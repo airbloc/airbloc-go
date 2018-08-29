@@ -1,20 +1,21 @@
 package main
 
 import (
-	"airbloc/go-producer/stream"
-	"context"
+	"airbloc/go-producer/blockchain"
+	"log"
+)
+
+const (
+	ABIPath  = "./abi"
+	BindPath = "./blockchain"
 )
 
 func init() {
-
+	if err := blockchain.GenerateBind(ABIPath, BindPath); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func main() {
-	ctx, cncl := context.WithCancel(context.Background())
-	strm, err := stream.Run(ctx, "tcp", ":6000")
-	if err != nil {
-		panic(err)
-	}
-	defer strm.Close()
-	cncl()
+
 }
