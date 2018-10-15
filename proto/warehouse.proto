@@ -1,0 +1,27 @@
+syntax = "proto3";
+package airbloc.warehouse;
+
+// warehouse.proto ==============================================================
+
+
+service Warehouse {
+    rpc Store(stream RawData) returns (StoreResult);
+    rpc StoreEncrypted(stream EncryptedData) returns (StoreResult);
+}
+
+message RawData {
+    string type = 1;
+    string ownerId = 2;
+    string payload = 3;
+}
+
+message EncryptedData {
+    string type = 1;
+    string ownerId = 2;
+    bytes encryptedPayload = 3;
+    bytes capsule = 4;
+}
+
+message StoreResult {
+    string uri = 1;
+}

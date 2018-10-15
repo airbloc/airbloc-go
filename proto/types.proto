@@ -1,0 +1,14 @@
+syntax = "proto3";
+package airbloc.common;
+
+message Result {
+}
+
+message Results {
+    repeated Result results = 1;
+}
+
+message Address {
+    int32 chainId = 1;
+    bytes address = 2;
+}

@@ -1,0 +1,33 @@
+syntax = "proto3";
+package airbloc.exchange;
+
+import "data.proto";
+import "types.proto";
+
+service ExchangeService {
+    rpc Order(OrderRequest) returns (OrderId);
+    rpc Settle(OrderId) returns (SettleResult);
+    rpc Reject(OrderId) returns (airbloc.common.Result);
+}
+
+message Contract {
+    enum Type {
+        RICHARDIAN = 0;
+        SMART = 1;
+    }
+    Type type = 1;
+    airbloc.common.Address smartContractAddress = 2;
+    bytes richardianHash = 3;
+}
+
+message OrderRequest {
+    airbloc.data.Batch data = 1;
+    Contract contract = 2;
+}
+
+message OrderId {
+    string orderId = 1;
+}
+
+message SettleResult {
+}

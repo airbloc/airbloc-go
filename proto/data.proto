@@ -1,0 +1,83 @@
+syntax = "proto3";
+package airbloc.data;
+
+import "./types.proto";
+
+/**
+ * Data Management API for Data Provider.
+ */
+service DataService {
+    rpc PreEncrypt(stream PreEncryptRequest) returns (stream PreEncryptResult);
+    rpc Register(stream RegisterDataRequest) returns (RegisterDataSummary);
+    
+    rpc Get(DataId) returns (Data);
+    rpc BatchGet(Batch) returns (BatchGetResult);
+
+    rpc SetPermission(SetDataPermissionRequest) returns (airbloc.common.Result);
+    rpc SetPermissionBatch(SetBatchDataPermissionRequest) returns (airbloc.common.Results);
+
+    rpc Unregister(DataId) returns (airbloc.common.Result);
+    rpc UnregisterBatch(Batch) returns (airbloc.common.Results);
+    
+    rpc Select(stream DataId) returns (Batch);
+    rpc Release(Batch) returns (airbloc.common.Result);
+}
+
+message Data {
+    message Permission {
+        string consumerId = 1;
+        bool allowAccess = 2;
+    }
+
+    string dataId = 1;
+    string collectionId = 2;
+    string ownerUserAid = 3;
+    string uri = 4;
+    uint64 registeredAt = 5;
+    repeated Permission permissions = 6;
+}
+
+message DataId {
+    string dataId = 1;
+}
+
+message Batch {
+    string batchId = 1;
+}
+
+message PreEncryptRequest {
+    string payload = 1;
+}
+
+message PreEncryptResult {
+    bytes encryptedPayload = 1;
+    bytes capsule = 2;
+}
+
+message RegisterDataRequest {
+    string collectionId = 1;
+    string ownerUserAid = 2;
+    string uri = 3;
+}
+
+message RegisterDataSummary {
+    bool succeed = 1;
+    string batchId = 2;
+    uint64 gasUsed = 3;
+}
+
+message BatchGetResult {
+    repeated Data data = 1;
+}
+
+message SetDataPermissionRequest {
+    string dataId = 1;
+    string consumerId = 2;
+    bool allowAccess = 3;
+}
+
+message SetBatchDataPermissionRequest {
+    string batchId = 1;
+    string consumerId = 2;
+    bool allowAccess = 3;
+}
