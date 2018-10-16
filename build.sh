@@ -1,17 +1,9 @@
 #!/usr/bin/env bash
 
-dests=(
-    "types"
-    "data"
-    "exchange"
-    "schemas"
-    "collections"
-    "producer"
-    "warehouse"
-)
+dir_name="proto"
 
-for dest in "${dests[@]}"; do
-    echo `protoc -I proto proto/${dest}.proto --go_out=plugins=grpc:$GOPATH/src`
+for entry in "$dir_name"/*; do
+    echo `protoc -I ${dir_name} ${entry} --go_out=plugins=grpc:$GOPATH/src`
 done
 
 echo `go run contracts/main.go`
