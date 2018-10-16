@@ -1,6 +1,7 @@
 // Protocols used for sending data to Producer Node.
 syntax = "proto3";
 package airbloc.producer;
+option go_package = "github.com/airbloc/airbloc-go/api/producer";
 
 message Identifier {
     string type = 1;

@@ -1,20 +1,6 @@
 syntax = "proto3";
 package airbloc.collections;
-
-service TypeService {
-    rpc Create(CreateTypeRequest) returns (CreateTypeResult);
-}
-
-message CreateTypeRequest {
-    string name = 1;
-    string schema = 2;
-}
-
-message CreateTypeResult {
-    bool exists = 1;
-    string id = 2;
-    uint64 gasUsed = 3;
-}
+option go_package = "github.com/airbloc/airbloc-go/api/collections";
 
 service CollectionService {
     rpc Create(CreateCollectionRequest) returns (CreateCollectionResponse);

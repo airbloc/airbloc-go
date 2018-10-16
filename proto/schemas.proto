@@ -1,0 +1,18 @@
+syntax = "proto3";
+package airbloc.schemas;
+option go_package = "github.com/airbloc/airbloc-go/api/schemas";
+
+service SchemaService {
+    rpc Create(CreateSchemaRequest) returns (CreateSchemaResult);
+}
+
+message CreateSchemaRequest {
+    string name = 1;
+    string schema = 2;
+}
+
+message CreateSchemaResult {
+    bool exists = 1;
+    string id = 2;
+    uint64 gasUsed = 3;
+}

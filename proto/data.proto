@@ -1,7 +1,8 @@
 syntax = "proto3";
 package airbloc.data;
+option go_package = "github.com/airbloc/airbloc-go/api/data";
 
-import "./types.proto";
+import "types.proto";
 
 /**
  * Data Management API for Data Provider.

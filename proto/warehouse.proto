@@ -1,5 +1,6 @@
 syntax = "proto3";
 package airbloc.warehouse;
+option go_package = "github.com/airbloc/airbloc-go/api/warehouse";
 
 // warehouse.proto ==============================================================
 
