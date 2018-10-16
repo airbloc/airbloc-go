@@ -1,7 +1,7 @@
 abi
-contracts
 config.json
-blockchain/bind/*
+**/node_modules
+**/build
 
 # Created by https://www.gitignore.io/api/go,intellij
 
