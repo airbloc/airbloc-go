@@ -5,7 +5,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
+
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 
 const BuildOutput = "contracts/build/out"
@@ -50,7 +51,7 @@ func main() {
 	}
 
 	for _, contract := range contracts {
-		abi, err := json.MarshalIndent(contract.Abi, "", "    ")
+		abi, err := json.Marshal(contract.Abi)
 		if err != nil {
 			log.Println(err)
 			return
@@ -60,30 +61,25 @@ func main() {
 			continue
 		}
 
-		outPath := "bind/" + contract.Name + ".go"
-		abiPath := BuildOutput + "/" + contract.Name + ".abi"
-		binPath := BuildOutput + "/" + contract.Name + ".bin"
+		outPath := "adapter/" + contract.Name + ".go"
 
-		err = ioutil.WriteFile(abiPath, abi, os.ModePerm)
+		tmp, err := bind.Bind(
+			[]string{contract.Name},
+			[]string{string(abi)},
+			[]string{contract.Bin},
+			"adapter",
+			bind.LangGo,
+		)
 		if err != nil {
 			log.Println(err)
 			return
 		}
 
-		err = ioutil.WriteFile(binPath, []byte(contract.Bin), os.ModePerm)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		if err = exec.Command(
-			"abigen",
-			"--abi", abiPath,
-			"--bin", binPath,
-			"--pkg", "contract",
-			"--type", contract.Name,
-			"--out", outPath,
-		).Run(); err != nil {
+		if err = ioutil.WriteFile(
+			outPath,
+			[]byte(tmp),
+			os.ModePerm,
+		); err != nil {
 			log.Println(err)
 			return
 		}

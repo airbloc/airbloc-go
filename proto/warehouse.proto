@@ -1,26 +1,31 @@
 syntax = "proto3";
 package airbloc.warehouse;
-option go_package = "github.com/airbloc/airbloc-go/api/warehouse";
-
-// warehouse.proto ==============================================================
+option go_package = "github.com/airbloc/airbloc-go/warehouse";
 
 
 service Warehouse {
     rpc Store(stream RawData) returns (StoreResult);
     rpc StoreEncrypted(stream EncryptedData) returns (StoreResult);
+    rpc RegisterUri(stream EncryptedData) returns (StoreResult);
 }
 
 message RawData {
-    string type = 1;
+    string collection = 1;
     string ownerId = 2;
     string payload = 3;
 }
 
 message EncryptedData {
-    string type = 1;
+    string collection = 1;
     string ownerId = 2;
     bytes encryptedPayload = 3;
     bytes capsule = 4;
+}
+
+message RegisterUriRequest {
+    string collection = 1;
+    string ownerId = 2;
+    string uri = 3;
 }
 
 message StoreResult {

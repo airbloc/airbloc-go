@@ -1,17 +1,17 @@
 syntax = "proto3";
 package airbloc.data;
-option go_package = "github.com/airbloc/airbloc-go/api/data";
+option go_package = "github.com/airbloc/airbloc-go/data";
 
-import "types.proto";
+import "proto/types.proto";
 
 /**
  * Data Management API for Data Provider.
  */
-service DataService {
+service Data {
     rpc PreEncrypt(stream PreEncryptRequest) returns (stream PreEncryptResult);
     rpc Register(stream RegisterDataRequest) returns (RegisterDataSummary);
     
-    rpc Get(DataId) returns (Data);
+    rpc Get(DataId) returns (DataResult);
     rpc BatchGet(Batch) returns (BatchGetResult);
 
     rpc SetPermission(SetDataPermissionRequest) returns (airbloc.common.Result);
@@ -22,24 +22,6 @@ service DataService {
     
     rpc Select(stream DataId) returns (Batch);
     rpc Release(Batch) returns (airbloc.common.Result);
-}
-
-message Data {
-    message Permission {
-        string consumerId = 1;
-        bool allowAccess = 2;
-    }
-
-    string dataId = 1;
-    string collectionId = 2;
-    string ownerUserAid = 3;
-    string uri = 4;
-    uint64 registeredAt = 5;
-    repeated Permission permissions = 6;
-}
-
-message DataId {
-    string dataId = 1;
 }
 
 message Batch {
@@ -67,8 +49,26 @@ message RegisterDataSummary {
     uint64 gasUsed = 3;
 }
 
+message DataId {
+    string dataId = 1;
+}
+
+message DataResult {
+    message Permission {
+        string consumerId = 1;
+        bool allowAccess = 2;
+    }
+
+    string dataId = 1;
+    string collectionId = 2;
+    string ownerUserAid = 3;
+    string uri = 4;
+    uint64 registeredAt = 5;
+    repeated Permission permissions = 6;
+}
+
 message BatchGetResult {
-    repeated Data data = 1;
+    repeated DataResult data = 1;
 }
 
 message SetDataPermissionRequest {

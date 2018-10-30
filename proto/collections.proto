@@ -1,23 +1,16 @@
 syntax = "proto3";
 package airbloc.collections;
-option go_package = "github.com/airbloc/airbloc-go/api/collections";
 
-service CollectionService {
+option go_package = "github.com/airbloc/airbloc-go/collections";
+
+service Collection {
     rpc Create(CreateCollectionRequest) returns (CreateCollectionResponse);
     rpc List(ListCollectionRequest) returns (ListCollectionResponse);
 }
 
-message Collection {
-    string id = 1;
-    string name = 2;
-    string type = 3;
-    reserved 4 to 10;
-    string incentivePolicy = 11;
-}
-
 message CreateCollectionRequest {
-    string name = 1;
-    string type = 2;
+    string appId = 1;
+    string schemaId = 2;
     reserved 3 to 10;
     string incentivePolicy = 11;
 }
@@ -31,7 +24,15 @@ message ListCollectionRequest {
     int32 itemsPerPage = 2;
 }
 
+message CollectionResponse {
+    string appId = 1;
+    string schemaId = 2;
+// TODO : return incentive policy
+//    reserved 3 to 10;
+//    string incentivePolicy = 11;
+}
+
 message ListCollectionResponse {
     int32 total = 1;
-    repeated Collection collections = 2;
+    repeated CollectionResponse collections = 2;
 }

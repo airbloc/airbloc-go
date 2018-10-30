@@ -1,8 +1,9 @@
 syntax = "proto3";
 package airbloc.schemas;
-option go_package = "github.com/airbloc/airbloc-go/api/schemas";
 
-service SchemaService {
+option go_package = "github.com/airbloc/airbloc-go/schemas";
+
+service Schema {
     rpc Create(CreateSchemaRequest) returns (CreateSchemaResult);
 }
 
@@ -14,5 +15,4 @@ message CreateSchemaRequest {
 message CreateSchemaResult {
     bool exists = 1;
     string id = 2;
-    uint64 gasUsed = 3;
 }

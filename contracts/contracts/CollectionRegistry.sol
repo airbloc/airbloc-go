@@ -7,6 +7,9 @@ import "./SchemaRegistry.sol";
 contract CollectionRegistry {
     using SafeMath for uint256;
 
+    event CollectionRegistered(bytes32 indexed _colectionId);
+    event CollectionUnregistered(bytes32 indexed _colectionId, bytes32 indexed _appId, bytes32 indexed _schemaId);
+
     struct Collection {
         bytes32 appId;
         bytes32 schemaId;
@@ -51,20 +54,24 @@ contract CollectionRegistry {
         uint256 _ratio
     ) public {
         require(appReg.checkOwner(_appId, msg.sender), "only owner can transfer ownership");
-        reg[_schemaId] = newCollection(_appId, _schemaId, _ratio);
+        bytes32 id = keccak256(abi.encodePacked(_appId, _schemaId));
+        reg[id] = newCollection(_appId, _schemaId, _ratio);
+        emit CollectionRegistered(id);
     }
 
     function unregister(bytes32 _id) public {
         require(appReg.checkOwner(reg[_id].appId, msg.sender), "only owner can transfer ownership");
+        Collection memory collection = reg[_id];
         delete reg[_id];
+        emit CollectionUnregistered(_id, collection.appId, collection.schemaId);
     }
 
-    function allow(bytes32 _id) public {
-        reg[_id].auth[msg.sender] = true;
+    function allow(bytes32 _id, bytes32 _uid) public {
+        reg[_id].auth[_uid] = true;
     }
 
-    function deny(bytes32 _id) public {
-        delete reg[_id].auth[msg.sender] = false;
+    function deny(bytes32 _id, bytes32 _uid) public {
+        delete reg[_id].auth[_uid];
     }
 
     function _get(bytes32 _id) internal view returns (Collection storage) {

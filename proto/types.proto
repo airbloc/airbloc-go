@@ -1,6 +1,6 @@
 syntax = "proto3";
 package airbloc.common;
-option go_package = "github.com/airbloc/airbloc-go/api/common";
+option go_package = "github.com/airbloc/airbloc-go/common";
 
 message Result {
 }
