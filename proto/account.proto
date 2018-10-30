@@ -1,0 +1,15 @@
+syntax = "proto3";
+package airbloc.collections;
+
+option go_package = "github.com/airbloc/airbloc-go/account";
+
+service Account {
+    rpc Create(AccountCreateRequest) returns (AccountCreateResponse);
+}
+
+message AccountCreateRequest {
+}
+
+message AccountCreateResponse {
+    bytes accountId = 1;
+}

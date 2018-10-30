@@ -1,14 +1,19 @@
 syntax = "proto3";
 package airbloc.exchange;
-option go_package = "github.com/airbloc/airbloc-go/api/exchange";
 
-import "data.proto";
-import "types.proto";
+option go_package = "github.com/airbloc/airbloc-go/exchange";
 
-service ExchangeService {
+import "proto/data.proto";
+import "proto/types.proto";
+
+service Exchange {
     rpc Order(OrderRequest) returns (OrderId);
-    rpc Settle(OrderId) returns (SettleResult);
+
+    rpc Settle(SettleMessage) returns (SettleResult);
     rpc Reject(OrderId) returns (airbloc.common.Result);
+
+    // after Open()
+    rpc Close(OrderId) returns (airbloc.common.Result);
 }
 
 message Contract {
@@ -24,11 +29,24 @@ message Contract {
 message OrderRequest {
     airbloc.data.Batch data = 1;
     Contract contract = 2;
+    string offeror = 3;
+    string offeree = 4;
+    repeated string option = 5;
+    double amount = 6;
 }
 
 message OrderId {
     string orderId = 1;
 }
 
+message SettleMessage {
+    OrderId orderId = 1;
+}
+
+message ContractId {
+    string ContractId = 1;
+}
+
 message SettleResult {
+    ContractId contractId = 1;
 }
