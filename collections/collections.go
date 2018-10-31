@@ -1,8 +1,6 @@
 package collections
 
 import (
-	"math/big"
-
 	"github.com/ethereum/go-ethereum/common"
 )
 
@@ -13,8 +11,8 @@ type Collection struct {
 }
 
 type IncentivePolicy struct {
-	DataProducer  *big.Int
-	DataProcessor *big.Int
-	DataRelayer   *big.Int
-	DataSource    *big.Int
+	DataProducer  float32
+	DataProcessor float32
+	DataRelayer   float32
+	DataSource    float32
 }

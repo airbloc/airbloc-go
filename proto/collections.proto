@@ -8,11 +8,18 @@ service Collection {
     rpc List(ListCollectionRequest) returns (ListCollectionResponse);
 }
 
+message Policy {
+    float DataProducer = 1;
+    float DataProcessor = 2;
+    float DataRelayer = 3;
+    float DataSource = 4;
+}
+
 message CreateCollectionRequest {
     string appId = 1;
     string schemaId = 2;
     reserved 3 to 10;
-    string incentivePolicy = 11;
+    Policy policy = 11;
 }
 
 message CreateCollectionResponse {
