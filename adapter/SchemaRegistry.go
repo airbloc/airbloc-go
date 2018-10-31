@@ -28,10 +28,10 @@ var (
 )
 
 // SchemaRegistryABI is the input ABI used to generate the binding from.
-const SchemaRegistryABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"check\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const SchemaRegistryABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"Registered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"Unregistered\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"metahash\",\"type\":\"bytes32\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"check\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // SchemaRegistryBin is the compiled bytecode used for deploying new contracts.
-const SchemaRegistryBin = `0x608060405260043610610057576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680631a0919dc1461005c578063399e07921461008d578063e1fa8e84146100d6575b600080fd5b34801561006857600080fd5b5061008b6004803603810190808035600019169060200190929190505050610107565b005b34801561009957600080fd5b506100bc6004803603810190808035600019169060200190929190505050610224565b604051808215151515815260200191505060405180910390f35b3480156100e257600080fd5b506101056004803603810190808035600019169060200190929190505050610297565b005b3373ffffffffffffffffffffffffffffffffffffffff16600080836000191660001916815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff161415156101e4576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260168152602001807f6f6e6c79206f776e65722063616e20646f20746869730000000000000000000081525060200191505060405180910390fd5b600080826000191660001916815260200190815260200160002060006101000a81549073ffffffffffffffffffffffffffffffffffffffff021916905550565b60008073ffffffffffffffffffffffffffffffffffffffff16600080846000191660001916815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1614159050919050565b33600080836000191660001916815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550505600a165627a7a72305820040ee3f14dcc7d3c1f346ea2804d20402eac1d42b76a90b4dd89194fb4b33a320029`
+const SchemaRegistryBin = `0x608060405260043610610057576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680631a0919dc1461005c578063399e07921461008d578063e1fa8e84146100d6575b600080fd5b34801561006857600080fd5b5061008b6004803603810190808035600019169060200190929190505050610107565b005b34801561009957600080fd5b506100bc6004803603810190808035600019169060200190929190505050610255565b604051808215151515815260200191505060405180910390f35b3480156100e257600080fd5b5061010560048036038101908080356000191690602001909291905050506102c8565b005b3373ffffffffffffffffffffffffffffffffffffffff16600080836000191660001916815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff161415156101e4576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260168152602001807f6f6e6c79206f776e65722063616e20646f20746869730000000000000000000081525060200191505060405180910390fd5b600080826000191660001916815260200190815260200160002060006101000a81549073ffffffffffffffffffffffffffffffffffffffff021916905580600019167fe17fec26316aebe957e188549d659a89f359c49766bcc0ae2fb7ded274ffe14660405160405180910390a250565b60008073ffffffffffffffffffffffffffffffffffffffff16600080846000191660001916815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1614159050919050565b60008133436040516020018084600019166000191681526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c0100000000000000000000000002815260140182815260200193505050506040516020818303038152906040526040518082805190602001908083835b602083101515610372578051825260208201915060208101905060208303925061034d565b6001836020036101000a0380198251168184511680821785525050505050509050019150506040518091039020905033600080836000191660001916815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555080600019167f10906fae603eebfac53ddc0f103bee8a044dd7643c425c7a90f921dfa15ef62c60405160405180910390a250505600a165627a7a723058203fbd5c8160a08a2bf73f3edb2ccdecae8fb45aaa366a55ed0b2c29a7f78bc0ce0029`
 
 // DeploySchemaRegistry deploys a new Ethereum contract, binding an instance of SchemaRegistry to it.
 func DeploySchemaRegistry(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *SchemaRegistry, error) {
@@ -216,23 +216,23 @@ func (_SchemaRegistry *SchemaRegistryCallerSession) Check(id [32]byte) (bool, er
 
 // Register is a paid mutator transaction binding the contract method 0xe1fa8e84.
 //
-// Solidity: function register(id bytes32) returns()
-func (_SchemaRegistry *SchemaRegistryTransactor) Register(opts *bind.TransactOpts, id [32]byte) (*types.Transaction, error) {
-	return _SchemaRegistry.contract.Transact(opts, "register", id)
+// Solidity: function register(metahash bytes32) returns()
+func (_SchemaRegistry *SchemaRegistryTransactor) Register(opts *bind.TransactOpts, metahash [32]byte) (*types.Transaction, error) {
+	return _SchemaRegistry.contract.Transact(opts, "register", metahash)
 }
 
 // Register is a paid mutator transaction binding the contract method 0xe1fa8e84.
 //
-// Solidity: function register(id bytes32) returns()
-func (_SchemaRegistry *SchemaRegistrySession) Register(id [32]byte) (*types.Transaction, error) {
-	return _SchemaRegistry.Contract.Register(&_SchemaRegistry.TransactOpts, id)
+// Solidity: function register(metahash bytes32) returns()
+func (_SchemaRegistry *SchemaRegistrySession) Register(metahash [32]byte) (*types.Transaction, error) {
+	return _SchemaRegistry.Contract.Register(&_SchemaRegistry.TransactOpts, metahash)
 }
 
 // Register is a paid mutator transaction binding the contract method 0xe1fa8e84.
 //
-// Solidity: function register(id bytes32) returns()
-func (_SchemaRegistry *SchemaRegistryTransactorSession) Register(id [32]byte) (*types.Transaction, error) {
-	return _SchemaRegistry.Contract.Register(&_SchemaRegistry.TransactOpts, id)
+// Solidity: function register(metahash bytes32) returns()
+func (_SchemaRegistry *SchemaRegistryTransactorSession) Register(metahash [32]byte) (*types.Transaction, error) {
+	return _SchemaRegistry.Contract.Register(&_SchemaRegistry.TransactOpts, metahash)
 }
 
 // Unregister is a paid mutator transaction binding the contract method 0x1a0919dc.
@@ -254,4 +254,268 @@ func (_SchemaRegistry *SchemaRegistrySession) Unregister(id [32]byte) (*types.Tr
 // Solidity: function unregister(id bytes32) returns()
 func (_SchemaRegistry *SchemaRegistryTransactorSession) Unregister(id [32]byte) (*types.Transaction, error) {
 	return _SchemaRegistry.Contract.Unregister(&_SchemaRegistry.TransactOpts, id)
+}
+
+// SchemaRegistryRegisteredIterator is returned from FilterRegistered and is used to iterate over the raw logs and unpacked data for Registered events raised by the SchemaRegistry contract.
+type SchemaRegistryRegisteredIterator struct {
+	Event *SchemaRegistryRegistered // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *SchemaRegistryRegisteredIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(SchemaRegistryRegistered)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(SchemaRegistryRegistered)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *SchemaRegistryRegisteredIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *SchemaRegistryRegisteredIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// SchemaRegistryRegistered represents a Registered event raised by the SchemaRegistry contract.
+type SchemaRegistryRegistered struct {
+	Id  [32]byte
+	Raw types.Log // Blockchain specific contextual infos
+}
+
+// FilterRegistered is a free log retrieval operation binding the contract event 0x10906fae603eebfac53ddc0f103bee8a044dd7643c425c7a90f921dfa15ef62c.
+//
+// Solidity: e Registered(_id indexed bytes32)
+func (_SchemaRegistry *SchemaRegistryFilterer) FilterRegistered(opts *bind.FilterOpts, _id [][32]byte) (*SchemaRegistryRegisteredIterator, error) {
+
+	var _idRule []interface{}
+	for _, _idItem := range _id {
+		_idRule = append(_idRule, _idItem)
+	}
+
+	logs, sub, err := _SchemaRegistry.contract.FilterLogs(opts, "Registered", _idRule)
+	if err != nil {
+		return nil, err
+	}
+	return &SchemaRegistryRegisteredIterator{contract: _SchemaRegistry.contract, event: "Registered", logs: logs, sub: sub}, nil
+}
+
+// WatchRegistered is a free log subscription operation binding the contract event 0x10906fae603eebfac53ddc0f103bee8a044dd7643c425c7a90f921dfa15ef62c.
+//
+// Solidity: e Registered(_id indexed bytes32)
+func (_SchemaRegistry *SchemaRegistryFilterer) WatchRegistered(opts *bind.WatchOpts, sink chan<- *SchemaRegistryRegistered, _id [][32]byte) (event.Subscription, error) {
+
+	var _idRule []interface{}
+	for _, _idItem := range _id {
+		_idRule = append(_idRule, _idItem)
+	}
+
+	logs, sub, err := _SchemaRegistry.contract.WatchLogs(opts, "Registered", _idRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(SchemaRegistryRegistered)
+				if err := _SchemaRegistry.contract.UnpackLog(event, "Registered", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// SchemaRegistryUnregisteredIterator is returned from FilterUnregistered and is used to iterate over the raw logs and unpacked data for Unregistered events raised by the SchemaRegistry contract.
+type SchemaRegistryUnregisteredIterator struct {
+	Event *SchemaRegistryUnregistered // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *SchemaRegistryUnregisteredIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(SchemaRegistryUnregistered)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(SchemaRegistryUnregistered)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *SchemaRegistryUnregisteredIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *SchemaRegistryUnregisteredIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// SchemaRegistryUnregistered represents a Unregistered event raised by the SchemaRegistry contract.
+type SchemaRegistryUnregistered struct {
+	Id  [32]byte
+	Raw types.Log // Blockchain specific contextual infos
+}
+
+// FilterUnregistered is a free log retrieval operation binding the contract event 0xe17fec26316aebe957e188549d659a89f359c49766bcc0ae2fb7ded274ffe146.
+//
+// Solidity: e Unregistered(_id indexed bytes32)
+func (_SchemaRegistry *SchemaRegistryFilterer) FilterUnregistered(opts *bind.FilterOpts, _id [][32]byte) (*SchemaRegistryUnregisteredIterator, error) {
+
+	var _idRule []interface{}
+	for _, _idItem := range _id {
+		_idRule = append(_idRule, _idItem)
+	}
+
+	logs, sub, err := _SchemaRegistry.contract.FilterLogs(opts, "Unregistered", _idRule)
+	if err != nil {
+		return nil, err
+	}
+	return &SchemaRegistryUnregisteredIterator{contract: _SchemaRegistry.contract, event: "Unregistered", logs: logs, sub: sub}, nil
+}
+
+// WatchUnregistered is a free log subscription operation binding the contract event 0xe17fec26316aebe957e188549d659a89f359c49766bcc0ae2fb7ded274ffe146.
+//
+// Solidity: e Unregistered(_id indexed bytes32)
+func (_SchemaRegistry *SchemaRegistryFilterer) WatchUnregistered(opts *bind.WatchOpts, sink chan<- *SchemaRegistryUnregistered, _id [][32]byte) (event.Subscription, error) {
+
+	var _idRule []interface{}
+	for _, _idItem := range _id {
+		_idRule = append(_idRule, _idItem)
+	}
+
+	logs, sub, err := _SchemaRegistry.contract.WatchLogs(opts, "Unregistered", _idRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(SchemaRegistryUnregistered)
+				if err := _SchemaRegistry.contract.UnpackLog(event, "Unregistered", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
 }

@@ -7,8 +7,10 @@ import "./SchemaRegistry.sol";
 contract CollectionRegistry {
     using SafeMath for uint256;
 
-    event CollectionRegistered(bytes32 indexed _colectionId);
-    event CollectionUnregistered(bytes32 indexed _colectionId, bytes32 indexed _appId, bytes32 indexed _schemaId);
+    event Registered(bytes32 indexed _colectionId);
+    event Unregistered(bytes32 indexed _colectionId, bytes32 indexed _appId, bytes32 indexed _schemaId);
+    event Allowed(bytes32 indexed _collectionId, bytes32 indexed _uid);
+    event Denied(bytes32 indexed _collectionId, bytes32 indexed _uid);
 
     struct Collection {
         bytes32 appId;
@@ -56,22 +58,24 @@ contract CollectionRegistry {
         require(appReg.checkOwner(_appId, msg.sender), "only owner can transfer ownership");
         bytes32 id = keccak256(abi.encodePacked(_appId, _schemaId));
         reg[id] = newCollection(_appId, _schemaId, _ratio);
-        emit CollectionRegistered(id);
+        emit Registered(id);
     }
 
     function unregister(bytes32 _id) public {
         require(appReg.checkOwner(reg[_id].appId, msg.sender), "only owner can transfer ownership");
         Collection memory collection = reg[_id];
         delete reg[_id];
-        emit CollectionUnregistered(_id, collection.appId, collection.schemaId);
+        emit Unregistered(_id, collection.appId, collection.schemaId);
     }
 
     function allow(bytes32 _id, bytes32 _uid) public {
         reg[_id].auth[_uid] = true;
+        emit Allowed(_id, _uid);
     }
 
     function deny(bytes32 _id, bytes32 _uid) public {
         delete reg[_id].auth[_uid];
+        emit Denied(_id, _uid);
     }
 
     function _get(bytes32 _id) internal view returns (Collection storage) {
