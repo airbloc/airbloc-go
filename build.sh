@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo `dep ensure -v`
+
 dir_name="proto"
 
 for entry in "$dir_name"/*; do
