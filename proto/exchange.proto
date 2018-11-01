@@ -13,7 +13,7 @@ service Exchange {
     rpc Reject(OrderId) returns (airbloc.common.Result);
 
     // after Open()
-    rpc Close(OrderId) returns (airbloc.common.Result);
+    rpc CloseOrder(OrderId) returns (airbloc.common.Result);
 }
 
 message Contract {
