@@ -111,7 +111,7 @@ func (db *badgerDB) NewIterator() *badger.Iterator {
 func (db *badgerDB) Close() error {
 	err := db.db.Close()
 	if err != nil {
-		return errors.New("database: close database : " + err.Error())
+		return errors.Wrap(err, "database: close database")
 	}
 	return nil
 }
@@ -125,6 +125,10 @@ func (db *badgerDB) NewBatch() Batch {
 	txn := db.db.NewTransaction(true)
 
 	return &badgerBatch{db: db.db, txn: txn}
+}
+
+func (db *badgerDB) getDB() interface{} {
+	return db.db
 }
 
 type badgerBatch struct {
