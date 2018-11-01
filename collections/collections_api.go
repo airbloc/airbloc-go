@@ -8,18 +8,18 @@ import (
 	"google.golang.org/grpc"
 )
 
-type Service struct {
+type API struct {
 	conn    net.Conn
-	adapter *Adapter
+	adapter *Service
 	server  *grpc.Server
 }
 
-func (cs *Service) Close() {
+func (cs *API) Close() {
 	cs.server.Stop()
 	cs.conn.Close()
 }
 
-func (cs *Service) Create(ctx context.Context, req *CreateCollectionRequest) (*CreateCollectionResponse, error) {
+func (cs *API) Create(ctx context.Context, req *CreateCollectionRequest) (*CreateCollectionResponse, error) {
 	hash, err := cs.adapter.Register(ctx, &Collection{
 		AppId:    common.HexToHash(req.AppId),
 		SchemaId: common.HexToHash(req.SchemaId),
@@ -36,16 +36,16 @@ func (cs *Service) Create(ctx context.Context, req *CreateCollectionRequest) (*C
 }
 
 // TODO after localdb integration
-func (cs *Service) List(ctx context.Context, req *ListCollectionRequest) (*ListCollectionResponse, error) {
+func (cs *API) List(ctx context.Context, req *ListCollectionRequest) (*ListCollectionResponse, error) {
 	return nil, nil
 }
 
-func NewService(conn net.Conn, adapter *Adapter) (*Service, error) {
-	service := &Service{
+func NewAPI(conn net.Conn, adapter *Service) (*API, error) {
+	api := &API{
 		conn:    conn,
 		adapter: adapter,
 		server:  grpc.NewServer(),
 	}
-	RegisterCollectionServer(service.server, service)
-	return service, nil
+	RegisterCollectionServer(api.server, api)
+	return api, nil
 }
