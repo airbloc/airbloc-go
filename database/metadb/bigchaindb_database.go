@@ -50,8 +50,7 @@ func (db *bigchainDB) Create(
 	asset txn.Asset,
 	metadata txn.Metadata,
 	mode Mode,
-) (err error) {
-	var tx *txn.Transaction
+) (tx *txn.Transaction, err error) {
 	tx, err = db.newCreateTransaction(asset, metadata)
 	if err != nil {
 		return
