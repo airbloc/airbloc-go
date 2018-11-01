@@ -30,7 +30,7 @@ var (
 )
 
 type Database interface {
-	Create(txn.Asset, txn.Metadata, Mode) error
+	Create(txn.Asset, txn.Metadata, Mode) (*txn.Transaction, error)
 	RetrieveOne(context.Context, *bson.Document, ...findopt.One) (*bson.Document, error)
 	RetrieveMany(context.Context, *bson.Document, ...findopt.Find) (*bson.Document, error)
 	Append(string, ed25519.PublicKey, txn.Metadata, Mode) error

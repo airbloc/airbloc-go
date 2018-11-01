@@ -14,6 +14,7 @@ type Database interface {
 	Close() error
 	Version() int
 	NewBatch() Batch
+	getDB() interface{}
 }
 
 // Batch is a write-only database that commits changes to its host database
