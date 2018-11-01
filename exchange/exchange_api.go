@@ -8,34 +8,38 @@ import (
 	"google.golang.org/grpc"
 )
 
-type Service struct {
+type API struct {
 	conn   net.Conn
 	server *grpc.Server
 }
 
-func (s *Service) Close() {
+func (s *API) Close() {
 	s.server.Stop()
 	s.conn.Close()
 }
 
 // TODO
-func (s *Service) Order(ctx context.Context, req *OrderRequest) (*OrderId, error) {
+func (s *API) Order(ctx context.Context, req *OrderRequest) (*OrderId, error) {
 	return nil, nil
 }
 
-func (s *Service) Settle(ctx context.Context, id *OrderId) (*SettleResult, error) {
+func (s *API) Settle(ctx context.Context, req *SettleMessage) (*SettleResult, error) {
 	return nil, nil
 }
 
-func (s *Service) Reject(ctx context.Context, id *OrderId) (*common.Result, error) {
+func (s *API) Reject(ctx context.Context, id *OrderId) (*common.Result, error) {
 	return nil, nil
 }
 
-func NewService(conn net.Conn) (*Service, error) {
-	service := &Service{
+func (s *API) CloseOrder(ctx context.Context, id *OrderId) (*common.Result, error) {
+	return nil, nil
+}
+
+func NewAPI(conn net.Conn) (*API, error) {
+	api := &API{
 		conn:   conn,
 		server: grpc.NewServer(),
 	}
-	RegisterExchangeServiceServer(service.server, service)
-	return service, nil
+	RegisterExchangeServer(api.server, api)
+	return api, nil
 }
