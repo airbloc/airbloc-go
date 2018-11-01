@@ -6,8 +6,6 @@ import (
 	"log"
 	"os"
 
-	"os/exec"
-
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 
@@ -21,10 +19,6 @@ type Contract struct {
 }
 
 func main() {
-	os.Chdir("contracts")
-	exec.Command("truffle", "compile").Run()
-	os.Chdir("..")
-
 	fileInfos, err := ioutil.ReadDir(ContractDir)
 	if err != nil {
 		log.Println(err)
