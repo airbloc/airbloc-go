@@ -3,30 +3,40 @@ package schemas
 import (
 	"net"
 
+	"encoding/json"
+
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
 
-type Service struct {
-	conn   net.Conn
-	server *grpc.Server
+type API struct {
+	conn    net.Conn
+	service *Service
+	server  *grpc.Server
 }
 
-func (s *Service) Close() {
+func (s *API) Close() {
 	s.server.Stop()
 	s.conn.Close()
 }
 
 // TODO
-func (s *Service) Create(ctx context.Context, req *CreateSchemaRequest) (*CreateSchemaResult, error) {
+func (s *API) Create(ctx context.Context, req *CreateSchemaRequest) (*CreateSchemaResult, error) {
+	data := make(map[string]interface{})
+	err := json.Unmarshal([]byte(req.Schema), &data)
+	if err != nil {
+		return nil, err
+	}
+	s.service.Register(ctx, req.Name, data)
 	return nil, nil
 }
 
-func NewService(conn net.Conn) (*Service, error) {
-	service := &Service{
-		conn:   conn,
-		server: grpc.NewServer(),
+func NewAPI(conn net.Conn, service *Service) (*API, error) {
+	api := &API{
+		conn:    conn,
+		service: service,
+		server:  grpc.NewServer(),
 	}
-	RegisterSchemaServiceServer(service.server, service)
-	return service, nil
+	RegisterSchemaServer(api.server, api)
+	return api, nil
 }
