@@ -18,15 +18,6 @@ func (s *Service) Close() {
 	s.conn.Close()
 }
 
-// TODO
-func (s *Service) PreEncrypt(stream Data_PreEncryptServer) error {
-	return nil
-}
-
-func (s *Service) Register(stream Data_RegisterServer) error {
-	return nil
-}
-
 func (s *Service) Get(ctx context.Context, dataId *DataId) (*DataResult, error) {
 	return nil, nil
 }
@@ -43,11 +34,11 @@ func (s *Service) SetPermissionBatch(ctx context.Context, req *SetBatchDataPermi
 	return nil, nil
 }
 
-func (s *Service) Unregister(ctx context.Context, dataId *DataId) (*common.Result, error) {
+func (s *Service) Delete(ctx context.Context, dataId *DataId) (*common.Result, error) {
 	return nil, nil
 }
 
-func (s *Service) UnregisterBatch(ctx context.Context, batchId *BatchRequest) (*common.Results, error) {
+func (s *Service) DeleteBatch(ctx context.Context, batchId *BatchRequest) (*common.Results, error) {
 	return nil, nil
 }
 
