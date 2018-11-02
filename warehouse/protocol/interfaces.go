@@ -2,8 +2,9 @@ package protocol
 
 import (
 	"errors"
-	"github.com/airbloc/airbloc-go/warehouse/bundle"
 	"net/url"
+
+	"github.com/airbloc/airbloc-go/warehouse/bundle"
 )
 
 var (

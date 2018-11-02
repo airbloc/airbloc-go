@@ -2,6 +2,7 @@ package key
 
 import (
 	"crypto/rand"
+
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/ethereum/go-ethereum/crypto/ecies"
 )

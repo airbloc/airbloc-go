@@ -1,10 +1,11 @@
 package bundle
 
 import (
+	"time"
+
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/data"
 	"github.com/mailru/easyjson"
-	"time"
 )
 
 type Bundle struct {

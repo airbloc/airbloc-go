@@ -12,7 +12,6 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 // TODO: metadb integration
@@ -26,7 +25,7 @@ type Service struct {
 
 func NewService(
 	db metadb.Database,
-	client *ethclient.Client,
+	client *blockchain.Client,
 	account *bind.TransactOpts,
 	addr common.Address,
 ) (*Service, error) {
@@ -43,7 +42,7 @@ func NewService(
 
 	return &Service{
 		db:          db,
-		client:      blockchain.NewClient(client),
+		client:      client,
 		account:     account,
 		contract:    collection,
 		contractABI: contractABI,

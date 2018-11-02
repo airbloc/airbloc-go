@@ -4,10 +4,11 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
+	"time"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
-	"time"
 )
 
 const (

@@ -1,11 +1,12 @@
 package protocol
 
 import (
+	"net/url"
+	"time"
+
 	"github.com/airbloc/airbloc-go/warehouse/bundle"
 	"github.com/pkg/errors"
 	"github.com/valyala/fasthttp"
-	"net/url"
-	"time"
 )
 
 type HttpProtocol struct {

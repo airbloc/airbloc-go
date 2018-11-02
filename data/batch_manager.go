@@ -3,6 +3,7 @@ package data
 import (
 	"crypto/rand"
 	"encoding/hex"
+
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/pkg/errors"

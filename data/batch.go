@@ -1,8 +1,9 @@
 package data
 
 import (
-	"github.com/airbloc/airbloc-go/common"
 	"strings"
+
+	"github.com/airbloc/airbloc-go/common"
 )
 
 // Batch contains and points multiple data ID.

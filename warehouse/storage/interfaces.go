@@ -1,8 +1,9 @@
 package storage
 
 import (
-	"github.com/airbloc/airbloc-go/warehouse/bundle"
 	"net/url"
+
+	"github.com/airbloc/airbloc-go/warehouse/bundle"
 )
 
 type Storage interface {
