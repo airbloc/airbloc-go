@@ -7,26 +7,26 @@ import (
 	"google.golang.org/grpc"
 )
 
-type Service struct {
+type API struct {
 	conn   net.Conn
 	server *grpc.Server
 }
 
-func (s *Service) Close() {
+func (s *API) Close() {
 	s.server.Stop()
 	s.conn.Close()
 }
 
 // TODO
-func (s *Service) Create(ctx context.Context, req *CreateSchemaRequest) (*CreateSchemaResult, error) {
+func (s *API) Create(ctx context.Context, req *CreateSchemaRequest) (*CreateSchemaResult, error) {
 	return nil, nil
 }
 
-func NewService(conn net.Conn) (*Service, error) {
-	service := &Service{
+func NewService(conn net.Conn) (*API, error) {
+	service := &API{
 		conn:   conn,
 		server: grpc.NewServer(),
 	}
-	RegisterSchemaServiceServer(service.server, service)
+	RegisterSchemaServer(service.server, service)
 	return service, nil
 }

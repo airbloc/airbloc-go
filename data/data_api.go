@@ -31,7 +31,7 @@ func (s *Service) Get(ctx context.Context, dataId *DataId) (*DataResult, error) 
 	return nil, nil
 }
 
-func (s *Service) BatchGet(ctx context.Context, batchId *Batch) (*BatchGetResult, error) {
+func (s *Service) BatchGet(ctx context.Context, batchId *BatchRequest) (*BatchGetResult, error) {
 	return nil, nil
 }
 
@@ -47,7 +47,7 @@ func (s *Service) Unregister(ctx context.Context, dataId *DataId) (*common.Resul
 	return nil, nil
 }
 
-func (s *Service) UnregisterBatch(ctx context.Context, batchId *Batch) (*common.Results, error) {
+func (s *Service) UnregisterBatch(ctx context.Context, batchId *BatchRequest) (*common.Results, error) {
 	return nil, nil
 }
 
@@ -55,7 +55,7 @@ func (s *Service) Select(stream Data_SelectServer) error {
 	return nil
 }
 
-func (s *Service) Release(ctx context.Context, batchId *Batch) (*common.Result, error) {
+func (s *Service) Release(ctx context.Context, batchId *BatchRequest) (*common.Result, error) {
 	return nil, nil
 }
 
