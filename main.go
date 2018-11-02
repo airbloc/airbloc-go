@@ -19,6 +19,6 @@ func main() {
 		big.NewFloat(37.8),
 		big.NewFloat(params.Ether),
 	)
-	bigInt := new(big.Int).Set8
+	bigInt := new(big.Int).Set
 	log.Println(bigFloat.Int())
 }
