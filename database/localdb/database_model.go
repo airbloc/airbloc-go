@@ -12,20 +12,20 @@ func NewModel(db Database, prefix string) *Model {
 	}
 }
 
-func (m *Model) Put(key, value []byte) error {
-	return m.db.Put(append(m.prefix, key...), value)
+func (m *Model) Put(key string, value []byte) error {
+	return m.db.Put(append(m.prefix, []byte(key)...), value)
 }
 
-func (m *Model) Get(key []byte) ([]byte, error) {
-	return m.db.Get(append(m.prefix, key...))
+func (m *Model) Get(key string) ([]byte, error) {
+	return m.db.Get(append(m.prefix, []byte(key)...))
 }
 
-func (m *Model) Has(key []byte) (bool, error) {
-	return m.db.Has(append(m.prefix, key...))
+func (m *Model) Has(key string) (bool, error) {
+	return m.db.Has(append(m.prefix, []byte(key)...))
 }
 
-func (m *Model) Delete(key []byte) error {
-	return m.db.Delete(append(m.prefix, key...))
+func (m *Model) Delete(key string) error {
+	return m.db.Delete(append(m.prefix, []byte(key)...))
 }
 
 func (m *Model) NewBatch() *ModelBatch {
@@ -40,8 +40,8 @@ type ModelBatch struct {
 	prefix []byte
 }
 
-func (b *ModelBatch) Put(key, value []byte) error {
-	return b.batch.Put(append(b.prefix, key...), value)
+func (b *ModelBatch) Put(key string, value []byte) error {
+	return b.batch.Put(append(b.prefix, []byte(key)...), value)
 }
 
 func (b *ModelBatch) Write() error {

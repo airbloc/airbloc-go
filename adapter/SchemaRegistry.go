@@ -28,10 +28,10 @@ var (
 )
 
 // SchemaRegistryABI is the input ABI used to generate the binding from.
-const SchemaRegistryABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"Registered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"Unregistered\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"metahash\",\"type\":\"bytes32\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"check\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const SchemaRegistryABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"Registered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"Unregistered\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"check\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // SchemaRegistryBin is the compiled bytecode used for deploying new contracts.
-const SchemaRegistryBin = `0x608060405260043610610057576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680631a0919dc1461005c578063399e07921461008d578063e1fa8e84146100d6575b600080fd5b34801561006857600080fd5b5061008b6004803603810190808035600019169060200190929190505050610107565b005b34801561009957600080fd5b506100bc6004803603810190808035600019169060200190929190505050610255565b604051808215151515815260200191505060405180910390f35b3480156100e257600080fd5b5061010560048036038101908080356000191690602001909291905050506102c8565b005b3373ffffffffffffffffffffffffffffffffffffffff16600080836000191660001916815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff161415156101e4576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260168152602001807f6f6e6c79206f776e65722063616e20646f20746869730000000000000000000081525060200191505060405180910390fd5b600080826000191660001916815260200190815260200160002060006101000a81549073ffffffffffffffffffffffffffffffffffffffff021916905580600019167fe17fec26316aebe957e188549d659a89f359c49766bcc0ae2fb7ded274ffe14660405160405180910390a250565b60008073ffffffffffffffffffffffffffffffffffffffff16600080846000191660001916815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1614159050919050565b60008133436040516020018084600019166000191681526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c0100000000000000000000000002815260140182815260200193505050506040516020818303038152906040526040518082805190602001908083835b602083101515610372578051825260208201915060208101905060208303925061034d565b6001836020036101000a0380198251168184511680821785525050505050509050019150506040518091039020905033600080836000191660001916815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555080600019167f10906fae603eebfac53ddc0f103bee8a044dd7643c425c7a90f921dfa15ef62c60405160405180910390a250505600a165627a7a723058203fbd5c8160a08a2bf73f3edb2ccdecae8fb45aaa366a55ed0b2c29a7f78bc0ce0029`
+const SchemaRegistryBin = `0x608060405260043610610057576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680631a0919dc1461005c5780631aa3a0081461008d578063399e0792146100a4575b600080fd5b34801561006857600080fd5b5061008b60048036038101908080356000191690602001909291905050506100ed565b005b34801561009957600080fd5b506100a261023b565b005b3480156100b057600080fd5b506100d36004803603810190808035600019169060200190929190505050610391565b604051808215151515815260200191505060405180910390f35b3373ffffffffffffffffffffffffffffffffffffffff16600080836000191660001916815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff161415156101ca576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260168152602001807f6f6e6c79206f776e65722063616e20646f20746869730000000000000000000081525060200191505060405180910390fd5b600080826000191660001916815260200190815260200160002060006101000a81549073ffffffffffffffffffffffffffffffffffffffff021916905580600019167fe17fec26316aebe957e188549d659a89f359c49766bcc0ae2fb7ded274ffe14660405160405180910390a250565b60003343604051602001808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401828152602001925050506040516020818303038152906040526040518082805190602001908083835b6020831015156102d557805182526020820191506020810190506020830392506102b0565b6001836020036101000a0380198251168184511680821785525050505050509050019150506040518091039020905033600080836000191660001916815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555080600019167f10906fae603eebfac53ddc0f103bee8a044dd7643c425c7a90f921dfa15ef62c60405160405180910390a250565b60008073ffffffffffffffffffffffffffffffffffffffff16600080846000191660001916815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff161490509190505600a165627a7a72305820c9d6d6acfe3de67a346be6527e13dbdd6e6498de576c64934c752e67b9b6cc320029`
 
 // DeploySchemaRegistry deploys a new Ethereum contract, binding an instance of SchemaRegistry to it.
 func DeploySchemaRegistry(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *SchemaRegistry, error) {
@@ -190,70 +190,70 @@ func (_SchemaRegistry *SchemaRegistryTransactorRaw) Transact(opts *bind.Transact
 
 // Check is a free data retrieval call binding the contract method 0x399e0792.
 //
-// Solidity: function check(id bytes32) constant returns(bool)
-func (_SchemaRegistry *SchemaRegistryCaller) Check(opts *bind.CallOpts, id [32]byte) (bool, error) {
+// Solidity: function check(_id bytes32) constant returns(bool)
+func (_SchemaRegistry *SchemaRegistryCaller) Check(opts *bind.CallOpts, _id [32]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
 	out := ret0
-	err := _SchemaRegistry.contract.Call(opts, out, "check", id)
+	err := _SchemaRegistry.contract.Call(opts, out, "check", _id)
 	return *ret0, err
 }
 
 // Check is a free data retrieval call binding the contract method 0x399e0792.
 //
-// Solidity: function check(id bytes32) constant returns(bool)
-func (_SchemaRegistry *SchemaRegistrySession) Check(id [32]byte) (bool, error) {
-	return _SchemaRegistry.Contract.Check(&_SchemaRegistry.CallOpts, id)
+// Solidity: function check(_id bytes32) constant returns(bool)
+func (_SchemaRegistry *SchemaRegistrySession) Check(_id [32]byte) (bool, error) {
+	return _SchemaRegistry.Contract.Check(&_SchemaRegistry.CallOpts, _id)
 }
 
 // Check is a free data retrieval call binding the contract method 0x399e0792.
 //
-// Solidity: function check(id bytes32) constant returns(bool)
-func (_SchemaRegistry *SchemaRegistryCallerSession) Check(id [32]byte) (bool, error) {
-	return _SchemaRegistry.Contract.Check(&_SchemaRegistry.CallOpts, id)
+// Solidity: function check(_id bytes32) constant returns(bool)
+func (_SchemaRegistry *SchemaRegistryCallerSession) Check(_id [32]byte) (bool, error) {
+	return _SchemaRegistry.Contract.Check(&_SchemaRegistry.CallOpts, _id)
 }
 
-// Register is a paid mutator transaction binding the contract method 0xe1fa8e84.
+// Register is a paid mutator transaction binding the contract method 0x1aa3a008.
 //
-// Solidity: function register(metahash bytes32) returns()
-func (_SchemaRegistry *SchemaRegistryTransactor) Register(opts *bind.TransactOpts, metahash [32]byte) (*types.Transaction, error) {
-	return _SchemaRegistry.contract.Transact(opts, "register", metahash)
+// Solidity: function register() returns()
+func (_SchemaRegistry *SchemaRegistryTransactor) Register(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _SchemaRegistry.contract.Transact(opts, "register")
 }
 
-// Register is a paid mutator transaction binding the contract method 0xe1fa8e84.
+// Register is a paid mutator transaction binding the contract method 0x1aa3a008.
 //
-// Solidity: function register(metahash bytes32) returns()
-func (_SchemaRegistry *SchemaRegistrySession) Register(metahash [32]byte) (*types.Transaction, error) {
-	return _SchemaRegistry.Contract.Register(&_SchemaRegistry.TransactOpts, metahash)
+// Solidity: function register() returns()
+func (_SchemaRegistry *SchemaRegistrySession) Register() (*types.Transaction, error) {
+	return _SchemaRegistry.Contract.Register(&_SchemaRegistry.TransactOpts)
 }
 
-// Register is a paid mutator transaction binding the contract method 0xe1fa8e84.
+// Register is a paid mutator transaction binding the contract method 0x1aa3a008.
 //
-// Solidity: function register(metahash bytes32) returns()
-func (_SchemaRegistry *SchemaRegistryTransactorSession) Register(metahash [32]byte) (*types.Transaction, error) {
-	return _SchemaRegistry.Contract.Register(&_SchemaRegistry.TransactOpts, metahash)
-}
-
-// Unregister is a paid mutator transaction binding the contract method 0x1a0919dc.
-//
-// Solidity: function unregister(id bytes32) returns()
-func (_SchemaRegistry *SchemaRegistryTransactor) Unregister(opts *bind.TransactOpts, id [32]byte) (*types.Transaction, error) {
-	return _SchemaRegistry.contract.Transact(opts, "unregister", id)
+// Solidity: function register() returns()
+func (_SchemaRegistry *SchemaRegistryTransactorSession) Register() (*types.Transaction, error) {
+	return _SchemaRegistry.Contract.Register(&_SchemaRegistry.TransactOpts)
 }
 
 // Unregister is a paid mutator transaction binding the contract method 0x1a0919dc.
 //
-// Solidity: function unregister(id bytes32) returns()
-func (_SchemaRegistry *SchemaRegistrySession) Unregister(id [32]byte) (*types.Transaction, error) {
-	return _SchemaRegistry.Contract.Unregister(&_SchemaRegistry.TransactOpts, id)
+// Solidity: function unregister(_id bytes32) returns()
+func (_SchemaRegistry *SchemaRegistryTransactor) Unregister(opts *bind.TransactOpts, _id [32]byte) (*types.Transaction, error) {
+	return _SchemaRegistry.contract.Transact(opts, "unregister", _id)
 }
 
 // Unregister is a paid mutator transaction binding the contract method 0x1a0919dc.
 //
-// Solidity: function unregister(id bytes32) returns()
-func (_SchemaRegistry *SchemaRegistryTransactorSession) Unregister(id [32]byte) (*types.Transaction, error) {
-	return _SchemaRegistry.Contract.Unregister(&_SchemaRegistry.TransactOpts, id)
+// Solidity: function unregister(_id bytes32) returns()
+func (_SchemaRegistry *SchemaRegistrySession) Unregister(_id [32]byte) (*types.Transaction, error) {
+	return _SchemaRegistry.Contract.Unregister(&_SchemaRegistry.TransactOpts, _id)
+}
+
+// Unregister is a paid mutator transaction binding the contract method 0x1a0919dc.
+//
+// Solidity: function unregister(_id bytes32) returns()
+func (_SchemaRegistry *SchemaRegistryTransactorSession) Unregister(_id [32]byte) (*types.Transaction, error) {
+	return _SchemaRegistry.Contract.Unregister(&_SchemaRegistry.TransactOpts, _id)
 }
 
 // SchemaRegistryRegisteredIterator is returned from FilterRegistered and is used to iterate over the raw logs and unpacked data for Registered events raised by the SchemaRegistry contract.
