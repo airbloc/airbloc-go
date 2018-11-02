@@ -31,13 +31,6 @@ func NewBigchainDB(bdbUrl, mdbUrl string, key *txn.KeyPair, version int) (Databa
 		return nil, err
 	}
 
-	if key == nil {
-		key, err = txn.NewKeyPair()
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	return &bigchainDB{
 		bdb: bdbClient,
 		mdb: mdbClient.Database(BigchainDBName),

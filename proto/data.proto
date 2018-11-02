@@ -1,52 +1,28 @@
 syntax = "proto3";
 package airbloc.data;
-option go_package = "github.com/airbloc/airbloc-go/data";
+option go_package = "github.com/airbloc/airbloc-go/api/data";
 
 import "proto/types.proto";
 
 /**
- * Data Management API for Data Provider.
+ * Data Management API.
  */
 service Data {
-    rpc PreEncrypt(stream PreEncryptRequest) returns (stream PreEncryptResult);
-    rpc Register(stream RegisterDataRequest) returns (RegisterDataSummary);
-    
     rpc Get(DataId) returns (DataResult);
-    rpc BatchGet(Batch) returns (BatchGetResult);
+    rpc BatchGet(BatchRequest) returns (BatchGetResult);
 
     rpc SetPermission(SetDataPermissionRequest) returns (airbloc.common.Result);
     rpc SetPermissionBatch(SetBatchDataPermissionRequest) returns (airbloc.common.Results);
 
-    rpc Unregister(DataId) returns (airbloc.common.Result);
-    rpc UnregisterBatch(Batch) returns (airbloc.common.Results);
-    
-    rpc Select(stream DataId) returns (Batch);
-    rpc Release(Batch) returns (airbloc.common.Result);
+    rpc Delete(DataId) returns (airbloc.common.Result);
+    rpc DeleteBatch(BatchRequest) returns (airbloc.common.Results);
+
+    rpc Select(stream DataId) returns (BatchRequest);
+    rpc Release(BatchRequest) returns (airbloc.common.Result);
 }
 
-message Batch {
+message BatchRequest {
     string batchId = 1;
-}
-
-message PreEncryptRequest {
-    string payload = 1;
-}
-
-message PreEncryptResult {
-    bytes encryptedPayload = 1;
-    bytes capsule = 2;
-}
-
-message RegisterDataRequest {
-    string collectionId = 1;
-    string ownerUserAid = 2;
-    string uri = 3;
-}
-
-message RegisterDataSummary {
-    bool succeed = 1;
-    string batchId = 2;
-    uint64 gasUsed = 3;
 }
 
 message DataId {

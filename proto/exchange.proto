@@ -27,7 +27,7 @@ message Contract {
 }
 
 message OrderRequest {
-    airbloc.data.Batch data = 1;
+    airbloc.data.BatchRequest data = 1;
     Contract contract = 2;
     string offeror = 3;
     string offeree = 4;
