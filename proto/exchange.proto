@@ -13,7 +13,7 @@ service Exchange {
     rpc Reject(OrderId) returns (airbloc.common.Result);
 
     // after Open()
-    rpc Close(OrderId) returns (airbloc.common.Result);
+    rpc CloseOrder(OrderId) returns (airbloc.common.Result);
 }
 
 message Contract {
@@ -27,7 +27,7 @@ message Contract {
 }
 
 message OrderRequest {
-    airbloc.data.Batch data = 1;
+    airbloc.data.BatchRequest data = 1;
     Contract contract = 2;
     string offeror = 3;
     string offeree = 4;

@@ -62,241 +62,6 @@ func (m *BatchRequest) GetBatchId() string {
 	return ""
 }
 
-type BatchResult struct {
-	BatchId              string   `protobuf:"bytes,1,opt,name=batchId,proto3" json:"batchId,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *BatchResult) Reset()         { *m = BatchResult{} }
-func (m *BatchResult) String() string { return proto.CompactTextString(m) }
-func (*BatchResult) ProtoMessage()    {}
-func (*BatchResult) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ac8e6d38f431921d, []int{1}
-}
-
-func (m *BatchResult) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_BatchResult.Unmarshal(m, b)
-}
-func (m *BatchResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_BatchResult.Marshal(b, m, deterministic)
-}
-func (m *BatchResult) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_BatchResult.Merge(m, src)
-}
-func (m *BatchResult) XXX_Size() int {
-	return xxx_messageInfo_BatchResult.Size(m)
-}
-func (m *BatchResult) XXX_DiscardUnknown() {
-	xxx_messageInfo_BatchResult.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_BatchResult proto.InternalMessageInfo
-
-func (m *BatchResult) GetBatchId() string {
-	if m != nil {
-		return m.BatchId
-	}
-	return ""
-}
-
-type PreEncryptRequest struct {
-	Payload              string   `protobuf:"bytes,1,opt,name=Payload,proto3" json:"Payload,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *PreEncryptRequest) Reset()         { *m = PreEncryptRequest{} }
-func (m *PreEncryptRequest) String() string { return proto.CompactTextString(m) }
-func (*PreEncryptRequest) ProtoMessage()    {}
-func (*PreEncryptRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ac8e6d38f431921d, []int{2}
-}
-
-func (m *PreEncryptRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_PreEncryptRequest.Unmarshal(m, b)
-}
-func (m *PreEncryptRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_PreEncryptRequest.Marshal(b, m, deterministic)
-}
-func (m *PreEncryptRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PreEncryptRequest.Merge(m, src)
-}
-func (m *PreEncryptRequest) XXX_Size() int {
-	return xxx_messageInfo_PreEncryptRequest.Size(m)
-}
-func (m *PreEncryptRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_PreEncryptRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PreEncryptRequest proto.InternalMessageInfo
-
-func (m *PreEncryptRequest) GetPayload() string {
-	if m != nil {
-		return m.Payload
-	}
-	return ""
-}
-
-type PreEncryptResult struct {
-	EncryptedPayload     []byte   `protobuf:"bytes,1,opt,name=encryptedPayload,proto3" json:"encryptedPayload,omitempty"`
-	Capsule              []byte   `protobuf:"bytes,2,opt,name=capsule,proto3" json:"capsule,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *PreEncryptResult) Reset()         { *m = PreEncryptResult{} }
-func (m *PreEncryptResult) String() string { return proto.CompactTextString(m) }
-func (*PreEncryptResult) ProtoMessage()    {}
-func (*PreEncryptResult) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ac8e6d38f431921d, []int{3}
-}
-
-func (m *PreEncryptResult) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_PreEncryptResult.Unmarshal(m, b)
-}
-func (m *PreEncryptResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_PreEncryptResult.Marshal(b, m, deterministic)
-}
-func (m *PreEncryptResult) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PreEncryptResult.Merge(m, src)
-}
-func (m *PreEncryptResult) XXX_Size() int {
-	return xxx_messageInfo_PreEncryptResult.Size(m)
-}
-func (m *PreEncryptResult) XXX_DiscardUnknown() {
-	xxx_messageInfo_PreEncryptResult.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PreEncryptResult proto.InternalMessageInfo
-
-func (m *PreEncryptResult) GetEncryptedPayload() []byte {
-	if m != nil {
-		return m.EncryptedPayload
-	}
-	return nil
-}
-
-func (m *PreEncryptResult) GetCapsule() []byte {
-	if m != nil {
-		return m.Capsule
-	}
-	return nil
-}
-
-type RegisterDataRequest struct {
-	CollectionId         string   `protobuf:"bytes,1,opt,name=collectionId,proto3" json:"collectionId,omitempty"`
-	OwnerUserAid         string   `protobuf:"bytes,2,opt,name=ownerUserAid,proto3" json:"ownerUserAid,omitempty"`
-	Uri                  string   `protobuf:"bytes,3,opt,name=uri,proto3" json:"uri,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *RegisterDataRequest) Reset()         { *m = RegisterDataRequest{} }
-func (m *RegisterDataRequest) String() string { return proto.CompactTextString(m) }
-func (*RegisterDataRequest) ProtoMessage()    {}
-func (*RegisterDataRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ac8e6d38f431921d, []int{4}
-}
-
-func (m *RegisterDataRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_RegisterDataRequest.Unmarshal(m, b)
-}
-func (m *RegisterDataRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_RegisterDataRequest.Marshal(b, m, deterministic)
-}
-func (m *RegisterDataRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RegisterDataRequest.Merge(m, src)
-}
-func (m *RegisterDataRequest) XXX_Size() int {
-	return xxx_messageInfo_RegisterDataRequest.Size(m)
-}
-func (m *RegisterDataRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_RegisterDataRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_RegisterDataRequest proto.InternalMessageInfo
-
-func (m *RegisterDataRequest) GetCollectionId() string {
-	if m != nil {
-		return m.CollectionId
-	}
-	return ""
-}
-
-func (m *RegisterDataRequest) GetOwnerUserAid() string {
-	if m != nil {
-		return m.OwnerUserAid
-	}
-	return ""
-}
-
-func (m *RegisterDataRequest) GetUri() string {
-	if m != nil {
-		return m.Uri
-	}
-	return ""
-}
-
-type RegisterDataSummary struct {
-	Succeed              bool     `protobuf:"varint,1,opt,name=succeed,proto3" json:"succeed,omitempty"`
-	BatchId              string   `protobuf:"bytes,2,opt,name=batchId,proto3" json:"batchId,omitempty"`
-	GasUsed              uint64   `protobuf:"varint,3,opt,name=gasUsed,proto3" json:"gasUsed,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *RegisterDataSummary) Reset()         { *m = RegisterDataSummary{} }
-func (m *RegisterDataSummary) String() string { return proto.CompactTextString(m) }
-func (*RegisterDataSummary) ProtoMessage()    {}
-func (*RegisterDataSummary) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ac8e6d38f431921d, []int{5}
-}
-
-func (m *RegisterDataSummary) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_RegisterDataSummary.Unmarshal(m, b)
-}
-func (m *RegisterDataSummary) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_RegisterDataSummary.Marshal(b, m, deterministic)
-}
-func (m *RegisterDataSummary) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RegisterDataSummary.Merge(m, src)
-}
-func (m *RegisterDataSummary) XXX_Size() int {
-	return xxx_messageInfo_RegisterDataSummary.Size(m)
-}
-func (m *RegisterDataSummary) XXX_DiscardUnknown() {
-	xxx_messageInfo_RegisterDataSummary.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_RegisterDataSummary proto.InternalMessageInfo
-
-func (m *RegisterDataSummary) GetSucceed() bool {
-	if m != nil {
-		return m.Succeed
-	}
-	return false
-}
-
-func (m *RegisterDataSummary) GetBatchId() string {
-	if m != nil {
-		return m.BatchId
-	}
-	return ""
-}
-
-func (m *RegisterDataSummary) GetGasUsed() uint64 {
-	if m != nil {
-		return m.GasUsed
-	}
-	return 0
-}
-
 type DataId struct {
 	DataId               string   `protobuf:"bytes,1,opt,name=dataId,proto3" json:"dataId,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -308,7 +73,7 @@ func (m *DataId) Reset()         { *m = DataId{} }
 func (m *DataId) String() string { return proto.CompactTextString(m) }
 func (*DataId) ProtoMessage()    {}
 func (*DataId) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ac8e6d38f431921d, []int{6}
+	return fileDescriptor_ac8e6d38f431921d, []int{1}
 }
 
 func (m *DataId) XXX_Unmarshal(b []byte) error {
@@ -352,7 +117,7 @@ func (m *DataResult) Reset()         { *m = DataResult{} }
 func (m *DataResult) String() string { return proto.CompactTextString(m) }
 func (*DataResult) ProtoMessage()    {}
 func (*DataResult) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ac8e6d38f431921d, []int{7}
+	return fileDescriptor_ac8e6d38f431921d, []int{2}
 }
 
 func (m *DataResult) XXX_Unmarshal(b []byte) error {
@@ -427,7 +192,7 @@ func (m *DataResult_Permission) Reset()         { *m = DataResult_Permission{} }
 func (m *DataResult_Permission) String() string { return proto.CompactTextString(m) }
 func (*DataResult_Permission) ProtoMessage()    {}
 func (*DataResult_Permission) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ac8e6d38f431921d, []int{7, 0}
+	return fileDescriptor_ac8e6d38f431921d, []int{2, 0}
 }
 
 func (m *DataResult_Permission) XXX_Unmarshal(b []byte) error {
@@ -473,7 +238,7 @@ func (m *BatchGetResult) Reset()         { *m = BatchGetResult{} }
 func (m *BatchGetResult) String() string { return proto.CompactTextString(m) }
 func (*BatchGetResult) ProtoMessage()    {}
 func (*BatchGetResult) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ac8e6d38f431921d, []int{8}
+	return fileDescriptor_ac8e6d38f431921d, []int{3}
 }
 
 func (m *BatchGetResult) XXX_Unmarshal(b []byte) error {
@@ -514,7 +279,7 @@ func (m *SetDataPermissionRequest) Reset()         { *m = SetDataPermissionReque
 func (m *SetDataPermissionRequest) String() string { return proto.CompactTextString(m) }
 func (*SetDataPermissionRequest) ProtoMessage()    {}
 func (*SetDataPermissionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ac8e6d38f431921d, []int{9}
+	return fileDescriptor_ac8e6d38f431921d, []int{4}
 }
 
 func (m *SetDataPermissionRequest) XXX_Unmarshal(b []byte) error {
@@ -569,7 +334,7 @@ func (m *SetBatchDataPermissionRequest) Reset()         { *m = SetBatchDataPermi
 func (m *SetBatchDataPermissionRequest) String() string { return proto.CompactTextString(m) }
 func (*SetBatchDataPermissionRequest) ProtoMessage()    {}
 func (*SetBatchDataPermissionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ac8e6d38f431921d, []int{10}
+	return fileDescriptor_ac8e6d38f431921d, []int{5}
 }
 
 func (m *SetBatchDataPermissionRequest) XXX_Unmarshal(b []byte) error {
@@ -613,11 +378,6 @@ func (m *SetBatchDataPermissionRequest) GetAllowAccess() bool {
 
 func init() {
 	proto.RegisterType((*BatchRequest)(nil), "airbloc.data.BatchRequest")
-	proto.RegisterType((*BatchResult)(nil), "airbloc.data.BatchResult")
-	proto.RegisterType((*PreEncryptRequest)(nil), "airbloc.data.PreEncryptRequest")
-	proto.RegisterType((*PreEncryptResult)(nil), "airbloc.data.PreEncryptResult")
-	proto.RegisterType((*RegisterDataRequest)(nil), "airbloc.data.RegisterDataRequest")
-	proto.RegisterType((*RegisterDataSummary)(nil), "airbloc.data.RegisterDataSummary")
 	proto.RegisterType((*DataId)(nil), "airbloc.data.DataId")
 	proto.RegisterType((*DataResult)(nil), "airbloc.data.DataResult")
 	proto.RegisterType((*DataResult_Permission)(nil), "airbloc.data.DataResult.Permission")
@@ -629,48 +389,39 @@ func init() {
 func init() { proto.RegisterFile("proto/data.proto", fileDescriptor_ac8e6d38f431921d) }
 
 var fileDescriptor_ac8e6d38f431921d = []byte{
-	// 651 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x55, 0x5f, 0x6f, 0xd3, 0x30,
-	0x10, 0x57, 0xff, 0xac, 0xeb, 0xae, 0x05, 0x3a, 0x83, 0x46, 0x88, 0x60, 0x94, 0x80, 0xa0, 0x02,
-	0xd6, 0xa1, 0x21, 0x5e, 0x40, 0x20, 0x6d, 0xda, 0x98, 0xf6, 0x02, 0x23, 0x55, 0x25, 0xb4, 0x37,
-	0xd7, 0x39, 0x75, 0x91, 0xd2, 0xb8, 0xd8, 0x8e, 0xa6, 0x8a, 0x4f, 0xc6, 0x27, 0xe1, 0xeb, 0x20,
-	0x3b, 0x49, 0x9b, 0x28, 0x75, 0x41, 0xe2, 0x29, 0xbe, 0xf3, 0xcf, 0x77, 0xbf, 0xfb, 0xf9, 0xce,
-	0x81, 0xde, 0x5c, 0x70, 0xc5, 0x0f, 0x03, 0xaa, 0xe8, 0xd0, 0x2c, 0x49, 0x97, 0x86, 0x62, 0x12,
-	0x71, 0x36, 0xd4, 0x3e, 0x77, 0x37, 0xdd, 0x57, 0x8b, 0x39, 0xca, 0x14, 0xe0, 0x0d, 0xa0, 0x7b,
-	0x42, 0x15, 0xbb, 0xf6, 0xf1, 0x47, 0x82, 0x52, 0x11, 0x07, 0xb6, 0x27, 0xda, 0xbe, 0x08, 0x9c,
-	0x5a, 0xbf, 0x36, 0xd8, 0xf1, 0x73, 0xd3, 0x7b, 0x01, 0x9d, 0x0c, 0x29, 0x93, 0x68, 0x13, 0xf0,
-	0x00, 0x76, 0x2f, 0x05, 0x9e, 0xc5, 0x4c, 0x2c, 0xe6, 0xaa, 0x10, 0x77, 0x4e, 0x17, 0x11, 0xa7,
-	0x4b, 0x78, 0x66, 0x7a, 0xdf, 0xa1, 0x57, 0x84, 0x9b, 0xe0, 0x2f, 0xa1, 0x87, 0xa9, 0x03, 0x83,
-	0xcb, 0xc2, 0xb1, 0xae, 0x5f, 0xf1, 0xeb, 0xc8, 0x8c, 0xce, 0x65, 0x12, 0xa1, 0x53, 0x37, 0x90,
-	0xdc, 0xf4, 0x38, 0xdc, 0xf5, 0x71, 0x1a, 0x4a, 0x85, 0xe2, 0x94, 0x2a, 0x9a, 0x53, 0xf1, 0xa0,
-	0xcb, 0x78, 0x14, 0x21, 0x53, 0x21, 0x8f, 0x97, 0xf4, 0x4b, 0x3e, 0x8d, 0xe1, 0x37, 0x31, 0x8a,
-	0xb1, 0x44, 0x71, 0x1c, 0x06, 0x26, 0xf2, 0x8e, 0x5f, 0xf2, 0x91, 0x1e, 0x34, 0x12, 0x11, 0x3a,
-	0x0d, 0xb3, 0xa5, 0x97, 0x1e, 0x2b, 0x27, 0x1c, 0x25, 0xb3, 0x19, 0x15, 0x0b, 0xcd, 0x50, 0x26,
-	0x8c, 0x21, 0xa6, 0xb9, 0xda, 0x7e, 0x6e, 0x16, 0x45, 0xac, 0x97, 0x44, 0xd4, 0x3b, 0x53, 0x2a,
-	0xc7, 0x12, 0x03, 0x93, 0xa0, 0xe9, 0xe7, 0xa6, 0xd7, 0x87, 0x96, 0x0e, 0x7e, 0x11, 0x90, 0x3d,
-	0x68, 0x05, 0x66, 0x95, 0x95, 0x90, 0x59, 0xde, 0xaf, 0x3a, 0x40, 0x5a, 0xb0, 0x11, 0xd3, 0x02,
-	0xab, 0xe8, 0x50, 0xff, 0x07, 0x1d, 0x1a, 0x76, 0x1d, 0x9a, 0x4b, 0x1d, 0xf4, 0x29, 0x91, 0xe9,
-	0x80, 0xc1, 0xb1, 0x72, 0xb6, 0x4c, 0x05, 0x25, 0x1f, 0x39, 0x83, 0xce, 0x1c, 0xc5, 0x2c, 0x94,
-	0x32, 0xe4, 0xb1, 0x74, 0x5a, 0xfd, 0xc6, 0xa0, 0x73, 0xf4, 0x74, 0x58, 0xec, 0xd7, 0xe1, 0xaa,
-	0x88, 0xe1, 0xe5, 0x12, 0xeb, 0x17, 0xcf, 0xb9, 0x5f, 0x00, 0x56, 0x5b, 0x64, 0x1f, 0x80, 0xf1,
-	0x58, 0x26, 0x33, 0x14, 0xcb, 0x72, 0x0b, 0x1e, 0xd2, 0x87, 0x0e, 0x8d, 0x22, 0x7e, 0x73, 0xcc,
-	0x18, 0x4a, 0x69, 0x2a, 0x6e, 0xfb, 0x45, 0x97, 0xf7, 0x09, 0x6e, 0x9b, 0x2e, 0x3f, 0xc7, 0xbc,
-	0x17, 0x5f, 0x43, 0x53, 0x93, 0x71, 0x6a, 0x86, 0xa1, 0x63, 0x63, 0xe8, 0x1b, 0x94, 0xa7, 0xc0,
-	0x19, 0xa1, 0xd2, 0xee, 0x02, 0xe3, 0xac, 0xf1, 0x6c, 0x17, 0x51, 0x66, 0x5d, 0xff, 0x1b, 0xeb,
-	0x46, 0x95, 0xf5, 0x4f, 0x78, 0x34, 0x42, 0x65, 0x88, 0xaf, 0x4f, 0x6d, 0x9d, 0xd6, 0xff, 0x4f,
-	0x7e, 0xf4, 0x7b, 0x0b, 0x9a, 0x3a, 0x2b, 0xf9, 0x06, 0xb0, 0x9a, 0x64, 0xf2, 0xb8, 0xac, 0x54,
-	0xe5, 0x49, 0x70, 0xf7, 0xed, 0x00, 0x2d, 0xe8, 0xa0, 0xf6, 0xa6, 0x46, 0x7c, 0x68, 0xe7, 0x13,
-	0x45, 0x9e, 0x94, 0xf1, 0x6b, 0x46, 0xdb, 0xdd, 0x00, 0xc9, 0x86, 0x71, 0x50, 0x23, 0xef, 0xa0,
-	0x71, 0x8e, 0x8a, 0xdc, 0xab, 0xde, 0xe4, 0x45, 0xe0, 0x5a, 0xef, 0x97, 0x9c, 0x42, 0x3b, 0xef,
-	0x0c, 0xe2, 0x96, 0x51, 0xc5, 0x17, 0xd4, 0x7d, 0xb8, 0x66, 0x6f, 0xd5, 0x4d, 0x5f, 0xe1, 0xd6,
-	0x08, 0x55, 0xa1, 0x65, 0x9f, 0x97, 0xe1, 0xb6, 0xe6, 0x71, 0xf7, 0x96, 0x38, 0xc6, 0x67, 0x33,
-	0x1e, 0x0f, 0xb3, 0x80, 0x57, 0x40, 0x4a, 0x01, 0x4d, 0x3e, 0xf2, 0xaa, 0x12, 0xd5, 0xde, 0x1c,
-	0xee, 0xfd, 0xf5, 0xa1, 0x25, 0x79, 0x0f, 0x30, 0x8e, 0xf3, 0xa9, 0xb5, 0x08, 0x66, 0xe3, 0xf5,
-	0x19, 0xee, 0xac, 0xce, 0xa6, 0xa4, 0x36, 0xa9, 0x66, 0xe5, 0xf0, 0x01, 0x5a, 0x23, 0xd4, 0x0f,
-	0x92, 0x25, 0xff, 0x83, 0xb5, 0x41, 0xd3, 0x06, 0x22, 0x1f, 0x61, 0xdb, 0xc7, 0x08, 0xa9, 0xc4,
-	0x8d, 0xc9, 0x2d, 0x35, 0x9c, 0x3c, 0xbb, 0xf2, 0xa6, 0xa1, 0xba, 0x4e, 0x26, 0xda, 0x7f, 0x98,
-	0x61, 0xf2, 0xef, 0xc1, 0x34, 0xfd, 0xd3, 0x4e, 0x5a, 0xe6, 0x4f, 0xfa, 0xf6, 0x4f, 0x00, 0x00,
-	0x00, 0xff, 0xff, 0xf1, 0x69, 0x18, 0x9d, 0x7e, 0x07, 0x00, 0x00,
+	// 498 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x54, 0x51, 0x8b, 0xd3, 0x4c,
+	0x14, 0x25, 0x4d, 0xbe, 0xec, 0x7e, 0xb7, 0x55, 0xd6, 0x41, 0xd6, 0x21, 0xa8, 0x84, 0x08, 0x4b,
+	0x40, 0x4d, 0x61, 0x45, 0x9f, 0x54, 0x68, 0xa9, 0x2c, 0x7d, 0x51, 0x49, 0xf1, 0x65, 0xdf, 0xd2,
+	0xe4, 0xd2, 0x0d, 0xa4, 0x99, 0x9a, 0xb9, 0x61, 0x11, 0x7f, 0x91, 0x3f, 0xc1, 0x7f, 0x27, 0x33,
+	0x49, 0xdb, 0x84, 0x76, 0xea, 0x83, 0x4f, 0x99, 0x39, 0xf7, 0xcc, 0xbd, 0xe7, 0x9e, 0x9b, 0x19,
+	0xb8, 0xd8, 0x54, 0x82, 0xc4, 0x38, 0x4b, 0x28, 0x89, 0xf4, 0x92, 0x8d, 0x92, 0xbc, 0x5a, 0x16,
+	0x22, 0x8d, 0x14, 0xe6, 0x3d, 0x6a, 0xe2, 0xf4, 0x63, 0x83, 0xb2, 0x21, 0x04, 0x21, 0x8c, 0xa6,
+	0x09, 0xa5, 0x77, 0x31, 0x7e, 0xaf, 0x51, 0x12, 0xe3, 0x70, 0xb6, 0x54, 0xfb, 0x79, 0xc6, 0x2d,
+	0xdf, 0x0a, 0xff, 0x8f, 0xb7, 0xdb, 0xc0, 0x07, 0x77, 0x96, 0x50, 0x32, 0xcf, 0xd8, 0x25, 0xb8,
+	0x99, 0x5e, 0xb5, 0x94, 0x76, 0x17, 0xfc, 0x1e, 0x00, 0x28, 0x4a, 0x8c, 0xb2, 0x2e, 0xc8, 0x44,
+	0x63, 0x01, 0x8c, 0x52, 0x51, 0x14, 0x98, 0x52, 0x2e, 0xca, 0x79, 0xc6, 0x07, 0x3a, 0xda, 0xc3,
+	0x14, 0x47, 0xdc, 0x97, 0x58, 0x7d, 0x93, 0x58, 0x4d, 0xf2, 0x8c, 0xdb, 0x0d, 0xa7, 0x8b, 0xb1,
+	0x0b, 0xb0, 0xeb, 0x2a, 0xe7, 0x8e, 0x0e, 0xa9, 0xa5, 0x3a, 0x55, 0xe1, 0x2a, 0x97, 0x84, 0x15,
+	0x66, 0x13, 0xe2, 0xff, 0xf9, 0x56, 0xe8, 0xc4, 0x3d, 0x8c, 0x7d, 0x82, 0xe1, 0x06, 0xab, 0x75,
+	0x2e, 0x65, 0x2e, 0x4a, 0xc9, 0x5d, 0xdf, 0x0e, 0x87, 0xd7, 0x2f, 0xa2, 0xae, 0x4f, 0xd1, 0xbe,
+	0x89, 0xe8, 0xeb, 0x8e, 0x1b, 0x77, 0xcf, 0x79, 0x9f, 0x01, 0xf6, 0x21, 0xf6, 0x1c, 0x20, 0x15,
+	0xa5, 0xac, 0xd7, 0x58, 0xed, 0xda, 0xed, 0x20, 0xcc, 0x87, 0x61, 0x52, 0x14, 0xe2, 0x7e, 0x92,
+	0xa6, 0x28, 0xa5, 0xee, 0xf8, 0x3c, 0xee, 0x42, 0xc1, 0x47, 0x78, 0xa8, 0xe7, 0x70, 0x83, 0xd4,
+	0xda, 0xf7, 0x0a, 0x1c, 0x25, 0x86, 0x5b, 0x5a, 0x21, 0x37, 0x29, 0x8c, 0x35, 0x2b, 0x20, 0xe0,
+	0x0b, 0x24, 0x05, 0x77, 0x14, 0xb7, 0x33, 0x35, 0x0d, 0xa2, 0xaf, 0x7a, 0xf0, 0x37, 0xd5, 0xf6,
+	0xa1, 0xea, 0x9f, 0xf0, 0x6c, 0x81, 0xa4, 0x85, 0x1f, 0x2f, 0x6d, 0xfc, 0x9d, 0xfe, 0xbd, 0xf8,
+	0xf5, 0x2f, 0x07, 0x1c, 0x55, 0x95, 0xbd, 0x05, 0xfb, 0x06, 0x89, 0x3d, 0x3e, 0xb4, 0x68, 0x9e,
+	0x79, 0x46, 0xe3, 0xd8, 0x0c, 0xce, 0xb7, 0x96, 0x33, 0xaf, 0xcf, 0xea, 0x5e, 0x09, 0xef, 0xe9,
+	0x91, 0xd8, 0x7e, 0x4c, 0x5f, 0xe0, 0xc1, 0x02, 0xa9, 0xf3, 0x2f, 0x5c, 0xf5, 0xe9, 0xa6, 0xa9,
+	0x78, 0x97, 0x3b, 0x5e, 0x2a, 0xd6, 0x6b, 0x51, 0x46, 0x6d, 0xc2, 0x5b, 0x60, 0xbd, 0x84, 0xba,
+	0x1e, 0x7b, 0x79, 0x90, 0xd5, 0xec, 0xba, 0xf7, 0xe4, 0x78, 0x6a, 0xc9, 0xde, 0x81, 0x3b, 0xc3,
+	0x02, 0x09, 0x0d, 0x66, 0x99, 0x34, 0x4d, 0x61, 0xd8, 0x9c, 0x6b, 0xc4, 0x9c, 0x72, 0xcb, 0x58,
+	0xfb, 0x3d, 0xb8, 0x0b, 0x54, 0x37, 0xdc, 0x50, 0xfb, 0x44, 0xd2, 0xd0, 0x62, 0x1f, 0xe0, 0x2c,
+	0xc6, 0x02, 0x13, 0x89, 0x27, 0xab, 0x1b, 0x1a, 0x98, 0x86, 0xb7, 0x57, 0xab, 0x9c, 0xee, 0xea,
+	0xa5, 0xc2, 0xc7, 0x2d, 0x67, 0xfb, 0x7d, 0xbd, 0x12, 0xe3, 0x64, 0x93, 0xeb, 0x77, 0x73, 0xe9,
+	0xea, 0x77, 0xf1, 0xcd, 0x9f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xa9, 0x36, 0x7e, 0xb4, 0x4c, 0x05,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -685,14 +436,12 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type DataClient interface {
-	PreEncrypt(ctx context.Context, opts ...grpc.CallOption) (Data_PreEncryptClient, error)
-	Register(ctx context.Context, opts ...grpc.CallOption) (Data_RegisterClient, error)
 	Get(ctx context.Context, in *DataId, opts ...grpc.CallOption) (*DataResult, error)
 	BatchGet(ctx context.Context, in *BatchRequest, opts ...grpc.CallOption) (*BatchGetResult, error)
 	SetPermission(ctx context.Context, in *SetDataPermissionRequest, opts ...grpc.CallOption) (*common.Result, error)
 	SetPermissionBatch(ctx context.Context, in *SetBatchDataPermissionRequest, opts ...grpc.CallOption) (*common.Results, error)
-	Unregister(ctx context.Context, in *DataId, opts ...grpc.CallOption) (*common.Result, error)
-	UnregisterBatch(ctx context.Context, in *BatchRequest, opts ...grpc.CallOption) (*common.Results, error)
+	Delete(ctx context.Context, in *DataId, opts ...grpc.CallOption) (*common.Result, error)
+	DeleteBatch(ctx context.Context, in *BatchRequest, opts ...grpc.CallOption) (*common.Results, error)
 	Select(ctx context.Context, opts ...grpc.CallOption) (Data_SelectClient, error)
 	Release(ctx context.Context, in *BatchRequest, opts ...grpc.CallOption) (*common.Result, error)
 }
@@ -703,71 +452,6 @@ type dataClient struct {
 
 func NewDataClient(cc *grpc.ClientConn) DataClient {
 	return &dataClient{cc}
-}
-
-func (c *dataClient) PreEncrypt(ctx context.Context, opts ...grpc.CallOption) (Data_PreEncryptClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Data_serviceDesc.Streams[0], "/airbloc.data.Data/PreEncrypt", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &dataPreEncryptClient{stream}
-	return x, nil
-}
-
-type Data_PreEncryptClient interface {
-	Send(*PreEncryptRequest) error
-	Recv() (*PreEncryptResult, error)
-	grpc.ClientStream
-}
-
-type dataPreEncryptClient struct {
-	grpc.ClientStream
-}
-
-func (x *dataPreEncryptClient) Send(m *PreEncryptRequest) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *dataPreEncryptClient) Recv() (*PreEncryptResult, error) {
-	m := new(PreEncryptResult)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *dataClient) Register(ctx context.Context, opts ...grpc.CallOption) (Data_RegisterClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Data_serviceDesc.Streams[1], "/airbloc.data.Data/Register", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &dataRegisterClient{stream}
-	return x, nil
-}
-
-type Data_RegisterClient interface {
-	Send(*RegisterDataRequest) error
-	CloseAndRecv() (*RegisterDataSummary, error)
-	grpc.ClientStream
-}
-
-type dataRegisterClient struct {
-	grpc.ClientStream
-}
-
-func (x *dataRegisterClient) Send(m *RegisterDataRequest) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *dataRegisterClient) CloseAndRecv() (*RegisterDataSummary, error) {
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	m := new(RegisterDataSummary)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
 
 func (c *dataClient) Get(ctx context.Context, in *DataId, opts ...grpc.CallOption) (*DataResult, error) {
@@ -806,18 +490,18 @@ func (c *dataClient) SetPermissionBatch(ctx context.Context, in *SetBatchDataPer
 	return out, nil
 }
 
-func (c *dataClient) Unregister(ctx context.Context, in *DataId, opts ...grpc.CallOption) (*common.Result, error) {
+func (c *dataClient) Delete(ctx context.Context, in *DataId, opts ...grpc.CallOption) (*common.Result, error) {
 	out := new(common.Result)
-	err := c.cc.Invoke(ctx, "/airbloc.data.Data/Unregister", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/airbloc.data.Data/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *dataClient) UnregisterBatch(ctx context.Context, in *BatchRequest, opts ...grpc.CallOption) (*common.Results, error) {
+func (c *dataClient) DeleteBatch(ctx context.Context, in *BatchRequest, opts ...grpc.CallOption) (*common.Results, error) {
 	out := new(common.Results)
-	err := c.cc.Invoke(ctx, "/airbloc.data.Data/UnregisterBatch", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/airbloc.data.Data/DeleteBatch", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -825,7 +509,7 @@ func (c *dataClient) UnregisterBatch(ctx context.Context, in *BatchRequest, opts
 }
 
 func (c *dataClient) Select(ctx context.Context, opts ...grpc.CallOption) (Data_SelectClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Data_serviceDesc.Streams[2], "/airbloc.data.Data/Select", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Data_serviceDesc.Streams[0], "/airbloc.data.Data/Select", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -835,7 +519,7 @@ func (c *dataClient) Select(ctx context.Context, opts ...grpc.CallOption) (Data_
 
 type Data_SelectClient interface {
 	Send(*DataId) error
-	CloseAndRecv() (*BatchResult, error)
+	CloseAndRecv() (*BatchRequest, error)
 	grpc.ClientStream
 }
 
@@ -847,11 +531,11 @@ func (x *dataSelectClient) Send(m *DataId) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *dataSelectClient) CloseAndRecv() (*BatchResult, error) {
+func (x *dataSelectClient) CloseAndRecv() (*BatchRequest, error) {
 	if err := x.ClientStream.CloseSend(); err != nil {
 		return nil, err
 	}
-	m := new(BatchResult)
+	m := new(BatchRequest)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -869,72 +553,18 @@ func (c *dataClient) Release(ctx context.Context, in *BatchRequest, opts ...grpc
 
 // DataServer is the server API for Data service.
 type DataServer interface {
-	PreEncrypt(Data_PreEncryptServer) error
-	Register(Data_RegisterServer) error
 	Get(context.Context, *DataId) (*DataResult, error)
 	BatchGet(context.Context, *BatchRequest) (*BatchGetResult, error)
 	SetPermission(context.Context, *SetDataPermissionRequest) (*common.Result, error)
 	SetPermissionBatch(context.Context, *SetBatchDataPermissionRequest) (*common.Results, error)
-	Unregister(context.Context, *DataId) (*common.Result, error)
-	UnregisterBatch(context.Context, *BatchRequest) (*common.Results, error)
+	Delete(context.Context, *DataId) (*common.Result, error)
+	DeleteBatch(context.Context, *BatchRequest) (*common.Results, error)
 	Select(Data_SelectServer) error
 	Release(context.Context, *BatchRequest) (*common.Result, error)
 }
 
 func RegisterDataServer(s *grpc.Server, srv DataServer) {
 	s.RegisterService(&_Data_serviceDesc, srv)
-}
-
-func _Data_PreEncrypt_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(DataServer).PreEncrypt(&dataPreEncryptServer{stream})
-}
-
-type Data_PreEncryptServer interface {
-	Send(*PreEncryptResult) error
-	Recv() (*PreEncryptRequest, error)
-	grpc.ServerStream
-}
-
-type dataPreEncryptServer struct {
-	grpc.ServerStream
-}
-
-func (x *dataPreEncryptServer) Send(m *PreEncryptResult) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *dataPreEncryptServer) Recv() (*PreEncryptRequest, error) {
-	m := new(PreEncryptRequest)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func _Data_Register_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(DataServer).Register(&dataRegisterServer{stream})
-}
-
-type Data_RegisterServer interface {
-	SendAndClose(*RegisterDataSummary) error
-	Recv() (*RegisterDataRequest, error)
-	grpc.ServerStream
-}
-
-type dataRegisterServer struct {
-	grpc.ServerStream
-}
-
-func (x *dataRegisterServer) SendAndClose(m *RegisterDataSummary) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *dataRegisterServer) Recv() (*RegisterDataRequest, error) {
-	m := new(RegisterDataRequest)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
 
 func _Data_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1009,38 +639,38 @@ func _Data_SetPermissionBatch_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Data_Unregister_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Data_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DataId)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DataServer).Unregister(ctx, in)
+		return srv.(DataServer).Delete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/airbloc.data.Data/Unregister",
+		FullMethod: "/airbloc.data.Data/Delete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DataServer).Unregister(ctx, req.(*DataId))
+		return srv.(DataServer).Delete(ctx, req.(*DataId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Data_UnregisterBatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Data_DeleteBatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BatchRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DataServer).UnregisterBatch(ctx, in)
+		return srv.(DataServer).DeleteBatch(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/airbloc.data.Data/UnregisterBatch",
+		FullMethod: "/airbloc.data.Data/DeleteBatch",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DataServer).UnregisterBatch(ctx, req.(*BatchRequest))
+		return srv.(DataServer).DeleteBatch(ctx, req.(*BatchRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1050,7 +680,7 @@ func _Data_Select_Handler(srv interface{}, stream grpc.ServerStream) error {
 }
 
 type Data_SelectServer interface {
-	SendAndClose(*BatchResult) error
+	SendAndClose(*BatchRequest) error
 	Recv() (*DataId, error)
 	grpc.ServerStream
 }
@@ -1059,7 +689,7 @@ type dataSelectServer struct {
 	grpc.ServerStream
 }
 
-func (x *dataSelectServer) SendAndClose(m *BatchResult) error {
+func (x *dataSelectServer) SendAndClose(m *BatchRequest) error {
 	return x.ServerStream.SendMsg(m)
 }
 
@@ -1110,12 +740,12 @@ var _Data_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Data_SetPermissionBatch_Handler,
 		},
 		{
-			MethodName: "Unregister",
-			Handler:    _Data_Unregister_Handler,
+			MethodName: "Delete",
+			Handler:    _Data_Delete_Handler,
 		},
 		{
-			MethodName: "UnregisterBatch",
-			Handler:    _Data_UnregisterBatch_Handler,
+			MethodName: "DeleteBatch",
+			Handler:    _Data_DeleteBatch_Handler,
 		},
 		{
 			MethodName: "Release",
@@ -1123,17 +753,6 @@ var _Data_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "PreEncrypt",
-			Handler:       _Data_PreEncrypt_Handler,
-			ServerStreams: true,
-			ClientStreams: true,
-		},
-		{
-			StreamName:    "Register",
-			Handler:       _Data_Register_Handler,
-			ClientStreams: true,
-		},
 		{
 			StreamName:    "Select",
 			Handler:       _Data_Select_Handler,
