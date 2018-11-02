@@ -1,6 +1,8 @@
 package warehouse
 
 import (
+	"time"
+
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/data"
 	"github.com/airbloc/airbloc-go/key"
@@ -8,7 +10,6 @@ import (
 	"github.com/airbloc/airbloc-go/warehouse/protocol"
 	"github.com/airbloc/airbloc-go/warehouse/storage"
 	"github.com/pkg/errors"
-	"time"
 )
 
 type DataWarehouse struct {

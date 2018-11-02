@@ -3,6 +3,8 @@ package airbloc.collections;
 
 option go_package = "github.com/airbloc/airbloc-go/account";
 
+import "proto/types.proto";
+
 service Account {
     rpc Create(AccountCreateRequest) returns (AccountCreateResponse);
 }
@@ -11,5 +13,5 @@ message AccountCreateRequest {
 }
 
 message AccountCreateResponse {
-    bytes accountId = 1;
+    airbloc.common.Hash accountId = 1;
 }

@@ -2,12 +2,13 @@ package storage
 
 import (
 	"fmt"
-	"github.com/airbloc/airbloc-go/warehouse/bundle"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/url"
 	"os"
 	"path"
+
+	"github.com/airbloc/airbloc-go/warehouse/bundle"
+	"github.com/pkg/errors"
 )
 
 type LocalStorage struct {

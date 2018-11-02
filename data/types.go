@@ -2,9 +2,10 @@ package data
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/pkg/errors"
-	"strconv"
 )
 
 type Data struct {

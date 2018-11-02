@@ -2,6 +2,7 @@ package key
 
 import (
 	"crypto/ecdsa"
+
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"

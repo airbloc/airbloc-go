@@ -9,34 +9,34 @@ const (
 	EventDenied       = "Denied"
 )
 
-func (adt *Adapter) ParseRegisteredEvent(logData []byte) (
+func (s *Service) ParseRegisteredEvent(logData []byte) (
 	event *adapter.CollectionRegistryRegistered,
 	err error,
 ) {
-	err = adt.contractABI.Unpack(&event, EventRegistered, logData)
+	err = s.contractABI.Unpack(&event, EventRegistered, logData)
 	return
 }
 
-func (adt *Adapter) ParseUnregsiteredEvent(logData []byte) (
+func (s *Service) ParseUnregsiteredEvent(logData []byte) (
 	event *adapter.CollectionRegistryUnregistered,
 	err error,
 ) {
-	err = adt.contractABI.Unpack(&event, EventUnregistered, logData)
+	err = s.contractABI.Unpack(&event, EventUnregistered, logData)
 	return
 }
 
-func (adt *Adapter) ParseAllowedEvent(logData []byte) (
+func (s *Service) ParseAllowedEvent(logData []byte) (
 	event *adapter.CollectionRegistryAllowed,
 	err error,
 ) {
-	err = adt.contractABI.Unpack(&event, EventAllowed, logData)
+	err = s.contractABI.Unpack(&event, EventAllowed, logData)
 	return
 }
 
-func (adt *Adapter) ParseDenideEvent(logData []byte) (
+func (s *Service) ParseDenideEvent(logData []byte) (
 	event *adapter.CollectionRegistryDenied,
 	err error,
 ) {
-	err = adt.contractABI.Unpack(&event, EventDenied, logData)
+	err = s.contractABI.Unpack(&event, EventDenied, logData)
 	return
 }

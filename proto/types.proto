@@ -13,3 +13,7 @@ message Address {
     int32 chainId = 1;
     bytes address = 2;
 }
+
+message Hash {
+    bytes hash = 1;
+}

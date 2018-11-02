@@ -4,6 +4,7 @@ package bundle
 
 import (
 	json "encoding/json"
+
 	data "github.com/airbloc/airbloc-go/data"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
