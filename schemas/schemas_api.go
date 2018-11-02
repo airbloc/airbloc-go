@@ -11,8 +11,8 @@ import (
 
 type API struct {
 	conn    net.Conn
-	service *Service
 	server  *grpc.Server
+	service *Service
 }
 
 func (s *API) Close() {
@@ -31,11 +31,15 @@ func (s *API) Create(ctx context.Context, req *CreateSchemaRequest) (*CreateSche
 	return nil, nil
 }
 
+//func (s *API) Delete(ctx context.Context, req *DeleteSchemaRequest) (*DeleteSchemaResult, error) {
+//
+//}
+
 func NewAPI(conn net.Conn, service *Service) (*API, error) {
 	api := &API{
 		conn:    conn,
-		service: service,
 		server:  grpc.NewServer(),
+		service: service,
 	}
 	RegisterSchemaServer(api.server, api)
 	return api, nil

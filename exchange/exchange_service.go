@@ -6,7 +6,6 @@ import (
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"golang.org/x/net/context"
@@ -15,7 +14,6 @@ import (
 type Service struct {
 	db          *localdb.Model
 	client      *ethclient.Client
-	account     *bind.TransactOpts
 	contract    *adapter.Exchange
 	contractABI abi.ABI
 }
@@ -23,7 +21,6 @@ type Service struct {
 func NewService(
 	db localdb.Database,
 	client *ethclient.Client,
-	account *bind.TransactOpts,
 	addr common.Address,
 ) (*Service, error) {
 	exchange, err := adapter.NewExchange(addr, client)
@@ -40,7 +37,6 @@ func NewService(
 	return &Service{
 		db:          localdb.NewModel(db, "collection"),
 		client:      client,
-		account:     account,
 		contract:    exchange,
 		contractABI: contractABI,
 	}, nil
