@@ -3,28 +3,41 @@ package blockchain
 import (
 	"context"
 
+	"crypto/ecdsa"
+
+	"github.com/airbloc/airbloc-go/account"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 type Client struct {
 	*ethclient.Client
-	ctx context.Context
-	cfg ClientOpt
+	ctx     context.Context
+	cfg     ClientOpt
+	Account *account.Account
 }
 
-func NewClient(url string, cfg ClientOpt) (*Client, error) {
+func NewClient(url string, key *ecdsa.PrivateKey, cfg ClientOpt) (*Client, error) {
 	client, err := ethclient.Dial(url)
 	if err != nil {
 		return nil, err
 	}
 
+	if key == nil {
+		key, err = crypto.GenerateKey()
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return &Client{
-		Client: client,
-		ctx:    context.Background(),
-		cfg:    cfg,
+		Client:  client,
+		ctx:     context.Background(),
+		cfg:     cfg,
+		Account: account.NewAccount(key),
 	}, err
 }
 
