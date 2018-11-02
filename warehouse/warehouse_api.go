@@ -30,7 +30,7 @@ func (s *API) DeleteBundle(context context.Context, request *DeleteBundleRequest
 	return nil, nil
 }
 
-func NewService(conn net.Conn) (*API, error) {
+func NewAPI(conn net.Conn) (*API, error) {
 	service := &API{
 		conn:   conn,
 		server: grpc.NewServer(),
