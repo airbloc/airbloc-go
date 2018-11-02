@@ -5,7 +5,6 @@ import (
 
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/crypto/ecies"
 	"github.com/pkg/errors"
@@ -67,12 +66,4 @@ func (key *Key) DeriveEd25519KeyPair() *txn.KeyPair {
 		PrivateKey: privateKey,
 		PublicKey:  publicKey,
 	}
-}
-
-func (key *Key) SignEthTx(tx *types.Transaction) (*types.Transaction, error) {
-	return types.SignTx(tx, types.EIP155Signer{}, key.PrivateKey)
-}
-
-func (key *Key) SignBDBTx(tx *txn.Transaction) error {
-	return tx.Sign([]*txn.KeyPair{key.DeriveEd25519KeyPair()})
 }
