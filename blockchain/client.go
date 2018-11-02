@@ -3,42 +3,39 @@ package blockchain
 import (
 	"context"
 
-	"crypto/ecdsa"
-
-	"github.com/airbloc/airbloc-go/account"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 type Client struct {
 	*ethclient.Client
-	ctx     context.Context
-	cfg     ClientOpt
-	Account *account.Account
+	ctx        context.Context
+	cfg        ClientOpt
+	transactor *bind.TransactOpts
 }
 
-func NewClient(url string, key *ecdsa.PrivateKey, cfg ClientOpt) (*Client, error) {
+func NewClient(transactor *bind.TransactOpts, url string, cfg ClientOpt) (*Client, error) {
 	client, err := ethclient.Dial(url)
 	if err != nil {
 		return nil, err
 	}
 
-	if key == nil {
-		key, err = crypto.GenerateKey()
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	return &Client{
-		Client:  client,
-		ctx:     context.Background(),
-		cfg:     cfg,
-		Account: account.NewAccount(key),
+		Client:     client,
+		ctx:        context.Background(),
+		cfg:        cfg,
+		transactor: transactor,
 	}, err
+}
+
+func (c Client) Account() *bind.TransactOpts {
+	return c.transactor
+}
+
+func (c *Client) SetAccount(account *bind.TransactOpts) {
+	c.transactor = account
 }
 
 func (c *Client) waitConfirmation(ctx context.Context) error {

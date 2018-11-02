@@ -5,6 +5,8 @@ import (
 
 	"strings"
 
+	"math/big"
+
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
 	"github.com/airbloc/airbloc-go/database/localdb"
@@ -19,7 +21,6 @@ import (
 type Service struct {
 	db          *localdb.Model
 	client      *blockchain.Client
-	account     *bind.TransactOpts
 	contract    *adapter.CollectionRegistry
 	contractABI abi.ABI
 }
@@ -27,7 +28,6 @@ type Service struct {
 func NewService(
 	db localdb.Database,
 	client *blockchain.Client,
-	account *bind.TransactOpts,
 	addr common.Address,
 ) (*Service, error) {
 	collection, err := adapter.NewCollectionRegistry(addr, client)
@@ -44,7 +44,6 @@ func NewService(
 	return &Service{
 		db:          localdb.NewModel(db, "collection"),
 		client:      client,
-		account:     account,
 		contract:    collection,
 		contractABI: contractABI,
 	}, nil
@@ -64,10 +63,10 @@ func (s *Service) Get(id common.Hash) (*Collection, error) {
 
 func (s *Service) Register(ctx context.Context, collection *Collection) (common.Hash, error) {
 	tx, err := s.contract.Register(
-		s.account,
+		s.client.Account(),
 		collection.AppId,
 		collection.SchemaId,
-		collection.Policy.DataProducer,
+		big.NewInt(0),
 	)
 	if err != nil {
 		return common.Hash{}, err
@@ -90,7 +89,7 @@ func (s *Service) Register(ctx context.Context, collection *Collection) (common.
 }
 
 func (s *Service) Unregister(ctx context.Context, collectionId common.Hash) error {
-	tx, err := s.contract.Unregister(s.account, collectionId)
+	tx, err := s.contract.Unregister(s.client.Account(), collectionId)
 	if err != nil {
 		return err
 	}
