@@ -1,26 +1,22 @@
 package collections
 
 import (
-	"net"
-
+	"github.com/airbloc/airbloc-go/api"
 	"github.com/ethereum/go-ethereum/common"
 	"golang.org/x/net/context"
-	"google.golang.org/grpc"
 )
 
 type API struct {
-	conn    net.Conn
-	adapter *Service
-	server  *grpc.Server
+	service *Service
 }
 
-func (cs *API) Close() {
-	cs.server.Stop()
-	cs.conn.Close()
+func NewAPI(backend *api.AirblocBackend) (api.API, error) {
+	service, err := NewService(backend.LocalDatabase, backend.Ethclient, nil, common.Address{})
+	return &API{service}, err
 }
 
-func (cs *API) Create(ctx context.Context, req *CreateCollectionRequest) (*CreateCollectionResponse, error) {
-	hash, err := cs.adapter.Register(ctx, &Collection{
+func (api *API) Create(ctx context.Context, req *CreateCollectionRequest) (*CreateCollectionResponse, error) {
+	hash, err := api.service.Register(ctx, &Collection{
 		AppId:    common.HexToHash(req.AppId),
 		SchemaId: common.HexToHash(req.SchemaId),
 		Policy: &IncentivePolicy{
@@ -36,16 +32,10 @@ func (cs *API) Create(ctx context.Context, req *CreateCollectionRequest) (*Creat
 }
 
 // TODO after localdb integration
-func (cs *API) List(ctx context.Context, req *ListCollectionRequest) (*ListCollectionResponse, error) {
+func (api *API) List(ctx context.Context, req *ListCollectionRequest) (*ListCollectionResponse, error) {
 	return nil, nil
 }
 
-func NewAPI(conn net.Conn, adapter *Service) (*API, error) {
-	api := &API{
-		conn:    conn,
-		adapter: adapter,
-		server:  grpc.NewServer(),
-	}
-	RegisterCollectionServer(api.server, api)
-	return api, nil
+func (api *API) AttachToAPI(service *api.APIService) {
+	RegisterCollectionServer(service.GrpcServer, api)
 }
