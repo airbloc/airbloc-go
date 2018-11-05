@@ -1,6 +1,10 @@
 pragma solidity ^0.4.0;
 
+import "openzeppelin-solidity/contracts/AddressUtils.sol";
+
 library ExchangeLib {
+    using AddressUtils for address;
+
     enum Status {NEUTRAL, PENDING, SETTLED, REJECTED, OPENED, CLOSED}
 
     struct Offer {
@@ -19,6 +23,7 @@ library ExchangeLib {
         Offer memory _offer
     ) internal returns (bytes32) {
         require(_offer.status == Status.NEUTRAL, "neutral state only");
+        require(_offer.contractAddr.isContract(), "not contract address");
         bytes8 offerId = bytes8(
             keccak256(
                 abi.encodePacked(
@@ -38,45 +43,40 @@ library ExchangeLib {
     function settle(
         Orderbook storage _orderbook,
         bytes32 _offerId
-    ) internal returns (bool) {
+    ) internal {
         Offer storage offer = _orderbook.orders[_offerId];
-        if (offer.status != Status.PENDING) {return false;}
-        if (msg.sender != offer.offeree) {return false;}
+        require(offer.status == Status.PENDING, "pending state only");
+        require(msg.sender == offer.offeree, "only offeree can settle offer");
         offer.status = Status.SETTLED;
-        return true;
     }
 
     function reject(
         Orderbook storage _orderbook,
         bytes32 _offerId
-    ) internal returns (bool) {
+    ) internal {
         Offer storage offer = _orderbook.orders[_offerId];
-        if (offer.status != Status.PENDING) {return false;}       
-        if (msg.sender != offer.offeree) {return false;}
+        require(offer.status == Status.PENDING, "pending state only");
+        require(msg.sender == offer.offeree, "only offeree can reject offer");
         offer.status = Status.REJECTED;
-        return true;
     }
 
     function open(
         Orderbook storage _orderbook,
         bytes32 _offerId
-    ) internal returns (bool) {
+    ) internal {
         Offer storage offer = _orderbook.orders[_offerId];
-        if (offer.status != Status.SETTLED) {return false;}
-        if (msg.sender != offer.contractAddr) {return false;}
+        require(offer.status == Status.SETTLED, "settled state only");
+        require(msg.sender == offer.contractAddr, "only contract can open transaction");
         offer.status = Status.OPENED;
-        return true;
     }
 
     function close(
         Orderbook storage _orderbook,
         bytes32 _offerId
-    ) internal returns (bool) {
+    ) internal {
         Offer storage offer = _orderbook.orders[_offerId];
-        if (offer.status != Status.OPENED) {return false;}
-        if (msg.sender != offer.contractAddr) {return false;}
+        require(msg.sender == offer.contractAddr, "only contract can close transaction");
         offer.status = Status.CLOSED;
-        return true;
     }
 
     function getOffer(
