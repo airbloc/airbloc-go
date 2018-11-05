@@ -1,6 +1,9 @@
 package api
 
-import "github.com/airbloc/airbloc-go/blockchain"
+import (
+	"github.com/airbloc/airbloc-go/blockchain"
+	"github.com/airbloc/airbloc-go/warehouse"
+)
 
 type Config struct {
 	PrivateKeyPath string
@@ -24,4 +27,6 @@ type Config struct {
 		Endpoint string
 		Option   blockchain.ClientOpt
 	}
+
+	Warehouse warehouse.Config
 }
