@@ -3,6 +3,7 @@ package blockchain
 import (
 	"context"
 
+	"github.com/airbloc/airbloc-go/account"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -13,10 +14,10 @@ type Client struct {
 	*ethclient.Client
 	ctx        context.Context
 	cfg        ClientOpt
-	transactor *bind.TransactOpts
+	transactor *account.Account
 }
 
-func NewClient(transactor *bind.TransactOpts, url string, cfg ClientOpt) (*Client, error) {
+func NewClient(transactor *account.Account, url string, cfg ClientOpt) (*Client, error) {
 	client, err := ethclient.Dial(url)
 	if err != nil {
 		return nil, err
@@ -31,10 +32,10 @@ func NewClient(transactor *bind.TransactOpts, url string, cfg ClientOpt) (*Clien
 }
 
 func (c Client) Account() *bind.TransactOpts {
-	return c.transactor
+	return c.transactor.TransactOpts()
 }
 
-func (c *Client) SetAccount(account *bind.TransactOpts) {
+func (c *Client) SetAccount(account *account.Account) {
 	c.transactor = account
 }
 

@@ -3,6 +3,7 @@ package account
 import (
 	ablCommon "github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/key"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 )
 
@@ -22,4 +23,15 @@ type Account struct {
 	PasswordSig []byte
 
 	k *key.Key
+}
+
+func NewAccount(k *key.Key) *Account {
+	// TODO: add contract proxy
+	return &Account{
+		k: k,
+	}
+}
+
+func (acc *Account) TransactOpts() *bind.TransactOpts {
+	return bind.NewKeyedTransactor(acc.k.PrivateKey)
 }
