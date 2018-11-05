@@ -48,7 +48,7 @@ contract Accounts is Ownable {
         emit SignUp(msg.sender, address(0x0), accountId);
     }
 
-    function createTemporary(address proxy) {
+    function createTemporary(address proxy) external {
         bytes8 accountId = newAccount(msg.sender);
         accounts[accountId].proxy = proxy;
         accounts[accountId].status = Status.TEMPORARY;
@@ -63,13 +63,13 @@ contract Accounts is Ownable {
         emit SignUp(owner, proxy, accountId);
     }
 
-    function getAccountId(address sender) returns (bytes8) {
+    function getAccountId(address sender) public view returns (bytes8) {
         bytes8 accountId = addressToAccount[sender];
         require(accounts[accountId].status != Status.NONE, "unknown address");
         return accountId;
     }
 
-    function getAccountIdFromSignature(bytes message, bytes signature) returns (bytes8) {
+    function getAccountIdFromSignature(bytes message, bytes signature) public view returns (bytes8) {
         // TODO: use schnorr signature verification like following code
         // (msg, P, R, s) => require(R == ecadd(ecmul(s, G), ecmul(keccak256(msg, P, R), P))
         //    && Accounts[passwordToAccount[P]].status != Status.NONE);
