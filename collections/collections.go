@@ -2,6 +2,8 @@ package collections
 
 import (
 	"context"
+	"github.com/ethereum/go-ethereum/params"
+	"math/big"
 
 	"strings"
 
@@ -16,7 +18,7 @@ import (
 )
 
 // TODO: localdb integration
-type Service struct {
+type Collections struct {
 	db          *localdb.Model
 	client      *blockchain.Client
 	account     *bind.TransactOpts
@@ -24,12 +26,12 @@ type Service struct {
 	contractABI abi.ABI
 }
 
-func NewService(
+func New(
 	db localdb.Database,
 	client *blockchain.Client,
 	account *bind.TransactOpts,
 	addr common.Address,
-) (*Service, error) {
+) (*Collections, error) {
 	collection, err := adapter.NewCollectionRegistry(addr, client)
 	if err != nil {
 		return nil, err
@@ -41,7 +43,7 @@ func NewService(
 		return nil, err
 	}
 
-	return &Service{
+	return &Collections{
 		db:          localdb.NewModel(db, "collection"),
 		client:      client,
 		account:     account,
@@ -50,7 +52,7 @@ func NewService(
 	}, nil
 }
 
-func (s *Service) Get(id common.Hash) (*Collection, error) {
+func (s *Collections) Get(id common.Hash) (*Collection, error) {
 	appId, schemaId, err := s.contract.Get(nil, id)
 	if err != nil {
 		return nil, err
@@ -62,13 +64,20 @@ func (s *Service) Get(id common.Hash) (*Collection, error) {
 	}, nil
 }
 
-func (s *Service) Register(ctx context.Context, collection *Collection) (common.Hash, error) {
+func (s *Collections) Register(ctx context.Context, collection *Collection) (common.Hash, error) {
+	// damn EVM
+	dataProducerRatio := new(big.Float).SetFloat64(float64(collection.Policy.DataProducer))
+	dataProducerRatio.Mul(dataProducerRatio, big.NewFloat(params.Ether))
+	solidityDataProducerRatio := new(big.Int)
+	dataProducerRatio.Int(solidityDataProducerRatio)
+
 	tx, err := s.contract.Register(
 		s.account,
 		collection.AppId,
 		collection.SchemaId,
-		collection.Policy.DataProducer,
+		solidityDataProducerRatio,
 	)
+
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -89,7 +98,7 @@ func (s *Service) Register(ctx context.Context, collection *Collection) (common.
 	return event.ColectionId, nil
 }
 
-func (s *Service) Unregister(ctx context.Context, collectionId common.Hash) error {
+func (s *Collections) Unregister(ctx context.Context, collectionId common.Hash) error {
 	tx, err := s.contract.Unregister(s.account, collectionId)
 	if err != nil {
 		return err
@@ -108,15 +117,15 @@ func (s *Service) Unregister(ctx context.Context, collectionId common.Hash) erro
 	return err
 }
 
-func (s *Service) Check(id common.Hash) (bool, error) {
+func (s *Collections) Check(id common.Hash) (bool, error) {
 	return s.contract.Check(nil, id)
 }
 
-func (s *Service) CheckAllowed(id, uid common.Hash) (bool, error) {
+func (s *Collections) CheckAllowed(id, uid common.Hash) (bool, error) {
 	return s.contract.CheckAllowed(nil, id, uid)
 }
 
-func (s *Service) Allow(ctx context.Context, account *bind.TransactOpts, id, uid common.Hash) error {
+func (s *Collections) Allow(ctx context.Context, account *bind.TransactOpts, id, uid common.Hash) error {
 	tx, err := s.contract.Allow(account, id, uid)
 	if err != nil {
 		return err
@@ -134,7 +143,7 @@ func (s *Service) Allow(ctx context.Context, account *bind.TransactOpts, id, uid
 	return err
 }
 
-func (s *Service) Deny(ctx context.Context, account *bind.TransactOpts, id, uid common.Hash) error {
+func (s *Collections) Deny(ctx context.Context, account *bind.TransactOpts, id, uid common.Hash) error {
 	tx, err := s.contract.Deny(account, id, uid)
 	if err != nil {
 		return err

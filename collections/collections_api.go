@@ -7,16 +7,16 @@ import (
 )
 
 type API struct {
-	service *Service
+	collections *Collections
 }
 
 func NewAPI(backend *api.AirblocBackend) (api.API, error) {
-	service, err := NewService(backend.LocalDatabase, backend.Ethclient, nil, common.Address{})
-	return &API{service}, err
+	collections, err := New(backend.LocalDatabase, backend.Ethclient, nil, common.Address{})
+	return &API{collections}, err
 }
 
 func (api *API) Create(ctx context.Context, req *CreateCollectionRequest) (*CreateCollectionResponse, error) {
-	hash, err := api.service.Register(ctx, &Collection{
+	hash, err := api.collections.Register(ctx, &Collection{
 		AppId:    common.HexToHash(req.AppId),
 		SchemaId: common.HexToHash(req.SchemaId),
 		Policy: &IncentivePolicy{
