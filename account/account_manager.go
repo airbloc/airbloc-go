@@ -1,6 +1,7 @@
 package account
 
 import (
+	"github.com/pkg/errors"
 	"strings"
 
 	"context"
@@ -12,19 +13,16 @@ import (
 	ethCommon "github.com/ethereum/go-ethereum/common"
 )
 
-type Service struct {
+type Manager struct {
 	client      *blockchain.Client
 	contract    *adapter.Accounts
 	contractABI abi.ABI
 }
 
-func NewService(
-	client *blockchain.Client,
-	addr ethCommon.Address,
-) (*Service, error) {
+func NewManager(client *blockchain.Client, addr ethCommon.Address) (*Manager, error) {
 	accounts, err := adapter.NewAccounts(addr, client)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to bind to Accounts")
 	}
 
 	rawABI := strings.NewReader(adapter.AccountsABI)
@@ -33,26 +31,26 @@ func NewService(
 		return nil, err
 	}
 
-	return &Service{
+	return &Manager{
 		client:      client,
 		contract:    accounts,
 		contractABI: contractABI,
 	}, nil
 }
 
-func (s *Service) Create(ctx context.Context) (ablCommon.ID, error) {
-	tx, err := s.contract.Create(s.client.Account())
+func (manager *Manager) Create(ctx context.Context) (ablCommon.ID, error) {
+	tx, err := manager.contract.Create(manager.client.Account())
 	if err != nil {
 		return ablCommon.ID{}, err
 	}
 
-	receipt, err := s.client.WaitMined(ctx, tx)
+	receipt, err := manager.client.WaitMined(ctx, tx)
 	if err != nil {
 		return ablCommon.ID{}, err
 	}
 
 	event := adapter.AccountsSignUp{}
-	if err := s.contractABI.Unpack(
+	if err := manager.contractABI.Unpack(
 		&event,
 		"SignUp",
 		receipt.Logs[0].Data,
@@ -63,16 +61,16 @@ func (s *Service) Create(ctx context.Context) (ablCommon.ID, error) {
 	return ablCommon.ID(event.AccountId), err
 }
 
-func (s *Service) CreateTemporary(
+func (manager *Manager) CreateTemporary(
 	ctx context.Context,
 	proxy ethCommon.Address,
 ) error {
-	tx, err := s.contract.CreateTemporary(s.client.Account(), proxy)
+	tx, err := manager.contract.CreateTemporary(manager.client.Account(), proxy)
 	if err != nil {
 		return err
 	}
 
-	_, err = s.client.WaitMined(ctx, tx)
+	_, err = manager.client.WaitMined(ctx, tx)
 	if err != nil {
 		return err
 	}
@@ -81,22 +79,22 @@ func (s *Service) CreateTemporary(
 	return nil
 }
 
-func (s *Service) CreateUsingProxy(
+func (manager *Manager) CreateUsingProxy(
 	ctx context.Context,
 	owner, proxy, proof ethCommon.Address,
 ) (ablCommon.ID, error) {
-	tx, err := s.contract.CreateUsingProxy(s.client.Account(), owner, proxy, proof)
+	tx, err := manager.contract.CreateUsingProxy(manager.client.Account(), owner, proxy, proof)
 	if err != nil {
 		return ablCommon.ID{}, err
 	}
 
-	receipt, err := s.client.WaitMined(ctx, tx)
+	receipt, err := manager.client.WaitMined(ctx, tx)
 	if err != nil {
 		return ablCommon.ID{}, err
 	}
 
 	event := adapter.AccountsSignUp{}
-	if err := s.contractABI.Unpack(
+	if err := manager.contractABI.Unpack(
 		&event,
 		"SignUp",
 		receipt.Logs[0].Data,
