@@ -1,6 +1,7 @@
 pragma solidity ^0.4.24;
 
 import "./Exchange.sol";
+import "./ExchangeLib.sol";
 
 contract SimpleContract {
 
@@ -11,22 +12,33 @@ contract SimpleContract {
 
     Exchange private exchange;
     mapping(bytes32 => Agreement) agreements;
+    mapping(bytes32 => uint256) balances;
 
     constructor(Exchange _exchange) public {
         exchange = _exchange;
     }
 
     function open(bytes32 _offerId) public payable {
-        (address offeror,,,) = exchange.getOrder(_offerId);
+        (
+            address offeror, 
+            , // address offeree,
+            address contractAddr
+        ) = exchange.getOffer(_offerId);
         require(msg.sender == offeror, "should have authority");
-        exchange.open(_offerId, new address[](0), msg.value, 0);
+        require(contractAddr == address(this), "not this contract");
+        exchange.open(_offerId);
+        balances[_offerId] = msg.value;
+        agreements[_offerId] = Agreement(false, false);
     }
 
     function close(bytes32 _offerId) public {
         (
             address offeror,
             address offeree,
-        ) = exchange.getParticipants(_offerId);
+            address contractAddr
+        ) = exchange.getOffer(_offerId);
+
+        require(contractAddr == address(this), "not this contract");
 
         bool isOfferor = msg.sender == offeror;
         bool isOfferee = msg.sender == offeree;
@@ -39,7 +51,9 @@ contract SimpleContract {
             agreements[_offerId].offeror &&
             agreements[_offerId].offeree
         ) {
-            (bool reverted, uint256 amount) = exchange.close(_offerId);
+            bool reverted = exchange.close(_offerId);
+            uint256 amount = balances[_offerId];
+            delete agreements[_offerId];
 
             if (!reverted) {
                 offeror.transfer(amount);
@@ -47,7 +61,6 @@ contract SimpleContract {
                 offeree.transfer(amount);
             }
 
-            delete agreements[_offerId];
             return;
         }
 
