@@ -1,45 +1,42 @@
 package exchange
 
 import (
-	"net"
-
-	"github.com/airbloc/airbloc-go/common"
+	"github.com/airbloc/airbloc-go/api"
+	ablCommon "github.com/airbloc/airbloc-go/common"
+	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/pkg/errors"
 	"golang.org/x/net/context"
-	"google.golang.org/grpc"
 )
 
 type API struct {
-	conn   net.Conn
-	server *grpc.Server
+	exchange *Exchange
 }
 
-func (s *API) Close() {
-	s.server.Stop()
-	s.conn.Close()
+func NewAPI(backend *api.AirblocBackend) (api.API, error) {
+	exchange, err := New(backend.Ethclient, ethCommon.Address{})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create Exchange API")
+	}
+	return &API{exchange}, nil
+}
+
+func (api *API) AttachToAPI(service *api.APIService) {
+	RegisterExchangeServer(service.GrpcServer, api)
 }
 
 // TODO
-func (s *API) Order(ctx context.Context, req *OrderRequest) (*common.Hash, error) {
+func (api *API) Order(ctx context.Context, req *OrderRequest) (*ablCommon.Hash, error) {
 	return nil, nil
 }
 
-func (s *API) Settle(ctx context.Context, req *SettleMessage) (*common.Result, error) {
+func (api *API) Settle(ctx context.Context, req *SettleMessage) (*ablCommon.Result, error) {
 	return nil, nil
 }
 
-func (s *API) Reject(ctx context.Context, id *OrderId) (*common.Result, error) {
+func (api *API) Reject(ctx context.Context, id *OrderId) (*ablCommon.Result, error) {
 	return nil, nil
 }
 
-func (s *API) CloseOrder(ctx context.Context, id *OrderId) (*common.Result, error) {
+func (api *API) CloseOrder(ctx context.Context, id *OrderId) (*ablCommon.Result, error) {
 	return nil, nil
-}
-
-func NewAPI(conn net.Conn) (*API, error) {
-	api := &API{
-		conn:   conn,
-		server: grpc.NewServer(),
-	}
-	RegisterExchangeServer(api.server, api)
-	return api, nil
 }
