@@ -1,46 +1,37 @@
 package schemas
 
 import (
-	"net"
-
 	"encoding/json"
+	"github.com/airbloc/airbloc-go/api"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/pkg/errors"
 
 	"golang.org/x/net/context"
-	"google.golang.org/grpc"
 )
 
 type API struct {
-	conn    net.Conn
-	server  *grpc.Server
-	service *Service
+	schemas *Schemas
 }
 
-func (s *API) Close() {
-	s.server.Stop()
-	s.conn.Close()
+func NewAPI(backend *api.AirblocBackend) (api.API, error) {
+	schemas, err := New(backend.MetaDatabase, backend.Ethclient, common.Address{})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create Schemas")
+	}
+	return &API{schemas}, nil
+}
+
+func (api *API) AttachToAPI(service *api.APIService) {
+	RegisterSchemaServer(service.GrpcServer, api)
 }
 
 // TODO
-func (s *API) Create(ctx context.Context, req *CreateSchemaRequest) (*CreateSchemaResult, error) {
+func (api *API) Create(ctx context.Context, req *CreateSchemaRequest) (*CreateSchemaResult, error) {
 	data := make(map[string]interface{})
 	err := json.Unmarshal([]byte(req.Schema), &data)
 	if err != nil {
 		return nil, err
 	}
-	s.service.Register(ctx, req.Name, data)
+	s.schemas.Register(ctx, req.Name, data)
 	return nil, nil
-}
-
-//func (s *API) Delete(ctx context.Context, req *DeleteSchemaRequest) (*DeleteSchemaResult, error) {
-//
-//}
-
-func NewAPI(conn net.Conn, service *Service) (*API, error) {
-	api := &API{
-		conn:    conn,
-		server:  grpc.NewServer(),
-		service: service,
-	}
-	RegisterSchemaServer(api.server, api)
-	return api, nil
 }
