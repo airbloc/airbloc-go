@@ -1,9 +1,8 @@
 package account
 
 import (
-	"crypto/ecdsa"
-
 	ablCommon "github.com/airbloc/airbloc-go/common"
+	"github.com/airbloc/airbloc-go/key"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 )
@@ -23,13 +22,16 @@ type Account struct {
 	Proxy       ethCommon.Address
 	PasswordSig []byte
 
-	Opts *bind.TransactOpts
-	key  *ecdsa.PrivateKey
+	k *key.Key
 }
 
-func NewAccount(key *ecdsa.PrivateKey) *Account {
+func NewAccount(k *key.Key) *Account {
+	// TODO: add contract proxy
 	return &Account{
-		Opts: bind.NewKeyedTransactor(key),
-		key:  key,
+		k: k,
 	}
+}
+
+func (acc *Account) TransactOpts() *bind.TransactOpts {
+	return bind.NewKeyedTransactor(acc.k.PrivateKey)
 }
