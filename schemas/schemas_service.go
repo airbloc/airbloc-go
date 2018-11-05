@@ -8,7 +8,6 @@ import (
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
 	"github.com/airbloc/airbloc-go/database/metadb"
-	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -18,7 +17,6 @@ import (
 type Service struct {
 	db          metadb.Database
 	client      *blockchain.Client
-	account     *bind.TransactOpts
 	contract    *adapter.SchemaRegistry
 	contractABI abi.ABI
 }
@@ -26,7 +24,6 @@ type Service struct {
 func NewService(
 	db metadb.Database,
 	client *blockchain.Client,
-	account *bind.TransactOpts,
 	addr common.Address,
 ) (*Service, error) {
 	collection, err := adapter.NewSchemaRegistry(addr, client)
@@ -43,14 +40,13 @@ func NewService(
 	return &Service{
 		db:          db,
 		client:      client,
-		account:     account,
 		contract:    collection,
 		contractABI: contractABI,
 	}, nil
 }
 
 func (s *Service) Register(ctx context.Context, name string, data map[string]interface{}) (common.Hash, error) {
-	dtx, err := s.contract.Register(s.account)
+	dtx, err := s.contract.Register(s.client.Account())
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -69,22 +65,22 @@ func (s *Service) Register(ctx context.Context, name string, data map[string]int
 		return common.Hash{}, err
 	}
 
-	_, err = s.db.Create(txn.Asset{
-		Data: map[string]interface{}{
-			"id":     common.Hash(event.Id).Hex(),
-			"name":   name,
-			"schema": data,
-		},
-	}, nil, metadb.BigchainTxModeDefault)
-	if err != nil {
-		return common.Hash{}, err
-	}
+	//_, err = s.db.Create(txn.Asset{
+	//	Data: map[string]interface{}{
+	//		"id":     common.Hash(event.Id).Hex(),
+	//		"name":   name,
+	//		"schema": data,
+	//	},
+	//}, nil, metadb.BigchainTxModeDefault)
+	//if err != nil {
+	//	return common.Hash{}, err
+	//}
 
 	return common.Hash(event.Id), nil
 }
 
 func (s *Service) Unregister(ctx context.Context, id common.Hash) error {
-	dtx, err := s.contract.Unregister(s.account, id)
+	dtx, err := s.contract.Unregister(s.client.Account(), id)
 	if err != nil {
 		return err
 	}

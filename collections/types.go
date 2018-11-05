@@ -11,8 +11,8 @@ type Collection struct {
 }
 
 type IncentivePolicy struct {
-	DataProducer  float32
-	DataProcessor float32
-	DataRelayer   float32
-	DataSource    float32
+	DataProducer  float64
+	DataProcessor float64
+	DataRelayer   float64
+	DataSource    float64
 }

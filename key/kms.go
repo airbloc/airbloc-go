@@ -4,6 +4,8 @@ import (
 	"crypto/rand"
 
 	"github.com/airbloc/airbloc-go/database/localdb"
+	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto/ecies"
 )
 
@@ -30,4 +32,12 @@ func (kms *Manager) Decrypt(encryptedPayload []byte) (string, error) {
 	privateKey := kms.OwnerKey.ECIESPrivate
 	payload, err := privateKey.Decrypt(encryptedPayload, nil, nil)
 	return string(payload), err
+}
+
+func (kms *Manager) SignEthTx(tx *types.Transaction) (*types.Transaction, error) {
+	return types.SignTx(tx, types.EIP155Signer{}, kms.OwnerKey.PrivateKey)
+}
+
+func (kms *Manager) SignBDBTx(tx *txn.Transaction) error {
+	return tx.Sign([]*txn.KeyPair{kms.OwnerKey.DeriveEd25519KeyPair()})
 }

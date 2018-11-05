@@ -41,7 +41,7 @@ func NewService(
 }
 
 func (s *Service) Create(ctx context.Context) (ablCommon.ID, error) {
-	tx, err := s.contract.Create(s.client.Account.Opts)
+	tx, err := s.contract.Create(s.client.Account())
 	if err != nil {
 		return ablCommon.ID{}, err
 	}
@@ -67,7 +67,7 @@ func (s *Service) CreateTemporary(
 	ctx context.Context,
 	proxy ethCommon.Address,
 ) error {
-	tx, err := s.contract.CreateTemporary(s.client.Account.Opts, proxy)
+	tx, err := s.contract.CreateTemporary(s.client.Account(), proxy)
 	if err != nil {
 		return err
 	}
@@ -85,7 +85,7 @@ func (s *Service) CreateUsingProxy(
 	ctx context.Context,
 	owner, proxy, proof ethCommon.Address,
 ) (ablCommon.ID, error) {
-	tx, err := s.contract.CreateUsingProxy(s.client.Account.Opts, owner, proxy, proof)
+	tx, err := s.contract.CreateUsingProxy(s.client.Account(), owner, proxy, proof)
 	if err != nil {
 		return ablCommon.ID{}, err
 	}

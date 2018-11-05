@@ -1,9 +1,11 @@
 package main
 
 import (
+	"math/big"
+
 	"log"
 
-	"github.com/pkg/errors"
+	"github.com/ethereum/go-ethereum/params"
 )
 
 //go:generate ./build.sh
@@ -12,15 +14,11 @@ func init() {
 
 }
 
-func a() error {
-	return errors.New("hello world!")
-}
-
-func b() error {
-	return errors.Wrap(a(), "rehello!")
-}
-
 func main() {
-	log.Println((b()))
-	log.Println(len([]byte("4957744b3ac54434b8270f2c854cc1040228c82ea4e72d66d2887a4d3e30b317")))
+	bigFloat := new(big.Float).Mul(
+		big.NewFloat(37.8),
+		big.NewFloat(params.Ether),
+	)
+	bigInt := new(big.Int).Set
+	log.Println(bigFloat.Int())
 }

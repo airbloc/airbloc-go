@@ -116,10 +116,6 @@ func (db *badgerDB) Close() error {
 	return nil
 }
 
-func (db *badgerDB) RawDB() *badger.DB {
-	return db.db
-}
-
 func (db *badgerDB) NewBatch() Batch {
 
 	txn := db.db.NewTransaction(true)

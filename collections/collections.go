@@ -21,7 +21,6 @@ import (
 type Collections struct {
 	db          *localdb.Model
 	client      *blockchain.Client
-	account     *bind.TransactOpts
 	contract    *adapter.CollectionRegistry
 	contractABI abi.ABI
 }
@@ -29,7 +28,6 @@ type Collections struct {
 func New(
 	db localdb.Database,
 	client *blockchain.Client,
-	account *bind.TransactOpts,
 	addr common.Address,
 ) (*Collections, error) {
 	collection, err := adapter.NewCollectionRegistry(addr, client)
@@ -46,7 +44,6 @@ func New(
 	return &Collections{
 		db:          localdb.NewModel(db, "collection"),
 		client:      client,
-		account:     account,
 		contract:    collection,
 		contractABI: contractABI,
 	}, nil
@@ -66,13 +63,13 @@ func (s *Collections) Get(id common.Hash) (*Collection, error) {
 
 func (s *Collections) Register(ctx context.Context, collection *Collection) (common.Hash, error) {
 	// damn EVM
-	dataProducerRatio := new(big.Float).SetFloat64(float64(collection.Policy.DataProducer))
+	dataProducerRatio := big.NewFloat(collection.Policy.DataProducer)
 	dataProducerRatio.Mul(dataProducerRatio, big.NewFloat(params.Ether))
 	solidityDataProducerRatio := new(big.Int)
 	dataProducerRatio.Int(solidityDataProducerRatio)
 
 	tx, err := s.contract.Register(
-		s.account,
+		s.client.Account(),
 		collection.AppId,
 		collection.SchemaId,
 		solidityDataProducerRatio,
@@ -104,7 +101,7 @@ func (s *Collections) Unregister(ctx context.Context, collectionId common.Hash) 
 		return err
 	}
 
-	receipt, err := bind.WaitMined(ctx, s.client, tx)
+	receipt, err := s.client.WaitMined(ctx, tx)
 	if err != nil {
 		return err
 	}
@@ -131,7 +128,7 @@ func (s *Collections) Allow(ctx context.Context, account *bind.TransactOpts, id,
 		return err
 	}
 
-	receipt, err := bind.WaitMined(ctx, s.client, tx)
+	receipt, err := s.client.WaitMined(ctx, tx)
 	if err != nil {
 		return err
 	}
@@ -149,7 +146,7 @@ func (s *Collections) Deny(ctx context.Context, account *bind.TransactOpts, id, 
 		return err
 	}
 
-	receipt, err := bind.WaitMined(ctx, s.client, tx)
+	receipt, err := s.client.WaitMined(ctx, tx)
 	if err != nil {
 		return err
 	}
