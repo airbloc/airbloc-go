@@ -27,7 +27,7 @@ var (
 )
 
 func main() {
-	config := &api.Config{}
+	config := api.DefaultConfig()
 
 	backend, err := api.NewAirblocBackend(config)
 	if err != nil {

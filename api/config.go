@@ -9,9 +9,6 @@ type Config struct {
 	PrivateKeyPath string
 	Port           int
 
-	Service string
-	API     string
-
 	LocalDB struct {
 		Path    string
 		Version int
@@ -29,4 +26,22 @@ type Config struct {
 	}
 
 	Warehouse warehouse.Config
+}
+
+func DefaultConfig() (config *Config) {
+	config.PrivateKeyPath = "private.key"
+	config.Port = 9124
+
+	config.LocalDB.Path = "local.db"
+	config.LocalDB.Version = 1
+
+	config.MetaDB.BigchainDBEndpoint = "http://localhost:9984/api/v1"
+	config.MetaDB.MongoDBEndpoint = "mongo://localhost:27017"
+	config.MetaDB.Version = 1
+
+	config.Blockchain.Endpoint = "http://localhost:8545"
+	config.Blockchain.Option.Confirmation = 1
+
+	config.Warehouse = warehouse.DefaultConfig()
+	return
 }
