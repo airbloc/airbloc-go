@@ -1,60 +1,57 @@
 package data
 
 import (
-	"net"
-
-	"github.com/airbloc/airbloc-go/common"
-	context "golang.org/x/net/context"
-	grpc "google.golang.org/grpc"
+	"github.com/airbloc/airbloc-go/api"
+	ablCommon "github.com/airbloc/airbloc-go/common"
+	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/pkg/errors"
+	"golang.org/x/net/context"
 )
 
-type Service struct {
-	conn   net.Conn
-	server *grpc.Server
+type API struct {
+	manager *Manager
 }
 
-func (s *Service) Close() {
-	s.server.Stop()
-	s.conn.Close()
+func NewAPI(backend *api.AirblocBackend) (api.API, error) {
+	manager, err := NewManager(backend.Kms, backend.Ethclient, backend.LocalDatabase, ethCommon.Address{})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create Data API")
+	}
+	return &API{manager}, nil
 }
 
-func (s *Service) Get(ctx context.Context, dataId *DataId) (*DataResult, error) {
+func (api *API) AttachToAPI(service *api.APIService) {
+	RegisterDataServer(service.GrpcServer, api)
+}
+
+func (api *API) Get(ctx context.Context, dataId *DataId) (*DataResult, error) {
 	return nil, nil
 }
 
-func (s *Service) BatchGet(ctx context.Context, batchId *BatchRequest) (*BatchGetResult, error) {
+func (api *API) BatchGet(ctx context.Context, batchId *BatchRequest) (*BatchGetResult, error) {
 	return nil, nil
 }
 
-func (s *Service) SetPermission(ctx context.Context, req *SetDataPermissionRequest) (*common.Result, error) {
+func (api *API) SetPermission(ctx context.Context, req *SetDataPermissionRequest) (*ablCommon.Result, error) {
 	return nil, nil
 }
 
-func (s *Service) SetPermissionBatch(ctx context.Context, req *SetBatchDataPermissionRequest) (*common.Results, error) {
+func (api *API) SetPermissionBatch(ctx context.Context, req *SetBatchDataPermissionRequest) (*ablCommon.Results, error) {
 	return nil, nil
 }
 
-func (s *Service) Delete(ctx context.Context, dataId *DataId) (*common.Result, error) {
+func (api *API) Delete(ctx context.Context, dataId *DataId) (*ablCommon.Result, error) {
 	return nil, nil
 }
 
-func (s *Service) DeleteBatch(ctx context.Context, batchId *BatchRequest) (*common.Results, error) {
+func (api *API) DeleteBatch(ctx context.Context, batchId *BatchRequest) (*ablCommon.Results, error) {
 	return nil, nil
 }
 
-func (s *Service) Select(stream Data_SelectServer) error {
+func (api *API) Select(stream Data_SelectServer) error {
 	return nil
 }
 
-func (s *Service) Release(ctx context.Context, batchId *BatchRequest) (*common.Result, error) {
+func (api *API) Release(ctx context.Context, batchId *BatchRequest) (*ablCommon.Result, error) {
 	return nil, nil
-}
-
-func NewService(conn net.Conn) (*Service, error) {
-	service := &Service{
-		conn:   conn,
-		server: grpc.NewServer(),
-	}
-	RegisterDataServer(service.server, service)
-	return service, nil
 }
