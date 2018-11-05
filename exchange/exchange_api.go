@@ -19,11 +19,11 @@ func (s *API) Close() {
 }
 
 // TODO
-func (s *API) Order(ctx context.Context, req *OrderRequest) (*OrderId, error) {
+func (s *API) Order(ctx context.Context, req *OrderRequest) (*common.Hash, error) {
 	return nil, nil
 }
 
-func (s *API) Settle(ctx context.Context, req *SettleMessage) (*SettleResult, error) {
+func (s *API) Settle(ctx context.Context, req *SettleMessage) (*common.Result, error) {
 	return nil, nil
 }
 
