@@ -1,13 +1,13 @@
 pragma solidity ^0.4.24;
 
-import "./ExContractLib.sol";
+import "./ExchangeLib.sol";
 import "openzeppelin-solidity/contracts/AddressUtils.sol";
 import "openzeppelin-solidity/contracts/access/Whitelist.sol";
 
 contract Exchange is Whitelist {
     using AddressUtils for address;
-    using ExContractLib for ExContractLib.Offer;
-    using ExContractLib for ExContractLib.Orderbook;
+    using ExchangeLib for ExchangeLib.Offer;
+    using ExchangeLib for ExchangeLib.Orderbook;
 
     event OfferPresented(bytes32 indexed _offerId, address _contract);
     event OfferSettled(bytes32 indexed _offerId, address _offeree);
@@ -15,12 +15,12 @@ contract Exchange is Whitelist {
     event OfferOpened(bytes32 indexed _offerId, uint256 _timeout);
     event OfferClosed(bytes32 indexed _offerId, address _offeror, address _offeree, uint256 _amount, bool _reverted);
 
-    ExContractLib.Orderbook orderbook;
-    uint256 constant DEFAULT_TIMEOUT = 100; // block = 3600 sec = 60 min = 1 hour
+    ExchangeLib.Orderbook orderbook;
+    uint256 constant DEFAULT_TIMEOUT = 240; // block = 3600 sec = 60 min = 1 hour
     uint256 constant MAX_OPT_LENGTH = 10;
 
     constructor() public {
-        orderbook = ExContractLib.Orderbook();
+        orderbook = ExchangeLib.Orderbook();
     }
 
     function order(
@@ -34,11 +34,11 @@ contract Exchange is Whitelist {
         require(_contract.isContract(), "invalid contract address");
 
         bytes32 offerId = orderbook.order(
-            ExContractLib.Order({
+            ExchangeLib.Offer({
                 offeror: _offeror,
                 offeree: _offeree,
                 contractAddr: _contract,
-                isPending: true
+                state: ExchangeLib.Status.NEUTRAL
             })
         );
         emit OfferPresented(offerId, _contract);
@@ -60,7 +60,7 @@ contract Exchange is Whitelist {
         uint256 _amount,
         uint256 _timeout
     ) public {
-        ExContractLib.Order storage targetOrder = orderbook.getOrder(_offerId);
+        ExchangeLib.Order storage targetOrder = orderbook.getOrder(_offerId);
 
         require(targetOrder.contractAddr != address(0), "order not found");
         require(!targetOrder.isPending, "order not settled");
@@ -73,8 +73,8 @@ contract Exchange is Whitelist {
 
         bool result = orderbook.open(
             _offerId,
-            ExContractLib.Offer({
-                participants: ExContractLib.Participants({
+            ExchangeLib.Offer({
+                participants: ExchangeLib.Participants({
                     offeror: targetOrder.offeror,
                     offeree: targetOrder.offeree,
                     opt: _opt
@@ -89,7 +89,7 @@ contract Exchange is Whitelist {
     }
 
     function close(bytes32 _offerId) public returns (bool, uint256) {
-        ExContractLib.Offer storage offer = orderbook.getOffer(_offerId);
+        ExchangeLib.Offer storage offer = orderbook.getOffer(_offerId);
         (
             address offeror,
             address offeree,
@@ -111,8 +111,8 @@ contract Exchange is Whitelist {
         view
         returns (address, address, address[], uint256, uint256, address)
     {
-        ExContractLib.Offer storage offer = orderbook.getOffer(_offerId);
-        ExContractLib.Participants storage participants = offer.participants;
+        ExchangeLib.Offer storage offer = orderbook.getOffer(_offerId);
+        ExchangeLib.Participants storage participants = offer.participants;
         return (
             participants.offeror,
             participants.offeree,
@@ -128,7 +128,7 @@ contract Exchange is Whitelist {
         view
         returns (address, address, address[])
     {
-        ExContractLib.Participants storage participants = orderbook.getOffer(_offerId).participants;
+        ExchangeLib.Participants storage participants = orderbook.getOffer(_offerId).participants;
         return (
             participants.offeror,
             participants.offeree,
@@ -141,7 +141,7 @@ contract Exchange is Whitelist {
         view
         returns (address, address, address, bool)
     {
-        ExContractLib.Order storage targetOrder = orderbook.getOrder(_offerId);
+        ExchangeLib.Order storage targetOrder = orderbook.getOrder(_offerId);
         return (
             targetOrder.offeror,
             targetOrder.offeree,

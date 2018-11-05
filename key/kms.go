@@ -34,10 +34,10 @@ func (kms *Manager) Decrypt(encryptedPayload []byte) (string, error) {
 	return string(payload), err
 }
 
-func (key *Key) SignEthTx(tx *types.Transaction) (*types.Transaction, error) {
-	return types.SignTx(tx, types.EIP155Signer{}, key.PrivateKey)
+func (kms *Manager) SignEthTx(tx *types.Transaction) (*types.Transaction, error) {
+	return types.SignTx(tx, types.EIP155Signer{}, kms.OwnerKey.PrivateKey)
 }
 
-func (key *Key) SignBDBTx(tx *txn.Transaction) error {
-	return tx.Sign([]*txn.KeyPair{key.DeriveEd25519KeyPair()})
+func (kms *Manager) SignBDBTx(tx *txn.Transaction) error {
+	return tx.Sign([]*txn.KeyPair{kms.OwnerKey.DeriveEd25519KeyPair()})
 }
