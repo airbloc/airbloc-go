@@ -11,14 +11,14 @@ contract SimpleContract {
     }
 
     Exchange private exchange;
-    mapping(bytes32 => Agreement) agreements;
-    mapping(bytes32 => uint256) balances;
+    mapping(bytes8 => Agreement) agreements;
+    mapping(bytes8 => uint256) balances;
 
     constructor(Exchange _exchange) public {
         exchange = _exchange;
     }
 
-    function open(bytes32 _offerId) public payable {
+    function open(bytes8 _offerId) public payable {
         (
             address offeror, 
             , // address offeree,
@@ -31,7 +31,7 @@ contract SimpleContract {
         agreements[_offerId] = Agreement(false, false);
     }
 
-    function close(bytes32 _offerId) public {
+    function close(bytes8 _offerId) public {
         (
             address offeror,
             address offeree,

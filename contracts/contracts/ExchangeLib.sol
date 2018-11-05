@@ -15,13 +15,13 @@ library ExchangeLib {
     }
 
     struct Orderbook {
-        mapping(bytes32 => Offer) orders;
+        mapping(bytes8 => Offer) orders;
     }
 
     function order(
         Orderbook storage _orderbook,
         Offer memory _offer
-    ) internal returns (bytes32) {
+    ) internal returns (bytes8) {
         require(_offer.status == Status.NEUTRAL, "neutral state only");
         require(_offer.contractAddr.isContract(), "not contract address");
         bytes8 offerId = bytes8(
@@ -42,7 +42,7 @@ library ExchangeLib {
 
     function settle(
         Orderbook storage _orderbook,
-        bytes32 _offerId
+        bytes8 _offerId
     ) internal {
         Offer storage offer = _orderbook.orders[_offerId];
         require(offer.status == Status.PENDING, "pending state only");
@@ -52,7 +52,7 @@ library ExchangeLib {
 
     function reject(
         Orderbook storage _orderbook,
-        bytes32 _offerId
+        bytes8 _offerId
     ) internal {
         Offer storage offer = _orderbook.orders[_offerId];
         require(offer.status == Status.PENDING, "pending state only");
@@ -62,7 +62,7 @@ library ExchangeLib {
 
     function open(
         Orderbook storage _orderbook,
-        bytes32 _offerId
+        bytes8 _offerId
     ) internal {
         Offer storage offer = _orderbook.orders[_offerId];
         require(offer.status == Status.SETTLED, "settled state only");
@@ -72,7 +72,7 @@ library ExchangeLib {
 
     function close(
         Orderbook storage _orderbook,
-        bytes32 _offerId
+        bytes8 _offerId
     ) internal {
         Offer storage offer = _orderbook.orders[_offerId];
         require(msg.sender == offer.contractAddr, "only contract can close transaction");
@@ -81,7 +81,7 @@ library ExchangeLib {
 
     function getOffer(
         Orderbook storage _orderbook,
-        bytes32 _offerId
+        bytes8 _offerId
     ) internal view returns (Offer storage) {
         return _orderbook.orders[_offerId];
     }

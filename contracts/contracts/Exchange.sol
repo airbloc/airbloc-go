@@ -7,11 +7,11 @@ contract Exchange is Whitelist {
     using ExchangeLib for ExchangeLib.Offer;
     using ExchangeLib for ExchangeLib.Orderbook;
 
-    event OfferPresented(bytes32 indexed _offerId, address _contract);
-    event OfferSettled(bytes32 indexed _offerId, address _offeree);
-    event OfferRejected(bytes32 indexed _offerId, address _offeree);
-    event OfferOpened(bytes32 indexed _offerId);
-    event OfferClosed(bytes32 indexed _offerId, address _offeror, address _offeree, bool _reverted);
+    event OfferPresented(bytes8 indexed _offerId, address _contract);
+    event OfferSettled(bytes8 indexed _offerId);
+    event OfferRejected(bytes8 indexed _offerId);
+    event OfferOpened(bytes8 indexed _offerId);
+    event OfferClosed(bytes8 indexed _offerId, address _offeror, address _offeree, bool _reverted);
 
     ExchangeLib.Orderbook orderbook;
     uint256 constant DEFAULT_TIMEOUT = 240; // block = 3600 sec = 60 min = 1 hour
@@ -30,7 +30,7 @@ contract Exchange is Whitelist {
         require(_offeree != address(0), "invalid offere address");
         require(_contract != address(0), "invalid contract address");
 
-        bytes32 offerId = orderbook.order(
+        bytes8 offerId = orderbook.order(
             ExchangeLib.Offer({
                 offeror: _offeror,
                 offeree: _offeree,
@@ -41,22 +41,22 @@ contract Exchange is Whitelist {
         emit OfferPresented(offerId, _contract);
     }
 
-    function settle(bytes32 _offerId) public {
+    function settle(bytes8 _offerId) public {
         orderbook.settle(_offerId);
-        emit OfferSettled(_offerId, msg.sender);
+        emit OfferSettled(_offerId);
     }
 
-    function reject(bytes32 _offerId) public {
+    function reject(bytes8 _offerId) public {
         orderbook.reject(_offerId);
-        emit OfferRejected(_offerId, msg.sender);
+        emit OfferRejected(_offerId);
     }
 
-    function open(bytes32 _offerId) public {
+    function open(bytes8 _offerId) public {
         orderbook.open(_offerId);
         emit OfferOpened(_offerId);
     }
 
-    function close(bytes32 _offerId) public returns (bool) {
+    function close(bytes8 _offerId) public returns (bool) {
         ExchangeLib.Offer storage offer = _getOffer(_offerId);
         orderbook.close(_offerId);
         bool reverted = false;
@@ -66,7 +66,7 @@ contract Exchange is Whitelist {
         return reverted;
     }
 
-    function _getOffer(bytes32 _offerId)
+    function _getOffer(bytes8 _offerId)
         internal
         view
         returns (ExchangeLib.Offer storage)
@@ -74,7 +74,7 @@ contract Exchange is Whitelist {
         return orderbook.getOffer(_offerId);
     }
 
-    function getOffer(bytes32 _offerId)
+    function getOffer(bytes8 _offerId)
         public
         view
         returns (address, address, address)
