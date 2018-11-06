@@ -12,11 +12,11 @@ import (
 // Manager is local key-manager service (KMS) containing the account's private key
 // and re-encryption keys that owned by the account.
 type Manager struct {
-	OwnerKey      Key
-	localDatabase *localdb.Database
+	OwnerKey      *Key
+	localDatabase localdb.Database
 }
 
-func NewManager(ownerKey Key, localDatabase *localdb.Database) *Manager {
+func NewManager(ownerKey *Key, localDatabase localdb.Database) *Manager {
 	return &Manager{
 		OwnerKey:      ownerKey,
 		localDatabase: localDatabase,

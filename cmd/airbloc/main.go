@@ -1,25 +1,25 @@
 package main
 
 import (
-	"github.com/airbloc/airbloc-go/account"
+	accountAPI "github.com/airbloc/airbloc-go/account/api"
 	"github.com/airbloc/airbloc-go/api"
-	"github.com/airbloc/airbloc-go/collections"
-	"github.com/airbloc/airbloc-go/data"
-	"github.com/airbloc/airbloc-go/exchange"
-	"github.com/airbloc/airbloc-go/schemas"
-	"github.com/airbloc/airbloc-go/warehouse"
+	collectionsAPI "github.com/airbloc/airbloc-go/collections/api"
+	dataAPI "github.com/airbloc/airbloc-go/data/api"
+	exchangeAPI "github.com/airbloc/airbloc-go/exchange/api"
+	schemasAPI "github.com/airbloc/airbloc-go/schemas/api"
+	warehouseAPI "github.com/airbloc/airbloc-go/warehouse/api"
 	"github.com/ethereum/go-ethereum/log"
 	"strings"
 )
 
 var (
 	AvailableAPIs = map[string]api.Constructor{
-		"account":     account.NewAPI,
-		"collections": collections.NewAPI,
-		"data":        data.NewAPI,
-		"exchange":    exchange.NewAPI,
-		"schemas":     schemas.NewAPI,
-		"warehouse":   warehouse.NewAPI,
+		"account":     accountAPI.New,
+		"collections": collectionsAPI.New,
+		"data":        dataAPI.New,
+		"exchange":    exchangeAPI.New,
+		"schemas":     schemasAPI.New,
+		"warehouse":   warehouseAPI.New,
 	}
 	AvailableServices = map[string]api.ServiceConstructor{
 		"api": api.NewAPIService,

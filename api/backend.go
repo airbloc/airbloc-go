@@ -42,7 +42,7 @@ func NewAirblocBackend(config *Config) (*AirblocBackend, error) {
 
 	kms := key.NewManager(nodeKey, localDatabase)
 
-	ethclient, err := blockchain.NewClient(config.Blockchain.Endpoint, nodeKey.PrivateKey, config.Blockchain.Option)
+	ethclient, err := blockchain.NewClient(nodeKey, config.Blockchain.Endpoint, config.Blockchain.Option)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to initialize Ethereum client")
 	}
@@ -53,6 +53,7 @@ func NewAirblocBackend(config *Config) (*AirblocBackend, error) {
 		MetaDatabase:  metaDatabase,
 		LocalDatabase: localDatabase,
 		Config:        config,
+		Services:      make(map[string]Service),
 	}, nil
 }
 
@@ -66,6 +67,7 @@ func (airbloc *AirblocBackend) Start() error {
 			return errors.Wrapf(err, "failed to start %s service", name)
 		}
 	}
+	return nil
 }
 
 func (airbloc *AirblocBackend) Stop() {

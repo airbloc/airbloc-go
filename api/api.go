@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"net"
@@ -56,6 +57,7 @@ func (service *APIService) Start() error {
 		return errors.Wrapf(err, "failed to listen to TCP port %d for RPC", service.port)
 	}
 
+	log.Info("Server started", "address", service.Address)
 	if err := service.HttpServer.Serve(lis); err != http.ErrServerClosed {
 		return errors.Wrapf(err, "failed to start HTTP server")
 	}

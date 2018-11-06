@@ -41,7 +41,7 @@ func New(
 
 // exchange.sol
 func (exchange *Exchange) Order(ctx context.Context, offeror, offeree, contract ethCommon.Address) (ablCommon.ID, error) {
-	tx, err := exchange.contract.Order(s.client.Account(), offeror, offeree, contract)
+	tx, err := exchange.contract.Order(exchange.client.Account(), offeror, offeree, contract)
 	if err != nil {
 		return ablCommon.ID{}, err
 	}
@@ -64,7 +64,7 @@ func (exchange *Exchange) Order(ctx context.Context, offeror, offeree, contract 
 }
 
 func (exchange *Exchange) Settle(ctx context.Context, offerId ablCommon.ID) error {
-	tx, err := exchange.contract.Settle(s.client.Account(), offerId)
+	tx, err := exchange.contract.Settle(exchange.client.Account(), offerId)
 	if err != nil {
 		return err
 	}
@@ -87,7 +87,7 @@ func (exchange *Exchange) Settle(ctx context.Context, offerId ablCommon.ID) erro
 }
 
 func (exchange *Exchange) Reject(ctx context.Context, offerId ablCommon.ID) error {
-	tx, err := exchange.contract.Reject(s.client.Account(), offerId)
+	tx, err := exchange.contract.Reject(exchange.client.Account(), offerId)
 	if err != nil {
 		return err
 	}

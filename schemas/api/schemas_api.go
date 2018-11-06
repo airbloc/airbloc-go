@@ -1,8 +1,9 @@
-package schemas
+package api
 
 import (
 	"encoding/json"
 	"github.com/airbloc/airbloc-go/api"
+	"github.com/airbloc/airbloc-go/schemas"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
 
@@ -10,11 +11,11 @@ import (
 )
 
 type API struct {
-	schemas *Schemas
+	schemas *schemas.Schemas
 }
 
-func NewAPI(backend *api.AirblocBackend) (api.API, error) {
-	schemas, err := New(backend.MetaDatabase, backend.Ethclient, common.Address{})
+func New(backend *api.AirblocBackend) (api.API, error) {
+	schemas, err := schemas.New(backend.MetaDatabase, backend.Ethclient, common.Address{})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create Schemas")
 	}
@@ -32,6 +33,6 @@ func (api *API) Create(ctx context.Context, req *CreateSchemaRequest) (*CreateSc
 	if err != nil {
 		return nil, err
 	}
-	s.schemas.Register(ctx, req.Name, data)
+	api.schemas.Register(ctx, req.Name, data)
 	return nil, nil
 }

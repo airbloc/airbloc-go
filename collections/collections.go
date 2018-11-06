@@ -96,7 +96,7 @@ func (s *Collections) Register(ctx context.Context, collection *Collection) (com
 }
 
 func (s *Collections) Unregister(ctx context.Context, collectionId common.Hash) error {
-	tx, err := s.contract.Unregister(s.account, collectionId)
+	tx, err := s.contract.Unregister(s.client.Account(), collectionId)
 	if err != nil {
 		return err
 	}

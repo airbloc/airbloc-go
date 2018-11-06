@@ -1,25 +1,26 @@
-package collections
+package api
 
 import (
 	"github.com/airbloc/airbloc-go/api"
+	"github.com/airbloc/airbloc-go/collections"
 	"github.com/ethereum/go-ethereum/common"
 	"golang.org/x/net/context"
 )
 
 type API struct {
-	collections *Collections
+	collections *collections.Collections
 }
 
-func NewAPI(backend *api.AirblocBackend) (api.API, error) {
-	collections, err := New(backend.LocalDatabase, backend.Ethclient, common.Address{})
+func New(backend *api.AirblocBackend) (api.API, error) {
+	collections, err := collections.New(backend.LocalDatabase, backend.Ethclient, common.Address{})
 	return &API{collections}, err
 }
 
 func (api *API) Create(ctx context.Context, req *CreateCollectionRequest) (*CreateCollectionResponse, error) {
-	hash, err := api.collections.Register(ctx, &Collection{
+	hash, err := api.collections.Register(ctx, &collections.Collection{
 		AppId:    common.HexToHash(req.AppId),
 		SchemaId: common.HexToHash(req.SchemaId),
-		Policy: &IncentivePolicy{
+		Policy: &collections.IncentivePolicy{
 			DataProducer:  req.Policy.DataProducer,
 			DataProcessor: req.Policy.DataProcessor,
 			DataRelayer:   req.Policy.DataRelayer,

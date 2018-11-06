@@ -1,7 +1,7 @@
 syntax = "proto3";
 package airbloc.schemas;
 
-option go_package = "github.com/airbloc/airbloc-go/schemas";
+option go_package = "github.com/airbloc/airbloc-go/schemas/api";
 
 service Schema {
     rpc Create(CreateSchemaRequest) returns (CreateSchemaResult);

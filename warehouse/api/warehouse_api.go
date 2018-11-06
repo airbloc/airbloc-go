@@ -1,18 +1,19 @@
-package warehouse
+package api
 
 import (
 	"context"
 	"github.com/airbloc/airbloc-go/api"
+	"github.com/airbloc/airbloc-go/warehouse"
 	"github.com/airbloc/airbloc-go/warehouse/protocol"
 	"github.com/airbloc/airbloc-go/warehouse/storage"
 	"github.com/pkg/errors"
 )
 
 type API struct {
-	warehouse *DataWarehouse
+	warehouse *warehouse.DataWarehouse
 }
 
-func NewAPI(airbloc *api.AirblocBackend) (api.API, error) {
+func New(airbloc *api.AirblocBackend) (api.API, error) {
 	config := airbloc.Config.Warehouse
 
 	supportedProtocols := []protocol.Protocol{
@@ -29,8 +30,8 @@ func NewAPI(airbloc *api.AirblocBackend) (api.API, error) {
 		return nil, errors.Errorf("unknown storage type: %s", config.DefaultStorage)
 	}
 
-	warehouse := New(airbloc.Kms, defaultStorage, supportedProtocols)
-	return &API{warehouse}, nil
+	dw := warehouse.New(airbloc.Kms, defaultStorage, supportedProtocols)
+	return &API{dw}, nil
 }
 
 func (api *API) StoreBundle(stream Warehouse_StoreBundleServer) error {

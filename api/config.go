@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/airbloc/airbloc-go/blockchain"
-	"github.com/airbloc/airbloc-go/warehouse"
+	"time"
 )
 
 type Config struct {
@@ -25,10 +25,30 @@ type Config struct {
 		Option   blockchain.ClientOpt
 	}
 
-	Warehouse warehouse.Config
+	Warehouse struct {
+		DefaultStorage string
+
+		Http struct {
+			Timeout         time.Duration
+			MaxConnsPerHost int
+		}
+
+		LocalStorage struct {
+			SavePath string
+			Endpoint string
+		}
+
+		S3 struct {
+			Region     string
+			AccessKey  string
+			Bucket     string
+			PathPrefix string
+		}
+	}
 }
 
 func DefaultConfig() (config *Config) {
+	config = new(Config)
 	config.PrivateKeyPath = "private.key"
 	config.Port = 9124
 
@@ -42,6 +62,11 @@ func DefaultConfig() (config *Config) {
 	config.Blockchain.Endpoint = "http://localhost:8545"
 	config.Blockchain.Option.Confirmation = 1
 
-	config.Warehouse = warehouse.DefaultConfig()
+	config.Warehouse.DefaultStorage = "local"
+	config.Warehouse.Http.Timeout = 30 * time.Second
+	config.Warehouse.Http.MaxConnsPerHost = 10
+
+	config.Warehouse.LocalStorage.SavePath = "local/warehouse/"
+	config.Warehouse.LocalStorage.Endpoint = "http://localhost:9125/"
 	return
 }
