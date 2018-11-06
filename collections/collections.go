@@ -2,8 +2,9 @@ package collections
 
 import (
 	"context"
-	"github.com/ethereum/go-ethereum/params"
 	"math/big"
+
+	"github.com/ethereum/go-ethereum/params"
 
 	"strings"
 

@@ -1,8 +1,9 @@
 package api
 
 import (
-	"github.com/airbloc/airbloc-go/blockchain"
 	"time"
+
+	"github.com/airbloc/airbloc-go/blockchain"
 )
 
 type Config struct {

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+
 	accountAPI "github.com/airbloc/airbloc-go/account/api"
 	"github.com/airbloc/airbloc-go/api"
 	collectionsAPI "github.com/airbloc/airbloc-go/collections/api"
@@ -9,7 +11,6 @@ import (
 	schemasAPI "github.com/airbloc/airbloc-go/schemas/api"
 	warehouseAPI "github.com/airbloc/airbloc-go/warehouse/api"
 	"github.com/ethereum/go-ethereum/log"
-	"strings"
 )
 
 var (
