@@ -2,8 +2,8 @@ package blockchain
 
 import (
 	"context"
+	"github.com/airbloc/airbloc-go/key"
 
-	"github.com/airbloc/airbloc-go/account"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -14,29 +14,30 @@ type Client struct {
 	*ethclient.Client
 	ctx        context.Context
 	cfg        ClientOpt
-	transactor *account.Account
+	transactor *bind.TransactOpts
 }
 
-func NewClient(transactor *account.Account, url string, cfg ClientOpt) (*Client, error) {
-	client, err := ethclient.Dial(url)
+func NewClient(key *key.Key, url string, cfg ClientOpt) (*Client, error) {
+	ethClient, err := ethclient.Dial(url)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Client{
-		Client:     client,
-		ctx:        context.Background(),
-		cfg:        cfg,
-		transactor: transactor,
-	}, err
+	client := &Client{
+		Client: ethClient,
+		ctx:    context.Background(),
+		cfg:    cfg,
+	}
+	client.SetAccount(key)
+	return client, nil
 }
 
 func (c Client) Account() *bind.TransactOpts {
-	return c.transactor.TransactOpts()
+	return c.transactor
 }
 
-func (c *Client) SetAccount(account *account.Account) {
-	c.transactor = account
+func (c *Client) SetAccount(key *key.Key) {
+	c.transactor = bind.NewKeyedTransactor(key.PrivateKey)
 }
 
 func (c *Client) waitConfirmation(ctx context.Context) error {
