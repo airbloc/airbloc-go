@@ -36,3 +36,19 @@
 [[constraint]]
   name = "github.com/mongodb/mongo-go-driver"
   version = "0.0.17"
+
+[[constraint]]
+  name = "github.com/go-yaml/yaml"
+  version = "2.2.1"
+
+[[constraint]]
+  name = "github.com/libp2p/go-libp2p"
+  version = "6.0.23"
+
+[[constraint]]
+  name = "github.com/libp2p/go-libp2p-kad-dht"
+  version = "4.4.12"
+
+[[constraint]]
+  name = "github.com/stretchr/testify"
+  version = "1.2.2"

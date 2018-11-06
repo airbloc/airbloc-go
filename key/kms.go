@@ -39,5 +39,5 @@ func (kms *Manager) SignEthTx(tx *types.Transaction) (*types.Transaction, error)
 }
 
 func (kms *Manager) SignBDBTx(tx *txn.Transaction) error {
-	return tx.Sign([]*txn.KeyPair{kms.OwnerKey.DeriveEd25519KeyPair()})
+	return tx.Sign([]*txn.KeyPair{kms.OwnerKey.DeriveBigchainDBKeyPair()})
 }
