@@ -71,6 +71,9 @@ func (airbloc *AirblocBackend) Start() error {
 }
 
 func (airbloc *AirblocBackend) Stop() {
+	airbloc.Ethclient.Close()
+	airbloc.LocalDatabase.Close()
+	airbloc.MetaDatabase.Close()
 	for _, service := range airbloc.Services {
 		service.Stop()
 	}
