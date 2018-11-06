@@ -66,7 +66,7 @@ func (warehouse *DataWarehouse) Store(stream *BundleStream) (*bundle.Bundle, err
 
 	createdBundle := &bundle.Bundle{
 		Id:         bundleId,
-		Provider:   nil, /* TODO: implement appID */
+		Provider:   common.ID{}, /* TODO: implement appID */
 		Collection: stream.collection,
 		DataCount:  stream.DataCount,
 		IngestedAt: ingestedAt,

@@ -1,7 +1,7 @@
 syntax = "proto3";
 package airbloc.exchange;
 
-option go_package = "github.com/airbloc/airbloc-go/exchange";
+option go_package = "github.com/airbloc/airbloc-go/exchange/api";
 
 import "proto/data.proto";
 import "proto/types.proto";
@@ -10,10 +10,10 @@ service Exchange {
     rpc Order(OrderRequest) returns (airbloc.common.Hash);
 
     rpc Settle(airbloc.common.Hash) returns (airbloc.common.Result);
-    rpc Reject(OrderId) returns (airbloc.common.Result);
+    rpc Reject(OrderIdRequest) returns (airbloc.common.Result);
 
     // after Open()
-    rpc CloseOrder(OrderId) returns (airbloc.common.Result);
+    rpc CloseOrder(OrderIdRequest) returns (airbloc.common.Result);
 }
 
 message Contract {
@@ -33,6 +33,10 @@ message OrderRequest {
     string offeree = 4;
     repeated string option = 5;
     double amount = 6;
+}
+
+message OrderIdRequest {
+    string OrderId = 1;
 }
 
 message ContractId {

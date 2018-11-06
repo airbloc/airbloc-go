@@ -9,7 +9,7 @@ const (
 	EventDenied       = "Denied"
 )
 
-func (s *Service) ParseRegisteredEvent(logData []byte) (
+func (s *Collections) ParseRegisteredEvent(logData []byte) (
 	event *adapter.CollectionRegistryRegistered,
 	err error,
 ) {
@@ -17,7 +17,7 @@ func (s *Service) ParseRegisteredEvent(logData []byte) (
 	return
 }
 
-func (s *Service) ParseUnregsiteredEvent(logData []byte) (
+func (s *Collections) ParseUnregsiteredEvent(logData []byte) (
 	event *adapter.CollectionRegistryUnregistered,
 	err error,
 ) {
@@ -25,7 +25,7 @@ func (s *Service) ParseUnregsiteredEvent(logData []byte) (
 	return
 }
 
-func (s *Service) ParseAllowedEvent(logData []byte) (
+func (s *Collections) ParseAllowedEvent(logData []byte) (
 	event *adapter.CollectionRegistryAllowed,
 	err error,
 ) {
@@ -33,7 +33,7 @@ func (s *Service) ParseAllowedEvent(logData []byte) (
 	return
 }
 
-func (s *Service) ParseDenideEvent(logData []byte) (
+func (s *Collections) ParseDenideEvent(logData []byte) (
 	event *adapter.CollectionRegistryDenied,
 	err error,
 ) {

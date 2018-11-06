@@ -1,7 +1,7 @@
 syntax = "proto3";
 package airbloc.collections;
 
-option go_package = "github.com/airbloc/airbloc-go/account";
+option go_package = "github.com/airbloc/airbloc-go/account/api";
 
 import "proto/types.proto";
 

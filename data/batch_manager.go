@@ -32,7 +32,7 @@ func createBatchId() (string, error) {
 	return hex.EncodeToString(bytes), nil
 }
 
-func (operator *BatchManager) CreateBatch() (*Batch, string, error) {
+func (operator *BatchManager) Create() (*Batch, string, error) {
 	batchId, err := createBatchId()
 	if err != nil {
 		return nil, batchId, err
@@ -47,13 +47,13 @@ func (operator *BatchManager) CreateBatch() (*Batch, string, error) {
 	return batch, batchId, nil
 }
 
-func (operator *BatchManager) GetBatch(batchId string) (*Batch, error) {
+func (operator *BatchManager) Get(batchId string) (*Batch, error) {
 	if operator.batches[batchId] != nil {
 		return operator.batches[batchId], nil
 	}
 
 	// try in local storage
-	existsInLocal, err := operator.localStorage.Has([]byte(batchId))
+	existsInLocal, err := operator.localStorage.Has(batchId)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to query batchId to local database")
 	}
@@ -61,7 +61,7 @@ func (operator *BatchManager) GetBatch(batchId string) (*Batch, error) {
 		return nil, errors.Errorf("batchId %s does not exist.", batchId)
 	}
 
-	batchData, err := operator.localStorage.Get([]byte(batchId))
+	batchData, err := operator.localStorage.Get(batchId)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load batchId to local database")
 	}
@@ -76,7 +76,7 @@ func (operator *BatchManager) Save(batchId string) error {
 	}
 
 	batchData := batch.Marshal()
-	return operator.localStorage.Put([]byte(batchId), batchData)
+	return operator.localStorage.Put(batchId, batchData)
 }
 
 func (operator *BatchManager) Delete(batchId string) error {
@@ -84,5 +84,5 @@ func (operator *BatchManager) Delete(batchId string) error {
 		return errors.Errorf("batchId %s not found.", batchId)
 	}
 	delete(operator.batches, batchId)
-	return operator.localStorage.Delete([]byte(batchId))
+	return operator.localStorage.Delete(batchId)
 }
