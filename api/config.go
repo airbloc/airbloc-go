@@ -1,72 +1,57 @@
 package api
 
 import (
-	"github.com/airbloc/airbloc-go/blockchain"
 	"time"
 )
 
 type Config struct {
-	PrivateKeyPath string
-	Port           int
+	PrivateKeyPath string `default:"private.key" yaml:"privateKeyPath"`
+	Port           int    `default:"9124" yaml:"port"`
 
 	LocalDB struct {
-		Path    string
-		Version int
-	}
+		Path    string `default:"local/"`
+		Version int    `default:"1"`
+	} `yaml:"localDb"`
 
 	MetaDB struct {
-		BigchainDBEndpoint string
-		MongoDBEndpoint    string
-		Version            int
-	}
+		BigchainDBEndpoint string `default:"http://localhost:9984" yaml:"bigchainDbEndpoint"`
+		MongoDBEndpoint    string `default:"mongodb://localhost:27017" yaml:"mongoDbEndpoint"`
+		Version            int    `default:"1"`
+	} `yaml:"metaDb"`
 
 	Blockchain struct {
-		Endpoint string
-		Option   blockchain.ClientOpt
+		Endpoint string `default:"http://localhost:8545"`
+		Options  struct {
+			MinConfirmations int `default:"1" yaml:"minConfirmations"`
+		}
+		Deployments struct {
+			Accounts           string `yaml:"Accounts"`
+			AppRegistry        string `yaml:"AppRegistry"`
+			CollectionRegistry string `yaml:"CollectionRegistry"`
+			DataRegistry       string `yaml:"DataRegistry"`
+			Exchange           string `yaml:"Exchange"`
+			SchemaRegistry     string `yaml:"SchemaRegistry"`
+		}
 	}
 
 	Warehouse struct {
-		DefaultStorage string
+		DefaultStorage string `default:"local" yaml:"defaultStorage"`
 
 		Http struct {
-			Timeout         time.Duration
-			MaxConnsPerHost int
+			Timeout         time.Duration `default:"30s"`
+			MaxConnsPerHost int           `default:"5" yaml:"maxConnsPerHost"`
 		}
 
 		LocalStorage struct {
-			SavePath string
-			Endpoint string
+			SavePath string `default:"local/warehouse"`
+			Endpoint string `default:"http://localhost:80"`
 		}
 
 		S3 struct {
-			Region     string
-			AccessKey  string
-			Bucket     string
-			PathPrefix string
+			Region     string `yaml:"region"`
+			AccessKey  string `yaml:"accessKey"`
+			Bucket     string `yaml:"bucket"`
+			PathPrefix string `yaml:"pathPrefix"`
 		}
 	}
-}
-
-func DefaultConfig() (config *Config) {
-	config = new(Config)
-	config.PrivateKeyPath = "private.key"
-	config.Port = 9124
-
-	config.LocalDB.Path = "local.db"
-	config.LocalDB.Version = 1
-
-	config.MetaDB.BigchainDBEndpoint = "http://localhost:9984/api/v1"
-	config.MetaDB.MongoDBEndpoint = "mongo://localhost:27017"
-	config.MetaDB.Version = 1
-
-	config.Blockchain.Endpoint = "http://localhost:8545"
-	config.Blockchain.Option.Confirmation = 1
-
-	config.Warehouse.DefaultStorage = "local"
-	config.Warehouse.Http.Timeout = 30 * time.Second
-	config.Warehouse.Http.MaxConnsPerHost = 10
-
-	config.Warehouse.LocalStorage.SavePath = "local/warehouse/"
-	config.Warehouse.LocalStorage.Endpoint = "http://localhost:9125/"
-	return
 }
