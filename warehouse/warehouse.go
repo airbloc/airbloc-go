@@ -50,12 +50,16 @@ func (warehouse *DataWarehouse) encrypt(d *data.Data) (*data.EncryptedData, erro
 		return nil, err
 	}
 	return &data.EncryptedData{
-		Payload: encryptedPayload,
-		Capsule: nil,
+		OwnerAnid: d.OwnerAnid,
+		Payload:   encryptedPayload,
+		Capsule:   nil,
 	}, nil
 }
 
 func (warehouse *DataWarehouse) Store(stream *BundleStream) (*bundle.Bundle, error) {
+	if stream == nil {
+		return nil, errors.New("No data in the stream.")
+	}
 	ingestedAt := time.Now()
 
 	// TODO: hash collision proof / generate on contract
