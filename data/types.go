@@ -14,9 +14,9 @@ type Data struct {
 }
 
 type EncryptedData struct {
-	Data
-	Payload []byte `json:"payload"`
-	Capsule []byte `json:"capsule"`
+	OwnerAnid string `json:"ownerAnid"`
+	Payload   []byte `json:"payload"`
+	Capsule   []byte `json:"capsule"`
 }
 
 type ID struct {

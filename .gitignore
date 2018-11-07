@@ -1,5 +1,10 @@
 abi
+contracts/truffle-config.local.js
 config.json
+private.key
+local/
+local.db
+config.yml
 **/node_modules
 **/build
 

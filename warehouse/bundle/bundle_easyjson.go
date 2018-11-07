@@ -4,7 +4,6 @@ package bundle
 
 import (
 	json "encoding/json"
-
 	data "github.com/airbloc/airbloc-go/data"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
@@ -233,6 +232,8 @@ func easyjson40af25b0DecodeGithubComAirblocAirblocGoData(in *jlexer.Lexer, out *
 			continue
 		}
 		switch key {
+		case "ownerAnid":
+			out.OwnerAnid = string(in.String())
 		case "payload":
 			if in.IsNull() {
 				in.Skip()
@@ -247,8 +248,6 @@ func easyjson40af25b0DecodeGithubComAirblocAirblocGoData(in *jlexer.Lexer, out *
 			} else {
 				out.Capsule = in.Bytes()
 			}
-		case "ownerAnid":
-			out.OwnerAnid = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -263,6 +262,16 @@ func easyjson40af25b0EncodeGithubComAirblocAirblocGoData(out *jwriter.Writer, in
 	out.RawByte('{')
 	first := true
 	_ = first
+	{
+		const prefix string = ",\"ownerAnid\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.OwnerAnid))
+	}
 	{
 		const prefix string = ",\"payload\":"
 		if first {
@@ -282,16 +291,6 @@ func easyjson40af25b0EncodeGithubComAirblocAirblocGoData(out *jwriter.Writer, in
 			out.RawString(prefix)
 		}
 		out.Base64Bytes(in.Capsule)
-	}
-	{
-		const prefix string = ",\"ownerAnid\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.OwnerAnid))
 	}
 	out.RawByte('}')
 }
