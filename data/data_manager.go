@@ -57,7 +57,12 @@ func (manager *Manager) Get(dataId string) (*ablCommon.Data, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to retrieve bundle of data %s", dataId)
 	}
+	encryptedData := bundle.Data[id.Index]
 
-	data := bundle.Data[id.Index]
+	// try to decrypt data using own private key / re-encryption key
+	data, err := manager.kms.DecryptExternalData(encryptedData)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to decrypt data %s", dataId)
+	}
 	return data, nil
 }
