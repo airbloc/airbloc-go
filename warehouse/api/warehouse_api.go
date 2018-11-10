@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/airbloc/airbloc-go/api"
 	"github.com/airbloc/airbloc-go/common"
-	"github.com/airbloc/airbloc-go/data"
 	"github.com/airbloc/airbloc-go/warehouse"
 	"github.com/airbloc/airbloc-go/warehouse/protocol"
 	"github.com/airbloc/airbloc-go/warehouse/storage"
@@ -37,7 +36,13 @@ func New(airbloc *api.AirblocBackend) (_ api.API, err error) {
 		return nil, errors.Errorf("unknown storage type: %s", config.DefaultStorage)
 	}
 
-	dw := warehouse.New(airbloc.Kms, defaultStorage, supportedProtocols)
+	dw := warehouse.New(
+		airbloc.Kms,
+		airbloc.LocalDatabase,
+		airbloc.MetaDatabase,
+		defaultStorage,
+		supportedProtocols,
+	)
 	return &API{dw}, nil
 }
 
@@ -59,7 +64,7 @@ func (api *API) StoreBundle(stream Warehouse_StoreBundleServer) error {
 			bundleStream = api.warehouse.CreateBundle(collectionId)
 		}
 
-		datum := &data.Data{
+		datum := &common.Data{
 			Payload:   request.GetPayload(),
 			OwnerAnid: request.GetOwnerId(),
 		}
@@ -97,7 +102,7 @@ func (api *API) StoreEncryptedBundle(stream Warehouse_StoreEncryptedBundleServer
 			bundleStream = api.warehouse.CreateBundle(collectionId)
 		}
 
-		datum := &data.EncryptedData{
+		datum := &common.EncryptedData{
 			Payload:   request.GetEncryptedPayload(),
 			OwnerAnid: request.GetOwnerId(),
 			Capsule:   request.GetCapsule(),
