@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/airbloc/airbloc-go/common"
-	"github.com/airbloc/airbloc-go/data"
 	"github.com/mailru/easyjson"
 )
 
@@ -16,7 +15,7 @@ type Bundle struct {
 	DataCount  int       `json:"dataCount"`
 	IngestedAt time.Time `json:"ingestedAt"`
 
-	Data []*data.EncryptedData `json:"data"`
+	Data []*common.EncryptedData `json:"data"`
 }
 
 func Unmarshal(bundleData []byte) (*Bundle, error) {

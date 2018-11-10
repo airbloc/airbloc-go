@@ -4,7 +4,7 @@ package bundle
 
 import (
 	json "encoding/json"
-	data "github.com/airbloc/airbloc-go/data"
+	common "github.com/airbloc/airbloc-go/common"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
@@ -65,23 +65,23 @@ func easyjson40af25b0DecodeGithubComAirblocAirblocGoWarehouseBundle(in *jlexer.L
 				in.Delim('[')
 				if out.Data == nil {
 					if !in.IsDelim(']') {
-						out.Data = make([]*data.EncryptedData, 0, 8)
+						out.Data = make([]*common.EncryptedData, 0, 8)
 					} else {
-						out.Data = []*data.EncryptedData{}
+						out.Data = []*common.EncryptedData{}
 					}
 				} else {
 					out.Data = (out.Data)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v1 *data.EncryptedData
+					var v1 *common.EncryptedData
 					if in.IsNull() {
 						in.Skip()
 						v1 = nil
 					} else {
 						if v1 == nil {
-							v1 = new(data.EncryptedData)
+							v1 = new(common.EncryptedData)
 						}
-						easyjson40af25b0DecodeGithubComAirblocAirblocGoData(in, &*v1)
+						easyjson40af25b0DecodeGithubComAirblocAirblocGoCommon(in, &*v1)
 					}
 					out.Data = append(out.Data, v1)
 					in.WantComma()
@@ -181,7 +181,7 @@ func easyjson40af25b0EncodeGithubComAirblocAirblocGoWarehouseBundle(out *jwriter
 				if v3 == nil {
 					out.RawString("null")
 				} else {
-					easyjson40af25b0EncodeGithubComAirblocAirblocGoData(out, *v3)
+					easyjson40af25b0EncodeGithubComAirblocAirblocGoCommon(out, *v3)
 				}
 			}
 			out.RawByte(']')
@@ -213,7 +213,7 @@ func (v *Bundle) UnmarshalJSON(data []byte) error {
 func (v *Bundle) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson40af25b0DecodeGithubComAirblocAirblocGoWarehouseBundle(l, v)
 }
-func easyjson40af25b0DecodeGithubComAirblocAirblocGoData(in *jlexer.Lexer, out *data.EncryptedData) {
+func easyjson40af25b0DecodeGithubComAirblocAirblocGoCommon(in *jlexer.Lexer, out *common.EncryptedData) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -258,7 +258,7 @@ func easyjson40af25b0DecodeGithubComAirblocAirblocGoData(in *jlexer.Lexer, out *
 		in.Consumed()
 	}
 }
-func easyjson40af25b0EncodeGithubComAirblocAirblocGoData(out *jwriter.Writer, in data.EncryptedData) {
+func easyjson40af25b0EncodeGithubComAirblocAirblocGoCommon(out *jwriter.Writer, in common.EncryptedData) {
 	out.RawByte('{')
 	first := true
 	_ = first
