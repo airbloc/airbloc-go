@@ -8,6 +8,7 @@ import (
 	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/airbloc/airbloc-go/warehouse"
+	"github.com/airbloc/airbloc-go/warehouse/bundle"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
 )
@@ -65,4 +66,28 @@ func (manager *Manager) Get(dataId string) (*ablCommon.Data, error) {
 		return nil, errors.Wrapf(err, "failed to decrypt data %s", dataId)
 	}
 	return data, nil
+}
+
+func (manager *Manager) GetBatch(batch *Batch) ([]*ablCommon.Data, error) {
+	bundles := make(map[ablCommon.ID]*bundle.Bundle)
+	dataList := make([]*ablCommon.Data, batch.Count)
+
+	for dataId := range batch.Iterator() {
+		if _, alreadyFetched := bundles[dataId.BundleID]; !alreadyFetched {
+			b, err := manager.warehouse.Get(dataId.BundleID.String())
+			if err != nil {
+				return nil, errors.Wrapf(err, "failed to retrieve bundle of data %s", dataId.String())
+			}
+			bundles[dataId.BundleID] = b
+		}
+		encryptedData := bundles[dataId.BundleID].Data[dataId.Index]
+
+		// try to decrypt data using own private key / re-encryption key
+		data, err := manager.kms.DecryptExternalData(encryptedData)
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to decrypt data %s", dataId)
+		}
+		dataList = append(dataList, data)
+	}
+	return dataList, nil
 }
