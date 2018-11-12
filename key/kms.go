@@ -2,6 +2,8 @@ package key
 
 import (
 	"crypto/rand"
+	"github.com/airbloc/airbloc-go/common"
+	"github.com/ethereum/go-ethereum/log"
 
 	"github.com/airbloc/airbloc-go/database/localdb"
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
@@ -17,10 +19,17 @@ type Manager struct {
 }
 
 func NewManager(ownerKey *Key, localDatabase localdb.Database) *Manager {
+	log.Debug("Private key loaded", "address", ownerKey.EthereumAddress.Hex())
 	return &Manager{
 		OwnerKey:      ownerKey,
 		localDatabase: localDatabase,
 	}
+}
+
+// DecryptExternalData looks for re-encryption key, then tries to decrypt.
+func (kms *Manager) DecryptExternalData(data *common.EncryptedData) (*common.Data, error) {
+	// TODO: Implement key.Manager.DecryptExternalData
+	return nil, nil
 }
 
 func (kms *Manager) Encrypt(payload string) ([]byte, error) {

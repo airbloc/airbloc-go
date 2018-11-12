@@ -2,29 +2,38 @@ package metadb
 
 import (
 	"context"
-
 	"github.com/bigchaindb/go-bigchaindb-driver/pkg/client"
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/mongodb/mongo-go-driver/mongo/findopt"
 	"golang.org/x/crypto/ed25519"
+	"net/http"
 )
 
 type bigchainDB struct {
-	bdb *client.Client
-	mdb *mongo.Database
-	key *txn.KeyPair
-	v   int
+	bdb    *client.Client
+	client *http.Client
+	mdb    *mongo.Database
+	key    *txn.KeyPair
+	v      int
 }
 
 // http://localhost:9984 or external gateway
 func NewBigchainDB(bdbUrl, mdbUrl string, key *txn.KeyPair, version int) (Database, error) {
+	log.Debug("BigchainDB initiated", "endpoint", bdbUrl)
 	config := client.ClientConfig{Url: bdbUrl}
 	bdbClient, err := client.New(config)
 	if err != nil {
 		return nil, err
 	}
+
+	block, err := bdbClient.GetBlock("0")
+	if err != nil {
+		panic(err)
+	}
+	log.Debug("Connection Test", "block", block)
 
 	mdbClient, err := mongo.NewClient(mdbUrl)
 	if err != nil {
@@ -32,10 +41,11 @@ func NewBigchainDB(bdbUrl, mdbUrl string, key *txn.KeyPair, version int) (Databa
 	}
 
 	return &bigchainDB{
-		bdb: bdbClient,
-		mdb: mdbClient.Database(BigchainDBName),
-		key: key,
-		v:   version,
+		bdb:    bdbClient,
+		mdb:    mdbClient.Database(BigchainDBName),
+		client: &http.Client{},
+		key:    key,
+		v:      version,
 	}, nil
 }
 
@@ -49,14 +59,12 @@ func (db *bigchainDB) Create(
 		return
 	}
 
-	if err = db.signTx(tx); err != nil {
+	inTxn, err := db.prepareTx(tx)
+	if err != nil {
 		return
 	}
 
-	if err = db.sendTx(tx, mode); err != nil {
-		return
-	}
-
+	err = db.sendIntermediateTx(inTxn)
 	return
 }
 
@@ -65,7 +73,7 @@ func (db *bigchainDB) RetrieveOne(
 	query *bson.Document,
 	opts ...findopt.One,
 ) (*bson.Document, error) {
-	metaDB := db.mdb.Collection(BigchainMetaCollection)
+	metaDB := db.mdb.Collection(BigchainAssetCollection)
 	res := metaDB.FindOne(ctx, query, opts...)
 
 	doc := bson.NewDocument()
@@ -81,7 +89,7 @@ func (db *bigchainDB) RetrieveMany(
 	query *bson.Document,
 	opts ...findopt.Find,
 ) (*bson.Document, error) {
-	metaDB := db.mdb.Collection(BigchainMetaCollection)
+	metaDB := db.mdb.Collection(BigchainAssetCollection)
 
 	cursor, err := metaDB.Find(ctx, query, opts...)
 	if err != nil {
@@ -105,14 +113,12 @@ func (db *bigchainDB) Append(
 		return
 	}
 
-	if err = db.signTx(tx); err != nil {
+	inTxn, err := db.prepareTx(tx)
+	if err != nil {
 		return
 	}
 
-	if err = db.sendTx(tx, mode); err != nil {
-		return
-	}
-
+	err = db.sendIntermediateTx(inTxn)
 	return
 }
 
