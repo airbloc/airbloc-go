@@ -59,7 +59,7 @@ func (service *APIService) Start() error {
 	}
 
 	log.Info("Server started", "address", service.Address)
-	if err := service.HttpServer.Serve(lis); err != http.ErrServerClosed {
+	if err := service.GrpcServer.Serve(lis); err != http.ErrServerClosed {
 		return errors.Wrapf(err, "failed to start HTTP server")
 	}
 	return nil

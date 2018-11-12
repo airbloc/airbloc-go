@@ -13,5 +13,5 @@ var (
 
 type Protocol interface {
 	Name() string
-	Read(uri url.URL) (*bundle.Bundle, error)
+	Read(uri *url.URL) (*bundle.Bundle, error)
 }

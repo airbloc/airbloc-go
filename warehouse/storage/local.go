@@ -16,18 +16,21 @@ type LocalStorage struct {
 	Endpoint string
 }
 
-func NewLocalStorage(savePath string, endpoint string) *LocalStorage {
+func NewLocalStorage(savePath string, endpoint string) (*LocalStorage, error) {
+	if _, err := os.Stat(savePath); os.IsNotExist(err) {
+		err := os.MkdirAll(savePath, 0755)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to create save path")
+		}
+	}
+
 	return &LocalStorage{
 		SavePath: savePath,
 		Endpoint: endpoint,
-	}
+	}, nil
 }
 
 func (localStorage *LocalStorage) Save(bundle *bundle.Bundle) (*url.URL, error) {
-	if _, err := os.Stat(localStorage.SavePath); os.IsNotExist(err) {
-		return nil, errors.Errorf("the path %s does not exist", localStorage.SavePath)
-	}
-
 	fileName := fmt.Sprintf("%s.json", bundle.Id.String())
 	savePath := path.Join(localStorage.SavePath, fileName)
 

@@ -23,7 +23,7 @@ func newBatch(id string) *Batch {
 }
 
 // Append adds a data ID to the batch.
-func (batch *Batch) Append(dataId ID) {
+func (batch *Batch) Append(dataId common.DataID) {
 	indices := batch.set[dataId.BundleID]
 	if indices == nil {
 		indices = []int{}
@@ -36,12 +36,12 @@ func (batch *Batch) Append(dataId ID) {
 
 // Iterator returns an iterator channel that can be used to
 // traverse data IDs in for-range loop.
-func (batch *Batch) Iterator() chan ID {
-	ch := make(chan ID)
+func (batch *Batch) Iterator() chan common.DataID {
+	ch := make(chan common.DataID)
 	go func() {
 		for bundleId, indices := range batch.set {
 			for _, index := range indices {
-				ch <- ID{bundleId, index}
+				ch <- common.DataID{bundleId, index}
 			}
 		}
 		close(ch)
@@ -70,7 +70,7 @@ func UnmarshalBatch(batchId string, rawBatch []byte) (*Batch, error) {
 	dataIds := strings.Split(string(rawBatch), ",")
 	batch := newBatch(batchId)
 	for _, rawDataId := range dataIds {
-		dataId, err := NewDataID(rawDataId)
+		dataId, err := common.NewDataID(rawDataId)
 		if err != nil {
 			return nil, err
 		}

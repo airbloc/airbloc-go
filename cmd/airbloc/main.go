@@ -1,8 +1,7 @@
 package main
 
 import (
-	"strings"
-
+	"fmt"
 	accountAPI "github.com/airbloc/airbloc-go/account/api"
 	"github.com/airbloc/airbloc-go/api"
 	collectionsAPI "github.com/airbloc/airbloc-go/collections/api"
@@ -11,6 +10,9 @@ import (
 	schemasAPI "github.com/airbloc/airbloc-go/schemas/api"
 	warehouseAPI "github.com/airbloc/airbloc-go/warehouse/api"
 	"github.com/ethereum/go-ethereum/log"
+	"github.com/jinzhu/configor"
+	"os"
+	"strings"
 )
 
 var (
@@ -28,11 +30,22 @@ var (
 )
 
 func main() {
-	config := api.DefaultConfig()
+	config := new(api.Config)
+	if err := configor.Load(config, "config.yml"); err != nil {
+		fmt.Fprintln(os.Stderr, "Failed to load configurations.")
+		panic(err)
+	}
+
+	// setup logger
+	glogger := log.NewGlogHandler(log.StreamHandler(os.Stderr, log.TerminalFormat(true)))
+	glogger.Verbosity(log.Lvl(4))
+	log.Root().SetHandler(glogger)
 
 	backend, err := api.NewAirblocBackend(config)
 	if err != nil {
-		log.Error("Failed to initialize Airbloc backend.", "error", err)
+		log.Error("Failed to initialize Airbloc backend.")
+		log.Error(err.Error())
+		return
 	}
 	defer backend.Stop()
 

@@ -26,7 +26,7 @@ func (http *HttpProtocol) Name() string {
 	return "http"
 }
 
-func (http *HttpProtocol) Read(uri url.URL) (*bundle.Bundle, error) {
+func (http *HttpProtocol) Read(uri *url.URL) (*bundle.Bundle, error) {
 	request := fasthttp.AcquireRequest()
 	request.SetRequestURI(uri.String())
 

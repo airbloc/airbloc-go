@@ -1,99 +1,57 @@
 package api
 
 import (
-	"os"
 	"time"
-
-	"github.com/airbloc/airbloc-go/blockchain"
-	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
-	PrivateKeyPath string `yaml:"private_key_path"`
-	Port           int    `yaml:"port"`
+	PrivateKeyPath string `default:"private.key" yaml:"privateKeyPath"`
+	Port           int    `default:"9124" yaml:"port"`
 
 	LocalDB struct {
-		Path    string `yaml:"path"`
-		Version int    `yaml:"version"`
-	} `yaml:"local_db"`
+		Path    string `default:"local/"`
+		Version int    `default:"1"`
+	} `yaml:"localDb"`
 
 	MetaDB struct {
-		BigchainDBEndpoint string `yaml:"bigchain_db_endpoint"`
-		MongoDBEndpoint    string `yaml:"mongo_db_endpoint"`
-		Version            int    `yaml:"version"`
-	} `yaml:"meta_db"`
+		BigchainDBEndpoint string `default:"http://localhost:9984" yaml:"bigchainDbEndpoint"`
+		MongoDBEndpoint    string `default:"mongodb://localhost:27017" yaml:"mongoDbEndpoint"`
+		Version            int    `default:"1"`
+	} `yaml:"metaDb"`
 
 	Blockchain struct {
-		Endpoint string               `yaml:"endpoint"`
-		Option   blockchain.ClientOpt `yaml:"option"`
-	} `yaml:"blockchain"`
+		Endpoint string `default:"http://localhost:8545"`
+		Options  struct {
+			MinConfirmations int `default:"1" yaml:"minConfirmations"`
+		}
+		Deployments struct {
+			Accounts           string `yaml:"Accounts"`
+			AppRegistry        string `yaml:"AppRegistry"`
+			CollectionRegistry string `yaml:"CollectionRegistry"`
+			DataRegistry       string `yaml:"DataRegistry"`
+			Exchange           string `yaml:"Exchange"`
+			SchemaRegistry     string `yaml:"SchemaRegistry"`
+		}
+	}
 
 	Warehouse struct {
-		DefaultStorage string `yaml:"default_storage"`
+		DefaultStorage string `default:"local" yaml:"defaultStorage"`
 
 		Http struct {
-			Timeout         time.Duration `yaml:"timeout"`
-			MaxConnsPerHost int           `yaml:"max_conns_per_host"`
-		} `yaml:"http"`
+			Timeout         time.Duration `default:"30s"`
+			MaxConnsPerHost int           `default:"5" yaml:"maxConnsPerHost"`
+		}
 
 		LocalStorage struct {
-			SavePath string `yaml:"save_path"`
-			Endpoint string `yaml:"endpoint"`
-		} `yaml:"local_storage"`
+			SavePath string `default:"local/warehouse"`
+			Endpoint string `default:"http://localhost:80"`
+		}
 
 		S3 struct {
 			Region     string `yaml:"region"`
-			AccessKey  string `yaml:"access_key"`
+			AccessKey  string `yaml:"accessKey"`
 			Bucket     string `yaml:"bucket"`
-			PathPrefix string `yaml:"path_prefix"`
-		} `yaml:"s3"`
-	} `yaml:"warehouse"`
-}
-
-func DefaultConfig() (config *Config) {
-	config = new(Config)
-	config.PrivateKeyPath = "private.key"
-	config.Port = 9124
-
-	config.LocalDB.Path = "local.db"
-	config.LocalDB.Version = 1
-
-	config.MetaDB.BigchainDBEndpoint = "http://localhost:9984/api/v1"
-	config.MetaDB.MongoDBEndpoint = "mongo://localhost:27017"
-	config.MetaDB.Version = 1
-
-	config.Blockchain.Endpoint = "http://localhost:8545"
-	config.Blockchain.Option.Confirmation = 1
-
-	config.Warehouse.DefaultStorage = "local"
-	config.Warehouse.Http.Timeout = 30 * time.Second
-	config.Warehouse.Http.MaxConnsPerHost = 10
-
-	config.Warehouse.LocalStorage.SavePath = "local/warehouse/"
-	config.Warehouse.LocalStorage.Endpoint = "http://localhost:9125/"
-	return
-}
-
-func ImportConfig(filepath string) (*Config, error) {
-	config := new(Config)
-	file, err := os.OpenFile(filepath, os.O_RDONLY, os.ModePerm)
-	if err != nil {
-		return nil, err
+			PathPrefix string `yaml:"pathPrefix"`
+		}
 	}
-	defer file.Close()
-
-	decoder := yaml.NewDecoder(file)
-	err = decoder.Decode(&config)
-	return config, err
-}
-
-func (cfg *Config) Export(filepath string) error {
-	file, err := os.OpenFile(filepath, os.O_WRONLY, os.ModePerm)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	encoder := yaml.NewEncoder(file)
-	return encoder.Encode(cfg)
 }
