@@ -2,6 +2,7 @@ package key
 
 import (
 	"crypto/rand"
+
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/ethereum/go-ethereum/log"
 

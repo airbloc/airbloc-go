@@ -3,13 +3,14 @@ package api
 import (
 	"context"
 
+	"io"
+
 	"github.com/airbloc/airbloc-go/api"
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/warehouse"
 	"github.com/airbloc/airbloc-go/warehouse/protocol"
 	"github.com/airbloc/airbloc-go/warehouse/storage"
 	"github.com/pkg/errors"
-	"io"
 )
 
 type API struct {

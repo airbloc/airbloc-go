@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"strings"
+
 	accountAPI "github.com/airbloc/airbloc-go/account/api"
 	"github.com/airbloc/airbloc-go/api"
 	collectionsAPI "github.com/airbloc/airbloc-go/collections/api"
@@ -11,8 +14,6 @@ import (
 	warehouseAPI "github.com/airbloc/airbloc-go/warehouse/api"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/jinzhu/configor"
-	"os"
-	"strings"
 )
 
 var (

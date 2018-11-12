@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+
 	"github.com/airbloc/airbloc-go/warehouse/api"
 	"google.golang.org/grpc"
-	"log"
 )
 
 //go:generate ./build.sh

@@ -2,6 +2,7 @@ package metadb
 
 import (
 	"context"
+
 	"github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo/findopt"
