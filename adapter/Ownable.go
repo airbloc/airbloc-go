@@ -355,7 +355,7 @@ func (_Ownable *OwnableFilterer) ParseOwnershipRenouncedFromReceipt(receipt *typ
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
 			event := new(OwnableOwnershipRenounced)
-			if err := _Ownable.contract.UnpackLog(event, "OwnershipRenounced", log); err != nil {
+			if err := _Ownable.contract.UnpackLog(event, "OwnershipRenounced", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -508,7 +508,7 @@ func (_Ownable *OwnableFilterer) ParseOwnershipTransferredFromReceipt(receipt *t
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
 			event := new(OwnableOwnershipTransferred)
-			if err := _Ownable.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+			if err := _Ownable.contract.UnpackLog(event, "OwnershipTransferred", *log); err != nil {
 				return nil, err
 			}
 			return event, nil

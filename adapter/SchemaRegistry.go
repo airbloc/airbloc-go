@@ -418,7 +418,7 @@ func (_SchemaRegistry *SchemaRegistryFilterer) ParseRegistrationFromReceipt(rece
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x34b195a2b14d8eac732b11770bab8ed3823e96642f703b1a973f4a2981208d0f") {
 			event := new(SchemaRegistryRegistration)
-			if err := _SchemaRegistry.contract.UnpackLog(event, "Registration", log); err != nil {
+			if err := _SchemaRegistry.contract.UnpackLog(event, "Registration", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -566,7 +566,7 @@ func (_SchemaRegistry *SchemaRegistryFilterer) ParseUnregistrationFromReceipt(re
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x8c36f878328ed4dfe683ccea03edd5a0c360e665285312270adb9a22592367fb") {
 			event := new(SchemaRegistryUnregistration)
-			if err := _SchemaRegistry.contract.UnpackLog(event, "Unregistration", log); err != nil {
+			if err := _SchemaRegistry.contract.UnpackLog(event, "Unregistration", *log); err != nil {
 				return nil, err
 			}
 			return event, nil

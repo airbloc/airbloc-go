@@ -541,7 +541,7 @@ func (_Whitelist *WhitelistFilterer) ParseOwnershipRenouncedFromReceipt(receipt 
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
 			event := new(WhitelistOwnershipRenounced)
-			if err := _Whitelist.contract.UnpackLog(event, "OwnershipRenounced", log); err != nil {
+			if err := _Whitelist.contract.UnpackLog(event, "OwnershipRenounced", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -694,7 +694,7 @@ func (_Whitelist *WhitelistFilterer) ParseOwnershipTransferredFromReceipt(receip
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
 			event := new(WhitelistOwnershipTransferred)
-			if err := _Whitelist.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+			if err := _Whitelist.contract.UnpackLog(event, "OwnershipTransferred", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -847,7 +847,7 @@ func (_Whitelist *WhitelistFilterer) ParseRoleAddedFromReceipt(receipt *types.Re
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xbfec83d64eaa953f2708271a023ab9ee82057f8f3578d548c1a4ba0b5b700489") {
 			event := new(WhitelistRoleAdded)
-			if err := _Whitelist.contract.UnpackLog(event, "RoleAdded", log); err != nil {
+			if err := _Whitelist.contract.UnpackLog(event, "RoleAdded", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -996,7 +996,7 @@ func (_Whitelist *WhitelistFilterer) ParseRoleRemovedFromReceipt(receipt *types.
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xd211483f91fc6eff862467f8de606587a30c8fc9981056f051b897a418df803a") {
 			event := new(WhitelistRoleRemoved)
-			if err := _Whitelist.contract.UnpackLog(event, "RoleRemoved", log); err != nil {
+			if err := _Whitelist.contract.UnpackLog(event, "RoleRemoved", *log); err != nil {
 				return nil, err
 			}
 			return event, nil

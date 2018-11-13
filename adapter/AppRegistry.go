@@ -506,7 +506,7 @@ func (_AppRegistry *AppRegistryFilterer) ParseOwnershipRenouncedFromReceipt(rece
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
 			event := new(AppRegistryOwnershipRenounced)
-			if err := _AppRegistry.contract.UnpackLog(event, "OwnershipRenounced", log); err != nil {
+			if err := _AppRegistry.contract.UnpackLog(event, "OwnershipRenounced", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -659,7 +659,7 @@ func (_AppRegistry *AppRegistryFilterer) ParseOwnershipTransferredFromReceipt(re
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
 			event := new(AppRegistryOwnershipTransferred)
-			if err := _AppRegistry.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+			if err := _AppRegistry.contract.UnpackLog(event, "OwnershipTransferred", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -812,7 +812,7 @@ func (_AppRegistry *AppRegistryFilterer) ParseRegisteredFromReceipt(receipt *typ
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x81fd67a36836c34ada265e9e349edf3799560c1e24a2149ba1ff6c427179f591") {
 			event := new(AppRegistryRegistered)
-			if err := _AppRegistry.contract.UnpackLog(event, "Registered", log); err != nil {
+			if err := _AppRegistry.contract.UnpackLog(event, "Registered", *log); err != nil {
 				return nil, err
 			}
 			return event, nil

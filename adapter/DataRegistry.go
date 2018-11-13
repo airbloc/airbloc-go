@@ -450,7 +450,7 @@ func (_DataRegistry *DataRegistryFilterer) ParseBundleRegisteredFromReceipt(rece
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xab7212f2e313639f22d9f8d95bc067b9289814ce97d8136a08e37d239023b1a3") {
 			event := new(DataRegistryBundleRegistered)
-			if err := _DataRegistry.contract.UnpackLog(event, "BundleRegistered", log); err != nil {
+			if err := _DataRegistry.contract.UnpackLog(event, "BundleRegistered", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -598,7 +598,7 @@ func (_DataRegistry *DataRegistryFilterer) ParseOwnershipRenouncedFromReceipt(re
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
 			event := new(DataRegistryOwnershipRenounced)
-			if err := _DataRegistry.contract.UnpackLog(event, "OwnershipRenounced", log); err != nil {
+			if err := _DataRegistry.contract.UnpackLog(event, "OwnershipRenounced", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -751,7 +751,7 @@ func (_DataRegistry *DataRegistryFilterer) ParseOwnershipTransferredFromReceipt(
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
 			event := new(DataRegistryOwnershipTransferred)
-			if err := _DataRegistry.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+			if err := _DataRegistry.contract.UnpackLog(event, "OwnershipTransferred", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -898,7 +898,7 @@ func (_DataRegistry *DataRegistryFilterer) ParsePunishedFromReceipt(receipt *typ
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xf6a2a2bc3297e42d6b873d907a8cd2699857e3d3700babd53b7061a3b4de6094") {
 			event := new(DataRegistryPunished)
-			if err := _DataRegistry.contract.UnpackLog(event, "Punished", log); err != nil {
+			if err := _DataRegistry.contract.UnpackLog(event, "Punished", *log); err != nil {
 				return nil, err
 			}
 			return event, nil

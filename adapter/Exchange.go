@@ -681,7 +681,7 @@ func (_Exchange *ExchangeFilterer) ParseOfferClosedFromReceipt(receipt *types.Re
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xb576186fa17f96f0991d21a162ff79d8c544b056e64be35c6511d366c4647c14") {
 			event := new(ExchangeOfferClosed)
-			if err := _Exchange.contract.UnpackLog(event, "OfferClosed", log); err != nil {
+			if err := _Exchange.contract.UnpackLog(event, "OfferClosed", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -829,7 +829,7 @@ func (_Exchange *ExchangeFilterer) ParseOfferOpenedFromReceipt(receipt *types.Re
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xad95aba0b0916a320123c0424d84ac766fc031e506a6bbce9b4402783b589920") {
 			event := new(ExchangeOfferOpened)
-			if err := _Exchange.contract.UnpackLog(event, "OfferOpened", log); err != nil {
+			if err := _Exchange.contract.UnpackLog(event, "OfferOpened", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -978,7 +978,7 @@ func (_Exchange *ExchangeFilterer) ParseOfferPresentedFromReceipt(receipt *types
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xd090216304141d567e88f9d1c28798912d797b8d0f627d9f2a97d4d5922a1b79") {
 			event := new(ExchangeOfferPresented)
-			if err := _Exchange.contract.UnpackLog(event, "OfferPresented", log); err != nil {
+			if err := _Exchange.contract.UnpackLog(event, "OfferPresented", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -1126,7 +1126,7 @@ func (_Exchange *ExchangeFilterer) ParseOfferRejectedFromReceipt(receipt *types.
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x780cea1692b166ae033a8fe67c3e7dd9f1d520e3c999d1c59b9fda6f6ed372e5") {
 			event := new(ExchangeOfferRejected)
-			if err := _Exchange.contract.UnpackLog(event, "OfferRejected", log); err != nil {
+			if err := _Exchange.contract.UnpackLog(event, "OfferRejected", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -1274,7 +1274,7 @@ func (_Exchange *ExchangeFilterer) ParseOfferSettledFromReceipt(receipt *types.R
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x8563cd74c7f85b9decc8d88aa698ad179ef37e8224ee11e8ce270d9e3fe3ce28") {
 			event := new(ExchangeOfferSettled)
-			if err := _Exchange.contract.UnpackLog(event, "OfferSettled", log); err != nil {
+			if err := _Exchange.contract.UnpackLog(event, "OfferSettled", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -1422,7 +1422,7 @@ func (_Exchange *ExchangeFilterer) ParseOwnershipRenouncedFromReceipt(receipt *t
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
 			event := new(ExchangeOwnershipRenounced)
-			if err := _Exchange.contract.UnpackLog(event, "OwnershipRenounced", log); err != nil {
+			if err := _Exchange.contract.UnpackLog(event, "OwnershipRenounced", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -1575,7 +1575,7 @@ func (_Exchange *ExchangeFilterer) ParseOwnershipTransferredFromReceipt(receipt 
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
 			event := new(ExchangeOwnershipTransferred)
-			if err := _Exchange.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+			if err := _Exchange.contract.UnpackLog(event, "OwnershipTransferred", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -1728,7 +1728,7 @@ func (_Exchange *ExchangeFilterer) ParseRoleAddedFromReceipt(receipt *types.Rece
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xbfec83d64eaa953f2708271a023ab9ee82057f8f3578d548c1a4ba0b5b700489") {
 			event := new(ExchangeRoleAdded)
-			if err := _Exchange.contract.UnpackLog(event, "RoleAdded", log); err != nil {
+			if err := _Exchange.contract.UnpackLog(event, "RoleAdded", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -1877,7 +1877,7 @@ func (_Exchange *ExchangeFilterer) ParseRoleRemovedFromReceipt(receipt *types.Re
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xd211483f91fc6eff862467f8de606587a30c8fc9981056f051b897a418df803a") {
 			event := new(ExchangeRoleRemoved)
-			if err := _Exchange.contract.UnpackLog(event, "RoleRemoved", log); err != nil {
+			if err := _Exchange.contract.UnpackLog(event, "RoleRemoved", *log); err != nil {
 				return nil, err
 			}
 			return event, nil

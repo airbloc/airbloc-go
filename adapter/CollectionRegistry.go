@@ -458,7 +458,7 @@ func (_CollectionRegistry *CollectionRegistryFilterer) ParseAllowedFromReceipt(r
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xa22515132971f50f788da1869934dff79436ef9486db69a7a59731a5fb61689d") {
 			event := new(CollectionRegistryAllowed)
-			if err := _CollectionRegistry.contract.UnpackLog(event, "Allowed", log); err != nil {
+			if err := _CollectionRegistry.contract.UnpackLog(event, "Allowed", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -615,7 +615,7 @@ func (_CollectionRegistry *CollectionRegistryFilterer) ParseDeniedFromReceipt(re
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x4d28190f1b112cd85f6380723c76d76de35cb4a80b5ab017d01f320b25db009e") {
 			event := new(CollectionRegistryDenied)
-			if err := _CollectionRegistry.contract.UnpackLog(event, "Denied", log); err != nil {
+			if err := _CollectionRegistry.contract.UnpackLog(event, "Denied", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -767,7 +767,7 @@ func (_CollectionRegistry *CollectionRegistryFilterer) ParseRegisteredFromReceip
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x10906fae603eebfac53ddc0f103bee8a044dd7643c425c7a90f921dfa15ef62c") {
 			event := new(CollectionRegistryRegistered)
-			if err := _CollectionRegistry.contract.UnpackLog(event, "Registered", log); err != nil {
+			if err := _CollectionRegistry.contract.UnpackLog(event, "Registered", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -925,7 +925,7 @@ func (_CollectionRegistry *CollectionRegistryFilterer) ParseUnregisteredFromRece
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x0231d91ceaa0291166e678222375c22a49172b2641f9003dcdebd63e1160cc70") {
 			event := new(CollectionRegistryUnregistered)
-			if err := _CollectionRegistry.contract.UnpackLog(event, "Unregistered", log); err != nil {
+			if err := _CollectionRegistry.contract.UnpackLog(event, "Unregistered", *log); err != nil {
 				return nil, err
 			}
 			return event, nil

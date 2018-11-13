@@ -407,13 +407,13 @@ var (
 			for _, log := range receipt.Logs {
 				if log.Topics[0] == common.HexToHash("0x{{printf "%x" .Original.Id}}") {
 					event := new({{$contract.Type}}{{.Normalized.Name}})
-					if err := _{{$contract.Type}}.contract.UnpackLog(event, "{{.Original.Name}}", log); err != nil {
+					if err := _{{$contract.Type}}.contract.UnpackLog(event, "{{.Original.Name}}", *log); err != nil {
 						return nil, err
 					}
 					return event, nil
 				}
 			}
-			return nil, errors.New("{{.Original.Name}} event not found")
+			return nil, errors.New("{{.Original.Nakme}} event not found")
 		}
 
 		// Watch{{.Normalized.Name}} is a free log subscription operation binding the contract event 0x{{printf "%x" .Original.Id}}.

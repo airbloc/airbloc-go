@@ -338,7 +338,7 @@ func (_RBAC *RBACFilterer) ParseRoleAddedFromReceipt(receipt *types.Receipt) (*R
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xbfec83d64eaa953f2708271a023ab9ee82057f8f3578d548c1a4ba0b5b700489") {
 			event := new(RBACRoleAdded)
-			if err := _RBAC.contract.UnpackLog(event, "RoleAdded", log); err != nil {
+			if err := _RBAC.contract.UnpackLog(event, "RoleAdded", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -487,7 +487,7 @@ func (_RBAC *RBACFilterer) ParseRoleRemovedFromReceipt(receipt *types.Receipt) (
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xd211483f91fc6eff862467f8de606587a30c8fc9981056f051b897a418df803a") {
 			event := new(RBACRoleRemoved)
-			if err := _RBAC.contract.UnpackLog(event, "RoleRemoved", log); err != nil {
+			if err := _RBAC.contract.UnpackLog(event, "RoleRemoved", *log); err != nil {
 				return nil, err
 			}
 			return event, nil

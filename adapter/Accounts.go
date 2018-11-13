@@ -621,7 +621,7 @@ func (_Accounts *AccountsFilterer) ParseOwnershipRenouncedFromReceipt(receipt *t
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
 			event := new(AccountsOwnershipRenounced)
-			if err := _Accounts.contract.UnpackLog(event, "OwnershipRenounced", log); err != nil {
+			if err := _Accounts.contract.UnpackLog(event, "OwnershipRenounced", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -774,7 +774,7 @@ func (_Accounts *AccountsFilterer) ParseOwnershipTransferredFromReceipt(receipt 
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
 			event := new(AccountsOwnershipTransferred)
-			if err := _Accounts.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+			if err := _Accounts.contract.UnpackLog(event, "OwnershipTransferred", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
@@ -932,7 +932,7 @@ func (_Accounts *AccountsFilterer) ParseSignUpFromReceipt(receipt *types.Receipt
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xdc0e23ec13ae3f3516bc4813ae5996e1fb88c4d2e57ffcc46aa94fb846e70de7") {
 			event := new(AccountsSignUp)
-			if err := _Accounts.contract.UnpackLog(event, "SignUp", log); err != nil {
+			if err := _Accounts.contract.UnpackLog(event, "SignUp", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
