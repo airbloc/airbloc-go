@@ -52,7 +52,7 @@ func (s *Collections) Register(ctx context.Context, collection *Collection) (com
 
 	tx, err := s.contract.Register(
 		s.client.Account(),
-		collection.AppId,
+		[8]byte{'T', 'O', 'D', 'O'}, // TODO: AppID
 		collection.SchemaId,
 		solidityDataProducerRatio,
 	)
@@ -67,7 +67,7 @@ func (s *Collections) Register(ctx context.Context, collection *Collection) (com
 	}
 
 	var event adapter.CollectionRegistryRegistered
-	if err := s.client.GetEventFromReceipt("CollectionRegistry", EventRegistered, &event, receipt); err != nil {
+	if err := s.client.GetEventFromReceipt("CollectionRegistry", "Registered", &event, receipt); err != nil {
 		return common.Hash{}, err
 	}
 	return event.ColectionId, nil
@@ -85,8 +85,8 @@ func (s *Collections) Unregister(ctx context.Context, collectionId common.Hash) 
 	}
 
 	// do something with event
-	_, err = s.ParseUnregsiteredEvent(receipt.Logs[0].Data)
-	return err
+	event := adapter.CollectionRegistryUnregistered{}
+	return s.client.GetEventFromReceipt("CollectionRegistry", "Unregistered", &event, receipt)
 }
 
 func (s *Collections) Check(id common.Hash) (bool, error) {
@@ -108,8 +108,8 @@ func (s *Collections) Allow(ctx context.Context, account *bind.TransactOpts, id,
 		return err
 	}
 
-	_, err = s.ParseAllowedEvent(receipt.Logs[0].Data)
-	return err
+	event := adapter.CollectionRegistryAllowed{}
+	return s.client.GetEventFromReceipt("CollectionRegistry", "Allowed", &event, receipt)
 }
 
 func (s *Collections) Deny(ctx context.Context, account *bind.TransactOpts, id, uid common.Hash) error {
@@ -123,6 +123,6 @@ func (s *Collections) Deny(ctx context.Context, account *bind.TransactOpts, id, 
 		return err
 	}
 
-	_, err = s.ParseDenideEvent(receipt.Logs[0].Data)
-	return err
+	event := adapter.CollectionRegistryDenied{}
+	return s.client.GetEventFromReceipt("CollectionRegistry", "Denied", &event, receipt)
 }

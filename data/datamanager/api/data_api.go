@@ -4,7 +4,6 @@ import (
 	"github.com/airbloc/airbloc-go/api"
 	commonApi "github.com/airbloc/airbloc-go/common/api"
 	"github.com/airbloc/airbloc-go/data/datamanager"
-	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )
@@ -14,7 +13,7 @@ type API struct {
 }
 
 func New(backend *api.AirblocBackend) (api.API, error) {
-	manager, err := datamanager.NewManager(backend.Kms, backend.Ethclient, backend.LocalDatabase, ethCommon.Address{})
+	manager, err := datamanager.NewManager(backend.Kms, backend.Ethclient, backend.LocalDatabase)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create Data API")
 	}
