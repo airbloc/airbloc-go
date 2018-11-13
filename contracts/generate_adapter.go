@@ -5,11 +5,12 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 
-const BuildOutput = "build/out"
+const BuildOutput = "../adapter"
 const ContractDir = "build/contracts"
 
 type Contract struct {
@@ -61,7 +62,7 @@ func main() {
 			continue
 		}
 
-		outPath := "adapter/" + contract.Name + ".go"
+		outPath := path.Join(BuildOutput, contract.Name+".go")
 
 		tmp, err := bind.Bind(
 			[]string{contract.Name},

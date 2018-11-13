@@ -28,10 +28,10 @@ var (
 )
 
 // UtilsABI is the input ABI used to generate the binding from.
-const UtilsABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"creator\",\"type\":\"address\"},{\"name\":\"uniqueData\",\"type\":\"bytes32\"}],\"name\":\"generateId\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+const UtilsABI = "[]"
 
 // UtilsBin is the compiled bytecode used for deploying new contracts.
-const UtilsBin = `0x73000000000000000000000000000000000000000030146080604052600436106100575763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663111341d7811461005c575b600080fd5b81801561006857600080fd5b5061008d73ffffffffffffffffffffffffffffffffffffffff600435166024356100bb565b6040805177ffffffffffffffffffffffffffffffffffffffffffffffff199092168252519081900360200190f35b604080516c0100000000000000000000000073ffffffffffffffffffffffffffffffffffffffff85160260208083019190915243603483015260548083018590528351808403909101815260749092019283905281516000938392909182918401908083835b602083106101405780518252601f199092019160209182019101610121565b5181516020939093036101000a600019018019909116921691909117905260405192018290039091209796505050505050505600a165627a7a723058205411fc88b462fef165d128df903c26f5d9e535f5cd46ee42519433b02afc884a0029`
+const UtilsBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a723058208c354d9e7573e2aec27bab4a3c82db65380c634085ac1a6cded5df1b4b7e4eb70029`
 
 // DeployUtils deploys a new Ethereum contract, binding an instance of Utils to it.
 func DeployUtils(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Utils, error) {
@@ -186,25 +186,4 @@ func (_Utils *UtilsTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Tran
 // Transact invokes the (paid) contract method with params as input values.
 func (_Utils *UtilsTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
 	return _Utils.Contract.contract.Transact(opts, method, params...)
-}
-
-// GenerateId is a paid mutator transaction binding the contract method 0x111341d7.
-//
-// Solidity: function generateId(creator address, uniqueData bytes32) returns(bytes8)
-func (_Utils *UtilsTransactor) GenerateId(opts *bind.TransactOpts, creator common.Address, uniqueData [32]byte) (*types.Transaction, error) {
-	return _Utils.contract.Transact(opts, "generateId", creator, uniqueData)
-}
-
-// GenerateId is a paid mutator transaction binding the contract method 0x111341d7.
-//
-// Solidity: function generateId(creator address, uniqueData bytes32) returns(bytes8)
-func (_Utils *UtilsSession) GenerateId(creator common.Address, uniqueData [32]byte) (*types.Transaction, error) {
-	return _Utils.Contract.GenerateId(&_Utils.TransactOpts, creator, uniqueData)
-}
-
-// GenerateId is a paid mutator transaction binding the contract method 0x111341d7.
-//
-// Solidity: function generateId(creator address, uniqueData bytes32) returns(bytes8)
-func (_Utils *UtilsTransactorSession) GenerateId(creator common.Address, uniqueData [32]byte) (*types.Transaction, error) {
-	return _Utils.Contract.GenerateId(&_Utils.TransactOpts, creator, uniqueData)
 }

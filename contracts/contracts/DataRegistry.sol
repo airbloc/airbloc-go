@@ -4,6 +4,7 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "./Utils.sol";
 import "./SparseMerkleTree.sol";
 import "./Accounts.sol";
+import "./CollectionRegistry.sol";
 
 contract DataRegistry is Ownable {
 
@@ -36,10 +37,12 @@ contract DataRegistry is Ownable {
     mapping (bytes8 => Collection) collections;
 
     Accounts accounts;
+    CollectionRegistry collectionReg;
     SparseMerkleTree sparseMerkleTree;
 
-    constructor(Accounts _accounts, SparseMerkleTree _smt) public {
+    constructor(Accounts _accounts, CollectionRegistry _collections, SparseMerkleTree _smt) public {
         accounts = _accounts;
+        collectionReg = _collections;
         sparseMerkleTree = _smt;
     }
 

@@ -28,10 +28,10 @@ var (
 )
 
 // CollectionRegistryABI is the input ABI used to generate the binding from.
-const CollectionRegistryABI = "[{\"inputs\":[{\"name\":\"_appReg\",\"type\":\"address\"},{\"name\":\"_schemaReg\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_colectionId\",\"type\":\"bytes32\"}],\"name\":\"Registered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_colectionId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"_appId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"_schemaId\",\"type\":\"bytes32\"}],\"name\":\"Unregistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_collectionId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"_uid\",\"type\":\"bytes32\"}],\"name\":\"Allowed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_collectionId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"_uid\",\"type\":\"bytes32\"}],\"name\":\"Denied\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"},{\"name\":\"_schemaId\",\"type\":\"bytes32\"},{\"name\":\"_ratio\",\"type\":\"uint256\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"},{\"name\":\"_uid\",\"type\":\"bytes32\"}],\"name\":\"allow\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"},{\"name\":\"_uid\",\"type\":\"bytes32\"}],\"name\":\"deny\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"get\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"},{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"check\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"},{\"name\":\"_uid\",\"type\":\"bytes32\"}],\"name\":\"checkAllowed\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const CollectionRegistryABI = "[{\"inputs\":[{\"name\":\"_appReg\",\"type\":\"address\"},{\"name\":\"_schemaReg\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_colectionId\",\"type\":\"bytes32\"}],\"name\":\"Registered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_colectionId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"_appId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"_schemaId\",\"type\":\"bytes8\"}],\"name\":\"Unregistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_collectionId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"_uid\",\"type\":\"bytes32\"}],\"name\":\"Allowed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_collectionId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"_uid\",\"type\":\"bytes32\"}],\"name\":\"Denied\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"},{\"name\":\"_schemaId\",\"type\":\"bytes8\"},{\"name\":\"_ratio\",\"type\":\"uint256\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"},{\"name\":\"_uid\",\"type\":\"bytes32\"}],\"name\":\"allow\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"},{\"name\":\"_uid\",\"type\":\"bytes32\"}],\"name\":\"deny\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"get\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"},{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"check\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"},{\"name\":\"_uid\",\"type\":\"bytes32\"}],\"name\":\"checkAllowed\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // CollectionRegistryBin is the compiled bytecode used for deploying new contracts.
-const CollectionRegistryBin = `0x6080604052600436106100825763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166316299ded81146100875780631a0919dc146100b15780631fed449f146100c9578063399e0792146100e45780634fe929c2146101105780638eaa6ac01461012b578063d42e71551461015c575b600080fd5b34801561009357600080fd5b506100af600160c060020a031960043516602435604435610177565b005b3480156100bd57600080fd5b506100af6004356103b6565b3480156100d557600080fd5b506100af6004356024356105b3565b3480156100f057600080fd5b506100fc600435610608565b604080519115158252519081900360200190f35b34801561011c57600080fd5b506100af60043560243561062c565b34801561013757600080fd5b5061014360043561067e565b6040805192835260208301919091528051918290030190f35b34801561016857600080fd5b506100fc6004356024356106b0565b60008054604080517f672b7beb000000000000000000000000000000000000000000000000000000008152600160c060020a031987166004820152336024820152905173ffffffffffffffffffffffffffffffffffffffff9092169163672b7beb9160448082019260209290919082900301818787803b1580156101fa57600080fd5b505af115801561020e573d6000803e3d6000fd5b505050506040513d602081101561022457600080fd5b505115156102a2576040805160e560020a62461bcd02815260206004820152602160248201527f6f6e6c79206f776e65722063616e207472616e73666572206f776e657273686960448201527f7000000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b60408051600160c060020a03198616602080830191909152602880830187905283518084039091018152604890920192839052815191929182918401908083835b602083106103025780518252601f1990920191602091820191016102e3565b6001836020036101000a0380198251168184511680821785525050505050509050019150506040518091039020905061033c8484846106d4565b60008281526002602081815260408084208551815467ffffffffffffffff191660c060020a90910417815585830151600182015594810151805193860193909355910151600390930192909255905182917f10906fae603eebfac53ddc0f103bee8a044dd7643c425c7a90f921dfa15ef62c91a250505050565b6103be6108aa565b600080548382526002602090815260408084205481517f672b7beb00000000000000000000000000000000000000000000000000000000815260c060020a909102600160c060020a0319166004820152336024820152905173ffffffffffffffffffffffffffffffffffffffff9093169363672b7beb93604480840194939192918390030190829087803b15801561045557600080fd5b505af1158015610469573d6000803e3d6000fd5b505050506040513d602081101561047f57600080fd5b505115156104fd576040805160e560020a62461bcd02815260206004820152602160248201527f6f6e6c79206f776e65722063616e207472616e73666572206f776e657273686960448201527f7000000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b50600081815260026020818152604080842081516060810183528154600160c060020a031960c060020a82028116835260018401805484880190815286518088018852868a0180548252600388018054838c0152878a01929092528c8c529990985267ffffffffffffffff1990931690945592879055948690559285905592518251915192949093919091169185917f50caa0042a588c64a0d615b147438223a7af5d184c29dbf5f9398ba82d56a7eb91a45050565b6000828152600260209081526040808320848452600401909152808220805460ff1916600117905551829184917fa22515132971f50f788da1869934dff79436ef9486db69a7a59731a5fb61689d9190a35050565b60009081526002602052604090205460c060020a02600160c060020a031916151590565b6000828152600260209081526040808320848452600401909152808220805460ff1916905551829184917f4d28190f1b112cd85f6380723c76d76de35cb4a80b5ab017d01f320b25db009e9190a35050565b600080600061068c84610887565b805460019091015460c060020a909102600160c060020a0319169590945092505050565b60009182526002602090815260408084209284526004909201905290205460ff1690565b6106dc6108aa565b600154604080517f399e079200000000000000000000000000000000000000000000000000000000815260048101869052905173ffffffffffffffffffffffffffffffffffffffff9092169163399e0792916024808201926020929091908290030181600087803b15801561075057600080fd5b505af1158015610764573d6000803e3d6000fd5b505050506040513d602081101561077a57600080fd5b505115156107d2576040805160e560020a62461bcd02815260206004820152600e60248201527f696e76616c696420736368656d61000000000000000000000000000000000000604482015290519081900360640190fd5b6107db83610608565b1515610831576040805160e560020a62461bcd02815260206004820152601960248201527f636f6c6c656374696f6e20616c72656164792065786973747300000000000000604482015290519081900360640190fd5b60408051606081018252600160c060020a031986168152602080820186905282518084018452858152919283019190810161087b68056bc75e2d631000008763ffffffff61089816565b90529052949350505050565b600090815260026020526040902090565b6000828211156108a457fe5b50900390565b60408051608081018252600080825260208201529081016108c96108ce565b905290565b6040805180820190915260008082526020820152905600a165627a7a7230582031d71a2f743b3bc24bada779723dd4c8fe0fe5a39b07806c932f0ba1d4c843050029`
+const CollectionRegistryBin = `0x6080604052600436106100825763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416631a0919dc81146100875780631fed449f146100a1578063399e0792146100bc5780634fe929c2146100e85780638eaa6ac014610103578063a3b42cba1461013d578063d42e715514610168575b600080fd5b34801561009357600080fd5b5061009f600435610183565b005b3480156100ad57600080fd5b5061009f600435602435610390565b3480156100c857600080fd5b506100d46004356103e5565b604080519115158252519081900360200190f35b3480156100f457600080fd5b5061009f600435602435610409565b34801561010f57600080fd5b5061011b60043561045b565b60408051928352600160c060020a031990911660208301528051918290030190f35b34801561014957600080fd5b5061009f600160c060020a031960043581169060243516604435610493565b34801561017457600080fd5b506100d46004356024356106f5565b61018b610933565b600080548382526002602090815260408084205481517f672b7beb00000000000000000000000000000000000000000000000000000000815260c060020a909102600160c060020a0319166004820152336024820152905173ffffffffffffffffffffffffffffffffffffffff9093169363672b7beb93604480840194939192918390030190829087803b15801561022257600080fd5b505af1158015610236573d6000803e3d6000fd5b505050506040513d602081101561024c57600080fd5b505115156102ca576040805160e560020a62461bcd02815260206004820152602160248201527f6f6e6c79206f776e65722063616e207472616e73666572206f776e657273686960448201527f7000000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b50600081815260026020818152604080842081516060810183528154600160c060020a031960c060020a80830282168452680100000000000000008304028116838701908152855180870187526001860180548252868a018054838b0152868901929092528b8b52989097526fffffffffffffffffffffffffffffffff199092169093559486905592859055925182519151929490841693919091169185917f0231d91ceaa0291166e678222375c22a49172b2641f9003dcdebd63e1160cc7091a45050565b6000828152600260209081526040808320848452600301909152808220805460ff1916600117905551829184917fa22515132971f50f788da1869934dff79436ef9486db69a7a59731a5fb61689d9190a35050565b60009081526002602052604090205460c060020a02600160c060020a031916151590565b6000828152600260209081526040808320848452600301909152808220805460ff1916905551829184917f4d28190f1b112cd85f6380723c76d76de35cb4a80b5ab017d01f320b25db009e9190a35050565b600080600061046984610719565b5460c060020a808202600160c060020a031916966801000000000000000090920402945092505050565b60008054604080517f672b7beb000000000000000000000000000000000000000000000000000000008152600160c060020a031987166004820152336024820152905173ffffffffffffffffffffffffffffffffffffffff9092169163672b7beb9160448082019260209290919082900301818787803b15801561051657600080fd5b505af115801561052a573d6000803e3d6000fd5b505050506040513d602081101561054057600080fd5b505115156105be576040805160e560020a62461bcd02815260206004820152602160248201527f6f6e6c79206f776e65722063616e207472616e73666572206f776e657273686960448201527f7000000000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b60408051600160c060020a0319808716602080840191909152908616602883015282516010818403018152603090920192839052815191929182918401908083835b6020831061061f5780518252601f199092019160209182019101610600565b6001836020036101000a0380198251168184511680821785525050505050509050019150506040518091039020905061065984848461072a565b6000828152600260208181526040808420855181548785015160c060020a9081900468010000000000000000026fffffffffffffffff0000000000000000199190930467ffffffffffffffff1990921691909117161781559481015180516001870155909101519390910192909255905182917f10906fae603eebfac53ddc0f103bee8a044dd7643c425c7a90f921dfa15ef62c91a250505050565b60009182526002602090815260408084209284526003909201905290205460ff1690565b600090815260026020526040902090565b610732610933565b600154604080517f97e4fea7000000000000000000000000000000000000000000000000000000008152600160c060020a031986166004820152905173ffffffffffffffffffffffffffffffffffffffff909216916397e4fea7916024808201926020929091908290030181600087803b1580156107af57600080fd5b505af11580156107c3573d6000803e3d6000fd5b505050506040513d60208110156107d957600080fd5b50511515610831576040805160e560020a62461bcd02815260206004820152601b60248201527f676976656e20736368656d6120646f6573206e6f742065786973740000000000604482015290519081900360640190fd5b610844600160c060020a031984166103e5565b151561089a576040805160e560020a62461bcd02815260206004820152601960248201527f636f6c6c656374696f6e20616c72656164792065786973747300000000000000604482015290519081900360640190fd5b6060604051908101604052808577ffffffffffffffffffffffffffffffffffffffffffffffff191681526020018477ffffffffffffffffffffffffffffffffffffffffffffffff1916815260200160408051908101604052808581526020016109158668056bc75e2d6310000061092190919063ffffffff16565b90529052949350505050565b60008282111561092d57fe5b50900390565b6040805160808101825260008082526020820152908101610952610957565b905290565b6040805180820190915260008082526020820152905600a165627a7a723058203427575b2cefbceaed92327bd0675d381544e7a719813e64b6f8ab6c27ae50ba0029`
 
 // DeployCollectionRegistry deploys a new Ethereum contract, binding an instance of CollectionRegistry to it.
 func DeployCollectionRegistry(auth *bind.TransactOpts, backend bind.ContractBackend, _appReg common.Address, _schemaReg common.Address) (common.Address, *types.Transaction, *CollectionRegistry, error) {
@@ -242,11 +242,11 @@ func (_CollectionRegistry *CollectionRegistryCallerSession) CheckAllowed(_id [32
 
 // Get is a free data retrieval call binding the contract method 0x8eaa6ac0.
 //
-// Solidity: function get(_id bytes32) constant returns(bytes32, bytes32)
-func (_CollectionRegistry *CollectionRegistryCaller) Get(opts *bind.CallOpts, _id [32]byte) ([32]byte, [32]byte, error) {
+// Solidity: function get(_id bytes32) constant returns(bytes32, bytes8)
+func (_CollectionRegistry *CollectionRegistryCaller) Get(opts *bind.CallOpts, _id [32]byte) ([32]byte, [8]byte, error) {
 	var (
 		ret0 = new([32]byte)
-		ret1 = new([32]byte)
+		ret1 = new([8]byte)
 	)
 	out := &[]interface{}{
 		ret0,
@@ -258,15 +258,15 @@ func (_CollectionRegistry *CollectionRegistryCaller) Get(opts *bind.CallOpts, _i
 
 // Get is a free data retrieval call binding the contract method 0x8eaa6ac0.
 //
-// Solidity: function get(_id bytes32) constant returns(bytes32, bytes32)
-func (_CollectionRegistry *CollectionRegistrySession) Get(_id [32]byte) ([32]byte, [32]byte, error) {
+// Solidity: function get(_id bytes32) constant returns(bytes32, bytes8)
+func (_CollectionRegistry *CollectionRegistrySession) Get(_id [32]byte) ([32]byte, [8]byte, error) {
 	return _CollectionRegistry.Contract.Get(&_CollectionRegistry.CallOpts, _id)
 }
 
 // Get is a free data retrieval call binding the contract method 0x8eaa6ac0.
 //
-// Solidity: function get(_id bytes32) constant returns(bytes32, bytes32)
-func (_CollectionRegistry *CollectionRegistryCallerSession) Get(_id [32]byte) ([32]byte, [32]byte, error) {
+// Solidity: function get(_id bytes32) constant returns(bytes32, bytes8)
+func (_CollectionRegistry *CollectionRegistryCallerSession) Get(_id [32]byte) ([32]byte, [8]byte, error) {
 	return _CollectionRegistry.Contract.Get(&_CollectionRegistry.CallOpts, _id)
 }
 
@@ -312,24 +312,24 @@ func (_CollectionRegistry *CollectionRegistryTransactorSession) Deny(_id [32]byt
 	return _CollectionRegistry.Contract.Deny(&_CollectionRegistry.TransactOpts, _id, _uid)
 }
 
-// Register is a paid mutator transaction binding the contract method 0x16299ded.
+// Register is a paid mutator transaction binding the contract method 0xa3b42cba.
 //
-// Solidity: function register(_appId bytes8, _schemaId bytes32, _ratio uint256) returns()
-func (_CollectionRegistry *CollectionRegistryTransactor) Register(opts *bind.TransactOpts, _appId [8]byte, _schemaId [32]byte, _ratio *big.Int) (*types.Transaction, error) {
+// Solidity: function register(_appId bytes8, _schemaId bytes8, _ratio uint256) returns()
+func (_CollectionRegistry *CollectionRegistryTransactor) Register(opts *bind.TransactOpts, _appId [8]byte, _schemaId [8]byte, _ratio *big.Int) (*types.Transaction, error) {
 	return _CollectionRegistry.contract.Transact(opts, "register", _appId, _schemaId, _ratio)
 }
 
-// Register is a paid mutator transaction binding the contract method 0x16299ded.
+// Register is a paid mutator transaction binding the contract method 0xa3b42cba.
 //
-// Solidity: function register(_appId bytes8, _schemaId bytes32, _ratio uint256) returns()
-func (_CollectionRegistry *CollectionRegistrySession) Register(_appId [8]byte, _schemaId [32]byte, _ratio *big.Int) (*types.Transaction, error) {
+// Solidity: function register(_appId bytes8, _schemaId bytes8, _ratio uint256) returns()
+func (_CollectionRegistry *CollectionRegistrySession) Register(_appId [8]byte, _schemaId [8]byte, _ratio *big.Int) (*types.Transaction, error) {
 	return _CollectionRegistry.Contract.Register(&_CollectionRegistry.TransactOpts, _appId, _schemaId, _ratio)
 }
 
-// Register is a paid mutator transaction binding the contract method 0x16299ded.
+// Register is a paid mutator transaction binding the contract method 0xa3b42cba.
 //
-// Solidity: function register(_appId bytes8, _schemaId bytes32, _ratio uint256) returns()
-func (_CollectionRegistry *CollectionRegistryTransactorSession) Register(_appId [8]byte, _schemaId [32]byte, _ratio *big.Int) (*types.Transaction, error) {
+// Solidity: function register(_appId bytes8, _schemaId bytes8, _ratio uint256) returns()
+func (_CollectionRegistry *CollectionRegistryTransactorSession) Register(_appId [8]byte, _schemaId [8]byte, _ratio *big.Int) (*types.Transaction, error) {
 	return _CollectionRegistry.Contract.Register(&_CollectionRegistry.TransactOpts, _appId, _schemaId, _ratio)
 }
 
@@ -839,14 +839,14 @@ func (it *CollectionRegistryUnregisteredIterator) Close() error {
 type CollectionRegistryUnregistered struct {
 	ColectionId [32]byte
 	AppId       [32]byte
-	SchemaId    [32]byte
+	SchemaId    [8]byte
 	Raw         types.Log // Blockchain specific contextual infos
 }
 
-// FilterUnregistered is a free log retrieval operation binding the contract event 0x50caa0042a588c64a0d615b147438223a7af5d184c29dbf5f9398ba82d56a7eb.
+// FilterUnregistered is a free log retrieval operation binding the contract event 0x0231d91ceaa0291166e678222375c22a49172b2641f9003dcdebd63e1160cc70.
 //
-// Solidity: e Unregistered(_colectionId indexed bytes32, _appId indexed bytes32, _schemaId indexed bytes32)
-func (_CollectionRegistry *CollectionRegistryFilterer) FilterUnregistered(opts *bind.FilterOpts, _colectionId [][32]byte, _appId [][32]byte, _schemaId [][32]byte) (*CollectionRegistryUnregisteredIterator, error) {
+// Solidity: e Unregistered(_colectionId indexed bytes32, _appId indexed bytes32, _schemaId indexed bytes8)
+func (_CollectionRegistry *CollectionRegistryFilterer) FilterUnregistered(opts *bind.FilterOpts, _colectionId [][32]byte, _appId [][32]byte, _schemaId [][8]byte) (*CollectionRegistryUnregisteredIterator, error) {
 
 	var _colectionIdRule []interface{}
 	for _, _colectionIdItem := range _colectionId {
@@ -868,10 +868,10 @@ func (_CollectionRegistry *CollectionRegistryFilterer) FilterUnregistered(opts *
 	return &CollectionRegistryUnregisteredIterator{contract: _CollectionRegistry.contract, event: "Unregistered", logs: logs, sub: sub}, nil
 }
 
-// WatchUnregistered is a free log subscription operation binding the contract event 0x50caa0042a588c64a0d615b147438223a7af5d184c29dbf5f9398ba82d56a7eb.
+// WatchUnregistered is a free log subscription operation binding the contract event 0x0231d91ceaa0291166e678222375c22a49172b2641f9003dcdebd63e1160cc70.
 //
-// Solidity: e Unregistered(_colectionId indexed bytes32, _appId indexed bytes32, _schemaId indexed bytes32)
-func (_CollectionRegistry *CollectionRegistryFilterer) WatchUnregistered(opts *bind.WatchOpts, sink chan<- *CollectionRegistryUnregistered, _colectionId [][32]byte, _appId [][32]byte, _schemaId [][32]byte) (event.Subscription, error) {
+// Solidity: e Unregistered(_colectionId indexed bytes32, _appId indexed bytes32, _schemaId indexed bytes8)
+func (_CollectionRegistry *CollectionRegistryFilterer) WatchUnregistered(opts *bind.WatchOpts, sink chan<- *CollectionRegistryUnregistered, _colectionId [][32]byte, _appId [][32]byte, _schemaId [][8]byte) (event.Subscription, error) {
 
 	var _colectionIdRule []interface{}
 	for _, _colectionIdItem := range _colectionId {

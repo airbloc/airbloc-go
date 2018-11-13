@@ -1,5 +1,4 @@
 pragma solidity ^0.4.24;
-pragma experimental ABIEncoderV2;
 
 import "./Utils.sol";
 
@@ -12,8 +11,8 @@ contract SchemaRegistry {
         address owner;
         string name;
     }
-    mapping (bytes8 => Schema) schemas;
-    mapping (bytes32 => bool) nameExists;
+    mapping (bytes8 => Schema) public schemas;
+    mapping (bytes32 => bool) public nameExists;
 
     function register(string _name) public {
         bytes32 hashedName = keccak256(abi.encodePacked(_name));
@@ -38,11 +37,6 @@ contract SchemaRegistry {
 
         delete schemas[_id];
         emit Unregistered(_id);
-    }
-
-    function get(bytes8 _id) public view returns (Schema memory) {
-        require(exists(_id), "Given schema does not exist.");
-        return schemas[_id];
     }
 
     function exists(bytes8 _id) public view returns (bool) {
