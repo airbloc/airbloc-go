@@ -4,11 +4,11 @@ import (
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
 	ablCommon "github.com/airbloc/airbloc-go/common"
+	"github.com/airbloc/airbloc-go/data/bundle"
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/airbloc/airbloc-go/warehouse"
-	"github.com/airbloc/airbloc-go/warehouse/bundle"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
 )

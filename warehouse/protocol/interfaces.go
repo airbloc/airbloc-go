@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/url"
 
-	"github.com/airbloc/airbloc-go/warehouse/bundle"
+	"github.com/airbloc/airbloc-go/data/bundle"
 )
 
 var (

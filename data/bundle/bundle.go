@@ -1,9 +1,11 @@
 package bundle
 
 import (
+	"golang.org/x/crypto/sha3"
 	"time"
 
 	"github.com/airbloc/airbloc-go/common"
+	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/mailru/easyjson"
 )
 
@@ -27,4 +29,12 @@ func Unmarshal(bundleData []byte) (*Bundle, error) {
 func (bundle *Bundle) Marshal() (bundleData []byte, err error) {
 	bundleData, err = easyjson.Marshal(bundle)
 	return
+}
+
+func (bundle *Bundle) Hash() (ethCommon.Hash, error) {
+	bundleData, err := bundle.Marshal()
+	if err != nil {
+		return ethCommon.Hash{}, err
+	}
+	return sha3.Sum256(bundleData), nil
 }

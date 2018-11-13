@@ -16,7 +16,7 @@ import (
 
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/key"
-	"github.com/airbloc/airbloc-go/warehouse/bundle"
+	"github.com/airbloc/airbloc-go/data/bundle"
 	"github.com/airbloc/airbloc-go/warehouse/protocol"
 	"github.com/airbloc/airbloc-go/warehouse/storage"
 	"github.com/pkg/errors"
@@ -131,10 +131,15 @@ func (warehouse *DataWarehouse) Store(stream *BundleStream) (*bundle.Bundle, err
 }
 
 func (warehouse *DataWarehouse) registerBundleOnChain(createdBundle *bundle.Bundle) (int, error) {
+	bundleDataHash, err := createdBundle.Hash()
+	if bundleDataHash, err != nil {
+		return 0, errors.Wrap(err, "failed to get hash of the bundle data")
+	}
+
 	tx, err := warehouse.dataRegistry.RegisterBundle(warehouse.ethclient.Account(),
 		createdBundle.Collection,
 		[32]byte{'T', 'O', 'D', 'O'},
-		[32]byte{'T', 'O', 'D', 'O'},
+		bundleDataHash,
 		createdBundle.Uri)
 	if err != nil {
 		return 0, err

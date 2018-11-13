@@ -7,7 +7,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/airbloc/airbloc-go/warehouse/bundle"
+	"github.com/airbloc/airbloc-go/data/bundle"
 	"github.com/pkg/errors"
 )
 
