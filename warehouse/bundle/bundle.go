@@ -8,8 +8,8 @@ import (
 )
 
 type Bundle struct {
-	Id         common.ID `json:"id"`
-	Uri        string    `json:"uri"`
+	Id         common.ID `json:"-"`
+	Uri        string    `json:"-"`
 	Provider   common.ID `json:"provider"`
 	Collection common.ID `json:"collection"`
 	DataCount  int       `json:"dataCount"`

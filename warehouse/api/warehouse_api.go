@@ -40,6 +40,7 @@ func New(airbloc *api.AirblocBackend) (_ api.API, err error) {
 		airbloc.Kms,
 		airbloc.LocalDatabase,
 		airbloc.MetaDatabase,
+		airbloc.Ethclient,
 		defaultStorage,
 		supportedProtocols,
 	)

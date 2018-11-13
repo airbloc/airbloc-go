@@ -30,8 +30,8 @@ func NewLocalStorage(savePath string, endpoint string) (*LocalStorage, error) {
 	}, nil
 }
 
-func (localStorage *LocalStorage) Save(bundle *bundle.Bundle) (*url.URL, error) {
-	fileName := fmt.Sprintf("%s.json", bundle.Id.String())
+func (localStorage *LocalStorage) Save(bundleId string, bundle *bundle.Bundle) (*url.URL, error) {
+	fileName := fmt.Sprintf("%s.json", bundleId)
 	savePath := path.Join(localStorage.SavePath, fileName)
 
 	bundleData, err := bundle.Marshal()

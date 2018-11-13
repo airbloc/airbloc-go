@@ -7,7 +7,7 @@ import (
 )
 
 type Storage interface {
-	Save(*bundle.Bundle) (*url.URL, error)
+	Save(string, *bundle.Bundle) (*url.URL, error)
 	Update(*url.URL, *bundle.Bundle) error
 	Delete(*url.URL) error
 }
