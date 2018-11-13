@@ -1,12 +1,13 @@
 package collections
 
 import (
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/airbloc/airbloc-go/common"
+	ethCommon "github.com/ethereum/go-ethereum/common"
 )
 
 type Collection struct {
-	AppId    common.Hash
-	SchemaId common.Hash
+	AppId    ethCommon.Hash
+	SchemaId common.ID
 	Policy   *IncentivePolicy
 }
 

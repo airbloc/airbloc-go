@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/airbloc/airbloc-go/api"
 	"github.com/airbloc/airbloc-go/schemas"
+	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )
 
@@ -27,6 +28,17 @@ func (api *API) Create(ctx context.Context, req *CreateSchemaRequest) (*CreateSc
 	if err != nil {
 		return nil, err
 	}
-	api.schemas.Register(ctx, req.Name, data)
-	return nil, nil
+
+	id, err := api.schemas.Register(req.Name, data)
+	if err == schemas.ErrNameExists {
+		return &CreateSchemaResult{Exists: true}, nil
+	}
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to register schema")
+	}
+
+	return &CreateSchemaResult{
+		Id:     id.String(),
+		Exists: false,
+	}, nil
 }

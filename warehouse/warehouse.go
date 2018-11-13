@@ -184,7 +184,7 @@ func (warehouse *DataWarehouse) Get(bundleId string) (*data.Bundle, error) {
 		return nil, errors.Wrap(err, "failed to query on metadatabase")
 	}
 
-	parsedUri, err := url.Parse(metadata.Lookup("uri").StringValue())
+	parsedUri, err := url.Parse(metadata.Lookup("data", "uri").StringValue())
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse URI")
 	}
