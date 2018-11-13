@@ -51,6 +51,12 @@ func NewAirblocBackend(config *Config) (*AirblocBackend, error) {
 		return nil, errors.Wrap(err, "failed to initialize Ethereum client")
 	}
 
+	deployment, err := blockchain.LoadDeployments(config.Blockchain.DeploymentPath, ethclient)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to load contract deployments from %s", config.Blockchain.DeploymentPath)
+	}
+	ethclient.Contracts = deployment
+
 	return &AirblocBackend{
 		Kms:           kms,
 		Ethclient:     ethclient,

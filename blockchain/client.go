@@ -3,11 +3,11 @@ package blockchain
 import (
 	"context"
 	"github.com/airbloc/airbloc-go/key"
-
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/pkg/errors"
 )
 
 type Client struct {
@@ -15,6 +15,7 @@ type Client struct {
 	ctx        context.Context
 	cfg        ClientOpt
 	transactor *bind.TransactOpts
+	Contracts  *Deployments
 }
 
 func NewClient(key *key.Key, url string, cfg ClientOpt) (*Client, error) {
@@ -92,4 +93,27 @@ func (c *Client) WaitDeployed(ctx context.Context, tx *types.Transaction) (*type
 	}
 	err = c.waitConfirmation(ctx)
 	return receipt, err
+}
+
+func (c *Client) GetEventFromReceipt(contractName string, eventName string, event interface{}, receipt *types.Receipt) error {
+	logData := receipt.Logs[0].Data
+	abi, exists := c.Contracts.abis[contractName]
+	if !exists {
+		return errors.Errorf("contract name %s not found.", contractName)
+	}
+	abi.Unpack(event, eventName, logData)
+	return nil
+}
+
+func (c *Client) GetEventsFromReceipt(contractName string, eventNames []string, events []interface{}, receipt *types.Receipt) error {
+	abi, exists := c.Contracts.abis[contractName]
+	if !exists {
+		return errors.Errorf("contract name %s not found.", contractName)
+	}
+
+	for i := 0; i < len(eventNames); i++ {
+		logData := receipt.Logs[i].Data
+		abi.Unpack(events[i], eventNames[i], logData)
+	}
+	return nil
 }
