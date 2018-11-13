@@ -5,47 +5,29 @@ import (
 	"github.com/ethereum/go-ethereum/params"
 	"math/big"
 
-	"strings"
-
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
 	"github.com/airbloc/airbloc-go/database/localdb"
-	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/pkg/errors"
 )
 
 // TODO: localdb integration
 type Collections struct {
-	db          *localdb.Model
-	client      *blockchain.Client
-	contract    *adapter.CollectionRegistry
-	contractABI abi.ABI
+	db       *localdb.Model
+	client   *blockchain.Client
+	contract *adapter.CollectionRegistry
 }
 
 func New(
 	db localdb.Database,
 	client *blockchain.Client,
-	addr common.Address,
 ) (*Collections, error) {
-	collection, err := adapter.NewCollectionRegistry(addr, client)
-	if err != nil {
-		return nil, err
-	}
-
-	rawABI := strings.NewReader(adapter.CollectionRegistryABI)
-	contractABI, err := abi.JSON(rawABI)
-	if err != nil {
-		return nil, err
-	}
 
 	return &Collections{
-		db:          localdb.NewModel(db, "collection"),
-		client:      client,
-		contract:    collection,
-		contractABI: contractABI,
+		db:       localdb.NewModel(db, "collection"),
+		client:   client,
+		contract: client.Contracts.CollectionRegistry,
 	}, nil
 }
 
@@ -83,15 +65,11 @@ func (s *Collections) Register(ctx context.Context, collection *Collection) (com
 	if err != nil {
 		return common.Hash{}, err
 	}
-	if receipt.Status == types.ReceiptStatusFailed {
-		return common.Hash{}, errors.New("tx reverted")
-	}
 
-	event, err := s.ParseRegisteredEvent(receipt.Logs[0].Data)
-	if err != nil {
+	var event adapter.CollectionRegistryRegistered
+	if err := s.client.GetEventFromReceipt("CollectionRegistry", EventRegistered, &event, receipt); err != nil {
 		return common.Hash{}, err
 	}
-
 	return event.ColectionId, nil
 }
 
@@ -104,9 +82,6 @@ func (s *Collections) Unregister(ctx context.Context, collectionId common.Hash) 
 	receipt, err := s.client.WaitMined(ctx, tx)
 	if err != nil {
 		return err
-	}
-	if receipt.Status == types.ReceiptStatusFailed {
-		return errors.New("tx reverted")
 	}
 
 	// do something with event
@@ -132,9 +107,6 @@ func (s *Collections) Allow(ctx context.Context, account *bind.TransactOpts, id,
 	if err != nil {
 		return err
 	}
-	if receipt.Status == types.ReceiptStatusFailed {
-		return errors.New("tx reverted")
-	}
 
 	_, err = s.ParseAllowedEvent(receipt.Logs[0].Data)
 	return err
@@ -149,9 +121,6 @@ func (s *Collections) Deny(ctx context.Context, account *bind.TransactOpts, id, 
 	receipt, err := s.client.WaitMined(ctx, tx)
 	if err != nil {
 		return err
-	}
-	if receipt.Status == types.ReceiptStatusFailed {
-		return errors.New("tx reverted")
 	}
 
 	_, err = s.ParseDenideEvent(receipt.Logs[0].Data)

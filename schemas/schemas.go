@@ -1,9 +1,8 @@
 package schemas
 
 import (
-	"strings"
-
 	"context"
+	"github.com/pkg/errors"
 
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
@@ -21,24 +20,12 @@ type Schemas struct {
 	contractABI abi.ABI
 }
 
-func New(db metadb.Database, client *blockchain.Client, addr common.Address) (*Schemas, error) {
-	collection, err := adapter.NewSchemaRegistry(addr, client)
-	if err != nil {
-		return nil, err
-	}
-
-	rawABI := strings.NewReader(adapter.SchemaRegistryABI)
-	contractABI, err := abi.JSON(rawABI)
-	if err != nil {
-		return nil, err
-	}
-
+func New(db metadb.Database, client *blockchain.Client) *Schemas {
 	return &Schemas{
-		db:          db,
-		client:      client,
-		contract:    collection,
-		contractABI: contractABI,
-	}, nil
+		db:       db,
+		client:   client,
+		contract: client.Contracts.SchemaRegistry,
+	}
 }
 
 func (s *Schemas) Register(ctx context.Context, name string, data map[string]interface{}) (common.Hash, error) {
@@ -53,25 +40,10 @@ func (s *Schemas) Register(ctx context.Context, name string, data map[string]int
 	}
 
 	event := adapter.SchemaRegistryRegistered{}
-	if err := s.contractABI.Unpack(
-		&event,
-		"Registered",
-		receipt.Logs[0].Data,
-	); err != nil {
-		return common.Hash{}, err
+	if err := s.client.GetEventFromReceipt("SchemaRegistry", "Registered", &event, receipt); err != nil {
+		return common.Hash{}, errors.Wrap(err, "failed to parse a event from receipt")
 	}
-
-	//_, err = s.db.Create(txn.Asset{
-	//	Data: map[string]interface{}{
-	//		"id":     common.Hash(event.Id).Hex(),
-	//		"name":   name,
-	//		"schema": data,
-	//	},
-	//}, nil, metadb.BigchainTxModeDefault)
-	//if err != nil {
-	//	return common.Hash{}, err
-	//}
-
+	// TODO: add metadata
 	return common.Hash(event.Id), nil
 }
 

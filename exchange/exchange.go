@@ -1,41 +1,24 @@
 package exchange
 
 import (
-	"strings"
-
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
 	ablCommon "github.com/airbloc/airbloc-go/common"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )
 
 type Exchange struct {
-	client      *blockchain.Client
-	contract    *adapter.Exchange
-	contractABI abi.ABI
+	client   *blockchain.Client
+	contract *adapter.Exchange
 }
 
-func New(
-	client *blockchain.Client,
-	addr ethCommon.Address,
-) (*Exchange, error) {
-	exchange, err := adapter.NewExchange(addr, client)
-	if err != nil {
-		return nil, err
-	}
-
-	rawABI := strings.NewReader(adapter.ExchangeABI)
-	contractABI, err := abi.JSON(rawABI)
-	if err != nil {
-		return nil, err
-	}
-
+func New(client *blockchain.Client) (*Exchange, error) {
 	return &Exchange{
-		client:      client,
-		contract:    exchange,
-		contractABI: contractABI,
+		client:   client,
+		contract: client.Contracts.Exchange,
 	}, nil
 }
 
@@ -52,12 +35,8 @@ func (exchange *Exchange) Order(ctx context.Context, offeror, offeree, contract 
 	}
 
 	event := adapter.ExchangeOfferPresented{}
-	if err = exchange.contractABI.Unpack(
-		&event,
-		"OfferPresented",
-		receipt.Logs[0].Data,
-	); err != nil {
-		return ablCommon.ID{}, err
+	if err := exchange.client.GetEventFromReceipt("Exchange", "OfferPresented", &event, receipt); err != nil {
+		return ablCommon.ID{}, errors.Wrap(err, "failed to parse event from the receipt")
 	}
 
 	return ablCommon.ID(event.OfferId), err
@@ -75,14 +54,9 @@ func (exchange *Exchange) Settle(ctx context.Context, offerId ablCommon.ID) erro
 	}
 
 	event := adapter.ExchangeOfferSettled{}
-	if err = exchange.contractABI.Unpack(
-		&event,
-		"OfferSettled",
-		receipt.Logs[0].Data,
-	); err != nil {
-		return err
+	if err := exchange.client.GetEventFromReceipt("Exchange", "OfferSettled", &event, receipt); err != nil {
+		return errors.Wrap(err, "failed to parse event from the receipt")
 	}
-
 	return err
 }
 
@@ -98,14 +72,9 @@ func (exchange *Exchange) Reject(ctx context.Context, offerId ablCommon.ID) erro
 	}
 
 	event := adapter.ExchangeOfferSettled{}
-	if err = exchange.contractABI.Unpack(
-		&event,
-		"OfferRejected",
-		receipt.Logs[0].Data,
-	); err != nil {
-		return err
+	if err := exchange.client.GetEventFromReceipt("Exchange", "OfferSettled", &event, receipt); err != nil {
+		return errors.Wrap(err, "failed to parse event from the receipt")
 	}
-
 	return err
 }
 
