@@ -1,4 +1,4 @@
-package bundle
+package data
 
 import (
 	"golang.org/x/crypto/sha3"
@@ -20,7 +20,7 @@ type Bundle struct {
 	Data []*common.EncryptedData `json:"data"`
 }
 
-func Unmarshal(bundleData []byte) (*Bundle, error) {
+func UnmarshalBundle(bundleData []byte) (*Bundle, error) {
 	var bundle Bundle
 	err := easyjson.Unmarshal(bundleData, &bundle)
 	return &bundle, err

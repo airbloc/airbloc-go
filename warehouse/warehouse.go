@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
+	"github.com/airbloc/airbloc-go/data"
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/ethereum/go-ethereum/log"
@@ -16,7 +17,6 @@ import (
 
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/key"
-	"github.com/airbloc/airbloc-go/data/bundle"
 	"github.com/airbloc/airbloc-go/warehouse/protocol"
 	"github.com/airbloc/airbloc-go/warehouse/storage"
 	"github.com/pkg/errors"
@@ -77,7 +77,7 @@ func (warehouse *DataWarehouse) encrypt(d *common.Data) (*common.EncryptedData, 
 	}, nil
 }
 
-func generateBundleNameOf(bundle *bundle.Bundle) string {
+func generateBundleNameOf(bundle *data.Bundle) string {
 	tokenBytes := make([]byte, 4)
 	rand.Read(tokenBytes)
 	token := hex.EncodeToString(tokenBytes)
@@ -86,13 +86,13 @@ func generateBundleNameOf(bundle *bundle.Bundle) string {
 	return fmt.Sprintf("%s-%s-%s.bundle", currentTime, bundle.Collection.String(), token)
 }
 
-func (warehouse *DataWarehouse) Store(stream *BundleStream) (*bundle.Bundle, error) {
+func (warehouse *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 	if stream == nil {
 		return nil, errors.New("No data in the stream.")
 	}
 	ingestedAt := time.Now()
 
-	createdBundle := &bundle.Bundle{
+	createdBundle := &data.Bundle{
 		Provider:   common.ID{}, /* TODO: implement appID */
 		Collection: stream.collection,
 		DataCount:  stream.DataCount,
@@ -130,7 +130,7 @@ func (warehouse *DataWarehouse) Store(stream *BundleStream) (*bundle.Bundle, err
 	return createdBundle, nil
 }
 
-func (warehouse *DataWarehouse) registerBundleOnChain(createdBundle *bundle.Bundle) (int, error) {
+func (warehouse *DataWarehouse) registerBundleOnChain(createdBundle *data.Bundle) (int, error) {
 	bundleDataHash, err := createdBundle.Hash()
 	if bundleDataHash, err != nil {
 		return 0, errors.Wrap(err, "failed to get hash of the bundle data")
@@ -158,7 +158,7 @@ func (warehouse *DataWarehouse) registerBundleOnChain(createdBundle *bundle.Bund
 	return int(registerResult.Index), nil
 }
 
-func (warehouse *DataWarehouse) Get(bundleId string) (*bundle.Bundle, error) {
+func (warehouse *DataWarehouse) Get(bundleId string) (*data.Bundle, error) {
 	// try to fetch URI from cache. TODO: TTL of the bundle cache
 	uri, err := warehouse.localCache.Get(bundleId)
 	if err != nil {
@@ -185,7 +185,7 @@ func (warehouse *DataWarehouse) Get(bundleId string) (*bundle.Bundle, error) {
 	return warehouse.Fetch(parsedUri)
 }
 
-func (warehouse *DataWarehouse) Fetch(uri *url.URL) (*bundle.Bundle, error) {
+func (warehouse *DataWarehouse) Fetch(uri *url.URL) (*data.Bundle, error) {
 	protoc, exists := warehouse.protocols[uri.Scheme]
 	if !exists {
 		return nil, errors.Errorf("the protocol %s is not supported", uri.Scheme)

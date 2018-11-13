@@ -1,10 +1,10 @@
 package protocol
 
 import (
+	"github.com/airbloc/airbloc-go/data"
 	"net/url"
 	"time"
 
-	"github.com/airbloc/airbloc-go/data/bundle"
 	"github.com/pkg/errors"
 	"github.com/valyala/fasthttp"
 )
@@ -26,7 +26,7 @@ func (http *HttpProtocol) Name() string {
 	return "http"
 }
 
-func (http *HttpProtocol) Read(uri *url.URL) (*bundle.Bundle, error) {
+func (http *HttpProtocol) Read(uri *url.URL) (*data.Bundle, error) {
 	request := fasthttp.AcquireRequest()
 	request.SetRequestURI(uri.String())
 
@@ -39,7 +39,7 @@ func (http *HttpProtocol) Read(uri *url.URL) (*bundle.Bundle, error) {
 		return nil, ErrNotFound
 	}
 
-	bundle, err := bundle.Unmarshal(response.Body())
+	bundle, err := data.UnmarshalBundle(response.Body())
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to parse bundle from the URL %s", uri.String())
 	}

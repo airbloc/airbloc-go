@@ -7,7 +7,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/airbloc/airbloc-go/data/bundle"
+	"github.com/airbloc/airbloc-go/data"
 	"github.com/pkg/errors"
 )
 
@@ -30,7 +30,7 @@ func NewLocalStorage(savePath string, endpoint string) (*LocalStorage, error) {
 	}, nil
 }
 
-func (localStorage *LocalStorage) Save(bundleId string, bundle *bundle.Bundle) (*url.URL, error) {
+func (localStorage *LocalStorage) Save(bundleId string, bundle *data.Bundle) (*url.URL, error) {
 	fileName := fmt.Sprintf("%s.json", bundleId)
 	savePath := path.Join(localStorage.SavePath, fileName)
 
@@ -46,7 +46,7 @@ func (localStorage *LocalStorage) Save(bundleId string, bundle *bundle.Bundle) (
 	return url.Parse(path.Join(localStorage.Endpoint, fileName))
 }
 
-func (localStorage *LocalStorage) Update(url *url.URL, bundle *bundle.Bundle) error {
+func (localStorage *LocalStorage) Update(url *url.URL, bundle *data.Bundle) error {
 	_, fileName := path.Split(url.Path)
 	savedPath := path.Join(localStorage.SavePath, fileName)
 
