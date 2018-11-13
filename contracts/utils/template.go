@@ -65,6 +65,7 @@ const tmplSourceGo = `
 package {{.Package}}
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -78,6 +79,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -397,6 +399,22 @@ var (
 			}
 			return &{{$contract.Type}}{{.Normalized.Name}}Iterator{contract: _{{$contract.Type}}.contract, event: "{{.Original.Name}}", logs: logs, sub: sub}, nil
  		}
+
+		// Filter{{.Normalized.Name}} parses the event from given transaction receipt.
+		//
+		// Solidity: {{.Original.String}}
+ 		func (_{{$contract.Type}} *{{$contract.Type}}Filterer) Parse{{.Normalized.Name}}FromReceipt(receipt *types.Receipt) (*{{$contract.Type}}{{.Normalized.Name}}, error) {
+			for _, log := range receipt.Logs {
+				if log.Topics[0] == common.HexToHash("0x{{printf "%x" .Original.Id}}") {
+					event := new({{$contract.Type}}{{.Normalized.Name}})
+					if err := _{{$contract.Type}}.contract.UnpackLog(event, "{{.Original.Name}}", log); err != nil {
+						return nil, err
+					}
+					return event, nil
+				}
+			}
+			return nil, errors.New("{{.Original.Name}} event not found")
+		}
 
 		// Watch{{.Normalized.Name}} is a free log subscription operation binding the contract event 0x{{printf "%x" .Original.Id}}.
 		//
