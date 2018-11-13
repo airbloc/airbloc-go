@@ -9,8 +9,8 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 
-const BuildOutput = "contracts/build/out"
-const ContractDir = "contracts/build/contracts"
+const BuildOutput = "build/out"
+const ContractDir = "build/contracts"
 
 type Contract struct {
 	Name string      `json:"contractName"`
