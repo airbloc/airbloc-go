@@ -31,7 +31,7 @@ var (
 const ECRecoveryABI = "[]"
 
 // ECRecoveryBin is the compiled bytecode used for deploying new contracts.
-const ECRecoveryBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a72305820a64b5eb73328480dc88b1c49fadcf1881ee01869f7b820f53106f7797f9381cd0029`
+const ECRecoveryBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a72305820d19060762a5c3eaf8b695800f5f7dc43dddef14ac3a0f3d8675cc5b6c47640280029`
 
 // DeployECRecovery deploys a new Ethereum contract, binding an instance of ECRecovery to it.
 func DeployECRecovery(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *ECRecovery, error) {

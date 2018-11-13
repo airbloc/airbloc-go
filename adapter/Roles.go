@@ -31,7 +31,7 @@ var (
 const RolesABI = "[]"
 
 // RolesBin is the compiled bytecode used for deploying new contracts.
-const RolesBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a7230582062673eb75f50fa4bad42db1bd254b130a3968872338affc620440407a41b83890029`
+const RolesBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a72305820cf135ce162a4bda9784b02edf8e48748df8df194083290ba7b19c005ece2b57d0029`
 
 // DeployRoles deploys a new Ethereum contract, binding an instance of Roles to it.
 func DeployRoles(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Roles, error) {

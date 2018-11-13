@@ -31,7 +31,7 @@ var (
 const ExchangeLibABI = "[]"
 
 // ExchangeLibBin is the compiled bytecode used for deploying new contracts.
-const ExchangeLibBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a72305820771c10e2d03885fcb4ab4e44937824dd1752b692f9de5ebaddabe60cc8433e3f0029`
+const ExchangeLibBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a723058205bf604f94d11fe8633cd859a11f619c499dd4716f3e961c9b35e374193e49baf0029`
 
 // DeployExchangeLib deploys a new Ethereum contract, binding an instance of ExchangeLib to it.
 func DeployExchangeLib(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *ExchangeLib, error) {

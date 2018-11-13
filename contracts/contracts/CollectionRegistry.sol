@@ -13,7 +13,7 @@ contract CollectionRegistry {
     event Denied(bytes32 indexed _collectionId, bytes32 indexed _uid);
 
     struct Collection {
-        bytes32 appId;
+        bytes8 appId;
         bytes32 schemaId;
         IncentivePolicy policy;
         mapping (bytes32 => bool) auth;
@@ -37,7 +37,7 @@ contract CollectionRegistry {
         schemaReg = _schemaReg;
     }
 
-    function newCollection(bytes32 _appId, bytes32 _schemaId, uint256 _ratio) internal view returns (Collection memory) {
+    function newCollection(bytes8 _appId, bytes32 _schemaId, uint256 _ratio) internal view returns (Collection memory) {
         require(schemaReg.check(_schemaId), "invalid schema");
         require(check(_schemaId), "collection already exists");
         return Collection({
@@ -51,7 +51,7 @@ contract CollectionRegistry {
     }
 
     function register(
-        bytes32 _appId, 
+        bytes8 _appId,
         bytes32 _schemaId, 
         uint256 _ratio
     ) public {

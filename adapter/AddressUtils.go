@@ -31,7 +31,7 @@ var (
 const AddressUtilsABI = "[]"
 
 // AddressUtilsBin is the compiled bytecode used for deploying new contracts.
-const AddressUtilsBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a72305820e21c24f2618f2d769293270c23907e8e57cedbc3064026c56bc0a062eb60f5fa0029`
+const AddressUtilsBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a72305820fffcca12cee984498c2daed96e255e8144b7d8323854cd5a81e5650d807b3f9c0029`
 
 // DeployAddressUtils deploys a new Ethereum contract, binding an instance of AddressUtils to it.
 func DeployAddressUtils(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *AddressUtils, error) {
