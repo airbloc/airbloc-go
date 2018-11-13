@@ -33,7 +33,7 @@ contract AppRegistry is Ownable {
         require(!appNameExists[hashOfName], "App name already exists.");
         appNameExists[hashOfName] = true;
 
-        bytes8 appId = Utils.generateId(msg.sender, hashOfName);
+        bytes8 appId = Utils.generateId(hashOfName, msg.sender);
         apps[appId].name = _name;
         apps[appId].owner = msg.sender;
 
