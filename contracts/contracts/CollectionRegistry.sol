@@ -8,13 +8,13 @@ contract CollectionRegistry {
     using SafeMath for uint256;
 
     event Registered(bytes32 indexed _colectionId);
-    event Unregistered(bytes32 indexed _colectionId, bytes32 indexed _appId, bytes32 indexed _schemaId);
+    event Unregistered(bytes32 indexed _colectionId, bytes32 indexed _appId, bytes8 indexed _schemaId);
     event Allowed(bytes32 indexed _collectionId, bytes32 indexed _uid);
     event Denied(bytes32 indexed _collectionId, bytes32 indexed _uid);
 
     struct Collection {
         bytes8 appId;
-        bytes32 schemaId;
+        bytes8 schemaId;
         IncentivePolicy policy;
         mapping (bytes32 => bool) auth;
     }
@@ -37,8 +37,8 @@ contract CollectionRegistry {
         schemaReg = _schemaReg;
     }
 
-    function newCollection(bytes8 _appId, bytes32 _schemaId, uint256 _ratio) internal view returns (Collection memory) {
-        require(schemaReg.check(_schemaId), "invalid schema");
+    function newCollection(bytes8 _appId, bytes8 _schemaId, uint256 _ratio) internal view returns (Collection memory) {
+        require(schemaReg.exists(_schemaId), "given schema does not exist");
         require(check(_schemaId), "collection already exists");
         return Collection({
             appId: _appId,
@@ -52,7 +52,7 @@ contract CollectionRegistry {
 
     function register(
         bytes8 _appId,
-        bytes32 _schemaId, 
+        bytes8 _schemaId,
         uint256 _ratio
     ) public {
         require(appReg.checkOwner(_appId, msg.sender), "only owner can transfer ownership");
@@ -82,7 +82,7 @@ contract CollectionRegistry {
         return reg[_id];
     }
 
-    function get(bytes32 _id) public view returns (bytes32, bytes32) {
+    function get(bytes32 _id) public view returns (bytes32, bytes8) {
         Collection storage collection = _get(_id);
         return (
             collection.appId,
