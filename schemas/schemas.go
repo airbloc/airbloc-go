@@ -49,8 +49,8 @@ func (s *Schemas) Register(name string, schema map[string]interface{}) (common.I
 		return common.ID{}, errors.Wrap(err, "failed to wait for tx to be mined")
 	}
 
-	event := adapter.SchemaRegistryRegistered{}
-	if err := s.client.GetEventFromReceipt("SchemaRegistry", "Registered", &event, receipt); err != nil {
+	event, err := s.contract.ParseRegistrationFromReceipt(receipt)
+	if err != nil {
 		return common.ID{}, errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 

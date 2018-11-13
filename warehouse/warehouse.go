@@ -156,8 +156,7 @@ func (warehouse *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (int,
 		return 0, errors.Wrap(err, "failed to wait for tx to be mined")
 	}
 
-	registerResult := adapter.DataRegistryBundleRegistered{}
-	err = warehouse.ethclient.GetEventFromReceipt("DataRegistry", "BundleRegistered", &registerResult, receipt)
+	registerResult, err := warehouse.dataRegistry.ParseBundleRegisteredFromReceipt(receipt)
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to parse a event from the receipt")
 	}

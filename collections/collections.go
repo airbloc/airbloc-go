@@ -66,8 +66,8 @@ func (s *Collections) Register(ctx context.Context, collection *Collection) (com
 		return common.Hash{}, err
 	}
 
-	var event adapter.CollectionRegistryRegistered
-	if err := s.client.GetEventFromReceipt("CollectionRegistry", "Registered", &event, receipt); err != nil {
+	event, err := s.contract.ParseRegisteredFromReceipt(receipt)
+	if err != nil {
 		return common.Hash{}, err
 	}
 	return event.ColectionId, nil
@@ -85,8 +85,8 @@ func (s *Collections) Unregister(ctx context.Context, collectionId common.Hash) 
 	}
 
 	// do something with event
-	event := adapter.CollectionRegistryUnregistered{}
-	return s.client.GetEventFromReceipt("CollectionRegistry", "Unregistered", &event, receipt)
+	_, err = s.contract.ParseUnregisteredFromReceipt(receipt)
+	return err
 }
 
 func (s *Collections) Check(id common.Hash) (bool, error) {
@@ -108,8 +108,8 @@ func (s *Collections) Allow(ctx context.Context, account *bind.TransactOpts, id,
 		return err
 	}
 
-	event := adapter.CollectionRegistryAllowed{}
-	return s.client.GetEventFromReceipt("CollectionRegistry", "Allowed", &event, receipt)
+	_, err = s.contract.ParseAllowedFromReceipt(receipt)
+	return err
 }
 
 func (s *Collections) Deny(ctx context.Context, account *bind.TransactOpts, id, uid common.Hash) error {
@@ -123,6 +123,6 @@ func (s *Collections) Deny(ctx context.Context, account *bind.TransactOpts, id, 
 		return err
 	}
 
-	event := adapter.CollectionRegistryDenied{}
-	return s.client.GetEventFromReceipt("CollectionRegistry", "Denied", &event, receipt)
+	_, err = s.contract.ParseDeniedFromReceipt(receipt)
+	return err
 }

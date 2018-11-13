@@ -33,9 +33,7 @@ func (manager *Manager) Create(ctx context.Context) (ablCommon.ID, error) {
 		return ablCommon.ID{}, err
 	}
 
-	event := adapter.AccountsSignUp{}
-	err = manager.client.GetEventFromReceipt("Account", "SignUp", &event, receipt)
-
+	event, err := manager.contract.ParseSignUpFromReceipt(receipt)
 	if err != nil {
 		return ablCommon.ID{}, errors.Wrap(err, "failed to parse a event from the receipt")
 	}
@@ -74,8 +72,8 @@ func (manager *Manager) CreateUsingProxy(
 		return ablCommon.ID{}, err
 	}
 
-	event := adapter.AccountsSignUp{}
-	if err := manager.client.GetEventFromReceipt("Account", "SignUp", &event, receipt); err != nil {
+	event, err := manager.contract.ParseSignUpFromReceipt(receipt)
+	if err != nil {
 		return ablCommon.ID{}, errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 	return ablCommon.ID(event.AccountId), err

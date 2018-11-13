@@ -50,6 +50,7 @@ func NewAirblocBackend(config *Config) (*AirblocBackend, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to initialize Ethereum client")
 	}
+	ethclient.SetAccount(nodeKey)
 
 	deployment, err := blockchain.LoadDeployments(config.Blockchain.DeploymentPath, ethclient)
 	if err != nil {
