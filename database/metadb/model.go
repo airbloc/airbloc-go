@@ -34,12 +34,12 @@ func (model *Model) Append(string, ed25519.PublicKey, transaction.Metadata, Mode
 	panic("implement me")
 }
 
-func (model *Model) Burn(string, Mode) error {
-	panic("implement me")
+func (model *Model) Burn(assetId string) error {
+	return model.database.Burn(assetId, BigchainTxModeDefault)
 }
 
 func (model *Model) Close() error {
-	panic("implement me")
+	return model.database.Close()
 }
 
 func NewModel(database Database, name string) *Model {
