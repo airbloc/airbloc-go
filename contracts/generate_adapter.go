@@ -2,12 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/airbloc/airbloc-go/contracts/utils"
 	"io/ioutil"
 	"log"
 	"os"
 	"path"
-
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 
 const BuildOutput = "../adapter"
@@ -64,12 +63,11 @@ func main() {
 
 		outPath := path.Join(BuildOutput, contract.Name+".go")
 
-		tmp, err := bind.Bind(
+		tmp, err := utils.Bind(
 			[]string{contract.Name},
 			[]string{string(abi)},
 			[]string{contract.Bin},
 			"adapter",
-			bind.LangGo,
 		)
 		if err != nil {
 			log.Println(err)
