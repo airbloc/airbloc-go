@@ -4,8 +4,8 @@ import "./Utils.sol";
 
 contract SchemaRegistry {
 
-    event Registered(bytes8 indexed _id, address owner);
-    event Unregistered(bytes8 indexed _id);
+    event Registration(address indexed registrar, bytes8 _id);
+    event Unregistration(bytes8 indexed _id);
 
     struct Schema {
         address owner;
@@ -25,7 +25,7 @@ contract SchemaRegistry {
         schema.name = _name;
         nameExists[hashedName] = true;
 
-        emit Registered(id, msg.sender);
+        emit Registration(msg.sender, id);
     }
     
     function unregister(bytes8 _id) public {
@@ -36,7 +36,7 @@ contract SchemaRegistry {
         nameExists[hashedName] = false;
 
         delete schemas[_id];
-        emit Unregistered(_id);
+        emit Unregistration(_id);
     }
 
     function exists(bytes8 _id) public view returns (bool) {
