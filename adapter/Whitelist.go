@@ -4,6 +4,7 @@
 package adapter
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -532,6 +534,22 @@ func (_Whitelist *WhitelistFilterer) FilterOwnershipRenounced(opts *bind.FilterO
 	return &WhitelistOwnershipRenouncedIterator{contract: _Whitelist.contract, event: "OwnershipRenounced", logs: logs, sub: sub}, nil
 }
 
+// FilterOwnershipRenounced parses the event from given transaction receipt.
+//
+// Solidity: e OwnershipRenounced(previousOwner indexed address)
+func (_Whitelist *WhitelistFilterer) ParseOwnershipRenouncedFromReceipt(receipt *types.Receipt) (*WhitelistOwnershipRenounced, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
+			event := new(WhitelistOwnershipRenounced)
+			if err := _Whitelist.contract.UnpackLog(event, "OwnershipRenounced", log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("OwnershipRenounced event not found")
+}
+
 // WatchOwnershipRenounced is a free log subscription operation binding the contract event 0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820.
 //
 // Solidity: e OwnershipRenounced(previousOwner indexed address)
@@ -667,6 +685,22 @@ func (_Whitelist *WhitelistFilterer) FilterOwnershipTransferred(opts *bind.Filte
 		return nil, err
 	}
 	return &WhitelistOwnershipTransferredIterator{contract: _Whitelist.contract, event: "OwnershipTransferred", logs: logs, sub: sub}, nil
+}
+
+// FilterOwnershipTransferred parses the event from given transaction receipt.
+//
+// Solidity: e OwnershipTransferred(previousOwner indexed address, newOwner indexed address)
+func (_Whitelist *WhitelistFilterer) ParseOwnershipTransferredFromReceipt(receipt *types.Receipt) (*WhitelistOwnershipTransferred, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
+			event := new(WhitelistOwnershipTransferred)
+			if err := _Whitelist.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("OwnershipTransferred event not found")
 }
 
 // WatchOwnershipTransferred is a free log subscription operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
@@ -806,6 +840,22 @@ func (_Whitelist *WhitelistFilterer) FilterRoleAdded(opts *bind.FilterOpts, oper
 	return &WhitelistRoleAddedIterator{contract: _Whitelist.contract, event: "RoleAdded", logs: logs, sub: sub}, nil
 }
 
+// FilterRoleAdded parses the event from given transaction receipt.
+//
+// Solidity: e RoleAdded(operator indexed address, role string)
+func (_Whitelist *WhitelistFilterer) ParseRoleAddedFromReceipt(receipt *types.Receipt) (*WhitelistRoleAdded, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0xbfec83d64eaa953f2708271a023ab9ee82057f8f3578d548c1a4ba0b5b700489") {
+			event := new(WhitelistRoleAdded)
+			if err := _Whitelist.contract.UnpackLog(event, "RoleAdded", log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("RoleAdded event not found")
+}
+
 // WatchRoleAdded is a free log subscription operation binding the contract event 0xbfec83d64eaa953f2708271a023ab9ee82057f8f3578d548c1a4ba0b5b700489.
 //
 // Solidity: e RoleAdded(operator indexed address, role string)
@@ -937,6 +987,22 @@ func (_Whitelist *WhitelistFilterer) FilterRoleRemoved(opts *bind.FilterOpts, op
 		return nil, err
 	}
 	return &WhitelistRoleRemovedIterator{contract: _Whitelist.contract, event: "RoleRemoved", logs: logs, sub: sub}, nil
+}
+
+// FilterRoleRemoved parses the event from given transaction receipt.
+//
+// Solidity: e RoleRemoved(operator indexed address, role string)
+func (_Whitelist *WhitelistFilterer) ParseRoleRemovedFromReceipt(receipt *types.Receipt) (*WhitelistRoleRemoved, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0xd211483f91fc6eff862467f8de606587a30c8fc9981056f051b897a418df803a") {
+			event := new(WhitelistRoleRemoved)
+			if err := _Whitelist.contract.UnpackLog(event, "RoleRemoved", log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("RoleRemoved event not found")
 }
 
 // WatchRoleRemoved is a free log subscription operation binding the contract event 0xd211483f91fc6eff862467f8de606587a30c8fc9981056f051b897a418df803a.

@@ -4,6 +4,7 @@
 package adapter
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -346,6 +348,22 @@ func (_Ownable *OwnableFilterer) FilterOwnershipRenounced(opts *bind.FilterOpts,
 	return &OwnableOwnershipRenouncedIterator{contract: _Ownable.contract, event: "OwnershipRenounced", logs: logs, sub: sub}, nil
 }
 
+// FilterOwnershipRenounced parses the event from given transaction receipt.
+//
+// Solidity: e OwnershipRenounced(previousOwner indexed address)
+func (_Ownable *OwnableFilterer) ParseOwnershipRenouncedFromReceipt(receipt *types.Receipt) (*OwnableOwnershipRenounced, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
+			event := new(OwnableOwnershipRenounced)
+			if err := _Ownable.contract.UnpackLog(event, "OwnershipRenounced", log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("OwnershipRenounced event not found")
+}
+
 // WatchOwnershipRenounced is a free log subscription operation binding the contract event 0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820.
 //
 // Solidity: e OwnershipRenounced(previousOwner indexed address)
@@ -481,6 +499,22 @@ func (_Ownable *OwnableFilterer) FilterOwnershipTransferred(opts *bind.FilterOpt
 		return nil, err
 	}
 	return &OwnableOwnershipTransferredIterator{contract: _Ownable.contract, event: "OwnershipTransferred", logs: logs, sub: sub}, nil
+}
+
+// FilterOwnershipTransferred parses the event from given transaction receipt.
+//
+// Solidity: e OwnershipTransferred(previousOwner indexed address, newOwner indexed address)
+func (_Ownable *OwnableFilterer) ParseOwnershipTransferredFromReceipt(receipt *types.Receipt) (*OwnableOwnershipTransferred, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
+			event := new(OwnableOwnershipTransferred)
+			if err := _Ownable.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("OwnershipTransferred event not found")
 }
 
 // WatchOwnershipTransferred is a free log subscription operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.

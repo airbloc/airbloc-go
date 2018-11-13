@@ -4,6 +4,7 @@
 package adapter
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -329,6 +331,22 @@ func (_RBAC *RBACFilterer) FilterRoleAdded(opts *bind.FilterOpts, operator []com
 	return &RBACRoleAddedIterator{contract: _RBAC.contract, event: "RoleAdded", logs: logs, sub: sub}, nil
 }
 
+// FilterRoleAdded parses the event from given transaction receipt.
+//
+// Solidity: e RoleAdded(operator indexed address, role string)
+func (_RBAC *RBACFilterer) ParseRoleAddedFromReceipt(receipt *types.Receipt) (*RBACRoleAdded, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0xbfec83d64eaa953f2708271a023ab9ee82057f8f3578d548c1a4ba0b5b700489") {
+			event := new(RBACRoleAdded)
+			if err := _RBAC.contract.UnpackLog(event, "RoleAdded", log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("RoleAdded event not found")
+}
+
 // WatchRoleAdded is a free log subscription operation binding the contract event 0xbfec83d64eaa953f2708271a023ab9ee82057f8f3578d548c1a4ba0b5b700489.
 //
 // Solidity: e RoleAdded(operator indexed address, role string)
@@ -460,6 +478,22 @@ func (_RBAC *RBACFilterer) FilterRoleRemoved(opts *bind.FilterOpts, operator []c
 		return nil, err
 	}
 	return &RBACRoleRemovedIterator{contract: _RBAC.contract, event: "RoleRemoved", logs: logs, sub: sub}, nil
+}
+
+// FilterRoleRemoved parses the event from given transaction receipt.
+//
+// Solidity: e RoleRemoved(operator indexed address, role string)
+func (_RBAC *RBACFilterer) ParseRoleRemovedFromReceipt(receipt *types.Receipt) (*RBACRoleRemoved, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0xd211483f91fc6eff862467f8de606587a30c8fc9981056f051b897a418df803a") {
+			event := new(RBACRoleRemoved)
+			if err := _RBAC.contract.UnpackLog(event, "RoleRemoved", log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("RoleRemoved event not found")
 }
 
 // WatchRoleRemoved is a free log subscription operation binding the contract event 0xd211483f91fc6eff862467f8de606587a30c8fc9981056f051b897a418df803a.

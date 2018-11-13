@@ -4,6 +4,7 @@
 package adapter
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -612,6 +614,22 @@ func (_Accounts *AccountsFilterer) FilterOwnershipRenounced(opts *bind.FilterOpt
 	return &AccountsOwnershipRenouncedIterator{contract: _Accounts.contract, event: "OwnershipRenounced", logs: logs, sub: sub}, nil
 }
 
+// FilterOwnershipRenounced parses the event from given transaction receipt.
+//
+// Solidity: e OwnershipRenounced(previousOwner indexed address)
+func (_Accounts *AccountsFilterer) ParseOwnershipRenouncedFromReceipt(receipt *types.Receipt) (*AccountsOwnershipRenounced, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
+			event := new(AccountsOwnershipRenounced)
+			if err := _Accounts.contract.UnpackLog(event, "OwnershipRenounced", log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("OwnershipRenounced event not found")
+}
+
 // WatchOwnershipRenounced is a free log subscription operation binding the contract event 0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820.
 //
 // Solidity: e OwnershipRenounced(previousOwner indexed address)
@@ -747,6 +765,22 @@ func (_Accounts *AccountsFilterer) FilterOwnershipTransferred(opts *bind.FilterO
 		return nil, err
 	}
 	return &AccountsOwnershipTransferredIterator{contract: _Accounts.contract, event: "OwnershipTransferred", logs: logs, sub: sub}, nil
+}
+
+// FilterOwnershipTransferred parses the event from given transaction receipt.
+//
+// Solidity: e OwnershipTransferred(previousOwner indexed address, newOwner indexed address)
+func (_Accounts *AccountsFilterer) ParseOwnershipTransferredFromReceipt(receipt *types.Receipt) (*AccountsOwnershipTransferred, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
+			event := new(AccountsOwnershipTransferred)
+			if err := _Accounts.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("OwnershipTransferred event not found")
 }
 
 // WatchOwnershipTransferred is a free log subscription operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
@@ -889,6 +923,22 @@ func (_Accounts *AccountsFilterer) FilterSignUp(opts *bind.FilterOpts, owner []c
 		return nil, err
 	}
 	return &AccountsSignUpIterator{contract: _Accounts.contract, event: "SignUp", logs: logs, sub: sub}, nil
+}
+
+// FilterSignUp parses the event from given transaction receipt.
+//
+// Solidity: e SignUp(owner indexed address, proxy indexed address, accountId bytes8)
+func (_Accounts *AccountsFilterer) ParseSignUpFromReceipt(receipt *types.Receipt) (*AccountsSignUp, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0xdc0e23ec13ae3f3516bc4813ae5996e1fb88c4d2e57ffcc46aa94fb846e70de7") {
+			event := new(AccountsSignUp)
+			if err := _Accounts.contract.UnpackLog(event, "SignUp", log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("SignUp event not found")
 }
 
 // WatchSignUp is a free log subscription operation binding the contract event 0xdc0e23ec13ae3f3516bc4813ae5996e1fb88c4d2e57ffcc46aa94fb846e70de7.
