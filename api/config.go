@@ -24,7 +24,7 @@ type Config struct {
 		Options  struct {
 			MinConfirmations int `default:"1" yaml:"minConfirmations"`
 		}
-		DeploymentPath string `default:"deployment.local.json"`
+		DeploymentPath string `default:"deployment.local.json" yaml:"deploymentPath"`
 	}
 
 	Warehouse struct {
