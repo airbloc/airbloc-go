@@ -130,19 +130,25 @@ func (warehouse *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error
 	return createdBundle, nil
 }
 
-func (warehouse *DataWarehouse) registerBundleOnChain(createdBundle *data.Bundle) (int, error) {
-	bundleDataHash, err := createdBundle.Hash()
-	if bundleDataHash, err != nil {
+func (warehouse *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (int, error) {
+	bundleDataHash, err := bundle.Hash()
+	if err != nil {
 		return 0, errors.Wrap(err, "failed to get hash of the bundle data")
 	}
 
-	tx, err := warehouse.dataRegistry.RegisterBundle(warehouse.ethclient.Account(),
-		createdBundle.Collection,
-		[32]byte{'T', 'O', 'D', 'O'},
-		bundleDataHash,
-		createdBundle.Uri)
+	userMerkleRoot, err := bundle.SetupUserProof()
 	if err != nil {
-		return 0, err
+		return 0, errors.Wrap(err, "failed to setup SMT")
+	}
+
+	tx, err := warehouse.dataRegistry.RegisterBundle(
+		warehouse.ethclient.Account(),
+		bundle.Collection,
+		userMerkleRoot,
+		bundleDataHash,
+		bundle.Uri)
+	if err != nil {
+		return 0, errors.Wrap(err, "failed to register a bundle to DataRegistry")
 	}
 
 	receipt, err := warehouse.ethclient.WaitMined(context.Background(), tx)
