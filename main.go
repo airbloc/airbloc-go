@@ -8,12 +8,6 @@ import (
 	"log"
 )
 
-//go:generate ./build.sh
-
-func init() {
-
-}
-
 func main() {
 	conn, err := grpc.Dial("localhost:9124", grpc.WithInsecure())
 	if err != nil {
