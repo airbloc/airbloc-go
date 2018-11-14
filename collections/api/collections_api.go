@@ -13,7 +13,7 @@ type API struct {
 }
 
 func New(backend *api.AirblocBackend) (api.API, error) {
-	collectionManager, err := collections.New(backend.LocalDatabase, backend.Ethclient)
+	collectionManager, err := collections.New(backend.LocalDatabase, backend.MetaDatabase, backend.Ethclient)
 	return &API{collectionManager}, err
 }
 
