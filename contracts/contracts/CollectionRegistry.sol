@@ -52,7 +52,7 @@ contract CollectionRegistry {
         collection.appId = _appId;
         collection.schemaId = _schemaId;
 
-        // calculate with ETH. ex) 0.35ETH == 0.35%
+        // calculate with ETH. ex) 35ETH == 0.35%
         collection.policy = IncentivePolicy({
             self: _ratio,
             owner: uint256(100 ether).sub(_ratio)

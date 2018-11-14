@@ -30,10 +30,10 @@ var (
 )
 
 // SparseMerkleTreeABI is the input ABI used to generate the binding from.
-const SparseMerkleTreeABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"defaultHashes\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"constant\":true,\"inputs\":[{\"name\":\"leaf\",\"type\":\"bytes32\"},{\"name\":\"root\",\"type\":\"bytes32\"},{\"name\":\"tokenID\",\"type\":\"uint64\"},{\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"checkMembership\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"leaf\",\"type\":\"bytes32\"},{\"name\":\"index\",\"type\":\"uint64\"},{\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"getRoot\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const SparseMerkleTreeABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"defaultHashes\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"constant\":true,\"inputs\":[{\"name\":\"root\",\"type\":\"bytes32\"},{\"name\":\"leafID\",\"type\":\"uint64\"},{\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"checkMembership\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"index\",\"type\":\"uint64\"},{\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"getRoot\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // SparseMerkleTreeBin is the compiled bytecode used for deploying new contracts.
-const SparseMerkleTreeBin = `0x6080604052600436106100565763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166348419ad8811461005b578063509a7e5414610085578063f586df65146100ef575b600080fd5b34801561006757600080fd5b50610073600435610170565b60408051918252519081900360200190f35b34801561009157600080fd5b50604080516020600460443581810135601f8101849004840285018401909552848452610073948235946024803567ffffffffffffffff16953695946064949201919081908401838280828437509497506101849650505050505050565b3480156100fb57600080fd5b50604080516020601f60643560048181013592830184900484028501840190955281845261015c94803594602480359567ffffffffffffffff6044351695369560849493019181908401838280828437509497506103759650505050505050565b604080519115158252519081900360200190f35b6000816041811061017d57fe5b0154905081565b6000806000806000806020600888510381151561019d57fe5b061580156101ae5750610808875111155b15156101b957600080fd5b50505050602083015185906008907801000000000000000000000000000000000000000000000000900460005b60408110156103685760018216151561020f576000816041811061020657fe5b01549450610230565b6020830192508261ffff1687511015151561022957600080fd5b8287015194505b6001881615156102bf57604080516020808201879052818301889052825180830384018152606090920192839052815191929182918401908083835b6020831061028b5780518252601f19909201916020918201910161026c565b6001836020036101000a03801982511681845116808217855250505050505090500191505060405180910390209350610340565b604080516020808201889052818301879052825180830384018152606090920192839052815191929182918401908083835b602083106103105780518252601f1990920191602091820191016102f1565b6001836020036101000a038019825116818451168082178552505050505050905001915050604051809103902093505b600267ffffffffffffffff8316049150600267ffffffffffffffff89160497506001016101e6565b5091979650505050505050565b600080610383868585610184565b909414959450505050505600a165627a7a72305820ab277ba2fce2a59fe099ea067a0ff551fd1bec33fd35293a319f32db4e3c30100029`
+const SparseMerkleTreeBin = `0x6080604052600436106100565763ffffffff7c010000000000000000000000000000000000000000000000000000000060003504166348419ad8811461005b5780636859274b146100855780637652ce3b14610103575b600080fd5b34801561006757600080fd5b5061007360043561016b565b60408051918252519081900360200190f35b34801561009157600080fd5b50604080516020600460443581810135601f81018490048402850184019095528484526100ef948235946024803567ffffffffffffffff169536959460649492019190819084018382808284375094975061017f9650505050505050565b604080519115158252519081900360200190f35b34801561010f57600080fd5b5060408051602060046024803582810135601f810185900485028601850190965285855261007395833567ffffffffffffffff169536956044949193909101919081908401838280828437509497506101979650505050505050565b6000816041811061017857fe5b0154905081565b60008061018c8484610197565b909414949350505050565b600080600080600080602060088851038115156101b057fe5b061580156101c15750610808875111155b15156101cc57600080fd5b5050505060208301516001906008907801000000000000000000000000000000000000000000000000900460005b604081101561037c57600182161515610223576000816041811061021a57fe5b01549450610244565b6020830192508261ffff1687511015151561023d57600080fd5b8287015194505b6001881615156102d357604080516020808201879052818301889052825180830384018152606090920192839052815191929182918401908083835b6020831061029f5780518252601f199092019160209182019101610280565b6001836020036101000a03801982511681845116808217855250505050505090500191505060405180910390209350610354565b604080516020808201889052818301879052825180830384018152606090920192839052815191929182918401908083835b602083106103245780518252601f199092019160209182019101610305565b6001836020036101000a038019825116818451168082178552505050505050905001915050604051809103902093505b600267ffffffffffffffff8316049150600267ffffffffffffffff89160497506001016101fa565b509196955050505050505600a165627a7a723058209a93ae1fef53df7718b7e222a21a3b4572a71d65abe5569d8a876ef922f8af860029`
 
 // DeploySparseMerkleTree deploys a new Ethereum contract, binding an instance of SparseMerkleTree to it.
 func DeploySparseMerkleTree(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *SparseMerkleTree, error) {
@@ -190,30 +190,30 @@ func (_SparseMerkleTree *SparseMerkleTreeTransactorRaw) Transact(opts *bind.Tran
 	return _SparseMerkleTree.Contract.contract.Transact(opts, method, params...)
 }
 
-// CheckMembership is a free data retrieval call binding the contract method 0xf586df65.
+// CheckMembership is a free data retrieval call binding the contract method 0x6859274b.
 //
-// Solidity: function checkMembership(leaf bytes32, root bytes32, tokenID uint64, proof bytes) constant returns(bool)
-func (_SparseMerkleTree *SparseMerkleTreeCaller) CheckMembership(opts *bind.CallOpts, leaf [32]byte, root [32]byte, tokenID uint64, proof []byte) (bool, error) {
+// Solidity: function checkMembership(root bytes32, leafID uint64, proof bytes) constant returns(bool)
+func (_SparseMerkleTree *SparseMerkleTreeCaller) CheckMembership(opts *bind.CallOpts, root [32]byte, leafID uint64, proof []byte) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
 	out := ret0
-	err := _SparseMerkleTree.contract.Call(opts, out, "checkMembership", leaf, root, tokenID, proof)
+	err := _SparseMerkleTree.contract.Call(opts, out, "checkMembership", root, leafID, proof)
 	return *ret0, err
 }
 
-// CheckMembership is a free data retrieval call binding the contract method 0xf586df65.
+// CheckMembership is a free data retrieval call binding the contract method 0x6859274b.
 //
-// Solidity: function checkMembership(leaf bytes32, root bytes32, tokenID uint64, proof bytes) constant returns(bool)
-func (_SparseMerkleTree *SparseMerkleTreeSession) CheckMembership(leaf [32]byte, root [32]byte, tokenID uint64, proof []byte) (bool, error) {
-	return _SparseMerkleTree.Contract.CheckMembership(&_SparseMerkleTree.CallOpts, leaf, root, tokenID, proof)
+// Solidity: function checkMembership(root bytes32, leafID uint64, proof bytes) constant returns(bool)
+func (_SparseMerkleTree *SparseMerkleTreeSession) CheckMembership(root [32]byte, leafID uint64, proof []byte) (bool, error) {
+	return _SparseMerkleTree.Contract.CheckMembership(&_SparseMerkleTree.CallOpts, root, leafID, proof)
 }
 
-// CheckMembership is a free data retrieval call binding the contract method 0xf586df65.
+// CheckMembership is a free data retrieval call binding the contract method 0x6859274b.
 //
-// Solidity: function checkMembership(leaf bytes32, root bytes32, tokenID uint64, proof bytes) constant returns(bool)
-func (_SparseMerkleTree *SparseMerkleTreeCallerSession) CheckMembership(leaf [32]byte, root [32]byte, tokenID uint64, proof []byte) (bool, error) {
-	return _SparseMerkleTree.Contract.CheckMembership(&_SparseMerkleTree.CallOpts, leaf, root, tokenID, proof)
+// Solidity: function checkMembership(root bytes32, leafID uint64, proof bytes) constant returns(bool)
+func (_SparseMerkleTree *SparseMerkleTreeCallerSession) CheckMembership(root [32]byte, leafID uint64, proof []byte) (bool, error) {
+	return _SparseMerkleTree.Contract.CheckMembership(&_SparseMerkleTree.CallOpts, root, leafID, proof)
 }
 
 // DefaultHashes is a free data retrieval call binding the contract method 0x48419ad8.
@@ -242,28 +242,28 @@ func (_SparseMerkleTree *SparseMerkleTreeCallerSession) DefaultHashes(arg0 *big.
 	return _SparseMerkleTree.Contract.DefaultHashes(&_SparseMerkleTree.CallOpts, arg0)
 }
 
-// GetRoot is a free data retrieval call binding the contract method 0x509a7e54.
+// GetRoot is a free data retrieval call binding the contract method 0x7652ce3b.
 //
-// Solidity: function getRoot(leaf bytes32, index uint64, proof bytes) constant returns(bytes32)
-func (_SparseMerkleTree *SparseMerkleTreeCaller) GetRoot(opts *bind.CallOpts, leaf [32]byte, index uint64, proof []byte) ([32]byte, error) {
+// Solidity: function getRoot(index uint64, proof bytes) constant returns(bytes32)
+func (_SparseMerkleTree *SparseMerkleTreeCaller) GetRoot(opts *bind.CallOpts, index uint64, proof []byte) ([32]byte, error) {
 	var (
 		ret0 = new([32]byte)
 	)
 	out := ret0
-	err := _SparseMerkleTree.contract.Call(opts, out, "getRoot", leaf, index, proof)
+	err := _SparseMerkleTree.contract.Call(opts, out, "getRoot", index, proof)
 	return *ret0, err
 }
 
-// GetRoot is a free data retrieval call binding the contract method 0x509a7e54.
+// GetRoot is a free data retrieval call binding the contract method 0x7652ce3b.
 //
-// Solidity: function getRoot(leaf bytes32, index uint64, proof bytes) constant returns(bytes32)
-func (_SparseMerkleTree *SparseMerkleTreeSession) GetRoot(leaf [32]byte, index uint64, proof []byte) ([32]byte, error) {
-	return _SparseMerkleTree.Contract.GetRoot(&_SparseMerkleTree.CallOpts, leaf, index, proof)
+// Solidity: function getRoot(index uint64, proof bytes) constant returns(bytes32)
+func (_SparseMerkleTree *SparseMerkleTreeSession) GetRoot(index uint64, proof []byte) ([32]byte, error) {
+	return _SparseMerkleTree.Contract.GetRoot(&_SparseMerkleTree.CallOpts, index, proof)
 }
 
-// GetRoot is a free data retrieval call binding the contract method 0x509a7e54.
+// GetRoot is a free data retrieval call binding the contract method 0x7652ce3b.
 //
-// Solidity: function getRoot(leaf bytes32, index uint64, proof bytes) constant returns(bytes32)
-func (_SparseMerkleTree *SparseMerkleTreeCallerSession) GetRoot(leaf [32]byte, index uint64, proof []byte) ([32]byte, error) {
-	return _SparseMerkleTree.Contract.GetRoot(&_SparseMerkleTree.CallOpts, leaf, index, proof)
+// Solidity: function getRoot(index uint64, proof bytes) constant returns(bytes32)
+func (_SparseMerkleTree *SparseMerkleTreeCallerSession) GetRoot(index uint64, proof []byte) ([32]byte, error) {
+	return _SparseMerkleTree.Contract.GetRoot(&_SparseMerkleTree.CallOpts, index, proof)
 }

@@ -3,8 +3,7 @@ package api
 import (
 	"github.com/airbloc/airbloc-go/api"
 	"github.com/airbloc/airbloc-go/collections"
-	ablCommon "github.com/airbloc/airbloc-go/common"
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/airbloc/airbloc-go/common"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )
@@ -19,23 +18,30 @@ func New(backend *api.AirblocBackend) (api.API, error) {
 }
 
 func (api *API) Create(ctx context.Context, req *CreateCollectionRequest) (*CreateCollectionResponse, error) {
-	schemaId, err := ablCommon.IDFromString(req.SchemaId)
+	schemaId, err := common.IDFromString(req.GetSchemaId())
 	if err != nil {
 		return nil, errors.Wrap(err, "invalid schema ID")
 	}
 
-	hash, err := api.collections.Register(ctx, &collections.Collection{
-		AppId:    common.HexToHash(req.AppId),
+	appId, err := common.IDFromString(req.GetAppId())
+	if err != nil {
+		return nil, errors.Wrap(err, "invalid app ID")
+	}
+
+	collection := &collections.Collection{
+		AppId:    appId,
 		SchemaId: schemaId,
 		Policy: &collections.IncentivePolicy{
-			DataProducer:  req.Policy.DataProducer,
+			DataProvider:  req.Policy.DataProvider,
 			DataProcessor: req.Policy.DataProcessor,
 			DataRelayer:   req.Policy.DataRelayer,
-			DataSource:    req.Policy.DataSource,
+			DataOwner:     req.Policy.DataOwner,
 		},
-	})
+	}
+	collectionId, err := api.collections.Register(ctx, collection)
+
 	return &CreateCollectionResponse{
-		CollectionId: hash.Hex(),
+		CollectionId: collectionId.String(),
 	}, err
 }
 
