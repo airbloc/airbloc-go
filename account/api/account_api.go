@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/airbloc/airbloc-go/account"
 	"github.com/airbloc/airbloc-go/api"
-	commonApi "github.com/airbloc/airbloc-go/common/api"
 )
 
 type API struct {
@@ -22,7 +21,5 @@ func (api *API) AttachToAPI(service *api.APIService) {
 
 func (api *API) Create(ctx context.Context, req *AccountCreateRequest) (*AccountCreateResponse, error) {
 	id, err := api.manager.Create(ctx)
-	return &AccountCreateResponse{
-		AccountId: &commonApi.Hash{Hash: id[:]},
-	}, err
+	return &AccountCreateResponse{AccountId: id.String()}, err
 }

@@ -2,11 +2,11 @@ package schemas
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/database/metadb"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/mongodb/mongo-go-driver/bson"
@@ -32,6 +32,11 @@ func New(db metadb.Database, client *blockchain.Client) *Schemas {
 }
 
 func (s *Schemas) Register(name string, schema map[string]interface{}) (common.ID, error) {
+	rawSchema, err := json.Marshal(schema)
+	if err != nil {
+		return common.ID{}, errors.Wrap(err, "given schema is not a valid JSON schema")
+	}
+
 	if nameExists, err := s.NameExists(name); err != nil {
 		return common.ID{}, err
 	} else if nameExists {
@@ -44,7 +49,7 @@ func (s *Schemas) Register(name string, schema map[string]interface{}) (common.I
 		return common.ID{}, err
 	}
 
-	receipt, err := bind.WaitMined(context.Background(), s.client, dtx)
+	receipt, err := s.client.WaitMined(context.Background(), dtx)
 	if err != nil {
 		return common.ID{}, errors.Wrap(err, "failed to wait for tx to be mined")
 	}
@@ -61,7 +66,7 @@ func (s *Schemas) Register(name string, schema map[string]interface{}) (common.I
 	metadata := map[string]interface{}{
 		"name":   name,
 		"id":     schemaId.String(),
-		"schema": schema,
+		"schema": string(rawSchema),
 	}
 	if _, err := s.db.Create(metadata, nil); err != nil {
 		return schemaId, errors.Wrap(err, "failed to save metadata")
