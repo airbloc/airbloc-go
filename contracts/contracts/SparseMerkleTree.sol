@@ -4,6 +4,8 @@ pragma solidity ^0.4.24;
 // Based on https://rinkeby.etherscan.io/address/0x881544e0b2e02a79ad10b01eca51660889d5452b#code
 contract SparseMerkleTree {
 
+    bytes32 constant LEAF_INCLUDED = 0x0000000000000000000000000000000000000000000000000000000000000001;
+
     uint8 constant DEPTH = 64;
     bytes32[DEPTH + 1] public defaultHashes;
 
@@ -14,20 +16,19 @@ contract SparseMerkleTree {
     }
 
     function checkMembership(
-        bytes32 leaf,
         bytes32 root,
-        uint64 tokenID,
+        uint64 leafID,
         bytes proof) public view returns (bool)
     {
-        bytes32 computedHash = getRoot(leaf, tokenID, proof);
+        bytes32 computedHash = getRoot(leafID, proof);
         return (computedHash == root);
     }
 
     // first 64 bits of the proof are the 0/1 bits
-    function getRoot(bytes32 leaf, uint64 index, bytes proof) public view returns (bytes32) {
+    function getRoot(uint64 index, bytes proof) public view returns (bytes32) {
         require((proof.length - 8) % 32 == 0 && proof.length <= 2056);
         bytes32 proofElement;
-        bytes32 computedHash = leaf;
+        bytes32 computedHash = LEAF_INCLUDED;
         uint16 p = 8;
         uint64 proofBits;
         assembly {proofBits := div(mload(add(proof, 32)), exp(256, 24))}

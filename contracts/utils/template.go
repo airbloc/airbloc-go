@@ -413,7 +413,7 @@ var (
 					return event, nil
 				}
 			}
-			return nil, errors.New("{{.Original.Nakme}} event not found")
+			return nil, errors.New("{{.Original.Name}} event not found")
 		}
 
 		// Watch{{.Normalized.Name}} is a free log subscription operation binding the contract event 0x{{printf "%x" .Original.Id}}.
