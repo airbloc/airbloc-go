@@ -1,16 +1,22 @@
 package warehouse
 
 import (
+	"context"
+	"encoding/hex"
+	"fmt"
+	"github.com/airbloc/airbloc-go/adapter"
+	"github.com/airbloc/airbloc-go/blockchain"
+	"github.com/airbloc/airbloc-go/data"
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/mongodb/mongo-go-driver/bson"
+	"math/rand"
 	"net/url"
 	"time"
 
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/key"
-	"github.com/airbloc/airbloc-go/warehouse/bundle"
 	"github.com/airbloc/airbloc-go/warehouse/protocol"
 	"github.com/airbloc/airbloc-go/warehouse/storage"
 	"github.com/pkg/errors"
@@ -21,6 +27,8 @@ type DataWarehouse struct {
 	protocols      map[string]protocol.Protocol
 	localCache     *localdb.Model
 	metaDatabase   *metadb.Model
+	ethclient      *blockchain.Client
+	dataRegistry   *adapter.DataRegistry
 	DefaultStorage storage.Storage
 }
 
@@ -28,6 +36,7 @@ func New(
 	kms *key.Manager,
 	localDatabase localdb.Database,
 	metaDatabase metadb.Database,
+	ethclient *blockchain.Client,
 	defaultStorage storage.Storage,
 	supportedProtocols []protocol.Protocol,
 ) *DataWarehouse {
@@ -42,6 +51,8 @@ func New(
 		protocols:      protocols,
 		localCache:     localdb.NewModel(localDatabase, "bundle"),
 		metaDatabase:   metadb.NewModel(metaDatabase, "bundles"),
+		ethclient:      ethclient,
+		dataRegistry:   ethclient.Contracts.DataRegistry,
 		DefaultStorage: defaultStorage,
 	}
 }
@@ -66,36 +77,44 @@ func (warehouse *DataWarehouse) encrypt(d *common.Data) (*common.EncryptedData, 
 	}, nil
 }
 
-func (warehouse *DataWarehouse) Store(stream *BundleStream) (*bundle.Bundle, error) {
+func generateBundleNameOf(bundle *data.Bundle) string {
+	tokenBytes := make([]byte, 4)
+	rand.Read(tokenBytes)
+	token := hex.EncodeToString(tokenBytes)
+
+	currentTime := time.Now().Format("20060102150405")
+	return fmt.Sprintf("%s-%s-%s.bundle", currentTime, bundle.Collection.String(), token)
+}
+
+func (warehouse *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 	if stream == nil {
 		return nil, errors.New("No data in the stream.")
 	}
 	ingestedAt := time.Now()
 
-	// TODO: hash collision proof / generate on contract
-	bundleId := common.GenerateID(
-		warehouse.kms.OwnerKey.EthereumAddress,
-		time.Now(),
-		stream.collection[:])
-
-	createdBundle := &bundle.Bundle{
-		Id:         bundleId,
+	createdBundle := &data.Bundle{
 		Provider:   common.ID{}, /* TODO: implement appID */
 		Collection: stream.collection,
 		DataCount:  stream.DataCount,
 		IngestedAt: ingestedAt,
 		Data:       stream.data,
 	}
-
-	uri, err := warehouse.DefaultStorage.Save(createdBundle)
+	bundleName := generateBundleNameOf(createdBundle)
+	uri, err := warehouse.DefaultStorage.Save(bundleName, createdBundle)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to save bundle to the storage")
 	}
 	createdBundle.Uri = uri.String()
 
+	// register to on-chain
+	bundleIndex, err := warehouse.registerBundleOnChain(createdBundle)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to register bundle to blockchain")
+	}
+
 	// save metadata to make the bundle searchable
 	bundleInfo := map[string]interface{}{
-		"bundleId":   bundleId.String(),
+		"bundleId":   fmt.Sprintf("%s/%d", createdBundle.Collection, bundleIndex),
 		"uri":        createdBundle.Uri,
 		"provider":   createdBundle.Provider.String(),
 		"collection": createdBundle.Collection.String(),
@@ -111,7 +130,42 @@ func (warehouse *DataWarehouse) Store(stream *BundleStream) (*bundle.Bundle, err
 	return createdBundle, nil
 }
 
-func (warehouse *DataWarehouse) Get(bundleId string) (*bundle.Bundle, error) {
+func (warehouse *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (int, error) {
+	bundleDataHash, err := bundle.Hash()
+	if err != nil {
+		return 0, errors.Wrap(err, "failed to get hash of the bundle data")
+	}
+	log.Debug("Bundle data hash", "hash", bundleDataHash.Hex())
+
+	userMerkleRoot, err := bundle.SetupUserProof()
+	if err != nil {
+		return 0, errors.Wrap(err, "failed to setup SMT")
+	}
+	log.Debug("Bundle data merkle root", "root", userMerkleRoot.Hex())
+
+	tx, err := warehouse.dataRegistry.RegisterBundle(
+		warehouse.ethclient.Account(),
+		bundle.Collection,
+		userMerkleRoot,
+		bundleDataHash,
+		bundle.Uri)
+	if err != nil {
+		return 0, errors.Wrap(err, "failed to register a bundle to DataRegistry")
+	}
+
+	receipt, err := warehouse.ethclient.WaitMined(context.Background(), tx)
+	if err != nil {
+		return 0, errors.Wrap(err, "failed to wait for tx to be mined")
+	}
+
+	registerResult, err := warehouse.dataRegistry.ParseBundleRegisteredFromReceipt(receipt)
+	if err != nil {
+		return 0, errors.Wrap(err, "failed to parse a event from the receipt")
+	}
+	return int(registerResult.Index), nil
+}
+
+func (warehouse *DataWarehouse) Get(bundleId string) (*data.Bundle, error) {
 	// try to fetch URI from cache. TODO: TTL of the bundle cache
 	uri, err := warehouse.localCache.Get(bundleId)
 	if err != nil {
@@ -131,14 +185,14 @@ func (warehouse *DataWarehouse) Get(bundleId string) (*bundle.Bundle, error) {
 		return nil, errors.Wrap(err, "failed to query on metadatabase")
 	}
 
-	parsedUri, err := url.Parse(metadata.Lookup("uri").StringValue())
+	parsedUri, err := url.Parse(metadata.Lookup("data", "uri").StringValue())
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse URI")
 	}
 	return warehouse.Fetch(parsedUri)
 }
 
-func (warehouse *DataWarehouse) Fetch(uri *url.URL) (*bundle.Bundle, error) {
+func (warehouse *DataWarehouse) Fetch(uri *url.URL) (*data.Bundle, error) {
 	protoc, exists := warehouse.protocols[uri.Scheme]
 	if !exists {
 		return nil, errors.Errorf("the protocol %s is not supported", uri.Scheme)

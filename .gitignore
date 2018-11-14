@@ -1,6 +1,7 @@
 abi
 contracts/truffle-config.local.js
 config.json
+deployment.local.json
 private.key
 local/
 local.db

@@ -13,5 +13,5 @@ message AccountCreateRequest {
 }
 
 message AccountCreateResponse {
-    airbloc.common.Hash accountId = 1;
+    string accountId = 1;
 }

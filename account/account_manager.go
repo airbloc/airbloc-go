@@ -1,41 +1,25 @@
 package account
 
 import (
-	"github.com/pkg/errors"
-	"strings"
-
 	"context"
+	"github.com/pkg/errors"
 
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
 	ablCommon "github.com/airbloc/airbloc-go/common"
-	"github.com/ethereum/go-ethereum/accounts/abi"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 )
 
 type Manager struct {
-	client      *blockchain.Client
-	contract    *adapter.Accounts
-	contractABI abi.ABI
+	client   *blockchain.Client
+	contract *adapter.Accounts
 }
 
-func NewManager(client *blockchain.Client, addr ethCommon.Address) (*Manager, error) {
-	accounts, err := adapter.NewAccounts(addr, client)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to bind to Accounts")
-	}
-
-	rawABI := strings.NewReader(adapter.AccountsABI)
-	contractABI, err := abi.JSON(rawABI)
-	if err != nil {
-		return nil, err
-	}
-
+func NewManager(client *blockchain.Client) *Manager {
 	return &Manager{
-		client:      client,
-		contract:    accounts,
-		contractABI: contractABI,
-	}, nil
+		client:   client,
+		contract: client.Contracts.Accounts,
+	}
 }
 
 func (manager *Manager) Create(ctx context.Context) (ablCommon.ID, error) {
@@ -49,15 +33,10 @@ func (manager *Manager) Create(ctx context.Context) (ablCommon.ID, error) {
 		return ablCommon.ID{}, err
 	}
 
-	event := adapter.AccountsSignUp{}
-	if err := manager.contractABI.Unpack(
-		&event,
-		"SignUp",
-		receipt.Logs[0].Data,
-	); err != nil {
-		return ablCommon.ID{}, err
+	event, err := manager.contract.ParseSignUpFromReceipt(receipt)
+	if err != nil {
+		return ablCommon.ID{}, errors.Wrap(err, "failed to parse a event from the receipt")
 	}
-
 	return ablCommon.ID(event.AccountId), err
 }
 
@@ -93,14 +72,9 @@ func (manager *Manager) CreateUsingProxy(
 		return ablCommon.ID{}, err
 	}
 
-	event := adapter.AccountsSignUp{}
-	if err := manager.contractABI.Unpack(
-		&event,
-		"SignUp",
-		receipt.Logs[0].Data,
-	); err != nil {
-		return ablCommon.ID{}, err
+	event, err := manager.contract.ParseSignUpFromReceipt(receipt)
+	if err != nil {
+		return ablCommon.ID{}, errors.Wrap(err, "failed to parse a event from the receipt")
 	}
-
 	return ablCommon.ID(event.AccountId), err
 }

@@ -2,9 +2,8 @@ package protocol
 
 import (
 	"errors"
+	"github.com/airbloc/airbloc-go/data"
 	"net/url"
-
-	"github.com/airbloc/airbloc-go/warehouse/bundle"
 )
 
 var (
@@ -13,5 +12,5 @@ var (
 
 type Protocol interface {
 	Name() string
-	Read(uri *url.URL) (*bundle.Bundle, error)
+	Read(uri *url.URL) (*data.Bundle, error)
 }

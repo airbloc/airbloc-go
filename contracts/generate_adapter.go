@@ -2,15 +2,15 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/airbloc/airbloc-go/contracts/utils"
 	"io/ioutil"
 	"log"
 	"os"
-
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"path"
 )
 
-const BuildOutput = "contracts/build/out"
-const ContractDir = "contracts/build/contracts"
+const BuildOutput = "../adapter"
+const ContractDir = "build/contracts"
 
 type Contract struct {
 	Name string      `json:"contractName"`
@@ -61,14 +61,13 @@ func main() {
 			continue
 		}
 
-		outPath := "adapter/" + contract.Name + ".go"
+		outPath := path.Join(BuildOutput, contract.Name+".go")
 
-		tmp, err := bind.Bind(
+		tmp, err := utils.Bind(
 			[]string{contract.Name},
 			[]string{string(abi)},
 			[]string{contract.Bin},
 			"adapter",
-			bind.LangGo,
 		)
 		if err != nil {
 			log.Println(err)

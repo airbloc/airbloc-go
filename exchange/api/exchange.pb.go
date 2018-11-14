@@ -6,7 +6,7 @@ package api
 import (
 	fmt "fmt"
 	api "github.com/airbloc/airbloc-go/common/api"
-	api1 "github.com/airbloc/airbloc-go/data/api"
+	api1 "github.com/airbloc/airbloc-go/data/datamanager/api"
 	proto "github.com/golang/protobuf/proto"
 	context "golang.org/x/net/context"
 	grpc "google.golang.org/grpc"

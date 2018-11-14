@@ -36,3 +36,7 @@
 [[constraint]]
   name = "github.com/mongodb/mongo-go-driver"
   version = "0.0.17"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/loomnetwork/mamamerkle"

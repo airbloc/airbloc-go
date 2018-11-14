@@ -4,6 +4,7 @@
 package adapter
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -31,7 +33,7 @@ var (
 const RBACABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"role\",\"type\":\"string\"}],\"name\":\"RoleAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"role\",\"type\":\"string\"}],\"name\":\"RoleRemoved\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[{\"name\":\"_operator\",\"type\":\"address\"},{\"name\":\"_role\",\"type\":\"string\"}],\"name\":\"checkRole\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_operator\",\"type\":\"address\"},{\"name\":\"_role\",\"type\":\"string\"}],\"name\":\"hasRole\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // RBACBin is the compiled bytecode used for deploying new contracts.
-const RBACBin = `0x60806040526004361061004c576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680630988ca8c14610051578063217fe6c6146100da575b600080fd5b34801561005d57600080fd5b506100d8600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001908201803590602001908080601f016020809104026020016040519081016040528093929190818152602001838380828437820191505050505050919291929050505061017b565b005b3480156100e657600080fd5b50610161600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001908201803590602001908080601f01602080910402602001604051908101604052809392919081815260200183838082843782019150505050505091929192905050506101fc565b604051808215151515815260200191505060405180910390f35b6101f8826000836040518082805190602001908083835b6020831015156101b75780518252602082019150602081019050602083039250610192565b6001836020036101000a038019825116818451168082178552505050505050905001915050908152602001604051809103902061028390919063ffffffff16565b5050565b600061027b836000846040518082805190602001908083835b60208310151561023a5780518252602082019150602081019050602083039250610215565b6001836020036101000a038019825116818451168082178552505050505050905001915050908152602001604051809103902061029c90919063ffffffff16565b905092915050565b61028d828261029c565b151561029857600080fd5b5050565b60008260000160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900460ff169050929150505600a165627a7a723058202ec5b7703d986f3b889bffe3e22a045442f734526c17f475e0f411b879a394410029`
+const RBACBin = `0x60806040526004361061004b5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416630988ca8c8114610050578063217fe6c6146100c6575b600080fd5b34801561005c57600080fd5b5060408051602060046024803582810135601f81018590048502860185019096528585526100c495833573ffffffffffffffffffffffffffffffffffffffff1695369560449491939091019190819084018382808284375094975061014e9650505050505050565b005b3480156100d257600080fd5b5060408051602060046024803582810135601f810185900485028601850190965285855261013a95833573ffffffffffffffffffffffffffffffffffffffff169536956044949193909101919081908401838280828437509497506101bc9650505050505050565b604080519115158252519081900360200190f35b6101b8826000836040518082805190602001908083835b602083106101845780518252601f199092019160209182019101610165565b51815160209384036101000a600019018019909216911617905292019485525060405193849003019092209291505061022f565b5050565b6000610228836000846040518082805190602001908083835b602083106101f45780518252601f1990920191602091820191016101d5565b51815160209384036101000a6000190180199092169116179052920194855250604051938490030190922092915050610244565b9392505050565b6102398282610244565b15156101b857600080fd5b73ffffffffffffffffffffffffffffffffffffffff166000908152602091909152604090205460ff16905600a165627a7a723058201985dbb9d96e2f96a2372e1509a93153004c92f3948522bfab012ad050c15d550029`
 
 // DeployRBAC deploys a new Ethereum contract, binding an instance of RBAC to it.
 func DeployRBAC(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *RBAC, error) {
@@ -329,6 +331,22 @@ func (_RBAC *RBACFilterer) FilterRoleAdded(opts *bind.FilterOpts, operator []com
 	return &RBACRoleAddedIterator{contract: _RBAC.contract, event: "RoleAdded", logs: logs, sub: sub}, nil
 }
 
+// FilterRoleAdded parses the event from given transaction receipt.
+//
+// Solidity: e RoleAdded(operator indexed address, role string)
+func (_RBAC *RBACFilterer) ParseRoleAddedFromReceipt(receipt *types.Receipt) (*RBACRoleAdded, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0xbfec83d64eaa953f2708271a023ab9ee82057f8f3578d548c1a4ba0b5b700489") {
+			event := new(RBACRoleAdded)
+			if err := _RBAC.contract.UnpackLog(event, "RoleAdded", *log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("RoleAdded event not found")
+}
+
 // WatchRoleAdded is a free log subscription operation binding the contract event 0xbfec83d64eaa953f2708271a023ab9ee82057f8f3578d548c1a4ba0b5b700489.
 //
 // Solidity: e RoleAdded(operator indexed address, role string)
@@ -460,6 +478,22 @@ func (_RBAC *RBACFilterer) FilterRoleRemoved(opts *bind.FilterOpts, operator []c
 		return nil, err
 	}
 	return &RBACRoleRemovedIterator{contract: _RBAC.contract, event: "RoleRemoved", logs: logs, sub: sub}, nil
+}
+
+// FilterRoleRemoved parses the event from given transaction receipt.
+//
+// Solidity: e RoleRemoved(operator indexed address, role string)
+func (_RBAC *RBACFilterer) ParseRoleRemovedFromReceipt(receipt *types.Receipt) (*RBACRoleRemoved, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0xd211483f91fc6eff862467f8de606587a30c8fc9981056f051b897a418df803a") {
+			event := new(RBACRoleRemoved)
+			if err := _RBAC.contract.UnpackLog(event, "RoleRemoved", *log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("RoleRemoved event not found")
 }
 
 // WatchRoleRemoved is a free log subscription operation binding the contract event 0xd211483f91fc6eff862467f8de606587a30c8fc9981056f051b897a418df803a.

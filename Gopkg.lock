@@ -45,6 +45,22 @@
   revision = "67e573d211ace594f1366b4ce9d39726c4b19bd0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:78097abc20f73ec968b3f67bf74deda55009caa4b801d0d04f36145c869ab3c3"
+  name = "github.com/cevaris/ordered_map"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "0efaee1733e3399a3cb88fc7d2ce340bf2e863d7"
+
+[[projects]]
+  digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  pruneopts = "UT"
+  revision = "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
+  version = "v1.1.1"
+
+[[projects]]
   digest = "1:e47d51dab652d26c3fba6f8cba403f922d02757a82abdc77e90df7948daf296e"
   name = "github.com/deckarep/golang-set"
   packages = ["."]
@@ -219,6 +235,14 @@
   version = "v1.1"
 
 [[projects]]
+  branch = "master"
+  digest = "1:3d71996594377f5010626a5e616690156254876ee131e1ed0293f58ca33e3456"
+  name = "github.com/loomnetwork/mamamerkle"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "bd379c19d9638c72aea2c79b4ac0b973561e1783"
+
+[[projects]]
   digest = "1:c568d7727aa262c32bdf8a3f7db83614f7af0ed661474b24588de635c20024c7"
   name = "github.com/magiconair/properties"
   packages = ["."]
@@ -343,6 +367,14 @@
   version = "v0.8.0"
 
 [[projects]]
+  digest = "1:0028cb19b2e4c3112225cd871870f2d9cf49b9b4276531f03438a88e94be86fe"
+  name = "github.com/pmezard/go-difflib"
+  packages = ["difflib"]
+  pruneopts = "UT"
+  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
+  version = "v1.0.0"
+
+[[projects]]
   digest = "1:31d83d1b1c288073c91abadee3caec87de2a1fb5dbe589039264a802e67a26b8"
   name = "github.com/rjeczalik/notify"
   packages = ["."]
@@ -408,6 +440,14 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "a0d410e3f79f73f438bca304edad16bb28da5902"
+
+[[projects]]
+  digest = "1:18752d0b95816a1b777505a97f71c7467a8445b8ffb55631a7bf779f6ba4fa83"
+  name = "github.com/stretchr/testify"
+  packages = ["assert"]
+  pruneopts = "UT"
+  revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
+  version = "v1.2.2"
 
 [[projects]]
   branch = "master"
@@ -609,22 +649,29 @@
     "github.com/ethereum/go-ethereum/core/types",
     "github.com/ethereum/go-ethereum/crypto",
     "github.com/ethereum/go-ethereum/crypto/ecies",
+    "github.com/ethereum/go-ethereum/crypto/sha3",
     "github.com/ethereum/go-ethereum/ethclient",
     "github.com/ethereum/go-ethereum/event",
     "github.com/ethereum/go-ethereum/log",
     "github.com/ethereum/go-ethereum/params",
+    "github.com/go-interledger/cryptoconditions",
     "github.com/golang/protobuf/proto",
     "github.com/jinzhu/configor",
+    "github.com/kalaspuffar/base64url",
+    "github.com/loomnetwork/mamamerkle",
     "github.com/mailru/easyjson",
     "github.com/mailru/easyjson/jlexer",
     "github.com/mailru/easyjson/jwriter",
     "github.com/mongodb/mongo-go-driver/bson",
     "github.com/mongodb/mongo-go-driver/mongo",
     "github.com/mongodb/mongo-go-driver/mongo/findopt",
+    "github.com/mr-tron/base58/base58",
     "github.com/pkg/errors",
+    "github.com/stretchr/testify/assert",
     "github.com/syndtr/goleveldb/leveldb",
     "github.com/valyala/fasthttp",
     "golang.org/x/crypto/ed25519",
+    "golang.org/x/crypto/sha3",
     "golang.org/x/net/context",
     "google.golang.org/grpc",
   ]

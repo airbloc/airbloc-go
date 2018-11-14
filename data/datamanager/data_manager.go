@@ -1,15 +1,14 @@
-package data
+package datamanager
 
 import (
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
 	ablCommon "github.com/airbloc/airbloc-go/common"
+	"github.com/airbloc/airbloc-go/data"
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/airbloc/airbloc-go/warehouse"
-	"github.com/airbloc/airbloc-go/warehouse/bundle"
-	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
 )
 
@@ -19,32 +18,25 @@ type Manager struct {
 	metadb    *metadb.Database
 	warehouse *warehouse.DataWarehouse
 	registry  *adapter.DataRegistry
-	batches   *BatchManager
+	batches   *data.BatchManager
 }
 
 func NewManager(
 	kms *key.Manager,
 	client *blockchain.Client,
 	localDB localdb.Database,
-	address ethCommon.Address,
 ) (*Manager, error) {
-
-	registry, err := adapter.NewDataRegistry(address, client)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to bind to DataRegistry")
-	}
-
-	batches := NewBatchManager(localDB)
+	batches := data.NewBatchManager(localDB)
 
 	return &Manager{
 		kms:      kms,
 		client:   client,
-		registry: registry,
+		registry: client.Contracts.DataRegistry,
 		batches:  batches,
 	}, nil
 }
 
-func (manager *Manager) Batches() *BatchManager {
+func (manager *Manager) Batches() *data.BatchManager {
 	return manager.batches
 }
 
@@ -68,8 +60,8 @@ func (manager *Manager) Get(dataId string) (*ablCommon.Data, error) {
 	return data, nil
 }
 
-func (manager *Manager) GetBatch(batch *Batch) ([]*ablCommon.Data, error) {
-	bundles := make(map[ablCommon.ID]*bundle.Bundle)
+func (manager *Manager) GetBatch(batch *data.Batch) ([]*ablCommon.Data, error) {
+	bundles := make(map[ablCommon.ID]*data.Bundle)
 	dataList := make([]*ablCommon.Data, batch.Count)
 
 	for dataId := range batch.Iterator() {
