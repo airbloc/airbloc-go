@@ -61,7 +61,7 @@ Before launching Airbloc network on local, Make sure that
 If you modify Protobuf definitions in `proto/`, you should regenerate the protobuf binds.
 
 ```
- $ ./generate-proto.sh
+ $ make generate-proto
 ```
 
 ### Compiling Contract
