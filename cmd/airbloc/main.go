@@ -38,7 +38,7 @@ func main() {
 
 	// setup logger
 	glogger := log.NewGlogHandler(log.StreamHandler(os.Stderr, log.TerminalFormat(true)))
-	glogger.Verbosity(log.Lvl(4))
+	glogger.Verbosity(log.Lvl(log.LvlTrace))
 	log.Root().SetHandler(glogger)
 
 	backend, err := api.NewAirblocBackend(config)

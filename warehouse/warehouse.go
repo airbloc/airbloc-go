@@ -135,11 +135,13 @@ func (warehouse *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (int,
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to get hash of the bundle data")
 	}
+	log.Debug("Bundle data hash", "hash", bundleDataHash.Hex())
 
 	userMerkleRoot, err := bundle.SetupUserProof()
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to setup SMT")
 	}
+	log.Debug("Bundle data merkle root", "root", userMerkleRoot.Hex())
 
 	tx, err := warehouse.dataRegistry.RegisterBundle(
 		warehouse.ethclient.Account(),
