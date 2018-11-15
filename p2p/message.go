@@ -5,7 +5,6 @@ import (
 	"reflect"
 
 	"github.com/gogo/protobuf/proto"
-	"github.com/libp2p/go-libp2p-peerstore"
 )
 
 type Message struct {

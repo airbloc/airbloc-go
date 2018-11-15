@@ -2,11 +2,9 @@ package p2p
 
 import (
 	"context"
-	"sync"
-
-	"reflect"
-
 	"log"
+	"reflect"
+	"sync"
 
 	"github.com/airbloc/airbloc-go/api"
 	"github.com/airbloc/airbloc-go/key"
@@ -28,7 +26,7 @@ type Server interface {
 	RegisterProtocol(func(p2p.Message))
 	UnregisterProtocol()
 
-	RegisterTopic(string, proto.Message, Handler) error
+	RegisterTopic(string, proto.Message, TopicHandler) error
 	UnregisterTopic(string) error
 
 	SendMessage(context.Context, p2p.Message, peer.ID) error
@@ -49,7 +47,7 @@ type AirblocServer struct {
 	// topic - handlers
 	types    map[p2p.Topic]reflect.Type
 	topics   map[reflect.Type]string
-	handlers map[reflect.Type]Handler
+	handlers map[reflect.Type]TopicHandler
 }
 
 func NewServer(
@@ -60,7 +58,7 @@ func NewServer(
 	addr multiaddr.Multiaddr,
 	bootnode bool,
 	bootinfos []peerstore.PeerInfo,
-) (*AirblocServer, error) {
+) (Server, error) {
 	privKey, err := identity.DeriveLibp2pKeyPair()
 	if err != nil {
 		return nil, err
@@ -74,7 +72,7 @@ func NewServer(
 
 		types:    make(map[p2p.Topic]reflect.Type),
 		topics:   make(map[reflect.Type]string),
-		handlers: make(map[reflect.Type]Handler),
+		handlers: make(map[reflect.Type]TopicHandler),
 	}
 
 	h, err := libp2p.New(
@@ -137,7 +135,7 @@ func NewServer(
 // api backend interfaces
 func (s *AirblocServer) Start() error {
 	// start discovery
-	s.host.RegisterHandler(s.handler)
+	s.host.Register(s.handler)
 
 	// TODO: add max peers item to config
 	go s.peerWorker()
@@ -182,7 +180,15 @@ func (s *AirblocServer) handler(message p2p.Message) {
 	handler(pMsg)
 }
 
-func (s *AirblocServer) RegisterTopic(topic string, message proto.Message, handler Handler) error {
+func (s *AirblocServer) RegisterProtocol(handler ProtocolHandler) {
+	s.host.Register(handler)
+}
+
+func (s *AirblocServer) UnregisterProtocol() {
+
+}
+
+func (s *AirblocServer) RegisterTopic(topic string, message proto.Message, handler TopicHandler) error {
 	val, ok := p2p.Topic_value[topic]
 	if !ok {
 		return errors.New("topic already registered")

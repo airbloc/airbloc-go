@@ -1,4 +1,7 @@
 package p2p
 
-type Adapter func(Handler) Handler
-type Handler func(Message)
+import p2p "github.com/airbloc/airbloc-go/proto/p2p"
+
+type Adapter func(TopicHandler) TopicHandler
+type ProtocolHandler func(p2p.Message)
+type TopicHandler func(Message)

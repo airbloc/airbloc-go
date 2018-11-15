@@ -11,9 +11,6 @@ import (
 	"github.com/airbloc/airbloc-go/key"
 	p2p "github.com/airbloc/airbloc-go/proto/p2p"
 	"github.com/gogo/protobuf/proto"
-	"github.com/libp2p/go-libp2p-peerstore"
-	"github.com/libp2p/go-libp2p-protocol"
-	"github.com/multiformats/go-multiaddr"
 	"github.com/stretchr/testify/assert"
 )
 

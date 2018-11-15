@@ -4,9 +4,6 @@ import (
 	"time"
 
 	"log"
-
-	"github.com/libp2p/go-libp2p-peer"
-	"github.com/libp2p/go-libp2p-peerstore"
 )
 
 func (s *Server) peer(id peer.ID) (peerstore.PeerInfo, error) {
