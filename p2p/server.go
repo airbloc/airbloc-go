@@ -8,6 +8,7 @@ import (
 
 	"log"
 
+	"github.com/airbloc/airbloc-go/api"
 	"github.com/airbloc/airbloc-go/key"
 	p2p "github.com/airbloc/airbloc-go/proto/p2p"
 	"github.com/gogo/protobuf/proto"
@@ -16,13 +17,25 @@ import (
 	kaddht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/libp2p/go-libp2p-peer"
 	"github.com/libp2p/go-libp2p-peerstore"
-	"github.com/libp2p/go-libp2p/p2p/host/routed"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/multiformats/go-multihash"
 	"github.com/pkg/errors"
 )
 
-type Server struct {
+type Server interface {
+	api.Service
+
+	RegisterProtocol(func(p2p.Message))
+	UnregisterProtocol()
+
+	RegisterTopic(string, proto.Message, Handler) error
+	UnregisterTopic(string) error
+
+	SendMessage(context.Context, p2p.Message, peer.ID) error
+	PublishMessage(context.Context, p2p.Message) error
+}
+
+type AirblocServer struct {
 	// controller
 	mutex  *sync.Mutex
 	ctx    context.Context
@@ -33,26 +46,28 @@ type Server struct {
 	host AirblocHost
 	dht  *kaddht.IpfsDHT
 
-	// topics
+	// topic - handlers
 	types    map[p2p.Topic]reflect.Type
 	topics   map[reflect.Type]string
 	handlers map[reflect.Type]Handler
 }
 
 func NewServer(
+	pid string,
+	version string,
 	p2pId p2p.CID,
 	identity *key.Key,
 	addr multiaddr.Multiaddr,
 	bootnode bool,
 	bootinfos []peerstore.PeerInfo,
-) (*Server, error) {
+) (*AirblocServer, error) {
 	privKey, err := identity.DeriveLibp2pKeyPair()
 	if err != nil {
 		return nil, err
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
-	server := &Server{
+	server := &AirblocServer{
 		ctx:    ctx,
 		cancel: cancel,
 		mutex:  new(sync.Mutex),
@@ -77,7 +92,12 @@ func NewServer(
 		cancel()
 		return nil, err
 	}
-	server.host = AirblocHost{routedhost.Wrap(h, server.dht)}
+	server.host = AirblocHost{
+		pid:     pid,
+		version: version,
+		host:    h,
+		limit:   20,
+	}
 
 	if bootnode {
 		if err := server.dht.Bootstrap(ctx); err != nil {
@@ -115,18 +135,20 @@ func NewServer(
 }
 
 // api backend interfaces
-func (s *Server) Start() error {
+func (s *AirblocServer) Start() error {
 	// start discovery
-	s.host.RegisterHandler("/airbloc", s.handler)
+	s.host.RegisterHandler(s.handler)
+
+	// TODO: add max peers item to config
 	go s.peerWorker()
 	return nil
 }
 
-func (s *Server) Stop() {
+func (s *AirblocServer) Stop() {
 	s.cancel()
 }
 
-func (s *Server) handler(message p2p.Message) {
+func (s *AirblocServer) handler(message p2p.Message) {
 	typ, ok := s.types[message.Topic]
 	if !ok {
 		log.Println("unregistered topic")
@@ -160,7 +182,7 @@ func (s *Server) handler(message p2p.Message) {
 	handler(pMsg)
 }
 
-func (s *Server) RegisterTopic(topic string, message proto.Message, handler Handler) error {
+func (s *AirblocServer) RegisterTopic(topic string, message proto.Message, handler Handler) error {
 	val, ok := p2p.Topic_value[topic]
 	if !ok {
 		return errors.New("topic already registered")
@@ -176,7 +198,7 @@ func (s *Server) RegisterTopic(topic string, message proto.Message, handler Hand
 	return nil
 }
 
-func (s *Server) UnregisterTopic(topic string) error {
+func (s *AirblocServer) UnregisterTopic(topic string) error {
 	val, ok := p2p.Topic_value[topic]
 	if !ok {
 		return errors.New("invalid topic")
@@ -190,4 +212,12 @@ func (s *Server) UnregisterTopic(topic string) error {
 	s.mutex.Unlock()
 
 	return nil
+}
+
+func (s *AirblocServer) SendMessage(ctx context.Context, message p2p.Message, p peer.ID) error {
+	return s.host.Send(ctx, message, p)
+}
+
+func (s *AirblocServer) PublishMessage(ctx context.Context, message p2p.Message) error {
+	return s.host.Publish(ctx, message)
 }

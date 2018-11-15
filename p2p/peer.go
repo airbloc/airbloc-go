@@ -1,8 +1,9 @@
 package p2p
 
 import (
-	"log"
 	"time"
+
+	"log"
 
 	"github.com/libp2p/go-libp2p-peer"
 	"github.com/libp2p/go-libp2p-peerstore"
@@ -30,31 +31,49 @@ func (s *Server) peer(id peer.ID) (peerstore.PeerInfo, error) {
 	return s.host.Peerstore().PeerInfo(id), nil
 }
 
-func (s *Server) peerWorker() {
+func (s *AirblocServer) peerWorker() {
 	ticker := time.NewTicker(1 * time.Minute)
 	defer ticker.Stop()
 
+	s.refreshPeer()
 	for {
 		select {
 		case <-ticker.C:
-			idch, err := s.dht.GetClosestPeers(s.ctx, s.id.KeyString())
-			if s.ctx.Err() != nil {
-				log.Println("context error:", err)
-				return
-			}
-
-			if err != nil {
-				log.Println("failed to get closest peers:", err)
-				return
-			}
-
-			for id := range idch {
-				err = s.host.Connect(s.ctx, peerstore.PeerInfo{ID: id})
-				if err != nil {
-					log.Println("failed to connect peer:", err)
-					return
-				}
-			}
+			s.refreshPeer()
 		}
+	}
+}
+
+func (s *AirblocServer) refreshPeer() {
+	s.clearPeer()
+	s.updatePeer()
+}
+
+func (s *AirblocServer) clearPeer() {
+	peerStore := s.host.Peerstore()
+	for _, peerID := range peerStore.PeersWithAddrs() {
+		peerStore.ClearAddrs(peerID)
+	}
+}
+
+func (s *AirblocServer) updatePeer() {
+	idch, err := s.dht.GetClosestPeers(s.ctx, s.id.KeyString())
+	if s.ctx.Err() != nil {
+		log.Println("context error:", err)
+		return
+	}
+
+	if err != nil {
+		log.Println("failed to get closest peers:", err)
+		return
+	}
+
+	for id := range idch {
+		info, err := s.dht.FindPeer(s.ctx, id)
+		if err != nil {
+			log.Println("failed to find peer", id.Pretty(), ":", err)
+			return
+		}
+		s.host.Peerstore().AddAddrs(info.ID, info.Addrs, peerstore.TempAddrTTL)
 	}
 }

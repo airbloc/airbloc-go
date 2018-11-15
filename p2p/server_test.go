@@ -12,33 +12,46 @@ import (
 	p2p "github.com/airbloc/airbloc-go/proto/p2p"
 	"github.com/gogo/protobuf/proto"
 	"github.com/libp2p/go-libp2p-peerstore"
+	"github.com/libp2p/go-libp2p-protocol"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/stretchr/testify/assert"
 )
 
+const Size = 50
+
 var (
-	pongMsg []byte
-	pingMsg []byte
+	pid     = protocol.ID("/airbloc")
+	pongMsg p2p.Message
+	pingMsg p2p.Message
 	keys    []*key.Key
 	addrs   []multiaddr.Multiaddr
 )
 
 func init() {
-	pongMsg, _ = proto.Marshal(&p2p.TestPing{Message: "World!"})
-	pingMsg, _ = proto.Marshal(&p2p.TestPing{Message: "Hello"})
+	pong, _ := proto.Marshal(&p2p.TestPing{Message: "World!"})
+	pongMsg = p2p.Message{
+		Topic: p2p.Topic_TEST_PONG,
+		Data:  pong,
+	}
+	ping, _ := proto.Marshal(&p2p.TestPing{Message: "Hello"})
+	pingMsg = p2p.Message{
+		Topic: p2p.Topic_TEST_PING,
+		Data:  ping,
+	}
 
-	for i := 1; i < 12; i++ {
+	for i := 1; i <= Size+1; i++ {
 		privKey, _ := key.Generate()
 		addrStr := fmt.Sprintf("/ip4/127.0.0.1/tcp/24%02d", i)
-		log.Println(addrStr)
 		addr, _ := multiaddr.NewMultiaddr(addrStr)
 		keys = append(keys, privKey)
 		addrs = append(addrs, addr)
 	}
 }
 
-func makeBasicServer(index int, bootnode bool, bootinfos ...peerstore.PeerInfo) (*Server, error) {
+func makeBasicServer(index int, bootnode bool, bootinfos ...peerstore.PeerInfo) (*AirblocServer, error) {
 	return NewServer(
+		"airbloc",
+		"0.0.1",
 		p2p.CID_AIRBLOC, keys[index],
 		addrs[index], bootnode, bootinfos)
 }
@@ -57,35 +70,30 @@ func TestNewServer(t *testing.T) {
 	bootinfo, err := bootnode.host.BootInfo()
 	assert.NoError(t, err)
 
-	size := 10
-	servers := make([]*Server, size)
-	for i := 0; i < size; i++ {
-		server, err := makeBasicServer(i+1, false, bootinfo)
+	servers := make([]*AirblocServer, Size)
+	servers[0] = bootnode
+
+	for i := 1; i < Size; i++ {
+		server, err := makeBasicServer(i, false, bootinfo)
 		assert.NoError(t, err)
 		server.Start()
 		server.ctx = ctx
 
 		// ping
 		server.RegisterTopic(p2p.Topic_TEST_PING.String(), &p2p.TestPing{}, func(message Message) {
-			log.Println(message.Info.ID.Pretty(), message.Data.String())
-			server.host.Send(message.ctx, &p2p.Message{
-				Topic: p2p.Topic_TEST_PONG,
-				Data:  pongMsg,
-			}, message.Info.ID, "/airbloc")
+			log.Println("Recevied", message.Info.ID.Pretty(), message.Data.String())
+			server.host.Send(message.ctx, pongMsg, message.Info.ID)
 		})
 
 		// pong
 		server.RegisterTopic(p2p.Topic_TEST_PONG.String(), &p2p.TestPong{}, func(message Message) {
-			log.Println(message.Info.ID.Pretty(), message.Data.String())
+			log.Println("Received", message.Info.ID.Pretty(), message.Data.String())
 		})
 
 		servers[i] = server
 	}
 
-	err = servers[0].host.Send(ctx, &p2p.Message{
-		Topic: p2p.Topic_TEST_PING,
-		Data:  pingMsg,
-	}, servers[1].host.ID(), "/airbloc")
+	err = servers[Size/2].host.Publish(ctx, pingMsg)
 	assert.NoError(t, err)
 
 	time.Sleep(2 * time.Second)
