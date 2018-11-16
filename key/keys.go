@@ -2,6 +2,9 @@ package key
 
 import (
 	"crypto/ecdsa"
+	"golang.org/x/crypto/pbkdf2"
+	"golang.org/x/crypto/sha3"
+	"math/big"
 
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/ethereum/go-ethereum/common"
@@ -9,6 +12,11 @@ import (
 	"github.com/ethereum/go-ethereum/crypto/ecies"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ed25519"
+)
+
+var (
+	passwordSalt = []byte("AirblocPassword")
+	one = big.NewInt(1)
 )
 
 // Key is an ECDSA keypair with SECP256K1 curve
@@ -25,6 +33,32 @@ func FromECDSA(key *ecdsa.PrivateKey) *Key {
 		ECIESPrivate:    ecies.ImportECDSA(key),
 		EthereumAddress: crypto.PubkeyToAddress(key.PublicKey),
 	}
+}
+
+// DeriveFromPassword uses PBKDF2 with
+func DeriveFromPassword(identity common.Hash, password string) (*Key) {
+	passwordHash := sha3.Sum256([]byte(password))
+
+	// make PBKDF2 input material
+	// with sha3_256(identity hash) + sha3_256(password_hash)
+	keybase := make([]byte, 64)
+	copy(keybase[:32], identity[:])
+	copy(keybase[32:], passwordHash[:])
+
+	curveParams := crypto.S256().Params()
+	material := pbkdf2.Key(keybase, passwordSalt, 1024, curveParams.BitSize/8+8, sha3.New256)
+
+	// make sure that k <= N
+	k := new(big.Int).SetBytes(material)
+	n := new(big.Int).Sub(curveParams.N, one)
+	k.Mod(k, n)
+	k.Add(k, one)
+
+	private := new(ecdsa.PrivateKey)
+	private.PublicKey.Curve = crypto.S256()
+	private.D = k
+	private.PublicKey.X, private.PublicKey.Y = crypto.S256().ScalarBaseMult(k.Bytes())
+	return FromECDSA(private)
 }
 
 // Generate creates new random ECDSA Key.
