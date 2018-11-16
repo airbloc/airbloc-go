@@ -23,7 +23,37 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
+type AccountGetResponse_Status int32
+
+const (
+	AccountGetResponse__NONE     AccountGetResponse_Status = 0
+	AccountGetResponse_TEMPORARY AccountGetResponse_Status = 1
+	AccountGetResponse_CREATED   AccountGetResponse_Status = 2
+)
+
+var AccountGetResponse_Status_name = map[int32]string{
+	0: "_NONE",
+	1: "TEMPORARY",
+	2: "CREATED",
+}
+
+var AccountGetResponse_Status_value = map[string]int32{
+	"_NONE":     0,
+	"TEMPORARY": 1,
+	"CREATED":   2,
+}
+
+func (x AccountGetResponse_Status) String() string {
+	return proto.EnumName(AccountGetResponse_Status_name, int32(x))
+}
+
+func (AccountGetResponse_Status) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_477cbf5ae5b46edf, []int{3, 0}
+}
+
 type AccountCreateRequest struct {
+	Address              []byte   `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	PasswordSignature    []byte   `protobuf:"bytes,2,opt,name=passwordSignature,proto3" json:"passwordSignature,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -53,6 +83,20 @@ func (m *AccountCreateRequest) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_AccountCreateRequest proto.InternalMessageInfo
+
+func (m *AccountCreateRequest) GetAddress() []byte {
+	if m != nil {
+		return m.Address
+	}
+	return nil
+}
+
+func (m *AccountCreateRequest) GetPasswordSignature() []byte {
+	if m != nil {
+		return m.PasswordSignature
+	}
+	return nil
+}
 
 type AccountCreateResponse struct {
 	AccountId            string   `protobuf:"bytes,1,opt,name=accountId,proto3" json:"accountId,omitempty"`
@@ -93,27 +137,287 @@ func (m *AccountCreateResponse) GetAccountId() string {
 	return ""
 }
 
+type AccountGetRequest struct {
+	AccountId            string   `protobuf:"bytes,1,opt,name=accountId,proto3" json:"accountId,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AccountGetRequest) Reset()         { *m = AccountGetRequest{} }
+func (m *AccountGetRequest) String() string { return proto.CompactTextString(m) }
+func (*AccountGetRequest) ProtoMessage()    {}
+func (*AccountGetRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_477cbf5ae5b46edf, []int{2}
+}
+
+func (m *AccountGetRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AccountGetRequest.Unmarshal(m, b)
+}
+func (m *AccountGetRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AccountGetRequest.Marshal(b, m, deterministic)
+}
+func (m *AccountGetRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AccountGetRequest.Merge(m, src)
+}
+func (m *AccountGetRequest) XXX_Size() int {
+	return xxx_messageInfo_AccountGetRequest.Size(m)
+}
+func (m *AccountGetRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_AccountGetRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AccountGetRequest proto.InternalMessageInfo
+
+func (m *AccountGetRequest) GetAccountId() string {
+	if m != nil {
+		return m.AccountId
+	}
+	return ""
+}
+
+type AccountGetResponse struct {
+	AccountId            string                    `protobuf:"bytes,1,opt,name=accountId,proto3" json:"accountId,omitempty"`
+	OwnerAddress         []byte                    `protobuf:"bytes,2,opt,name=ownerAddress,proto3" json:"ownerAddress,omitempty"`
+	Status               AccountGetResponse_Status `protobuf:"varint,3,opt,name=status,proto3,enum=airbloc.collections.AccountGetResponse_Status" json:"status,omitempty"`
+	ProxyAddress         []byte                    `protobuf:"bytes,4,opt,name=proxyAddress,proto3" json:"proxyAddress,omitempty"`
+	PasswordProof        []byte                    `protobuf:"bytes,5,opt,name=passwordProof,proto3" json:"passwordProof,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
+	XXX_unrecognized     []byte                    `json:"-"`
+	XXX_sizecache        int32                     `json:"-"`
+}
+
+func (m *AccountGetResponse) Reset()         { *m = AccountGetResponse{} }
+func (m *AccountGetResponse) String() string { return proto.CompactTextString(m) }
+func (*AccountGetResponse) ProtoMessage()    {}
+func (*AccountGetResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_477cbf5ae5b46edf, []int{3}
+}
+
+func (m *AccountGetResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AccountGetResponse.Unmarshal(m, b)
+}
+func (m *AccountGetResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AccountGetResponse.Marshal(b, m, deterministic)
+}
+func (m *AccountGetResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AccountGetResponse.Merge(m, src)
+}
+func (m *AccountGetResponse) XXX_Size() int {
+	return xxx_messageInfo_AccountGetResponse.Size(m)
+}
+func (m *AccountGetResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_AccountGetResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AccountGetResponse proto.InternalMessageInfo
+
+func (m *AccountGetResponse) GetAccountId() string {
+	if m != nil {
+		return m.AccountId
+	}
+	return ""
+}
+
+func (m *AccountGetResponse) GetOwnerAddress() []byte {
+	if m != nil {
+		return m.OwnerAddress
+	}
+	return nil
+}
+
+func (m *AccountGetResponse) GetStatus() AccountGetResponse_Status {
+	if m != nil {
+		return m.Status
+	}
+	return AccountGetResponse__NONE
+}
+
+func (m *AccountGetResponse) GetProxyAddress() []byte {
+	if m != nil {
+		return m.ProxyAddress
+	}
+	return nil
+}
+
+func (m *AccountGetResponse) GetPasswordProof() []byte {
+	if m != nil {
+		return m.PasswordProof
+	}
+	return nil
+}
+
+type AccountGetByIdentityRequest struct {
+	Identity             string   `protobuf:"bytes,1,opt,name=identity,proto3" json:"identity,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AccountGetByIdentityRequest) Reset()         { *m = AccountGetByIdentityRequest{} }
+func (m *AccountGetByIdentityRequest) String() string { return proto.CompactTextString(m) }
+func (*AccountGetByIdentityRequest) ProtoMessage()    {}
+func (*AccountGetByIdentityRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_477cbf5ae5b46edf, []int{4}
+}
+
+func (m *AccountGetByIdentityRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AccountGetByIdentityRequest.Unmarshal(m, b)
+}
+func (m *AccountGetByIdentityRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AccountGetByIdentityRequest.Marshal(b, m, deterministic)
+}
+func (m *AccountGetByIdentityRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AccountGetByIdentityRequest.Merge(m, src)
+}
+func (m *AccountGetByIdentityRequest) XXX_Size() int {
+	return xxx_messageInfo_AccountGetByIdentityRequest.Size(m)
+}
+func (m *AccountGetByIdentityRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_AccountGetByIdentityRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AccountGetByIdentityRequest proto.InternalMessageInfo
+
+func (m *AccountGetByIdentityRequest) GetIdentity() string {
+	if m != nil {
+		return m.Identity
+	}
+	return ""
+}
+
+type TestPasswordRequest struct {
+	MessageHash          []byte   `protobuf:"bytes,1,opt,name=messageHash,proto3" json:"messageHash,omitempty"`
+	Signature            []byte   `protobuf:"bytes,2,opt,name=signature,proto3" json:"signature,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *TestPasswordRequest) Reset()         { *m = TestPasswordRequest{} }
+func (m *TestPasswordRequest) String() string { return proto.CompactTextString(m) }
+func (*TestPasswordRequest) ProtoMessage()    {}
+func (*TestPasswordRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_477cbf5ae5b46edf, []int{5}
+}
+
+func (m *TestPasswordRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TestPasswordRequest.Unmarshal(m, b)
+}
+func (m *TestPasswordRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TestPasswordRequest.Marshal(b, m, deterministic)
+}
+func (m *TestPasswordRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TestPasswordRequest.Merge(m, src)
+}
+func (m *TestPasswordRequest) XXX_Size() int {
+	return xxx_messageInfo_TestPasswordRequest.Size(m)
+}
+func (m *TestPasswordRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_TestPasswordRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TestPasswordRequest proto.InternalMessageInfo
+
+func (m *TestPasswordRequest) GetMessageHash() []byte {
+	if m != nil {
+		return m.MessageHash
+	}
+	return nil
+}
+
+func (m *TestPasswordRequest) GetSignature() []byte {
+	if m != nil {
+		return m.Signature
+	}
+	return nil
+}
+
+type TestPasswordResponse struct {
+	Exists               bool     `protobuf:"varint,1,opt,name=exists,proto3" json:"exists,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *TestPasswordResponse) Reset()         { *m = TestPasswordResponse{} }
+func (m *TestPasswordResponse) String() string { return proto.CompactTextString(m) }
+func (*TestPasswordResponse) ProtoMessage()    {}
+func (*TestPasswordResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_477cbf5ae5b46edf, []int{6}
+}
+
+func (m *TestPasswordResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TestPasswordResponse.Unmarshal(m, b)
+}
+func (m *TestPasswordResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TestPasswordResponse.Marshal(b, m, deterministic)
+}
+func (m *TestPasswordResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TestPasswordResponse.Merge(m, src)
+}
+func (m *TestPasswordResponse) XXX_Size() int {
+	return xxx_messageInfo_TestPasswordResponse.Size(m)
+}
+func (m *TestPasswordResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_TestPasswordResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TestPasswordResponse proto.InternalMessageInfo
+
+func (m *TestPasswordResponse) GetExists() bool {
+	if m != nil {
+		return m.Exists
+	}
+	return false
+}
+
 func init() {
+	proto.RegisterEnum("airbloc.collections.AccountGetResponse_Status", AccountGetResponse_Status_name, AccountGetResponse_Status_value)
 	proto.RegisterType((*AccountCreateRequest)(nil), "airbloc.collections.AccountCreateRequest")
 	proto.RegisterType((*AccountCreateResponse)(nil), "airbloc.collections.AccountCreateResponse")
+	proto.RegisterType((*AccountGetRequest)(nil), "airbloc.collections.AccountGetRequest")
+	proto.RegisterType((*AccountGetResponse)(nil), "airbloc.collections.AccountGetResponse")
+	proto.RegisterType((*AccountGetByIdentityRequest)(nil), "airbloc.collections.AccountGetByIdentityRequest")
+	proto.RegisterType((*TestPasswordRequest)(nil), "airbloc.collections.TestPasswordRequest")
+	proto.RegisterType((*TestPasswordResponse)(nil), "airbloc.collections.TestPasswordResponse")
 }
 
 func init() { proto.RegisterFile("proto/account.proto", fileDescriptor_477cbf5ae5b46edf) }
 
 var fileDescriptor_477cbf5ae5b46edf = []byte{
-	// 183 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x2e, 0x28, 0xca, 0x2f,
-	0xc9, 0xd7, 0x4f, 0x4c, 0x4e, 0xce, 0x2f, 0xcd, 0x2b, 0xd1, 0x03, 0xf3, 0x84, 0x84, 0x13, 0x33,
-	0x8b, 0x92, 0x72, 0xf2, 0x93, 0xf5, 0x92, 0xf3, 0x73, 0x72, 0x52, 0x93, 0x4b, 0x32, 0xf3, 0xf3,
-	0x8a, 0xa5, 0x04, 0x21, 0x2a, 0x4b, 0x2a, 0x0b, 0x52, 0x8b, 0x21, 0xea, 0x94, 0xc4, 0xb8, 0x44,
-	0x1c, 0x21, 0x1a, 0x9d, 0x8b, 0x52, 0x13, 0x4b, 0x52, 0x83, 0x52, 0x0b, 0x4b, 0x53, 0x8b, 0x4b,
-	0x94, 0x4c, 0xb9, 0x44, 0xd1, 0xc4, 0x8b, 0x0b, 0xf2, 0xf3, 0x8a, 0x53, 0x85, 0x64, 0xb8, 0x38,
-	0xa1, 0x36, 0x79, 0xa6, 0x48, 0x30, 0x2a, 0x30, 0x6a, 0x70, 0x06, 0x21, 0x04, 0x8c, 0xb2, 0xb8,
-	0xd8, 0xa1, 0xda, 0x84, 0xe2, 0xb9, 0xd8, 0x20, 0x5a, 0x85, 0x34, 0xf5, 0xb0, 0x38, 0x46, 0x0f,
-	0x9b, 0xb5, 0x52, 0x5a, 0xc4, 0x28, 0x85, 0xb8, 0xc4, 0x49, 0x3b, 0x4a, 0x33, 0x3d, 0xb3, 0x24,
-	0xa3, 0x34, 0x49, 0x2f, 0x39, 0x3f, 0x57, 0x1f, 0xaa, 0x0f, 0x46, 0xeb, 0xa6, 0xc3, 0x43, 0x44,
-	0x3f, 0xb1, 0x20, 0x33, 0x89, 0x0d, 0xec, 0x5d, 0x63, 0x40, 0x00, 0x00, 0x00, 0xff, 0xff, 0x9c,
-	0x5f, 0x31, 0x10, 0x2d, 0x01, 0x00, 0x00,
+	// 489 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x54, 0x4d, 0x6f, 0xd3, 0x40,
+	0x10, 0x25, 0x0d, 0x75, 0x9a, 0x69, 0x82, 0x92, 0x4d, 0x41, 0x56, 0xe0, 0x10, 0x59, 0x08, 0x12,
+	0x3e, 0x1c, 0x28, 0xe2, 0xc0, 0x31, 0x2d, 0xa1, 0xf4, 0x40, 0x1b, 0xb9, 0x01, 0x09, 0x0e, 0x54,
+	0x1b, 0x7b, 0x48, 0x8d, 0x52, 0xaf, 0xd9, 0x59, 0xab, 0xcd, 0xef, 0xe0, 0xc4, 0xbf, 0x45, 0xf5,
+	0xae, 0x9b, 0xb8, 0x89, 0x5a, 0x9f, 0xac, 0x79, 0x9e, 0x37, 0x6f, 0xe6, 0xcd, 0x68, 0xa1, 0x15,
+	0x4b, 0xa1, 0x44, 0x9f, 0xfb, 0xbe, 0x48, 0x22, 0xe5, 0xa6, 0x11, 0x6b, 0xf1, 0x50, 0x4e, 0x66,
+	0xc2, 0x77, 0x7d, 0x31, 0x9b, 0xa1, 0xaf, 0x42, 0x11, 0x51, 0xbb, 0xa9, 0x33, 0xd5, 0x3c, 0x46,
+	0xd2, 0x79, 0xce, 0x4f, 0xd8, 0x19, 0x68, 0xe2, 0xbe, 0x44, 0xae, 0xd0, 0xc3, 0x3f, 0x09, 0x92,
+	0x62, 0x36, 0x54, 0x78, 0x10, 0x48, 0x24, 0xb2, 0x4b, 0x9d, 0x52, 0xb7, 0xe6, 0x65, 0x21, 0x7b,
+	0x05, 0xcd, 0x98, 0x13, 0x5d, 0x08, 0x19, 0x9c, 0x84, 0xd3, 0x88, 0xab, 0x44, 0xa2, 0xbd, 0x91,
+	0xe6, 0xac, 0xfe, 0x70, 0xde, 0xc3, 0xc3, 0x1b, 0xf5, 0x29, 0x16, 0x11, 0x21, 0x7b, 0x02, 0x55,
+	0xd3, 0xf1, 0x61, 0x90, 0x4a, 0x54, 0xbd, 0x05, 0xe0, 0xbc, 0x85, 0xa6, 0xa1, 0x1d, 0xa0, 0xca,
+	0x7a, 0xba, 0x9d, 0xf2, 0x6f, 0x03, 0xd8, 0x32, 0xa7, 0x88, 0x0e, 0x73, 0xa0, 0x26, 0x2e, 0x22,
+	0x94, 0x03, 0x33, 0xab, 0x9e, 0x23, 0x87, 0xb1, 0x4f, 0x60, 0x91, 0xe2, 0x2a, 0x21, 0xbb, 0xdc,
+	0x29, 0x75, 0x1f, 0xec, 0xba, 0xee, 0x1a, 0x6f, 0xdd, 0x55, 0x69, 0xf7, 0x24, 0x65, 0x79, 0x86,
+	0x7d, 0xa5, 0x15, 0x4b, 0x71, 0x39, 0xcf, 0xb4, 0xee, 0x6b, 0xad, 0x65, 0x8c, 0x3d, 0x85, 0x7a,
+	0xe6, 0xe1, 0x48, 0x0a, 0xf1, 0xcb, 0xde, 0x4c, 0x93, 0xf2, 0xa0, 0xd3, 0x07, 0x4b, 0xd7, 0x66,
+	0x55, 0xd8, 0x3c, 0x3d, 0x3a, 0x3e, 0x1a, 0x36, 0xee, 0xb1, 0x3a, 0x54, 0xc7, 0xc3, 0x2f, 0xa3,
+	0x63, 0x6f, 0xe0, 0x7d, 0x6f, 0x94, 0xd8, 0x36, 0x54, 0xf6, 0xbd, 0xe1, 0x60, 0x3c, 0xfc, 0xd8,
+	0xd8, 0x70, 0x3e, 0xc0, 0xe3, 0x45, 0x7f, 0x7b, 0xf3, 0xc3, 0x00, 0x23, 0x15, 0xaa, 0x79, 0x66,
+	0x6c, 0x1b, 0xb6, 0x42, 0x03, 0x19, 0x8b, 0xae, 0x63, 0xe7, 0x2b, 0xb4, 0xc6, 0x48, 0x6a, 0x64,
+	0x1a, 0xc8, 0x28, 0x1d, 0xd8, 0x3e, 0x47, 0x22, 0x3e, 0xc5, 0xcf, 0x9c, 0xce, 0xcc, 0x8d, 0x2c,
+	0x43, 0x57, 0xc6, 0xd3, 0x8d, 0xfb, 0x58, 0x00, 0x8e, 0x0b, 0x3b, 0xf9, 0xb2, 0x66, 0x5d, 0x8f,
+	0xc0, 0xc2, 0xcb, 0x90, 0x94, 0x3e, 0xbb, 0x2d, 0xcf, 0x44, 0xbb, 0x7f, 0xcb, 0x50, 0x31, 0x23,
+	0xb0, 0x53, 0xb0, 0xf4, 0x31, 0xb1, 0xde, 0x6d, 0xab, 0xc8, 0x1d, 0x74, 0xfb, 0x45, 0x91, 0x54,
+	0xd3, 0xc4, 0x37, 0x28, 0x1f, 0xa0, 0x62, 0xcf, 0xee, 0x5c, 0xb4, 0x2e, 0xfd, 0xbc, 0xe0, 0x41,
+	0xb0, 0xdf, 0x50, 0xcf, 0xf9, 0xcf, 0xde, 0xdc, 0xc1, 0x5c, 0x59, 0x55, 0x71, 0x2d, 0x1f, 0x6a,
+	0xcb, 0x06, 0xb3, 0xee, 0x5a, 0xe2, 0x9a, 0xd5, 0xb6, 0x7b, 0x05, 0x32, 0xb5, 0xc8, 0xde, 0xcb,
+	0x1f, 0xbd, 0x69, 0xa8, 0xce, 0x92, 0x89, 0xeb, 0x8b, 0xf3, 0xbe, 0xa1, 0x65, 0xdf, 0xd7, 0xd3,
+	0xeb, 0x47, 0xa9, 0xcf, 0xe3, 0x70, 0x62, 0xa5, 0x2f, 0xce, 0xbb, 0xff, 0x01, 0x00, 0x00, 0xff,
+	0xff, 0xf3, 0x68, 0x4d, 0x0b, 0xb0, 0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -129,6 +433,9 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type AccountClient interface {
 	Create(ctx context.Context, in *AccountCreateRequest, opts ...grpc.CallOption) (*AccountCreateResponse, error)
+	Get(ctx context.Context, in *AccountGetRequest, opts ...grpc.CallOption) (*AccountGetResponse, error)
+	GetByIdentity(ctx context.Context, in *AccountGetByIdentityRequest, opts ...grpc.CallOption) (*AccountGetResponse, error)
+	TestPassword(ctx context.Context, in *TestPasswordRequest, opts ...grpc.CallOption) (*TestPasswordResponse, error)
 }
 
 type accountClient struct {
@@ -148,9 +455,39 @@ func (c *accountClient) Create(ctx context.Context, in *AccountCreateRequest, op
 	return out, nil
 }
 
+func (c *accountClient) Get(ctx context.Context, in *AccountGetRequest, opts ...grpc.CallOption) (*AccountGetResponse, error) {
+	out := new(AccountGetResponse)
+	err := c.cc.Invoke(ctx, "/airbloc.collections.Account/Get", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountClient) GetByIdentity(ctx context.Context, in *AccountGetByIdentityRequest, opts ...grpc.CallOption) (*AccountGetResponse, error) {
+	out := new(AccountGetResponse)
+	err := c.cc.Invoke(ctx, "/airbloc.collections.Account/GetByIdentity", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountClient) TestPassword(ctx context.Context, in *TestPasswordRequest, opts ...grpc.CallOption) (*TestPasswordResponse, error) {
+	out := new(TestPasswordResponse)
+	err := c.cc.Invoke(ctx, "/airbloc.collections.Account/TestPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccountServer is the server API for Account service.
 type AccountServer interface {
 	Create(context.Context, *AccountCreateRequest) (*AccountCreateResponse, error)
+	Get(context.Context, *AccountGetRequest) (*AccountGetResponse, error)
+	GetByIdentity(context.Context, *AccountGetByIdentityRequest) (*AccountGetResponse, error)
+	TestPassword(context.Context, *TestPasswordRequest) (*TestPasswordResponse, error)
 }
 
 func RegisterAccountServer(s *grpc.Server, srv AccountServer) {
@@ -175,6 +512,60 @@ func _Account_Create_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Account_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AccountGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/airbloc.collections.Account/Get",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServer).Get(ctx, req.(*AccountGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Account_GetByIdentity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AccountGetByIdentityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServer).GetByIdentity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/airbloc.collections.Account/GetByIdentity",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServer).GetByIdentity(ctx, req.(*AccountGetByIdentityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Account_TestPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TestPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountServer).TestPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/airbloc.collections.Account/TestPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountServer).TestPassword(ctx, req.(*TestPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Account_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "airbloc.collections.Account",
 	HandlerType: (*AccountServer)(nil),
@@ -182,6 +573,18 @@ var _Account_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Create",
 			Handler:    _Account_Create_Handler,
+		},
+		{
+			MethodName: "Get",
+			Handler:    _Account_Get_Handler,
+		},
+		{
+			MethodName: "GetByIdentity",
+			Handler:    _Account_GetByIdentity_Handler,
+		},
+		{
+			MethodName: "TestPassword",
+			Handler:    _Account_TestPassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
