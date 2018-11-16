@@ -10,6 +10,8 @@ service Account {
 }
 
 message AccountCreateRequest {
+    bytes address = 1;
+    bytes passwordSignature = 2;
 }
 
 message AccountCreateResponse {

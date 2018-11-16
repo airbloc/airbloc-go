@@ -2,6 +2,7 @@ package account
 
 import (
 	"context"
+	"github.com/ethereum/go-ethereum/log"
 	"github.com/pkg/errors"
 
 	"github.com/airbloc/airbloc-go/adapter"
@@ -22,52 +23,34 @@ func NewManager(client *blockchain.Client) *Manager {
 	}
 }
 
-func (manager *Manager) Create(ctx context.Context) (ablCommon.ID, error) {
-	tx, err := manager.contract.Create(manager.client.Account())
+func (manager *Manager) CreateTemporary(identityHash ethCommon.Hash) (ablCommon.ID, error) {
+	tx, err := manager.contract.CreateTemporary(manager.client.Account(), identityHash)
 	if err != nil {
 		return ablCommon.ID{}, err
 	}
 
-	receipt, err := manager.client.WaitMined(ctx, tx)
+	receipt, err := manager.client.WaitMined(context.Background(), tx)
 	if err != nil {
 		return ablCommon.ID{}, err
 	}
 
-	event, err := manager.contract.ParseSignUpFromReceipt(receipt)
+	event, err := manager.contract.ParseTemporaryCreatedFromReceipt(receipt)
 	if err != nil {
 		return ablCommon.ID{}, errors.Wrap(err, "failed to parse a event from the receipt")
 	}
-	return ablCommon.ID(event.AccountId), err
+	accountId := ablCommon.ID(event.AccountId)
+	log.Debug("New temporary account created", "accountId", accountId.String())
+
+	return accountId, nil
 }
 
-func (manager *Manager) CreateTemporary(
-	ctx context.Context,
-	proxy ethCommon.Address,
-) error {
-	tx, err := manager.contract.CreateTemporary(manager.client.Account(), proxy)
-	if err != nil {
-		return err
-	}
-
-	_, err = manager.client.WaitMined(ctx, tx)
-	if err != nil {
-		return err
-	}
-
-	// TODO do something
-	return nil
-}
-
-func (manager *Manager) CreateUsingProxy(
-	ctx context.Context,
-	owner, proxy, proof ethCommon.Address,
-) (ablCommon.ID, error) {
-	tx, err := manager.contract.CreateUsingProxy(manager.client.Account(), owner, proxy, proof)
+func (manager *Manager) CreateUsingProxy(owner ethCommon.Address, passwordSignature []byte) (ablCommon.ID, error) {
+	tx, err := manager.contract.CreateUsingProxy(manager.client.Account(), owner, passwordSignature)
 	if err != nil {
 		return ablCommon.ID{}, err
 	}
 
-	receipt, err := manager.client.WaitMined(ctx, tx)
+	receipt, err := manager.client.WaitMined(context.Background(), tx)
 	if err != nil {
 		return ablCommon.ID{}, err
 	}
