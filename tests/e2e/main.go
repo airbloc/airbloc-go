@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	accountsApi "github.com/airbloc/airbloc-go/account/api"
+	"github.com/airbloc/airbloc-go/account"
 	collectionApi "github.com/airbloc/airbloc-go/collections/api"
 	schemaApi "github.com/airbloc/airbloc-go/schemas/api"
 	warehouseApi "github.com/airbloc/airbloc-go/warehouse/api"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"log"
 	"time"
@@ -59,14 +61,22 @@ func testCreateCollection(appId string, schemaId string, conn *grpc.ClientConn) 
 	return result.GetCollectionId()
 }
 
-func testCreateUserAccount(conn *grpc.ClientConn) string {
-	accounts := accountsApi.NewAccountClient(conn)
+func testCreateUserAccount(conn *grpc.ClientConn, index int) string {
+	accounts := account.NewClient(conn)
 
-	result, err := accounts.Create(context.Background(), &accountsApi.AccountCreateRequest{})
+	priv, err := crypto.GenerateKey()
 	if err != nil {
-		log.Fatalln(err.Error())
+		log.Fatalln(errors.Wrap(err, "failed to generate a private key").Error())
 	}
-	return result.GetAccountId()
+
+	walletAddress := crypto.PubkeyToAddress(priv.PublicKey)
+	password := fmt.Sprintf("password%d", index)
+
+	session, err := accounts.Create(walletAddress, password)
+	if err != nil {
+		log.Fatalln(errors.Wrap(err, "failed to create account").Error())
+	}
+	return session.AccountId.String()
 }
 
 func main() {
@@ -91,8 +101,7 @@ func main() {
 	}
 
 	for i := 0; i < 10; i++ {
-		// userId := testCreateUserAccount(conn)
-		userId := fmt.Sprintf("deadbeefdeadbee%d", i%10)
+		userId := testCreateUserAccount(conn, i)
 		log.Printf("Created user %d : %s\n", i, userId)
 
 		rawData := &warehouseApi.RawDataRequest{
