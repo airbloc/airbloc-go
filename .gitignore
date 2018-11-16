@@ -1,6 +1,7 @@
 abi
 contracts/truffle-config.local.js
 config.json
+deployment.local.json
 private.key
 local/
 local.db
@@ -23,10 +24,6 @@ config.yml
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
-
-### Go Patch ###
-/vendor/
-/Godeps/
 
 ### Intellij ###
 .idea

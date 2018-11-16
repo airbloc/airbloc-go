@@ -24,14 +24,7 @@ type Config struct {
 		Options  struct {
 			MinConfirmations int `default:"1" yaml:"minConfirmations"`
 		}
-		Deployments struct {
-			Accounts           string `yaml:"Accounts"`
-			AppRegistry        string `yaml:"AppRegistry"`
-			CollectionRegistry string `yaml:"CollectionRegistry"`
-			DataRegistry       string `yaml:"DataRegistry"`
-			Exchange           string `yaml:"Exchange"`
-			SchemaRegistry     string `yaml:"SchemaRegistry"`
-		}
+		DeploymentPath string `default:"deployment.local.json" yaml:"deploymentPath"`
 	}
 
 	Warehouse struct {

@@ -9,11 +9,11 @@ import (
 
 type Data struct {
 	Payload   string `json:"payload"`
-	OwnerAnid string `json:"ownerAnid"`
+	OwnerAnid ID     `json:"ownerAnid"`
 }
 
 type EncryptedData struct {
-	OwnerAnid string `json:"ownerAnid"`
+	OwnerAnid ID     `json:"ownerAnid"`
 	Payload   []byte `json:"payload"`
 	Capsule   []byte `json:"capsule"`
 }

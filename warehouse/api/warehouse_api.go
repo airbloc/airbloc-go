@@ -42,6 +42,7 @@ func New(airbloc *api.AirblocBackend) (_ api.API, err error) {
 		airbloc.Kms,
 		airbloc.LocalDatabase,
 		airbloc.MetaDatabase,
+		airbloc.Ethclient,
 		defaultStorage,
 		supportedProtocols,
 	)
@@ -66,9 +67,14 @@ func (api *API) StoreBundle(stream Warehouse_StoreBundleServer) error {
 			bundleStream = api.warehouse.CreateBundle(collectionId)
 		}
 
+		ownerAnid, err := common.IDFromString(request.GetOwnerId())
+		if err != nil {
+			return errors.Wrapf(err, "failed to parse ANID %s", request.GetOwnerId())
+		}
+
 		datum := &common.Data{
 			Payload:   request.GetPayload(),
-			OwnerAnid: request.GetOwnerId(),
+			OwnerAnid: ownerAnid,
 		}
 		bundleStream.Add(datum)
 	}
@@ -104,9 +110,14 @@ func (api *API) StoreEncryptedBundle(stream Warehouse_StoreEncryptedBundleServer
 			bundleStream = api.warehouse.CreateBundle(collectionId)
 		}
 
+		ownerAnid, err := common.IDFromString(request.GetOwnerId())
+		if err != nil {
+			return errors.Wrapf(err, "failed to parse ANID %s", request.GetOwnerId())
+		}
+
 		datum := &common.EncryptedData{
 			Payload:   request.GetEncryptedPayload(),
-			OwnerAnid: request.GetOwnerId(),
+			OwnerAnid: ownerAnid,
 			Capsule:   request.GetCapsule(),
 		}
 		bundleStream.AddEncrypted(datum)

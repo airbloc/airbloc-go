@@ -3,98 +3,111 @@ pragma solidity ^0.4.24;
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "./AppRegistry.sol";
 import "./SchemaRegistry.sol";
+import "./SparseMerkleTree.sol";
+import "./Utils.sol";
 
 contract CollectionRegistry {
     using SafeMath for uint256;
 
-    event Registered(bytes32 indexed _colectionId);
-    event Unregistered(bytes32 indexed _colectionId, bytes32 indexed _appId, bytes32 indexed _schemaId);
-    event Allowed(bytes32 indexed _collectionId, bytes32 indexed _uid);
-    event Denied(bytes32 indexed _collectionId, bytes32 indexed _uid);
+    event Registration(address indexed registrar, bytes8 indexed appId, bytes8 collectionId);
+    event Unregistration(bytes8 indexed collectionId, bytes8 indexed appId);
+    event Allowed(bytes8 indexed collectionId, bytes8 indexed userId);
+    event Denied(bytes8 indexed collectionId, bytes8 indexed userId);
 
     struct Collection {
-        bytes32 appId;
-        bytes32 schemaId;
+        bytes8 appId;
+        bytes8 schemaId;
         IncentivePolicy policy;
-        mapping (bytes32 => bool) auth;
+        mapping (bytes8 => Auth) dataCollectionOf;
     }
 
     struct IncentivePolicy {
-        // calculate with ETH. ex) 0.35ETH == 0.35%
         uint256 self;
         uint256 owner;
     }
 
-    AppRegistry appReg;
-    SchemaRegistry schemaReg;
-    mapping (bytes32 => Collection) reg;
-
-    constructor(
-        AppRegistry _appReg,
-        SchemaRegistry _schemaReg
-    ) public {
-        appReg = _appReg;
-        schemaReg = _schemaReg;
+    struct Auth {
+        bool isAllowed;
+        uint256 authorizedAt;
     }
 
-    function newCollection(bytes32 _appId, bytes32 _schemaId, uint256 _ratio) internal view returns (Collection memory) {
-        require(schemaReg.check(_schemaId), "invalid schema");
-        require(check(_schemaId), "collection already exists");
-        return Collection({
-            appId: _appId,
-            schemaId: _schemaId,
-            policy: IncentivePolicy({
-                self: _ratio,
-                owner: uint256(100 ether).sub(_ratio)
-            })
+    mapping (bytes8 => Collection) collections;
+
+    AppRegistry apps;
+    SchemaRegistry schemas;
+
+    constructor(AppRegistry _appReg, SchemaRegistry _schemaReg) public {
+        apps = _appReg;
+        schemas = _schemaReg;
+    }
+
+    function register(bytes8 _appId, bytes8 _schemaId, uint256 _ratio) public {
+        require(apps.checkOwner(_appId, msg.sender), "only owner can register collection.");
+        require(schemas.exists(_schemaId), "given schema does not exist");
+
+        bytes32 unique = keccak256(abi.encodePacked(_appId, _schemaId, _ratio));
+        bytes8 collectionId = Utils.generateId(unique, msg.sender);
+
+        Collection storage collection = collections[collectionId];
+        collection.appId = _appId;
+        collection.schemaId = _schemaId;
+
+        // calculate with ETH. ex) 35ETH == 0.35%
+        collection.policy = IncentivePolicy({
+            self: _ratio,
+            owner: uint256(100 ether).sub(_ratio)
         });
+
+        emit Registration(msg.sender, _appId, collectionId);
     }
 
-    function register(
-        bytes32 _appId, 
-        bytes32 _schemaId, 
-        uint256 _ratio
-    ) public {
-        require(appReg.checkOwner(_appId, msg.sender), "only owner can transfer ownership");
-        bytes32 id = keccak256(abi.encodePacked(_appId, _schemaId));
-        reg[id] = newCollection(_appId, _schemaId, _ratio);
-        emit Registered(id);
+    function unregister(bytes8 _id) public {
+        require(exists(_id), "collection does not exist");
+
+        bytes8 appId = collections[_id].appId;
+        require(apps.checkOwner(appId, msg.sender), "only owner can register collection.");
+
+        delete collections[_id];
+        emit Unregistration(_id, appId);
     }
 
-    function unregister(bytes32 _id) public {
-        require(appReg.checkOwner(reg[_id].appId, msg.sender), "only owner can transfer ownership");
-        Collection memory collection = reg[_id];
-        delete reg[_id];
-        emit Unregistered(_id, collection.appId, collection.schemaId);
+    function get(bytes8 _id) public view returns (bytes8 appId, bytes8 schemaId, uint256 incentiveRatioSelf) {
+        require(exists(_id), "collection does not exist");
+
+        appId = collections[_id].appId;
+        schemaId = collections[_id].schemaId;
+        incentiveRatioSelf = collections[_id].policy.self;
     }
 
-    function allow(bytes32 _id, bytes32 _uid) public {
-        reg[_id].auth[_uid] = true;
-        emit Allowed(_id, _uid);
+    function allow(bytes8 _id, bytes8 _userId) public {
+        // TODO: User Delegate support?
+        require(exists(_id), "collection does not exist");
+
+        collections[_id].dataCollectionOf[_userId].isAllowed = true;
+        collections[_id].dataCollectionOf[_userId].authorizedAt = block.number;
+
+        emit Allowed(_id, _userId);
     }
 
-    function deny(bytes32 _id, bytes32 _uid) public {
-        delete reg[_id].auth[_uid];
-        emit Denied(_id, _uid);
+    function deny(bytes8 _id, bytes8 _userId) public {
+        require(exists(_id), "collection does not exist");
+
+        collections[_id].dataCollectionOf[_userId].isAllowed = false;
+        collections[_id].dataCollectionOf[_userId].authorizedAt = block.number;
+
+        emit Denied(_id, _userId);
     }
 
-    function _get(bytes32 _id) internal view returns (Collection storage) {
-        return reg[_id];
+    function exists(bytes8 _id) public view returns (bool) {
+        return (collections[_id].appId != bytes8(0x0));
     }
 
-    function get(bytes32 _id) public view returns (bytes32, bytes32) {
-        Collection storage collection = _get(_id);
-        return (
-            collection.appId,
-            collection.schemaId
-        );
+    function isCollectionAllowed(bytes8 collectionId, bytes8 user) public view returns (bool) {
+        return isCollectionAllowedAt(collectionId, user, block.number);
     }
 
-    function check(bytes32 _id) public view returns (bool) {
-        return (reg[_id].appId != bytes32(0x0));
-    }
-
-    function checkAllowed(bytes32 _id, bytes32 _uid) public view returns (bool) {
-        return reg[_id].auth[_uid];
+    function isCollectionAllowedAt(bytes8 collectionId, bytes8 user, uint256 blockNumber) public view returns (bool) {
+        return collections[collectionId].dataCollectionOf[user].isAllowed
+            && collections[collectionId].dataCollectionOf[user].authorizedAt < blockNumber;
     }
 }

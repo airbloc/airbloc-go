@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/airbloc/airbloc-go/key"
-
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 type Client struct {
@@ -16,6 +16,7 @@ type Client struct {
 	ctx        context.Context
 	cfg        ClientOpt
 	transactor *bind.TransactOpts
+	Contracts  *Deployments
 }
 
 func NewClient(key *key.Key, url string, cfg ClientOpt) (*Client, error) {
@@ -62,6 +63,8 @@ func (c *Client) waitConfirmation(ctx context.Context) error {
 
 // Wait Mined
 func (c *Client) WaitMined(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
+	log.Debug("Waiting for transaction to be ⛏", "address", tx.To().Hex(), "txid=", tx.Hash())
+
 	receipt, err := bind.WaitMined(ctx, c, tx)
 	if err != nil {
 		return nil, err
@@ -69,7 +72,7 @@ func (c *Client) WaitMined(ctx context.Context, tx *types.Transaction) (*types.R
 	if receipt.Status == types.ReceiptStatusFailed {
 		return nil, ErrTxFailed
 	}
-	err = c.waitConfirmation(ctx)
+	// err = c.waitConfirmation(ctx)
 	return receipt, err
 }
 
@@ -91,6 +94,6 @@ func (c *Client) WaitDeployed(ctx context.Context, tx *types.Transaction) (*type
 	if err == nil && len(code) == 0 {
 		err = bind.ErrNoCodeAfterDeploy
 	}
-	err = c.waitConfirmation(ctx)
+	// err = c.waitConfirmation(ctx)
 	return receipt, err
 }

@@ -1,18 +1,18 @@
 package collections
 
 import (
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/airbloc/airbloc-go/common"
 )
 
 type Collection struct {
-	AppId    common.Hash
-	SchemaId common.Hash
+	AppId    common.ID
+	SchemaId common.ID
 	Policy   *IncentivePolicy
 }
 
 type IncentivePolicy struct {
-	DataProducer  float64
+	DataProvider  float64
 	DataProcessor float64
 	DataRelayer   float64
-	DataSource    float64
+	DataOwner     float64
 }

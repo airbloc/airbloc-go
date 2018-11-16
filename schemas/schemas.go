@@ -1,100 +1,98 @@
 package schemas
 
 import (
-	"strings"
-
 	"context"
-
+	"encoding/json"
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
+	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/database/metadb"
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/mongodb/mongo-go-driver/bson"
+	"github.com/pkg/errors"
 )
 
-// TODO: metadb integration
+var (
+	ErrNameExists = errors.New("Schema name already exists")
+)
+
 type Schemas struct {
-	db          metadb.Database
-	client      *blockchain.Client
-	contract    *adapter.SchemaRegistry
-	contractABI abi.ABI
+	db       *metadb.Model
+	client   *blockchain.Client
+	contract *adapter.SchemaRegistry
 }
 
-func New(db metadb.Database, client *blockchain.Client, addr common.Address) (*Schemas, error) {
-	collection, err := adapter.NewSchemaRegistry(addr, client)
-	if err != nil {
-		return nil, err
-	}
-
-	rawABI := strings.NewReader(adapter.SchemaRegistryABI)
-	contractABI, err := abi.JSON(rawABI)
-	if err != nil {
-		return nil, err
-	}
-
+func New(db metadb.Database, client *blockchain.Client) *Schemas {
 	return &Schemas{
-		db:          db,
-		client:      client,
-		contract:    collection,
-		contractABI: contractABI,
-	}, nil
+		db:       metadb.NewModel(db, "schema"),
+		client:   client,
+		contract: client.Contracts.SchemaRegistry,
+	}
 }
 
-func (s *Schemas) Register(ctx context.Context, name string, data map[string]interface{}) (common.Hash, error) {
-	dtx, err := s.contract.Register(s.client.Account())
+func (s *Schemas) Register(name string, schema map[string]interface{}) (common.ID, error) {
+	rawSchema, err := json.Marshal(schema)
 	if err != nil {
-		return common.Hash{}, err
+		return common.ID{}, errors.Wrap(err, "given schema is not a valid JSON schema")
 	}
 
-	receipt, err := bind.WaitMined(ctx, s.client, dtx)
+	if nameExists, err := s.NameExists(name); err != nil {
+		return common.ID{}, err
+	} else if nameExists {
+		return common.ID{}, ErrNameExists
+	}
+
+	// register schema to the blockchain and get ID
+	dtx, err := s.contract.Register(s.client.Account(), name)
 	if err != nil {
-		return common.Hash{}, err
+		return common.ID{}, err
 	}
 
-	event := adapter.SchemaRegistryRegistered{}
-	if err := s.contractABI.Unpack(
-		&event,
-		"Registered",
-		receipt.Logs[0].Data,
-	); err != nil {
-		return common.Hash{}, err
+	receipt, err := s.client.WaitMined(context.Background(), dtx)
+	if err != nil {
+		return common.ID{}, errors.Wrap(err, "failed to wait for tx to be mined")
 	}
 
-	//_, err = s.db.Create(txn.Asset{
-	//	Data: map[string]interface{}{
-	//		"id":     common.Hash(event.Id).Hex(),
-	//		"name":   name,
-	//		"schema": data,
-	//	},
-	//}, nil, metadb.BigchainTxModeDefault)
-	//if err != nil {
-	//	return common.Hash{}, err
-	//}
+	event, err := s.contract.ParseRegistrationFromReceipt(receipt)
+	if err != nil {
+		return common.ID{}, errors.Wrap(err, "failed to parse a event from the receipt")
+	}
 
-	return common.Hash(event.Id), nil
+	schemaId := common.ID(event.Id)
+	log.Debug("Created new schema", "name", name, "schemaId", schemaId.String())
+
+	// create metadata
+	metadata := map[string]interface{}{
+		"name":   name,
+		"id":     schemaId.String(),
+		"schema": string(rawSchema),
+	}
+	if _, err := s.db.Create(metadata, nil); err != nil {
+		return schemaId, errors.Wrap(err, "failed to save metadata")
+	}
+	return schemaId, nil
 }
 
-func (s *Schemas) Unregister(ctx context.Context, id common.Hash) error {
-	dtx, err := s.contract.Unregister(s.client.Account(), id)
+func (s *Schemas) NameExists(name string) (bool, error) {
+	hashedName := crypto.Keccak256Hash([]byte(name))
+	return s.contract.NameExists(nil, hashedName)
+}
+
+func (s *Schemas) Unregister(id common.ID) error {
+	tx, err := s.contract.Unregister(s.client.Account(), id)
 	if err != nil {
 		return err
 	}
 
-	receipt, err := bind.WaitMined(ctx, s.client, dtx)
+	if _, err := s.client.WaitMined(context.Background(), tx); err != nil {
+		return err
+	}
+
+	query := bson.NewDocument(bson.EC.String("data.id", id.String()))
+	metadata, err := s.db.RetrieveAsset(query)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to find the asset on metadb")
 	}
-
-	event := adapter.SchemaRegistryUnregistered{}
-	if err := s.contractABI.Unpack(
-		&event,
-		"Unregistered",
-		receipt.Logs[0].Data,
-	); err != nil {
-		return err
-	}
-
-	// TODO: retrieve by id and burn it
-	return nil
+	return s.db.Burn(metadata.Lookup("id").StringValue())
 }

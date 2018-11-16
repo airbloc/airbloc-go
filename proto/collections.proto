@@ -9,10 +9,10 @@ service Collection {
 }
 
 message Policy {
-    double DataProducer = 1;
+    double DataProvider = 1;
     double DataProcessor = 2;
     double DataRelayer = 3;
-    double DataSource = 4;
+    double DataOwner = 4;
 }
 
 message CreateCollectionRequest {

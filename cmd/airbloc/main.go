@@ -8,7 +8,7 @@ import (
 	accountAPI "github.com/airbloc/airbloc-go/account/api"
 	"github.com/airbloc/airbloc-go/api"
 	collectionsAPI "github.com/airbloc/airbloc-go/collections/api"
-	dataAPI "github.com/airbloc/airbloc-go/data/api"
+	dataManageAPI "github.com/airbloc/airbloc-go/data/datamanager/api"
 	exchangeAPI "github.com/airbloc/airbloc-go/exchange/api"
 	schemasAPI "github.com/airbloc/airbloc-go/schemas/api"
 	warehouseAPI "github.com/airbloc/airbloc-go/warehouse/api"
@@ -20,7 +20,7 @@ var (
 	AvailableAPIs = map[string]api.Constructor{
 		"account":     accountAPI.New,
 		"collections": collectionsAPI.New,
-		"data":        dataAPI.New,
+		"data":        dataManageAPI.New,
 		"exchange":    exchangeAPI.New,
 		"schemas":     schemasAPI.New,
 		"warehouse":   warehouseAPI.New,
@@ -39,7 +39,7 @@ func main() {
 
 	// setup logger
 	glogger := log.NewGlogHandler(log.StreamHandler(os.Stderr, log.TerminalFormat(true)))
-	glogger.Verbosity(log.Lvl(4))
+	glogger.Verbosity(log.Lvl(log.LvlTrace))
 	log.Root().SetHandler(glogger)
 
 	backend, err := api.NewAirblocBackend(config)

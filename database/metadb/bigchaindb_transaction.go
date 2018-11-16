@@ -68,8 +68,6 @@ func (db *bigchainDB) preFulfill(t *txn.Transaction) ([]byte, error) {
 		serializedTxn.WriteString(input.Fulfills.TransactionID)
 		serializedTxn.WriteString(string(input.Fulfills.OutputIndex))
 	}
-
-	log.Debug("Signing Transaction", "payload", serializedTxn.String())
 	bytesToSign := sha3.Sum256([]byte(serializedTxn.String()))
 
 	// rand reader is ignored within Sign method; crypto.Hash(0) is sanity check to

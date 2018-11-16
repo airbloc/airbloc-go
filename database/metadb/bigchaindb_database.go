@@ -82,6 +82,8 @@ func (db *bigchainDB) RetrieveOne(
 	if err != nil {
 		return nil, err
 	}
+
+	// TODO: filter burned assets
 	return doc, nil
 }
 
@@ -99,6 +101,8 @@ func (db *bigchainDB) RetrieveMany(
 
 	doc := bson.NewDocument()
 	cursor.Decode(&doc)
+
+	// TODO: filter burned assets
 	return doc, nil
 }
 
