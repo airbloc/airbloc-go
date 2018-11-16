@@ -11,6 +11,10 @@ import (
 	"google.golang.org/grpc"
 )
 
+var (
+	ErrInvalidPassword = errors.New("invalid password.")
+)
+
 type Client struct {
 	manager api.AccountClient
 }
@@ -21,13 +25,13 @@ func NewClient(conn *grpc.ClientConn) (*Client) {
 	}
 }
 
-func (client *Client) Create(walletAddress ethCommon.Address, password string) (ablCommon.ID, error) {
+func (client *Client) Create(walletAddress ethCommon.Address, password string) (*Session, error) {
 	identity := crypto.Keccak256Hash(walletAddress.Bytes())
 	priv := key.DeriveFromPassword(identity, password)
 
 	sig, err := crypto.Sign(identity[:], priv.PrivateKey)
 	if err != nil {
-		return ablCommon.ID{}, errors.Wrap(err, "failed to create signature by password")
+		return nil, errors.Wrap(err, "failed to create signature by password")
 	}
 
 	request := &api.AccountCreateRequest{
@@ -37,7 +41,50 @@ func (client *Client) Create(walletAddress ethCommon.Address, password string) (
 
 	response, err := client.manager.Create(context.Background(), request)
 	if err != nil {
-		return ablCommon.ID{}, errors.Wrap(err, "RPC call failed")
+		return nil, errors.Wrap(err, "RPC call failed")
 	}
-	return ablCommon.IDFromString(response.GetAccountId())
+	accountId, err := ablCommon.IDFromString(response.GetAccountId())
+	if err != nil {
+		return nil, errors.Wrapf(err, "invalid ID returned from the server: %s", response.GetAccountId())
+	}
+	return &Session{
+		AccountId:     accountId,
+		WalletAddress: walletAddress,
+		Key:           priv,
+	}, nil
+}
+
+func (client *Client) LogIn(identity string, password string) (*Session, error) {
+	request := &api.AccountGetByIdentityRequest{
+		Identity: identity,
+	}
+	response, err := client.manager.GetByIdentity(context.Background(), request)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to log in: %s", identity)
+	}
+	accountId, err := ablCommon.IDFromString(response.GetAccountId())
+	if err != nil {
+		return nil, errors.Wrapf(err, "invalid ID returned from the server: %s", response.GetAccountId())
+	}
+	session := newSession(accountId, ethCommon.BytesToAddress(response.GetOwnerAddress()), password)
+
+	// generate test signature
+	identityHash := crypto.Keccak256Hash([]byte(identity))
+	sig, err := session.Sign(identityHash)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to sign using password key")
+	}
+
+	// test the signature to check whether the password is correct
+	testReq := &api.TestPasswordRequest{
+		MessageHash: identityHash[:],
+		Signature:   sig,
+	}
+	testResp, err := client.manager.TestPassword(context.Background(), testReq)
+	if err != nil {
+		return nil, errors.Wrapf(err, "RPC call TestPassword failed")
+	} else if !testResp.Exists {
+		return nil, ErrInvalidPassword
+	}
+	return session, nil
 }
