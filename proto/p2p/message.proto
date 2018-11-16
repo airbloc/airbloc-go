@@ -27,8 +27,9 @@ enum Topic {
 
 message Message {
     Topic topic = 1;
-    bytes From = 2;
-    bytes Data = 3;
+    bytes Data = 2;
+    bytes From = 3;
+    bytes Protocol = 4;
 }
 
 message ReEncryptionKeyRequest {}
