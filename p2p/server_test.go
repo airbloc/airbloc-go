@@ -8,32 +8,39 @@ import (
 
 	"time"
 
+	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/key"
+	"github.com/airbloc/airbloc-go/p2p/common"
 	p2p "github.com/airbloc/airbloc-go/proto/p2p"
 	"github.com/gogo/protobuf/proto"
+	peerstore "github.com/libp2p/go-libp2p-peerstore"
+	multiaddr "github.com/multiformats/go-multiaddr"
 	"github.com/stretchr/testify/assert"
 )
 
 const Size = 50
 
 var (
-	pid     = protocol.ID("/airbloc")
-	pongMsg p2p.Message
-	pingMsg p2p.Message
+	pongMsg common.ProtoMessage
+	pingMsg common.ProtoMessage
 	keys    []*key.Key
 	addrs   []multiaddr.Multiaddr
 )
 
 func init() {
 	pong, _ := proto.Marshal(&p2p.TestPing{Message: "World!"})
-	pongMsg = p2p.Message{
-		Topic: p2p.Topic_TEST_PONG,
-		Data:  pong,
+	pongMsg = common.ProtoMessage{
+		Message: p2p.Message{
+			Topic: p2p.Topic_TEST_PONG,
+			Data:  pong,
+		},
 	}
 	ping, _ := proto.Marshal(&p2p.TestPing{Message: "Hello"})
-	pingMsg = p2p.Message{
-		Topic: p2p.Topic_TEST_PING,
-		Data:  ping,
+	pingMsg = common.ProtoMessage{
+		Message: p2p.Message{
+			Topic: p2p.Topic_TEST_PING,
+			Data:  ping,
+		},
 	}
 
 	for i := 1; i <= Size+1; i++ {
@@ -45,12 +52,8 @@ func init() {
 	}
 }
 
-func makeBasicServer(index int, bootnode bool, bootinfos ...peerstore.PeerInfo) (*AirblocServer, error) {
-	return NewServer(
-		"airbloc",
-		"0.0.1",
-		p2p.CID_AIRBLOC, keys[index],
-		addrs[index], bootnode, bootinfos)
+func makeBasicServer(index int, bootnode bool, bootinfos ...peerstore.PeerInfo) (Server, error) {
+	return NewServer(localdb.NewMemDB(), keys[index], addrs[index], bootnode, bootinfos)
 }
 
 func TestNewServer(t *testing.T) {
@@ -64,33 +67,31 @@ func TestNewServer(t *testing.T) {
 	bootnode, err := makeBasicServer(0, true)
 	assert.NoError(t, err)
 
-	bootinfo, err := bootnode.host.BootInfo()
+	bootinfo, err := bootnode.bootInfo()
 	assert.NoError(t, err)
 
-	servers := make([]*AirblocServer, Size)
+	servers := make([]Server, Size)
 	servers[0] = bootnode
+
+	pid, err := common.NewPid("airbloc", "0.0.1")
+	assert.NoError(t, err)
 
 	for i := 1; i < Size; i++ {
 		server, err := makeBasicServer(i, false, bootinfo)
 		assert.NoError(t, err)
 		server.Start()
-		server.ctx = ctx
+		server.setContext(ctx)
 
 		// ping
-		server.RegisterTopic(p2p.Topic_TEST_PING.String(), &p2p.TestPing{}, func(message Message) {
-			log.Println("Recevied", message.Info.ID.Pretty(), message.Data.String())
-			server.host.Send(message.ctx, pongMsg, message.Info.ID)
-		})
+		server.RegisterTopic(p2p.Topic_TEST_PING.String(), &p2p.TestPing{}, Ping)
 
 		// pong
-		server.RegisterTopic(p2p.Topic_TEST_PONG.String(), &p2p.TestPong{}, func(message Message) {
-			log.Println("Received", message.Info.ID.Pretty(), message.Data.String())
-		})
+		server.RegisterTopic(p2p.Topic_TEST_PONG.String(), &p2p.TestPong{}, Pong)
 
 		servers[i] = server
 	}
 
-	err = servers[Size/2].host.Publish(ctx, pingMsg)
+	err = servers[Size/2].Publish(ctx, pingMsg, pid)
 	assert.NoError(t, err)
 
 	time.Sleep(2 * time.Second)

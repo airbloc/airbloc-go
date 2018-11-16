@@ -1,8 +1,7 @@
-package p2p
+package common
 
 import (
 	"path"
-
 	"strings"
 
 	"github.com/hashicorp/go-version"
@@ -32,7 +31,7 @@ func ParsePid(pid string) (Pid, error) {
 		return Pid{}, errors.New("pid has no prefix '/'")
 	}
 	elems := strings.Split(pid, "/")
-	name, rawVersion := elems[0], elems[1]
+	name, rawVersion := elems[1], elems[2]
 
 	v, err := version.NewVersion(rawVersion)
 	if err != nil {
@@ -55,4 +54,14 @@ func (pid Pid) Version() *version.Version {
 
 func (pid Pid) ProtocolID() protocol.ID {
 	return protocol.ID(path.Join("/", pid.name, pid.version.String()))
+}
+
+type Pids []Pid
+
+func (pids Pids) ProtocolID() []protocol.ID {
+	ids := make([]protocol.ID, len(pids))
+	for i, pid := range pids {
+		ids[i] = pid.ProtocolID()
+	}
+	return ids
 }
