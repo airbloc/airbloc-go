@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+
 	"github.com/airbloc/airbloc-go/api"
 	"github.com/airbloc/airbloc-go/schemas"
 	"github.com/pkg/errors"

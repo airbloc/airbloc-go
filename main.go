@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+
 	accountsApi "github.com/airbloc/airbloc-go/account/api"
 	collectionApi "github.com/airbloc/airbloc-go/collections/api"
 	schemaApi "github.com/airbloc/airbloc-go/schemas/api"
 	warehouseApi "github.com/airbloc/airbloc-go/warehouse/api"
 	"google.golang.org/grpc"
-	"log"
-	"time"
 )
 
 const testSchema = `{

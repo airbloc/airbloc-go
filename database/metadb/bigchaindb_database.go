@@ -2,6 +2,8 @@ package metadb
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/bigchaindb/go-bigchaindb-driver/pkg/client"
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/ethereum/go-ethereum/log"
@@ -9,7 +11,6 @@ import (
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/mongodb/mongo-go-driver/mongo/findopt"
 	"golang.org/x/crypto/ed25519"
-	"net/http"
 )
 
 type bigchainDB struct {

@@ -2,12 +2,13 @@ package api
 
 import (
 	"fmt"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/pkg/errors"
-	"google.golang.org/grpc"
 	"net"
 	"net/http"
 	"strings"
+
+	"github.com/ethereum/go-ethereum/log"
+	"github.com/pkg/errors"
+	"google.golang.org/grpc"
 )
 
 type APIService struct {

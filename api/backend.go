@@ -29,7 +29,7 @@ func NewAirblocBackend(config *Config) (*AirblocBackend, error) {
 	metaDatabase, err := metadb.NewBigchainDB(
 		config.MetaDB.BigchainDBEndpoint,
 		config.MetaDB.MongoDBEndpoint,
-		nodeKey.DeriveEd25519KeyPair(),
+		nodeKey.DeriveBigchainDBKeyPair(),
 		config.MetaDB.Version)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to initialize metadatabase")
@@ -82,6 +82,9 @@ func (airbloc *AirblocBackend) Start() error {
 }
 
 func (airbloc *AirblocBackend) Stop() {
+	airbloc.Ethclient.Close()
+	airbloc.LocalDatabase.Close()
+	airbloc.MetaDatabase.Close()
 	for _, service := range airbloc.Services {
 		service.Stop()
 	}

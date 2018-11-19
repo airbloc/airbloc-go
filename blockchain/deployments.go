@@ -3,11 +3,12 @@ package blockchain
 import (
 	"context"
 	"encoding/json"
+	"io/ioutil"
+
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/pkg/errors"
-	"io/ioutil"
 )
 
 type Deployments struct {

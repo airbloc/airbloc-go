@@ -1,8 +1,9 @@
 package data
 
 import (
-	"golang.org/x/crypto/sha3"
 	"time"
+
+	"golang.org/x/crypto/sha3"
 
 	"github.com/airbloc/airbloc-go/common"
 	ethCommon "github.com/ethereum/go-ethereum/common"

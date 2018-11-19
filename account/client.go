@@ -2,6 +2,7 @@ package account
 
 import (
 	"context"
+
 	"github.com/airbloc/airbloc-go/account/api"
 	ablCommon "github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/key"
@@ -19,7 +20,7 @@ type Client struct {
 	manager api.AccountClient
 }
 
-func NewClient(conn *grpc.ClientConn) (*Client) {
+func NewClient(conn *grpc.ClientConn) *Client {
 	return &Client{
 		manager: api.NewAccountClient(conn),
 	}
@@ -35,7 +36,7 @@ func (client *Client) Create(walletAddress ethCommon.Address, password string) (
 	}
 
 	request := &api.AccountCreateRequest{
-		Address: walletAddress.Bytes(),
+		Address:           walletAddress.Bytes(),
 		PasswordSignature: sig,
 	}
 
