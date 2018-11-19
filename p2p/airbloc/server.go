@@ -10,8 +10,10 @@ import (
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/airbloc/airbloc-go/key"
+	"github.com/airbloc/airbloc-go/p2p"
+	"github.com/airbloc/airbloc-go/p2p/basic"
 	"github.com/airbloc/airbloc-go/p2p/common"
-	p2p "github.com/airbloc/airbloc-go/proto/p2p"
+	p2pr "github.com/airbloc/airbloc-go/proto/p2p"
 	"github.com/gogo/protobuf/proto"
 	"github.com/ipfs/go-cid"
 	"github.com/libp2p/go-libp2p"
@@ -23,7 +25,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-type AirblocServer struct {
+type Server struct {
 	// controller
 	mutex  *sync.Mutex
 	ctx    context.Context
@@ -31,16 +33,16 @@ type AirblocServer struct {
 
 	// network
 	id   cid.Cid
-	host Host
+	host p2p.Host
 	dht  *kaddht.IpfsDHT
 
 	// database
 	db localdb.Database
 
 	// topic - handlers
-	types    map[p2p.Topic]reflect.Type
+	types    map[p2pr.Topic]reflect.Type
 	topics   map[reflect.Type]string
-	handlers map[reflect.Type]TopicHandler
+	handlers map[reflect.Type]p2p.TopicHandler
 }
 
 func NewServer(
@@ -49,22 +51,22 @@ func NewServer(
 	addr multiaddr.Multiaddr,
 	bootnode bool,
 	bootinfos []peerstore.PeerInfo,
-) (Server, error) {
+) (p2p.Server, error) {
 	privKey, err := identity.DeriveLibp2pKeyPair()
 	if err != nil {
 		return nil, err
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
-	server := &AirblocServer{
+	server := &Server{
 		ctx:    ctx,
 		cancel: cancel,
 		mutex:  new(sync.Mutex),
 
 		db:       localdb,
-		types:    make(map[p2p.Topic]reflect.Type),
+		types:    make(map[p2pr.Topic]reflect.Type),
 		topics:   make(map[reflect.Type]string),
-		handlers: make(map[reflect.Type]TopicHandler),
+		handlers: make(map[reflect.Type]p2p.TopicHandler),
 	}
 
 	h, err := libp2p.New(
@@ -83,10 +85,7 @@ func NewServer(
 		return nil, err
 	}
 
-	server.host = &AirblocHost{
-		BasicHost: BasicHost{h},
-		limit:     20,
-	}
+	server.host = NewHost(basic.NewHost(h), 20)
 
 	if bootnode {
 		if err := server.dht.Bootstrap(ctx); err != nil {
@@ -107,14 +106,14 @@ func NewServer(
 		}
 	}
 
-	idVal := int32(p2p.CID_AIRBLOC)
+	idVal := int32(p2pr.CID_AIRBLOC)
 
 	v1b := cid.V1Builder{
 		Codec:  uint64(idVal),
 		MhType: multihash.KECCAK_256,
 	}
 
-	server.id, err = v1b.Sum([]byte(p2p.CID_name[idVal]))
+	server.id, err = v1b.Sum([]byte(p2pr.CID_name[idVal]))
 	if err != nil {
 		cancel()
 		return nil, errors.Wrap(err, "server error : failed to generate cid")
@@ -124,7 +123,7 @@ func NewServer(
 }
 
 // DHT
-func (s *AirblocServer) Discovery() {
+func (s *Server) Discovery() {
 	ticker := time.NewTicker(1 * time.Minute)
 	defer ticker.Stop()
 
@@ -138,14 +137,14 @@ func (s *AirblocServer) Discovery() {
 	}
 }
 
-func (s *AirblocServer) clearPeer() {
+func (s *Server) clearPeer() {
 	peerStore := s.host.Peerstore()
 	for _, peerID := range peerStore.PeersWithAddrs() {
 		peerStore.ClearAddrs(peerID)
 	}
 }
 
-func (s *AirblocServer) updatePeer() {
+func (s *Server) updatePeer() {
 	idch, err := s.dht.GetClosestPeers(s.ctx, s.id.KeyString())
 	if s.ctx.Err() != nil {
 		log.Println("context error:", err)
@@ -168,7 +167,7 @@ func (s *AirblocServer) updatePeer() {
 }
 
 // api backend interfaces
-func (s *AirblocServer) Start() error {
+func (s *Server) Start() error {
 	pid, err := common.NewPid("airbloc", "0.0.1")
 	if err != nil {
 		return errors.Wrap(err, "failed to generate pid")
@@ -200,27 +199,27 @@ func (s *AirblocServer) Start() error {
 	return nil
 }
 
-func (s *AirblocServer) Stop() {
+func (s *Server) Stop() {
 	s.cancel()
 }
 
-func (s *AirblocServer) RegisterProtocol(pid common.Pid, handler ProtocolHandler) {
-	s.host.RegisterProtocol(pid, handler)
+func (s *Server) RegisterProtocol(pid common.Pid, handler p2p.ProtocolHandler, adapters ...p2p.ProtocolAdapter) {
+	s.host.RegisterProtocol(pid, handler, adapters...)
 }
 
-func (s *AirblocServer) UnregisterProtocol(pid common.Pid) {
+func (s *Server) UnregisterProtocol(pid common.Pid) {
 	s.host.UnregisterProtocol(pid)
 }
 
-func (s *AirblocServer) RegisterTopic(topic string, msg proto.Message, handler TopicHandler) error {
-	val, ok := p2p.Topic_value[topic]
+func (s *Server) RegisterTopic(topic string, msg proto.Message, handler p2p.TopicHandler) error {
+	val, ok := p2pr.Topic_value[topic]
 	if !ok {
 		return errors.New("topic already registered")
 	}
 	typ := common.MessageType(msg)
 
 	s.mutex.Lock()
-	s.types[p2p.Topic(val)] = typ
+	s.types[p2pr.Topic(val)] = typ
 	s.topics[typ] = topic
 	s.handlers[typ] = handler
 	s.mutex.Unlock()
@@ -228,15 +227,15 @@ func (s *AirblocServer) RegisterTopic(topic string, msg proto.Message, handler T
 	return nil
 }
 
-func (s *AirblocServer) UnregisterTopic(topic string) error {
-	val, ok := p2p.Topic_value[topic]
+func (s *Server) UnregisterTopic(topic string) error {
+	val, ok := p2pr.Topic_value[topic]
 	if !ok {
 		return errors.New("invalid topic")
 	}
-	msgType := s.types[p2p.Topic(val)]
+	msgType := s.types[p2pr.Topic(val)]
 
 	s.mutex.Lock()
-	delete(s.types, p2p.Topic(val))
+	delete(s.types, p2pr.Topic(val))
 	delete(s.topics, msgType)
 	delete(s.handlers, msgType)
 	s.mutex.Unlock()
@@ -244,31 +243,31 @@ func (s *AirblocServer) UnregisterTopic(topic string) error {
 	return nil
 }
 
-func (s *AirblocServer) Send(ctx context.Context, msg common.ProtoMessage, p peer.ID, pids ...common.Pid) error {
+func (s *Server) Send(ctx context.Context, msg common.ProtoMessage, p peer.ID, pids ...common.Pid) error {
 	return s.host.Send(ctx, msg, p, pids...)
 }
 
-func (s *AirblocServer) Publish(ctx context.Context, msg common.ProtoMessage, pids ...common.Pid) error {
+func (s *Server) Publish(ctx context.Context, msg common.ProtoMessage, pids ...common.Pid) error {
 	return s.host.Publish(ctx, msg, pids...)
 }
 
-func (s *AirblocServer) LocalDB() localdb.Database {
+func (s *Server) LocalDB() localdb.Database {
 	return s.db
 }
 
-func (s *AirblocServer) MetaDB() metadb.Database {
+func (s *Server) MetaDB() metadb.Database {
 	return nil
 }
 
 // for test
-func (s *AirblocServer) setContext(ctx context.Context) {
+func (s *Server) setContext(ctx context.Context) {
 	s.ctx = ctx
 }
 
-func (s *AirblocServer) getHost() Host {
+func (s *Server) getHost() p2p.Host {
 	return s.host
 }
 
-func (s *AirblocServer) bootInfo() (peerstore.PeerInfo, error) {
+func (s *Server) bootInfo() (peerstore.PeerInfo, error) {
 	return s.host.BootInfo()
 }

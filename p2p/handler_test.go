@@ -9,15 +9,7 @@ import (
 	"github.com/gogo/protobuf/proto"
 )
 
-func DatasyncReponse(s Server, ctx context.Context, msg common.Message) {
-
-}
-
-func DatasyncRequest(s Server, ctx context.Context, msg common.Message) {
-
-}
-
-func Ping(s Server, ctx context.Context, message common.Message) {
+func testPingHandler(s Server, ctx context.Context, message common.Message) {
 	log.Println("Ping", message.Info.ID.Pretty(), message.Data.String())
 
 	pong, _ := proto.Marshal(&p2p.TestPing{Message: "World!"})
@@ -31,6 +23,6 @@ func Ping(s Server, ctx context.Context, message common.Message) {
 	s.Send(ctx, pongMsg, message.Info.ID, message.Protocol)
 }
 
-func Pong(s Server, ctx context.Context, message common.Message) {
+func testPongHandler(s Server, ctx context.Context, message common.Message) {
 	log.Println("Pong", message.Info.ID.Pretty(), message.Data.String())
 }
