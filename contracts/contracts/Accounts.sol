@@ -3,15 +3,15 @@ pragma solidity ^0.4.24;
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/ECRecovery.sol";
+import "./Utils.sol";
 
 contract Accounts is Ownable {
     using SafeMath for uint256;
+    using ECRecovery for bytes32;
 
-    event SignUp(
-        address indexed owner,
-        address indexed proxy,
-        bytes8 accountId
-    );
+    event SignUp(address indexed owner, bytes8 accountId);
+    event TemporaryCreated(address indexed proxy, bytes32 indexed identityHash, bytes8 accountId);
+    event Unlocked(bytes32 indexed identityHash, bytes8 indexed accountId, address newOwner);
 
     enum Status {
         NONE,
@@ -26,41 +26,93 @@ contract Accounts is Ownable {
         // password support using account proxy
         address proxy;
         address passwordProof;
-        bytes4 passwordSalt;
-
-        bytes32 identityHashLock;
     }
 
     mapping (bytes8 => Account) public accounts;
-    mapping (address => bool) public isSignedUp;
     mapping (address => bytes8) private passwordToAccount;
     mapping (address => bytes8) private addressToAccount;
 
+    mapping (bytes32 => bytes8) public identityHashToAccount;
+
     uint256 public numberOfAccounts;
 
-    constructor() public {
-    }
-
     function create() external {
-        require(!isSignedUp[msg.sender], "account already exists");
+        require(
+            addressToAccount[msg.sender] == bytes8(0),
+            "you can make only one account per one Ethereum Account");
 
-        bytes8 accountId = newAccount(msg.sender);
-        emit SignUp(msg.sender, address(0x0), accountId);
+        bytes8 accountId = Utils.generateId(bytes32(0), msg.sender);
+        accounts[accountId].owner = msg.sender;
+        accounts[accountId].status = Status.CREATED;
+
+        addressToAccount[msg.sender] = accountId;
+        emit SignUp(msg.sender, accountId);
     }
 
-    function createTemporary(address proxy) external {
-        bytes8 accountId = newAccount(msg.sender);
-        accounts[accountId].proxy = proxy;
+    function createTemporary(bytes32 identityHash) external {
+        require(identityHashToAccount[identityHash] == bytes8(0), "account already exists");
+
+        bytes8 accountId = Utils.generateId(identityHash, msg.sender);
+        accounts[accountId].proxy = msg.sender;
         accounts[accountId].status = Status.TEMPORARY;
+
+        identityHashToAccount[identityHash] = accountId;
+        emit TemporaryCreated(msg.sender, identityHash, accountId);
     }
 
-    function createUsingProxy(address owner, address proxy, address passwordProof) external {
-        require(!isSignedUp[msg.sender], "account already exists");
+    function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) external {
+        // check that keccak256(identityPreimage) == account.identityHash
+        bytes32 identityHash = keccak256(abi.encodePacked(identityPreimage));
+        bytes8 accountId = identityHashToAccount[identityHash];
 
-        bytes8 accountId = newAccount(msg.sender);
-        setPassword(accountId, proxy, passwordProof);
+        require(isTemporary(accountId));
+        Account storage account = accounts[accountId];
 
-        emit SignUp(owner, proxy, accountId);
+        require(
+            msg.sender == account.proxy,
+            "account must be unlocked through the account proxy"
+        );
+        require(
+            addressToAccount[msg.sender] == bytes8(0),
+            "you can make only one account per one Ethereum Account"
+        );
+        account.owner = newOwner;
+        addressToAccount[newOwner] = accountId;
+
+        bytes memory message = abi.encodePacked(identityPreimage, newOwner);
+        setPassword(accountId, message, passwordSignature);
+
+        account.status = Status.CREATED;
+        emit Unlocked(identityHash, accountId, newOwner);
+    }
+
+    function createUsingProxy(address owner, bytes passwordSignature) external {
+        require(
+            addressToAccount[owner] == bytes8(0),
+            "you can make only one account per one Ethereum Account");
+
+        bytes8 accountId = Utils.generateId(bytes32(owner), msg.sender);
+        accounts[accountId].owner = owner;
+        accounts[accountId].status = Status.CREATED;
+
+        bytes memory message = abi.encodePacked(owner);
+        setPassword(accountId, message, passwordSignature);
+
+        addressToAccount[msg.sender] = accountId;
+        emit SignUp(msg.sender, accountId);
+    }
+
+    function setPassword(bytes8 accountId, bytes memory message, bytes memory passwordSignature) internal {
+        // user uses his/her own password to derive a sign key.
+        // since ECRECOVER returns address (not public key itself),
+        // we need to use address as a password proof.
+        address passwordProof = keccak256(message).recover(passwordSignature);
+
+        // password proof should be unique, since unique account ID is also used for key derivation
+        require(passwordToAccount[passwordProof] == bytes8(0x0), "password proof is not unique");
+
+        accounts[accountId].passwordProof = passwordProof;
+        passwordToAccount[passwordProof] = accountId;
     }
 
     function getAccountId(address sender) public view returns (bytes8) {
@@ -69,41 +121,17 @@ contract Accounts is Ownable {
         return accountId;
     }
 
-    function getAccountIdFromSignature(bytes message, bytes signature) public view returns (bytes8) {
-        // TODO: use schnorr signature verification like following code
-        // (msg, P, R, s) => require(R == ecadd(ecmul(s, G), ecmul(keccak256(msg, P, R), P))
-        //    && Accounts[passwordToAccount[P]].status != Status.NONE);
+    function getAccountIdFromSignature(bytes32 messageHash, bytes signature) public view returns (bytes8) {
+        address passwordProof = messageHash.recover(signature);
+        bytes8 accountId = passwordToAccount[passwordProof];
 
-        bytes32 hash = keccak256(message);
-        address recoveredPasswordProof = ECRecovery.recover(hash, signature);
-
-        bytes8 accountId = passwordToAccount[recoveredPasswordProof];
         if (accounts[accountId].status == Status.NONE) {
             revert("password mismatch");
         }
         return accountId;
     }
 
-    function setPassword(bytes8 accountId, address proxy, address passwordProof) public {
-        Account storage account = accounts[accountId];
-        account.proxy = proxy;
-        account.passwordProof = passwordProof;
-        passwordToAccount[passwordProof] = accountId;
-    }
-
-    function newAccount(address owner) internal returns (bytes8 accountId) {
-        // since Ethereum has a nonce in the transaction, this accountId would never colide.
-        bytes memory seed = abi.encodePacked(owner, block.number);
-        accountId = bytes8(keccak256(seed));
-
-        Account storage account = accounts[accountId];
-        account.owner = owner;
-        account.status = Status.CREATED;
-
-        isSignedUp[owner] = true;
-    }
-
-    function isTemporary(bytes8 accountId) external view returns (bool) {
+    function isTemporary(bytes8 accountId) public view returns (bool) {
         return accounts[accountId].status == Status.TEMPORARY;
     }
 }
