@@ -22,11 +22,9 @@ type Key struct {
 }
 
 func FromECDSA(key *ecdsa.PrivateKey) *Key {
-	var seed = make([]byte, 32)
-	copy(seed, key.D.Bytes())
 	return &Key{
 		PrivateKey:      key,
-		Ed25519Private:  ed25519.NewKeyFromSeed(seed),
+		Ed25519Private:  ed25519.NewKeyFromSeed(crypto.FromECDSA(key)),
 		ECIESPrivate:    ecies.ImportECDSA(key),
 		EthereumAddress: crypto.PubkeyToAddress(key.PublicKey),
 	}

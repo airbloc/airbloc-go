@@ -94,5 +94,5 @@ func TestNewServer(t *testing.T) {
 	err = servers[Size/2].Publish(ctx, pingMsg, pid)
 	assert.NoError(t, err)
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(1 * time.Second)
 }

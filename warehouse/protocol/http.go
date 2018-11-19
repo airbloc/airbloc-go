@@ -1,9 +1,10 @@
 package protocol
 
 import (
-	"github.com/airbloc/airbloc-go/data"
 	"net/url"
 	"time"
+
+	"github.com/airbloc/airbloc-go/data"
 
 	"github.com/pkg/errors"
 	"github.com/valyala/fasthttp"

@@ -2,11 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/airbloc/airbloc-go/contracts/utils"
 	"io/ioutil"
 	"log"
 	"os"
 	"path"
+
+	"github.com/airbloc/airbloc-go/contracts/utils"
 )
 
 const BuildOutput = "../adapter"

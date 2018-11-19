@@ -3,6 +3,7 @@ package schemas
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
 	"github.com/airbloc/airbloc-go/common"
