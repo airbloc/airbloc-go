@@ -2,9 +2,10 @@ package key
 
 import (
 	"crypto/ecdsa"
+	"math/big"
+
 	"golang.org/x/crypto/pbkdf2"
 	"golang.org/x/crypto/sha3"
-	"math/big"
 
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/ethereum/go-ethereum/common"
@@ -17,7 +18,7 @@ import (
 
 var (
 	passwordSalt = []byte("AirblocPassword")
-	one = big.NewInt(1)
+	one          = big.NewInt(1)
 )
 
 // Key is an ECDSA keypair with SECP256K1 curve
@@ -39,7 +40,7 @@ func FromECDSA(key *ecdsa.PrivateKey) *Key {
 }
 
 // DeriveFromPassword uses PBKDF2 with
-func DeriveFromPassword(identity common.Hash, password string) (*Key) {
+func DeriveFromPassword(identity common.Hash, password string) *Key {
 	passwordHash := sha3.Sum256([]byte(password))
 
 	// make PBKDF2 input material

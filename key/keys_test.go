@@ -3,9 +3,10 @@ package key
 import (
 	"encoding/hex"
 	"fmt"
+	"testing"
+
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestDeriveFromPassword(t *testing.T) {

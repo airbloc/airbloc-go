@@ -6,7 +6,6 @@ import (
 	"log"
 	"time"
 
-	accountsApi "github.com/airbloc/airbloc-go/account/api"
 	"github.com/airbloc/airbloc-go/account"
 	collectionApi "github.com/airbloc/airbloc-go/collections/api"
 	schemaApi "github.com/airbloc/airbloc-go/schemas/api"
