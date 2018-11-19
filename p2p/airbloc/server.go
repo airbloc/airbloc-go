@@ -1,4 +1,4 @@
-package p2p
+package ablhost
 
 import (
 	"context"
@@ -85,7 +85,7 @@ func NewServer(
 		return nil, err
 	}
 
-	server.host = NewHost(basic.NewHost(h), 20)
+	server.host = NewHost(basichost.NewHost(h), 20)
 
 	if bootnode {
 		if err := server.dht.Bootstrap(ctx); err != nil {
