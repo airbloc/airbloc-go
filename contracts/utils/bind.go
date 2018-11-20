@@ -145,6 +145,7 @@ func Bind(types []string, abis []string, bytecodes []string, pkg string) (string
 	if err := tmpl.Execute(buffer, data); err != nil {
 		return "", err
 	}
+
 	// For Go bindings pass the code through gofmt to clean it up
 	code, err := format.Source(buffer.Bytes())
 	if err != nil {

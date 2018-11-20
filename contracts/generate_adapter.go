@@ -1,3 +1,5 @@
+// SHOULD RUN IN PARENT DIRECTORY
+// go run contracts/generate_adapter.go
 package main
 
 import (
@@ -10,8 +12,8 @@ import (
 	"github.com/airbloc/airbloc-go/contracts/utils"
 )
 
-const BuildOutput = "../adapter"
-const ContractDir = "build/contracts"
+const BuildOutput = "adapter"
+const ContractDir = "contracts/build/contracts"
 
 type Contract struct {
 	Name string      `json:"contractName"`
