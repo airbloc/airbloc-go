@@ -3,16 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
-	"time"
-
-	"github.com/airbloc/airbloc-go/account"
+	accountClient "github.com/airbloc/airbloc-go/account/client"
 	collectionApi "github.com/airbloc/airbloc-go/collections/api"
 	schemaApi "github.com/airbloc/airbloc-go/schemas/api"
 	warehouseApi "github.com/airbloc/airbloc-go/warehouse/api"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
+	"log"
+	"time"
 )
 
 const testSchema = `{
@@ -63,7 +62,7 @@ func testCreateCollection(appId string, schemaId string, conn *grpc.ClientConn) 
 }
 
 func testCreateUserAccount(conn *grpc.ClientConn, index int) string {
-	accounts := account.NewClient(conn)
+	accounts := accountClient.NewClient(conn)
 
 	priv, err := crypto.GenerateKey()
 	if err != nil {
@@ -87,7 +86,7 @@ func main() {
 	}
 	defer conn.Close()
 
-	appId := "786d674f9f07fa21"
+	appId := "b40157c46f15681f"
 
 	schemaId := testCreateSchema(conn)
 	log.Printf("Created Schema ID: %s\n", schemaId)
