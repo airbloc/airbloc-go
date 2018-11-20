@@ -30,7 +30,7 @@ var (
 )
 
 // SchemaRegistryABI is the input ABI used to generate the binding from.
-const SchemaRegistryABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"Registered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"Unregistered\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"check\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const SchemaRegistryABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"nameExists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"name\":\"schemas\",\"outputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"name\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"registrar\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"Registration\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"Unregistration\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_name\",\"type\":\"string\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"exists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // SchemaRegistry is an auto generated Go binding around an Ethereum contract.
 type SchemaRegistry struct {
@@ -180,77 +180,139 @@ func (_SchemaRegistry *SchemaRegistryTransactorRaw) Transact(opts *bind.Transact
 	return _SchemaRegistry.Contract.contract.Transact(opts, method, params...)
 }
 
-// Check is a free data retrieval call binding the contract method 0x399e0792.
+// Exists is a free data retrieval call binding the contract method 0x97e4fea7.
 //
-// Solidity: function check(_id bytes32) constant returns(bool)
-func (_SchemaRegistry *SchemaRegistryCaller) Check(opts *bind.CallOpts, _id [32]byte) (bool, error) {
+// Solidity: function exists(_id bytes8) constant returns(bool)
+func (_SchemaRegistry *SchemaRegistryCaller) Exists(opts *bind.CallOpts, _id [8]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
 	out := ret0
-	err := _SchemaRegistry.contract.Call(opts, out, "check", _id)
+	err := _SchemaRegistry.contract.Call(opts, out, "exists", _id)
 	return *ret0, err
 }
 
-// Check is a free data retrieval call binding the contract method 0x399e0792.
+// Exists is a free data retrieval call binding the contract method 0x97e4fea7.
 //
-// Solidity: function check(_id bytes32) constant returns(bool)
-func (_SchemaRegistry *SchemaRegistrySession) Check(_id [32]byte) (bool, error) {
-	return _SchemaRegistry.Contract.Check(&_SchemaRegistry.CallOpts, _id)
+// Solidity: function exists(_id bytes8) constant returns(bool)
+func (_SchemaRegistry *SchemaRegistrySession) Exists(_id [8]byte) (bool, error) {
+	return _SchemaRegistry.Contract.Exists(&_SchemaRegistry.CallOpts, _id)
 }
 
-// Check is a free data retrieval call binding the contract method 0x399e0792.
+// Exists is a free data retrieval call binding the contract method 0x97e4fea7.
 //
-// Solidity: function check(_id bytes32) constant returns(bool)
-func (_SchemaRegistry *SchemaRegistryCallerSession) Check(_id [32]byte) (bool, error) {
-	return _SchemaRegistry.Contract.Check(&_SchemaRegistry.CallOpts, _id)
+// Solidity: function exists(_id bytes8) constant returns(bool)
+func (_SchemaRegistry *SchemaRegistryCallerSession) Exists(_id [8]byte) (bool, error) {
+	return _SchemaRegistry.Contract.Exists(&_SchemaRegistry.CallOpts, _id)
 }
 
-// Register is a paid mutator transaction binding the contract method 0x1aa3a008.
+// NameExists is a free data retrieval call binding the contract method 0x143dc3f8.
 //
-// Solidity: function register() returns()
-func (_SchemaRegistry *SchemaRegistryTransactor) Register(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _SchemaRegistry.contract.Transact(opts, "register")
+// Solidity: function nameExists( bytes32) constant returns(bool)
+func (_SchemaRegistry *SchemaRegistryCaller) NameExists(opts *bind.CallOpts, arg0 [32]byte) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _SchemaRegistry.contract.Call(opts, out, "nameExists", arg0)
+	return *ret0, err
 }
 
-// Register is a paid mutator transaction binding the contract method 0x1aa3a008.
+// NameExists is a free data retrieval call binding the contract method 0x143dc3f8.
 //
-// Solidity: function register() returns()
-func (_SchemaRegistry *SchemaRegistrySession) Register() (*types.Transaction, error) {
-	return _SchemaRegistry.Contract.Register(&_SchemaRegistry.TransactOpts)
+// Solidity: function nameExists( bytes32) constant returns(bool)
+func (_SchemaRegistry *SchemaRegistrySession) NameExists(arg0 [32]byte) (bool, error) {
+	return _SchemaRegistry.Contract.NameExists(&_SchemaRegistry.CallOpts, arg0)
 }
 
-// Register is a paid mutator transaction binding the contract method 0x1aa3a008.
+// NameExists is a free data retrieval call binding the contract method 0x143dc3f8.
 //
-// Solidity: function register() returns()
-func (_SchemaRegistry *SchemaRegistryTransactorSession) Register() (*types.Transaction, error) {
-	return _SchemaRegistry.Contract.Register(&_SchemaRegistry.TransactOpts)
+// Solidity: function nameExists( bytes32) constant returns(bool)
+func (_SchemaRegistry *SchemaRegistryCallerSession) NameExists(arg0 [32]byte) (bool, error) {
+	return _SchemaRegistry.Contract.NameExists(&_SchemaRegistry.CallOpts, arg0)
 }
 
-// Unregister is a paid mutator transaction binding the contract method 0x1a0919dc.
+// Schemas is a free data retrieval call binding the contract method 0xf45e6aaf.
 //
-// Solidity: function unregister(_id bytes32) returns()
-func (_SchemaRegistry *SchemaRegistryTransactor) Unregister(opts *bind.TransactOpts, _id [32]byte) (*types.Transaction, error) {
+// Solidity: function schemas( bytes8) constant returns(owner address, name string)
+func (_SchemaRegistry *SchemaRegistryCaller) Schemas(opts *bind.CallOpts, arg0 [8]byte) (struct {
+	Owner common.Address
+	Name  string
+}, error) {
+	ret := new(struct {
+		Owner common.Address
+		Name  string
+	})
+	out := ret
+	err := _SchemaRegistry.contract.Call(opts, out, "schemas", arg0)
+	return *ret, err
+}
+
+// Schemas is a free data retrieval call binding the contract method 0xf45e6aaf.
+//
+// Solidity: function schemas( bytes8) constant returns(owner address, name string)
+func (_SchemaRegistry *SchemaRegistrySession) Schemas(arg0 [8]byte) (struct {
+	Owner common.Address
+	Name  string
+}, error) {
+	return _SchemaRegistry.Contract.Schemas(&_SchemaRegistry.CallOpts, arg0)
+}
+
+// Schemas is a free data retrieval call binding the contract method 0xf45e6aaf.
+//
+// Solidity: function schemas( bytes8) constant returns(owner address, name string)
+func (_SchemaRegistry *SchemaRegistryCallerSession) Schemas(arg0 [8]byte) (struct {
+	Owner common.Address
+	Name  string
+}, error) {
+	return _SchemaRegistry.Contract.Schemas(&_SchemaRegistry.CallOpts, arg0)
+}
+
+// Register is a paid mutator transaction binding the contract method 0xf2c298be.
+//
+// Solidity: function register(_name string) returns()
+func (_SchemaRegistry *SchemaRegistryTransactor) Register(opts *bind.TransactOpts, _name string) (*types.Transaction, error) {
+	return _SchemaRegistry.contract.Transact(opts, "register", _name)
+}
+
+// Register is a paid mutator transaction binding the contract method 0xf2c298be.
+//
+// Solidity: function register(_name string) returns()
+func (_SchemaRegistry *SchemaRegistrySession) Register(_name string) (*types.Transaction, error) {
+	return _SchemaRegistry.Contract.Register(&_SchemaRegistry.TransactOpts, _name)
+}
+
+// Register is a paid mutator transaction binding the contract method 0xf2c298be.
+//
+// Solidity: function register(_name string) returns()
+func (_SchemaRegistry *SchemaRegistryTransactorSession) Register(_name string) (*types.Transaction, error) {
+	return _SchemaRegistry.Contract.Register(&_SchemaRegistry.TransactOpts, _name)
+}
+
+// Unregister is a paid mutator transaction binding the contract method 0x260a818e.
+//
+// Solidity: function unregister(_id bytes8) returns()
+func (_SchemaRegistry *SchemaRegistryTransactor) Unregister(opts *bind.TransactOpts, _id [8]byte) (*types.Transaction, error) {
 	return _SchemaRegistry.contract.Transact(opts, "unregister", _id)
 }
 
-// Unregister is a paid mutator transaction binding the contract method 0x1a0919dc.
+// Unregister is a paid mutator transaction binding the contract method 0x260a818e.
 //
-// Solidity: function unregister(_id bytes32) returns()
-func (_SchemaRegistry *SchemaRegistrySession) Unregister(_id [32]byte) (*types.Transaction, error) {
+// Solidity: function unregister(_id bytes8) returns()
+func (_SchemaRegistry *SchemaRegistrySession) Unregister(_id [8]byte) (*types.Transaction, error) {
 	return _SchemaRegistry.Contract.Unregister(&_SchemaRegistry.TransactOpts, _id)
 }
 
-// Unregister is a paid mutator transaction binding the contract method 0x1a0919dc.
+// Unregister is a paid mutator transaction binding the contract method 0x260a818e.
 //
-// Solidity: function unregister(_id bytes32) returns()
-func (_SchemaRegistry *SchemaRegistryTransactorSession) Unregister(_id [32]byte) (*types.Transaction, error) {
+// Solidity: function unregister(_id bytes8) returns()
+func (_SchemaRegistry *SchemaRegistryTransactorSession) Unregister(_id [8]byte) (*types.Transaction, error) {
 	return _SchemaRegistry.Contract.Unregister(&_SchemaRegistry.TransactOpts, _id)
 }
 
-// SchemaRegistryRegisteredIterator is returned from FilterRegistered and is used to iterate over the raw logs and unpacked data for Registered events raised by the SchemaRegistry contract.
-type SchemaRegistryRegisteredIterator struct {
-	Event *SchemaRegistryRegistered // Event containing the contract specifics and raw log
+// SchemaRegistryRegistrationIterator is returned from FilterRegistration and is used to iterate over the raw logs and unpacked data for Registration events raised by the SchemaRegistry contract.
+type SchemaRegistryRegistrationIterator struct {
+	Event *SchemaRegistryRegistration // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -264,7 +326,7 @@ type SchemaRegistryRegisteredIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *SchemaRegistryRegisteredIterator) Next() bool {
+func (it *SchemaRegistryRegistrationIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -273,7 +335,7 @@ func (it *SchemaRegistryRegisteredIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(SchemaRegistryRegistered)
+			it.Event = new(SchemaRegistryRegistration)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -288,7 +350,7 @@ func (it *SchemaRegistryRegisteredIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(SchemaRegistryRegistered)
+		it.Event = new(SchemaRegistryRegistration)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -304,67 +366,68 @@ func (it *SchemaRegistryRegisteredIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *SchemaRegistryRegisteredIterator) Error() error {
+func (it *SchemaRegistryRegistrationIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *SchemaRegistryRegisteredIterator) Close() error {
+func (it *SchemaRegistryRegistrationIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// SchemaRegistryRegistered represents a Registered event raised by the SchemaRegistry contract.
-type SchemaRegistryRegistered struct {
-	Id  [32]byte
-	Raw types.Log // Blockchain specific contextual infos
+// SchemaRegistryRegistration represents a Registration event raised by the SchemaRegistry contract.
+type SchemaRegistryRegistration struct {
+	Registrar common.Address
+	Id        [8]byte
+	Raw       types.Log // Blockchain specific contextual infos
 }
 
-// FilterRegistered is a free log retrieval operation binding the contract event 0x10906fae603eebfac53ddc0f103bee8a044dd7643c425c7a90f921dfa15ef62c.
+// FilterRegistration is a free log retrieval operation binding the contract event 0x34b195a2b14d8eac732b11770bab8ed3823e96642f703b1a973f4a2981208d0f.
 //
-// Solidity: e Registered(_id indexed bytes32)
-func (_SchemaRegistry *SchemaRegistryFilterer) FilterRegistered(opts *bind.FilterOpts, _id [][32]byte) (*SchemaRegistryRegisteredIterator, error) {
+// Solidity: e Registration(registrar indexed address, _id bytes8)
+func (_SchemaRegistry *SchemaRegistryFilterer) FilterRegistration(opts *bind.FilterOpts, registrar []common.Address) (*SchemaRegistryRegistrationIterator, error) {
 
-	var _idRule []interface{}
-	for _, _idItem := range _id {
-		_idRule = append(_idRule, _idItem)
+	var registrarRule []interface{}
+	for _, registrarItem := range registrar {
+		registrarRule = append(registrarRule, registrarItem)
 	}
 
-	logs, sub, err := _SchemaRegistry.contract.FilterLogs(opts, "Registered", _idRule)
+	logs, sub, err := _SchemaRegistry.contract.FilterLogs(opts, "Registration", registrarRule)
 	if err != nil {
 		return nil, err
 	}
-	return &SchemaRegistryRegisteredIterator{contract: _SchemaRegistry.contract, event: "Registered", logs: logs, sub: sub}, nil
+	return &SchemaRegistryRegistrationIterator{contract: _SchemaRegistry.contract, event: "Registration", logs: logs, sub: sub}, nil
 }
 
-// FilterRegistered parses the event from given transaction receipt.
+// FilterRegistration parses the event from given transaction receipt.
 //
-// Solidity: e Registered(_id indexed bytes32)
-func (_SchemaRegistry *SchemaRegistryFilterer) ParseRegisteredFromReceipt(receipt *types.Receipt) (*SchemaRegistryRegistered, error) {
+// Solidity: e Registration(registrar indexed address, _id bytes8)
+func (_SchemaRegistry *SchemaRegistryFilterer) ParseRegistrationFromReceipt(receipt *types.Receipt) (*SchemaRegistryRegistration, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0x10906fae603eebfac53ddc0f103bee8a044dd7643c425c7a90f921dfa15ef62c") {
-			event := new(SchemaRegistryRegistered)
-			if err := _SchemaRegistry.contract.UnpackLog(event, "Registered", *log); err != nil {
+		if log.Topics[0] == common.HexToHash("0x34b195a2b14d8eac732b11770bab8ed3823e96642f703b1a973f4a2981208d0f") {
+			event := new(SchemaRegistryRegistration)
+			if err := _SchemaRegistry.contract.UnpackLog(event, "Registration", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
 		}
 	}
-	return nil, errors.New("Registered event not found")
+	return nil, errors.New("Registration event not found")
 }
 
-// WatchRegistered is a free log subscription operation binding the contract event 0x10906fae603eebfac53ddc0f103bee8a044dd7643c425c7a90f921dfa15ef62c.
+// WatchRegistration is a free log subscription operation binding the contract event 0x34b195a2b14d8eac732b11770bab8ed3823e96642f703b1a973f4a2981208d0f.
 //
-// Solidity: e Registered(_id indexed bytes32)
-func (_SchemaRegistry *SchemaRegistryFilterer) WatchRegistered(opts *bind.WatchOpts, sink chan<- *SchemaRegistryRegistered, _id [][32]byte) (event.Subscription, error) {
+// Solidity: e Registration(registrar indexed address, _id bytes8)
+func (_SchemaRegistry *SchemaRegistryFilterer) WatchRegistration(opts *bind.WatchOpts, sink chan<- *SchemaRegistryRegistration, registrar []common.Address) (event.Subscription, error) {
 
-	var _idRule []interface{}
-	for _, _idItem := range _id {
-		_idRule = append(_idRule, _idItem)
+	var registrarRule []interface{}
+	for _, registrarItem := range registrar {
+		registrarRule = append(registrarRule, registrarItem)
 	}
 
-	logs, sub, err := _SchemaRegistry.contract.WatchLogs(opts, "Registered", _idRule)
+	logs, sub, err := _SchemaRegistry.contract.WatchLogs(opts, "Registration", registrarRule)
 	if err != nil {
 		return nil, err
 	}
@@ -374,8 +437,8 @@ func (_SchemaRegistry *SchemaRegistryFilterer) WatchRegistered(opts *bind.WatchO
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(SchemaRegistryRegistered)
-				if err := _SchemaRegistry.contract.UnpackLog(event, "Registered", log); err != nil {
+				event := new(SchemaRegistryRegistration)
+				if err := _SchemaRegistry.contract.UnpackLog(event, "Registration", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -396,9 +459,9 @@ func (_SchemaRegistry *SchemaRegistryFilterer) WatchRegistered(opts *bind.WatchO
 	}), nil
 }
 
-// SchemaRegistryUnregisteredIterator is returned from FilterUnregistered and is used to iterate over the raw logs and unpacked data for Unregistered events raised by the SchemaRegistry contract.
-type SchemaRegistryUnregisteredIterator struct {
-	Event *SchemaRegistryUnregistered // Event containing the contract specifics and raw log
+// SchemaRegistryUnregistrationIterator is returned from FilterUnregistration and is used to iterate over the raw logs and unpacked data for Unregistration events raised by the SchemaRegistry contract.
+type SchemaRegistryUnregistrationIterator struct {
+	Event *SchemaRegistryUnregistration // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -412,7 +475,7 @@ type SchemaRegistryUnregisteredIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *SchemaRegistryUnregisteredIterator) Next() bool {
+func (it *SchemaRegistryUnregistrationIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -421,7 +484,7 @@ func (it *SchemaRegistryUnregisteredIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(SchemaRegistryUnregistered)
+			it.Event = new(SchemaRegistryUnregistration)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -436,7 +499,7 @@ func (it *SchemaRegistryUnregisteredIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(SchemaRegistryUnregistered)
+		it.Event = new(SchemaRegistryUnregistration)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -452,67 +515,67 @@ func (it *SchemaRegistryUnregisteredIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *SchemaRegistryUnregisteredIterator) Error() error {
+func (it *SchemaRegistryUnregistrationIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *SchemaRegistryUnregisteredIterator) Close() error {
+func (it *SchemaRegistryUnregistrationIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// SchemaRegistryUnregistered represents a Unregistered event raised by the SchemaRegistry contract.
-type SchemaRegistryUnregistered struct {
-	Id  [32]byte
+// SchemaRegistryUnregistration represents a Unregistration event raised by the SchemaRegistry contract.
+type SchemaRegistryUnregistration struct {
+	Id  [8]byte
 	Raw types.Log // Blockchain specific contextual infos
 }
 
-// FilterUnregistered is a free log retrieval operation binding the contract event 0xe17fec26316aebe957e188549d659a89f359c49766bcc0ae2fb7ded274ffe146.
+// FilterUnregistration is a free log retrieval operation binding the contract event 0x8c36f878328ed4dfe683ccea03edd5a0c360e665285312270adb9a22592367fb.
 //
-// Solidity: e Unregistered(_id indexed bytes32)
-func (_SchemaRegistry *SchemaRegistryFilterer) FilterUnregistered(opts *bind.FilterOpts, _id [][32]byte) (*SchemaRegistryUnregisteredIterator, error) {
+// Solidity: e Unregistration(_id indexed bytes8)
+func (_SchemaRegistry *SchemaRegistryFilterer) FilterUnregistration(opts *bind.FilterOpts, _id [][8]byte) (*SchemaRegistryUnregistrationIterator, error) {
 
 	var _idRule []interface{}
 	for _, _idItem := range _id {
 		_idRule = append(_idRule, _idItem)
 	}
 
-	logs, sub, err := _SchemaRegistry.contract.FilterLogs(opts, "Unregistered", _idRule)
+	logs, sub, err := _SchemaRegistry.contract.FilterLogs(opts, "Unregistration", _idRule)
 	if err != nil {
 		return nil, err
 	}
-	return &SchemaRegistryUnregisteredIterator{contract: _SchemaRegistry.contract, event: "Unregistered", logs: logs, sub: sub}, nil
+	return &SchemaRegistryUnregistrationIterator{contract: _SchemaRegistry.contract, event: "Unregistration", logs: logs, sub: sub}, nil
 }
 
-// FilterUnregistered parses the event from given transaction receipt.
+// FilterUnregistration parses the event from given transaction receipt.
 //
-// Solidity: e Unregistered(_id indexed bytes32)
-func (_SchemaRegistry *SchemaRegistryFilterer) ParseUnregisteredFromReceipt(receipt *types.Receipt) (*SchemaRegistryUnregistered, error) {
+// Solidity: e Unregistration(_id indexed bytes8)
+func (_SchemaRegistry *SchemaRegistryFilterer) ParseUnregistrationFromReceipt(receipt *types.Receipt) (*SchemaRegistryUnregistration, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xe17fec26316aebe957e188549d659a89f359c49766bcc0ae2fb7ded274ffe146") {
-			event := new(SchemaRegistryUnregistered)
-			if err := _SchemaRegistry.contract.UnpackLog(event, "Unregistered", *log); err != nil {
+		if log.Topics[0] == common.HexToHash("0x8c36f878328ed4dfe683ccea03edd5a0c360e665285312270adb9a22592367fb") {
+			event := new(SchemaRegistryUnregistration)
+			if err := _SchemaRegistry.contract.UnpackLog(event, "Unregistration", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
 		}
 	}
-	return nil, errors.New("Unregistered event not found")
+	return nil, errors.New("Unregistration event not found")
 }
 
-// WatchUnregistered is a free log subscription operation binding the contract event 0xe17fec26316aebe957e188549d659a89f359c49766bcc0ae2fb7ded274ffe146.
+// WatchUnregistration is a free log subscription operation binding the contract event 0x8c36f878328ed4dfe683ccea03edd5a0c360e665285312270adb9a22592367fb.
 //
-// Solidity: e Unregistered(_id indexed bytes32)
-func (_SchemaRegistry *SchemaRegistryFilterer) WatchUnregistered(opts *bind.WatchOpts, sink chan<- *SchemaRegistryUnregistered, _id [][32]byte) (event.Subscription, error) {
+// Solidity: e Unregistration(_id indexed bytes8)
+func (_SchemaRegistry *SchemaRegistryFilterer) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *SchemaRegistryUnregistration, _id [][8]byte) (event.Subscription, error) {
 
 	var _idRule []interface{}
 	for _, _idItem := range _id {
 		_idRule = append(_idRule, _idItem)
 	}
 
-	logs, sub, err := _SchemaRegistry.contract.WatchLogs(opts, "Unregistered", _idRule)
+	logs, sub, err := _SchemaRegistry.contract.WatchLogs(opts, "Unregistration", _idRule)
 	if err != nil {
 		return nil, err
 	}
@@ -522,8 +585,8 @@ func (_SchemaRegistry *SchemaRegistryFilterer) WatchUnregistered(opts *bind.Watc
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(SchemaRegistryUnregistered)
-				if err := _SchemaRegistry.contract.UnpackLog(event, "Unregistered", log); err != nil {
+				event := new(SchemaRegistryUnregistration)
+				if err := _SchemaRegistry.contract.UnpackLog(event, "Unregistration", log); err != nil {
 					return err
 				}
 				event.Raw = log

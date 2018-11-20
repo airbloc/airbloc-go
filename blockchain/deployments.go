@@ -1,13 +1,11 @@
 package blockchain
 
 import (
-	"context"
 	"encoding/json"
 	"io/ioutil"
 
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/log"
 	"github.com/pkg/errors"
 )
 
@@ -18,24 +16,6 @@ type Deployments struct {
 	DataRegistry       *adapter.DataRegistry
 	SchemaRegistry     *adapter.SchemaRegistry
 	Exchange           *adapter.Exchange
-}
-
-func DeployAll(client *Client) (*Deployments, error) {
-	ctx := context.Background()
-
-	_, tx, accounts, err := adapter.DeployAccounts(client.Account(), client)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to deploy contract Accounts")
-	}
-	if receipt, err := client.WaitDeployed(ctx, tx); err != nil {
-		return nil, errors.Wrap(err, "failed to wait deployment of contract Accounts")
-	} else {
-		log.Info("Account contract deployed", "address", receipt.ContractAddress, "gasUsed", receipt.GasUsed)
-	}
-	// TODO: too many :(
-	return &Deployments{
-		Accounts: accounts,
-	}, nil
 }
 
 func LoadDeployments(path string, client *Client) (*Deployments, error) {

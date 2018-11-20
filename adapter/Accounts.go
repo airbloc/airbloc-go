@@ -30,7 +30,7 @@ var (
 )
 
 // AccountsABI is the input ABI used to generate the binding from.
-const AccountsABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"numberOfAccounts\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"}],\"name\":\"isSignedUp\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"name\":\"accounts\",\"outputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"status\",\"type\":\"uint8\"},{\"name\":\"proxy\",\"type\":\"address\"},{\"name\":\"passwordProof\",\"type\":\"address\"},{\"name\":\"passwordSalt\",\"type\":\"bytes4\"},{\"name\":\"identityHashLock\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"proxy\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"SignUp\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"}],\"name\":\"OwnershipRenounced\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[],\"name\":\"create\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"proxy\",\"type\":\"address\"}],\"name\":\"createTemporary\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"proxy\",\"type\":\"address\"},{\"name\":\"passwordProof\",\"type\":\"address\"}],\"name\":\"createUsingProxy\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"getAccountId\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"message\",\"type\":\"bytes\"},{\"name\":\"signature\",\"type\":\"bytes\"}],\"name\":\"getAccountIdFromSignature\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"accountId\",\"type\":\"bytes8\"},{\"name\":\"proxy\",\"type\":\"address\"},{\"name\":\"passwordProof\",\"type\":\"address\"}],\"name\":\"setPassword\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"isTemporary\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const AccountsABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"numberOfAccounts\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"identityHashToAccount\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"name\":\"accounts\",\"outputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"status\",\"type\":\"uint8\"},{\"name\":\"proxy\",\"type\":\"address\"},{\"name\":\"passwordProof\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"SignUp\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"proxy\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"identityHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"TemporaryCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"identityHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"accountId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"Unlocked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"}],\"name\":\"OwnershipRenounced\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[],\"name\":\"create\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"identityHash\",\"type\":\"bytes32\"}],\"name\":\"createTemporary\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"identityPreimage\",\"type\":\"bytes32\"},{\"name\":\"newOwner\",\"type\":\"address\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"unlockTemporary\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"createUsingProxy\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"getAccountId\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"messageHash\",\"type\":\"bytes32\"},{\"name\":\"signature\",\"type\":\"bytes\"}],\"name\":\"getAccountIdFromSignature\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"isTemporary\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // Accounts is an auto generated Go binding around an Ethereum contract.
 type Accounts struct {
@@ -182,22 +182,18 @@ func (_Accounts *AccountsTransactorRaw) Transact(opts *bind.TransactOpts, method
 
 // Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
 //
-// Solidity: function accounts( bytes8) constant returns(owner address, status uint8, proxy address, passwordProof address, passwordSalt bytes4, identityHashLock bytes32)
+// Solidity: function accounts( bytes8) constant returns(owner address, status uint8, proxy address, passwordProof address)
 func (_Accounts *AccountsCaller) Accounts(opts *bind.CallOpts, arg0 [8]byte) (struct {
-	Owner            common.Address
-	Status           uint8
-	Proxy            common.Address
-	PasswordProof    common.Address
-	PasswordSalt     [4]byte
-	IdentityHashLock [32]byte
+	Owner         common.Address
+	Status        uint8
+	Proxy         common.Address
+	PasswordProof common.Address
 }, error) {
 	ret := new(struct {
-		Owner            common.Address
-		Status           uint8
-		Proxy            common.Address
-		PasswordProof    common.Address
-		PasswordSalt     [4]byte
-		IdentityHashLock [32]byte
+		Owner         common.Address
+		Status        uint8
+		Proxy         common.Address
+		PasswordProof common.Address
 	})
 	out := ret
 	err := _Accounts.contract.Call(opts, out, "accounts", arg0)
@@ -206,28 +202,24 @@ func (_Accounts *AccountsCaller) Accounts(opts *bind.CallOpts, arg0 [8]byte) (st
 
 // Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
 //
-// Solidity: function accounts( bytes8) constant returns(owner address, status uint8, proxy address, passwordProof address, passwordSalt bytes4, identityHashLock bytes32)
+// Solidity: function accounts( bytes8) constant returns(owner address, status uint8, proxy address, passwordProof address)
 func (_Accounts *AccountsSession) Accounts(arg0 [8]byte) (struct {
-	Owner            common.Address
-	Status           uint8
-	Proxy            common.Address
-	PasswordProof    common.Address
-	PasswordSalt     [4]byte
-	IdentityHashLock [32]byte
+	Owner         common.Address
+	Status        uint8
+	Proxy         common.Address
+	PasswordProof common.Address
 }, error) {
 	return _Accounts.Contract.Accounts(&_Accounts.CallOpts, arg0)
 }
 
 // Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
 //
-// Solidity: function accounts( bytes8) constant returns(owner address, status uint8, proxy address, passwordProof address, passwordSalt bytes4, identityHashLock bytes32)
+// Solidity: function accounts( bytes8) constant returns(owner address, status uint8, proxy address, passwordProof address)
 func (_Accounts *AccountsCallerSession) Accounts(arg0 [8]byte) (struct {
-	Owner            common.Address
-	Status           uint8
-	Proxy            common.Address
-	PasswordProof    common.Address
-	PasswordSalt     [4]byte
-	IdentityHashLock [32]byte
+	Owner         common.Address
+	Status        uint8
+	Proxy         common.Address
+	PasswordProof common.Address
 }, error) {
 	return _Accounts.Contract.Accounts(&_Accounts.CallOpts, arg0)
 }
@@ -258,56 +250,56 @@ func (_Accounts *AccountsCallerSession) GetAccountId(sender common.Address) ([8]
 	return _Accounts.Contract.GetAccountId(&_Accounts.CallOpts, sender)
 }
 
-// GetAccountIdFromSignature is a free data retrieval call binding the contract method 0xbb28d52f.
+// GetAccountIdFromSignature is a free data retrieval call binding the contract method 0x23d0601d.
 //
-// Solidity: function getAccountIdFromSignature(message bytes, signature bytes) constant returns(bytes8)
-func (_Accounts *AccountsCaller) GetAccountIdFromSignature(opts *bind.CallOpts, message []byte, signature []byte) ([8]byte, error) {
+// Solidity: function getAccountIdFromSignature(messageHash bytes32, signature bytes) constant returns(bytes8)
+func (_Accounts *AccountsCaller) GetAccountIdFromSignature(opts *bind.CallOpts, messageHash [32]byte, signature []byte) ([8]byte, error) {
 	var (
 		ret0 = new([8]byte)
 	)
 	out := ret0
-	err := _Accounts.contract.Call(opts, out, "getAccountIdFromSignature", message, signature)
+	err := _Accounts.contract.Call(opts, out, "getAccountIdFromSignature", messageHash, signature)
 	return *ret0, err
 }
 
-// GetAccountIdFromSignature is a free data retrieval call binding the contract method 0xbb28d52f.
+// GetAccountIdFromSignature is a free data retrieval call binding the contract method 0x23d0601d.
 //
-// Solidity: function getAccountIdFromSignature(message bytes, signature bytes) constant returns(bytes8)
-func (_Accounts *AccountsSession) GetAccountIdFromSignature(message []byte, signature []byte) ([8]byte, error) {
-	return _Accounts.Contract.GetAccountIdFromSignature(&_Accounts.CallOpts, message, signature)
+// Solidity: function getAccountIdFromSignature(messageHash bytes32, signature bytes) constant returns(bytes8)
+func (_Accounts *AccountsSession) GetAccountIdFromSignature(messageHash [32]byte, signature []byte) ([8]byte, error) {
+	return _Accounts.Contract.GetAccountIdFromSignature(&_Accounts.CallOpts, messageHash, signature)
 }
 
-// GetAccountIdFromSignature is a free data retrieval call binding the contract method 0xbb28d52f.
+// GetAccountIdFromSignature is a free data retrieval call binding the contract method 0x23d0601d.
 //
-// Solidity: function getAccountIdFromSignature(message bytes, signature bytes) constant returns(bytes8)
-func (_Accounts *AccountsCallerSession) GetAccountIdFromSignature(message []byte, signature []byte) ([8]byte, error) {
-	return _Accounts.Contract.GetAccountIdFromSignature(&_Accounts.CallOpts, message, signature)
+// Solidity: function getAccountIdFromSignature(messageHash bytes32, signature bytes) constant returns(bytes8)
+func (_Accounts *AccountsCallerSession) GetAccountIdFromSignature(messageHash [32]byte, signature []byte) ([8]byte, error) {
+	return _Accounts.Contract.GetAccountIdFromSignature(&_Accounts.CallOpts, messageHash, signature)
 }
 
-// IsSignedUp is a free data retrieval call binding the contract method 0x22b6ffca.
+// IdentityHashToAccount is a free data retrieval call binding the contract method 0x17aba2d3.
 //
-// Solidity: function isSignedUp( address) constant returns(bool)
-func (_Accounts *AccountsCaller) IsSignedUp(opts *bind.CallOpts, arg0 common.Address) (bool, error) {
+// Solidity: function identityHashToAccount( bytes32) constant returns(bytes8)
+func (_Accounts *AccountsCaller) IdentityHashToAccount(opts *bind.CallOpts, arg0 [32]byte) ([8]byte, error) {
 	var (
-		ret0 = new(bool)
+		ret0 = new([8]byte)
 	)
 	out := ret0
-	err := _Accounts.contract.Call(opts, out, "isSignedUp", arg0)
+	err := _Accounts.contract.Call(opts, out, "identityHashToAccount", arg0)
 	return *ret0, err
 }
 
-// IsSignedUp is a free data retrieval call binding the contract method 0x22b6ffca.
+// IdentityHashToAccount is a free data retrieval call binding the contract method 0x17aba2d3.
 //
-// Solidity: function isSignedUp( address) constant returns(bool)
-func (_Accounts *AccountsSession) IsSignedUp(arg0 common.Address) (bool, error) {
-	return _Accounts.Contract.IsSignedUp(&_Accounts.CallOpts, arg0)
+// Solidity: function identityHashToAccount( bytes32) constant returns(bytes8)
+func (_Accounts *AccountsSession) IdentityHashToAccount(arg0 [32]byte) ([8]byte, error) {
+	return _Accounts.Contract.IdentityHashToAccount(&_Accounts.CallOpts, arg0)
 }
 
-// IsSignedUp is a free data retrieval call binding the contract method 0x22b6ffca.
+// IdentityHashToAccount is a free data retrieval call binding the contract method 0x17aba2d3.
 //
-// Solidity: function isSignedUp( address) constant returns(bool)
-func (_Accounts *AccountsCallerSession) IsSignedUp(arg0 common.Address) (bool, error) {
-	return _Accounts.Contract.IsSignedUp(&_Accounts.CallOpts, arg0)
+// Solidity: function identityHashToAccount( bytes32) constant returns(bytes8)
+func (_Accounts *AccountsCallerSession) IdentityHashToAccount(arg0 [32]byte) ([8]byte, error) {
+	return _Accounts.Contract.IdentityHashToAccount(&_Accounts.CallOpts, arg0)
 }
 
 // IsTemporary is a free data retrieval call binding the contract method 0x6b886888.
@@ -409,46 +401,46 @@ func (_Accounts *AccountsTransactorSession) Create() (*types.Transaction, error)
 	return _Accounts.Contract.Create(&_Accounts.TransactOpts)
 }
 
-// CreateTemporary is a paid mutator transaction binding the contract method 0xbef7a665.
+// CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
 //
-// Solidity: function createTemporary(proxy address) returns()
-func (_Accounts *AccountsTransactor) CreateTemporary(opts *bind.TransactOpts, proxy common.Address) (*types.Transaction, error) {
-	return _Accounts.contract.Transact(opts, "createTemporary", proxy)
+// Solidity: function createTemporary(identityHash bytes32) returns()
+func (_Accounts *AccountsTransactor) CreateTemporary(opts *bind.TransactOpts, identityHash [32]byte) (*types.Transaction, error) {
+	return _Accounts.contract.Transact(opts, "createTemporary", identityHash)
 }
 
-// CreateTemporary is a paid mutator transaction binding the contract method 0xbef7a665.
+// CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
 //
-// Solidity: function createTemporary(proxy address) returns()
-func (_Accounts *AccountsSession) CreateTemporary(proxy common.Address) (*types.Transaction, error) {
-	return _Accounts.Contract.CreateTemporary(&_Accounts.TransactOpts, proxy)
+// Solidity: function createTemporary(identityHash bytes32) returns()
+func (_Accounts *AccountsSession) CreateTemporary(identityHash [32]byte) (*types.Transaction, error) {
+	return _Accounts.Contract.CreateTemporary(&_Accounts.TransactOpts, identityHash)
 }
 
-// CreateTemporary is a paid mutator transaction binding the contract method 0xbef7a665.
+// CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
 //
-// Solidity: function createTemporary(proxy address) returns()
-func (_Accounts *AccountsTransactorSession) CreateTemporary(proxy common.Address) (*types.Transaction, error) {
-	return _Accounts.Contract.CreateTemporary(&_Accounts.TransactOpts, proxy)
+// Solidity: function createTemporary(identityHash bytes32) returns()
+func (_Accounts *AccountsTransactorSession) CreateTemporary(identityHash [32]byte) (*types.Transaction, error) {
+	return _Accounts.Contract.CreateTemporary(&_Accounts.TransactOpts, identityHash)
 }
 
-// CreateUsingProxy is a paid mutator transaction binding the contract method 0x8e370074.
+// CreateUsingProxy is a paid mutator transaction binding the contract method 0xdb82967c.
 //
-// Solidity: function createUsingProxy(owner address, proxy address, passwordProof address) returns()
-func (_Accounts *AccountsTransactor) CreateUsingProxy(opts *bind.TransactOpts, owner common.Address, proxy common.Address, passwordProof common.Address) (*types.Transaction, error) {
-	return _Accounts.contract.Transact(opts, "createUsingProxy", owner, proxy, passwordProof)
+// Solidity: function createUsingProxy(owner address, passwordSignature bytes) returns()
+func (_Accounts *AccountsTransactor) CreateUsingProxy(opts *bind.TransactOpts, owner common.Address, passwordSignature []byte) (*types.Transaction, error) {
+	return _Accounts.contract.Transact(opts, "createUsingProxy", owner, passwordSignature)
 }
 
-// CreateUsingProxy is a paid mutator transaction binding the contract method 0x8e370074.
+// CreateUsingProxy is a paid mutator transaction binding the contract method 0xdb82967c.
 //
-// Solidity: function createUsingProxy(owner address, proxy address, passwordProof address) returns()
-func (_Accounts *AccountsSession) CreateUsingProxy(owner common.Address, proxy common.Address, passwordProof common.Address) (*types.Transaction, error) {
-	return _Accounts.Contract.CreateUsingProxy(&_Accounts.TransactOpts, owner, proxy, passwordProof)
+// Solidity: function createUsingProxy(owner address, passwordSignature bytes) returns()
+func (_Accounts *AccountsSession) CreateUsingProxy(owner common.Address, passwordSignature []byte) (*types.Transaction, error) {
+	return _Accounts.Contract.CreateUsingProxy(&_Accounts.TransactOpts, owner, passwordSignature)
 }
 
-// CreateUsingProxy is a paid mutator transaction binding the contract method 0x8e370074.
+// CreateUsingProxy is a paid mutator transaction binding the contract method 0xdb82967c.
 //
-// Solidity: function createUsingProxy(owner address, proxy address, passwordProof address) returns()
-func (_Accounts *AccountsTransactorSession) CreateUsingProxy(owner common.Address, proxy common.Address, passwordProof common.Address) (*types.Transaction, error) {
-	return _Accounts.Contract.CreateUsingProxy(&_Accounts.TransactOpts, owner, proxy, passwordProof)
+// Solidity: function createUsingProxy(owner address, passwordSignature bytes) returns()
+func (_Accounts *AccountsTransactorSession) CreateUsingProxy(owner common.Address, passwordSignature []byte) (*types.Transaction, error) {
+	return _Accounts.Contract.CreateUsingProxy(&_Accounts.TransactOpts, owner, passwordSignature)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
@@ -472,27 +464,6 @@ func (_Accounts *AccountsTransactorSession) RenounceOwnership() (*types.Transact
 	return _Accounts.Contract.RenounceOwnership(&_Accounts.TransactOpts)
 }
 
-// SetPassword is a paid mutator transaction binding the contract method 0xf1cb50f0.
-//
-// Solidity: function setPassword(accountId bytes8, proxy address, passwordProof address) returns()
-func (_Accounts *AccountsTransactor) SetPassword(opts *bind.TransactOpts, accountId [8]byte, proxy common.Address, passwordProof common.Address) (*types.Transaction, error) {
-	return _Accounts.contract.Transact(opts, "setPassword", accountId, proxy, passwordProof)
-}
-
-// SetPassword is a paid mutator transaction binding the contract method 0xf1cb50f0.
-//
-// Solidity: function setPassword(accountId bytes8, proxy address, passwordProof address) returns()
-func (_Accounts *AccountsSession) SetPassword(accountId [8]byte, proxy common.Address, passwordProof common.Address) (*types.Transaction, error) {
-	return _Accounts.Contract.SetPassword(&_Accounts.TransactOpts, accountId, proxy, passwordProof)
-}
-
-// SetPassword is a paid mutator transaction binding the contract method 0xf1cb50f0.
-//
-// Solidity: function setPassword(accountId bytes8, proxy address, passwordProof address) returns()
-func (_Accounts *AccountsTransactorSession) SetPassword(accountId [8]byte, proxy common.Address, passwordProof common.Address) (*types.Transaction, error) {
-	return _Accounts.Contract.SetPassword(&_Accounts.TransactOpts, accountId, proxy, passwordProof)
-}
-
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
 // Solidity: function transferOwnership(_newOwner address) returns()
@@ -512,6 +483,27 @@ func (_Accounts *AccountsSession) TransferOwnership(_newOwner common.Address) (*
 // Solidity: function transferOwnership(_newOwner address) returns()
 func (_Accounts *AccountsTransactorSession) TransferOwnership(_newOwner common.Address) (*types.Transaction, error) {
 	return _Accounts.Contract.TransferOwnership(&_Accounts.TransactOpts, _newOwner)
+}
+
+// UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
+//
+// Solidity: function unlockTemporary(identityPreimage bytes32, newOwner address, passwordSignature bytes) returns()
+func (_Accounts *AccountsTransactor) UnlockTemporary(opts *bind.TransactOpts, identityPreimage [32]byte, newOwner common.Address, passwordSignature []byte) (*types.Transaction, error) {
+	return _Accounts.contract.Transact(opts, "unlockTemporary", identityPreimage, newOwner, passwordSignature)
+}
+
+// UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
+//
+// Solidity: function unlockTemporary(identityPreimage bytes32, newOwner address, passwordSignature bytes) returns()
+func (_Accounts *AccountsSession) UnlockTemporary(identityPreimage [32]byte, newOwner common.Address, passwordSignature []byte) (*types.Transaction, error) {
+	return _Accounts.Contract.UnlockTemporary(&_Accounts.TransactOpts, identityPreimage, newOwner, passwordSignature)
+}
+
+// UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
+//
+// Solidity: function unlockTemporary(identityPreimage bytes32, newOwner address, passwordSignature bytes) returns()
+func (_Accounts *AccountsTransactorSession) UnlockTemporary(identityPreimage [32]byte, newOwner common.Address, passwordSignature []byte) (*types.Transaction, error) {
+	return _Accounts.Contract.UnlockTemporary(&_Accounts.TransactOpts, identityPreimage, newOwner, passwordSignature)
 }
 
 // AccountsOwnershipRenouncedIterator is returned from FilterOwnershipRenounced and is used to iterate over the raw logs and unpacked data for OwnershipRenounced events raised by the Accounts contract.
@@ -889,26 +881,21 @@ func (it *AccountsSignUpIterator) Close() error {
 // AccountsSignUp represents a SignUp event raised by the Accounts contract.
 type AccountsSignUp struct {
 	Owner     common.Address
-	Proxy     common.Address
 	AccountId [8]byte
 	Raw       types.Log // Blockchain specific contextual infos
 }
 
-// FilterSignUp is a free log retrieval operation binding the contract event 0xdc0e23ec13ae3f3516bc4813ae5996e1fb88c4d2e57ffcc46aa94fb846e70de7.
+// FilterSignUp is a free log retrieval operation binding the contract event 0xb98ae0923087f0b489e49e611630c8accd44d415c9fcbd5d59c6511877754ec4.
 //
-// Solidity: e SignUp(owner indexed address, proxy indexed address, accountId bytes8)
-func (_Accounts *AccountsFilterer) FilterSignUp(opts *bind.FilterOpts, owner []common.Address, proxy []common.Address) (*AccountsSignUpIterator, error) {
+// Solidity: e SignUp(owner indexed address, accountId bytes8)
+func (_Accounts *AccountsFilterer) FilterSignUp(opts *bind.FilterOpts, owner []common.Address) (*AccountsSignUpIterator, error) {
 
 	var ownerRule []interface{}
 	for _, ownerItem := range owner {
 		ownerRule = append(ownerRule, ownerItem)
 	}
-	var proxyRule []interface{}
-	for _, proxyItem := range proxy {
-		proxyRule = append(proxyRule, proxyItem)
-	}
 
-	logs, sub, err := _Accounts.contract.FilterLogs(opts, "SignUp", ownerRule, proxyRule)
+	logs, sub, err := _Accounts.contract.FilterLogs(opts, "SignUp", ownerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -917,10 +904,10 @@ func (_Accounts *AccountsFilterer) FilterSignUp(opts *bind.FilterOpts, owner []c
 
 // FilterSignUp parses the event from given transaction receipt.
 //
-// Solidity: e SignUp(owner indexed address, proxy indexed address, accountId bytes8)
+// Solidity: e SignUp(owner indexed address, accountId bytes8)
 func (_Accounts *AccountsFilterer) ParseSignUpFromReceipt(receipt *types.Receipt) (*AccountsSignUp, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xdc0e23ec13ae3f3516bc4813ae5996e1fb88c4d2e57ffcc46aa94fb846e70de7") {
+		if log.Topics[0] == common.HexToHash("0xb98ae0923087f0b489e49e611630c8accd44d415c9fcbd5d59c6511877754ec4") {
 			event := new(AccountsSignUp)
 			if err := _Accounts.contract.UnpackLog(event, "SignUp", *log); err != nil {
 				return nil, err
@@ -931,21 +918,17 @@ func (_Accounts *AccountsFilterer) ParseSignUpFromReceipt(receipt *types.Receipt
 	return nil, errors.New("SignUp event not found")
 }
 
-// WatchSignUp is a free log subscription operation binding the contract event 0xdc0e23ec13ae3f3516bc4813ae5996e1fb88c4d2e57ffcc46aa94fb846e70de7.
+// WatchSignUp is a free log subscription operation binding the contract event 0xb98ae0923087f0b489e49e611630c8accd44d415c9fcbd5d59c6511877754ec4.
 //
-// Solidity: e SignUp(owner indexed address, proxy indexed address, accountId bytes8)
-func (_Accounts *AccountsFilterer) WatchSignUp(opts *bind.WatchOpts, sink chan<- *AccountsSignUp, owner []common.Address, proxy []common.Address) (event.Subscription, error) {
+// Solidity: e SignUp(owner indexed address, accountId bytes8)
+func (_Accounts *AccountsFilterer) WatchSignUp(opts *bind.WatchOpts, sink chan<- *AccountsSignUp, owner []common.Address) (event.Subscription, error) {
 
 	var ownerRule []interface{}
 	for _, ownerItem := range owner {
 		ownerRule = append(ownerRule, ownerItem)
 	}
-	var proxyRule []interface{}
-	for _, proxyItem := range proxy {
-		proxyRule = append(proxyRule, proxyItem)
-	}
 
-	logs, sub, err := _Accounts.contract.WatchLogs(opts, "SignUp", ownerRule, proxyRule)
+	logs, sub, err := _Accounts.contract.WatchLogs(opts, "SignUp", ownerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -957,6 +940,322 @@ func (_Accounts *AccountsFilterer) WatchSignUp(opts *bind.WatchOpts, sink chan<-
 				// New log arrived, parse the event and forward to the user
 				event := new(AccountsSignUp)
 				if err := _Accounts.contract.UnpackLog(event, "SignUp", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// AccountsTemporaryCreatedIterator is returned from FilterTemporaryCreated and is used to iterate over the raw logs and unpacked data for TemporaryCreated events raised by the Accounts contract.
+type AccountsTemporaryCreatedIterator struct {
+	Event *AccountsTemporaryCreated // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *AccountsTemporaryCreatedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(AccountsTemporaryCreated)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(AccountsTemporaryCreated)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *AccountsTemporaryCreatedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *AccountsTemporaryCreatedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// AccountsTemporaryCreated represents a TemporaryCreated event raised by the Accounts contract.
+type AccountsTemporaryCreated struct {
+	Proxy        common.Address
+	IdentityHash [32]byte
+	AccountId    [8]byte
+	Raw          types.Log // Blockchain specific contextual infos
+}
+
+// FilterTemporaryCreated is a free log retrieval operation binding the contract event 0x7f475d23ee7af49ec9e9b689d8eddd76ab367e3d326ba1658216174b5adbf52e.
+//
+// Solidity: e TemporaryCreated(proxy indexed address, identityHash indexed bytes32, accountId bytes8)
+func (_Accounts *AccountsFilterer) FilterTemporaryCreated(opts *bind.FilterOpts, proxy []common.Address, identityHash [][32]byte) (*AccountsTemporaryCreatedIterator, error) {
+
+	var proxyRule []interface{}
+	for _, proxyItem := range proxy {
+		proxyRule = append(proxyRule, proxyItem)
+	}
+	var identityHashRule []interface{}
+	for _, identityHashItem := range identityHash {
+		identityHashRule = append(identityHashRule, identityHashItem)
+	}
+
+	logs, sub, err := _Accounts.contract.FilterLogs(opts, "TemporaryCreated", proxyRule, identityHashRule)
+	if err != nil {
+		return nil, err
+	}
+	return &AccountsTemporaryCreatedIterator{contract: _Accounts.contract, event: "TemporaryCreated", logs: logs, sub: sub}, nil
+}
+
+// FilterTemporaryCreated parses the event from given transaction receipt.
+//
+// Solidity: e TemporaryCreated(proxy indexed address, identityHash indexed bytes32, accountId bytes8)
+func (_Accounts *AccountsFilterer) ParseTemporaryCreatedFromReceipt(receipt *types.Receipt) (*AccountsTemporaryCreated, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0x7f475d23ee7af49ec9e9b689d8eddd76ab367e3d326ba1658216174b5adbf52e") {
+			event := new(AccountsTemporaryCreated)
+			if err := _Accounts.contract.UnpackLog(event, "TemporaryCreated", *log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("TemporaryCreated event not found")
+}
+
+// WatchTemporaryCreated is a free log subscription operation binding the contract event 0x7f475d23ee7af49ec9e9b689d8eddd76ab367e3d326ba1658216174b5adbf52e.
+//
+// Solidity: e TemporaryCreated(proxy indexed address, identityHash indexed bytes32, accountId bytes8)
+func (_Accounts *AccountsFilterer) WatchTemporaryCreated(opts *bind.WatchOpts, sink chan<- *AccountsTemporaryCreated, proxy []common.Address, identityHash [][32]byte) (event.Subscription, error) {
+
+	var proxyRule []interface{}
+	for _, proxyItem := range proxy {
+		proxyRule = append(proxyRule, proxyItem)
+	}
+	var identityHashRule []interface{}
+	for _, identityHashItem := range identityHash {
+		identityHashRule = append(identityHashRule, identityHashItem)
+	}
+
+	logs, sub, err := _Accounts.contract.WatchLogs(opts, "TemporaryCreated", proxyRule, identityHashRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(AccountsTemporaryCreated)
+				if err := _Accounts.contract.UnpackLog(event, "TemporaryCreated", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// AccountsUnlockedIterator is returned from FilterUnlocked and is used to iterate over the raw logs and unpacked data for Unlocked events raised by the Accounts contract.
+type AccountsUnlockedIterator struct {
+	Event *AccountsUnlocked // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *AccountsUnlockedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(AccountsUnlocked)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(AccountsUnlocked)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *AccountsUnlockedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *AccountsUnlockedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// AccountsUnlocked represents a Unlocked event raised by the Accounts contract.
+type AccountsUnlocked struct {
+	IdentityHash [32]byte
+	AccountId    [8]byte
+	NewOwner     common.Address
+	Raw          types.Log // Blockchain specific contextual infos
+}
+
+// FilterUnlocked is a free log retrieval operation binding the contract event 0x97e37defaf20fab5209164d8e3b54fdb1bd84d7ec6def1886c587be543d41bc0.
+//
+// Solidity: e Unlocked(identityHash indexed bytes32, accountId indexed bytes8, newOwner address)
+func (_Accounts *AccountsFilterer) FilterUnlocked(opts *bind.FilterOpts, identityHash [][32]byte, accountId [][8]byte) (*AccountsUnlockedIterator, error) {
+
+	var identityHashRule []interface{}
+	for _, identityHashItem := range identityHash {
+		identityHashRule = append(identityHashRule, identityHashItem)
+	}
+	var accountIdRule []interface{}
+	for _, accountIdItem := range accountId {
+		accountIdRule = append(accountIdRule, accountIdItem)
+	}
+
+	logs, sub, err := _Accounts.contract.FilterLogs(opts, "Unlocked", identityHashRule, accountIdRule)
+	if err != nil {
+		return nil, err
+	}
+	return &AccountsUnlockedIterator{contract: _Accounts.contract, event: "Unlocked", logs: logs, sub: sub}, nil
+}
+
+// FilterUnlocked parses the event from given transaction receipt.
+//
+// Solidity: e Unlocked(identityHash indexed bytes32, accountId indexed bytes8, newOwner address)
+func (_Accounts *AccountsFilterer) ParseUnlockedFromReceipt(receipt *types.Receipt) (*AccountsUnlocked, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0x97e37defaf20fab5209164d8e3b54fdb1bd84d7ec6def1886c587be543d41bc0") {
+			event := new(AccountsUnlocked)
+			if err := _Accounts.contract.UnpackLog(event, "Unlocked", *log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("Unlocked event not found")
+}
+
+// WatchUnlocked is a free log subscription operation binding the contract event 0x97e37defaf20fab5209164d8e3b54fdb1bd84d7ec6def1886c587be543d41bc0.
+//
+// Solidity: e Unlocked(identityHash indexed bytes32, accountId indexed bytes8, newOwner address)
+func (_Accounts *AccountsFilterer) WatchUnlocked(opts *bind.WatchOpts, sink chan<- *AccountsUnlocked, identityHash [][32]byte, accountId [][8]byte) (event.Subscription, error) {
+
+	var identityHashRule []interface{}
+	for _, identityHashItem := range identityHash {
+		identityHashRule = append(identityHashRule, identityHashItem)
+	}
+	var accountIdRule []interface{}
+	for _, accountIdItem := range accountId {
+		accountIdRule = append(accountIdRule, accountIdItem)
+	}
+
+	logs, sub, err := _Accounts.contract.WatchLogs(opts, "Unlocked", identityHashRule, accountIdRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(AccountsUnlocked)
+				if err := _Accounts.contract.UnpackLog(event, "Unlocked", log); err != nil {
 					return err
 				}
 				event.Raw = log

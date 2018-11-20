@@ -11,14 +11,23 @@ import (
 )
 
 type Exchange struct {
-	client   *blockchain.Client
+	client   blockchain.TxClient
 	contract *adapter.Exchange
 }
 
-func New(client *blockchain.Client) (*Exchange, error) {
+func New(client blockchain.TxClient) (*Exchange, error) {
+	raw, err := client.GetContract(&adapter.Exchange{})
+	if err != nil {
+		return nil, err
+	}
+
+	contract, ok := raw.(*adapter.Exchange)
+	if !ok {
+		return nil, blockchain.ErrContractNotFound
+	}
 	return &Exchange{
 		client:   client,
-		contract: client.Contracts.Exchange,
+		contract: contract,
 	}, nil
 }
 

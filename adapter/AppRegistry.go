@@ -30,7 +30,7 @@ var (
 )
 
 // AppRegistryABI is the input ABI used to generate the binding from.
-const AppRegistryABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"}],\"name\":\"OwnershipRenounced\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes32\"},{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"newOwner\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes32\"},{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"checkOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes32\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes32\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes32\"}],\"name\":\"check\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const AppRegistryABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"name\":\"apps\",\"outputs\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"owner\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"appId\",\"type\":\"bytes8\"}],\"name\":\"Registered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"}],\"name\":\"OwnershipRenounced\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"},{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"newOwner\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"},{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"checkOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_name\",\"type\":\"string\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"}],\"name\":\"check\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // AppRegistry is an auto generated Go binding around an Ethereum contract.
 type AppRegistry struct {
@@ -180,10 +180,46 @@ func (_AppRegistry *AppRegistryTransactorRaw) Transact(opts *bind.TransactOpts, 
 	return _AppRegistry.Contract.contract.Transact(opts, method, params...)
 }
 
-// Check is a free data retrieval call binding the contract method 0x399e0792.
+// Apps is a free data retrieval call binding the contract method 0xe66e46c0.
 //
-// Solidity: function check(_appId bytes32) constant returns(bool)
-func (_AppRegistry *AppRegistryCaller) Check(opts *bind.CallOpts, _appId [32]byte) (bool, error) {
+// Solidity: function apps( bytes8) constant returns(name string, owner address)
+func (_AppRegistry *AppRegistryCaller) Apps(opts *bind.CallOpts, arg0 [8]byte) (struct {
+	Name  string
+	Owner common.Address
+}, error) {
+	ret := new(struct {
+		Name  string
+		Owner common.Address
+	})
+	out := ret
+	err := _AppRegistry.contract.Call(opts, out, "apps", arg0)
+	return *ret, err
+}
+
+// Apps is a free data retrieval call binding the contract method 0xe66e46c0.
+//
+// Solidity: function apps( bytes8) constant returns(name string, owner address)
+func (_AppRegistry *AppRegistrySession) Apps(arg0 [8]byte) (struct {
+	Name  string
+	Owner common.Address
+}, error) {
+	return _AppRegistry.Contract.Apps(&_AppRegistry.CallOpts, arg0)
+}
+
+// Apps is a free data retrieval call binding the contract method 0xe66e46c0.
+//
+// Solidity: function apps( bytes8) constant returns(name string, owner address)
+func (_AppRegistry *AppRegistryCallerSession) Apps(arg0 [8]byte) (struct {
+	Name  string
+	Owner common.Address
+}, error) {
+	return _AppRegistry.Contract.Apps(&_AppRegistry.CallOpts, arg0)
+}
+
+// Check is a free data retrieval call binding the contract method 0x398bc4e8.
+//
+// Solidity: function check(_appId bytes8) constant returns(bool)
+func (_AppRegistry *AppRegistryCaller) Check(opts *bind.CallOpts, _appId [8]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
@@ -192,24 +228,24 @@ func (_AppRegistry *AppRegistryCaller) Check(opts *bind.CallOpts, _appId [32]byt
 	return *ret0, err
 }
 
-// Check is a free data retrieval call binding the contract method 0x399e0792.
+// Check is a free data retrieval call binding the contract method 0x398bc4e8.
 //
-// Solidity: function check(_appId bytes32) constant returns(bool)
-func (_AppRegistry *AppRegistrySession) Check(_appId [32]byte) (bool, error) {
+// Solidity: function check(_appId bytes8) constant returns(bool)
+func (_AppRegistry *AppRegistrySession) Check(_appId [8]byte) (bool, error) {
 	return _AppRegistry.Contract.Check(&_AppRegistry.CallOpts, _appId)
 }
 
-// Check is a free data retrieval call binding the contract method 0x399e0792.
+// Check is a free data retrieval call binding the contract method 0x398bc4e8.
 //
-// Solidity: function check(_appId bytes32) constant returns(bool)
-func (_AppRegistry *AppRegistryCallerSession) Check(_appId [32]byte) (bool, error) {
+// Solidity: function check(_appId bytes8) constant returns(bool)
+func (_AppRegistry *AppRegistryCallerSession) Check(_appId [8]byte) (bool, error) {
 	return _AppRegistry.Contract.Check(&_AppRegistry.CallOpts, _appId)
 }
 
-// CheckOwner is a free data retrieval call binding the contract method 0x4caf58a3.
+// CheckOwner is a free data retrieval call binding the contract method 0x672b7beb.
 //
-// Solidity: function checkOwner(_appId bytes32, _owner address) constant returns(bool)
-func (_AppRegistry *AppRegistryCaller) CheckOwner(opts *bind.CallOpts, _appId [32]byte, _owner common.Address) (bool, error) {
+// Solidity: function checkOwner(_appId bytes8, _owner address) constant returns(bool)
+func (_AppRegistry *AppRegistryCaller) CheckOwner(opts *bind.CallOpts, _appId [8]byte, _owner common.Address) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
@@ -218,17 +254,17 @@ func (_AppRegistry *AppRegistryCaller) CheckOwner(opts *bind.CallOpts, _appId [3
 	return *ret0, err
 }
 
-// CheckOwner is a free data retrieval call binding the contract method 0x4caf58a3.
+// CheckOwner is a free data retrieval call binding the contract method 0x672b7beb.
 //
-// Solidity: function checkOwner(_appId bytes32, _owner address) constant returns(bool)
-func (_AppRegistry *AppRegistrySession) CheckOwner(_appId [32]byte, _owner common.Address) (bool, error) {
+// Solidity: function checkOwner(_appId bytes8, _owner address) constant returns(bool)
+func (_AppRegistry *AppRegistrySession) CheckOwner(_appId [8]byte, _owner common.Address) (bool, error) {
 	return _AppRegistry.Contract.CheckOwner(&_AppRegistry.CallOpts, _appId, _owner)
 }
 
-// CheckOwner is a free data retrieval call binding the contract method 0x4caf58a3.
+// CheckOwner is a free data retrieval call binding the contract method 0x672b7beb.
 //
-// Solidity: function checkOwner(_appId bytes32, _owner address) constant returns(bool)
-func (_AppRegistry *AppRegistryCallerSession) CheckOwner(_appId [32]byte, _owner common.Address) (bool, error) {
+// Solidity: function checkOwner(_appId bytes8, _owner address) constant returns(bool)
+func (_AppRegistry *AppRegistryCallerSession) CheckOwner(_appId [8]byte, _owner common.Address) (bool, error) {
 	return _AppRegistry.Contract.CheckOwner(&_AppRegistry.CallOpts, _appId, _owner)
 }
 
@@ -258,46 +294,46 @@ func (_AppRegistry *AppRegistryCallerSession) Owner() (common.Address, error) {
 	return _AppRegistry.Contract.Owner(&_AppRegistry.CallOpts)
 }
 
-// NewOwner is a paid mutator transaction binding the contract method 0x2534fa5d.
+// NewOwner is a paid mutator transaction binding the contract method 0xa856fe78.
 //
-// Solidity: function newOwner(_appId bytes32, _newOwner address) returns()
-func (_AppRegistry *AppRegistryTransactor) NewOwner(opts *bind.TransactOpts, _appId [32]byte, _newOwner common.Address) (*types.Transaction, error) {
+// Solidity: function newOwner(_appId bytes8, _newOwner address) returns()
+func (_AppRegistry *AppRegistryTransactor) NewOwner(opts *bind.TransactOpts, _appId [8]byte, _newOwner common.Address) (*types.Transaction, error) {
 	return _AppRegistry.contract.Transact(opts, "newOwner", _appId, _newOwner)
 }
 
-// NewOwner is a paid mutator transaction binding the contract method 0x2534fa5d.
+// NewOwner is a paid mutator transaction binding the contract method 0xa856fe78.
 //
-// Solidity: function newOwner(_appId bytes32, _newOwner address) returns()
-func (_AppRegistry *AppRegistrySession) NewOwner(_appId [32]byte, _newOwner common.Address) (*types.Transaction, error) {
+// Solidity: function newOwner(_appId bytes8, _newOwner address) returns()
+func (_AppRegistry *AppRegistrySession) NewOwner(_appId [8]byte, _newOwner common.Address) (*types.Transaction, error) {
 	return _AppRegistry.Contract.NewOwner(&_AppRegistry.TransactOpts, _appId, _newOwner)
 }
 
-// NewOwner is a paid mutator transaction binding the contract method 0x2534fa5d.
+// NewOwner is a paid mutator transaction binding the contract method 0xa856fe78.
 //
-// Solidity: function newOwner(_appId bytes32, _newOwner address) returns()
-func (_AppRegistry *AppRegistryTransactorSession) NewOwner(_appId [32]byte, _newOwner common.Address) (*types.Transaction, error) {
+// Solidity: function newOwner(_appId bytes8, _newOwner address) returns()
+func (_AppRegistry *AppRegistryTransactorSession) NewOwner(_appId [8]byte, _newOwner common.Address) (*types.Transaction, error) {
 	return _AppRegistry.Contract.NewOwner(&_AppRegistry.TransactOpts, _appId, _newOwner)
 }
 
-// Register is a paid mutator transaction binding the contract method 0xe1fa8e84.
+// Register is a paid mutator transaction binding the contract method 0xf2c298be.
 //
-// Solidity: function register(_appId bytes32) returns()
-func (_AppRegistry *AppRegistryTransactor) Register(opts *bind.TransactOpts, _appId [32]byte) (*types.Transaction, error) {
-	return _AppRegistry.contract.Transact(opts, "register", _appId)
+// Solidity: function register(_name string) returns()
+func (_AppRegistry *AppRegistryTransactor) Register(opts *bind.TransactOpts, _name string) (*types.Transaction, error) {
+	return _AppRegistry.contract.Transact(opts, "register", _name)
 }
 
-// Register is a paid mutator transaction binding the contract method 0xe1fa8e84.
+// Register is a paid mutator transaction binding the contract method 0xf2c298be.
 //
-// Solidity: function register(_appId bytes32) returns()
-func (_AppRegistry *AppRegistrySession) Register(_appId [32]byte) (*types.Transaction, error) {
-	return _AppRegistry.Contract.Register(&_AppRegistry.TransactOpts, _appId)
+// Solidity: function register(_name string) returns()
+func (_AppRegistry *AppRegistrySession) Register(_name string) (*types.Transaction, error) {
+	return _AppRegistry.Contract.Register(&_AppRegistry.TransactOpts, _name)
 }
 
-// Register is a paid mutator transaction binding the contract method 0xe1fa8e84.
+// Register is a paid mutator transaction binding the contract method 0xf2c298be.
 //
-// Solidity: function register(_appId bytes32) returns()
-func (_AppRegistry *AppRegistryTransactorSession) Register(_appId [32]byte) (*types.Transaction, error) {
-	return _AppRegistry.Contract.Register(&_AppRegistry.TransactOpts, _appId)
+// Solidity: function register(_name string) returns()
+func (_AppRegistry *AppRegistryTransactorSession) Register(_name string) (*types.Transaction, error) {
+	return _AppRegistry.Contract.Register(&_AppRegistry.TransactOpts, _name)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
@@ -342,24 +378,24 @@ func (_AppRegistry *AppRegistryTransactorSession) TransferOwnership(_newOwner co
 	return _AppRegistry.Contract.TransferOwnership(&_AppRegistry.TransactOpts, _newOwner)
 }
 
-// Unregister is a paid mutator transaction binding the contract method 0x1a0919dc.
+// Unregister is a paid mutator transaction binding the contract method 0x260a818e.
 //
-// Solidity: function unregister(_appId bytes32) returns()
-func (_AppRegistry *AppRegistryTransactor) Unregister(opts *bind.TransactOpts, _appId [32]byte) (*types.Transaction, error) {
+// Solidity: function unregister(_appId bytes8) returns()
+func (_AppRegistry *AppRegistryTransactor) Unregister(opts *bind.TransactOpts, _appId [8]byte) (*types.Transaction, error) {
 	return _AppRegistry.contract.Transact(opts, "unregister", _appId)
 }
 
-// Unregister is a paid mutator transaction binding the contract method 0x1a0919dc.
+// Unregister is a paid mutator transaction binding the contract method 0x260a818e.
 //
-// Solidity: function unregister(_appId bytes32) returns()
-func (_AppRegistry *AppRegistrySession) Unregister(_appId [32]byte) (*types.Transaction, error) {
+// Solidity: function unregister(_appId bytes8) returns()
+func (_AppRegistry *AppRegistrySession) Unregister(_appId [8]byte) (*types.Transaction, error) {
 	return _AppRegistry.Contract.Unregister(&_AppRegistry.TransactOpts, _appId)
 }
 
-// Unregister is a paid mutator transaction binding the contract method 0x1a0919dc.
+// Unregister is a paid mutator transaction binding the contract method 0x260a818e.
 //
-// Solidity: function unregister(_appId bytes32) returns()
-func (_AppRegistry *AppRegistryTransactorSession) Unregister(_appId [32]byte) (*types.Transaction, error) {
+// Solidity: function unregister(_appId bytes8) returns()
+func (_AppRegistry *AppRegistryTransactorSession) Unregister(_appId [8]byte) (*types.Transaction, error) {
 	return _AppRegistry.Contract.Unregister(&_AppRegistry.TransactOpts, _appId)
 }
 
@@ -648,6 +684,155 @@ func (_AppRegistry *AppRegistryFilterer) WatchOwnershipTransferred(opts *bind.Wa
 				// New log arrived, parse the event and forward to the user
 				event := new(AppRegistryOwnershipTransferred)
 				if err := _AppRegistry.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// AppRegistryRegisteredIterator is returned from FilterRegistered and is used to iterate over the raw logs and unpacked data for Registered events raised by the AppRegistry contract.
+type AppRegistryRegisteredIterator struct {
+	Event *AppRegistryRegistered // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *AppRegistryRegisteredIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(AppRegistryRegistered)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(AppRegistryRegistered)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *AppRegistryRegisteredIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *AppRegistryRegisteredIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// AppRegistryRegistered represents a Registered event raised by the AppRegistry contract.
+type AppRegistryRegistered struct {
+	Name  common.Hash
+	AppId [8]byte
+	Raw   types.Log // Blockchain specific contextual infos
+}
+
+// FilterRegistered is a free log retrieval operation binding the contract event 0x81fd67a36836c34ada265e9e349edf3799560c1e24a2149ba1ff6c427179f591.
+//
+// Solidity: e Registered(name indexed string, appId bytes8)
+func (_AppRegistry *AppRegistryFilterer) FilterRegistered(opts *bind.FilterOpts, name []string) (*AppRegistryRegisteredIterator, error) {
+
+	var nameRule []interface{}
+	for _, nameItem := range name {
+		nameRule = append(nameRule, nameItem)
+	}
+
+	logs, sub, err := _AppRegistry.contract.FilterLogs(opts, "Registered", nameRule)
+	if err != nil {
+		return nil, err
+	}
+	return &AppRegistryRegisteredIterator{contract: _AppRegistry.contract, event: "Registered", logs: logs, sub: sub}, nil
+}
+
+// FilterRegistered parses the event from given transaction receipt.
+//
+// Solidity: e Registered(name indexed string, appId bytes8)
+func (_AppRegistry *AppRegistryFilterer) ParseRegisteredFromReceipt(receipt *types.Receipt) (*AppRegistryRegistered, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0x81fd67a36836c34ada265e9e349edf3799560c1e24a2149ba1ff6c427179f591") {
+			event := new(AppRegistryRegistered)
+			if err := _AppRegistry.contract.UnpackLog(event, "Registered", *log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("Registered event not found")
+}
+
+// WatchRegistered is a free log subscription operation binding the contract event 0x81fd67a36836c34ada265e9e349edf3799560c1e24a2149ba1ff6c427179f591.
+//
+// Solidity: e Registered(name indexed string, appId bytes8)
+func (_AppRegistry *AppRegistryFilterer) WatchRegistered(opts *bind.WatchOpts, sink chan<- *AppRegistryRegistered, name []string) (event.Subscription, error) {
+
+	var nameRule []interface{}
+	for _, nameItem := range name {
+		nameRule = append(nameRule, nameItem)
+	}
+
+	logs, sub, err := _AppRegistry.contract.WatchLogs(opts, "Registered", nameRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(AppRegistryRegistered)
+				if err := _AppRegistry.contract.UnpackLog(event, "Registered", log); err != nil {
 					return err
 				}
 				event.Raw = log

@@ -19,21 +19,29 @@ import (
 type Collections struct {
 	localDb  *localdb.Model
 	metaDb   *metadb.Model
-	client   *blockchain.Client
+	client   blockchain.TxClient
 	contract *adapter.CollectionRegistry
 }
 
 func New(
 	localDb localdb.Database,
 	metaDb metadb.Database,
-	client *blockchain.Client,
+	client blockchain.TxClient,
 ) (*Collections, error) {
+	raw, err := client.GetContract(&adapter.CollectionRegistry{})
+	if err != nil {
+		return nil, err
+	}
 
+	contract, ok := raw.(*adapter.CollectionRegistry)
+	if !ok {
+		return nil, blockchain.ErrContractNotFound
+	}
 	return &Collections{
 		localDb:  localdb.NewModel(localDb, "collection"),
 		metaDb:   metadb.NewModel(metaDb, "collection"),
 		client:   client,
-		contract: client.Contracts.CollectionRegistry,
+		contract: contract,
 	}, nil
 }
 

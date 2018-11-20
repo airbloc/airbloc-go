@@ -14,7 +14,7 @@ import (
 
 type Manager struct {
 	kms       *key.Manager
-	client    *blockchain.Client
+	client    blockchain.TxClient
 	metadb    *metadb.Database
 	warehouse *warehouse.DataWarehouse
 	registry  *adapter.DataRegistry
@@ -23,15 +23,16 @@ type Manager struct {
 
 func NewManager(
 	kms *key.Manager,
-	client *blockchain.Client,
 	localDB localdb.Database,
+	client blockchain.TxClient,
+	contract *adapter.DataRegistry,
 ) (*Manager, error) {
 	batches := data.NewBatchManager(localDB)
 
 	return &Manager{
 		kms:      kms,
 		client:   client,
-		registry: client.Contracts.DataRegistry,
+		registry: contract,
 		batches:  batches,
 	}, nil
 }
@@ -53,11 +54,11 @@ func (manager *Manager) Get(dataId string) (*ablCommon.Data, error) {
 	encryptedData := bundle.Data[id.Index]
 
 	// try to decrypt data using own private key / re-encryption key
-	data, err := manager.kms.DecryptExternalData(encryptedData)
+	d, err := manager.kms.DecryptExternalData(encryptedData)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to decrypt data %s", dataId)
 	}
-	return data, nil
+	return d, nil
 }
 
 func (manager *Manager) GetBatch(batch *data.Batch) ([]*ablCommon.Data, error) {
@@ -75,11 +76,11 @@ func (manager *Manager) GetBatch(batch *data.Batch) ([]*ablCommon.Data, error) {
 		encryptedData := bundles[dataId.BundleID].Data[dataId.Index]
 
 		// try to decrypt data using own private key / re-encryption key
-		data, err := manager.kms.DecryptExternalData(encryptedData)
+		d, err := manager.kms.DecryptExternalData(encryptedData)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to decrypt data %s", dataId)
 		}
-		dataList = append(dataList, data)
+		dataList = append(dataList, d)
 	}
 	return dataList, nil
 }
