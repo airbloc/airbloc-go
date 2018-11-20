@@ -21,7 +21,7 @@ module.exports = function (deployer) {
             Exchange,
             SparseMerkleTree,
         ]);
-        await deployer.deploy(CollectionRegistry, AppRegistry.address, SchemaRegistry.address);
+        await deployer.deploy(CollectionRegistry, Accounts.address, AppRegistry.address, SchemaRegistry.address);
         await deployer.deploy(DataRegistry, Accounts.address, CollectionRegistry.address, SparseMerkleTree.address);
 
         const deployments = {
