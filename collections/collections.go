@@ -2,12 +2,13 @@ package collections
 
 import (
 	"context"
+	"math/big"
+
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/pkg/errors"
-	"math/big"
 
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"

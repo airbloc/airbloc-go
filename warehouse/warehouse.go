@@ -4,6 +4,10 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"math/rand"
+	"net/url"
+	"time"
+
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
 	"github.com/airbloc/airbloc-go/data"
@@ -11,9 +15,6 @@ import (
 	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/mongodb/mongo-go-driver/bson"
-	"math/rand"
-	"net/url"
-	"time"
 
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/key"

@@ -18,6 +18,14 @@ func GetBadgerDB(db Database) (*badger.DB, error) {
 	return v, nil
 }
 
+func GetMemDB(db Database) (*MemDB, error) {
+	v, ok := db.getDB().(*MemDB)
+	if !ok {
+		return nil, ErrWrongType
+	}
+	return v, nil
+}
+
 func GetLevelDB(db Database) (*leveldb.DB, error) {
 	v, ok := db.getDB().(*leveldb.DB)
 	if !ok {

@@ -3,6 +3,7 @@ package data
 import (
 	"bytes"
 	"encoding/binary"
+
 	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/loomnetwork/mamamerkle"
