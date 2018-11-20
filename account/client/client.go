@@ -1,8 +1,8 @@
-package account
+package client
 
 import (
 	"context"
-
+	"github.com/airbloc/airbloc-go/account"
 	"github.com/airbloc/airbloc-go/account/api"
 	ablCommon "github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/key"
@@ -20,13 +20,13 @@ type Client struct {
 	manager api.AccountClient
 }
 
-func NewClient(conn *grpc.ClientConn) *Client {
+func NewClient(conn *grpc.ClientConn) (*Client) {
 	return &Client{
 		manager: api.NewAccountClient(conn),
 	}
 }
 
-func (client *Client) Create(walletAddress ethCommon.Address, password string) (*Session, error) {
+func (client *Client) Create(walletAddress ethCommon.Address, password string) (*account.Session, error) {
 	identity := crypto.Keccak256Hash(walletAddress.Bytes())
 	priv := key.DeriveFromPassword(identity, password)
 
@@ -36,7 +36,7 @@ func (client *Client) Create(walletAddress ethCommon.Address, password string) (
 	}
 
 	request := &api.AccountCreateRequest{
-		Address:           walletAddress.Bytes(),
+		Address: walletAddress.Bytes(),
 		PasswordSignature: sig,
 	}
 
@@ -48,14 +48,14 @@ func (client *Client) Create(walletAddress ethCommon.Address, password string) (
 	if err != nil {
 		return nil, errors.Wrapf(err, "invalid ID returned from the server: %s", response.GetAccountId())
 	}
-	return &Session{
+	return &account.Session{
 		AccountId:     accountId,
 		WalletAddress: walletAddress,
 		Key:           priv,
 	}, nil
 }
 
-func (client *Client) LogIn(identity string, password string) (*Session, error) {
+func (client *Client) LogIn(identity string, password string) (*account.Session, error) {
 	request := &api.AccountGetByIdentityRequest{
 		Identity: identity,
 	}
@@ -67,7 +67,7 @@ func (client *Client) LogIn(identity string, password string) (*Session, error) 
 	if err != nil {
 		return nil, errors.Wrapf(err, "invalid ID returned from the server: %s", response.GetAccountId())
 	}
-	session := newSession(accountId, ethCommon.BytesToAddress(response.GetOwnerAddress()), password)
+	session := account.NewSession(accountId, ethCommon.BytesToAddress(response.GetOwnerAddress()), password)
 
 	// generate test signature
 	identityHash := crypto.Keccak256Hash([]byte(identity))
