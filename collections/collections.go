@@ -130,33 +130,3 @@ func (s *Collections) Exists(id common.ID) (bool, error) {
 func (s *Collections) IsCollectionAllowed(id, userId common.ID) (bool, error) {
 	return s.contract.IsCollectionAllowed(nil, id, userId)
 }
-
-func (s *Collections) Allow(id, userId common.ID) error {
-	tx, err := s.contract.Allow(s.client.Account(), id, userId)
-	if err != nil {
-		return err
-	}
-
-	receipt, err := s.client.WaitMined(context.Background(), tx)
-	if err != nil {
-		return err
-	}
-
-	_, err = s.contract.ParseAllowedFromReceipt(receipt)
-	return err
-}
-
-func (s *Collections) Deny(id, userId common.ID) error {
-	tx, err := s.contract.Deny(s.client.Account(), id, userId)
-	if err != nil {
-		return err
-	}
-
-	receipt, err := s.client.WaitMined(context.Background(), tx)
-	if err != nil {
-		return err
-	}
-
-	_, err = s.contract.ParseDeniedFromReceipt(receipt)
-	return err
-}
