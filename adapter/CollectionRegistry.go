@@ -30,26 +30,11 @@ var (
 )
 
 // CollectionRegistryABI is the input ABI used to generate the binding from.
-const CollectionRegistryABI = "[{\"inputs\":[{\"name\":\"_appReg\",\"type\":\"address\"},{\"name\":\"_schemaReg\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"registrar\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"appId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"collectionId\",\"type\":\"bytes8\"}],\"name\":\"Registration\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"appId\",\"type\":\"bytes8\"}],\"name\":\"Unregistration\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"userId\",\"type\":\"bytes8\"}],\"name\":\"Allowed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"userId\",\"type\":\"bytes8\"}],\"name\":\"Denied\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"},{\"name\":\"_schemaId\",\"type\":\"bytes8\"},{\"name\":\"_ratio\",\"type\":\"uint256\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"get\",\"outputs\":[{\"name\":\"appId\",\"type\":\"bytes8\"},{\"name\":\"schemaId\",\"type\":\"bytes8\"},{\"name\":\"incentiveRatioSelf\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"},{\"name\":\"_userId\",\"type\":\"bytes8\"}],\"name\":\"allow\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"},{\"name\":\"_userId\",\"type\":\"bytes8\"}],\"name\":\"deny\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"exists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"user\",\"type\":\"bytes8\"}],\"name\":\"isCollectionAllowed\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"user\",\"type\":\"bytes8\"},{\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"isCollectionAllowedAt\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
-
-// CollectionRegistryBin is the compiled bytecode used for deploying new contracts.
-const CollectionRegistryBin = `0x60806040526004361061008d5763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663260a818e81146100925780632fee2580146100b657806347ba65d2146100de57806397e4fea71461012b578063a3b42cba14610161578063a94d64e01461018c578063f53fb0cb146101b4578063f8907491146101df575b600080fd5b34801561009e57600080fd5b506100b4600160c060020a031960043516610207565b005b3480156100c257600080fd5b506100b4600160c060020a031960043581169060243516610407565b3480156100ea57600080fd5b50610100600160c060020a0319600435166104b8565b60408051600160c060020a031994851681529290931660208301528183015290519081900360600190f35b34801561013757600080fd5b5061014d600160c060020a031960043516610547565b604080519115158252519081900360200190f35b34801561016d57600080fd5b506100b4600160c060020a03196004358116906024351660443561056e565b34801561019857600080fd5b506100b4600160c060020a031960043581169060243516610927565b3480156101c057600080fd5b5061014d600160c060020a0319600435811690602435166044356109da565b3480156101eb57600080fd5b5061014d600160c060020a031960043581169060243516610a46565b600061021282610547565b1515610256576040805160e560020a62461bcd0281526020600482015260196024820152600080516020610b26833981519152604482015290519081900360640190fd5b50600160c060020a03198082166000908152602081815260408083205460015482517f672b7beb00000000000000000000000000000000000000000000000000000000815260c060020a9092029586166004830152336024830152915173ffffffffffffffffffffffffffffffffffffffff9092169363672b7beb9360448084019491939192918390030190829087803b1580156102f357600080fd5b505af1158015610307573d6000803e3d6000fd5b505050506040513d602081101561031d57600080fd5b5051151561039b576040805160e560020a62461bcd02815260206004820152602360248201527f6f6e6c79206f776e65722063616e20726567697374657220636f6c6c6563746960448201527f6f6e2e0000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600160c060020a031980831660008181526020819052604080822080546fffffffffffffffffffffffffffffffff191681556001810183905560020182905551928416927f88bf0005675630b29e5b698355f1c09cabdf78e912367fc1850c1d8b33366f2f9190a35050565b61041082610547565b1515610454576040805160e560020a62461bcd0281526020600482015260196024820152600080516020610b26833981519152604482015290519081900360640190fd5b600160c060020a03198281166000818152602081815260408083209486168084526003909501909152808220805460ff1916815543600190910155517f1a57e3d69528db9b16115c4ff4339d855e8468ce95579571daa74bd206d243039190a35050565b60008060006104c684610547565b151561050a576040805160e560020a62461bcd0281526020600482015260196024820152600080516020610b26833981519152604482015290519081900360640190fd5b505050600160c060020a0319166000908152602081905260409020805460019091015460c060020a80830293680100000000000000009093040291565b600160c060020a031990811660009081526020819052604090205460c060020a0216151590565b600154604080517f672b7beb000000000000000000000000000000000000000000000000000000008152600160c060020a03198616600482015233602482015290516000928392839273ffffffffffffffffffffffffffffffffffffffff9092169163672b7beb9160448082019260209290919082900301818787803b1580156105f757600080fd5b505af115801561060b573d6000803e3d6000fd5b505050506040513d602081101561062157600080fd5b5051151561069f576040805160e560020a62461bcd02815260206004820152602360248201527f6f6e6c79206f776e65722063616e20726567697374657220636f6c6c6563746960448201527f6f6e2e0000000000000000000000000000000000000000000000000000000000606482015290519081900360840190fd5b600254604080517f97e4fea7000000000000000000000000000000000000000000000000000000008152600160c060020a031988166004820152905173ffffffffffffffffffffffffffffffffffffffff909216916397e4fea7916024808201926020929091908290030181600087803b15801561071c57600080fd5b505af1158015610730573d6000803e3d6000fd5b505050506040513d602081101561074657600080fd5b5051151561079e576040805160e560020a62461bcd02815260206004820152601b60248201527f676976656e20736368656d6120646f6573206e6f742065786973740000000000604482015290519081900360640190fd5b60408051600160c060020a03198089166020808401919091529088166028830152603080830188905283518084039091018152605090920192839052815191929182918401908083835b602083106108075780518252601f1990920191602091820191016107e8565b6001836020036101000a038019825116818451168082178552505050505050905001915050604051809103902092506108408333610a5a565b600160c060020a0319811660009081526020818152604091829020805460c060020a808b0468010000000000000000026fffffffffffffffff000000000000000019918d0467ffffffffffffffff19909316929092171617815582518084019093528783529294509192509081016108c768056bc75e2d631000008763ffffffff610b1316565b905280516001830155602090810151600283015560408051600160c060020a0319858116825291519189169233927fed612afce4032a5821a725a428005a5afc5c47bff7cc9c9b8d0d69e078b133fb9281900390910190a3505050505050565b61093082610547565b1515610974576040805160e560020a62461bcd0281526020600482015260196024820152600080516020610b26833981519152604482015290519081900360640190fd5b600160c060020a03198281166000818152602081815260408083209486168084526003909501909152808220805460ff19166001908117825543910155517f2575002f9c19a89406e73df97a2c23c867221b5aa503bd19f5fdc8798f0093069190a35050565b600160c060020a03198084166000908152602081815260408083209386168352600390930190529081205460ff168015610a3e5750600160c060020a0319808516600090815260208181526040808320938716835260039093019052206001015482115b949350505050565b6000610a538383436109da565b9392505050565b604080516c0100000000000000000000000073ffffffffffffffffffffffffffffffffffffffff84160260208083019190915243603483015260548083018690528351808403909101815260749092019283905281516000938392909182918401908083835b60208310610adf5780518252601f199092019160209182019101610ac0565b5181516020939093036101000a60001901801990911692169190911790526040519201829003909120979650505050505050565b600082821115610b1f57fe5b509003905600636f6c6c656374696f6e20646f6573206e6f7420657869737400000000000000a165627a7a72305820a549e50b296745ce55bdd176455f7f95421c552011f69dc6566167fc631aeef30029`
-
-// DeployCollectionRegistry deploys a new Ethereum contract, binding an instance of CollectionRegistry to it.
-func DeployCollectionRegistry(auth *bind.TransactOpts, backend bind.ContractBackend, _appReg common.Address, _schemaReg common.Address) (common.Address, *types.Transaction, *CollectionRegistry, error) {
-	parsed, err := abi.JSON(strings.NewReader(CollectionRegistryABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(CollectionRegistryBin), backend, _appReg, _schemaReg)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &CollectionRegistry{CollectionRegistryCaller: CollectionRegistryCaller{contract: contract}, CollectionRegistryTransactor: CollectionRegistryTransactor{contract: contract}, CollectionRegistryFilterer: CollectionRegistryFilterer{contract: contract}}, nil
-}
+const CollectionRegistryABI = "[{\"inputs\":[{\"name\":\"_appReg\",\"type\":\"address\"},{\"name\":\"_schemaReg\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_colectionId\",\"type\":\"bytes32\"}],\"name\":\"Registered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_colectionId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"_appId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"_schemaId\",\"type\":\"bytes32\"}],\"name\":\"Unregistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_collectionId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"_uid\",\"type\":\"bytes32\"}],\"name\":\"Allowed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_collectionId\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"_uid\",\"type\":\"bytes32\"}],\"name\":\"Denied\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes32\"},{\"name\":\"_schemaId\",\"type\":\"bytes32\"},{\"name\":\"_ratio\",\"type\":\"uint256\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"},{\"name\":\"_uid\",\"type\":\"bytes32\"}],\"name\":\"allow\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"},{\"name\":\"_uid\",\"type\":\"bytes32\"}],\"name\":\"deny\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"get\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"},{\"name\":\"\",\"type\":\"bytes32\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"}],\"name\":\"check\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes32\"},{\"name\":\"_uid\",\"type\":\"bytes32\"}],\"name\":\"checkAllowed\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // CollectionRegistry is an auto generated Go binding around an Ethereum contract.
 type CollectionRegistry struct {
+	Address                      common.Address
 	CollectionRegistryCaller     // Read-only binding to the contract
 	CollectionRegistryTransactor // Write-only binding to the contract
 	CollectionRegistryFilterer   // Log filterer for contract events
@@ -113,7 +98,12 @@ func NewCollectionRegistry(address common.Address, backend bind.ContractBackend)
 	if err != nil {
 		return nil, err
 	}
-	return &CollectionRegistry{CollectionRegistryCaller: CollectionRegistryCaller{contract: contract}, CollectionRegistryTransactor: CollectionRegistryTransactor{contract: contract}, CollectionRegistryFilterer: CollectionRegistryFilterer{contract: contract}}, nil
+	return &CollectionRegistry{
+		Address:                      address,
+		CollectionRegistryCaller:     CollectionRegistryCaller{contract: contract},
+		CollectionRegistryTransactor: CollectionRegistryTransactor{contract: contract},
+		CollectionRegistryFilterer:   CollectionRegistryFilterer{contract: contract},
+	}, nil
 }
 
 // NewCollectionRegistryCaller creates a new read-only instance of CollectionRegistry, bound to a specific deployed contract.
@@ -190,205 +180,169 @@ func (_CollectionRegistry *CollectionRegistryTransactorRaw) Transact(opts *bind.
 	return _CollectionRegistry.Contract.contract.Transact(opts, method, params...)
 }
 
-// Exists is a free data retrieval call binding the contract method 0x97e4fea7.
+// Check is a free data retrieval call binding the contract method 0x399e0792.
 //
-// Solidity: function exists(_id bytes8) constant returns(bool)
-func (_CollectionRegistry *CollectionRegistryCaller) Exists(opts *bind.CallOpts, _id [8]byte) (bool, error) {
+// Solidity: function check(_id bytes32) constant returns(bool)
+func (_CollectionRegistry *CollectionRegistryCaller) Check(opts *bind.CallOpts, _id [32]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
 	out := ret0
-	err := _CollectionRegistry.contract.Call(opts, out, "exists", _id)
+	err := _CollectionRegistry.contract.Call(opts, out, "check", _id)
 	return *ret0, err
 }
 
-// Exists is a free data retrieval call binding the contract method 0x97e4fea7.
+// Check is a free data retrieval call binding the contract method 0x399e0792.
 //
-// Solidity: function exists(_id bytes8) constant returns(bool)
-func (_CollectionRegistry *CollectionRegistrySession) Exists(_id [8]byte) (bool, error) {
-	return _CollectionRegistry.Contract.Exists(&_CollectionRegistry.CallOpts, _id)
+// Solidity: function check(_id bytes32) constant returns(bool)
+func (_CollectionRegistry *CollectionRegistrySession) Check(_id [32]byte) (bool, error) {
+	return _CollectionRegistry.Contract.Check(&_CollectionRegistry.CallOpts, _id)
 }
 
-// Exists is a free data retrieval call binding the contract method 0x97e4fea7.
+// Check is a free data retrieval call binding the contract method 0x399e0792.
 //
-// Solidity: function exists(_id bytes8) constant returns(bool)
-func (_CollectionRegistry *CollectionRegistryCallerSession) Exists(_id [8]byte) (bool, error) {
-	return _CollectionRegistry.Contract.Exists(&_CollectionRegistry.CallOpts, _id)
+// Solidity: function check(_id bytes32) constant returns(bool)
+func (_CollectionRegistry *CollectionRegistryCallerSession) Check(_id [32]byte) (bool, error) {
+	return _CollectionRegistry.Contract.Check(&_CollectionRegistry.CallOpts, _id)
 }
 
-// Get is a free data retrieval call binding the contract method 0x47ba65d2.
+// CheckAllowed is a free data retrieval call binding the contract method 0xd42e7155.
 //
-// Solidity: function get(_id bytes8) constant returns(appId bytes8, schemaId bytes8, incentiveRatioSelf uint256)
-func (_CollectionRegistry *CollectionRegistryCaller) Get(opts *bind.CallOpts, _id [8]byte) (struct {
-	AppId              [8]byte
-	SchemaId           [8]byte
-	IncentiveRatioSelf *big.Int
-}, error) {
-	ret := new(struct {
-		AppId              [8]byte
-		SchemaId           [8]byte
-		IncentiveRatioSelf *big.Int
-	})
-	out := ret
+// Solidity: function checkAllowed(_id bytes32, _uid bytes32) constant returns(bool)
+func (_CollectionRegistry *CollectionRegistryCaller) CheckAllowed(opts *bind.CallOpts, _id [32]byte, _uid [32]byte) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _CollectionRegistry.contract.Call(opts, out, "checkAllowed", _id, _uid)
+	return *ret0, err
+}
+
+// CheckAllowed is a free data retrieval call binding the contract method 0xd42e7155.
+//
+// Solidity: function checkAllowed(_id bytes32, _uid bytes32) constant returns(bool)
+func (_CollectionRegistry *CollectionRegistrySession) CheckAllowed(_id [32]byte, _uid [32]byte) (bool, error) {
+	return _CollectionRegistry.Contract.CheckAllowed(&_CollectionRegistry.CallOpts, _id, _uid)
+}
+
+// CheckAllowed is a free data retrieval call binding the contract method 0xd42e7155.
+//
+// Solidity: function checkAllowed(_id bytes32, _uid bytes32) constant returns(bool)
+func (_CollectionRegistry *CollectionRegistryCallerSession) CheckAllowed(_id [32]byte, _uid [32]byte) (bool, error) {
+	return _CollectionRegistry.Contract.CheckAllowed(&_CollectionRegistry.CallOpts, _id, _uid)
+}
+
+// Get is a free data retrieval call binding the contract method 0x8eaa6ac0.
+//
+// Solidity: function get(_id bytes32) constant returns(bytes32, bytes32)
+func (_CollectionRegistry *CollectionRegistryCaller) Get(opts *bind.CallOpts, _id [32]byte) ([32]byte, [32]byte, error) {
+	var (
+		ret0 = new([32]byte)
+		ret1 = new([32]byte)
+	)
+	out := &[]interface{}{
+		ret0,
+		ret1,
+	}
 	err := _CollectionRegistry.contract.Call(opts, out, "get", _id)
-	return *ret, err
+	return *ret0, *ret1, err
 }
 
-// Get is a free data retrieval call binding the contract method 0x47ba65d2.
+// Get is a free data retrieval call binding the contract method 0x8eaa6ac0.
 //
-// Solidity: function get(_id bytes8) constant returns(appId bytes8, schemaId bytes8, incentiveRatioSelf uint256)
-func (_CollectionRegistry *CollectionRegistrySession) Get(_id [8]byte) (struct {
-	AppId              [8]byte
-	SchemaId           [8]byte
-	IncentiveRatioSelf *big.Int
-}, error) {
+// Solidity: function get(_id bytes32) constant returns(bytes32, bytes32)
+func (_CollectionRegistry *CollectionRegistrySession) Get(_id [32]byte) ([32]byte, [32]byte, error) {
 	return _CollectionRegistry.Contract.Get(&_CollectionRegistry.CallOpts, _id)
 }
 
-// Get is a free data retrieval call binding the contract method 0x47ba65d2.
+// Get is a free data retrieval call binding the contract method 0x8eaa6ac0.
 //
-// Solidity: function get(_id bytes8) constant returns(appId bytes8, schemaId bytes8, incentiveRatioSelf uint256)
-func (_CollectionRegistry *CollectionRegistryCallerSession) Get(_id [8]byte) (struct {
-	AppId              [8]byte
-	SchemaId           [8]byte
-	IncentiveRatioSelf *big.Int
-}, error) {
+// Solidity: function get(_id bytes32) constant returns(bytes32, bytes32)
+func (_CollectionRegistry *CollectionRegistryCallerSession) Get(_id [32]byte) ([32]byte, [32]byte, error) {
 	return _CollectionRegistry.Contract.Get(&_CollectionRegistry.CallOpts, _id)
 }
 
-// IsCollectionAllowed is a free data retrieval call binding the contract method 0xf8907491.
+// Allow is a paid mutator transaction binding the contract method 0x1fed449f.
 //
-// Solidity: function isCollectionAllowed(collectionId bytes8, user bytes8) constant returns(bool)
-func (_CollectionRegistry *CollectionRegistryCaller) IsCollectionAllowed(opts *bind.CallOpts, collectionId [8]byte, user [8]byte) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _CollectionRegistry.contract.Call(opts, out, "isCollectionAllowed", collectionId, user)
-	return *ret0, err
+// Solidity: function allow(_id bytes32, _uid bytes32) returns()
+func (_CollectionRegistry *CollectionRegistryTransactor) Allow(opts *bind.TransactOpts, _id [32]byte, _uid [32]byte) (*types.Transaction, error) {
+	return _CollectionRegistry.contract.Transact(opts, "allow", _id, _uid)
 }
 
-// IsCollectionAllowed is a free data retrieval call binding the contract method 0xf8907491.
+// Allow is a paid mutator transaction binding the contract method 0x1fed449f.
 //
-// Solidity: function isCollectionAllowed(collectionId bytes8, user bytes8) constant returns(bool)
-func (_CollectionRegistry *CollectionRegistrySession) IsCollectionAllowed(collectionId [8]byte, user [8]byte) (bool, error) {
-	return _CollectionRegistry.Contract.IsCollectionAllowed(&_CollectionRegistry.CallOpts, collectionId, user)
+// Solidity: function allow(_id bytes32, _uid bytes32) returns()
+func (_CollectionRegistry *CollectionRegistrySession) Allow(_id [32]byte, _uid [32]byte) (*types.Transaction, error) {
+	return _CollectionRegistry.Contract.Allow(&_CollectionRegistry.TransactOpts, _id, _uid)
 }
 
-// IsCollectionAllowed is a free data retrieval call binding the contract method 0xf8907491.
+// Allow is a paid mutator transaction binding the contract method 0x1fed449f.
 //
-// Solidity: function isCollectionAllowed(collectionId bytes8, user bytes8) constant returns(bool)
-func (_CollectionRegistry *CollectionRegistryCallerSession) IsCollectionAllowed(collectionId [8]byte, user [8]byte) (bool, error) {
-	return _CollectionRegistry.Contract.IsCollectionAllowed(&_CollectionRegistry.CallOpts, collectionId, user)
+// Solidity: function allow(_id bytes32, _uid bytes32) returns()
+func (_CollectionRegistry *CollectionRegistryTransactorSession) Allow(_id [32]byte, _uid [32]byte) (*types.Transaction, error) {
+	return _CollectionRegistry.Contract.Allow(&_CollectionRegistry.TransactOpts, _id, _uid)
 }
 
-// IsCollectionAllowedAt is a free data retrieval call binding the contract method 0xf53fb0cb.
+// Deny is a paid mutator transaction binding the contract method 0x4fe929c2.
 //
-// Solidity: function isCollectionAllowedAt(collectionId bytes8, user bytes8, blockNumber uint256) constant returns(bool)
-func (_CollectionRegistry *CollectionRegistryCaller) IsCollectionAllowedAt(opts *bind.CallOpts, collectionId [8]byte, user [8]byte, blockNumber *big.Int) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _CollectionRegistry.contract.Call(opts, out, "isCollectionAllowedAt", collectionId, user, blockNumber)
-	return *ret0, err
+// Solidity: function deny(_id bytes32, _uid bytes32) returns()
+func (_CollectionRegistry *CollectionRegistryTransactor) Deny(opts *bind.TransactOpts, _id [32]byte, _uid [32]byte) (*types.Transaction, error) {
+	return _CollectionRegistry.contract.Transact(opts, "deny", _id, _uid)
 }
 
-// IsCollectionAllowedAt is a free data retrieval call binding the contract method 0xf53fb0cb.
+// Deny is a paid mutator transaction binding the contract method 0x4fe929c2.
 //
-// Solidity: function isCollectionAllowedAt(collectionId bytes8, user bytes8, blockNumber uint256) constant returns(bool)
-func (_CollectionRegistry *CollectionRegistrySession) IsCollectionAllowedAt(collectionId [8]byte, user [8]byte, blockNumber *big.Int) (bool, error) {
-	return _CollectionRegistry.Contract.IsCollectionAllowedAt(&_CollectionRegistry.CallOpts, collectionId, user, blockNumber)
+// Solidity: function deny(_id bytes32, _uid bytes32) returns()
+func (_CollectionRegistry *CollectionRegistrySession) Deny(_id [32]byte, _uid [32]byte) (*types.Transaction, error) {
+	return _CollectionRegistry.Contract.Deny(&_CollectionRegistry.TransactOpts, _id, _uid)
 }
 
-// IsCollectionAllowedAt is a free data retrieval call binding the contract method 0xf53fb0cb.
+// Deny is a paid mutator transaction binding the contract method 0x4fe929c2.
 //
-// Solidity: function isCollectionAllowedAt(collectionId bytes8, user bytes8, blockNumber uint256) constant returns(bool)
-func (_CollectionRegistry *CollectionRegistryCallerSession) IsCollectionAllowedAt(collectionId [8]byte, user [8]byte, blockNumber *big.Int) (bool, error) {
-	return _CollectionRegistry.Contract.IsCollectionAllowedAt(&_CollectionRegistry.CallOpts, collectionId, user, blockNumber)
+// Solidity: function deny(_id bytes32, _uid bytes32) returns()
+func (_CollectionRegistry *CollectionRegistryTransactorSession) Deny(_id [32]byte, _uid [32]byte) (*types.Transaction, error) {
+	return _CollectionRegistry.Contract.Deny(&_CollectionRegistry.TransactOpts, _id, _uid)
 }
 
-// Allow is a paid mutator transaction binding the contract method 0xa94d64e0.
+// Register is a paid mutator transaction binding the contract method 0x4073c0cc.
 //
-// Solidity: function allow(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistryTransactor) Allow(opts *bind.TransactOpts, _id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.contract.Transact(opts, "allow", _id, _userId)
-}
-
-// Allow is a paid mutator transaction binding the contract method 0xa94d64e0.
-//
-// Solidity: function allow(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistrySession) Allow(_id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.Contract.Allow(&_CollectionRegistry.TransactOpts, _id, _userId)
-}
-
-// Allow is a paid mutator transaction binding the contract method 0xa94d64e0.
-//
-// Solidity: function allow(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistryTransactorSession) Allow(_id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.Contract.Allow(&_CollectionRegistry.TransactOpts, _id, _userId)
-}
-
-// Deny is a paid mutator transaction binding the contract method 0x2fee2580.
-//
-// Solidity: function deny(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistryTransactor) Deny(opts *bind.TransactOpts, _id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.contract.Transact(opts, "deny", _id, _userId)
-}
-
-// Deny is a paid mutator transaction binding the contract method 0x2fee2580.
-//
-// Solidity: function deny(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistrySession) Deny(_id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.Contract.Deny(&_CollectionRegistry.TransactOpts, _id, _userId)
-}
-
-// Deny is a paid mutator transaction binding the contract method 0x2fee2580.
-//
-// Solidity: function deny(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistryTransactorSession) Deny(_id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.Contract.Deny(&_CollectionRegistry.TransactOpts, _id, _userId)
-}
-
-// Register is a paid mutator transaction binding the contract method 0xa3b42cba.
-//
-// Solidity: function register(_appId bytes8, _schemaId bytes8, _ratio uint256) returns()
-func (_CollectionRegistry *CollectionRegistryTransactor) Register(opts *bind.TransactOpts, _appId [8]byte, _schemaId [8]byte, _ratio *big.Int) (*types.Transaction, error) {
+// Solidity: function register(_appId bytes32, _schemaId bytes32, _ratio uint256) returns()
+func (_CollectionRegistry *CollectionRegistryTransactor) Register(opts *bind.TransactOpts, _appId [32]byte, _schemaId [32]byte, _ratio *big.Int) (*types.Transaction, error) {
 	return _CollectionRegistry.contract.Transact(opts, "register", _appId, _schemaId, _ratio)
 }
 
-// Register is a paid mutator transaction binding the contract method 0xa3b42cba.
+// Register is a paid mutator transaction binding the contract method 0x4073c0cc.
 //
-// Solidity: function register(_appId bytes8, _schemaId bytes8, _ratio uint256) returns()
-func (_CollectionRegistry *CollectionRegistrySession) Register(_appId [8]byte, _schemaId [8]byte, _ratio *big.Int) (*types.Transaction, error) {
+// Solidity: function register(_appId bytes32, _schemaId bytes32, _ratio uint256) returns()
+func (_CollectionRegistry *CollectionRegistrySession) Register(_appId [32]byte, _schemaId [32]byte, _ratio *big.Int) (*types.Transaction, error) {
 	return _CollectionRegistry.Contract.Register(&_CollectionRegistry.TransactOpts, _appId, _schemaId, _ratio)
 }
 
-// Register is a paid mutator transaction binding the contract method 0xa3b42cba.
+// Register is a paid mutator transaction binding the contract method 0x4073c0cc.
 //
-// Solidity: function register(_appId bytes8, _schemaId bytes8, _ratio uint256) returns()
-func (_CollectionRegistry *CollectionRegistryTransactorSession) Register(_appId [8]byte, _schemaId [8]byte, _ratio *big.Int) (*types.Transaction, error) {
+// Solidity: function register(_appId bytes32, _schemaId bytes32, _ratio uint256) returns()
+func (_CollectionRegistry *CollectionRegistryTransactorSession) Register(_appId [32]byte, _schemaId [32]byte, _ratio *big.Int) (*types.Transaction, error) {
 	return _CollectionRegistry.Contract.Register(&_CollectionRegistry.TransactOpts, _appId, _schemaId, _ratio)
 }
 
-// Unregister is a paid mutator transaction binding the contract method 0x260a818e.
+// Unregister is a paid mutator transaction binding the contract method 0x1a0919dc.
 //
-// Solidity: function unregister(_id bytes8) returns()
-func (_CollectionRegistry *CollectionRegistryTransactor) Unregister(opts *bind.TransactOpts, _id [8]byte) (*types.Transaction, error) {
+// Solidity: function unregister(_id bytes32) returns()
+func (_CollectionRegistry *CollectionRegistryTransactor) Unregister(opts *bind.TransactOpts, _id [32]byte) (*types.Transaction, error) {
 	return _CollectionRegistry.contract.Transact(opts, "unregister", _id)
 }
 
-// Unregister is a paid mutator transaction binding the contract method 0x260a818e.
+// Unregister is a paid mutator transaction binding the contract method 0x1a0919dc.
 //
-// Solidity: function unregister(_id bytes8) returns()
-func (_CollectionRegistry *CollectionRegistrySession) Unregister(_id [8]byte) (*types.Transaction, error) {
+// Solidity: function unregister(_id bytes32) returns()
+func (_CollectionRegistry *CollectionRegistrySession) Unregister(_id [32]byte) (*types.Transaction, error) {
 	return _CollectionRegistry.Contract.Unregister(&_CollectionRegistry.TransactOpts, _id)
 }
 
-// Unregister is a paid mutator transaction binding the contract method 0x260a818e.
+// Unregister is a paid mutator transaction binding the contract method 0x1a0919dc.
 //
-// Solidity: function unregister(_id bytes8) returns()
-func (_CollectionRegistry *CollectionRegistryTransactorSession) Unregister(_id [8]byte) (*types.Transaction, error) {
+// Solidity: function unregister(_id bytes32) returns()
+func (_CollectionRegistry *CollectionRegistryTransactorSession) Unregister(_id [32]byte) (*types.Transaction, error) {
 	return _CollectionRegistry.Contract.Unregister(&_CollectionRegistry.TransactOpts, _id)
 }
 
@@ -461,26 +415,26 @@ func (it *CollectionRegistryAllowedIterator) Close() error {
 
 // CollectionRegistryAllowed represents a Allowed event raised by the CollectionRegistry contract.
 type CollectionRegistryAllowed struct {
-	CollectionId [8]byte
-	UserId       [8]byte
+	CollectionId [32]byte
+	Uid          [32]byte
 	Raw          types.Log // Blockchain specific contextual infos
 }
 
-// FilterAllowed is a free log retrieval operation binding the contract event 0x2575002f9c19a89406e73df97a2c23c867221b5aa503bd19f5fdc8798f009306.
+// FilterAllowed is a free log retrieval operation binding the contract event 0xa22515132971f50f788da1869934dff79436ef9486db69a7a59731a5fb61689d.
 //
-// Solidity: e Allowed(collectionId indexed bytes8, userId indexed bytes8)
-func (_CollectionRegistry *CollectionRegistryFilterer) FilterAllowed(opts *bind.FilterOpts, collectionId [][8]byte, userId [][8]byte) (*CollectionRegistryAllowedIterator, error) {
+// Solidity: e Allowed(_collectionId indexed bytes32, _uid indexed bytes32)
+func (_CollectionRegistry *CollectionRegistryFilterer) FilterAllowed(opts *bind.FilterOpts, _collectionId [][32]byte, _uid [][32]byte) (*CollectionRegistryAllowedIterator, error) {
 
-	var collectionIdRule []interface{}
-	for _, collectionIdItem := range collectionId {
-		collectionIdRule = append(collectionIdRule, collectionIdItem)
+	var _collectionIdRule []interface{}
+	for _, _collectionIdItem := range _collectionId {
+		_collectionIdRule = append(_collectionIdRule, _collectionIdItem)
 	}
-	var userIdRule []interface{}
-	for _, userIdItem := range userId {
-		userIdRule = append(userIdRule, userIdItem)
+	var _uidRule []interface{}
+	for _, _uidItem := range _uid {
+		_uidRule = append(_uidRule, _uidItem)
 	}
 
-	logs, sub, err := _CollectionRegistry.contract.FilterLogs(opts, "Allowed", collectionIdRule, userIdRule)
+	logs, sub, err := _CollectionRegistry.contract.FilterLogs(opts, "Allowed", _collectionIdRule, _uidRule)
 	if err != nil {
 		return nil, err
 	}
@@ -489,10 +443,10 @@ func (_CollectionRegistry *CollectionRegistryFilterer) FilterAllowed(opts *bind.
 
 // FilterAllowed parses the event from given transaction receipt.
 //
-// Solidity: e Allowed(collectionId indexed bytes8, userId indexed bytes8)
+// Solidity: e Allowed(_collectionId indexed bytes32, _uid indexed bytes32)
 func (_CollectionRegistry *CollectionRegistryFilterer) ParseAllowedFromReceipt(receipt *types.Receipt) (*CollectionRegistryAllowed, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0x2575002f9c19a89406e73df97a2c23c867221b5aa503bd19f5fdc8798f009306") {
+		if log.Topics[0] == common.HexToHash("0xa22515132971f50f788da1869934dff79436ef9486db69a7a59731a5fb61689d") {
 			event := new(CollectionRegistryAllowed)
 			if err := _CollectionRegistry.contract.UnpackLog(event, "Allowed", *log); err != nil {
 				return nil, err
@@ -503,21 +457,21 @@ func (_CollectionRegistry *CollectionRegistryFilterer) ParseAllowedFromReceipt(r
 	return nil, errors.New("Allowed event not found")
 }
 
-// WatchAllowed is a free log subscription operation binding the contract event 0x2575002f9c19a89406e73df97a2c23c867221b5aa503bd19f5fdc8798f009306.
+// WatchAllowed is a free log subscription operation binding the contract event 0xa22515132971f50f788da1869934dff79436ef9486db69a7a59731a5fb61689d.
 //
-// Solidity: e Allowed(collectionId indexed bytes8, userId indexed bytes8)
-func (_CollectionRegistry *CollectionRegistryFilterer) WatchAllowed(opts *bind.WatchOpts, sink chan<- *CollectionRegistryAllowed, collectionId [][8]byte, userId [][8]byte) (event.Subscription, error) {
+// Solidity: e Allowed(_collectionId indexed bytes32, _uid indexed bytes32)
+func (_CollectionRegistry *CollectionRegistryFilterer) WatchAllowed(opts *bind.WatchOpts, sink chan<- *CollectionRegistryAllowed, _collectionId [][32]byte, _uid [][32]byte) (event.Subscription, error) {
 
-	var collectionIdRule []interface{}
-	for _, collectionIdItem := range collectionId {
-		collectionIdRule = append(collectionIdRule, collectionIdItem)
+	var _collectionIdRule []interface{}
+	for _, _collectionIdItem := range _collectionId {
+		_collectionIdRule = append(_collectionIdRule, _collectionIdItem)
 	}
-	var userIdRule []interface{}
-	for _, userIdItem := range userId {
-		userIdRule = append(userIdRule, userIdItem)
+	var _uidRule []interface{}
+	for _, _uidItem := range _uid {
+		_uidRule = append(_uidRule, _uidItem)
 	}
 
-	logs, sub, err := _CollectionRegistry.contract.WatchLogs(opts, "Allowed", collectionIdRule, userIdRule)
+	logs, sub, err := _CollectionRegistry.contract.WatchLogs(opts, "Allowed", _collectionIdRule, _uidRule)
 	if err != nil {
 		return nil, err
 	}
@@ -618,26 +572,26 @@ func (it *CollectionRegistryDeniedIterator) Close() error {
 
 // CollectionRegistryDenied represents a Denied event raised by the CollectionRegistry contract.
 type CollectionRegistryDenied struct {
-	CollectionId [8]byte
-	UserId       [8]byte
+	CollectionId [32]byte
+	Uid          [32]byte
 	Raw          types.Log // Blockchain specific contextual infos
 }
 
-// FilterDenied is a free log retrieval operation binding the contract event 0x1a57e3d69528db9b16115c4ff4339d855e8468ce95579571daa74bd206d24303.
+// FilterDenied is a free log retrieval operation binding the contract event 0x4d28190f1b112cd85f6380723c76d76de35cb4a80b5ab017d01f320b25db009e.
 //
-// Solidity: e Denied(collectionId indexed bytes8, userId indexed bytes8)
-func (_CollectionRegistry *CollectionRegistryFilterer) FilterDenied(opts *bind.FilterOpts, collectionId [][8]byte, userId [][8]byte) (*CollectionRegistryDeniedIterator, error) {
+// Solidity: e Denied(_collectionId indexed bytes32, _uid indexed bytes32)
+func (_CollectionRegistry *CollectionRegistryFilterer) FilterDenied(opts *bind.FilterOpts, _collectionId [][32]byte, _uid [][32]byte) (*CollectionRegistryDeniedIterator, error) {
 
-	var collectionIdRule []interface{}
-	for _, collectionIdItem := range collectionId {
-		collectionIdRule = append(collectionIdRule, collectionIdItem)
+	var _collectionIdRule []interface{}
+	for _, _collectionIdItem := range _collectionId {
+		_collectionIdRule = append(_collectionIdRule, _collectionIdItem)
 	}
-	var userIdRule []interface{}
-	for _, userIdItem := range userId {
-		userIdRule = append(userIdRule, userIdItem)
+	var _uidRule []interface{}
+	for _, _uidItem := range _uid {
+		_uidRule = append(_uidRule, _uidItem)
 	}
 
-	logs, sub, err := _CollectionRegistry.contract.FilterLogs(opts, "Denied", collectionIdRule, userIdRule)
+	logs, sub, err := _CollectionRegistry.contract.FilterLogs(opts, "Denied", _collectionIdRule, _uidRule)
 	if err != nil {
 		return nil, err
 	}
@@ -646,10 +600,10 @@ func (_CollectionRegistry *CollectionRegistryFilterer) FilterDenied(opts *bind.F
 
 // FilterDenied parses the event from given transaction receipt.
 //
-// Solidity: e Denied(collectionId indexed bytes8, userId indexed bytes8)
+// Solidity: e Denied(_collectionId indexed bytes32, _uid indexed bytes32)
 func (_CollectionRegistry *CollectionRegistryFilterer) ParseDeniedFromReceipt(receipt *types.Receipt) (*CollectionRegistryDenied, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0x1a57e3d69528db9b16115c4ff4339d855e8468ce95579571daa74bd206d24303") {
+		if log.Topics[0] == common.HexToHash("0x4d28190f1b112cd85f6380723c76d76de35cb4a80b5ab017d01f320b25db009e") {
 			event := new(CollectionRegistryDenied)
 			if err := _CollectionRegistry.contract.UnpackLog(event, "Denied", *log); err != nil {
 				return nil, err
@@ -660,21 +614,21 @@ func (_CollectionRegistry *CollectionRegistryFilterer) ParseDeniedFromReceipt(re
 	return nil, errors.New("Denied event not found")
 }
 
-// WatchDenied is a free log subscription operation binding the contract event 0x1a57e3d69528db9b16115c4ff4339d855e8468ce95579571daa74bd206d24303.
+// WatchDenied is a free log subscription operation binding the contract event 0x4d28190f1b112cd85f6380723c76d76de35cb4a80b5ab017d01f320b25db009e.
 //
-// Solidity: e Denied(collectionId indexed bytes8, userId indexed bytes8)
-func (_CollectionRegistry *CollectionRegistryFilterer) WatchDenied(opts *bind.WatchOpts, sink chan<- *CollectionRegistryDenied, collectionId [][8]byte, userId [][8]byte) (event.Subscription, error) {
+// Solidity: e Denied(_collectionId indexed bytes32, _uid indexed bytes32)
+func (_CollectionRegistry *CollectionRegistryFilterer) WatchDenied(opts *bind.WatchOpts, sink chan<- *CollectionRegistryDenied, _collectionId [][32]byte, _uid [][32]byte) (event.Subscription, error) {
 
-	var collectionIdRule []interface{}
-	for _, collectionIdItem := range collectionId {
-		collectionIdRule = append(collectionIdRule, collectionIdItem)
+	var _collectionIdRule []interface{}
+	for _, _collectionIdItem := range _collectionId {
+		_collectionIdRule = append(_collectionIdRule, _collectionIdItem)
 	}
-	var userIdRule []interface{}
-	for _, userIdItem := range userId {
-		userIdRule = append(userIdRule, userIdItem)
+	var _uidRule []interface{}
+	for _, _uidItem := range _uid {
+		_uidRule = append(_uidRule, _uidItem)
 	}
 
-	logs, sub, err := _CollectionRegistry.contract.WatchLogs(opts, "Denied", collectionIdRule, userIdRule)
+	logs, sub, err := _CollectionRegistry.contract.WatchLogs(opts, "Denied", _collectionIdRule, _uidRule)
 	if err != nil {
 		return nil, err
 	}
@@ -706,9 +660,9 @@ func (_CollectionRegistry *CollectionRegistryFilterer) WatchDenied(opts *bind.Wa
 	}), nil
 }
 
-// CollectionRegistryRegistrationIterator is returned from FilterRegistration and is used to iterate over the raw logs and unpacked data for Registration events raised by the CollectionRegistry contract.
-type CollectionRegistryRegistrationIterator struct {
-	Event *CollectionRegistryRegistration // Event containing the contract specifics and raw log
+// CollectionRegistryRegisteredIterator is returned from FilterRegistered and is used to iterate over the raw logs and unpacked data for Registered events raised by the CollectionRegistry contract.
+type CollectionRegistryRegisteredIterator struct {
+	Event *CollectionRegistryRegistered // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -722,7 +676,7 @@ type CollectionRegistryRegistrationIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CollectionRegistryRegistrationIterator) Next() bool {
+func (it *CollectionRegistryRegisteredIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -731,7 +685,7 @@ func (it *CollectionRegistryRegistrationIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CollectionRegistryRegistration)
+			it.Event = new(CollectionRegistryRegistered)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -746,7 +700,7 @@ func (it *CollectionRegistryRegistrationIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CollectionRegistryRegistration)
+		it.Event = new(CollectionRegistryRegistered)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -762,77 +716,67 @@ func (it *CollectionRegistryRegistrationIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CollectionRegistryRegistrationIterator) Error() error {
+func (it *CollectionRegistryRegisteredIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CollectionRegistryRegistrationIterator) Close() error {
+func (it *CollectionRegistryRegisteredIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CollectionRegistryRegistration represents a Registration event raised by the CollectionRegistry contract.
-type CollectionRegistryRegistration struct {
-	Registrar    common.Address
-	AppId        [8]byte
-	CollectionId [8]byte
-	Raw          types.Log // Blockchain specific contextual infos
+// CollectionRegistryRegistered represents a Registered event raised by the CollectionRegistry contract.
+type CollectionRegistryRegistered struct {
+	ColectionId [32]byte
+	Raw         types.Log // Blockchain specific contextual infos
 }
 
-// FilterRegistration is a free log retrieval operation binding the contract event 0xed612afce4032a5821a725a428005a5afc5c47bff7cc9c9b8d0d69e078b133fb.
+// FilterRegistered is a free log retrieval operation binding the contract event 0x10906fae603eebfac53ddc0f103bee8a044dd7643c425c7a90f921dfa15ef62c.
 //
-// Solidity: e Registration(registrar indexed address, appId indexed bytes8, collectionId bytes8)
-func (_CollectionRegistry *CollectionRegistryFilterer) FilterRegistration(opts *bind.FilterOpts, registrar []common.Address, appId [][8]byte) (*CollectionRegistryRegistrationIterator, error) {
+// Solidity: e Registered(_colectionId indexed bytes32)
+func (_CollectionRegistry *CollectionRegistryFilterer) FilterRegistered(opts *bind.FilterOpts, _colectionId [][32]byte) (*CollectionRegistryRegisteredIterator, error) {
 
-	var registrarRule []interface{}
-	for _, registrarItem := range registrar {
-		registrarRule = append(registrarRule, registrarItem)
-	}
-	var appIdRule []interface{}
-	for _, appIdItem := range appId {
-		appIdRule = append(appIdRule, appIdItem)
+	var _colectionIdRule []interface{}
+	for _, _colectionIdItem := range _colectionId {
+		_colectionIdRule = append(_colectionIdRule, _colectionIdItem)
 	}
 
-	logs, sub, err := _CollectionRegistry.contract.FilterLogs(opts, "Registration", registrarRule, appIdRule)
+	logs, sub, err := _CollectionRegistry.contract.FilterLogs(opts, "Registered", _colectionIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CollectionRegistryRegistrationIterator{contract: _CollectionRegistry.contract, event: "Registration", logs: logs, sub: sub}, nil
+	return &CollectionRegistryRegisteredIterator{contract: _CollectionRegistry.contract, event: "Registered", logs: logs, sub: sub}, nil
 }
 
-// FilterRegistration parses the event from given transaction receipt.
+// FilterRegistered parses the event from given transaction receipt.
 //
-// Solidity: e Registration(registrar indexed address, appId indexed bytes8, collectionId bytes8)
-func (_CollectionRegistry *CollectionRegistryFilterer) ParseRegistrationFromReceipt(receipt *types.Receipt) (*CollectionRegistryRegistration, error) {
+// Solidity: e Registered(_colectionId indexed bytes32)
+func (_CollectionRegistry *CollectionRegistryFilterer) ParseRegisteredFromReceipt(receipt *types.Receipt) (*CollectionRegistryRegistered, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xed612afce4032a5821a725a428005a5afc5c47bff7cc9c9b8d0d69e078b133fb") {
-			event := new(CollectionRegistryRegistration)
-			if err := _CollectionRegistry.contract.UnpackLog(event, "Registration", *log); err != nil {
+		if log.Topics[0] == common.HexToHash("0x10906fae603eebfac53ddc0f103bee8a044dd7643c425c7a90f921dfa15ef62c") {
+			event := new(CollectionRegistryRegistered)
+			if err := _CollectionRegistry.contract.UnpackLog(event, "Registered", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
 		}
 	}
-	return nil, errors.New("Registration event not found")
+	return nil, errors.New("Registered event not found")
 }
 
-// WatchRegistration is a free log subscription operation binding the contract event 0xed612afce4032a5821a725a428005a5afc5c47bff7cc9c9b8d0d69e078b133fb.
+// WatchRegistered is a free log subscription operation binding the contract event 0x10906fae603eebfac53ddc0f103bee8a044dd7643c425c7a90f921dfa15ef62c.
 //
-// Solidity: e Registration(registrar indexed address, appId indexed bytes8, collectionId bytes8)
-func (_CollectionRegistry *CollectionRegistryFilterer) WatchRegistration(opts *bind.WatchOpts, sink chan<- *CollectionRegistryRegistration, registrar []common.Address, appId [][8]byte) (event.Subscription, error) {
+// Solidity: e Registered(_colectionId indexed bytes32)
+func (_CollectionRegistry *CollectionRegistryFilterer) WatchRegistered(opts *bind.WatchOpts, sink chan<- *CollectionRegistryRegistered, _colectionId [][32]byte) (event.Subscription, error) {
 
-	var registrarRule []interface{}
-	for _, registrarItem := range registrar {
-		registrarRule = append(registrarRule, registrarItem)
-	}
-	var appIdRule []interface{}
-	for _, appIdItem := range appId {
-		appIdRule = append(appIdRule, appIdItem)
+	var _colectionIdRule []interface{}
+	for _, _colectionIdItem := range _colectionId {
+		_colectionIdRule = append(_colectionIdRule, _colectionIdItem)
 	}
 
-	logs, sub, err := _CollectionRegistry.contract.WatchLogs(opts, "Registration", registrarRule, appIdRule)
+	logs, sub, err := _CollectionRegistry.contract.WatchLogs(opts, "Registered", _colectionIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -842,8 +786,8 @@ func (_CollectionRegistry *CollectionRegistryFilterer) WatchRegistration(opts *b
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CollectionRegistryRegistration)
-				if err := _CollectionRegistry.contract.UnpackLog(event, "Registration", log); err != nil {
+				event := new(CollectionRegistryRegistered)
+				if err := _CollectionRegistry.contract.UnpackLog(event, "Registered", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -864,9 +808,9 @@ func (_CollectionRegistry *CollectionRegistryFilterer) WatchRegistration(opts *b
 	}), nil
 }
 
-// CollectionRegistryUnregistrationIterator is returned from FilterUnregistration and is used to iterate over the raw logs and unpacked data for Unregistration events raised by the CollectionRegistry contract.
-type CollectionRegistryUnregistrationIterator struct {
-	Event *CollectionRegistryUnregistration // Event containing the contract specifics and raw log
+// CollectionRegistryUnregisteredIterator is returned from FilterUnregistered and is used to iterate over the raw logs and unpacked data for Unregistered events raised by the CollectionRegistry contract.
+type CollectionRegistryUnregisteredIterator struct {
+	Event *CollectionRegistryUnregistered // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -880,7 +824,7 @@ type CollectionRegistryUnregistrationIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *CollectionRegistryUnregistrationIterator) Next() bool {
+func (it *CollectionRegistryUnregisteredIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -889,7 +833,7 @@ func (it *CollectionRegistryUnregistrationIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(CollectionRegistryUnregistration)
+			it.Event = new(CollectionRegistryUnregistered)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -904,7 +848,7 @@ func (it *CollectionRegistryUnregistrationIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(CollectionRegistryUnregistration)
+		it.Event = new(CollectionRegistryUnregistered)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -920,76 +864,85 @@ func (it *CollectionRegistryUnregistrationIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *CollectionRegistryUnregistrationIterator) Error() error {
+func (it *CollectionRegistryUnregisteredIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *CollectionRegistryUnregistrationIterator) Close() error {
+func (it *CollectionRegistryUnregisteredIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// CollectionRegistryUnregistration represents a Unregistration event raised by the CollectionRegistry contract.
-type CollectionRegistryUnregistration struct {
-	CollectionId [8]byte
-	AppId        [8]byte
-	Raw          types.Log // Blockchain specific contextual infos
+// CollectionRegistryUnregistered represents a Unregistered event raised by the CollectionRegistry contract.
+type CollectionRegistryUnregistered struct {
+	ColectionId [32]byte
+	AppId       [32]byte
+	SchemaId    [32]byte
+	Raw         types.Log // Blockchain specific contextual infos
 }
 
-// FilterUnregistration is a free log retrieval operation binding the contract event 0x88bf0005675630b29e5b698355f1c09cabdf78e912367fc1850c1d8b33366f2f.
+// FilterUnregistered is a free log retrieval operation binding the contract event 0x50caa0042a588c64a0d615b147438223a7af5d184c29dbf5f9398ba82d56a7eb.
 //
-// Solidity: e Unregistration(collectionId indexed bytes8, appId indexed bytes8)
-func (_CollectionRegistry *CollectionRegistryFilterer) FilterUnregistration(opts *bind.FilterOpts, collectionId [][8]byte, appId [][8]byte) (*CollectionRegistryUnregistrationIterator, error) {
+// Solidity: e Unregistered(_colectionId indexed bytes32, _appId indexed bytes32, _schemaId indexed bytes32)
+func (_CollectionRegistry *CollectionRegistryFilterer) FilterUnregistered(opts *bind.FilterOpts, _colectionId [][32]byte, _appId [][32]byte, _schemaId [][32]byte) (*CollectionRegistryUnregisteredIterator, error) {
 
-	var collectionIdRule []interface{}
-	for _, collectionIdItem := range collectionId {
-		collectionIdRule = append(collectionIdRule, collectionIdItem)
+	var _colectionIdRule []interface{}
+	for _, _colectionIdItem := range _colectionId {
+		_colectionIdRule = append(_colectionIdRule, _colectionIdItem)
 	}
-	var appIdRule []interface{}
-	for _, appIdItem := range appId {
-		appIdRule = append(appIdRule, appIdItem)
+	var _appIdRule []interface{}
+	for _, _appIdItem := range _appId {
+		_appIdRule = append(_appIdRule, _appIdItem)
+	}
+	var _schemaIdRule []interface{}
+	for _, _schemaIdItem := range _schemaId {
+		_schemaIdRule = append(_schemaIdRule, _schemaIdItem)
 	}
 
-	logs, sub, err := _CollectionRegistry.contract.FilterLogs(opts, "Unregistration", collectionIdRule, appIdRule)
+	logs, sub, err := _CollectionRegistry.contract.FilterLogs(opts, "Unregistered", _colectionIdRule, _appIdRule, _schemaIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &CollectionRegistryUnregistrationIterator{contract: _CollectionRegistry.contract, event: "Unregistration", logs: logs, sub: sub}, nil
+	return &CollectionRegistryUnregisteredIterator{contract: _CollectionRegistry.contract, event: "Unregistered", logs: logs, sub: sub}, nil
 }
 
-// FilterUnregistration parses the event from given transaction receipt.
+// FilterUnregistered parses the event from given transaction receipt.
 //
-// Solidity: e Unregistration(collectionId indexed bytes8, appId indexed bytes8)
-func (_CollectionRegistry *CollectionRegistryFilterer) ParseUnregistrationFromReceipt(receipt *types.Receipt) (*CollectionRegistryUnregistration, error) {
+// Solidity: e Unregistered(_colectionId indexed bytes32, _appId indexed bytes32, _schemaId indexed bytes32)
+func (_CollectionRegistry *CollectionRegistryFilterer) ParseUnregisteredFromReceipt(receipt *types.Receipt) (*CollectionRegistryUnregistered, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0x88bf0005675630b29e5b698355f1c09cabdf78e912367fc1850c1d8b33366f2f") {
-			event := new(CollectionRegistryUnregistration)
-			if err := _CollectionRegistry.contract.UnpackLog(event, "Unregistration", *log); err != nil {
+		if log.Topics[0] == common.HexToHash("0x50caa0042a588c64a0d615b147438223a7af5d184c29dbf5f9398ba82d56a7eb") {
+			event := new(CollectionRegistryUnregistered)
+			if err := _CollectionRegistry.contract.UnpackLog(event, "Unregistered", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
 		}
 	}
-	return nil, errors.New("Unregistration event not found")
+	return nil, errors.New("Unregistered event not found")
 }
 
-// WatchUnregistration is a free log subscription operation binding the contract event 0x88bf0005675630b29e5b698355f1c09cabdf78e912367fc1850c1d8b33366f2f.
+// WatchUnregistered is a free log subscription operation binding the contract event 0x50caa0042a588c64a0d615b147438223a7af5d184c29dbf5f9398ba82d56a7eb.
 //
-// Solidity: e Unregistration(collectionId indexed bytes8, appId indexed bytes8)
-func (_CollectionRegistry *CollectionRegistryFilterer) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *CollectionRegistryUnregistration, collectionId [][8]byte, appId [][8]byte) (event.Subscription, error) {
+// Solidity: e Unregistered(_colectionId indexed bytes32, _appId indexed bytes32, _schemaId indexed bytes32)
+func (_CollectionRegistry *CollectionRegistryFilterer) WatchUnregistered(opts *bind.WatchOpts, sink chan<- *CollectionRegistryUnregistered, _colectionId [][32]byte, _appId [][32]byte, _schemaId [][32]byte) (event.Subscription, error) {
 
-	var collectionIdRule []interface{}
-	for _, collectionIdItem := range collectionId {
-		collectionIdRule = append(collectionIdRule, collectionIdItem)
+	var _colectionIdRule []interface{}
+	for _, _colectionIdItem := range _colectionId {
+		_colectionIdRule = append(_colectionIdRule, _colectionIdItem)
 	}
-	var appIdRule []interface{}
-	for _, appIdItem := range appId {
-		appIdRule = append(appIdRule, appIdItem)
+	var _appIdRule []interface{}
+	for _, _appIdItem := range _appId {
+		_appIdRule = append(_appIdRule, _appIdItem)
+	}
+	var _schemaIdRule []interface{}
+	for _, _schemaIdItem := range _schemaId {
+		_schemaIdRule = append(_schemaIdRule, _schemaIdItem)
 	}
 
-	logs, sub, err := _CollectionRegistry.contract.WatchLogs(opts, "Unregistration", collectionIdRule, appIdRule)
+	logs, sub, err := _CollectionRegistry.contract.WatchLogs(opts, "Unregistered", _colectionIdRule, _appIdRule, _schemaIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -999,8 +952,8 @@ func (_CollectionRegistry *CollectionRegistryFilterer) WatchUnregistration(opts 
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(CollectionRegistryUnregistration)
-				if err := _CollectionRegistry.contract.UnpackLog(event, "Unregistration", log); err != nil {
+				event := new(CollectionRegistryUnregistered)
+				if err := _CollectionRegistry.contract.UnpackLog(event, "Unregistered", log); err != nil {
 					return err
 				}
 				event.Raw = log

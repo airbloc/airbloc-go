@@ -32,24 +32,9 @@ var (
 // ExchangeLibABI is the input ABI used to generate the binding from.
 const ExchangeLibABI = "[]"
 
-// ExchangeLibBin is the compiled bytecode used for deploying new contracts.
-const ExchangeLibBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a723058205bf604f94d11fe8633cd859a11f619c499dd4716f3e961c9b35e374193e49baf0029`
-
-// DeployExchangeLib deploys a new Ethereum contract, binding an instance of ExchangeLib to it.
-func DeployExchangeLib(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *ExchangeLib, error) {
-	parsed, err := abi.JSON(strings.NewReader(ExchangeLibABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(ExchangeLibBin), backend)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &ExchangeLib{ExchangeLibCaller: ExchangeLibCaller{contract: contract}, ExchangeLibTransactor: ExchangeLibTransactor{contract: contract}, ExchangeLibFilterer: ExchangeLibFilterer{contract: contract}}, nil
-}
-
 // ExchangeLib is an auto generated Go binding around an Ethereum contract.
 type ExchangeLib struct {
+	Address               common.Address
 	ExchangeLibCaller     // Read-only binding to the contract
 	ExchangeLibTransactor // Write-only binding to the contract
 	ExchangeLibFilterer   // Log filterer for contract events
@@ -113,7 +98,12 @@ func NewExchangeLib(address common.Address, backend bind.ContractBackend) (*Exch
 	if err != nil {
 		return nil, err
 	}
-	return &ExchangeLib{ExchangeLibCaller: ExchangeLibCaller{contract: contract}, ExchangeLibTransactor: ExchangeLibTransactor{contract: contract}, ExchangeLibFilterer: ExchangeLibFilterer{contract: contract}}, nil
+	return &ExchangeLib{
+		Address:               address,
+		ExchangeLibCaller:     ExchangeLibCaller{contract: contract},
+		ExchangeLibTransactor: ExchangeLibTransactor{contract: contract},
+		ExchangeLibFilterer:   ExchangeLibFilterer{contract: contract},
+	}, nil
 }
 
 // NewExchangeLibCaller creates a new read-only instance of ExchangeLib, bound to a specific deployed contract.

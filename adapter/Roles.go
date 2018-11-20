@@ -32,24 +32,9 @@ var (
 // RolesABI is the input ABI used to generate the binding from.
 const RolesABI = "[]"
 
-// RolesBin is the compiled bytecode used for deploying new contracts.
-const RolesBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a72305820cf135ce162a4bda9784b02edf8e48748df8df194083290ba7b19c005ece2b57d0029`
-
-// DeployRoles deploys a new Ethereum contract, binding an instance of Roles to it.
-func DeployRoles(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Roles, error) {
-	parsed, err := abi.JSON(strings.NewReader(RolesABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(RolesBin), backend)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &Roles{RolesCaller: RolesCaller{contract: contract}, RolesTransactor: RolesTransactor{contract: contract}, RolesFilterer: RolesFilterer{contract: contract}}, nil
-}
-
 // Roles is an auto generated Go binding around an Ethereum contract.
 type Roles struct {
+	Address         common.Address
 	RolesCaller     // Read-only binding to the contract
 	RolesTransactor // Write-only binding to the contract
 	RolesFilterer   // Log filterer for contract events
@@ -113,7 +98,12 @@ func NewRoles(address common.Address, backend bind.ContractBackend) (*Roles, err
 	if err != nil {
 		return nil, err
 	}
-	return &Roles{RolesCaller: RolesCaller{contract: contract}, RolesTransactor: RolesTransactor{contract: contract}, RolesFilterer: RolesFilterer{contract: contract}}, nil
+	return &Roles{
+		Address:         address,
+		RolesCaller:     RolesCaller{contract: contract},
+		RolesTransactor: RolesTransactor{contract: contract},
+		RolesFilterer:   RolesFilterer{contract: contract},
+	}, nil
 }
 
 // NewRolesCaller creates a new read-only instance of Roles, bound to a specific deployed contract.

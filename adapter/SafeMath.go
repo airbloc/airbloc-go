@@ -32,24 +32,9 @@ var (
 // SafeMathABI is the input ABI used to generate the binding from.
 const SafeMathABI = "[]"
 
-// SafeMathBin is the compiled bytecode used for deploying new contracts.
-const SafeMathBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a72305820bd385704a7cdeeee49ba5e7c584a3197d8d330e17874d1f7883d1a03624e51460029`
-
-// DeploySafeMath deploys a new Ethereum contract, binding an instance of SafeMath to it.
-func DeploySafeMath(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *SafeMath, error) {
-	parsed, err := abi.JSON(strings.NewReader(SafeMathABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(SafeMathBin), backend)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &SafeMath{SafeMathCaller: SafeMathCaller{contract: contract}, SafeMathTransactor: SafeMathTransactor{contract: contract}, SafeMathFilterer: SafeMathFilterer{contract: contract}}, nil
-}
-
 // SafeMath is an auto generated Go binding around an Ethereum contract.
 type SafeMath struct {
+	Address            common.Address
 	SafeMathCaller     // Read-only binding to the contract
 	SafeMathTransactor // Write-only binding to the contract
 	SafeMathFilterer   // Log filterer for contract events
@@ -113,7 +98,12 @@ func NewSafeMath(address common.Address, backend bind.ContractBackend) (*SafeMat
 	if err != nil {
 		return nil, err
 	}
-	return &SafeMath{SafeMathCaller: SafeMathCaller{contract: contract}, SafeMathTransactor: SafeMathTransactor{contract: contract}, SafeMathFilterer: SafeMathFilterer{contract: contract}}, nil
+	return &SafeMath{
+		Address:            address,
+		SafeMathCaller:     SafeMathCaller{contract: contract},
+		SafeMathTransactor: SafeMathTransactor{contract: contract},
+		SafeMathFilterer:   SafeMathFilterer{contract: contract},
+	}, nil
 }
 
 // NewSafeMathCaller creates a new read-only instance of SafeMath, bound to a specific deployed contract.

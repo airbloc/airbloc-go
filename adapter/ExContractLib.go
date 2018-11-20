@@ -4,6 +4,7 @@
 package adapter
 
 import (
+	"errors"
 	"math/big"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 
 // Reference imports to suppress errors if they are not otherwise used.
 var (
+	_ = errors.New
 	_ = big.NewInt
 	_ = strings.NewReader
 	_ = ethereum.NotFound
@@ -30,24 +32,9 @@ var (
 // ExContractLibABI is the input ABI used to generate the binding from.
 const ExContractLibABI = "[]"
 
-// ExContractLibBin is the compiled bytecode used for deploying new contracts.
-const ExContractLibBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a72305820d7954ff33ff95dd837035b2e0731c3514bb6f77fb6cf99565571bcc4be24da9e0029`
-
-// DeployExContractLib deploys a new Ethereum contract, binding an instance of ExContractLib to it.
-func DeployExContractLib(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *ExContractLib, error) {
-	parsed, err := abi.JSON(strings.NewReader(ExContractLibABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(ExContractLibBin), backend)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &ExContractLib{ExContractLibCaller: ExContractLibCaller{contract: contract}, ExContractLibTransactor: ExContractLibTransactor{contract: contract}, ExContractLibFilterer: ExContractLibFilterer{contract: contract}}, nil
-}
-
 // ExContractLib is an auto generated Go binding around an Ethereum contract.
 type ExContractLib struct {
+	Address                 common.Address
 	ExContractLibCaller     // Read-only binding to the contract
 	ExContractLibTransactor // Write-only binding to the contract
 	ExContractLibFilterer   // Log filterer for contract events
@@ -111,7 +98,12 @@ func NewExContractLib(address common.Address, backend bind.ContractBackend) (*Ex
 	if err != nil {
 		return nil, err
 	}
-	return &ExContractLib{ExContractLibCaller: ExContractLibCaller{contract: contract}, ExContractLibTransactor: ExContractLibTransactor{contract: contract}, ExContractLibFilterer: ExContractLibFilterer{contract: contract}}, nil
+	return &ExContractLib{
+		Address:                 address,
+		ExContractLibCaller:     ExContractLibCaller{contract: contract},
+		ExContractLibTransactor: ExContractLibTransactor{contract: contract},
+		ExContractLibFilterer:   ExContractLibFilterer{contract: contract},
+	}, nil
 }
 
 // NewExContractLibCaller creates a new read-only instance of ExContractLib, bound to a specific deployed contract.

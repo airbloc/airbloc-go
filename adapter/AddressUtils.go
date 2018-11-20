@@ -32,24 +32,9 @@ var (
 // AddressUtilsABI is the input ABI used to generate the binding from.
 const AddressUtilsABI = "[]"
 
-// AddressUtilsBin is the compiled bytecode used for deploying new contracts.
-const AddressUtilsBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a72305820fffcca12cee984498c2daed96e255e8144b7d8323854cd5a81e5650d807b3f9c0029`
-
-// DeployAddressUtils deploys a new Ethereum contract, binding an instance of AddressUtils to it.
-func DeployAddressUtils(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *AddressUtils, error) {
-	parsed, err := abi.JSON(strings.NewReader(AddressUtilsABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(AddressUtilsBin), backend)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &AddressUtils{AddressUtilsCaller: AddressUtilsCaller{contract: contract}, AddressUtilsTransactor: AddressUtilsTransactor{contract: contract}, AddressUtilsFilterer: AddressUtilsFilterer{contract: contract}}, nil
-}
-
 // AddressUtils is an auto generated Go binding around an Ethereum contract.
 type AddressUtils struct {
+	Address                common.Address
 	AddressUtilsCaller     // Read-only binding to the contract
 	AddressUtilsTransactor // Write-only binding to the contract
 	AddressUtilsFilterer   // Log filterer for contract events
@@ -113,7 +98,12 @@ func NewAddressUtils(address common.Address, backend bind.ContractBackend) (*Add
 	if err != nil {
 		return nil, err
 	}
-	return &AddressUtils{AddressUtilsCaller: AddressUtilsCaller{contract: contract}, AddressUtilsTransactor: AddressUtilsTransactor{contract: contract}, AddressUtilsFilterer: AddressUtilsFilterer{contract: contract}}, nil
+	return &AddressUtils{
+		Address:                address,
+		AddressUtilsCaller:     AddressUtilsCaller{contract: contract},
+		AddressUtilsTransactor: AddressUtilsTransactor{contract: contract},
+		AddressUtilsFilterer:   AddressUtilsFilterer{contract: contract},
+	}, nil
 }
 
 // NewAddressUtilsCaller creates a new read-only instance of AddressUtils, bound to a specific deployed contract.
