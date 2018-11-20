@@ -1,17 +1,15 @@
-package main
+package e2e
 
 import (
 	"context"
 	"fmt"
-	accountClient "github.com/airbloc/airbloc-go/account/client"
+	"log"
+	"time"
+
 	collectionApi "github.com/airbloc/airbloc-go/collections/api"
 	schemaApi "github.com/airbloc/airbloc-go/schemas/api"
 	warehouseApi "github.com/airbloc/airbloc-go/warehouse/api"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/pkg/errors"
 	"google.golang.org/grpc"
-	"log"
-	"time"
 )
 
 const testSchema = `{
@@ -61,24 +59,6 @@ func testCreateCollection(appId string, schemaId string, conn *grpc.ClientConn) 
 	return result.GetCollectionId()
 }
 
-func testCreateUserAccount(conn *grpc.ClientConn, index int) string {
-	accounts := accountClient.NewClient(conn)
-
-	priv, err := crypto.GenerateKey()
-	if err != nil {
-		log.Fatalln(errors.Wrap(err, "failed to generate a private key").Error())
-	}
-
-	walletAddress := crypto.PubkeyToAddress(priv.PublicKey)
-	password := fmt.Sprintf("password%d", index)
-
-	session, err := accounts.Create(walletAddress, password)
-	if err != nil {
-		log.Fatalln(errors.Wrap(err, "failed to create account").Error())
-	}
-	return session.AccountId.String()
-}
-
 func main() {
 	conn, err := grpc.Dial("localhost:9124", grpc.WithInsecure())
 	if err != nil {
@@ -86,7 +66,7 @@ func main() {
 	}
 	defer conn.Close()
 
-	appId := "b40157c46f15681f"
+	appId := "786d674f9f07fa21"
 
 	schemaId := testCreateSchema(conn)
 	log.Printf("Created Schema ID: %s\n", schemaId)
@@ -101,7 +81,8 @@ func main() {
 	}
 
 	for i := 0; i < 10; i++ {
-		userId := testCreateUserAccount(conn, i)
+		// userId := testCreateUserAccount(conn)
+		userId := fmt.Sprintf("deadbeefdeadbee%d", i%10)
 		log.Printf("Created user %d : %s\n", i, userId)
 
 		rawData := &warehouseApi.RawDataRequest{
