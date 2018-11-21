@@ -1,4 +1,4 @@
-package api
+package node
 
 import (
 	"github.com/airbloc/airbloc-go/blockchain"

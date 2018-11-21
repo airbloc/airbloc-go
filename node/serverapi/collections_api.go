@@ -1,23 +1,24 @@
-package api
+package serverapi
 
 import (
-	"github.com/airbloc/airbloc-go/api"
 	"github.com/airbloc/airbloc-go/collections"
 	"github.com/airbloc/airbloc-go/common"
+	"github.com/airbloc/airbloc-go/node"
+	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )
 
-type API struct {
+type CollectionsAPI struct {
 	collections *collections.Collections
 }
 
-func New(backend *api.AirblocBackend) (api.API, error) {
+func NewCollectionsAPI(backend *node.AirblocBackend) (node.API, error) {
 	collectionManager, err := collections.New(backend.LocalDatabase, backend.MetaDatabase, backend.Ethclient)
-	return &API{collectionManager}, err
+	return &CollectionsAPI{collectionManager}, err
 }
 
-func (api *API) Create(ctx context.Context, req *CreateCollectionRequest) (*CreateCollectionResponse, error) {
+func (api *CollectionsAPI) Create(ctx context.Context, req *pb.CreateCollectionRequest) (*pb.CreateCollectionResponse, error) {
 	schemaId, err := common.IDFromString(req.GetSchemaId())
 	if err != nil {
 		return nil, errors.Wrap(err, "invalid schema ID")
@@ -40,16 +41,16 @@ func (api *API) Create(ctx context.Context, req *CreateCollectionRequest) (*Crea
 	}
 	collectionId, err := api.collections.Register(ctx, collection)
 
-	return &CreateCollectionResponse{
+	return &pb.CreateCollectionResponse{
 		CollectionId: collectionId.String(),
 	}, err
 }
 
 // TODO after localdb integration
-func (api *API) List(ctx context.Context, req *ListCollectionRequest) (*ListCollectionResponse, error) {
+func (api *CollectionsAPI) List(ctx context.Context, req *pb.ListCollectionRequest) (*pb.ListCollectionResponse, error) {
 	return nil, nil
 }
 
-func (api *API) AttachToAPI(service *api.APIService) {
-	RegisterCollectionServer(service.GrpcServer, api)
+func (api *CollectionsAPI) AttachToAPI(service *node.APIService) {
+	pb.RegisterCollectionServer(service.GrpcServer, api)
 }

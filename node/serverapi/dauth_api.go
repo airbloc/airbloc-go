@@ -1,43 +1,44 @@
-package api
+package serverapi
 
 import (
 	"context"
-	"github.com/airbloc/airbloc-go/api"
 	"github.com/airbloc/airbloc-go/common"
-	commonAPI "github.com/airbloc/airbloc-go/common/api"
 	"github.com/airbloc/airbloc-go/dauth"
+	"github.com/airbloc/airbloc-go/node"
+	commonpb "github.com/airbloc/airbloc-go/proto/rpc/v1"
+	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/pkg/errors"
 )
 
-type API struct {
+type DAuthAPI struct {
 	manager *dauth.Manager
 }
 
-func New(backend *api.AirblocBackend) (api.API, error) {
+func NewDAuthAPI(backend *node.AirblocBackend) (node.API, error) {
 	manager := dauth.NewManager(backend.Ethclient)
-	return &API{manager}, nil
+	return &DAuthAPI{manager}, nil
 }
 
-func (api *API) Allow(ctx context.Context, req *DAuthRequest) (*commonAPI.Result, error) {
+func (api *DAuthAPI) Allow(ctx context.Context, req *pb.DAuthRequest) (*commonpb.Result, error) {
 	collectionId, err := common.IDFromString(req.GetCollectionId())
 	if err != nil {
 		return nil, errors.Wrapf(err, "invalid collection ID: %s", req.GetCollectionId())
 	}
 
 	err = api.manager.Allow(collectionId, req.GetPasswordSignature())
-	return &commonAPI.Result{}, err
+	return &commonpb.Result{}, err
 }
 
-func (api *API) Deny(ctx context.Context, req *DAuthRequest) (*commonAPI.Result, error) {
+func (api *DAuthAPI) Deny(ctx context.Context, req *pb.DAuthRequest) (*commonpb.Result, error) {
 	collectionId, err := common.IDFromString(req.GetCollectionId())
 	if err != nil {
 		return nil, errors.Wrapf(err, "invalid collection ID: %s", req.GetCollectionId())
 	}
 
 	err = api.manager.Deny(collectionId, req.GetPasswordSignature())
-	return &commonAPI.Result{}, err
+	return &commonpb.Result{}, err
 }
 
-func (api *API) AttachToAPI(service *api.APIService) {
-	RegisterDAuthServer(service.GrpcServer, api)
+func (api *DAuthAPI) AttachToAPI(service *node.APIService) {
+	pb.RegisterDAuthServer(service.GrpcServer, api)
 }

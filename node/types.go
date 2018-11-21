@@ -1,4 +1,4 @@
-package api
+package node
 
 type API interface {
 	AttachToAPI(api *APIService)

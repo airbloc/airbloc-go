@@ -1,4 +1,4 @@
-package api
+package node
 
 import (
 	"fmt"

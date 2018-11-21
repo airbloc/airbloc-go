@@ -5,33 +5,27 @@ import (
 	"os"
 	"strings"
 
-	accountAPI "github.com/airbloc/airbloc-go/account/api"
-	"github.com/airbloc/airbloc-go/api"
-	collectionsAPI "github.com/airbloc/airbloc-go/collections/api"
-	dataManageAPI "github.com/airbloc/airbloc-go/data/datamanager/api"
-	exchangeAPI "github.com/airbloc/airbloc-go/exchange/api"
-	schemasAPI "github.com/airbloc/airbloc-go/schemas/api"
-	warehouseAPI "github.com/airbloc/airbloc-go/warehouse/api"
+	"github.com/airbloc/airbloc-go/node"
+	"github.com/airbloc/airbloc-go/node/serverapi"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/jinzhu/configor"
 )
 
 var (
-	AvailableAPIs = map[string]api.Constructor{
-		"account":     accountAPI.New,
-		"collections": collectionsAPI.New,
-		"data":        dataManageAPI.New,
-		"exchange":    exchangeAPI.New,
-		"schemas":     schemasAPI.New,
-		"warehouse":   warehouseAPI.New,
+	AvailableAPIs = map[string]node.Constructor{
+		"collections": serverapi.NewCollectionsAPI,
+		"data":        serverapi.NewDataAPI,
+		"exchange":    serverapi.NewExchangeAPI,
+		"schemas":     serverapi.NewSchemaAPI,
+		"warehouse":   serverapi.NewWarehouseAPI,
 	}
-	AvailableServices = map[string]api.ServiceConstructor{
-		"api": api.NewAPIService,
+	AvailableServices = map[string]node.ServiceConstructor{
+		"api": node.NewAPIService,
 	}
 )
 
 func main() {
-	config := new(api.Config)
+	config := new(node.Config)
 	if err := configor.Load(config, "config.yml"); err != nil {
 		fmt.Fprintln(os.Stderr, "Failed to load configurations.")
 		panic(err)
@@ -42,7 +36,7 @@ func main() {
 	glogger.Verbosity(log.Lvl(log.LvlTrace))
 	log.Root().SetHandler(glogger)
 
-	backend, err := api.NewAirblocBackend(config)
+	backend, err := node.NewAirblocBackend(config)
 	if err != nil {
 		log.Error("Failed to initialize Airbloc backend.")
 		log.Error(err.Error())
@@ -61,7 +55,7 @@ func main() {
 	backend.Start()
 }
 
-func registerServices(backend *api.AirblocBackend, serviceNames []string) {
+func registerServices(backend *node.AirblocBackend, serviceNames []string) {
 	for _, name := range serviceNames {
 		serviceConstructor, exists := AvailableServices[name]
 		if !exists {
@@ -78,8 +72,8 @@ func registerServices(backend *api.AirblocBackend, serviceNames []string) {
 	}
 }
 
-func registerApis(backend *api.AirblocBackend, apiNames []string) {
-	apiService, ok := backend.Services["api"].(*api.APIService)
+func registerApis(backend *node.AirblocBackend, apiNames []string) {
+	apiService, ok := backend.Services["api"].(*node.APIService)
 	if !ok {
 		log.Error("API service is not registered")
 		panic(nil)

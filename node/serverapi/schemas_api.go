@@ -1,29 +1,29 @@
-package api
+package serverapi
 
 import (
 	"encoding/json"
-
-	"github.com/airbloc/airbloc-go/api"
+	"github.com/airbloc/airbloc-go/node"
+	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/airbloc/airbloc-go/schemas"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )
 
-type API struct {
+type SchemaAPI struct {
 	schemas *schemas.Schemas
 }
 
-func New(backend *api.AirblocBackend) (api.API, error) {
+func NewSchemaAPI(backend *node.AirblocBackend) (node.API, error) {
 	schemaManager := schemas.New(backend.MetaDatabase, backend.Ethclient)
-	return &API{schemaManager}, nil
+	return &SchemaAPI{schemaManager}, nil
 }
 
-func (api *API) AttachToAPI(service *api.APIService) {
-	RegisterSchemaServer(service.GrpcServer, api)
+func (api *SchemaAPI) AttachToAPI(service *node.APIService) {
+	pb.RegisterSchemaServer(service.GrpcServer, api)
 }
 
 // TODO
-func (api *API) Create(ctx context.Context, req *CreateSchemaRequest) (*CreateSchemaResult, error) {
+func (api *SchemaAPI) Create(ctx context.Context, req *pb.CreateSchemaRequest) (*pb.CreateSchemaResult, error) {
 	data := make(map[string]interface{})
 	err := json.Unmarshal([]byte(req.Schema), &data)
 	if err != nil {
@@ -32,13 +32,13 @@ func (api *API) Create(ctx context.Context, req *CreateSchemaRequest) (*CreateSc
 
 	id, err := api.schemas.Register(req.Name, data)
 	if err == schemas.ErrNameExists {
-		return &CreateSchemaResult{Exists: true}, nil
+		return &pb.CreateSchemaResult{Exists: true}, nil
 	}
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to register schema")
 	}
 
-	return &CreateSchemaResult{
+	return &pb.CreateSchemaResult{
 		Id:     id.String(),
 		Exists: false,
 	}, nil

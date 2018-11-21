@@ -1,0 +1,5 @@
+package userdelegate
+
+func Main() {
+
+}

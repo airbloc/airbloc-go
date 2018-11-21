@@ -1,35 +1,39 @@
-package api
+package userdelegateapi
 
 import (
 	"context"
 
 	"github.com/airbloc/airbloc-go/account"
-	"github.com/airbloc/airbloc-go/api"
 	ablCommon "github.com/airbloc/airbloc-go/common"
+	"github.com/airbloc/airbloc-go/node"
+	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/userdelegate"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
 )
 
-type API struct {
+type AccountAPI struct {
 	manager *account.Manager
 }
 
-func New(backend *api.AirblocBackend) (api.API, error) {
+func NewAccountAPI(backend *node.AirblocBackend) (node.API, error) {
 	manager := account.NewManager(backend.Ethclient)
-	return &API{manager}, nil
+	return &AccountAPI{manager}, nil
 }
 
-func (api *API) AttachToAPI(service *api.APIService) {
-	RegisterAccountServer(service.GrpcServer, api)
+func (api *AccountAPI) AttachToAPI(service *node.APIService) {
+	pb.RegisterAccountServer(service.GrpcServer, api)
 }
 
-func (api *API) Create(ctx context.Context, req *AccountCreateRequest) (*AccountCreateResponse, error) {
+func (api *AccountAPI) Create(
+	ctx context.Context,
+	req *pb.AccountCreateRequest,
+) (*pb.AccountCreateResponse, error) {
 	address := ethCommon.BytesToAddress(req.GetAddress())
 	id, err := api.manager.CreateUsingProxy(address, req.GetPasswordSignature())
-	return &AccountCreateResponse{AccountId: id.String()}, err
+	return &pb.AccountCreateResponse{AccountId: id.String()}, err
 }
 
-func (api *API) Get(ctx context.Context, req *AccountGetRequest) (*AccountGetResponse, error) {
+func (api *AccountAPI) Get(ctx context.Context, req *pb.AccountGetRequest) (*pb.AccountGetResponse, error) {
 	accountId, err := ablCommon.IDFromString(req.GetAccountId())
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to parse account ID: %s", req.GetAccountId())
@@ -40,34 +44,37 @@ func (api *API) Get(ctx context.Context, req *AccountGetRequest) (*AccountGetRes
 		return nil, err
 	}
 
-	return &AccountGetResponse{
+	return &pb.AccountGetResponse{
 		AccountId:     acc.ID.String(),
 		OwnerAddress:  acc.Owner.Bytes(),
-		Status:        AccountGetResponse_Status(acc.Status),
+		Status:        pb.AccountGetResponse_Status(acc.Status),
 		ProxyAddress:  acc.Proxy.Bytes(),
 		PasswordProof: acc.PasswordProof.Bytes(),
 	}, nil
 }
 
-func (api *API) GetByIdentity(ctx context.Context, req *AccountGetByIdentityRequest) (*AccountGetResponse, error) {
+func (api *AccountAPI) GetByIdentity(
+	ctx context.Context,
+	req *pb.AccountGetByIdentityRequest,
+) (*pb.AccountGetResponse, error) {
 	acc, err := api.manager.GetByIdentity(req.GetIdentity())
 	if err != nil {
 		return nil, err
 	}
 
-	return &AccountGetResponse{
+	return &pb.AccountGetResponse{
 		AccountId:     acc.ID.String(),
 		OwnerAddress:  acc.Owner.Bytes(),
-		Status:        AccountGetResponse_Status(acc.Status),
+		Status:        pb.AccountGetResponse_Status(acc.Status),
 		ProxyAddress:  acc.Proxy.Bytes(),
 		PasswordProof: acc.PasswordProof.Bytes(),
 	}, nil
 }
 
-func (api *API) TestPassword(ctx context.Context, req *TestPasswordRequest) (*TestPasswordResponse, error) {
+func (api *AccountAPI) TestPassword(ctx context.Context, req *pb.TestPasswordRequest) (*pb.TestPasswordResponse, error) {
 	exists, err := api.manager.TestPassword(
 		ethCommon.BytesToHash(req.GetMessageHash()),
 		req.GetSignature())
 
-	return &TestPasswordResponse{Exists: exists}, err
+	return &pb.TestPasswordResponse{Exists: exists}, err
 }

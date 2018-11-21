@@ -1,23 +1,24 @@
-package api
+package serverapi
 
 import (
 	"context"
 
+	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"io"
 
-	"github.com/airbloc/airbloc-go/api"
 	"github.com/airbloc/airbloc-go/common"
+	"github.com/airbloc/airbloc-go/node"
 	"github.com/airbloc/airbloc-go/warehouse"
 	"github.com/airbloc/airbloc-go/warehouse/protocol"
 	"github.com/airbloc/airbloc-go/warehouse/storage"
 	"github.com/pkg/errors"
 )
 
-type API struct {
+type WarehouseAPI struct {
 	warehouse *warehouse.DataWarehouse
 }
 
-func New(airbloc *api.AirblocBackend) (_ api.API, err error) {
+func NewWarehouseAPI(airbloc *node.AirblocBackend) (_ node.API, err error) {
 	config := airbloc.Config.Warehouse
 
 	supportedProtocols := []protocol.Protocol{
@@ -46,10 +47,10 @@ func New(airbloc *api.AirblocBackend) (_ api.API, err error) {
 		defaultStorage,
 		supportedProtocols,
 	)
-	return &API{dw}, nil
+	return &WarehouseAPI{dw}, nil
 }
 
-func (api *API) StoreBundle(stream Warehouse_StoreBundleServer) error {
+func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) error {
 	var bundleStream *warehouse.BundleStream
 	for {
 		request, err := stream.Recv()
@@ -84,7 +85,7 @@ func (api *API) StoreBundle(stream Warehouse_StoreBundleServer) error {
 		return errors.Wrap(err, "failed to store a bundle")
 	}
 
-	return stream.SendAndClose(&StoreResult{
+	return stream.SendAndClose(&pb.StoreResult{
 		BundleId:  bundle.Id.String(),
 		Uri:       bundle.Uri,
 		DataCount: uint64(bundle.DataCount),
@@ -92,7 +93,7 @@ func (api *API) StoreBundle(stream Warehouse_StoreBundleServer) error {
 	})
 }
 
-func (api *API) StoreEncryptedBundle(stream Warehouse_StoreEncryptedBundleServer) error {
+func (api *WarehouseAPI) StoreEncryptedBundle(stream pb.Warehouse_StoreEncryptedBundleServer) error {
 	var bundleStream *warehouse.BundleStream
 	for {
 		request, err := stream.Recv()
@@ -128,7 +129,7 @@ func (api *API) StoreEncryptedBundle(stream Warehouse_StoreEncryptedBundleServer
 		return errors.Wrap(err, "failed to store a bundle")
 	}
 
-	return stream.SendAndClose(&StoreResult{
+	return stream.SendAndClose(&pb.StoreResult{
 		BundleId:  bundle.Id.String(),
 		Uri:       bundle.Uri,
 		DataCount: uint64(bundle.DataCount),
@@ -136,10 +137,10 @@ func (api *API) StoreEncryptedBundle(stream Warehouse_StoreEncryptedBundleServer
 	})
 }
 
-func (api *API) DeleteBundle(context context.Context, request *DeleteBundleRequest) (*DeleteBundleResult, error) {
+func (api *WarehouseAPI) DeleteBundle(context context.Context, request *pb.DeleteBundleRequest) (*pb.DeleteBundleResult, error) {
 	return nil, nil
 }
 
-func (api *API) AttachToAPI(service *api.APIService) {
-	RegisterWarehouseServer(service.GrpcServer, api)
+func (api *WarehouseAPI) AttachToAPI(service *node.APIService) {
+	pb.RegisterWarehouseServer(service.GrpcServer, api)
 }
