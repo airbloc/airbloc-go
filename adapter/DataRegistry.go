@@ -94,7 +94,7 @@ type DataRegistryTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["DataRegistry"] = &DataRegistry{}.New
+	blockchain.ContractList["DataRegistry"] = (&DataRegistry{}).new
 }
 
 // NewDataRegistry creates a new instance of DataRegistry, bound to a specific deployed contract.
@@ -147,7 +147,7 @@ func bindDataRegistry(address common.Address, caller bind.ContractCaller, transa
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_DataRegistry *DataRegistry) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_DataRegistry *DataRegistry) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewDataRegistry(address, backend)
 }
 

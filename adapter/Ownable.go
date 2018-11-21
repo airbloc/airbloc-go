@@ -94,7 +94,7 @@ type OwnableTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["Ownable"] = &Ownable{}.New
+	blockchain.ContractList["Ownable"] = (&Ownable{}).new
 }
 
 // NewOwnable creates a new instance of Ownable, bound to a specific deployed contract.
@@ -147,7 +147,7 @@ func bindOwnable(address common.Address, caller bind.ContractCaller, transactor 
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_Ownable *Ownable) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_Ownable *Ownable) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewOwnable(address, backend)
 }
 

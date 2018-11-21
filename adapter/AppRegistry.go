@@ -94,7 +94,7 @@ type AppRegistryTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["AppRegistry"] = &AppRegistry{}.New
+	blockchain.ContractList["AppRegistry"] = (&AppRegistry{}).new
 }
 
 // NewAppRegistry creates a new instance of AppRegistry, bound to a specific deployed contract.
@@ -147,7 +147,7 @@ func bindAppRegistry(address common.Address, caller bind.ContractCaller, transac
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_AppRegistry *AppRegistry) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_AppRegistry *AppRegistry) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewAppRegistry(address, backend)
 }
 

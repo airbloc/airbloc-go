@@ -94,7 +94,7 @@ type ExchangeLibTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["ExchangeLib"] = &ExchangeLib{}.New
+	blockchain.ContractList["ExchangeLib"] = (&ExchangeLib{}).new
 }
 
 // NewExchangeLib creates a new instance of ExchangeLib, bound to a specific deployed contract.
@@ -147,7 +147,7 @@ func bindExchangeLib(address common.Address, caller bind.ContractCaller, transac
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_ExchangeLib *ExchangeLib) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_ExchangeLib *ExchangeLib) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewExchangeLib(address, backend)
 }
 

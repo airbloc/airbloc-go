@@ -94,7 +94,7 @@ type WhitelistTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["Whitelist"] = &Whitelist{}.New
+	blockchain.ContractList["Whitelist"] = (&Whitelist{}).new
 }
 
 // NewWhitelist creates a new instance of Whitelist, bound to a specific deployed contract.
@@ -147,7 +147,7 @@ func bindWhitelist(address common.Address, caller bind.ContractCaller, transacto
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_Whitelist *Whitelist) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_Whitelist *Whitelist) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewWhitelist(address, backend)
 }
 

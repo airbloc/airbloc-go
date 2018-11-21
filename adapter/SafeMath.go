@@ -94,7 +94,7 @@ type SafeMathTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["SafeMath"] = &SafeMath{}.New
+	blockchain.ContractList["SafeMath"] = (&SafeMath{}).new
 }
 
 // NewSafeMath creates a new instance of SafeMath, bound to a specific deployed contract.
@@ -147,7 +147,7 @@ func bindSafeMath(address common.Address, caller bind.ContractCaller, transactor
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_SafeMath *SafeMath) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_SafeMath *SafeMath) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewSafeMath(address, backend)
 }
 

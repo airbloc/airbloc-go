@@ -94,7 +94,7 @@ type AddressUtilsTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["AddressUtils"] = &AddressUtils{}.New
+	blockchain.ContractList["AddressUtils"] = (&AddressUtils{}).new
 }
 
 // NewAddressUtils creates a new instance of AddressUtils, bound to a specific deployed contract.
@@ -147,7 +147,7 @@ func bindAddressUtils(address common.Address, caller bind.ContractCaller, transa
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_AddressUtils *AddressUtils) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_AddressUtils *AddressUtils) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewAddressUtils(address, backend)
 }
 

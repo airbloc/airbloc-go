@@ -94,7 +94,7 @@ type ExchangeTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["Exchange"] = &Exchange{}.New
+	blockchain.ContractList["Exchange"] = (&Exchange{}).new
 }
 
 // NewExchange creates a new instance of Exchange, bound to a specific deployed contract.
@@ -147,7 +147,7 @@ func bindExchange(address common.Address, caller bind.ContractCaller, transactor
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_Exchange *Exchange) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_Exchange *Exchange) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewExchange(address, backend)
 }
 

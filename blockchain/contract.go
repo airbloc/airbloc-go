@@ -15,7 +15,7 @@ var (
 	ErrContractNotFound = errors.New("contract not found")
 )
 
-var ContractList map[string]ContractConstructor
+var ContractList = make(map[string]ContractConstructor)
 
 type ContractManager struct {
 	client  TxClient

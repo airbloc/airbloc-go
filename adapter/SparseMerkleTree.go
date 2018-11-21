@@ -94,7 +94,7 @@ type SparseMerkleTreeTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["SparseMerkleTree"] = &SparseMerkleTree{}.New
+	blockchain.ContractList["SparseMerkleTree"] = (&SparseMerkleTree{}).new
 }
 
 // NewSparseMerkleTree creates a new instance of SparseMerkleTree, bound to a specific deployed contract.
@@ -147,7 +147,7 @@ func bindSparseMerkleTree(address common.Address, caller bind.ContractCaller, tr
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_SparseMerkleTree *SparseMerkleTree) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_SparseMerkleTree *SparseMerkleTree) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewSparseMerkleTree(address, backend)
 }
 

@@ -155,7 +155,7 @@ var (
 	}
 
 	func init() {
-		blockchain.ContractList["{{.Type}}"] = &{{.Type}}{}.New
+		blockchain.ContractList["{{.Type}}"] = (&{{.Type}}{}).new
 	}
 
 	// New{{.Type}} creates a new instance of {{.Type}}, bound to a specific deployed contract.
@@ -208,7 +208,7 @@ var (
 	  return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 	}
 
-	func (_{{.Type}} *{{.Type}}) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	func (_{{.Type}} *{{.Type}}) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 		return New{{.Type}}(address, backend)
 	}
 
