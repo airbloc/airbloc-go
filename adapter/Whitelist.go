@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -92,6 +93,10 @@ type WhitelistTransactorRaw struct {
 	Contract *WhitelistTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["Whitelist"] = &Whitelist{}
+}
+
 // NewWhitelist creates a new instance of Whitelist, bound to a specific deployed contract.
 func NewWhitelist(address common.Address, backend bind.ContractBackend) (*Whitelist, error) {
 	contract, err := bindWhitelist(address, backend, backend, backend)
@@ -140,6 +145,10 @@ func bindWhitelist(address common.Address, caller bind.ContractCaller, transacto
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_Whitelist *Whitelist) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewWhitelist(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

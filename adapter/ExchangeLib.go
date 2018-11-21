@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -92,6 +93,10 @@ type ExchangeLibTransactorRaw struct {
 	Contract *ExchangeLibTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["ExchangeLib"] = &ExchangeLib{}
+}
+
 // NewExchangeLib creates a new instance of ExchangeLib, bound to a specific deployed contract.
 func NewExchangeLib(address common.Address, backend bind.ContractBackend) (*ExchangeLib, error) {
 	contract, err := bindExchangeLib(address, backend, backend, backend)
@@ -140,6 +145,10 @@ func bindExchangeLib(address common.Address, caller bind.ContractCaller, transac
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_ExchangeLib *ExchangeLib) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewExchangeLib(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

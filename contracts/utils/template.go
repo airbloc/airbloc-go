@@ -68,6 +68,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -153,6 +154,10 @@ var (
 		Contract *{{.Type}}Transactor // Generic write-only contract binding to access the raw methods on
 	}
 
+	func init() {
+		blockchain.ContractList["{{.Type}}"] = &{{.Type}}{}
+	}
+
 	// New{{.Type}} creates a new instance of {{.Type}}, bound to a specific deployed contract.
 	func New{{.Type}}(address common.Address, backend bind.ContractBackend) (*{{.Type}}, error) {
 		contract, err := bind{{.Type}}(address, backend, backend, backend)
@@ -201,6 +206,10 @@ var (
 	    return nil, err
 	  }
 	  return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+	}
+
+	func (_{{.Type}} *{{.Type}}) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+		return New{{.Type}}(address, backend)
 	}
 
 	// Call invokes the (constant) contract method with params as input values and

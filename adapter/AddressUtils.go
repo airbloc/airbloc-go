@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -92,6 +93,10 @@ type AddressUtilsTransactorRaw struct {
 	Contract *AddressUtilsTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["AddressUtils"] = &AddressUtils{}
+}
+
 // NewAddressUtils creates a new instance of AddressUtils, bound to a specific deployed contract.
 func NewAddressUtils(address common.Address, backend bind.ContractBackend) (*AddressUtils, error) {
 	contract, err := bindAddressUtils(address, backend, backend, backend)
@@ -140,6 +145,10 @@ func bindAddressUtils(address common.Address, caller bind.ContractCaller, transa
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_AddressUtils *AddressUtils) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewAddressUtils(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

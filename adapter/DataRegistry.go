@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -92,6 +93,10 @@ type DataRegistryTransactorRaw struct {
 	Contract *DataRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["DataRegistry"] = &DataRegistry{}
+}
+
 // NewDataRegistry creates a new instance of DataRegistry, bound to a specific deployed contract.
 func NewDataRegistry(address common.Address, backend bind.ContractBackend) (*DataRegistry, error) {
 	contract, err := bindDataRegistry(address, backend, backend, backend)
@@ -140,6 +145,10 @@ func bindDataRegistry(address common.Address, caller bind.ContractCaller, transa
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_DataRegistry *DataRegistry) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewDataRegistry(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

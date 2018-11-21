@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -92,6 +93,10 @@ type RBACTransactorRaw struct {
 	Contract *RBACTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["RBAC"] = &RBAC{}
+}
+
 // NewRBAC creates a new instance of RBAC, bound to a specific deployed contract.
 func NewRBAC(address common.Address, backend bind.ContractBackend) (*RBAC, error) {
 	contract, err := bindRBAC(address, backend, backend, backend)
@@ -140,6 +145,10 @@ func bindRBAC(address common.Address, caller bind.ContractCaller, transactor bin
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_RBAC *RBAC) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewRBAC(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -92,6 +93,10 @@ type CollectionRegistryTransactorRaw struct {
 	Contract *CollectionRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["CollectionRegistry"] = &CollectionRegistry{}
+}
+
 // NewCollectionRegistry creates a new instance of CollectionRegistry, bound to a specific deployed contract.
 func NewCollectionRegistry(address common.Address, backend bind.ContractBackend) (*CollectionRegistry, error) {
 	contract, err := bindCollectionRegistry(address, backend, backend, backend)
@@ -140,6 +145,10 @@ func bindCollectionRegistry(address common.Address, caller bind.ContractCaller, 
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_CollectionRegistry *CollectionRegistry) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewCollectionRegistry(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

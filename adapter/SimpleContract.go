@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -92,6 +93,10 @@ type SimpleContractTransactorRaw struct {
 	Contract *SimpleContractTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["SimpleContract"] = &SimpleContract{}
+}
+
 // NewSimpleContract creates a new instance of SimpleContract, bound to a specific deployed contract.
 func NewSimpleContract(address common.Address, backend bind.ContractBackend) (*SimpleContract, error) {
 	contract, err := bindSimpleContract(address, backend, backend, backend)
@@ -140,6 +145,10 @@ func bindSimpleContract(address common.Address, caller bind.ContractCaller, tran
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_SimpleContract *SimpleContract) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewSimpleContract(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

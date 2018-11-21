@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -92,6 +93,10 @@ type ECRecoveryTransactorRaw struct {
 	Contract *ECRecoveryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["ECRecovery"] = &ECRecovery{}
+}
+
 // NewECRecovery creates a new instance of ECRecovery, bound to a specific deployed contract.
 func NewECRecovery(address common.Address, backend bind.ContractBackend) (*ECRecovery, error) {
 	contract, err := bindECRecovery(address, backend, backend, backend)
@@ -140,6 +145,10 @@ func bindECRecovery(address common.Address, caller bind.ContractCaller, transact
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_ECRecovery *ECRecovery) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewECRecovery(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

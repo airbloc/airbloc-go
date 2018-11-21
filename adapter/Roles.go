@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -92,6 +93,10 @@ type RolesTransactorRaw struct {
 	Contract *RolesTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["Roles"] = &Roles{}
+}
+
 // NewRoles creates a new instance of Roles, bound to a specific deployed contract.
 func NewRoles(address common.Address, backend bind.ContractBackend) (*Roles, error) {
 	contract, err := bindRoles(address, backend, backend, backend)
@@ -140,6 +145,10 @@ func bindRoles(address common.Address, caller bind.ContractCaller, transactor bi
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_Roles *Roles) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewRoles(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

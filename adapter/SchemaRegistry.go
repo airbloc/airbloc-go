@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -92,6 +93,10 @@ type SchemaRegistryTransactorRaw struct {
 	Contract *SchemaRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["SchemaRegistry"] = &SchemaRegistry{}
+}
+
 // NewSchemaRegistry creates a new instance of SchemaRegistry, bound to a specific deployed contract.
 func NewSchemaRegistry(address common.Address, backend bind.ContractBackend) (*SchemaRegistry, error) {
 	contract, err := bindSchemaRegistry(address, backend, backend, backend)
@@ -140,6 +145,10 @@ func bindSchemaRegistry(address common.Address, caller bind.ContractCaller, tran
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_SchemaRegistry *SchemaRegistry) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewSchemaRegistry(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

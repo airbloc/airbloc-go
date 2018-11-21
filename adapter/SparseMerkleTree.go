@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -92,6 +93,10 @@ type SparseMerkleTreeTransactorRaw struct {
 	Contract *SparseMerkleTreeTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["SparseMerkleTree"] = &SparseMerkleTree{}
+}
+
 // NewSparseMerkleTree creates a new instance of SparseMerkleTree, bound to a specific deployed contract.
 func NewSparseMerkleTree(address common.Address, backend bind.ContractBackend) (*SparseMerkleTree, error) {
 	contract, err := bindSparseMerkleTree(address, backend, backend, backend)
@@ -140,6 +145,10 @@ func bindSparseMerkleTree(address common.Address, caller bind.ContractCaller, tr
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_SparseMerkleTree *SparseMerkleTree) New(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewSparseMerkleTree(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and
