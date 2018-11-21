@@ -1,0 +1,34 @@
+syntax = "proto3";
+package airbloc.apps;
+
+option go_package = "github.com/airbloc/airbloc-go/apps/api";
+
+service App {
+    rpc NewOwner(NewOwnerRequest) returns (Response);
+    rpc CheckOwner(CheckOwnerRequest) returns (Response);
+    rpc Register (RegisterRequest) returns (Response);
+    rpc Unregister (UnregisterRequest) returns (Response);
+}
+
+message Response {
+    bool success = 1;
+    string message = 2;
+}
+
+message NewOwnerRequest {
+    string appId = 1;
+    string owner = 2;
+}
+
+message CheckOwnerRequest {
+    string appId = 1;
+    string owner = 2;
+}
+
+message RegisterRequest {
+    string name = 1;
+}
+
+message UnregisterRequest {
+    string appId = 1;
+}

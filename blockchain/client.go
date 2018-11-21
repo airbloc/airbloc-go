@@ -30,7 +30,12 @@ func NewClient(key *key.Key, url string, cfg ClientOpt) (*Client, error) {
 		ctx:    context.Background(),
 		cfg:    cfg,
 	}
-	client.contracts = NewContractManager(client)
+
+	cm := NewContractManager(client)
+	if err := cm.Load(cfg.DeploymentPath); err != nil {
+		return nil, err
+	}
+	client.contracts = cm
 	client.SetAccount(key)
 	return client, nil
 }
