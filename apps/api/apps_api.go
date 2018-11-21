@@ -11,11 +11,11 @@ import (
 )
 
 type API struct {
-	apps *apps.Apps
+	apps *apps.Manager
 }
 
 func New(backend api.Backend) (api.API, error) {
-	appsManager, err := apps.New(backend.Client())
+	appsManager, err := apps.NewManager(backend.Client())
 	return &API{appsManager}, err
 }
 
