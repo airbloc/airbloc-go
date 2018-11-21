@@ -1,4 +1,4 @@
-package ablhost
+package p2p
 
 import (
 	"context"
@@ -10,8 +10,6 @@ import (
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/airbloc/airbloc-go/key"
-	"github.com/airbloc/airbloc-go/p2p"
-	"github.com/airbloc/airbloc-go/p2p/basic"
 	"github.com/airbloc/airbloc-go/p2p/common"
 	p2pr "github.com/airbloc/airbloc-go/proto/p2p"
 	"github.com/gogo/protobuf/proto"
@@ -25,7 +23,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-type Server struct {
+type AiblocServer struct {
 	// controller
 	mutex  *sync.Mutex
 	ctx    context.Context
@@ -33,7 +31,7 @@ type Server struct {
 
 	// network
 	id   cid.Cid
-	host p2p.Host
+	host Host
 	dht  *kaddht.IpfsDHT
 
 	// database
@@ -42,7 +40,7 @@ type Server struct {
 	// topic - handlers
 	types    map[p2pr.Topic]reflect.Type
 	topics   map[reflect.Type]string
-	handlers map[reflect.Type]p2p.TopicHandler
+	handlers map[reflect.Type]TopicHandler
 }
 
 func NewServer(
@@ -51,14 +49,14 @@ func NewServer(
 	addr multiaddr.Multiaddr,
 	bootnode bool,
 	bootinfos []peerstore.PeerInfo,
-) (p2p.Server, error) {
+) (Server, error) {
 	privKey, err := identity.DeriveLibp2pKeyPair()
 	if err != nil {
 		return nil, err
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
-	server := &Server{
+	server := &AiblocServer{
 		ctx:    ctx,
 		cancel: cancel,
 		mutex:  new(sync.Mutex),
@@ -66,7 +64,7 @@ func NewServer(
 		db:       localdb,
 		types:    make(map[p2pr.Topic]reflect.Type),
 		topics:   make(map[reflect.Type]string),
-		handlers: make(map[reflect.Type]p2p.TopicHandler),
+		handlers: make(map[reflect.Type]TopicHandler),
 	}
 
 	h, err := libp2p.New(
@@ -85,7 +83,7 @@ func NewServer(
 		return nil, err
 	}
 
-	server.host = NewHost(basichost.NewHost(h), 20)
+	server.host = NewAirblocHost(NewBasicHost(h), 20)
 
 	if bootnode {
 		if err := server.dht.Bootstrap(ctx); err != nil {
@@ -123,7 +121,7 @@ func NewServer(
 }
 
 // DHT
-func (s *Server) Discovery() {
+func (s *AiblocServer) Discovery() {
 	ticker := time.NewTicker(1 * time.Minute)
 	defer ticker.Stop()
 
@@ -137,14 +135,14 @@ func (s *Server) Discovery() {
 	}
 }
 
-func (s *Server) clearPeer() {
+func (s *AiblocServer) clearPeer() {
 	peerStore := s.host.Peerstore()
 	for _, peerID := range peerStore.PeersWithAddrs() {
 		peerStore.ClearAddrs(peerID)
 	}
 }
 
-func (s *Server) updatePeer() {
+func (s *AiblocServer) updatePeer() {
 	idch, err := s.dht.GetClosestPeers(s.ctx, s.id.KeyString())
 	if s.ctx.Err() != nil {
 		log.Println("context error:", err)
@@ -167,7 +165,7 @@ func (s *Server) updatePeer() {
 }
 
 // api backend interfaces
-func (s *Server) Start() error {
+func (s *AiblocServer) Start() error {
 	pid, err := common.NewPid("airbloc", "0.0.1")
 	if err != nil {
 		return errors.Wrap(err, "failed to generate pid")
@@ -199,19 +197,19 @@ func (s *Server) Start() error {
 	return nil
 }
 
-func (s *Server) Stop() {
+func (s *AiblocServer) Stop() {
 	s.cancel()
 }
 
-func (s *Server) RegisterProtocol(pid common.Pid, handler p2p.ProtocolHandler, adapters ...p2p.ProtocolAdapter) {
+func (s *AiblocServer) RegisterProtocol(pid common.Pid, handler ProtocolHandler, adapters ...ProtocolAdapter) {
 	s.host.RegisterProtocol(pid, handler, adapters...)
 }
 
-func (s *Server) UnregisterProtocol(pid common.Pid) {
+func (s *AiblocServer) UnregisterProtocol(pid common.Pid) {
 	s.host.UnregisterProtocol(pid)
 }
 
-func (s *Server) RegisterTopic(topic string, msg proto.Message, handler p2p.TopicHandler) error {
+func (s *AiblocServer) RegisterTopic(topic string, msg proto.Message, handler TopicHandler) error {
 	val, ok := p2pr.Topic_value[topic]
 	if !ok {
 		return errors.New("topic already registered")
@@ -227,7 +225,7 @@ func (s *Server) RegisterTopic(topic string, msg proto.Message, handler p2p.Topi
 	return nil
 }
 
-func (s *Server) UnregisterTopic(topic string) error {
+func (s *AiblocServer) UnregisterTopic(topic string) error {
 	val, ok := p2pr.Topic_value[topic]
 	if !ok {
 		return errors.New("invalid topic")
@@ -243,31 +241,31 @@ func (s *Server) UnregisterTopic(topic string) error {
 	return nil
 }
 
-func (s *Server) Send(ctx context.Context, msg common.ProtoMessage, p peer.ID, pids ...common.Pid) error {
+func (s *AiblocServer) Send(ctx context.Context, msg common.ProtoMessage, p peer.ID, pids ...common.Pid) error {
 	return s.host.Send(ctx, msg, p, pids...)
 }
 
-func (s *Server) Publish(ctx context.Context, msg common.ProtoMessage, pids ...common.Pid) error {
+func (s *AiblocServer) Publish(ctx context.Context, msg common.ProtoMessage, pids ...common.Pid) error {
 	return s.host.Publish(ctx, msg, pids...)
 }
 
-func (s *Server) LocalDB() localdb.Database {
+func (s *AiblocServer) LocalDB() localdb.Database {
 	return s.db
 }
 
-func (s *Server) MetaDB() metadb.Database {
+func (s *AiblocServer) MetaDB() metadb.Database {
 	return nil
 }
 
 // for test
-func (s *Server) setContext(ctx context.Context) {
+func (s *AiblocServer) setContext(ctx context.Context) {
 	s.ctx = ctx
 }
 
-func (s *Server) getHost() p2p.Host {
+func (s *AiblocServer) getHost() Host {
 	return s.host
 }
 
-func (s *Server) bootInfo() (peerstore.PeerInfo, error) {
+func (s *AiblocServer) bootInfo() (peerstore.PeerInfo, error) {
 	return s.host.BootInfo()
 }
