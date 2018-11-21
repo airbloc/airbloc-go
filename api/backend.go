@@ -11,13 +11,12 @@ import (
 // Airbloc implements Airbloc node service.
 // it composes all service used by Airbloc.
 type AirblocBackend struct {
-	Kms           *key.Manager
-	Ethclient     *blockchain.Client
+	Kms           key.Manager
+	Ethclient     blockchain.TxClient
 	MetaDatabase  metadb.Database
 	LocalDatabase localdb.Database
 	Config        *Config
-
-	Services map[string]Service
+	services      map[string]Service
 }
 
 func NewAirblocBackend(config *Config) (*AirblocBackend, error) {
@@ -40,7 +39,7 @@ func NewAirblocBackend(config *Config) (*AirblocBackend, error) {
 		return nil, errors.Wrap(err, "failed to initialize local database")
 	}
 
-	kms := key.NewManager(nodeKey, localDatabase)
+	kms := key.NewKeyManager(nodeKey, localDatabase)
 
 	// setup ethereum client
 	clientOpt := blockchain.ClientOpt{
@@ -52,28 +51,18 @@ func NewAirblocBackend(config *Config) (*AirblocBackend, error) {
 	}
 	ethclient.SetAccount(nodeKey)
 
-	deployment, err := blockchain.LoadDeployments(config.Blockchain.DeploymentPath, ethclient)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to load contract deployments from %s", config.Blockchain.DeploymentPath)
-	}
-	ethclient.Contracts = deployment
-
 	return &AirblocBackend{
 		Kms:           kms,
 		Ethclient:     ethclient,
 		MetaDatabase:  metaDatabase,
 		LocalDatabase: localDatabase,
 		Config:        config,
-		Services:      make(map[string]Service),
+		services:      make(map[string]Service),
 	}, nil
 }
 
-func (airbloc *AirblocBackend) Attach(name string, service Service) {
-	airbloc.Services[name] = service
-}
-
 func (airbloc *AirblocBackend) Start() error {
-	for name, service := range airbloc.Services {
+	for name, service := range airbloc.services {
 		if err := service.Start(); err != nil {
 			return errors.Wrapf(err, "failed to start %s service", name)
 		}
@@ -82,17 +71,22 @@ func (airbloc *AirblocBackend) Start() error {
 }
 
 func (airbloc *AirblocBackend) Stop() {
-	airbloc.Ethclient.Close()
-	airbloc.LocalDatabase.Close()
-	airbloc.MetaDatabase.Close()
-	for _, service := range airbloc.Services {
+	for _, service := range airbloc.services {
 		service.Stop()
 	}
-	airbloc.Close()
-}
-
-func (airbloc *AirblocBackend) Close() {
+	airbloc.Ethclient.Close()
 	airbloc.LocalDatabase.Close()
 	airbloc.MetaDatabase.Close()
-	airbloc.Ethclient.Close()
+}
+
+func (airbloc *AirblocBackend) GetService(name string) Service {
+	return airbloc.services[name]
+}
+
+func (airbloc *AirblocBackend) AttachService(name string, service Service) {
+	airbloc.Services[name] = service
+}
+
+func (airbloc *AirblocBackend) DettachService(name string) {
+	delete(airbloc.Services, name)
 }
