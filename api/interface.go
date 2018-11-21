@@ -9,7 +9,7 @@ import (
 
 type Backend interface {
 	Kms() key.Manager
-	Client() blockchain.TxClient
+	Client() *blockchain.Client
 	MetaDatabase() metadb.Database
 	LocalDatabase() localdb.Database
 	Config() *Config
@@ -24,11 +24,11 @@ type API interface {
 	AttachToAPI(api *APIService)
 }
 
-type Constructor func(airbloc *AirblocBackend) (API, error)
+type Constructor func(airbloc Backend) (API, error)
 
 type Service interface {
 	Start() error
 	Stop()
 }
 
-type ServiceConstructor func(airbloc *AirblocBackend) (Service, error)
+type ServiceConstructor func(airbloc Backend) (Service, error)

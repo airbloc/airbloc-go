@@ -12,8 +12,12 @@ type API struct {
 	manager *datamanager.Manager
 }
 
-func New(backend *api.AirblocBackend) (api.API, error) {
-	manager, err := datamanager.NewManager(backend.Kms, backend.Ethclient, backend.LocalDatabase)
+func New(backend api.Backend) (api.API, error) {
+	manager, err := datamanager.NewManager(
+		backend.Kms(),
+		backend.LocalDatabase(),
+		backend.Client(),
+	)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create Data API")
 	}

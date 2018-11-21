@@ -61,7 +61,7 @@ func main() {
 	backend.Start()
 }
 
-func registerServices(backend *api.AirblocBackend, serviceNames []string) {
+func registerServices(backend api.Backend, serviceNames []string) {
 	for _, name := range serviceNames {
 		serviceConstructor, exists := AvailableServices[name]
 		if !exists {
@@ -74,12 +74,12 @@ func registerServices(backend *api.AirblocBackend, serviceNames []string) {
 			log.Error("Failed to create service", "name", name, "error", err)
 			panic(err)
 		}
-		backend.Attach(name, service)
+		backend.AttachService(name, service)
 	}
 }
 
-func registerApis(backend *api.AirblocBackend, apiNames []string) {
-	apiService, ok := backend.Services["api"].(*api.APIService)
+func registerApis(backend api.Backend, apiNames []string) {
+	apiService, ok := backend.GetService("api").(*api.APIService)
 	if !ok {
 		log.Error("API service is not registered")
 		panic(nil)

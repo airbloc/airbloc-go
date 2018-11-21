@@ -17,8 +17,8 @@ type API struct {
 	warehouse *warehouse.DataWarehouse
 }
 
-func New(airbloc *api.AirblocBackend) (_ api.API, err error) {
-	config := airbloc.Config.Warehouse
+func New(airbloc api.Backend) (_ api.API, err error) {
+	config := airbloc.Config().Warehouse
 
 	supportedProtocols := []protocol.Protocol{
 		protocol.NewHttpProtocol(config.Http.Timeout, config.Http.MaxConnsPerHost),
@@ -38,15 +38,18 @@ func New(airbloc *api.AirblocBackend) (_ api.API, err error) {
 		return nil, errors.Errorf("unknown storage type: %s", config.DefaultStorage)
 	}
 
-	dw := warehouse.New(
-		airbloc.Kms,
-		airbloc.LocalDatabase,
-		airbloc.MetaDatabase,
-		airbloc.Ethclient,
+	dw, err := warehouse.New(
+		airbloc.Kms(),
+		airbloc.LocalDatabase(),
+		airbloc.MetaDatabase(),
+		airbloc.Client(),
 		defaultStorage,
 		supportedProtocols,
 	)
-	return &API{dw}, nil
+	if err != nil {
+		return nil, errors.Wrap(err, "warehouse api : failed to create warehouse API")
+	}
+	return &API{dw}, err
 }
 
 func (api *API) StoreBundle(stream Warehouse_StoreBundleServer) error {

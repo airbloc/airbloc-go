@@ -25,10 +25,18 @@ func NewManager(
 	kms key.Manager,
 	localDB localdb.Database,
 	client blockchain.TxClient,
-	contract *adapter.DataRegistry,
 ) (*Manager, error) {
 	batches := data.NewBatchManager(localDB)
 
+	raw, err := client.GetContract(&adapter.DataRegistry{})
+	if err != nil {
+		return nil, err
+	}
+
+	contract, ok := raw.(*adapter.DataRegistry)
+	if !ok {
+		return nil, blockchain.ErrContractNotFound
+	}
 	return &Manager{
 		kms:      kms,
 		client:   client,

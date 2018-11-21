@@ -11,15 +11,15 @@ import (
 // Airbloc implements Airbloc node service.
 // it composes all service used by Airbloc.
 type AirblocBackend struct {
-	Kms           key.Manager
-	Ethclient     blockchain.TxClient
-	MetaDatabase  metadb.Database
-	LocalDatabase localdb.Database
-	Config        *Config
+	kms           key.Manager
+	ethclient     *blockchain.Client
+	metaDatabase  metadb.Database
+	localDatabase localdb.Database
+	config        *Config
 	services      map[string]Service
 }
 
-func NewAirblocBackend(config *Config) (*AirblocBackend, error) {
+func NewAirblocBackend(config *Config) (Backend, error) {
 	nodeKey, err := key.Load(config.PrivateKeyPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load private key from the given path")
@@ -52,13 +52,33 @@ func NewAirblocBackend(config *Config) (*AirblocBackend, error) {
 	ethclient.SetAccount(nodeKey)
 
 	return &AirblocBackend{
-		Kms:           kms,
-		Ethclient:     ethclient,
-		MetaDatabase:  metaDatabase,
-		LocalDatabase: localDatabase,
-		Config:        config,
+		kms:           kms,
+		ethclient:     ethclient,
+		metaDatabase:  metaDatabase,
+		localDatabase: localDatabase,
+		config:        config,
 		services:      make(map[string]Service),
 	}, nil
+}
+
+func (airbloc *AirblocBackend) Kms() key.Manager {
+	return airbloc.kms
+}
+
+func (airbloc *AirblocBackend) Client() *blockchain.Client {
+	return airbloc.ethclient
+}
+
+func (airbloc *AirblocBackend) MetaDatabase() metadb.Database {
+	return airbloc.metaDatabase
+}
+
+func (airbloc *AirblocBackend) LocalDatabase() localdb.Database {
+	return airbloc.localDatabase
+}
+
+func (airbloc *AirblocBackend) Config() *Config {
+	return airbloc.config
 }
 
 func (airbloc *AirblocBackend) Start() error {
@@ -74,9 +94,9 @@ func (airbloc *AirblocBackend) Stop() {
 	for _, service := range airbloc.services {
 		service.Stop()
 	}
-	airbloc.Ethclient.Close()
-	airbloc.LocalDatabase.Close()
-	airbloc.MetaDatabase.Close()
+	airbloc.ethclient.Close()
+	airbloc.localDatabase.Close()
+	airbloc.metaDatabase.Close()
 }
 
 func (airbloc *AirblocBackend) GetService(name string) Service {
@@ -84,9 +104,9 @@ func (airbloc *AirblocBackend) GetService(name string) Service {
 }
 
 func (airbloc *AirblocBackend) AttachService(name string, service Service) {
-	airbloc.Services[name] = service
+	airbloc.services[name] = service
 }
 
 func (airbloc *AirblocBackend) DettachService(name string) {
-	delete(airbloc.Services, name)
+	delete(airbloc.services, name)
 }
