@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	ErrNoAccount = errors.New("Account not found."),
+	ErrNoAccount = errors.New("Account not found.")
 )
 
 type Manager struct {
