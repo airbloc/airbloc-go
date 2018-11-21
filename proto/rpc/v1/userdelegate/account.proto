@@ -1,9 +1,9 @@
 syntax = "proto3";
-package airbloc.collections;
+package airbloc.rpc.v1;
 
-option go_package = "github.com/airbloc/airbloc-go/account/api";
+option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/userdelegate";
 
-import "proto/types.proto";
+import "proto/rpc/v1/types.proto";
 
 service Account {
     rpc Create(AccountCreateRequest) returns (AccountCreateResponse);

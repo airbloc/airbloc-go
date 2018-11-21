@@ -1,8 +1,9 @@
 syntax = "proto3";
-package airbloc.data;
-option go_package = "github.com/airbloc/airbloc-go/data/datamanager/api";
+package airbloc.rpc.v1;
 
-import "proto/types.proto";
+option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
+
+import "proto/rpc/v1/types.proto";
 
 /**
  * Data Management API.
@@ -11,14 +12,14 @@ service Data {
     rpc Get(DataId) returns (DataResult);
     rpc BatchGet(BatchRequest) returns (BatchGetResult);
 
-    rpc SetPermission(SetDataPermissionRequest) returns (airbloc.common.Result);
-    rpc SetPermissionBatch(SetBatchDataPermissionRequest) returns (airbloc.common.Results);
+    rpc SetPermission(SetDataPermissionRequest) returns (airbloc.rpc.v1.Result);
+    rpc SetPermissionBatch(SetBatchDataPermissionRequest) returns (airbloc.rpc.v1.Results);
 
-    rpc Delete(DataId) returns (airbloc.common.Result);
-    rpc DeleteBatch(BatchRequest) returns (airbloc.common.Results);
+    rpc Delete(DataId) returns (airbloc.rpc.v1.Result);
+    rpc DeleteBatch(BatchRequest) returns (airbloc.rpc.v1.Results);
 
     rpc Select(stream DataId) returns (BatchRequest);
-    rpc Release(BatchRequest) returns (airbloc.common.Result);
+    rpc Release(BatchRequest) returns (airbloc.rpc.v1.Result);
 }
 
 message BatchRequest {

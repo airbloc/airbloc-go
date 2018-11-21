@@ -1,0 +1,19 @@
+syntax = "proto3";
+package airbloc.rpc.v1;
+
+option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
+
+import "proto/rpc/v1/types.proto";
+
+/**
+ * DAuth (Data Collection Authentification) API.
+ */
+service DAuth {
+    rpc Allow(DAuthRequest) returns (airbloc.rpc.v1.Result);
+    rpc Deny(DAuthRequest) returns (airbloc.rpc.v1.Result);
+}
+
+message DAuthRequest {
+    string collectionId = 1;
+    bytes passwordSignature = 2;
+}
