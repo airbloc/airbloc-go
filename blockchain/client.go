@@ -26,11 +26,11 @@ func NewClient(key *key.Key, url string, cfg ClientOpt) (*Client, error) {
 	}
 
 	client := &Client{
-		Client:    ethClient,
-		ctx:       context.Background(),
-		cfg:       cfg,
-		contracts: NewContractManager(),
+		Client: ethClient,
+		ctx:    context.Background(),
+		cfg:    cfg,
 	}
+	client.contracts = NewContractManager(client)
 	client.SetAccount(key)
 	return client, nil
 }
@@ -44,7 +44,7 @@ func (c *Client) SetAccount(key *key.Key) {
 }
 
 func (c *Client) GetContract(contract interface{}) (interface{}, error) {
-	return c.contracts.Get(contract)
+	return c.contracts.GetContract(contract)
 }
 
 func (c *Client) waitConfirmation(ctx context.Context) error {

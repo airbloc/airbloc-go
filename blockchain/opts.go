@@ -1,5 +1,6 @@
 package blockchain
 
 type ClientOpt struct {
-	Confirmation int
+	Confirmation   int
+	DeploymentPath string
 }
