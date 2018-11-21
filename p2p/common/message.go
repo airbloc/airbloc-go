@@ -6,7 +6,7 @@ import (
 	"io"
 	"reflect"
 
-	p2p "github.com/airbloc/airbloc-go/proto/p2p"
+	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/gogo/protobuf/proto"
 	"github.com/libp2p/go-libp2p-net"
 	"github.com/libp2p/go-libp2p-peer"
@@ -15,7 +15,7 @@ import (
 )
 
 type ProtoMessage struct {
-	p2p.Message
+	pb.Message
 }
 
 func (message ProtoMessage) ID() peer.ID {

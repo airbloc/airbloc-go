@@ -1,6 +1,7 @@
 syntax = "proto3";
-
 package airbloc.p2p.v1;
+
+option go_package = "github.com/airbloc/airbloc-go/proto/p2p/v1";
 
 enum CID {
     AIRBLOC = 0;

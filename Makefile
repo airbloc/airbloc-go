@@ -2,7 +2,7 @@
 DEST = $(shell pwd)/build/bin
 
 PROTO_DIR := proto
-PROTO_SRCS := $(wildcard $(PROTO_DIR)/*.proto)
+PROTO_SRCS := $(shell find $(PROTO_DIR) -name *.proto)
 
 all: airbloc
 
