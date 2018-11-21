@@ -94,7 +94,7 @@ type WhitelistTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["Whitelist"] = &Whitelist{}
+	blockchain.ContractList["Whitelist"] = &Whitelist{}.New
 }
 
 // NewWhitelist creates a new instance of Whitelist, bound to a specific deployed contract.

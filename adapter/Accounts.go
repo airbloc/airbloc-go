@@ -94,7 +94,7 @@ type AccountsTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["Accounts"] = &Accounts{}
+	blockchain.ContractList["Accounts"] = &Accounts{}.New
 }
 
 // NewAccounts creates a new instance of Accounts, bound to a specific deployed contract.

@@ -94,7 +94,7 @@ type SchemaRegistryTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["SchemaRegistry"] = &SchemaRegistry{}
+	blockchain.ContractList["SchemaRegistry"] = &SchemaRegistry{}.New
 }
 
 // NewSchemaRegistry creates a new instance of SchemaRegistry, bound to a specific deployed contract.

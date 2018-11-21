@@ -8,9 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
-type ContractConstructor interface {
-	New(common.Address, bind.ContractBackend) (interface{}, error)
-}
+type ContractConstructor func(common.Address, bind.ContractBackend) (interface{}, error)
 
 type TxClient interface {
 	bind.ContractBackend

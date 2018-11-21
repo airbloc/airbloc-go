@@ -94,7 +94,7 @@ type CollectionRegistryTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["CollectionRegistry"] = &CollectionRegistry{}
+	blockchain.ContractList["CollectionRegistry"] = &CollectionRegistry{}.New
 }
 
 // NewCollectionRegistry creates a new instance of CollectionRegistry, bound to a specific deployed contract.

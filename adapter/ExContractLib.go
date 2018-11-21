@@ -94,7 +94,7 @@ type ExContractLibTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["ExContractLib"] = &ExContractLib{}
+	blockchain.ContractList["ExContractLib"] = &ExContractLib{}.New
 }
 
 // NewExContractLib creates a new instance of ExContractLib, bound to a specific deployed contract.

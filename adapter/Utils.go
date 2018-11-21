@@ -94,7 +94,7 @@ type UtilsTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["Utils"] = &Utils{}
+	blockchain.ContractList["Utils"] = &Utils{}.New
 }
 
 // NewUtils creates a new instance of Utils, bound to a specific deployed contract.

@@ -47,7 +47,7 @@ func (cm *ContractManager) load(reader io.Reader) error {
 	}
 
 	for name, addr := range contracts {
-		contract, err := ContractList[name].New(addr, cm.client)
+		contract, err := ContractList[name](addr, cm.client)
 		if err != nil {
 			return errors.Wrap(err, "contract manager : failed to get contract")
 		}

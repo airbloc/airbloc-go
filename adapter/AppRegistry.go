@@ -94,7 +94,7 @@ type AppRegistryTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["AppRegistry"] = &AppRegistry{}
+	blockchain.ContractList["AppRegistry"] = &AppRegistry{}.New
 }
 
 // NewAppRegistry creates a new instance of AppRegistry, bound to a specific deployed contract.

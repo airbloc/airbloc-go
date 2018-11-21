@@ -94,7 +94,7 @@ type SimpleContractTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["SimpleContract"] = &SimpleContract{}
+	blockchain.ContractList["SimpleContract"] = &SimpleContract{}.New
 }
 
 // NewSimpleContract creates a new instance of SimpleContract, bound to a specific deployed contract.

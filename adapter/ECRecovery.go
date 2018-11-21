@@ -94,7 +94,7 @@ type ECRecoveryTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["ECRecovery"] = &ECRecovery{}
+	blockchain.ContractList["ECRecovery"] = &ECRecovery{}.New
 }
 
 // NewECRecovery creates a new instance of ECRecovery, bound to a specific deployed contract.

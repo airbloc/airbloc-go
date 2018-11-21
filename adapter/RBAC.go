@@ -94,7 +94,7 @@ type RBACTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["RBAC"] = &RBAC{}
+	blockchain.ContractList["RBAC"] = &RBAC{}.New
 }
 
 // NewRBAC creates a new instance of RBAC, bound to a specific deployed contract.

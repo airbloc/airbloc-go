@@ -155,7 +155,7 @@ var (
 	}
 
 	func init() {
-		blockchain.ContractList["{{.Type}}"] = &{{.Type}}{}
+		blockchain.ContractList["{{.Type}}"] = &{{.Type}}{}.New
 	}
 
 	// New{{.Type}} creates a new instance of {{.Type}}, bound to a specific deployed contract.

@@ -94,7 +94,7 @@ type DataRegistryTransactorRaw struct {
 }
 
 func init() {
-	blockchain.ContractList["DataRegistry"] = &DataRegistry{}
+	blockchain.ContractList["DataRegistry"] = &DataRegistry{}.New
 }
 
 // NewDataRegistry creates a new instance of DataRegistry, bound to a specific deployed contract.
