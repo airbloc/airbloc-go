@@ -24,7 +24,7 @@ import (
 )
 
 type DataWarehouse struct {
-	kms            *key.Manager
+	kms            key.Manager
 	protocols      map[string]protocol.Protocol
 	localCache     *localdb.Model
 	metaDatabase   *metadb.Model
@@ -34,7 +34,7 @@ type DataWarehouse struct {
 }
 
 func New(
-	kms *key.Manager,
+	kms key.Manager,
 	localDatabase localdb.Database,
 	metaDatabase metadb.Database,
 	ethclient blockchain.TxClient,

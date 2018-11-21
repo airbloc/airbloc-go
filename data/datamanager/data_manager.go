@@ -13,7 +13,7 @@ import (
 )
 
 type Manager struct {
-	kms       *key.Manager
+	kms       key.Manager
 	client    blockchain.TxClient
 	metadb    *metadb.Database
 	warehouse *warehouse.DataWarehouse
@@ -22,7 +22,7 @@ type Manager struct {
 }
 
 func NewManager(
-	kms *key.Manager,
+	kms key.Manager,
 	localDB localdb.Database,
 	client blockchain.TxClient,
 	contract *adapter.DataRegistry,
