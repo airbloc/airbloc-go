@@ -13,7 +13,7 @@ type Session struct {
 	Key           *key.Key
 }
 
-func NewSession(accountId ablCommon.ID, walletAddress ethCommon.Address, password string) (*Session) {
+func NewSession(accountId ablCommon.ID, walletAddress ethCommon.Address, password string) *Session {
 	identityHash := crypto.Keccak256Hash(walletAddress.Bytes())
 	priv := key.DeriveFromPassword(identityHash, password)
 	return &Session{

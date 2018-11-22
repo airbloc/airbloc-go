@@ -14,9 +14,12 @@ type API struct {
 	manager *account.Manager
 }
 
-func New(backend *api.AirblocBackend) (api.API, error) {
-	manager := account.NewManager(backend.Ethclient)
-	return &API{manager}, nil
+func New(backend api.Backend) (api.API, error) {
+	manager, err := account.NewManager(backend.Client())
+	if err != nil {
+		return nil, errors.Wrap(err, "account api : failed to create account API")
+	}
+	return &API{manager}, err
 }
 
 func (api *API) AttachToAPI(service *api.APIService) {

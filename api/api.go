@@ -20,7 +20,7 @@ type APIService struct {
 	port int
 }
 
-func NewAPIService(airbloc *AirblocBackend) (Service, error) {
+func NewAPIService(airbloc Backend) (Service, error) {
 	grpcServer := grpc.NewServer()
 	restAPImux := http.NewServeMux()
 
@@ -33,7 +33,8 @@ func NewAPIService(airbloc *AirblocBackend) (Service, error) {
 		}
 	})
 
-	address := fmt.Sprintf("localhost:%d", airbloc.Config.Port)
+	config := airbloc.Config()
+	address := fmt.Sprintf("localhost:%d", config.Port)
 	service := &APIService{
 		GrpcServer: grpcServer,
 		RestAPIMux: restAPImux,
@@ -42,7 +43,7 @@ func NewAPIService(airbloc *AirblocBackend) (Service, error) {
 			Handler: proxyHandler,
 		},
 		Address: address,
-		port:    airbloc.Config.Port,
+		port:    config.Port,
 	}
 	return service, nil
 }

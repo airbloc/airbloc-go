@@ -2,6 +2,7 @@ package dauth
 
 import (
 	"context"
+
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
 	"github.com/airbloc/airbloc-go/common"
@@ -20,7 +21,7 @@ type Manager struct {
 	collectionRegistry *adapter.CollectionRegistry
 }
 
-func NewManager(client *blockchain.Client) (*Manager) {
+func NewManager(client *blockchain.Client) *Manager {
 	return &Manager{
 		ethclient:          client,
 		collectionRegistry: client.Contracts.CollectionRegistry,
@@ -28,7 +29,7 @@ func NewManager(client *blockchain.Client) (*Manager) {
 }
 
 // Allow allows data provider to collect certain kinds (Collection) of user's data.
-func (manager *Manager) Allow(collectionId common.ID, passwordSig []byte) (error) {
+func (manager *Manager) Allow(collectionId common.ID, passwordSig []byte) error {
 	if exists, err := manager.Exists(collectionId); err != nil {
 		return errors.Wrap(err, "failed to check collection existence")
 	} else if !exists {
@@ -46,7 +47,7 @@ func (manager *Manager) Allow(collectionId common.ID, passwordSig []byte) (error
 }
 
 // Allow allows data provider to collect certain kinds (Collection) of user's data.
-func (manager *Manager) Deny(collectionId common.ID, passwordSig []byte) (error) {
+func (manager *Manager) Deny(collectionId common.ID, passwordSig []byte) error {
 	if exists, err := manager.Exists(collectionId); err != nil {
 		return errors.Wrap(err, "failed to check collection existence")
 	} else if !exists {

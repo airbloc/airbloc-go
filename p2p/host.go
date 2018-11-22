@@ -6,13 +6,13 @@ import (
 	"github.com/airbloc/airbloc-go/p2p/common"
 	"github.com/libp2p/go-libp2p-interface-connmgr"
 	"github.com/libp2p/go-libp2p-net"
-	peer "github.com/libp2p/go-libp2p-peer"
+	"github.com/libp2p/go-libp2p-peer"
 	"github.com/libp2p/go-libp2p-peerstore"
 	"github.com/multiformats/go-multistream"
 )
 
 type ProtocolRegistry interface {
-	RegisterProtocol(common.Pid, ProtocolHandler)
+	RegisterProtocol(common.Pid, ProtocolHandler, ...ProtocolAdapter)
 	UnregisterProtocol(common.Pid)
 }
 

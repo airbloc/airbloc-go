@@ -30,6 +30,7 @@ import (
 	"unicode"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/valyala/fastjson"
 )
 
 // Lang is a target programming language selector to generate bindings for.
@@ -44,7 +45,7 @@ const (
 // to be used as is in client code, but rather as an intermediate struct which
 // enforces compile time type safety and naming convention opposed to having to
 // manually maintain hard coded strings that break on runtime.
-func Bind(types []string, abis []string, bytecodes []string, pkg string) (string, error) {
+func Bind(types string, abis *fastjson.Object, asts *fastjson.Object, pkg string) (string, error) {
 	lang := LangGo
 
 	// Process each individual contract requested binding
@@ -121,7 +122,6 @@ func Bind(types []string, abis []string, bytecodes []string, pkg string) (string
 		contracts[types[i]] = &tmplContract{
 			Type:        capitalise(types[i]),
 			InputABI:    strings.Replace(strippedABI, "\"", "\\\"", -1),
-			InputBin:    strings.TrimSpace(bytecodes[i]),
 			Constructor: evmABI.Constructor,
 			Calls:       calls,
 			Transacts:   transacts,
@@ -146,16 +146,13 @@ func Bind(types []string, abis []string, bytecodes []string, pkg string) (string
 	if err := tmpl.Execute(buffer, data); err != nil {
 		return "", err
 	}
+
 	// For Go bindings pass the code through gofmt to clean it up
-	if lang == LangGo {
-		code, err := format.Source(buffer.Bytes())
-		if err != nil {
-			return "", fmt.Errorf("%v\n%s", err, buffer)
-		}
-		return string(code), nil
+	code, err := format.Source(buffer.Bytes())
+	if err != nil {
+		return "", fmt.Errorf("%v\n%s", err, buffer)
 	}
-	// For all others just return as is for now
-	return buffer.String(), nil
+	return string(code), nil
 }
 
 // bindType is a set of type binders that convert Solidity types to some supported

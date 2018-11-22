@@ -13,9 +13,12 @@ type API struct {
 	schemas *schemas.Schemas
 }
 
-func New(backend *api.AirblocBackend) (api.API, error) {
-	schemaManager := schemas.New(backend.MetaDatabase, backend.Ethclient)
-	return &API{schemaManager}, nil
+func New(backend api.Backend) (api.API, error) {
+	schemaManager, err := schemas.New(backend.MetaDatabase(), backend.Client())
+	if err != nil {
+		return nil, errors.Wrap(err, "schema api : failed to create schema API")
+	}
+	return &API{schemaManager}, err
 }
 
 func (api *API) AttachToAPI(service *api.APIService) {

@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -32,24 +33,9 @@ var (
 // ECRecoveryABI is the input ABI used to generate the binding from.
 const ECRecoveryABI = "[]"
 
-// ECRecoveryBin is the compiled bytecode used for deploying new contracts.
-const ECRecoveryBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a72305820d19060762a5c3eaf8b695800f5f7dc43dddef14ac3a0f3d8675cc5b6c47640280029`
-
-// DeployECRecovery deploys a new Ethereum contract, binding an instance of ECRecovery to it.
-func DeployECRecovery(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *ECRecovery, error) {
-	parsed, err := abi.JSON(strings.NewReader(ECRecoveryABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(ECRecoveryBin), backend)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &ECRecovery{ECRecoveryCaller: ECRecoveryCaller{contract: contract}, ECRecoveryTransactor: ECRecoveryTransactor{contract: contract}, ECRecoveryFilterer: ECRecoveryFilterer{contract: contract}}, nil
-}
-
 // ECRecovery is an auto generated Go binding around an Ethereum contract.
 type ECRecovery struct {
+	Address              common.Address
 	ECRecoveryCaller     // Read-only binding to the contract
 	ECRecoveryTransactor // Write-only binding to the contract
 	ECRecoveryFilterer   // Log filterer for contract events
@@ -107,13 +93,22 @@ type ECRecoveryTransactorRaw struct {
 	Contract *ECRecoveryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["ECRecovery"] = (&ECRecovery{}).new
+}
+
 // NewECRecovery creates a new instance of ECRecovery, bound to a specific deployed contract.
 func NewECRecovery(address common.Address, backend bind.ContractBackend) (*ECRecovery, error) {
 	contract, err := bindECRecovery(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &ECRecovery{ECRecoveryCaller: ECRecoveryCaller{contract: contract}, ECRecoveryTransactor: ECRecoveryTransactor{contract: contract}, ECRecoveryFilterer: ECRecoveryFilterer{contract: contract}}, nil
+	return &ECRecovery{
+		Address:              address,
+		ECRecoveryCaller:     ECRecoveryCaller{contract: contract},
+		ECRecoveryTransactor: ECRecoveryTransactor{contract: contract},
+		ECRecoveryFilterer:   ECRecoveryFilterer{contract: contract},
+	}, nil
 }
 
 // NewECRecoveryCaller creates a new read-only instance of ECRecovery, bound to a specific deployed contract.
@@ -150,6 +145,10 @@ func bindECRecovery(address common.Address, caller bind.ContractCaller, transact
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_ECRecovery *ECRecovery) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewECRecovery(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

@@ -24,38 +24,46 @@ import (
 )
 
 type DataWarehouse struct {
-	kms            *key.Manager
+	kms            key.Manager
 	protocols      map[string]protocol.Protocol
 	localCache     *localdb.Model
 	metaDatabase   *metadb.Model
-	ethclient      *blockchain.Client
+	ethclient      blockchain.TxClient
 	dataRegistry   *adapter.DataRegistry
 	DefaultStorage storage.Storage
 }
 
 func New(
-	kms *key.Manager,
+	kms key.Manager,
 	localDatabase localdb.Database,
 	metaDatabase metadb.Database,
-	ethclient *blockchain.Client,
+	ethclient blockchain.TxClient,
 	defaultStorage storage.Storage,
 	supportedProtocols []protocol.Protocol,
-) *DataWarehouse {
-
+) (*DataWarehouse, error) {
 	protocols := map[string]protocol.Protocol{}
 	for _, protoc := range supportedProtocols {
 		protocols[protoc.Name()] = protoc
 	}
 
+	raw, err := ethclient.GetContract(&adapter.DataRegistry{})
+	if err != nil {
+		return nil, err
+	}
+
+	contract, ok := raw.(*adapter.DataRegistry)
+	if !ok {
+		return nil, blockchain.ErrContractNotFound
+	}
 	return &DataWarehouse{
 		kms:            kms,
 		protocols:      protocols,
 		localCache:     localdb.NewModel(localDatabase, "bundle"),
 		metaDatabase:   metadb.NewModel(metaDatabase, "bundles"),
 		ethclient:      ethclient,
-		dataRegistry:   ethclient.Contracts.DataRegistry,
+		dataRegistry:   contract,
 		DefaultStorage: defaultStorage,
-	}
+	}, nil
 }
 
 func (warehouse *DataWarehouse) CreateBundle(collection common.ID) *BundleStream {

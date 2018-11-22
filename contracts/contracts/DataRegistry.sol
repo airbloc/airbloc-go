@@ -35,7 +35,7 @@ contract DataRegistry is Ownable {
     function registerBundle(bytes8 collectionId, bytes32 usersRoot, bytes32 dataHash, string uri) external /*onlyProvider*/ {
         require(collections.exists(collectionId), "Collection does not exist.");
 
-        Bundle storage bundle;
+        Bundle memory bundle;
         bundle.usersRoot = usersRoot;
         bundle.bundleDataHash = dataHash;
         bundle.uri = uri;
@@ -46,7 +46,7 @@ contract DataRegistry is Ownable {
         emit BundleRegistered(collectionId, bundleIndex);
     }
 
-    function challenge(bytes8 collectionId, uint64 bundleIndex, bytes proof) external /*onlyConsumer*/ {
+    function challenge(bytes8 collectionId, uint64 bundleIndex, bytes proof) external view /*onlyConsumer*/ {
         require(collections.exists(collectionId), "Collection does not exist.");
         bytes8 userId = accounts.getAccountId(msg.sender);
 

@@ -1,22 +1,26 @@
+// SHOULD RUN IN PARENT DIRECTORY
+// go run contracts/generate_adapter.go
 package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path"
 
 	"github.com/airbloc/airbloc-go/contracts/utils"
+	"github.com/valyala/fastjson"
 )
 
-const BuildOutput = "../adapter"
-const ContractDir = "build/contracts"
+const BuildOutput = "adapter"
+const ContractDir = "contracts/build/contracts"
 
 type Contract struct {
-	Name string      `json:"contractName"`
-	Abi  interface{} `json:"abi"`
-	Bin  string      `json:"deployedBytecode"`
+	Name string
+	ABI  *fastjson.Object
+	AST  *fastjson.Object
 }
 
 func main() {
@@ -36,23 +40,28 @@ func main() {
 
 	contracts := make([]Contract, len(fileNames))
 	for i, fileName := range fileNames {
-		file, err := os.Open(ContractDir + "/" + fileName)
+		data, err := ioutil.ReadFile(ContractDir + "/" + fileName)
 		if err != nil {
 			log.Println(err)
 			return
 		}
 
-		decoder := json.NewDecoder(file)
-		err = decoder.Decode(&contracts[i])
-		file.Close()
+		var p fastjson.Parser
+		v, err := p.ParseBytes(data)
 		if err != nil {
 			log.Println(err)
 			return
+		}
+
+		contracts[i] = Contract{
+			Name: string(v.GetStringBytes("contractName")),
+			ABI:  v.GetObject("abi"),
+			AST:  v.GetObject("ast"),
 		}
 	}
 
 	for _, contract := range contracts {
-		abi, err := json.Marshal(contract.Abi)
+		abi, err := json.Marshal(contract.ABI)
 		if err != nil {
 			log.Println(err)
 			return
@@ -63,11 +72,12 @@ func main() {
 		}
 
 		outPath := path.Join(BuildOutput, contract.Name+".go")
+		fmt.Println(string(abi))
 
 		tmp, err := utils.Bind(
 			[]string{contract.Name},
 			[]string{string(abi)},
-			[]string{contract.Bin},
+			[]string{""},
 			"adapter",
 		)
 		if err != nil {

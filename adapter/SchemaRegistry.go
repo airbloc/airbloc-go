@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -32,24 +33,9 @@ var (
 // SchemaRegistryABI is the input ABI used to generate the binding from.
 const SchemaRegistryABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"nameExists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"name\":\"schemas\",\"outputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"name\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"registrar\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"Registration\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"Unregistration\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_name\",\"type\":\"string\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"exists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
-// SchemaRegistryBin is the compiled bytecode used for deploying new contracts.
-const SchemaRegistryBin = `0x60806040526004361061006c5763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663143dc3f88114610071578063260a818e1461009d57806397e4fea7146100c1578063f2c298be146100e3578063f45e6aaf1461013c575b600080fd5b34801561007d57600080fd5b50610089600435610209565b604080519115158252519081900360200190f35b3480156100a957600080fd5b506100bf600160c060020a03196004351661021e565b005b3480156100cd57600080fd5b50610089600160c060020a031960043516610422565b3480156100ef57600080fd5b506040805160206004803580820135601f81018490048402850184019095528484526100bf9436949293602493928401919081908401838280828437509497506104569650505050505050565b34801561014857600080fd5b5061015e600160c060020a031960043516610658565b604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200180602001828103825283818151815260200191508051906020019080838360005b838110156101cd5781810151838201526020016101b5565b50505050905090810190601f1680156101fa5780820380516001836020036101000a031916815260200191505b50935050505060405180910390f35b60016020526000908152604090205460ff1681565b600160c060020a031981166000908152602081905260408120805490919073ffffffffffffffffffffffffffffffffffffffff1633146102bf57604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601660248201527f4f6e6c79206f776e65722063616e20646f207468697300000000000000000000604482015290519081900360640190fd5b8160010160405160200180828054600181600116156101000203166002900480156103215780601f106102ff576101008083540402835291820191610321565b820191906000526020600020905b81548152906001019060200180831161030d575b50509150506040516020818303038152906040526040518082805190602001908083835b602083106103645780518252601f199092019160209182019101610345565b51815160209384036101000a6000190180199092169116179052604080519290940182900390912060008181526001808452858220805460ff19169055600160c060020a03198b16825292819052938420805473ffffffffffffffffffffffffffffffffffffffff1916815590965094509192506103e69184019050826107cf565b5050604051600160c060020a03198416907f8c36f878328ed4dfe683ccea03edd5a0c360e665285312270adb9a22592367fb90600090a2505050565b600160c060020a03191660009081526020819052604090205473ffffffffffffffffffffffffffffffffffffffff16151590565b6000806000836040516020018082805190602001908083835b6020831061048e5780518252601f19909201916020918201910161046f565b6001836020036101000a0380198251168184511680821785525050505050509050019150506040516020818303038152906040526040518082805190602001908083835b602083106104f15780518252601f1990920191602091820191016104d2565b51815160209384036101000a6000190180199092169116179052604080519290940182900390912060008181526001909252929020549196505060ff1615915061059e905057604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601a60248201527f54686520736368656d6120616c72656164792065786973747321000000000000604482015290519081900360640190fd5b6105a88333610716565b600160c060020a03198116600090815260208181526040909120805473ffffffffffffffffffffffffffffffffffffffff191633178155865192945092506105f7916001840191870190610816565b50600083815260016020818152604092839020805460ff19169092179091558151600160c060020a031985168152915133927f34b195a2b14d8eac732b11770bab8ed3823e96642f703b1a973f4a2981208d0f92908290030190a250505050565b600060208181529181526040908190208054600180830180548551600261010094831615949094026000190190911692909204601f810187900487028301870190955284825273ffffffffffffffffffffffffffffffffffffffff909216949293909283018282801561070c5780601f106106e15761010080835404028352916020019161070c565b820191906000526020600020905b8154815290600101906020018083116106ef57829003601f168201915b5050505050905082565b604080516c0100000000000000000000000073ffffffffffffffffffffffffffffffffffffffff84160260208083019190915243603483015260548083018690528351808403909101815260749092019283905281516000938392909182918401908083835b6020831061079b5780518252601f19909201916020918201910161077c565b5181516020939093036101000a60001901801990911692169190911790526040519201829003909120979650505050505050565b50805460018160011615610100020316600290046000825580601f106107f55750610813565b601f0160209004906000526020600020908101906108139190610894565b50565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f1061085757805160ff1916838001178555610884565b82800160010185558215610884579182015b82811115610884578251825591602001919060010190610869565b50610890929150610894565b5090565b6108ae91905b80821115610890576000815560010161089a565b905600a165627a7a72305820b8d0794ca752178f82c297f47dd9745761c4f1772aa2466bff36547f9cd9a90e0029`
-
-// DeploySchemaRegistry deploys a new Ethereum contract, binding an instance of SchemaRegistry to it.
-func DeploySchemaRegistry(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *SchemaRegistry, error) {
-	parsed, err := abi.JSON(strings.NewReader(SchemaRegistryABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(SchemaRegistryBin), backend)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &SchemaRegistry{SchemaRegistryCaller: SchemaRegistryCaller{contract: contract}, SchemaRegistryTransactor: SchemaRegistryTransactor{contract: contract}, SchemaRegistryFilterer: SchemaRegistryFilterer{contract: contract}}, nil
-}
-
 // SchemaRegistry is an auto generated Go binding around an Ethereum contract.
 type SchemaRegistry struct {
+	Address                  common.Address
 	SchemaRegistryCaller     // Read-only binding to the contract
 	SchemaRegistryTransactor // Write-only binding to the contract
 	SchemaRegistryFilterer   // Log filterer for contract events
@@ -107,13 +93,22 @@ type SchemaRegistryTransactorRaw struct {
 	Contract *SchemaRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["SchemaRegistry"] = (&SchemaRegistry{}).new
+}
+
 // NewSchemaRegistry creates a new instance of SchemaRegistry, bound to a specific deployed contract.
 func NewSchemaRegistry(address common.Address, backend bind.ContractBackend) (*SchemaRegistry, error) {
 	contract, err := bindSchemaRegistry(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &SchemaRegistry{SchemaRegistryCaller: SchemaRegistryCaller{contract: contract}, SchemaRegistryTransactor: SchemaRegistryTransactor{contract: contract}, SchemaRegistryFilterer: SchemaRegistryFilterer{contract: contract}}, nil
+	return &SchemaRegistry{
+		Address:                  address,
+		SchemaRegistryCaller:     SchemaRegistryCaller{contract: contract},
+		SchemaRegistryTransactor: SchemaRegistryTransactor{contract: contract},
+		SchemaRegistryFilterer:   SchemaRegistryFilterer{contract: contract},
+	}, nil
 }
 
 // NewSchemaRegistryCaller creates a new read-only instance of SchemaRegistry, bound to a specific deployed contract.
@@ -150,6 +145,10 @@ func bindSchemaRegistry(address common.Address, caller bind.ContractCaller, tran
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_SchemaRegistry *SchemaRegistry) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewSchemaRegistry(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

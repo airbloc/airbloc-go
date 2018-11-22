@@ -12,8 +12,8 @@ type API struct {
 	exchange *exchange.Exchange
 }
 
-func New(backend *api.AirblocBackend) (api.API, error) {
-	ex, err := exchange.New(backend.Ethclient)
+func New(backend api.Backend) (api.API, error) {
+	ex, err := exchange.New(backend.Client())
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create Exchange API")
 	}

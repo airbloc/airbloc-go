@@ -16,7 +16,7 @@ type Client struct {
 	ctx        context.Context
 	cfg        ClientOpt
 	transactor *bind.TransactOpts
-	Contracts  *Deployments
+	contracts  *ContractManager
 }
 
 func NewClient(key *key.Key, url string, cfg ClientOpt) (*Client, error) {
@@ -30,6 +30,12 @@ func NewClient(key *key.Key, url string, cfg ClientOpt) (*Client, error) {
 		ctx:    context.Background(),
 		cfg:    cfg,
 	}
+
+	cm := NewContractManager(client)
+	if err := cm.Load(cfg.DeploymentPath); err != nil {
+		return nil, err
+	}
+	client.contracts = cm
 	client.SetAccount(key)
 	return client, nil
 }
@@ -40,6 +46,10 @@ func (c Client) Account() *bind.TransactOpts {
 
 func (c *Client) SetAccount(key *key.Key) {
 	c.transactor = bind.NewKeyedTransactor(key.PrivateKey)
+}
+
+func (c *Client) GetContract(contract interface{}) (interface{}, error) {
+	return c.contracts.GetContract(contract)
 }
 
 func (c *Client) waitConfirmation(ctx context.Context) error {

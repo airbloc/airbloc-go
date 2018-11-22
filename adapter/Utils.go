@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -32,24 +33,9 @@ var (
 // UtilsABI is the input ABI used to generate the binding from.
 const UtilsABI = "[]"
 
-// UtilsBin is the compiled bytecode used for deploying new contracts.
-const UtilsBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a723058208c354d9e7573e2aec27bab4a3c82db65380c634085ac1a6cded5df1b4b7e4eb70029`
-
-// DeployUtils deploys a new Ethereum contract, binding an instance of Utils to it.
-func DeployUtils(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Utils, error) {
-	parsed, err := abi.JSON(strings.NewReader(UtilsABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(UtilsBin), backend)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &Utils{UtilsCaller: UtilsCaller{contract: contract}, UtilsTransactor: UtilsTransactor{contract: contract}, UtilsFilterer: UtilsFilterer{contract: contract}}, nil
-}
-
 // Utils is an auto generated Go binding around an Ethereum contract.
 type Utils struct {
+	Address         common.Address
 	UtilsCaller     // Read-only binding to the contract
 	UtilsTransactor // Write-only binding to the contract
 	UtilsFilterer   // Log filterer for contract events
@@ -107,13 +93,22 @@ type UtilsTransactorRaw struct {
 	Contract *UtilsTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["Utils"] = (&Utils{}).new
+}
+
 // NewUtils creates a new instance of Utils, bound to a specific deployed contract.
 func NewUtils(address common.Address, backend bind.ContractBackend) (*Utils, error) {
 	contract, err := bindUtils(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &Utils{UtilsCaller: UtilsCaller{contract: contract}, UtilsTransactor: UtilsTransactor{contract: contract}, UtilsFilterer: UtilsFilterer{contract: contract}}, nil
+	return &Utils{
+		Address:         address,
+		UtilsCaller:     UtilsCaller{contract: contract},
+		UtilsTransactor: UtilsTransactor{contract: contract},
+		UtilsFilterer:   UtilsFilterer{contract: contract},
+	}, nil
 }
 
 // NewUtilsCaller creates a new read-only instance of Utils, bound to a specific deployed contract.
@@ -150,6 +145,10 @@ func bindUtils(address common.Address, caller bind.ContractCaller, transactor bi
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_Utils *Utils) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewUtils(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

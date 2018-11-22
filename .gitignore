@@ -8,6 +8,7 @@ local.db
 config.yml
 **/node_modules
 **/build
+tests/playground
 
 # Created by https://www.gitignore.io/api/go,intellij
 

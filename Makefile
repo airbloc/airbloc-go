@@ -16,8 +16,12 @@ clean:
 install: airbloc
 	@cp -f $(DEST)/airbloc $GOPATH/bin/
 
+generate-bind:
+	@go run contracts/generate_adapter.go
+
 generate-proto:
 	@for PROTO in $(PROTO_SRCS); do protoc -I. $$PROTO --go_out=plugins=grpc:$$GOPATH/src; done
+    @protoc --go_out=. proto/p2p/message.proto
 
 uninstall:
 	@rm -f $GOPATH/bin/airbloc

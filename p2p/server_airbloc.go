@@ -11,7 +11,7 @@ import (
 	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/airbloc/airbloc-go/p2p/common"
-	p2p "github.com/airbloc/airbloc-go/proto/p2p"
+	p2pr "github.com/airbloc/airbloc-go/proto/p2p"
 	"github.com/gogo/protobuf/proto"
 	"github.com/ipfs/go-cid"
 	"github.com/libp2p/go-libp2p"
@@ -38,12 +38,12 @@ type AirblocServer struct {
 	db localdb.Database
 
 	// topic - handlers
-	types    map[p2p.Topic]reflect.Type
+	types    map[p2pr.Topic]reflect.Type
 	topics   map[reflect.Type]string
 	handlers map[reflect.Type]TopicHandler
 }
 
-func NewServer(
+func NewAirblocServer(
 	localdb localdb.Database,
 	identity *key.Key,
 	addr multiaddr.Multiaddr,
@@ -62,7 +62,7 @@ func NewServer(
 		mutex:  new(sync.Mutex),
 
 		db:       localdb,
-		types:    make(map[p2p.Topic]reflect.Type),
+		types:    make(map[p2pr.Topic]reflect.Type),
 		topics:   make(map[reflect.Type]string),
 		handlers: make(map[reflect.Type]TopicHandler),
 	}
@@ -83,10 +83,7 @@ func NewServer(
 		return nil, err
 	}
 
-	server.host = &AirblocHost{
-		BasicHost: BasicHost{h},
-		limit:     20,
-	}
+	server.host = NewAirblocHost(NewBasicHost(h), 20)
 
 	if bootnode {
 		if err := server.dht.Bootstrap(ctx); err != nil {
@@ -107,14 +104,14 @@ func NewServer(
 		}
 	}
 
-	idVal := int32(p2p.CID_AIRBLOC)
+	idVal := int32(p2pr.CID_AIRBLOC)
 
 	v1b := cid.V1Builder{
 		Codec:  uint64(idVal),
 		MhType: multihash.KECCAK_256,
 	}
 
-	server.id, err = v1b.Sum([]byte(p2p.CID_name[idVal]))
+	server.id, err = v1b.Sum([]byte(p2pr.CID_name[idVal]))
 	if err != nil {
 		cancel()
 		return nil, errors.Wrap(err, "server error : failed to generate cid")
@@ -204,8 +201,8 @@ func (s *AirblocServer) Stop() {
 	s.cancel()
 }
 
-func (s *AirblocServer) RegisterProtocol(pid common.Pid, handler ProtocolHandler) {
-	s.host.RegisterProtocol(pid, handler)
+func (s *AirblocServer) RegisterProtocol(pid common.Pid, handler ProtocolHandler, adapters ...ProtocolAdapter) {
+	s.host.RegisterProtocol(pid, handler, adapters...)
 }
 
 func (s *AirblocServer) UnregisterProtocol(pid common.Pid) {
@@ -213,14 +210,14 @@ func (s *AirblocServer) UnregisterProtocol(pid common.Pid) {
 }
 
 func (s *AirblocServer) RegisterTopic(topic string, msg proto.Message, handler TopicHandler) error {
-	val, ok := p2p.Topic_value[topic]
+	val, ok := p2pr.Topic_value[topic]
 	if !ok {
 		return errors.New("topic already registered")
 	}
 	typ := common.MessageType(msg)
 
 	s.mutex.Lock()
-	s.types[p2p.Topic(val)] = typ
+	s.types[p2pr.Topic(val)] = typ
 	s.topics[typ] = topic
 	s.handlers[typ] = handler
 	s.mutex.Unlock()
@@ -229,14 +226,14 @@ func (s *AirblocServer) RegisterTopic(topic string, msg proto.Message, handler T
 }
 
 func (s *AirblocServer) UnregisterTopic(topic string) error {
-	val, ok := p2p.Topic_value[topic]
+	val, ok := p2pr.Topic_value[topic]
 	if !ok {
 		return errors.New("invalid topic")
 	}
-	msgType := s.types[p2p.Topic(val)]
+	msgType := s.types[p2pr.Topic(val)]
 
 	s.mutex.Lock()
-	delete(s.types, p2p.Topic(val))
+	delete(s.types, p2pr.Topic(val))
 	delete(s.topics, msgType)
 	delete(s.handlers, msgType)
 	s.mutex.Unlock()

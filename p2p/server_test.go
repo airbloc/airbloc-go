@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"testing"
-
 	"time"
 
 	"github.com/airbloc/airbloc-go/database/localdb"
@@ -13,8 +12,8 @@ import (
 	"github.com/airbloc/airbloc-go/p2p/common"
 	p2p "github.com/airbloc/airbloc-go/proto/p2p"
 	"github.com/gogo/protobuf/proto"
-	peerstore "github.com/libp2p/go-libp2p-peerstore"
-	multiaddr "github.com/multiformats/go-multiaddr"
+	"github.com/libp2p/go-libp2p-peerstore"
+	"github.com/multiformats/go-multiaddr"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -53,7 +52,7 @@ func init() {
 }
 
 func makeBasicServer(index int, bootnode bool, bootinfos ...peerstore.PeerInfo) (Server, error) {
-	return NewServer(localdb.NewMemDB(), keys[index], addrs[index], bootnode, bootinfos)
+	return NewAirblocServer(localdb.NewMemDB(), keys[index], addrs[index], bootnode, bootinfos)
 }
 
 func TestNewServer(t *testing.T) {
@@ -83,10 +82,10 @@ func TestNewServer(t *testing.T) {
 		server.setContext(ctx)
 
 		// ping
-		server.RegisterTopic(p2p.Topic_TEST_PING.String(), &p2p.TestPing{}, Ping)
+		server.RegisterTopic(p2p.Topic_TEST_PING.String(), &p2p.TestPing{}, testPingHandler)
 
 		// pong
-		server.RegisterTopic(p2p.Topic_TEST_PONG.String(), &p2p.TestPong{}, Pong)
+		server.RegisterTopic(p2p.Topic_TEST_PONG.String(), &p2p.TestPong{}, testPongHandler)
 
 		servers[i] = server
 	}

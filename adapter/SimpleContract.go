@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -32,24 +33,9 @@ var (
 // SimpleContractABI is the input ABI used to generate the binding from.
 const SimpleContractABI = "[{\"inputs\":[{\"name\":\"_exchange\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"open\",\"outputs\":[],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"close\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
-// SimpleContractBin is the compiled bytecode used for deploying new contracts.
-const SimpleContractBin = `0x60806040526004361061004b5763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663688e839181146100505780636d55224814610074575b600080fd5b34801561005c57600080fd5b50610072600160c060020a031960043516610089565b005b610072600160c060020a031960043516610419565b60008054604080517f107f04b4000000000000000000000000000000000000000000000000000000008152600160c060020a0319851660048201529051839283928392839283928392600160a060020a039092169163107f04b49160248082019260609290919082900301818787803b15801561010557600080fd5b505af1158015610119573d6000803e3d6000fd5b505050506040513d606081101561012f57600080fd5b50805160208201516040909201519098509096509450600160a060020a03851630146101a5576040805160e560020a62461bcd02815260206004820152601160248201527f6e6f74207468697320636f6e7472616374000000000000000000000000000000604482015290519081900360640190fd5b33600160a060020a038089168214955087161492508380156101c45750825b151561021a576040805160e560020a62461bcd02815260206004820152601560248201527f73686f756c64206861766520617574686f726974790000000000000000000000604482015290519081900360640190fd5b600160c060020a0319881660009081526001602052604090205460ff1680156102615750600160c060020a03198816600090815260016020526040902054610100900460ff165b156103b65760008054604080517f688e8391000000000000000000000000000000000000000000000000000000008152600160c060020a03198c1660048201529051600160a060020a039092169263688e8391926024808401936020939083900390910190829087803b1580156102d757600080fd5b505af11580156102eb573d6000803e3d6000fd5b505050506040513d602081101561030157600080fd5b5051600160c060020a031989166000908152600260209081526040808320546001909252909120805461ffff19169055909250905081151561037957604051600160a060020a0388169082156108fc029083906000818181858888f19350505050158015610373573d6000803e3d6000fd5b506103b1565b604051600160a060020a0387169082156108fc029083906000818181858888f193505050501580156103af573d6000803e3d6000fd5b505b61040f565b83156103e857600160c060020a031988166000908152600160208190526040909120805460ff1916909117905561040f565b600160c060020a031988166000908152600160205260409020805461ff0019166101001790555b5050505050505050565b60008054604080517f107f04b4000000000000000000000000000000000000000000000000000000008152600160c060020a03198516600482015290518392600160a060020a03169163107f04b491602480830192606092919082900301818787803b15801561048857600080fd5b505af115801561049c573d6000803e3d6000fd5b505050506040513d60608110156104b257600080fd5b508051604090910151909250905033600160a060020a03831614610520576040805160e560020a62461bcd02815260206004820152601560248201527f73686f756c64206861766520617574686f726974790000000000000000000000604482015290519081900360640190fd5b600160a060020a0381163014610580576040805160e560020a62461bcd02815260206004820152601160248201527f6e6f74207468697320636f6e7472616374000000000000000000000000000000604482015290519081900360640190fd5b60008054604080517f6d552248000000000000000000000000000000000000000000000000000000008152600160c060020a0319871660048201529051600160a060020a0390921692636d5522489260248084019382900301818387803b1580156105ea57600080fd5b505af11580156105fe573d6000803e3d6000fd5b505050600160c060020a0319909316600081815260026020908152604080832034905580518082018252838152808301848152948452600190925290912090518154925115156101000261ff001991151560ff1990941693909317169190911790555050505600a165627a7a723058203cd362e05ee8713ce37f656cebe014897133c4f22cec1a1f11edb70b7857078f0029`
-
-// DeploySimpleContract deploys a new Ethereum contract, binding an instance of SimpleContract to it.
-func DeploySimpleContract(auth *bind.TransactOpts, backend bind.ContractBackend, _exchange common.Address) (common.Address, *types.Transaction, *SimpleContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(SimpleContractABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(SimpleContractBin), backend, _exchange)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &SimpleContract{SimpleContractCaller: SimpleContractCaller{contract: contract}, SimpleContractTransactor: SimpleContractTransactor{contract: contract}, SimpleContractFilterer: SimpleContractFilterer{contract: contract}}, nil
-}
-
 // SimpleContract is an auto generated Go binding around an Ethereum contract.
 type SimpleContract struct {
+	Address                  common.Address
 	SimpleContractCaller     // Read-only binding to the contract
 	SimpleContractTransactor // Write-only binding to the contract
 	SimpleContractFilterer   // Log filterer for contract events
@@ -107,13 +93,22 @@ type SimpleContractTransactorRaw struct {
 	Contract *SimpleContractTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["SimpleContract"] = (&SimpleContract{}).new
+}
+
 // NewSimpleContract creates a new instance of SimpleContract, bound to a specific deployed contract.
 func NewSimpleContract(address common.Address, backend bind.ContractBackend) (*SimpleContract, error) {
 	contract, err := bindSimpleContract(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &SimpleContract{SimpleContractCaller: SimpleContractCaller{contract: contract}, SimpleContractTransactor: SimpleContractTransactor{contract: contract}, SimpleContractFilterer: SimpleContractFilterer{contract: contract}}, nil
+	return &SimpleContract{
+		Address:                  address,
+		SimpleContractCaller:     SimpleContractCaller{contract: contract},
+		SimpleContractTransactor: SimpleContractTransactor{contract: contract},
+		SimpleContractFilterer:   SimpleContractFilterer{contract: contract},
+	}, nil
 }
 
 // NewSimpleContractCaller creates a new read-only instance of SimpleContract, bound to a specific deployed contract.
@@ -150,6 +145,10 @@ func bindSimpleContract(address common.Address, caller bind.ContractCaller, tran
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_SimpleContract *SimpleContract) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewSimpleContract(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

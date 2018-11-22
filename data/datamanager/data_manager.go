@@ -13,8 +13,8 @@ import (
 )
 
 type Manager struct {
-	kms       *key.Manager
-	client    *blockchain.Client
+	kms       key.Manager
+	client    blockchain.TxClient
 	metadb    *metadb.Database
 	warehouse *warehouse.DataWarehouse
 	registry  *adapter.DataRegistry
@@ -22,16 +22,25 @@ type Manager struct {
 }
 
 func NewManager(
-	kms *key.Manager,
-	client *blockchain.Client,
+	kms key.Manager,
 	localDB localdb.Database,
+	client blockchain.TxClient,
 ) (*Manager, error) {
 	batches := data.NewBatchManager(localDB)
 
+	raw, err := client.GetContract(&adapter.DataRegistry{})
+	if err != nil {
+		return nil, err
+	}
+
+	contract, ok := raw.(*adapter.DataRegistry)
+	if !ok {
+		return nil, blockchain.ErrContractNotFound
+	}
 	return &Manager{
 		kms:      kms,
 		client:   client,
-		registry: client.Contracts.DataRegistry,
+		registry: contract,
 		batches:  batches,
 	}, nil
 }
@@ -53,11 +62,11 @@ func (manager *Manager) Get(dataId string) (*ablCommon.Data, error) {
 	encryptedData := bundle.Data[id.Index]
 
 	// try to decrypt data using own private key / re-encryption key
-	data, err := manager.kms.DecryptExternalData(encryptedData)
+	d, err := manager.kms.DecryptExternalData(encryptedData)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to decrypt data %s", dataId)
 	}
-	return data, nil
+	return d, nil
 }
 
 func (manager *Manager) GetBatch(batch *data.Batch) ([]*ablCommon.Data, error) {
@@ -75,11 +84,11 @@ func (manager *Manager) GetBatch(batch *data.Batch) ([]*ablCommon.Data, error) {
 		encryptedData := bundles[dataId.BundleID].Data[dataId.Index]
 
 		// try to decrypt data using own private key / re-encryption key
-		data, err := manager.kms.DecryptExternalData(encryptedData)
+		d, err := manager.kms.DecryptExternalData(encryptedData)
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to decrypt data %s", dataId)
+			return nil, errors.Wrapf(err, "failed to decrypt data %s", dataId.String())
 		}
-		dataList = append(dataList, data)
+		dataList = append(dataList, d)
 	}
 	return dataList, nil
 }
