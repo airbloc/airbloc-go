@@ -17,7 +17,7 @@ type Backend interface {
 	Service
 	GetService(string) Service
 	AttachService(string, Service)
-	DettachService(string)
+	DetachService(string)
 }
 
 type API interface {

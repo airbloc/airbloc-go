@@ -107,6 +107,6 @@ func (airbloc *AirblocBackend) AttachService(name string, service Service) {
 	airbloc.services[name] = service
 }
 
-func (airbloc *AirblocBackend) DettachService(name string) {
+func (airbloc *AirblocBackend) DetachService(name string) {
 	delete(airbloc.services, name)
 }
