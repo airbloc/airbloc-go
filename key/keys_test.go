@@ -30,3 +30,10 @@ func TestDeriveFromPassword(t *testing.T) {
 	signatureIsCorrect := crypto.VerifySignature(crypto.CompressPubkey(&key.PublicKey), hash[:], sig[:64])
 	assert.True(t, signatureIsCorrect, "Signature is incorrect!")
 }
+
+func TestGenerate(t *testing.T) {
+	key, err := Generate()
+	assert.NoError(t, err)
+
+	key.Save("../private.key")
+}

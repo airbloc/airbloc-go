@@ -26,10 +26,10 @@ contract AppRegistry is Ownable {
 
     function checkOwner(bytes8 _appId, address _owner) public view returns (bool) {
         return get(_appId).owner == _owner;
-    } 
+    }
 
     function register(string _name) public {
-        bytes32 hashOfName = keccak256(_name);
+        bytes32 hashOfName = keccak256(abi.encodePacked(_name));
         require(!appNameExists[hashOfName], "App name already exists.");
         appNameExists[hashOfName] = true;
 
@@ -43,7 +43,7 @@ contract AppRegistry is Ownable {
     function unregister(bytes8 _appId) public {
         require(check(_appId), "App does not exist.");
 
-        bytes32 hashOfName = keccak256(apps[_appId].name);
+        bytes32 hashOfName = keccak256(abi.encodePacked(apps[_appId].name));
         appNameExists[hashOfName] = false;
         delete apps[_appId];
     }

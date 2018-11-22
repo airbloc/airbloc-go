@@ -30,6 +30,7 @@ import (
 	"unicode"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/valyala/fastjson"
 )
 
 // Lang is a target programming language selector to generate bindings for.
@@ -44,7 +45,7 @@ const (
 // to be used as is in client code, but rather as an intermediate struct which
 // enforces compile time type safety and naming convention opposed to having to
 // manually maintain hard coded strings that break on runtime.
-func Bind(types []string, abis []string, bytecodes []string, pkg string) (string, error) {
+func Bind(types string, abis *fastjson.Object, asts *fastjson.Object, pkg string) (string, error) {
 	lang := LangGo
 
 	// Process each individual contract requested binding

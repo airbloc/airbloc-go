@@ -86,7 +86,7 @@ func (manager *Manager) GetBatch(batch *data.Batch) ([]*ablCommon.Data, error) {
 		// try to decrypt data using own private key / re-encryption key
 		d, err := manager.kms.DecryptExternalData(encryptedData)
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to decrypt data %s", dataId)
+			return nil, errors.Wrapf(err, "failed to decrypt data %s", dataId.String())
 		}
 		dataList = append(dataList, d)
 	}
