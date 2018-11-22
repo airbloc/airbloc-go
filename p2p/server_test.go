@@ -9,7 +9,6 @@ import (
 
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/key"
-	airbloc "github.com/airbloc/airbloc-go/p2p/airbloc"
 	"github.com/airbloc/airbloc-go/p2p/common"
 	p2p "github.com/airbloc/airbloc-go/proto/p2p"
 	"github.com/gogo/protobuf/proto"
@@ -53,7 +52,7 @@ func init() {
 }
 
 func makeBasicServer(index int, bootnode bool, bootinfos ...peerstore.PeerInfo) (Server, error) {
-	return airbloc.NewServer(localdb.NewMemDB(), keys[index], addrs[index], bootnode, bootinfos)
+	return NewAirblocServer(localdb.NewMemDB(), keys[index], addrs[index], bootnode, bootinfos)
 }
 
 func TestNewServer(t *testing.T) {

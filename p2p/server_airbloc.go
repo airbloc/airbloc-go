@@ -23,7 +23,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-type AiblocServer struct {
+type AirblocServer struct {
 	// controller
 	mutex  *sync.Mutex
 	ctx    context.Context
@@ -43,7 +43,7 @@ type AiblocServer struct {
 	handlers map[reflect.Type]TopicHandler
 }
 
-func NewServer(
+func NewAirblocServer(
 	localdb localdb.Database,
 	identity *key.Key,
 	addr multiaddr.Multiaddr,
@@ -56,7 +56,7 @@ func NewServer(
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
-	server := &AiblocServer{
+	server := &AirblocServer{
 		ctx:    ctx,
 		cancel: cancel,
 		mutex:  new(sync.Mutex),
@@ -121,7 +121,7 @@ func NewServer(
 }
 
 // DHT
-func (s *AiblocServer) Discovery() {
+func (s *AirblocServer) Discovery() {
 	ticker := time.NewTicker(1 * time.Minute)
 	defer ticker.Stop()
 
@@ -135,14 +135,14 @@ func (s *AiblocServer) Discovery() {
 	}
 }
 
-func (s *AiblocServer) clearPeer() {
+func (s *AirblocServer) clearPeer() {
 	peerStore := s.host.Peerstore()
 	for _, peerID := range peerStore.PeersWithAddrs() {
 		peerStore.ClearAddrs(peerID)
 	}
 }
 
-func (s *AiblocServer) updatePeer() {
+func (s *AirblocServer) updatePeer() {
 	idch, err := s.dht.GetClosestPeers(s.ctx, s.id.KeyString())
 	if s.ctx.Err() != nil {
 		log.Println("context error:", err)
@@ -165,7 +165,7 @@ func (s *AiblocServer) updatePeer() {
 }
 
 // api backend interfaces
-func (s *AiblocServer) Start() error {
+func (s *AirblocServer) Start() error {
 	pid, err := common.NewPid("airbloc", "0.0.1")
 	if err != nil {
 		return errors.Wrap(err, "failed to generate pid")
@@ -197,19 +197,19 @@ func (s *AiblocServer) Start() error {
 	return nil
 }
 
-func (s *AiblocServer) Stop() {
+func (s *AirblocServer) Stop() {
 	s.cancel()
 }
 
-func (s *AiblocServer) RegisterProtocol(pid common.Pid, handler ProtocolHandler, adapters ...ProtocolAdapter) {
+func (s *AirblocServer) RegisterProtocol(pid common.Pid, handler ProtocolHandler, adapters ...ProtocolAdapter) {
 	s.host.RegisterProtocol(pid, handler, adapters...)
 }
 
-func (s *AiblocServer) UnregisterProtocol(pid common.Pid) {
+func (s *AirblocServer) UnregisterProtocol(pid common.Pid) {
 	s.host.UnregisterProtocol(pid)
 }
 
-func (s *AiblocServer) RegisterTopic(topic string, msg proto.Message, handler TopicHandler) error {
+func (s *AirblocServer) RegisterTopic(topic string, msg proto.Message, handler TopicHandler) error {
 	val, ok := p2pr.Topic_value[topic]
 	if !ok {
 		return errors.New("topic already registered")
@@ -225,7 +225,7 @@ func (s *AiblocServer) RegisterTopic(topic string, msg proto.Message, handler To
 	return nil
 }
 
-func (s *AiblocServer) UnregisterTopic(topic string) error {
+func (s *AirblocServer) UnregisterTopic(topic string) error {
 	val, ok := p2pr.Topic_value[topic]
 	if !ok {
 		return errors.New("invalid topic")
@@ -241,31 +241,31 @@ func (s *AiblocServer) UnregisterTopic(topic string) error {
 	return nil
 }
 
-func (s *AiblocServer) Send(ctx context.Context, msg common.ProtoMessage, p peer.ID, pids ...common.Pid) error {
+func (s *AirblocServer) Send(ctx context.Context, msg common.ProtoMessage, p peer.ID, pids ...common.Pid) error {
 	return s.host.Send(ctx, msg, p, pids...)
 }
 
-func (s *AiblocServer) Publish(ctx context.Context, msg common.ProtoMessage, pids ...common.Pid) error {
+func (s *AirblocServer) Publish(ctx context.Context, msg common.ProtoMessage, pids ...common.Pid) error {
 	return s.host.Publish(ctx, msg, pids...)
 }
 
-func (s *AiblocServer) LocalDB() localdb.Database {
+func (s *AirblocServer) LocalDB() localdb.Database {
 	return s.db
 }
 
-func (s *AiblocServer) MetaDB() metadb.Database {
+func (s *AirblocServer) MetaDB() metadb.Database {
 	return nil
 }
 
 // for test
-func (s *AiblocServer) setContext(ctx context.Context) {
+func (s *AirblocServer) setContext(ctx context.Context) {
 	s.ctx = ctx
 }
 
-func (s *AiblocServer) getHost() Host {
+func (s *AirblocServer) getHost() Host {
 	return s.host
 }
 
-func (s *AiblocServer) bootInfo() (peerstore.PeerInfo, error) {
+func (s *AirblocServer) bootInfo() (peerstore.PeerInfo, error) {
 	return s.host.BootInfo()
 }
