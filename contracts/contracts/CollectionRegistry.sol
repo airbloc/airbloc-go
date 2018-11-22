@@ -5,6 +5,7 @@ import "./AppRegistry.sol";
 import "./SchemaRegistry.sol";
 import "./SparseMerkleTree.sol";
 import "./Utils.sol";
+import "./Accounts.sol";
 
 contract CollectionRegistry {
     using SafeMath for uint256;
@@ -33,12 +34,14 @@ contract CollectionRegistry {
 
     mapping (bytes8 => Collection) collections;
 
+    Accounts accounts;
     AppRegistry apps;
     SchemaRegistry schemas;
 
-    constructor(AppRegistry _appReg, SchemaRegistry _schemaReg) public {
+    constructor(Accounts _accounts, AppRegistry _appReg, SchemaRegistry _schemaReg) public {
         apps = _appReg;
         schemas = _schemaReg;
+        accounts = _accounts;
     }
 
     function register(bytes8 _appId, bytes8 _schemaId, uint256 _ratio) public {
@@ -79,23 +82,47 @@ contract CollectionRegistry {
         incentiveRatioSelf = collections[_id].policy.self;
     }
 
-    function allow(bytes8 _id, bytes8 _userId) public {
-        // TODO: User Delegate support?
-        require(exists(_id), "collection does not exist");
+    function allow(bytes8 _id) public {
+        bytes8 userId = accounts.getAccountId(msg.sender);
+        modifyAuth(_id, userId, true);
 
-        collections[_id].dataCollectionOf[_userId].isAllowed = true;
-        collections[_id].dataCollectionOf[_userId].authorizedAt = block.number;
-
-        emit Allowed(_id, _userId);
+        emit Allowed(_id, userId);
     }
 
-    function deny(bytes8 _id, bytes8 _userId) public {
-        require(exists(_id), "collection does not exist");
+    function allowByPassword(bytes8 _id, bytes passwordSignature) public {
+        bytes32 inputHash = keccak256(abi.encodePacked(_id));
+        bytes8 userId = accounts.getAccountIdFromSignature(inputHash, passwordSignature);
 
-        collections[_id].dataCollectionOf[_userId].isAllowed = false;
-        collections[_id].dataCollectionOf[_userId].authorizedAt = block.number;
+        modifyAuth(_id, userId, true);
+        emit Allowed(_id, userId);
+    }
 
-        emit Denied(_id, _userId);
+    function deny(bytes8 _id) public {
+        bytes8 userId = accounts.getAccountId(msg.sender);
+
+        modifyAuth(_id, userId, false);
+        emit Denied(_id, userId);
+    }
+
+    function denyByPassword(bytes8 _id, bytes passwordSignature) public {
+        bytes32 inputHash = keccak256(abi.encodePacked(_id));
+        bytes8 userId = accounts.getAccountIdFromSignature(inputHash, passwordSignature);
+
+        modifyAuth(_id, userId, false);
+        emit Denied(_id, userId);
+    }
+
+    function modifyAuth(bytes8 _id, bytes8 _userId, bool _allow) internal {
+        require(exists(_id), "Collection does not exist.");
+        Auth storage auth = collections[_id].dataCollectionOf[_userId];
+
+        if (auth.authorizedAt != 0 && accounts.isTemporary(_userId)) {
+            // temporary account can't change DAuth settings that already set.
+            revert("The account is currently locked.");
+        }
+
+        auth.isAllowed = _allow;
+        auth.authorizedAt = block.number;
     }
 
     function exists(bytes8 _id) public view returns (bool) {
