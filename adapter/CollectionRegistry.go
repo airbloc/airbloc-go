@@ -31,7 +31,7 @@ var (
 )
 
 // CollectionRegistryABI is the input ABI used to generate the binding from.
-const CollectionRegistryABI = "[{\"inputs\":[{\"name\":\"_appReg\",\"type\":\"address\"},{\"name\":\"_schemaReg\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"registrar\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"appId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"collectionId\",\"type\":\"bytes8\"}],\"name\":\"Registration\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"appId\",\"type\":\"bytes8\"}],\"name\":\"Unregistration\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"userId\",\"type\":\"bytes8\"}],\"name\":\"Allowed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"userId\",\"type\":\"bytes8\"}],\"name\":\"Denied\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"},{\"name\":\"_schemaId\",\"type\":\"bytes8\"},{\"name\":\"_ratio\",\"type\":\"uint256\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"get\",\"outputs\":[{\"name\":\"appId\",\"type\":\"bytes8\"},{\"name\":\"schemaId\",\"type\":\"bytes8\"},{\"name\":\"incentiveRatioSelf\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"},{\"name\":\"_userId\",\"type\":\"bytes8\"}],\"name\":\"allow\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"},{\"name\":\"_userId\",\"type\":\"bytes8\"}],\"name\":\"deny\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"exists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"user\",\"type\":\"bytes8\"}],\"name\":\"isCollectionAllowed\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"user\",\"type\":\"bytes8\"},{\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"isCollectionAllowedAt\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const CollectionRegistryABI = "[{\"inputs\":[{\"name\":\"_accounts\",\"type\":\"address\"},{\"name\":\"_appReg\",\"type\":\"address\"},{\"name\":\"_schemaReg\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"registrar\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"appId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"collectionId\",\"type\":\"bytes8\"}],\"name\":\"Registration\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"appId\",\"type\":\"bytes8\"}],\"name\":\"Unregistration\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"userId\",\"type\":\"bytes8\"}],\"name\":\"Allowed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"userId\",\"type\":\"bytes8\"}],\"name\":\"Denied\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"},{\"name\":\"_schemaId\",\"type\":\"bytes8\"},{\"name\":\"_ratio\",\"type\":\"uint256\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"get\",\"outputs\":[{\"name\":\"appId\",\"type\":\"bytes8\"},{\"name\":\"schemaId\",\"type\":\"bytes8\"},{\"name\":\"incentiveRatioSelf\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"allow\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"allowByPassword\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"deny\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"denyByPassword\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"exists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"user\",\"type\":\"bytes8\"}],\"name\":\"isCollectionAllowed\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"user\",\"type\":\"bytes8\"},{\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"isCollectionAllowedAt\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // CollectionRegistry is an auto generated Go binding around an Ethereum contract.
 type CollectionRegistry struct {
@@ -307,46 +307,88 @@ func (_CollectionRegistry *CollectionRegistryCallerSession) IsCollectionAllowedA
 	return _CollectionRegistry.Contract.IsCollectionAllowedAt(&_CollectionRegistry.CallOpts, collectionId, user, blockNumber)
 }
 
-// Allow is a paid mutator transaction binding the contract method 0xa94d64e0.
+// Allow is a paid mutator transaction binding the contract method 0x4c9b30b4.
 //
-// Solidity: function allow(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistryTransactor) Allow(opts *bind.TransactOpts, _id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.contract.Transact(opts, "allow", _id, _userId)
+// Solidity: function allow(_id bytes8) returns()
+func (_CollectionRegistry *CollectionRegistryTransactor) Allow(opts *bind.TransactOpts, _id [8]byte) (*types.Transaction, error) {
+	return _CollectionRegistry.contract.Transact(opts, "allow", _id)
 }
 
-// Allow is a paid mutator transaction binding the contract method 0xa94d64e0.
+// Allow is a paid mutator transaction binding the contract method 0x4c9b30b4.
 //
-// Solidity: function allow(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistrySession) Allow(_id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.Contract.Allow(&_CollectionRegistry.TransactOpts, _id, _userId)
+// Solidity: function allow(_id bytes8) returns()
+func (_CollectionRegistry *CollectionRegistrySession) Allow(_id [8]byte) (*types.Transaction, error) {
+	return _CollectionRegistry.Contract.Allow(&_CollectionRegistry.TransactOpts, _id)
 }
 
-// Allow is a paid mutator transaction binding the contract method 0xa94d64e0.
+// Allow is a paid mutator transaction binding the contract method 0x4c9b30b4.
 //
-// Solidity: function allow(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistryTransactorSession) Allow(_id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.Contract.Allow(&_CollectionRegistry.TransactOpts, _id, _userId)
+// Solidity: function allow(_id bytes8) returns()
+func (_CollectionRegistry *CollectionRegistryTransactorSession) Allow(_id [8]byte) (*types.Transaction, error) {
+	return _CollectionRegistry.Contract.Allow(&_CollectionRegistry.TransactOpts, _id)
 }
 
-// Deny is a paid mutator transaction binding the contract method 0x2fee2580.
+// AllowByPassword is a paid mutator transaction binding the contract method 0x4a91ee2a.
 //
-// Solidity: function deny(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistryTransactor) Deny(opts *bind.TransactOpts, _id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.contract.Transact(opts, "deny", _id, _userId)
+// Solidity: function allowByPassword(_id bytes8, passwordSignature bytes) returns()
+func (_CollectionRegistry *CollectionRegistryTransactor) AllowByPassword(opts *bind.TransactOpts, _id [8]byte, passwordSignature []byte) (*types.Transaction, error) {
+	return _CollectionRegistry.contract.Transact(opts, "allowByPassword", _id, passwordSignature)
 }
 
-// Deny is a paid mutator transaction binding the contract method 0x2fee2580.
+// AllowByPassword is a paid mutator transaction binding the contract method 0x4a91ee2a.
 //
-// Solidity: function deny(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistrySession) Deny(_id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.Contract.Deny(&_CollectionRegistry.TransactOpts, _id, _userId)
+// Solidity: function allowByPassword(_id bytes8, passwordSignature bytes) returns()
+func (_CollectionRegistry *CollectionRegistrySession) AllowByPassword(_id [8]byte, passwordSignature []byte) (*types.Transaction, error) {
+	return _CollectionRegistry.Contract.AllowByPassword(&_CollectionRegistry.TransactOpts, _id, passwordSignature)
 }
 
-// Deny is a paid mutator transaction binding the contract method 0x2fee2580.
+// AllowByPassword is a paid mutator transaction binding the contract method 0x4a91ee2a.
 //
-// Solidity: function deny(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistryTransactorSession) Deny(_id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.Contract.Deny(&_CollectionRegistry.TransactOpts, _id, _userId)
+// Solidity: function allowByPassword(_id bytes8, passwordSignature bytes) returns()
+func (_CollectionRegistry *CollectionRegistryTransactorSession) AllowByPassword(_id [8]byte, passwordSignature []byte) (*types.Transaction, error) {
+	return _CollectionRegistry.Contract.AllowByPassword(&_CollectionRegistry.TransactOpts, _id, passwordSignature)
+}
+
+// Deny is a paid mutator transaction binding the contract method 0x18856694.
+//
+// Solidity: function deny(_id bytes8) returns()
+func (_CollectionRegistry *CollectionRegistryTransactor) Deny(opts *bind.TransactOpts, _id [8]byte) (*types.Transaction, error) {
+	return _CollectionRegistry.contract.Transact(opts, "deny", _id)
+}
+
+// Deny is a paid mutator transaction binding the contract method 0x18856694.
+//
+// Solidity: function deny(_id bytes8) returns()
+func (_CollectionRegistry *CollectionRegistrySession) Deny(_id [8]byte) (*types.Transaction, error) {
+	return _CollectionRegistry.Contract.Deny(&_CollectionRegistry.TransactOpts, _id)
+}
+
+// Deny is a paid mutator transaction binding the contract method 0x18856694.
+//
+// Solidity: function deny(_id bytes8) returns()
+func (_CollectionRegistry *CollectionRegistryTransactorSession) Deny(_id [8]byte) (*types.Transaction, error) {
+	return _CollectionRegistry.Contract.Deny(&_CollectionRegistry.TransactOpts, _id)
+}
+
+// DenyByPassword is a paid mutator transaction binding the contract method 0x0c9bb7d2.
+//
+// Solidity: function denyByPassword(_id bytes8, passwordSignature bytes) returns()
+func (_CollectionRegistry *CollectionRegistryTransactor) DenyByPassword(opts *bind.TransactOpts, _id [8]byte, passwordSignature []byte) (*types.Transaction, error) {
+	return _CollectionRegistry.contract.Transact(opts, "denyByPassword", _id, passwordSignature)
+}
+
+// DenyByPassword is a paid mutator transaction binding the contract method 0x0c9bb7d2.
+//
+// Solidity: function denyByPassword(_id bytes8, passwordSignature bytes) returns()
+func (_CollectionRegistry *CollectionRegistrySession) DenyByPassword(_id [8]byte, passwordSignature []byte) (*types.Transaction, error) {
+	return _CollectionRegistry.Contract.DenyByPassword(&_CollectionRegistry.TransactOpts, _id, passwordSignature)
+}
+
+// DenyByPassword is a paid mutator transaction binding the contract method 0x0c9bb7d2.
+//
+// Solidity: function denyByPassword(_id bytes8, passwordSignature bytes) returns()
+func (_CollectionRegistry *CollectionRegistryTransactorSession) DenyByPassword(_id [8]byte, passwordSignature []byte) (*types.Transaction, error) {
+	return _CollectionRegistry.Contract.DenyByPassword(&_CollectionRegistry.TransactOpts, _id, passwordSignature)
 }
 
 // Register is a paid mutator transaction binding the contract method 0xa3b42cba.
