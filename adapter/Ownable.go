@@ -12,7 +12,7 @@ import (
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
+	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -25,7 +25,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = common.Big1
+	_ = ethCommon.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -35,7 +35,7 @@ const OwnableABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outpu
 
 // Ownable is an auto generated Go binding around an Ethereum contract.
 type Ownable struct {
-	Address           common.Address
+	Address           ethCommon.Address
 	OwnableCaller     // Read-only binding to the contract
 	OwnableTransactor // Write-only binding to the contract
 	OwnableFilterer   // Log filterer for contract events
@@ -98,7 +98,7 @@ func init() {
 }
 
 // NewOwnable creates a new instance of Ownable, bound to a specific deployed contract.
-func NewOwnable(address common.Address, backend bind.ContractBackend) (*Ownable, error) {
+func NewOwnable(address ethCommon.Address, backend bind.ContractBackend) (*Ownable, error) {
 	contract, err := bindOwnable(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -112,7 +112,7 @@ func NewOwnable(address common.Address, backend bind.ContractBackend) (*Ownable,
 }
 
 // NewOwnableCaller creates a new read-only instance of Ownable, bound to a specific deployed contract.
-func NewOwnableCaller(address common.Address, caller bind.ContractCaller) (*OwnableCaller, error) {
+func NewOwnableCaller(address ethCommon.Address, caller bind.ContractCaller) (*OwnableCaller, error) {
 	contract, err := bindOwnable(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func NewOwnableCaller(address common.Address, caller bind.ContractCaller) (*Owna
 }
 
 // NewOwnableTransactor creates a new write-only instance of Ownable, bound to a specific deployed contract.
-func NewOwnableTransactor(address common.Address, transactor bind.ContractTransactor) (*OwnableTransactor, error) {
+func NewOwnableTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*OwnableTransactor, error) {
 	contract, err := bindOwnable(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -130,7 +130,7 @@ func NewOwnableTransactor(address common.Address, transactor bind.ContractTransa
 }
 
 // NewOwnableFilterer creates a new log filterer instance of Ownable, bound to a specific deployed contract.
-func NewOwnableFilterer(address common.Address, filterer bind.ContractFilterer) (*OwnableFilterer, error) {
+func NewOwnableFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*OwnableFilterer, error) {
 	contract, err := bindOwnable(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -139,7 +139,7 @@ func NewOwnableFilterer(address common.Address, filterer bind.ContractFilterer) 
 }
 
 // bindOwnable binds a generic wrapper to an already deployed contract.
-func bindOwnable(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindOwnable(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(OwnableABI))
 	if err != nil {
 		return nil, err
@@ -147,7 +147,7 @@ func bindOwnable(address common.Address, caller bind.ContractCaller, transactor 
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_Ownable *Ownable) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_Ownable *Ownable) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewOwnable(address, backend)
 }
 
@@ -352,7 +352,7 @@ func (_Ownable *OwnableFilterer) FilterOwnershipRenounced(opts *bind.FilterOpts,
 // Solidity: e OwnershipRenounced(previousOwner indexed address)
 func (_Ownable *OwnableFilterer) ParseOwnershipRenouncedFromReceipt(receipt *types.Receipt) (*OwnableOwnershipRenounced, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
+		if log.Topics[0] == ethCommon.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
 			event := new(OwnableOwnershipRenounced)
 			if err := _Ownable.contract.UnpackLog(event, "OwnershipRenounced", *log); err != nil {
 				return nil, err
@@ -505,7 +505,7 @@ func (_Ownable *OwnableFilterer) FilterOwnershipTransferred(opts *bind.FilterOpt
 // Solidity: e OwnershipTransferred(previousOwner indexed address, newOwner indexed address)
 func (_Ownable *OwnableFilterer) ParseOwnershipTransferredFromReceipt(receipt *types.Receipt) (*OwnableOwnershipTransferred, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
+		if log.Topics[0] == ethCommon.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
 			event := new(OwnableOwnershipTransferred)
 			if err := _Ownable.contract.UnpackLog(event, "OwnershipTransferred", *log); err != nil {
 				return nil, err

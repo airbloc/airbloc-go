@@ -12,7 +12,7 @@ import (
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
+	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -25,17 +25,17 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = common.Big1
+	_ = ethCommon.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
 
 // DataRegistryABI is the input ABI used to generate the binding from.
-const DataRegistryABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_accounts\",\"type\":\"address\"},{\"name\":\"_collections\",\"type\":\"address\"},{\"name\":\"_smt\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"index\",\"type\":\"uint64\"}],\"name\":\"BundleRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"provider\",\"type\":\"address\"}],\"name\":\"Punished\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"}],\"name\":\"OwnershipRenounced\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"usersRoot\",\"type\":\"bytes32\"},{\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"name\":\"uri\",\"type\":\"string\"}],\"name\":\"registerBundle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"bundleIndex\",\"type\":\"uint64\"},{\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"challenge\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"bundleIndex\",\"type\":\"uint64\"},{\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"isMyDataIncluded\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const DataRegistryABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_accounts\",\"type\":\"address\"},{\"name\":\"_collections\",\"type\":\"address\"},{\"name\":\"_smt\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"index\",\"type\":\"uint64\"}],\"name\":\"BundleRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"provider\",\"type\":\"address\"}],\"name\":\"Punished\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"}],\"name\":\"OwnershipRenounced\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"usersRoot\",\"type\":\"bytes32\"},{\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"name\":\"uri\",\"type\":\"string\"}],\"name\":\"registerBundle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"bundleIndex\",\"type\":\"uint64\"},{\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"challenge\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"bundleIndex\",\"type\":\"uint64\"},{\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"isMyDataIncluded\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // DataRegistry is an auto generated Go binding around an Ethereum contract.
 type DataRegistry struct {
-	Address                common.Address
+	Address                ethCommon.Address
 	DataRegistryCaller     // Read-only binding to the contract
 	DataRegistryTransactor // Write-only binding to the contract
 	DataRegistryFilterer   // Log filterer for contract events
@@ -93,12 +93,20 @@ type DataRegistryTransactorRaw struct {
 	Contract *DataRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+type DataRegistryBundle struct {
+	BundleDataHash        ethCommon.Hash
+	CreatedAt             *big.Int
+	ProofOfPosessionCount uint64
+	Uri                   string
+	UsersRoot             ethCommon.Hash
+}
+
 func init() {
 	blockchain.ContractList["DataRegistry"] = (&DataRegistry{}).new
 }
 
 // NewDataRegistry creates a new instance of DataRegistry, bound to a specific deployed contract.
-func NewDataRegistry(address common.Address, backend bind.ContractBackend) (*DataRegistry, error) {
+func NewDataRegistry(address ethCommon.Address, backend bind.ContractBackend) (*DataRegistry, error) {
 	contract, err := bindDataRegistry(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -112,7 +120,7 @@ func NewDataRegistry(address common.Address, backend bind.ContractBackend) (*Dat
 }
 
 // NewDataRegistryCaller creates a new read-only instance of DataRegistry, bound to a specific deployed contract.
-func NewDataRegistryCaller(address common.Address, caller bind.ContractCaller) (*DataRegistryCaller, error) {
+func NewDataRegistryCaller(address ethCommon.Address, caller bind.ContractCaller) (*DataRegistryCaller, error) {
 	contract, err := bindDataRegistry(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -121,7 +129,7 @@ func NewDataRegistryCaller(address common.Address, caller bind.ContractCaller) (
 }
 
 // NewDataRegistryTransactor creates a new write-only instance of DataRegistry, bound to a specific deployed contract.
-func NewDataRegistryTransactor(address common.Address, transactor bind.ContractTransactor) (*DataRegistryTransactor, error) {
+func NewDataRegistryTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*DataRegistryTransactor, error) {
 	contract, err := bindDataRegistry(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -130,7 +138,7 @@ func NewDataRegistryTransactor(address common.Address, transactor bind.ContractT
 }
 
 // NewDataRegistryFilterer creates a new log filterer instance of DataRegistry, bound to a specific deployed contract.
-func NewDataRegistryFilterer(address common.Address, filterer bind.ContractFilterer) (*DataRegistryFilterer, error) {
+func NewDataRegistryFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*DataRegistryFilterer, error) {
 	contract, err := bindDataRegistry(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -139,7 +147,7 @@ func NewDataRegistryFilterer(address common.Address, filterer bind.ContractFilte
 }
 
 // bindDataRegistry binds a generic wrapper to an already deployed contract.
-func bindDataRegistry(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindDataRegistry(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(DataRegistryABI))
 	if err != nil {
 		return nil, err
@@ -147,7 +155,7 @@ func bindDataRegistry(address common.Address, caller bind.ContractCaller, transa
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_DataRegistry *DataRegistry) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_DataRegistry *DataRegistry) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewDataRegistry(address, backend)
 }
 
@@ -187,6 +195,30 @@ func (_DataRegistry *DataRegistryTransactorRaw) Transfer(opts *bind.TransactOpts
 // Transact invokes the (paid) contract method with params as input values.
 func (_DataRegistry *DataRegistryTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
 	return _DataRegistry.Contract.contract.Transact(opts, method, params...)
+}
+
+// Challenge is a free data retrieval call binding the contract method 0x1ac30935.
+//
+// Solidity: function challenge(collectionId bytes8, bundleIndex uint64, proof bytes) constant returns()
+func (_DataRegistry *DataRegistryCaller) Challenge(opts *bind.CallOpts, collectionId [8]byte, bundleIndex uint64, proof []byte) error {
+	var ()
+	out := &[]interface{}{}
+	err := _DataRegistry.contract.Call(opts, out, "challenge", collectionId, bundleIndex, proof)
+	return err
+}
+
+// Challenge is a free data retrieval call binding the contract method 0x1ac30935.
+//
+// Solidity: function challenge(collectionId bytes8, bundleIndex uint64, proof bytes) constant returns()
+func (_DataRegistry *DataRegistrySession) Challenge(collectionId [8]byte, bundleIndex uint64, proof []byte) error {
+	return _DataRegistry.Contract.Challenge(&_DataRegistry.CallOpts, collectionId, bundleIndex, proof)
+}
+
+// Challenge is a free data retrieval call binding the contract method 0x1ac30935.
+//
+// Solidity: function challenge(collectionId bytes8, bundleIndex uint64, proof bytes) constant returns()
+func (_DataRegistry *DataRegistryCallerSession) Challenge(collectionId [8]byte, bundleIndex uint64, proof []byte) error {
+	return _DataRegistry.Contract.Challenge(&_DataRegistry.CallOpts, collectionId, bundleIndex, proof)
 }
 
 // IsMyDataIncluded is a free data retrieval call binding the contract method 0x45ab73d1.
@@ -239,27 +271,6 @@ func (_DataRegistry *DataRegistrySession) Owner() (common.Address, error) {
 // Solidity: function owner() constant returns(address)
 func (_DataRegistry *DataRegistryCallerSession) Owner() (common.Address, error) {
 	return _DataRegistry.Contract.Owner(&_DataRegistry.CallOpts)
-}
-
-// Challenge is a paid mutator transaction binding the contract method 0x1ac30935.
-//
-// Solidity: function challenge(collectionId bytes8, bundleIndex uint64, proof bytes) returns()
-func (_DataRegistry *DataRegistryTransactor) Challenge(opts *bind.TransactOpts, collectionId [8]byte, bundleIndex uint64, proof []byte) (*types.Transaction, error) {
-	return _DataRegistry.contract.Transact(opts, "challenge", collectionId, bundleIndex, proof)
-}
-
-// Challenge is a paid mutator transaction binding the contract method 0x1ac30935.
-//
-// Solidity: function challenge(collectionId bytes8, bundleIndex uint64, proof bytes) returns()
-func (_DataRegistry *DataRegistrySession) Challenge(collectionId [8]byte, bundleIndex uint64, proof []byte) (*types.Transaction, error) {
-	return _DataRegistry.Contract.Challenge(&_DataRegistry.TransactOpts, collectionId, bundleIndex, proof)
-}
-
-// Challenge is a paid mutator transaction binding the contract method 0x1ac30935.
-//
-// Solidity: function challenge(collectionId bytes8, bundleIndex uint64, proof bytes) returns()
-func (_DataRegistry *DataRegistryTransactorSession) Challenge(collectionId [8]byte, bundleIndex uint64, proof []byte) (*types.Transaction, error) {
-	return _DataRegistry.Contract.Challenge(&_DataRegistry.TransactOpts, collectionId, bundleIndex, proof)
 }
 
 // RegisterBundle is a paid mutator transaction binding the contract method 0xbde66f2c.
@@ -421,7 +432,7 @@ func (_DataRegistry *DataRegistryFilterer) FilterBundleRegistered(opts *bind.Fil
 // Solidity: e BundleRegistered(collectionId indexed bytes8, index uint64)
 func (_DataRegistry *DataRegistryFilterer) ParseBundleRegisteredFromReceipt(receipt *types.Receipt) (*DataRegistryBundleRegistered, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xab7212f2e313639f22d9f8d95bc067b9289814ce97d8136a08e37d239023b1a3") {
+		if log.Topics[0] == ethCommon.HexToHash("0xab7212f2e313639f22d9f8d95bc067b9289814ce97d8136a08e37d239023b1a3") {
 			event := new(DataRegistryBundleRegistered)
 			if err := _DataRegistry.contract.UnpackLog(event, "BundleRegistered", *log); err != nil {
 				return nil, err
@@ -569,7 +580,7 @@ func (_DataRegistry *DataRegistryFilterer) FilterOwnershipRenounced(opts *bind.F
 // Solidity: e OwnershipRenounced(previousOwner indexed address)
 func (_DataRegistry *DataRegistryFilterer) ParseOwnershipRenouncedFromReceipt(receipt *types.Receipt) (*DataRegistryOwnershipRenounced, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
+		if log.Topics[0] == ethCommon.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
 			event := new(DataRegistryOwnershipRenounced)
 			if err := _DataRegistry.contract.UnpackLog(event, "OwnershipRenounced", *log); err != nil {
 				return nil, err
@@ -722,7 +733,7 @@ func (_DataRegistry *DataRegistryFilterer) FilterOwnershipTransferred(opts *bind
 // Solidity: e OwnershipTransferred(previousOwner indexed address, newOwner indexed address)
 func (_DataRegistry *DataRegistryFilterer) ParseOwnershipTransferredFromReceipt(receipt *types.Receipt) (*DataRegistryOwnershipTransferred, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
+		if log.Topics[0] == ethCommon.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
 			event := new(DataRegistryOwnershipTransferred)
 			if err := _DataRegistry.contract.UnpackLog(event, "OwnershipTransferred", *log); err != nil {
 				return nil, err
@@ -869,7 +880,7 @@ func (_DataRegistry *DataRegistryFilterer) FilterPunished(opts *bind.FilterOpts)
 // Solidity: e Punished(provider address)
 func (_DataRegistry *DataRegistryFilterer) ParsePunishedFromReceipt(receipt *types.Receipt) (*DataRegistryPunished, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xf6a2a2bc3297e42d6b873d907a8cd2699857e3d3700babd53b7061a3b4de6094") {
+		if log.Topics[0] == ethCommon.HexToHash("0xf6a2a2bc3297e42d6b873d907a8cd2699857e3d3700babd53b7061a3b4de6094") {
 			event := new(DataRegistryPunished)
 			if err := _DataRegistry.contract.UnpackLog(event, "Punished", *log); err != nil {
 				return nil, err

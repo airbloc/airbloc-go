@@ -9,10 +9,11 @@ import (
 	"strings"
 
 	"github.com/airbloc/airbloc-go/blockchain"
+	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
+	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -25,7 +26,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = common.Big1
+	_ = ethCommon.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -35,7 +36,7 @@ const ExchangeLibABI = "[]"
 
 // ExchangeLib is an auto generated Go binding around an Ethereum contract.
 type ExchangeLib struct {
-	Address               common.Address
+	Address               ethCommon.Address
 	ExchangeLibCaller     // Read-only binding to the contract
 	ExchangeLibTransactor // Write-only binding to the contract
 	ExchangeLibFilterer   // Log filterer for contract events
@@ -93,12 +94,34 @@ type ExchangeLibTransactorRaw struct {
 	Contract *ExchangeLibTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+type ExchangeLibStatus int8
+
+const (
+	StatusCLOSED   = 5
+	StatusNEUTRAL  = 0
+	StatusOPENED   = 4
+	StatusPENDING  = 1
+	StatusREJECTED = 3
+	StatusSETTLED  = 2
+)
+
+type ExchangeLibOffer struct {
+	ContractAddr ethCommon.Address
+	Offeree      ethCommon.Address
+	Offeror      ethCommon.Address
+	Status       ExchangeLibStatus
+}
+
+type ExchangeLibOrderbook struct {
+	Orders map[ablCommon.ID]ExchangeLibOffer
+}
+
 func init() {
 	blockchain.ContractList["ExchangeLib"] = (&ExchangeLib{}).new
 }
 
 // NewExchangeLib creates a new instance of ExchangeLib, bound to a specific deployed contract.
-func NewExchangeLib(address common.Address, backend bind.ContractBackend) (*ExchangeLib, error) {
+func NewExchangeLib(address ethCommon.Address, backend bind.ContractBackend) (*ExchangeLib, error) {
 	contract, err := bindExchangeLib(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -112,7 +135,7 @@ func NewExchangeLib(address common.Address, backend bind.ContractBackend) (*Exch
 }
 
 // NewExchangeLibCaller creates a new read-only instance of ExchangeLib, bound to a specific deployed contract.
-func NewExchangeLibCaller(address common.Address, caller bind.ContractCaller) (*ExchangeLibCaller, error) {
+func NewExchangeLibCaller(address ethCommon.Address, caller bind.ContractCaller) (*ExchangeLibCaller, error) {
 	contract, err := bindExchangeLib(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -121,7 +144,7 @@ func NewExchangeLibCaller(address common.Address, caller bind.ContractCaller) (*
 }
 
 // NewExchangeLibTransactor creates a new write-only instance of ExchangeLib, bound to a specific deployed contract.
-func NewExchangeLibTransactor(address common.Address, transactor bind.ContractTransactor) (*ExchangeLibTransactor, error) {
+func NewExchangeLibTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*ExchangeLibTransactor, error) {
 	contract, err := bindExchangeLib(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -130,7 +153,7 @@ func NewExchangeLibTransactor(address common.Address, transactor bind.ContractTr
 }
 
 // NewExchangeLibFilterer creates a new log filterer instance of ExchangeLib, bound to a specific deployed contract.
-func NewExchangeLibFilterer(address common.Address, filterer bind.ContractFilterer) (*ExchangeLibFilterer, error) {
+func NewExchangeLibFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*ExchangeLibFilterer, error) {
 	contract, err := bindExchangeLib(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -139,7 +162,7 @@ func NewExchangeLibFilterer(address common.Address, filterer bind.ContractFilter
 }
 
 // bindExchangeLib binds a generic wrapper to an already deployed contract.
-func bindExchangeLib(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindExchangeLib(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(ExchangeLibABI))
 	if err != nil {
 		return nil, err
@@ -147,7 +170,7 @@ func bindExchangeLib(address common.Address, caller bind.ContractCaller, transac
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_ExchangeLib *ExchangeLib) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_ExchangeLib *ExchangeLib) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewExchangeLib(address, backend)
 }
 

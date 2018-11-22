@@ -3,8 +3,6 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -16,12 +14,6 @@ import (
 
 const BuildOutput = "adapter"
 const ContractDir = "contracts/build/contracts"
-
-type Contract struct {
-	Name string
-	ABI  *fastjson.Object
-	AST  *fastjson.Object
-}
 
 func main() {
 	fileInfos, err := ioutil.ReadDir(ContractDir)
@@ -38,7 +30,7 @@ func main() {
 		}
 	}
 
-	contracts := make([]Contract, len(fileNames))
+	contracts := make([]utils.Contract, len(fileNames))
 	for i, fileName := range fileNames {
 		data, err := ioutil.ReadFile(ContractDir + "/" + fileName)
 		if err != nil {
@@ -53,41 +45,27 @@ func main() {
 			return
 		}
 
-		contracts[i] = Contract{
+		contracts[i] = utils.Contract{
 			Name: string(v.GetStringBytes("contractName")),
-			ABI:  v.GetObject("abi"),
-			AST:  v.GetObject("ast"),
+			ABI:  v.Get("abi"),
+			AST:  v.Get("ast"),
 		}
 	}
 
 	for _, contract := range contracts {
-		abi, err := json.Marshal(contract.ABI)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
 		if contract.Name == "Migrations" {
 			continue
 		}
 
-		outPath := path.Join(BuildOutput, contract.Name+".go")
-		fmt.Println(string(abi))
-
-		tmp, err := utils.Bind(
-			[]string{contract.Name},
-			[]string{string(abi)},
-			[]string{""},
-			"adapter",
-		)
+		tmp, err := utils.Bind(contract, "adapter")
 		if err != nil {
-			log.Println(err)
+			log.Printf("%+v", err)
 			return
 		}
 
 		if err = ioutil.WriteFile(
-			outPath,
-			[]byte(tmp),
+			path.Join(BuildOutput, contract.Name+".go"),
+			tmp,
 			os.ModePerm,
 		); err != nil {
 			log.Println(err)

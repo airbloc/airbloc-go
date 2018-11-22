@@ -12,7 +12,7 @@ import (
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
+	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -25,7 +25,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = common.Big1
+	_ = ethCommon.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -35,7 +35,7 @@ const SparseMerkleTreeABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"ty
 
 // SparseMerkleTree is an auto generated Go binding around an Ethereum contract.
 type SparseMerkleTree struct {
-	Address                    common.Address
+	Address                    ethCommon.Address
 	SparseMerkleTreeCaller     // Read-only binding to the contract
 	SparseMerkleTreeTransactor // Write-only binding to the contract
 	SparseMerkleTreeFilterer   // Log filterer for contract events
@@ -98,7 +98,7 @@ func init() {
 }
 
 // NewSparseMerkleTree creates a new instance of SparseMerkleTree, bound to a specific deployed contract.
-func NewSparseMerkleTree(address common.Address, backend bind.ContractBackend) (*SparseMerkleTree, error) {
+func NewSparseMerkleTree(address ethCommon.Address, backend bind.ContractBackend) (*SparseMerkleTree, error) {
 	contract, err := bindSparseMerkleTree(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -112,7 +112,7 @@ func NewSparseMerkleTree(address common.Address, backend bind.ContractBackend) (
 }
 
 // NewSparseMerkleTreeCaller creates a new read-only instance of SparseMerkleTree, bound to a specific deployed contract.
-func NewSparseMerkleTreeCaller(address common.Address, caller bind.ContractCaller) (*SparseMerkleTreeCaller, error) {
+func NewSparseMerkleTreeCaller(address ethCommon.Address, caller bind.ContractCaller) (*SparseMerkleTreeCaller, error) {
 	contract, err := bindSparseMerkleTree(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func NewSparseMerkleTreeCaller(address common.Address, caller bind.ContractCalle
 }
 
 // NewSparseMerkleTreeTransactor creates a new write-only instance of SparseMerkleTree, bound to a specific deployed contract.
-func NewSparseMerkleTreeTransactor(address common.Address, transactor bind.ContractTransactor) (*SparseMerkleTreeTransactor, error) {
+func NewSparseMerkleTreeTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*SparseMerkleTreeTransactor, error) {
 	contract, err := bindSparseMerkleTree(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -130,7 +130,7 @@ func NewSparseMerkleTreeTransactor(address common.Address, transactor bind.Contr
 }
 
 // NewSparseMerkleTreeFilterer creates a new log filterer instance of SparseMerkleTree, bound to a specific deployed contract.
-func NewSparseMerkleTreeFilterer(address common.Address, filterer bind.ContractFilterer) (*SparseMerkleTreeFilterer, error) {
+func NewSparseMerkleTreeFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*SparseMerkleTreeFilterer, error) {
 	contract, err := bindSparseMerkleTree(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -139,7 +139,7 @@ func NewSparseMerkleTreeFilterer(address common.Address, filterer bind.ContractF
 }
 
 // bindSparseMerkleTree binds a generic wrapper to an already deployed contract.
-func bindSparseMerkleTree(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindSparseMerkleTree(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(SparseMerkleTreeABI))
 	if err != nil {
 		return nil, err
@@ -147,7 +147,7 @@ func bindSparseMerkleTree(address common.Address, caller bind.ContractCaller, tr
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_SparseMerkleTree *SparseMerkleTree) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_SparseMerkleTree *SparseMerkleTree) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewSparseMerkleTree(address, backend)
 }
 

@@ -12,7 +12,7 @@ import (
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
+	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -25,7 +25,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = common.Big1
+	_ = ethCommon.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -35,7 +35,7 @@ const WhitelistABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"_operator\",\"
 
 // Whitelist is an auto generated Go binding around an Ethereum contract.
 type Whitelist struct {
-	Address             common.Address
+	Address             ethCommon.Address
 	WhitelistCaller     // Read-only binding to the contract
 	WhitelistTransactor // Write-only binding to the contract
 	WhitelistFilterer   // Log filterer for contract events
@@ -98,7 +98,7 @@ func init() {
 }
 
 // NewWhitelist creates a new instance of Whitelist, bound to a specific deployed contract.
-func NewWhitelist(address common.Address, backend bind.ContractBackend) (*Whitelist, error) {
+func NewWhitelist(address ethCommon.Address, backend bind.ContractBackend) (*Whitelist, error) {
 	contract, err := bindWhitelist(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -112,7 +112,7 @@ func NewWhitelist(address common.Address, backend bind.ContractBackend) (*Whitel
 }
 
 // NewWhitelistCaller creates a new read-only instance of Whitelist, bound to a specific deployed contract.
-func NewWhitelistCaller(address common.Address, caller bind.ContractCaller) (*WhitelistCaller, error) {
+func NewWhitelistCaller(address ethCommon.Address, caller bind.ContractCaller) (*WhitelistCaller, error) {
 	contract, err := bindWhitelist(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func NewWhitelistCaller(address common.Address, caller bind.ContractCaller) (*Wh
 }
 
 // NewWhitelistTransactor creates a new write-only instance of Whitelist, bound to a specific deployed contract.
-func NewWhitelistTransactor(address common.Address, transactor bind.ContractTransactor) (*WhitelistTransactor, error) {
+func NewWhitelistTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*WhitelistTransactor, error) {
 	contract, err := bindWhitelist(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -130,7 +130,7 @@ func NewWhitelistTransactor(address common.Address, transactor bind.ContractTran
 }
 
 // NewWhitelistFilterer creates a new log filterer instance of Whitelist, bound to a specific deployed contract.
-func NewWhitelistFilterer(address common.Address, filterer bind.ContractFilterer) (*WhitelistFilterer, error) {
+func NewWhitelistFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*WhitelistFilterer, error) {
 	contract, err := bindWhitelist(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -139,7 +139,7 @@ func NewWhitelistFilterer(address common.Address, filterer bind.ContractFilterer
 }
 
 // bindWhitelist binds a generic wrapper to an already deployed contract.
-func bindWhitelist(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindWhitelist(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(WhitelistABI))
 	if err != nil {
 		return nil, err
@@ -147,7 +147,7 @@ func bindWhitelist(address common.Address, caller bind.ContractCaller, transacto
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_Whitelist *Whitelist) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_Whitelist *Whitelist) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewWhitelist(address, backend)
 }
 
@@ -538,7 +538,7 @@ func (_Whitelist *WhitelistFilterer) FilterOwnershipRenounced(opts *bind.FilterO
 // Solidity: e OwnershipRenounced(previousOwner indexed address)
 func (_Whitelist *WhitelistFilterer) ParseOwnershipRenouncedFromReceipt(receipt *types.Receipt) (*WhitelistOwnershipRenounced, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
+		if log.Topics[0] == ethCommon.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
 			event := new(WhitelistOwnershipRenounced)
 			if err := _Whitelist.contract.UnpackLog(event, "OwnershipRenounced", *log); err != nil {
 				return nil, err
@@ -691,7 +691,7 @@ func (_Whitelist *WhitelistFilterer) FilterOwnershipTransferred(opts *bind.Filte
 // Solidity: e OwnershipTransferred(previousOwner indexed address, newOwner indexed address)
 func (_Whitelist *WhitelistFilterer) ParseOwnershipTransferredFromReceipt(receipt *types.Receipt) (*WhitelistOwnershipTransferred, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
+		if log.Topics[0] == ethCommon.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
 			event := new(WhitelistOwnershipTransferred)
 			if err := _Whitelist.contract.UnpackLog(event, "OwnershipTransferred", *log); err != nil {
 				return nil, err
@@ -844,7 +844,7 @@ func (_Whitelist *WhitelistFilterer) FilterRoleAdded(opts *bind.FilterOpts, oper
 // Solidity: e RoleAdded(operator indexed address, role string)
 func (_Whitelist *WhitelistFilterer) ParseRoleAddedFromReceipt(receipt *types.Receipt) (*WhitelistRoleAdded, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xbfec83d64eaa953f2708271a023ab9ee82057f8f3578d548c1a4ba0b5b700489") {
+		if log.Topics[0] == ethCommon.HexToHash("0xbfec83d64eaa953f2708271a023ab9ee82057f8f3578d548c1a4ba0b5b700489") {
 			event := new(WhitelistRoleAdded)
 			if err := _Whitelist.contract.UnpackLog(event, "RoleAdded", *log); err != nil {
 				return nil, err
@@ -993,7 +993,7 @@ func (_Whitelist *WhitelistFilterer) FilterRoleRemoved(opts *bind.FilterOpts, op
 // Solidity: e RoleRemoved(operator indexed address, role string)
 func (_Whitelist *WhitelistFilterer) ParseRoleRemovedFromReceipt(receipt *types.Receipt) (*WhitelistRoleRemoved, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xd211483f91fc6eff862467f8de606587a30c8fc9981056f051b897a418df803a") {
+		if log.Topics[0] == ethCommon.HexToHash("0xd211483f91fc6eff862467f8de606587a30c8fc9981056f051b897a418df803a") {
 			event := new(WhitelistRoleRemoved)
 			if err := _Whitelist.contract.UnpackLog(event, "RoleRemoved", *log); err != nil {
 				return nil, err

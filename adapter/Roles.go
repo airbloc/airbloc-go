@@ -12,7 +12,7 @@ import (
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
+	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -25,7 +25,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = common.Big1
+	_ = ethCommon.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -35,7 +35,7 @@ const RolesABI = "[]"
 
 // Roles is an auto generated Go binding around an Ethereum contract.
 type Roles struct {
-	Address         common.Address
+	Address         ethCommon.Address
 	RolesCaller     // Read-only binding to the contract
 	RolesTransactor // Write-only binding to the contract
 	RolesFilterer   // Log filterer for contract events
@@ -93,12 +93,16 @@ type RolesTransactorRaw struct {
 	Contract *RolesTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+type RolesRole struct {
+	Bearer map[ethCommon.Address]bool
+}
+
 func init() {
 	blockchain.ContractList["Roles"] = (&Roles{}).new
 }
 
 // NewRoles creates a new instance of Roles, bound to a specific deployed contract.
-func NewRoles(address common.Address, backend bind.ContractBackend) (*Roles, error) {
+func NewRoles(address ethCommon.Address, backend bind.ContractBackend) (*Roles, error) {
 	contract, err := bindRoles(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -112,7 +116,7 @@ func NewRoles(address common.Address, backend bind.ContractBackend) (*Roles, err
 }
 
 // NewRolesCaller creates a new read-only instance of Roles, bound to a specific deployed contract.
-func NewRolesCaller(address common.Address, caller bind.ContractCaller) (*RolesCaller, error) {
+func NewRolesCaller(address ethCommon.Address, caller bind.ContractCaller) (*RolesCaller, error) {
 	contract, err := bindRoles(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -121,7 +125,7 @@ func NewRolesCaller(address common.Address, caller bind.ContractCaller) (*RolesC
 }
 
 // NewRolesTransactor creates a new write-only instance of Roles, bound to a specific deployed contract.
-func NewRolesTransactor(address common.Address, transactor bind.ContractTransactor) (*RolesTransactor, error) {
+func NewRolesTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*RolesTransactor, error) {
 	contract, err := bindRoles(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -130,7 +134,7 @@ func NewRolesTransactor(address common.Address, transactor bind.ContractTransact
 }
 
 // NewRolesFilterer creates a new log filterer instance of Roles, bound to a specific deployed contract.
-func NewRolesFilterer(address common.Address, filterer bind.ContractFilterer) (*RolesFilterer, error) {
+func NewRolesFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*RolesFilterer, error) {
 	contract, err := bindRoles(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -139,7 +143,7 @@ func NewRolesFilterer(address common.Address, filterer bind.ContractFilterer) (*
 }
 
 // bindRoles binds a generic wrapper to an already deployed contract.
-func bindRoles(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindRoles(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(RolesABI))
 	if err != nil {
 		return nil, err
@@ -147,7 +151,7 @@ func bindRoles(address common.Address, caller bind.ContractCaller, transactor bi
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_Roles *Roles) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_Roles *Roles) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewRoles(address, backend)
 }
 

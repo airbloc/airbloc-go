@@ -12,7 +12,7 @@ import (
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
+	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -25,7 +25,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = common.Big1
+	_ = ethCommon.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -35,7 +35,7 @@ const RBACABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"
 
 // RBAC is an auto generated Go binding around an Ethereum contract.
 type RBAC struct {
-	Address        common.Address
+	Address        ethCommon.Address
 	RBACCaller     // Read-only binding to the contract
 	RBACTransactor // Write-only binding to the contract
 	RBACFilterer   // Log filterer for contract events
@@ -98,7 +98,7 @@ func init() {
 }
 
 // NewRBAC creates a new instance of RBAC, bound to a specific deployed contract.
-func NewRBAC(address common.Address, backend bind.ContractBackend) (*RBAC, error) {
+func NewRBAC(address ethCommon.Address, backend bind.ContractBackend) (*RBAC, error) {
 	contract, err := bindRBAC(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -112,7 +112,7 @@ func NewRBAC(address common.Address, backend bind.ContractBackend) (*RBAC, error
 }
 
 // NewRBACCaller creates a new read-only instance of RBAC, bound to a specific deployed contract.
-func NewRBACCaller(address common.Address, caller bind.ContractCaller) (*RBACCaller, error) {
+func NewRBACCaller(address ethCommon.Address, caller bind.ContractCaller) (*RBACCaller, error) {
 	contract, err := bindRBAC(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func NewRBACCaller(address common.Address, caller bind.ContractCaller) (*RBACCal
 }
 
 // NewRBACTransactor creates a new write-only instance of RBAC, bound to a specific deployed contract.
-func NewRBACTransactor(address common.Address, transactor bind.ContractTransactor) (*RBACTransactor, error) {
+func NewRBACTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*RBACTransactor, error) {
 	contract, err := bindRBAC(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -130,7 +130,7 @@ func NewRBACTransactor(address common.Address, transactor bind.ContractTransacto
 }
 
 // NewRBACFilterer creates a new log filterer instance of RBAC, bound to a specific deployed contract.
-func NewRBACFilterer(address common.Address, filterer bind.ContractFilterer) (*RBACFilterer, error) {
+func NewRBACFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*RBACFilterer, error) {
 	contract, err := bindRBAC(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -139,7 +139,7 @@ func NewRBACFilterer(address common.Address, filterer bind.ContractFilterer) (*R
 }
 
 // bindRBAC binds a generic wrapper to an already deployed contract.
-func bindRBAC(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindRBAC(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(RBACABI))
 	if err != nil {
 		return nil, err
@@ -147,7 +147,7 @@ func bindRBAC(address common.Address, caller bind.ContractCaller, transactor bin
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_RBAC *RBAC) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_RBAC *RBAC) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewRBAC(address, backend)
 }
 
@@ -335,7 +335,7 @@ func (_RBAC *RBACFilterer) FilterRoleAdded(opts *bind.FilterOpts, operator []com
 // Solidity: e RoleAdded(operator indexed address, role string)
 func (_RBAC *RBACFilterer) ParseRoleAddedFromReceipt(receipt *types.Receipt) (*RBACRoleAdded, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xbfec83d64eaa953f2708271a023ab9ee82057f8f3578d548c1a4ba0b5b700489") {
+		if log.Topics[0] == ethCommon.HexToHash("0xbfec83d64eaa953f2708271a023ab9ee82057f8f3578d548c1a4ba0b5b700489") {
 			event := new(RBACRoleAdded)
 			if err := _RBAC.contract.UnpackLog(event, "RoleAdded", *log); err != nil {
 				return nil, err
@@ -484,7 +484,7 @@ func (_RBAC *RBACFilterer) FilterRoleRemoved(opts *bind.FilterOpts, operator []c
 // Solidity: e RoleRemoved(operator indexed address, role string)
 func (_RBAC *RBACFilterer) ParseRoleRemovedFromReceipt(receipt *types.Receipt) (*RBACRoleRemoved, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xd211483f91fc6eff862467f8de606587a30c8fc9981056f051b897a418df803a") {
+		if log.Topics[0] == ethCommon.HexToHash("0xd211483f91fc6eff862467f8de606587a30c8fc9981056f051b897a418df803a") {
 			event := new(RBACRoleRemoved)
 			if err := _RBAC.contract.UnpackLog(event, "RoleRemoved", *log); err != nil {
 				return nil, err

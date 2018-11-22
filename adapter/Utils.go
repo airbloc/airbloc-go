@@ -12,7 +12,7 @@ import (
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
+	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -25,7 +25,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = common.Big1
+	_ = ethCommon.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -35,7 +35,7 @@ const UtilsABI = "[]"
 
 // Utils is an auto generated Go binding around an Ethereum contract.
 type Utils struct {
-	Address         common.Address
+	Address         ethCommon.Address
 	UtilsCaller     // Read-only binding to the contract
 	UtilsTransactor // Write-only binding to the contract
 	UtilsFilterer   // Log filterer for contract events
@@ -98,7 +98,7 @@ func init() {
 }
 
 // NewUtils creates a new instance of Utils, bound to a specific deployed contract.
-func NewUtils(address common.Address, backend bind.ContractBackend) (*Utils, error) {
+func NewUtils(address ethCommon.Address, backend bind.ContractBackend) (*Utils, error) {
 	contract, err := bindUtils(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -112,7 +112,7 @@ func NewUtils(address common.Address, backend bind.ContractBackend) (*Utils, err
 }
 
 // NewUtilsCaller creates a new read-only instance of Utils, bound to a specific deployed contract.
-func NewUtilsCaller(address common.Address, caller bind.ContractCaller) (*UtilsCaller, error) {
+func NewUtilsCaller(address ethCommon.Address, caller bind.ContractCaller) (*UtilsCaller, error) {
 	contract, err := bindUtils(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func NewUtilsCaller(address common.Address, caller bind.ContractCaller) (*UtilsC
 }
 
 // NewUtilsTransactor creates a new write-only instance of Utils, bound to a specific deployed contract.
-func NewUtilsTransactor(address common.Address, transactor bind.ContractTransactor) (*UtilsTransactor, error) {
+func NewUtilsTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*UtilsTransactor, error) {
 	contract, err := bindUtils(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -130,7 +130,7 @@ func NewUtilsTransactor(address common.Address, transactor bind.ContractTransact
 }
 
 // NewUtilsFilterer creates a new log filterer instance of Utils, bound to a specific deployed contract.
-func NewUtilsFilterer(address common.Address, filterer bind.ContractFilterer) (*UtilsFilterer, error) {
+func NewUtilsFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*UtilsFilterer, error) {
 	contract, err := bindUtils(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -139,7 +139,7 @@ func NewUtilsFilterer(address common.Address, filterer bind.ContractFilterer) (*
 }
 
 // bindUtils binds a generic wrapper to an already deployed contract.
-func bindUtils(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindUtils(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(UtilsABI))
 	if err != nil {
 		return nil, err
@@ -147,7 +147,7 @@ func bindUtils(address common.Address, caller bind.ContractCaller, transactor bi
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_Utils *Utils) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_Utils *Utils) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewUtils(address, backend)
 }
 
