@@ -10,6 +10,10 @@ airbloc:
 	./env.sh go install ./cmd/airbloc
 	@echo "$(DEST)/airbloc"
 
+bootnode:
+	./env.sh go install ./cmd/bootnode
+	@echo "$(DEST)/bootnode"
+
 clean:
 	@rm -rf build/
 
