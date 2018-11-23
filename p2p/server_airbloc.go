@@ -18,6 +18,7 @@ import (
 	kaddht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/libp2p/go-libp2p-peer"
 	"github.com/libp2p/go-libp2p-peerstore"
+	"github.com/libp2p/go-libp2p/p2p/host/routed"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/multiformats/go-multihash"
 	"github.com/pkg/errors"
@@ -35,10 +36,11 @@ type AirblocServer struct {
 	cancel context.CancelFunc
 
 	// network
-	id   cid.Cid
-	pid	 common.Pid
-	host Host
-	dht  *kaddht.IpfsDHT
+	id      cid.Cid
+	pid     common.Pid
+	host    Host
+	dht     *kaddht.IpfsDHT
+	nodekey *key.Key
 
 	// database
 	db localdb.Database
@@ -51,12 +53,12 @@ type AirblocServer struct {
 
 func NewServer(
 	localdb localdb.Database,
-	identity *key.Key,
+	nodekey *key.Key,
 	addr multiaddr.Multiaddr,
 	bootnode bool,
 	bootinfos []peerstore.PeerInfo,
 ) (Server, error) {
-	privKey, err := identity.DeriveLibp2pKeyPair()
+	privKey, err := nodekey.DeriveLibp2pKeyPair()
 	if err != nil {
 		return nil, err
 	}
@@ -68,10 +70,11 @@ func NewServer(
 
 	ctx, cancel := context.WithCancel(context.Background())
 	server := &AirblocServer{
-		ctx:    ctx,
-		cancel: cancel,
-		mutex:  new(sync.Mutex),
-		pid:    pid,
+		ctx:     ctx,
+		cancel:  cancel,
+		mutex:   new(sync.Mutex),
+		pid:     pid,
+		nodekey: nodekey,
 
 		db:       localdb,
 		types:    make(map[string]reflect.Type),
@@ -95,6 +98,7 @@ func NewServer(
 		return nil, err
 	}
 
+	h = routedhost.Wrap(h, server.dht)
 	server.host = &AirblocHost{
 		BasicHost: BasicHost{h},
 		limit:     20,
@@ -240,6 +244,9 @@ func (s *AirblocServer) Send(ctx context.Context, msg proto.Message, topic strin
 	if err != nil {
 		return errors.Wrap(err, "send error")
 	}
+	if err := payload.Sign(s.nodekey); err != nil {
+		return errors.Wrap(err, "send error")
+	}
 	return s.host.Send(ctx, *payload, p, s.pid)
 }
 
@@ -247,6 +254,9 @@ func (s *AirblocServer) Publish(ctx context.Context, msg proto.Message, topic st
 	payload, err := common.NewProtoMessage(msg, topic)
 	if err != nil {
 		return errors.Wrap(err, "publish error")
+	}
+	if err := payload.Sign(s.nodekey); err != nil {
+		return errors.Wrap(err, "send error")
 	}
 	return s.host.Publish(ctx, *payload, s.pid)
 }

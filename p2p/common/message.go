@@ -3,6 +3,10 @@ package common
 import (
 	"bufio"
 	"context"
+	"crypto/ecdsa"
+	"github.com/airbloc/airbloc-go/key"
+	"github.com/ethereum/go-ethereum/crypto"
+	"golang.org/x/crypto/sha3"
 	"io"
 	"reflect"
 
@@ -30,6 +34,23 @@ func NewProtoMessage(msg proto.Message, topic string) (*ProtoMessage, error) {
 			Data:  data,
 		},
 	}, nil
+}
+
+func (message *ProtoMessage) getSignHash() []byte {
+	topic := []byte(message.GetTopic())
+	signData := append(topic, message.GetData()...)
+
+	hash := sha3.Sum256(signData)
+	return hash[:]
+}
+
+func (message *ProtoMessage) Sign(key *key.Key) error {
+	sig, err := crypto.Sign(message.getSignHash(), key.PrivateKey)
+	if err != nil {
+		return errors.Wrap(err, "sign error")
+	}
+	message.Signature = sig
+	return nil
 }
 
 func (message ProtoMessage) ID() peer.ID {
@@ -83,7 +104,15 @@ func (message ProtoMessage) MakeMessage(ctx context.Context, typ reflect.Type) (
 	if err != nil {
 		return Message{}, errors.Wrap(err, "failed to parse protocol")
 	}
-	return NewMessage(msg, peerstore.PeerInfo{ID: message.ID()}, pid), nil
+	m := NewMessage(msg, peerstore.PeerInfo{ID: message.ID()}, pid)
+
+	// recover sender's public key from the signature.
+	senderPub, err := crypto.SigToPub(message.getSignHash(), message.GetSignature())
+	if err != nil {
+		return Message{}, errors.Wrap(err, "failed to recover from signature")
+	}
+	m.Sender = senderPub
+	return m, nil
 }
 
 func MessageType(msg proto.Message) reflect.Type {
@@ -93,6 +122,7 @@ func MessageType(msg proto.Message) reflect.Type {
 type Message struct {
 	Data     proto.Message
 	Info     peerstore.PeerInfo
+	Sender   *ecdsa.PublicKey
 	Protocol Pid
 }
 
