@@ -2,6 +2,8 @@ package p2p
 
 import (
 	"context"
+	"log"
+
 	"github.com/airbloc/airbloc-go/p2p/common"
 	"github.com/libp2p/go-libp2p-host"
 	"github.com/libp2p/go-libp2p-interface-connmgr"
@@ -15,6 +17,12 @@ import (
 
 type BasicHost struct {
 	host host.Host
+}
+
+func NewBasicHost(host host.Host) Host {
+	return &BasicHost{
+		host: host,
+	}
 }
 
 // Mux returns host's multistreamMuxer
@@ -62,11 +70,17 @@ func (h *BasicHost) Connect(ctx context.Context, pi peerstore.PeerInfo) error {
 // Register register p2p.Message handler
 func (h *BasicHost) RegisterProtocol(
 	pid common.Pid,
-	handler StreamHandler,
-	adapters ...StreamAdapter,
+	handler ProtocolHandler,
+	adapters ...ProtocolAdapter,
 ) {
 	h.host.SetStreamHandler(pid.ProtocolID(), func(stream net.Stream) {
-		handler.Handle(adapters...)(stream)
+		defer stream.Reset()
+		msg, err := common.ReadMessage(stream)
+		if err != nil {
+			log.Println("failed to read message from stream :", err)
+			return
+		}
+		go handler.Handle(adapters...)(msg)
 	})
 }
 

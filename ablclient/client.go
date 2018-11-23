@@ -20,7 +20,7 @@ type Client struct {
 	manager pb.AccountClient
 }
 
-func NewClient(conn *grpc.ClientConn) (*Client) {
+func NewClient(conn *grpc.ClientConn) *Client {
 	return &Client{
 		manager: pb.NewAccountClient(conn),
 	}

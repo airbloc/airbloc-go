@@ -11,7 +11,7 @@ import (
 )
 
 type ProtocolRegistry interface {
-	RegisterProtocol(common.Pid, ProtocolHandler)
+	RegisterProtocol(common.Pid, ProtocolHandler, ...ProtocolAdapter)
 	UnregisterProtocol(common.Pid)
 }
 

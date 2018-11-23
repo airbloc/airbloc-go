@@ -14,12 +14,13 @@ import (
 
 var (
 	AvailableAPIs = map[string]node.Constructor{
+		"apps":        serverapi.NewAppsAPI,
 		"collections": serverapi.NewCollectionsAPI,
 		"data":        serverapi.NewDataAPI,
 		"exchange":    serverapi.NewExchangeAPI,
 		"schemas":     serverapi.NewSchemaAPI,
 		"warehouse":   serverapi.NewWarehouseAPI,
-		"account":	   userdelegateapi.NewAccountAPI, // TODO: it's not supposed to be in here
+		"account":     userdelegateapi.NewAccountAPI, // TODO: it's not supposed to be in here
 	}
 	AvailableServices = map[string]node.ServiceConstructor{
 		"api": node.NewAPIService,
@@ -57,7 +58,7 @@ func main() {
 	backend.Start()
 }
 
-func registerServices(backend *node.AirblocBackend, serviceNames []string) {
+func registerServices(backend node.Backend, serviceNames []string) {
 	for _, name := range serviceNames {
 		serviceConstructor, exists := AvailableServices[name]
 		if !exists {
@@ -70,12 +71,12 @@ func registerServices(backend *node.AirblocBackend, serviceNames []string) {
 			log.Error("Failed to create service", "name", name, "error", err)
 			panic(err)
 		}
-		backend.Attach(name, service)
+		backend.AttachService(name, service)
 	}
 }
 
-func registerApis(backend *node.AirblocBackend, apiNames []string) {
-	apiService, ok := backend.Services["api"].(*node.APIService)
+func registerApis(backend node.Backend, apiNames []string) {
+	apiService, ok := backend.GetService("api").(*node.APIService)
 	if !ok {
 		log.Error("API service is not registered")
 		panic(nil)

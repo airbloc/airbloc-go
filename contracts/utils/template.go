@@ -24,15 +24,27 @@ type tmplData struct {
 	Contracts map[string]*tmplContract // List of contracts to generate into this file
 }
 
+// TODO make mapping friendly interface
 // tmplContract contains the data needed to generate an individual contract binding.
 type tmplContract struct {
-	Type        string                 // Type name of the main contract binding
-	InputABI    string                 // JSON ABI used as the input to generate the binding from
-	InputBin    string                 // Optional EVM bytecode used to denetare deploy code from
-	Constructor abi.Method             // Contract constructor for deploy parametrization
+	Type        string     // Type name of the main contract binding
+	InputABI    string     // JSON ABI used as the input to generate the binding from
+	Constructor abi.Method // Contract constructor for deploy parametrization
+	Enums       map[string]*tmplEnum
+	Structs     map[string]*tmplStruct
 	Calls       map[string]*tmplMethod // Contract calls that only read state data
 	Transacts   map[string]*tmplMethod // Contract calls that write state data
 	Events      map[string]*tmplEvent  // Contract events accessors
+}
+
+type tmplEnum struct {
+	Name   string
+	Member map[string]int8
+}
+
+type tmplStruct struct {
+	Name   string
+	Member map[string]string // name => type
 }
 
 // tmplMethod is a wrapper around an abi.Method that contains a few preprocessed
@@ -69,9 +81,11 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	ablCommon "github.com/airbloc/airbloc-go/common"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
@@ -85,6 +99,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
+	_ = ablCommon.IDFromString
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
@@ -94,29 +109,12 @@ var (
 	// {{.Type}}ABI is the input ABI used to generate the binding from.
 	const {{.Type}}ABI = "{{.InputABI}}"
 
-	{{if .InputBin}}
-		// {{.Type}}Bin is the compiled bytecode used for deploying new contracts.
-		const {{.Type}}Bin = ` + "`" + `{{.InputBin}}` + "`" + `
-
-		// Deploy{{.Type}} deploys a new Ethereum contract, binding an instance of {{.Type}} to it.
-		func Deploy{{.Type}}(auth *bind.TransactOpts, backend bind.ContractBackend {{range .Constructor.Inputs}}, {{.Name}} {{bindtype .Type}}{{end}}) (common.Address, *types.Transaction, *{{.Type}}, error) {
-		  parsed, err := abi.JSON(strings.NewReader({{.Type}}ABI))
-		  if err != nil {
-		    return common.Address{}, nil, nil, err
-		  }
-		  address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex({{.Type}}Bin), backend {{range .Constructor.Inputs}}, {{.Name}}{{end}})
-		  if err != nil {
-		    return common.Address{}, nil, nil, err
-		  }
-		  return address, tx, &{{.Type}}{ {{.Type}}Caller: {{.Type}}Caller{contract: contract}, {{.Type}}Transactor: {{.Type}}Transactor{contract: contract}, {{.Type}}Filterer: {{.Type}}Filterer{contract: contract} }, nil
-		}
-	{{end}}
-
 	// {{.Type}} is an auto generated Go binding around an Ethereum contract.
 	type {{.Type}} struct {
-	  {{.Type}}Caller     // Read-only binding to the contract
-	  {{.Type}}Transactor // Write-only binding to the contract
-		{{.Type}}Filterer   // Log filterer for contract events
+		Address common.Address
+		{{.Type}}Caller     	// Read-only binding to the contract
+		{{.Type}}Transactor 	// Write-only binding to the contract
+		{{.Type}}Filterer   	// Log filterer for contract events
 	}
 
 	// {{.Type}}Caller is an auto generated read-only Go binding around an Ethereum contract.
@@ -171,13 +169,38 @@ var (
 		Contract *{{.Type}}Transactor // Generic write-only contract binding to access the raw methods on
 	}
 
+	{{range .Enums}}
+		type {{$contract.Type}}{{.Name}} int8
+		{{$name := .Name}}
+		const (
+			{{range $key, $value := .Member}}{{$name}}{{$key}} = {{$value}}
+			{{end}}
+		)
+	{{end}}
+
+	{{range .Structs}}
+		type {{$contract.Type}}{{.Name}} struct {
+			{{range $key, $value := .Member}}{{$key}}	{{$value}}
+			{{end}}
+		}
+	{{end}}
+
+	func init() {
+		blockchain.ContractList["{{.Type}}"] = (&{{.Type}}{}).new
+	}
+
 	// New{{.Type}} creates a new instance of {{.Type}}, bound to a specific deployed contract.
 	func New{{.Type}}(address common.Address, backend bind.ContractBackend) (*{{.Type}}, error) {
-	  contract, err := bind{{.Type}}(address, backend, backend, backend)
-	  if err != nil {
-	    return nil, err
-	  }
-	  return &{{.Type}}{ {{.Type}}Caller: {{.Type}}Caller{contract: contract}, {{.Type}}Transactor: {{.Type}}Transactor{contract: contract}, {{.Type}}Filterer: {{.Type}}Filterer{contract: contract} }, nil
+		contract, err := bind{{.Type}}(address, backend, backend, backend)
+		if err != nil {
+	    	return nil, err
+	  	}
+		return &{{.Type}}{
+			Address: address,
+			{{.Type}}Caller: {{.Type}}Caller{contract: contract}, 
+			{{.Type}}Transactor: {{.Type}}Transactor{contract: contract}, 
+			{{.Type}}Filterer: {{.Type}}Filterer{contract: contract},
+		}, nil
 	}
 
 	// New{{.Type}}Caller creates a new read-only instance of {{.Type}}, bound to a specific deployed contract.
@@ -214,6 +237,10 @@ var (
 	    return nil, err
 	  }
 	  return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+	}
+
+	func (_{{.Type}} *{{.Type}}) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+		return New{{.Type}}(address, backend)
 	}
 
 	// Call invokes the (constant) contract method with params as input values and

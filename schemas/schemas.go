@@ -20,15 +20,18 @@ var (
 
 type Schemas struct {
 	db       *metadb.Model
-	client   *blockchain.Client
+	client   blockchain.TxClient
 	contract *adapter.SchemaRegistry
 }
 
-func New(db metadb.Database, client *blockchain.Client) *Schemas {
+func New(db metadb.Database, client blockchain.TxClient) *Schemas {
+	raw, _ := client.GetContract(&adapter.SchemaRegistry{})
+	contract, _ := raw.(*adapter.SchemaRegistry)
+
 	return &Schemas{
 		db:       metadb.NewModel(db, "schema"),
 		client:   client,
-		contract: client.Contracts.SchemaRegistry,
+		contract: contract,
 	}
 }
 

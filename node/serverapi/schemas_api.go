@@ -13,8 +13,8 @@ type SchemaAPI struct {
 	schemas *schemas.Schemas
 }
 
-func NewSchemaAPI(backend *node.AirblocBackend) (node.API, error) {
-	schemaManager := schemas.New(backend.MetaDatabase, backend.Ethclient)
+func NewSchemaAPI(backend node.Backend) (node.API, error) {
+	schemaManager := schemas.New(backend.MetaDatabase(), backend.Client())
 	return &SchemaAPI{schemaManager}, nil
 }
 

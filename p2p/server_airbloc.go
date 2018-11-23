@@ -51,7 +51,7 @@ type AirblocServer struct {
 	handlers map[reflect.Type]TopicHandler
 }
 
-func NewServer(
+func NewAirblocServer(
 	localdb localdb.Database,
 	nodekey *key.Key,
 	addr multiaddr.Multiaddr,
@@ -99,10 +99,7 @@ func NewServer(
 	}
 
 	h = routedhost.Wrap(h, server.dht)
-	server.host = &AirblocHost{
-		BasicHost: BasicHost{h},
-		limit:     20,
-	}
+	server.host = NewAirblocHost(NewBasicHost(h), 20)
 
 	if bootnode {
 		if err := server.dht.Bootstrap(ctx); err != nil {

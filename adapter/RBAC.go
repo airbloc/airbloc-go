@@ -8,6 +8,8 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
+	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -24,6 +26,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
+	_ = ablCommon.IDFromString
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
@@ -32,24 +35,9 @@ var (
 // RBACABI is the input ABI used to generate the binding from.
 const RBACABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"role\",\"type\":\"string\"}],\"name\":\"RoleAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"role\",\"type\":\"string\"}],\"name\":\"RoleRemoved\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[{\"name\":\"_operator\",\"type\":\"address\"},{\"name\":\"_role\",\"type\":\"string\"}],\"name\":\"checkRole\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_operator\",\"type\":\"address\"},{\"name\":\"_role\",\"type\":\"string\"}],\"name\":\"hasRole\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
-// RBACBin is the compiled bytecode used for deploying new contracts.
-const RBACBin = `0x60806040526004361061004b5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416630988ca8c8114610050578063217fe6c6146100c6575b600080fd5b34801561005c57600080fd5b5060408051602060046024803582810135601f81018590048502860185019096528585526100c495833573ffffffffffffffffffffffffffffffffffffffff1695369560449491939091019190819084018382808284375094975061014e9650505050505050565b005b3480156100d257600080fd5b5060408051602060046024803582810135601f810185900485028601850190965285855261013a95833573ffffffffffffffffffffffffffffffffffffffff169536956044949193909101919081908401838280828437509497506101bc9650505050505050565b604080519115158252519081900360200190f35b6101b8826000836040518082805190602001908083835b602083106101845780518252601f199092019160209182019101610165565b51815160209384036101000a600019018019909216911617905292019485525060405193849003019092209291505061022f565b5050565b6000610228836000846040518082805190602001908083835b602083106101f45780518252601f1990920191602091820191016101d5565b51815160209384036101000a6000190180199092169116179052920194855250604051938490030190922092915050610244565b9392505050565b6102398282610244565b15156101b857600080fd5b73ffffffffffffffffffffffffffffffffffffffff166000908152602091909152604090205460ff16905600a165627a7a723058201985dbb9d96e2f96a2372e1509a93153004c92f3948522bfab012ad050c15d550029`
-
-// DeployRBAC deploys a new Ethereum contract, binding an instance of RBAC to it.
-func DeployRBAC(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *RBAC, error) {
-	parsed, err := abi.JSON(strings.NewReader(RBACABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(RBACBin), backend)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &RBAC{RBACCaller: RBACCaller{contract: contract}, RBACTransactor: RBACTransactor{contract: contract}, RBACFilterer: RBACFilterer{contract: contract}}, nil
-}
-
 // RBAC is an auto generated Go binding around an Ethereum contract.
 type RBAC struct {
+	Address        common.Address
 	RBACCaller     // Read-only binding to the contract
 	RBACTransactor // Write-only binding to the contract
 	RBACFilterer   // Log filterer for contract events
@@ -107,13 +95,22 @@ type RBACTransactorRaw struct {
 	Contract *RBACTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["RBAC"] = (&RBAC{}).new
+}
+
 // NewRBAC creates a new instance of RBAC, bound to a specific deployed contract.
 func NewRBAC(address common.Address, backend bind.ContractBackend) (*RBAC, error) {
 	contract, err := bindRBAC(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &RBAC{RBACCaller: RBACCaller{contract: contract}, RBACTransactor: RBACTransactor{contract: contract}, RBACFilterer: RBACFilterer{contract: contract}}, nil
+	return &RBAC{
+		Address:        address,
+		RBACCaller:     RBACCaller{contract: contract},
+		RBACTransactor: RBACTransactor{contract: contract},
+		RBACFilterer:   RBACFilterer{contract: contract},
+	}, nil
 }
 
 // NewRBACCaller creates a new read-only instance of RBAC, bound to a specific deployed contract.
@@ -150,6 +147,10 @@ func bindRBAC(address common.Address, caller bind.ContractCaller, transactor bin
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_RBAC *RBAC) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewRBAC(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

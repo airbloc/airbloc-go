@@ -8,6 +8,8 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
+	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -24,6 +26,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
+	_ = ablCommon.IDFromString
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
@@ -32,24 +35,9 @@ var (
 // RolesABI is the input ABI used to generate the binding from.
 const RolesABI = "[]"
 
-// RolesBin is the compiled bytecode used for deploying new contracts.
-const RolesBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a72305820cf135ce162a4bda9784b02edf8e48748df8df194083290ba7b19c005ece2b57d0029`
-
-// DeployRoles deploys a new Ethereum contract, binding an instance of Roles to it.
-func DeployRoles(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Roles, error) {
-	parsed, err := abi.JSON(strings.NewReader(RolesABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(RolesBin), backend)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &Roles{RolesCaller: RolesCaller{contract: contract}, RolesTransactor: RolesTransactor{contract: contract}, RolesFilterer: RolesFilterer{contract: contract}}, nil
-}
-
 // Roles is an auto generated Go binding around an Ethereum contract.
 type Roles struct {
+	Address         common.Address
 	RolesCaller     // Read-only binding to the contract
 	RolesTransactor // Write-only binding to the contract
 	RolesFilterer   // Log filterer for contract events
@@ -107,13 +95,26 @@ type RolesTransactorRaw struct {
 	Contract *RolesTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+type RolesRole struct {
+	Bearer map[common.Address]bool
+}
+
+func init() {
+	blockchain.ContractList["Roles"] = (&Roles{}).new
+}
+
 // NewRoles creates a new instance of Roles, bound to a specific deployed contract.
 func NewRoles(address common.Address, backend bind.ContractBackend) (*Roles, error) {
 	contract, err := bindRoles(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &Roles{RolesCaller: RolesCaller{contract: contract}, RolesTransactor: RolesTransactor{contract: contract}, RolesFilterer: RolesFilterer{contract: contract}}, nil
+	return &Roles{
+		Address:         address,
+		RolesCaller:     RolesCaller{contract: contract},
+		RolesTransactor: RolesTransactor{contract: contract},
+		RolesFilterer:   RolesFilterer{contract: contract},
+	}, nil
 }
 
 // NewRolesCaller creates a new read-only instance of Roles, bound to a specific deployed contract.
@@ -150,6 +151,10 @@ func bindRoles(address common.Address, caller bind.ContractCaller, transactor bi
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_Roles *Roles) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewRoles(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

@@ -11,16 +11,15 @@ import (
 // Airbloc implements Airbloc node service.
 // it composes all service used by Airbloc.
 type AirblocBackend struct {
-	Kms           *key.Manager
-	Ethclient     *blockchain.Client
-	MetaDatabase  metadb.Database
-	LocalDatabase localdb.Database
-	Config        *Config
-
-	Services map[string]Service
+	kms           key.Manager
+	ethclient     *blockchain.Client
+	metaDatabase  metadb.Database
+	localDatabase localdb.Database
+	config        *Config
+	services      map[string]Service
 }
 
-func NewAirblocBackend(config *Config) (*AirblocBackend, error) {
+func NewAirblocBackend(config *Config) (Backend, error) {
 	nodeKey, err := key.Load(config.PrivateKeyPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load private key from the given path")
@@ -41,11 +40,12 @@ func NewAirblocBackend(config *Config) (*AirblocBackend, error) {
 		return nil, errors.Wrap(err, "failed to initialize local database")
 	}
 
-	kms := key.NewManager(nodeKey, localDatabase)
+	kms := key.NewKeyManager(nodeKey, localDatabase)
 
 	// setup ethereum client
 	clientOpt := blockchain.ClientOpt{
 		Confirmation: config.Blockchain.Options.MinConfirmations,
+		DeploymentPath: config.Blockchain.DeploymentPath,
 	}
 	ethclient, err := blockchain.NewClient(nodeKey, config.Blockchain.Endpoint, clientOpt)
 	if err != nil {
@@ -53,28 +53,38 @@ func NewAirblocBackend(config *Config) (*AirblocBackend, error) {
 	}
 	ethclient.SetAccount(nodeKey)
 
-	deployment, err := blockchain.LoadDeployments(config.Blockchain.DeploymentPath, ethclient)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to load contract deployments from %s", config.Blockchain.DeploymentPath)
-	}
-	ethclient.Contracts = deployment
-
 	return &AirblocBackend{
-		Kms:           kms,
-		Ethclient:     ethclient,
-		MetaDatabase:  metaDatabase,
-		LocalDatabase: localDatabase,
-		Config:        config,
-		Services:      make(map[string]Service),
+		kms:           kms,
+		ethclient:     ethclient,
+		metaDatabase:  metaDatabase,
+		localDatabase: localDatabase,
+		config:        config,
+		services:      make(map[string]Service),
 	}, nil
 }
 
-func (airbloc *AirblocBackend) Attach(name string, service Service) {
-	airbloc.Services[name] = service
+func (airbloc *AirblocBackend) Kms() key.Manager {
+	return airbloc.kms
+}
+
+func (airbloc *AirblocBackend) Client() *blockchain.Client {
+	return airbloc.ethclient
+}
+
+func (airbloc *AirblocBackend) MetaDatabase() metadb.Database {
+	return airbloc.metaDatabase
+}
+
+func (airbloc *AirblocBackend) LocalDatabase() localdb.Database {
+	return airbloc.localDatabase
+}
+
+func (airbloc *AirblocBackend) Config() *Config {
+	return airbloc.config
 }
 
 func (airbloc *AirblocBackend) Start() error {
-	for name, service := range airbloc.Services {
+	for name, service := range airbloc.services {
 		if err := service.Start(); err != nil {
 			return errors.Wrapf(err, "failed to start %s service", name)
 		}
@@ -83,17 +93,22 @@ func (airbloc *AirblocBackend) Start() error {
 }
 
 func (airbloc *AirblocBackend) Stop() {
-	airbloc.Ethclient.Close()
-	airbloc.LocalDatabase.Close()
-	airbloc.MetaDatabase.Close()
-	for _, service := range airbloc.Services {
+	for _, service := range airbloc.services {
 		service.Stop()
 	}
-	airbloc.Close()
+	airbloc.ethclient.Close()
+	airbloc.localDatabase.Close()
+	airbloc.metaDatabase.Close()
 }
 
-func (airbloc *AirblocBackend) Close() {
-	airbloc.LocalDatabase.Close()
-	airbloc.MetaDatabase.Close()
-	airbloc.Ethclient.Close()
+func (airbloc *AirblocBackend) GetService(name string) Service {
+	return airbloc.services[name]
+}
+
+func (airbloc *AirblocBackend) AttachService(name string, service Service) {
+	airbloc.services[name] = service
+}
+
+func (airbloc *AirblocBackend) DetachService(name string) {
+	delete(airbloc.services, name)
 }

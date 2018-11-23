@@ -41,12 +41,22 @@ func init() {
 }
 
 func makeBasicServer(ctx context.Context, index int, bootnode bool, bootinfos ...peerstore.PeerInfo) (Server, error) {
-	server, err := NewServer(localdb.NewMemDB(), keys[index], addrs[index], bootnode, bootinfos)
+	server, err := NewAirblocServer(localdb.NewMemDB(), keys[index], addrs[index], bootnode, bootinfos)
 	if err != nil {
 		return nil, err
 	}
 	server.setContext(ctx)
 	return server, nil
+}
+
+func handlePing(s Server, ctx context.Context, message common.Message) {
+	log.Println("Ping", message.Info.ID.Pretty(), message.Data.String())
+
+	s.Send(ctx, &pb.TestPing{Message: "World!"}, "ping", message.Info.ID)
+}
+
+func handlePong(s Server, ctx context.Context, message common.Message) {
+	log.Println("Pong", message.Info.ID.Pretty(), message.Data.String())
 }
 
 func TestNewServer(t *testing.T) {
@@ -71,11 +81,8 @@ func TestNewServer(t *testing.T) {
 		assert.NoError(t, err)
 		server.Start()
 
-		// ping
-		server.SubscribeTopic("ping", &pb.TestPing{}, Ping)
-
-		// pong
-		server.SubscribeTopic("pong", &pb.TestPong{}, Pong)
+		server.SubscribeTopic("ping", &pb.TestPing{}, handlePing)
+		server.SubscribeTopic("pong", &pb.TestPong{}, handlePong)
 
 		servers[i] = server
 	}

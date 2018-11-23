@@ -73,7 +73,10 @@
   version = "v0.2.0"
 
 [[projects]]
+<<<<<<< HEAD
   digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
+=======
+>>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
   pruneopts = "UT"
@@ -112,7 +115,10 @@
   revision = "2de33835d10275975374b37b2dcfd22c9020a1f5"
 
 [[projects]]
+<<<<<<< HEAD
   digest = "1:99b481bc93060f144d5a4f9695e4c702b2b94ee171f76a9c7621050b3bdfa56e"
+=======
+>>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/ethereum/go-ethereum"
   packages = [
     ".",
@@ -182,21 +188,32 @@
   name = "github.com/gogo/protobuf"
   packages = [
     "io",
+<<<<<<< HEAD
     "proto",
+=======
+    "proto"
+>>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   ]
   pruneopts = "UT"
   revision = "636bf0302bc95575d69441b25a2603156ffdddf1"
   version = "v1.1.1"
 
 [[projects]]
+<<<<<<< HEAD
   digest = "1:4c0989ca0bcd10799064318923b9bc2db6b4d6338dd75f3f2d86c3511aaaf5cf"
+=======
+>>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/golang/protobuf"
   packages = [
     "proto",
     "ptypes",
     "ptypes/any",
     "ptypes/duration",
+<<<<<<< HEAD
     "ptypes/timestamp",
+=======
+    "ptypes/timestamp"
+>>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   ]
   pruneopts = "UT"
   revision = "aa810b61a9c79d51363740d207bb46cf8e620ed5"
@@ -211,7 +228,10 @@
   revision = "2e65f85255dbc3072edf28d6b5b8efc472979f5a"
 
 [[projects]]
+<<<<<<< HEAD
   digest = "1:3a26588bc48b96825977c1b3df964f8fd842cd6860cc26370588d3563433cf11"
+=======
+>>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/google/uuid"
   packages = ["."]
   pruneopts = "UT"
@@ -305,7 +325,10 @@
   version = "v1.0.0"
 
 [[projects]]
+<<<<<<< HEAD
   digest = "1:9999472bf9c934426d967c507d61f2de84affb8318b8d8c8bc38b3486edbd826"
+=======
+>>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/ipfs/go-cid"
   packages = ["."]
   pruneopts = "UT"
@@ -436,7 +459,10 @@
   version = "v1.1"
 
 [[projects]]
+<<<<<<< HEAD
   digest = "1:651240087688933ab0f620305d19c2169a82fe4570525227df57513a7ddd2ffe"
+=======
+>>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/libp2p/go-addr-util"
   packages = ["."]
   pruneopts = "UT"
@@ -979,7 +1005,10 @@
   version = "v1.2.0"
 
 [[projects]]
+<<<<<<< HEAD
   digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
+=======
+>>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/pkg/errors"
   packages = ["."]
   pruneopts = "UT"
@@ -995,7 +1024,10 @@
   version = "v1.0.0"
 
 [[projects]]
+<<<<<<< HEAD
   digest = "1:31d83d1b1c288073c91abadee3caec87de2a1fb5dbe589039264a802e67a26b8"
+=======
+>>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/rjeczalik/notify"
   packages = ["."]
   pruneopts = "UT"
@@ -1011,7 +1043,10 @@
   version = "v1.6.0"
 
 [[projects]]
+<<<<<<< HEAD
   digest = "1:919bb3aa6d9d0b67648c219fa4925312bc3c2872da19e818fa769e9c97a2b643"
+=======
+>>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/spaolacci/murmur3"
   packages = ["."]
   pruneopts = "UT"
@@ -1038,7 +1073,10 @@
   version = "v1.3.0"
 
 [[projects]]
+<<<<<<< HEAD
   digest = "1:68ea4e23713989dc20b1bded5d9da2c5f9be14ff9885beef481848edd18c26cb"
+=======
+>>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/spf13/jwalterweatherman"
   packages = ["."]
   pruneopts = "UT"
@@ -1099,7 +1137,10 @@
   revision = "6b91fda63f2e36186f1c9d0e48578defb69c5d43"
 
 [[projects]]
+<<<<<<< HEAD
   digest = "1:c468422f334a6b46a19448ad59aaffdfc0a36b08fdcc1c749a0b29b6453d7e59"
+=======
+>>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/valyala/bytebufferpool"
   packages = ["."]
   pruneopts = "UT"
@@ -1117,6 +1158,15 @@
   pruneopts = "UT"
   revision = "e5f51c11919d4f66400334047b897ef0a94c6f3c"
   version = "v20180529"
+
+[[projects]]
+  name = "github.com/valyala/fastjson"
+  packages = [
+    ".",
+    "fastfloat"
+  ]
+  revision = "37952265e1c05c1765a0b8d01efbde0b5b4e3913"
+  version = "v1.0.0"
 
 [[projects]]
   branch = "master"
@@ -1225,7 +1275,11 @@
     "ed25519/internal/edwards25519",
     "pbkdf2",
     "scrypt",
+<<<<<<< HEAD
     "sha3",
+=======
+    "sha3"
+>>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   ]
   pruneopts = "UT"
   revision = "0c41d7ab0a0ee717d4590a44bcb987dfd9e183eb"
@@ -1307,7 +1361,10 @@
 
 [[projects]]
   branch = "master"
+<<<<<<< HEAD
   digest = "1:077c1c599507b3b3e9156d17d36e1e61928ee9b53a5b420f10f28ebd4a0b275c"
+=======
+>>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
   pruneopts = "UT"
@@ -1375,6 +1432,7 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
+<<<<<<< HEAD
   input-imports = [
     "github.com/bigchaindb/go-bigchaindb-driver/pkg/client",
     "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction",
@@ -1431,5 +1489,8 @@
     "google.golang.org/grpc",
     "gopkg.in/urfave/cli.v1",
   ]
+=======
+  inputs-digest = "603309276676fc2f489dd3cc75cdfba7068debd2fd86da1a75a64c349cf758b2"
+>>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   solver-name = "gps-cdcl"
   solver-version = 1

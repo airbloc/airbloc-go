@@ -15,8 +15,8 @@ type DAuthAPI struct {
 	manager *dauth.Manager
 }
 
-func NewDAuthAPI(backend *node.AirblocBackend) (node.API, error) {
-	manager := dauth.NewManager(backend.Ethclient)
+func NewDAuthAPI(backend node.Backend) (node.API, error) {
+	manager := dauth.NewManager(backend.Client())
 	return &DAuthAPI{manager}, nil
 }
 

@@ -13,8 +13,15 @@ type CollectionsAPI struct {
 	collections *collections.Collections
 }
 
-func NewCollectionsAPI(backend *node.AirblocBackend) (node.API, error) {
-	collectionManager, err := collections.New(backend.LocalDatabase, backend.MetaDatabase, backend.Ethclient)
+func NewCollectionsAPI(backend node.Backend) (node.API, error) {
+	collectionManager, err := collections.New(
+		backend.LocalDatabase(),
+		backend.MetaDatabase(),
+		backend.Client(),
+	)
+	if err != nil {
+		return nil, errors.Wrap(err, "collection api : failed to create collection API")
+	}
 	return &CollectionsAPI{collectionManager}, err
 }
 

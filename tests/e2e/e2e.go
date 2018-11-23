@@ -1,4 +1,4 @@
-package main
+package e2e
 
 import (
 	"context"
@@ -84,7 +84,7 @@ func main() {
 	}
 	defer conn.Close()
 
-	appId := "b40157c46f15681f"
+	appId := "786d674f9f07fa21"
 
 	schemaId := testCreateSchema(conn)
 	log.Printf("Created Schema ID: %s\n", schemaId)

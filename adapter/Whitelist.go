@@ -8,6 +8,8 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
+	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -24,6 +26,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
+	_ = ablCommon.IDFromString
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
@@ -32,24 +35,9 @@ var (
 // WhitelistABI is the input ABI used to generate the binding from.
 const WhitelistABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"_operator\",\"type\":\"address\"},{\"name\":\"_role\",\"type\":\"string\"}],\"name\":\"checkRole\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"ROLE_WHITELISTED\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_operator\",\"type\":\"address\"},{\"name\":\"_role\",\"type\":\"string\"}],\"name\":\"hasRole\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"role\",\"type\":\"string\"}],\"name\":\"RoleAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"role\",\"type\":\"string\"}],\"name\":\"RoleRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"}],\"name\":\"OwnershipRenounced\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_operator\",\"type\":\"address\"}],\"name\":\"addAddressToWhitelist\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_operator\",\"type\":\"address\"}],\"name\":\"whitelist\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_operators\",\"type\":\"address[]\"}],\"name\":\"addAddressesToWhitelist\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_operator\",\"type\":\"address\"}],\"name\":\"removeAddressFromWhitelist\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_operators\",\"type\":\"address[]\"}],\"name\":\"removeAddressesFromWhitelist\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
-// WhitelistBin is the compiled bytecode used for deploying new contracts.
-const WhitelistBin = `0x6080604052600436106100ae5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416630988ca8c81146100b357806318b919e91461011c578063217fe6c6146101a657806324953eaa14610221578063286dd3f514610276578063715018a6146102975780637b9417c8146102ac5780638da5cb5b146102cd5780639b19251a146102fe578063e2ec6ec31461031f578063f2fde38b14610374575b600080fd5b3480156100bf57600080fd5b5060408051602060046024803582810135601f810185900485028601850190965285855261011a958335600160a060020a03169536956044949193909101919081908401838280828437509497506103959650505050505050565b005b34801561012857600080fd5b50610131610403565b6040805160208082528351818301528351919283929083019185019080838360005b8381101561016b578181015183820152602001610153565b50505050905090810190601f1680156101985780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b3480156101b257600080fd5b5060408051602060046024803582810135601f810185900485028601850190965285855261020d958335600160a060020a03169536956044949193909101919081908401838280828437509497506104289650505050505050565b604080519115158252519081900360200190f35b34801561022d57600080fd5b506040805160206004803580820135838102808601850190965280855261011a9536959394602494938501929182918501908490808284375094975061049b9650505050505050565b34801561028257600080fd5b5061011a600160a060020a03600435166104e8565b3480156102a357600080fd5b5061011a61052f565b3480156102b857600080fd5b5061011a600160a060020a036004351661059b565b3480156102d957600080fd5b506102e26105df565b60408051600160a060020a039092168252519081900360200190f35b34801561030a57600080fd5b5061020d600160a060020a03600435166105ee565b34801561032b57600080fd5b506040805160206004803580820135838102808601850190965280855261011a953695939460249493850192918291850190849080828437509497506106239650505050505050565b34801561038057600080fd5b5061011a600160a060020a0360043516610670565b6103ff826001836040518082805190602001908083835b602083106103cb5780518252601f1990920191602091820191016103ac565b51815160209384036101000a6000190180199092169116179052920194855250604051938490030190922092915050610690565b5050565b604080518082019091526009815260008051602061096c833981519152602082015281565b6000610494836001846040518082805190602001908083835b602083106104605780518252601f199092019160209182019101610441565b51815160209384036101000a60001901801990921691161790529201948552506040519384900301909220929150506106a5565b9392505050565b60008054600160a060020a031633146104b357600080fd5b5060005b81518110156103ff576104e082828151811015156104d157fe5b906020019060200201516104e8565b6001016104b7565b600054600160a060020a031633146104ff57600080fd5b61052c8160408051908101604052806009815260200160008051602061096c8339815191528152506106c4565b50565b600054600160a060020a0316331461054657600080fd5b60008054604051600160a060020a03909116917ff8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c6482091a26000805473ffffffffffffffffffffffffffffffffffffffff19169055565b600054600160a060020a031633146105b257600080fd5b61052c8160408051908101604052806009815260200160008051602061096c8339815191528152506107d5565b600054600160a060020a031681565b600061061d8260408051908101604052806009815260200160008051602061096c833981519152815250610428565b92915050565b60008054600160a060020a0316331461063b57600080fd5b5060005b81518110156103ff57610668828281518110151561065957fe5b9060200190602002015161059b565b60010161063f565b600054600160a060020a0316331461068757600080fd5b61052c816108a7565b61069a82826106a5565b15156103ff57600080fd5b600160a060020a03166000908152602091909152604090205460ff1690565b61072e826001836040518082805190602001908083835b602083106106fa5780518252601f1990920191602091820191016106db565b51815160209384036101000a6000190180199092169116179052920194855250604051938490030190922092915050610924565b81600160a060020a03167fd211483f91fc6eff862467f8de606587a30c8fc9981056f051b897a418df803a826040518080602001828103825283818151815260200191508051906020019080838360005b8381101561079757818101518382015260200161077f565b50505050905090810190601f1680156107c45780820380516001836020036101000a031916815260200191505b509250505060405180910390a25050565b61083f826001836040518082805190602001908083835b6020831061080b5780518252601f1990920191602091820191016107ec565b51815160209384036101000a6000190180199092169116179052920194855250604051938490030190922092915050610946565b81600160a060020a03167fbfec83d64eaa953f2708271a023ab9ee82057f8f3578d548c1a4ba0b5b700489826040518080602001828103825283818151815260200191508051906020019080838360008381101561079757818101518382015260200161077f565b600160a060020a03811615156108bc57600080fd5b60008054604051600160a060020a03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a36000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b600160a060020a0316600090815260209190915260409020805460ff19169055565b600160a060020a0316600090815260209190915260409020805460ff19166001179055560077686974656c6973740000000000000000000000000000000000000000000000a165627a7a72305820dfa21ba4740aeac32463c949b58c4e34fcf9e077173bb7afc0f3b3f98d0b39de0029`
-
-// DeployWhitelist deploys a new Ethereum contract, binding an instance of Whitelist to it.
-func DeployWhitelist(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Whitelist, error) {
-	parsed, err := abi.JSON(strings.NewReader(WhitelistABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(WhitelistBin), backend)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &Whitelist{WhitelistCaller: WhitelistCaller{contract: contract}, WhitelistTransactor: WhitelistTransactor{contract: contract}, WhitelistFilterer: WhitelistFilterer{contract: contract}}, nil
-}
-
 // Whitelist is an auto generated Go binding around an Ethereum contract.
 type Whitelist struct {
+	Address             common.Address
 	WhitelistCaller     // Read-only binding to the contract
 	WhitelistTransactor // Write-only binding to the contract
 	WhitelistFilterer   // Log filterer for contract events
@@ -107,13 +95,22 @@ type WhitelistTransactorRaw struct {
 	Contract *WhitelistTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+func init() {
+	blockchain.ContractList["Whitelist"] = (&Whitelist{}).new
+}
+
 // NewWhitelist creates a new instance of Whitelist, bound to a specific deployed contract.
 func NewWhitelist(address common.Address, backend bind.ContractBackend) (*Whitelist, error) {
 	contract, err := bindWhitelist(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &Whitelist{WhitelistCaller: WhitelistCaller{contract: contract}, WhitelistTransactor: WhitelistTransactor{contract: contract}, WhitelistFilterer: WhitelistFilterer{contract: contract}}, nil
+	return &Whitelist{
+		Address:             address,
+		WhitelistCaller:     WhitelistCaller{contract: contract},
+		WhitelistTransactor: WhitelistTransactor{contract: contract},
+		WhitelistFilterer:   WhitelistFilterer{contract: contract},
+	}, nil
 }
 
 // NewWhitelistCaller creates a new read-only instance of Whitelist, bound to a specific deployed contract.
@@ -150,6 +147,10 @@ func bindWhitelist(address common.Address, caller bind.ContractCaller, transacto
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_Whitelist *Whitelist) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewWhitelist(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and

@@ -4,15 +4,13 @@ import (
 	"context"
 
 	"github.com/airbloc/airbloc-go/p2p/common"
-	"github.com/libp2p/go-libp2p-net"
 )
 
-type StreamAdapter func(StreamHandler) StreamHandler
-type StreamHandler func(net.Stream)
+type ProtocolAdapter func(ProtocolHandler) ProtocolHandler
 type ProtocolHandler func(common.ProtoMessage)
 type TopicHandler func(Server, context.Context, common.Message)
 
-func (h StreamHandler) handle(sh StreamHandler, adapters ...StreamAdapter) StreamHandler {
+func (h ProtocolHandler) handle(sh ProtocolHandler, adapters ...ProtocolAdapter) ProtocolHandler {
 	for i := len(adapters)/2 - 1; i >= 0; i-- {
 		opp := len(adapters) - 1 - i
 		adapters[i], adapters[opp] = adapters[opp], adapters[i]
@@ -23,9 +21,9 @@ func (h StreamHandler) handle(sh StreamHandler, adapters ...StreamAdapter) Strea
 	return sh
 }
 
-func (h StreamHandler) Handle(adapters ...StreamAdapter) StreamHandler {
-	var sh StreamHandler = func(stream net.Stream) {
-		h(stream)
+func (h ProtocolHandler) Handle(adapters ...ProtocolAdapter) ProtocolHandler {
+	var sh ProtocolHandler = func(msg common.ProtoMessage) {
+		h(msg)
 	}
 	return h.handle(sh, adapters...)
 }

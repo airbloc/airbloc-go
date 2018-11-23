@@ -18,8 +18,8 @@ type WarehouseAPI struct {
 	warehouse *warehouse.DataWarehouse
 }
 
-func NewWarehouseAPI(airbloc *node.AirblocBackend) (_ node.API, err error) {
-	config := airbloc.Config.Warehouse
+func NewWarehouseAPI(airbloc node.Backend) (_ node.API, err error) {
+	config := airbloc.Config().Warehouse
 
 	supportedProtocols := []protocol.Protocol{
 		protocol.NewHttpProtocol(config.Http.Timeout, config.Http.MaxConnsPerHost),
@@ -39,15 +39,15 @@ func NewWarehouseAPI(airbloc *node.AirblocBackend) (_ node.API, err error) {
 		return nil, errors.Errorf("unknown storage type: %s", config.DefaultStorage)
 	}
 
-	dw := warehouse.New(
-		airbloc.Kms,
-		airbloc.LocalDatabase,
-		airbloc.MetaDatabase,
-		airbloc.Ethclient,
+	dw, err := warehouse.New(
+		airbloc.Kms(),
+		airbloc.LocalDatabase(),
+		airbloc.MetaDatabase(),
+		airbloc.Client(),
 		defaultStorage,
 		supportedProtocols,
 	)
-	return &WarehouseAPI{dw}, nil
+	return &WarehouseAPI{dw}, err
 }
 
 func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) error {

@@ -8,6 +8,8 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/airbloc/airbloc-go/blockchain"
+	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -24,6 +26,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
+	_ = ablCommon.IDFromString
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
@@ -32,24 +35,9 @@ var (
 // ExchangeLibABI is the input ABI used to generate the binding from.
 const ExchangeLibABI = "[]"
 
-// ExchangeLibBin is the compiled bytecode used for deploying new contracts.
-const ExchangeLibBin = `0x73000000000000000000000000000000000000000030146080604052600080fd00a165627a7a723058205bf604f94d11fe8633cd859a11f619c499dd4716f3e961c9b35e374193e49baf0029`
-
-// DeployExchangeLib deploys a new Ethereum contract, binding an instance of ExchangeLib to it.
-func DeployExchangeLib(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *ExchangeLib, error) {
-	parsed, err := abi.JSON(strings.NewReader(ExchangeLibABI))
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(ExchangeLibBin), backend)
-	if err != nil {
-		return common.Address{}, nil, nil, err
-	}
-	return address, tx, &ExchangeLib{ExchangeLibCaller: ExchangeLibCaller{contract: contract}, ExchangeLibTransactor: ExchangeLibTransactor{contract: contract}, ExchangeLibFilterer: ExchangeLibFilterer{contract: contract}}, nil
-}
-
 // ExchangeLib is an auto generated Go binding around an Ethereum contract.
 type ExchangeLib struct {
+	Address               common.Address
 	ExchangeLibCaller     // Read-only binding to the contract
 	ExchangeLibTransactor // Write-only binding to the contract
 	ExchangeLibFilterer   // Log filterer for contract events
@@ -107,13 +95,44 @@ type ExchangeLibTransactorRaw struct {
 	Contract *ExchangeLibTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+type ExchangeLibStatus int8
+
+const (
+	StatusCLOSED   = 5
+	StatusNEUTRAL  = 0
+	StatusOPENED   = 4
+	StatusPENDING  = 1
+	StatusREJECTED = 3
+	StatusSETTLED  = 2
+)
+
+type ExchangeLibOffer struct {
+	ContractAddr common.Address
+	Offeree      common.Address
+	Offeror      common.Address
+	Status       ExchangeLibStatus
+}
+
+type ExchangeLibOrderbook struct {
+	Orders map[ablCommon.ID]ExchangeLibOffer
+}
+
+func init() {
+	blockchain.ContractList["ExchangeLib"] = (&ExchangeLib{}).new
+}
+
 // NewExchangeLib creates a new instance of ExchangeLib, bound to a specific deployed contract.
 func NewExchangeLib(address common.Address, backend bind.ContractBackend) (*ExchangeLib, error) {
 	contract, err := bindExchangeLib(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &ExchangeLib{ExchangeLibCaller: ExchangeLibCaller{contract: contract}, ExchangeLibTransactor: ExchangeLibTransactor{contract: contract}, ExchangeLibFilterer: ExchangeLibFilterer{contract: contract}}, nil
+	return &ExchangeLib{
+		Address:               address,
+		ExchangeLibCaller:     ExchangeLibCaller{contract: contract},
+		ExchangeLibTransactor: ExchangeLibTransactor{contract: contract},
+		ExchangeLibFilterer:   ExchangeLibFilterer{contract: contract},
+	}, nil
 }
 
 // NewExchangeLibCaller creates a new read-only instance of ExchangeLib, bound to a specific deployed contract.
@@ -150,6 +169,10 @@ func bindExchangeLib(address common.Address, caller bind.ContractCaller, transac
 		return nil, err
 	}
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_ExchangeLib *ExchangeLib) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewExchangeLib(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and
