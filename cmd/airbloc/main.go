@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/airbloc/airbloc-go/node/userdelegateapi"
 	"os"
 	"strings"
+
+	"github.com/airbloc/airbloc-go/node/userdelegateapi"
 
 	"github.com/airbloc/airbloc-go/node"
 	"github.com/airbloc/airbloc-go/node/serverapi"

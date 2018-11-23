@@ -4,11 +4,12 @@ import (
 	"bufio"
 	"context"
 	"crypto/ecdsa"
+	"io"
+	"reflect"
+
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/ethereum/go-ethereum/crypto"
 	"golang.org/x/crypto/sha3"
-	"io"
-	"reflect"
 
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/gogo/protobuf/proto"

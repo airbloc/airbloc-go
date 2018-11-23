@@ -3,6 +3,8 @@ package userdelegate
 import (
 	"context"
 	"fmt"
+	"log"
+
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/airbloc/airbloc-go/p2p"
@@ -10,7 +12,6 @@ import (
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/userdelegate"
 	"github.com/libp2p/go-libp2p-peerstore"
 	"github.com/multiformats/go-multiaddr"
-	"log"
 )
 
 func newServer(memdb localdb.Database, k *key.Key, port int, bootnode bool, bootinfos ...peerstore.PeerInfo) p2p.Server {
@@ -18,7 +19,7 @@ func newServer(memdb localdb.Database, k *key.Key, port int, bootnode bool, boot
 	if err != nil {
 		log.Fatalf("%+v\n", err)
 	}
-	server, err := p2p.NewServer(memdb, k, addr, bootnode, bootinfos)
+	server, err := p2p.NewAirblocServer(memdb, k, addr, bootnode, bootinfos)
 	if err != nil {
 		log.Fatalf("%+v\n", err)
 	}
@@ -49,7 +50,7 @@ func Main() {
 	server.SubscribeTopic("dauth-deny-deadbeefdeadbeef", &pb.DAuthRequest{}, authHandler(false))
 }
 
-func authHandler(allow bool) func (server p2p.Server, context context.Context, message common.Message) {
-	return func (server p2p.Server, context context.Context, message common.Message) {
+func authHandler(allow bool) func(server p2p.Server, context context.Context, message common.Message) {
+	return func(server p2p.Server, context context.Context, message common.Message) {
 	}
 }

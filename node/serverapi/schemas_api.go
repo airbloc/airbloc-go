@@ -2,6 +2,7 @@ package serverapi
 
 import (
 	"encoding/json"
+
 	"github.com/airbloc/airbloc-go/node"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/airbloc/airbloc-go/schemas"
