@@ -16,6 +16,7 @@ import (
 type bigchainDB struct {
 	bdb    *client.Client
 	client *http.Client
+	bdbUrl string
 	mdb    *mongo.Database
 	key    *txn.KeyPair
 	v      int
@@ -44,6 +45,7 @@ func NewBigchainDB(bdbUrl, mdbUrl string, key *txn.KeyPair, version int) (Databa
 	return &bigchainDB{
 		bdb:    bdbClient,
 		mdb:    mdbClient.Database(BigchainDBName),
+		bdbUrl: bdbUrl,
 		client: &http.Client{},
 		key:    key,
 		v:      version,
