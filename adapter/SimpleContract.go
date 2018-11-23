@@ -9,10 +9,11 @@ import (
 	"strings"
 
 	"github.com/airbloc/airbloc-go/blockchain"
+	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -25,7 +26,8 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ethCommon.Big1
+	_ = ablCommon.IDFromString
+	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -35,7 +37,7 @@ const SimpleContractABI = "[{\"inputs\":[{\"name\":\"_exchange\",\"type\":\"addr
 
 // SimpleContract is an auto generated Go binding around an Ethereum contract.
 type SimpleContract struct {
-	Address                  ethCommon.Address
+	Address                  common.Address
 	SimpleContractCaller     // Read-only binding to the contract
 	SimpleContractTransactor // Write-only binding to the contract
 	SimpleContractFilterer   // Log filterer for contract events
@@ -103,7 +105,7 @@ func init() {
 }
 
 // NewSimpleContract creates a new instance of SimpleContract, bound to a specific deployed contract.
-func NewSimpleContract(address ethCommon.Address, backend bind.ContractBackend) (*SimpleContract, error) {
+func NewSimpleContract(address common.Address, backend bind.ContractBackend) (*SimpleContract, error) {
 	contract, err := bindSimpleContract(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -117,7 +119,7 @@ func NewSimpleContract(address ethCommon.Address, backend bind.ContractBackend) 
 }
 
 // NewSimpleContractCaller creates a new read-only instance of SimpleContract, bound to a specific deployed contract.
-func NewSimpleContractCaller(address ethCommon.Address, caller bind.ContractCaller) (*SimpleContractCaller, error) {
+func NewSimpleContractCaller(address common.Address, caller bind.ContractCaller) (*SimpleContractCaller, error) {
 	contract, err := bindSimpleContract(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -126,7 +128,7 @@ func NewSimpleContractCaller(address ethCommon.Address, caller bind.ContractCall
 }
 
 // NewSimpleContractTransactor creates a new write-only instance of SimpleContract, bound to a specific deployed contract.
-func NewSimpleContractTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*SimpleContractTransactor, error) {
+func NewSimpleContractTransactor(address common.Address, transactor bind.ContractTransactor) (*SimpleContractTransactor, error) {
 	contract, err := bindSimpleContract(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -135,7 +137,7 @@ func NewSimpleContractTransactor(address ethCommon.Address, transactor bind.Cont
 }
 
 // NewSimpleContractFilterer creates a new log filterer instance of SimpleContract, bound to a specific deployed contract.
-func NewSimpleContractFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*SimpleContractFilterer, error) {
+func NewSimpleContractFilterer(address common.Address, filterer bind.ContractFilterer) (*SimpleContractFilterer, error) {
 	contract, err := bindSimpleContract(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -144,7 +146,7 @@ func NewSimpleContractFilterer(address ethCommon.Address, filterer bind.Contract
 }
 
 // bindSimpleContract binds a generic wrapper to an already deployed contract.
-func bindSimpleContract(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindSimpleContract(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(SimpleContractABI))
 	if err != nil {
 		return nil, err
@@ -152,7 +154,7 @@ func bindSimpleContract(address ethCommon.Address, caller bind.ContractCaller, t
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_SimpleContract *SimpleContract) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_SimpleContract *SimpleContract) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewSimpleContract(address, backend)
 }
 

@@ -9,10 +9,11 @@ import (
 	"strings"
 
 	"github.com/airbloc/airbloc-go/blockchain"
+	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -25,7 +26,8 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ethCommon.Big1
+	_ = ablCommon.IDFromString
+	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -35,7 +37,7 @@ const ECRecoveryABI = "[]"
 
 // ECRecovery is an auto generated Go binding around an Ethereum contract.
 type ECRecovery struct {
-	Address              ethCommon.Address
+	Address              common.Address
 	ECRecoveryCaller     // Read-only binding to the contract
 	ECRecoveryTransactor // Write-only binding to the contract
 	ECRecoveryFilterer   // Log filterer for contract events
@@ -98,7 +100,7 @@ func init() {
 }
 
 // NewECRecovery creates a new instance of ECRecovery, bound to a specific deployed contract.
-func NewECRecovery(address ethCommon.Address, backend bind.ContractBackend) (*ECRecovery, error) {
+func NewECRecovery(address common.Address, backend bind.ContractBackend) (*ECRecovery, error) {
 	contract, err := bindECRecovery(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -112,7 +114,7 @@ func NewECRecovery(address ethCommon.Address, backend bind.ContractBackend) (*EC
 }
 
 // NewECRecoveryCaller creates a new read-only instance of ECRecovery, bound to a specific deployed contract.
-func NewECRecoveryCaller(address ethCommon.Address, caller bind.ContractCaller) (*ECRecoveryCaller, error) {
+func NewECRecoveryCaller(address common.Address, caller bind.ContractCaller) (*ECRecoveryCaller, error) {
 	contract, err := bindECRecovery(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -121,7 +123,7 @@ func NewECRecoveryCaller(address ethCommon.Address, caller bind.ContractCaller) 
 }
 
 // NewECRecoveryTransactor creates a new write-only instance of ECRecovery, bound to a specific deployed contract.
-func NewECRecoveryTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*ECRecoveryTransactor, error) {
+func NewECRecoveryTransactor(address common.Address, transactor bind.ContractTransactor) (*ECRecoveryTransactor, error) {
 	contract, err := bindECRecovery(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -130,7 +132,7 @@ func NewECRecoveryTransactor(address ethCommon.Address, transactor bind.Contract
 }
 
 // NewECRecoveryFilterer creates a new log filterer instance of ECRecovery, bound to a specific deployed contract.
-func NewECRecoveryFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*ECRecoveryFilterer, error) {
+func NewECRecoveryFilterer(address common.Address, filterer bind.ContractFilterer) (*ECRecoveryFilterer, error) {
 	contract, err := bindECRecovery(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -139,7 +141,7 @@ func NewECRecoveryFilterer(address ethCommon.Address, filterer bind.ContractFilt
 }
 
 // bindECRecovery binds a generic wrapper to an already deployed contract.
-func bindECRecovery(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindECRecovery(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(ECRecoveryABI))
 	if err != nil {
 		return nil, err
@@ -147,7 +149,7 @@ func bindECRecovery(address ethCommon.Address, caller bind.ContractCaller, trans
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_ECRecovery *ECRecovery) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_ECRecovery *ECRecovery) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewECRecovery(address, backend)
 }
 

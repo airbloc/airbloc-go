@@ -2,13 +2,17 @@
 DEST = $(shell pwd)/build/bin
 
 PROTO_DIR := proto
-PROTO_SRCS := $(wildcard $(PROTO_DIR)/*.proto)
+PROTO_SRCS := $(shell find $(PROTO_DIR) -name *.proto)
 
 all: airbloc
 
 airbloc:
 	./env.sh go install ./cmd/airbloc
 	@echo "$(DEST)/airbloc"
+
+bootnode:
+	./env.sh go install ./cmd/bootnode
+	@echo "$(DEST)/bootnode"
 
 clean:
 	@rm -rf build/
@@ -21,7 +25,6 @@ generate-bind:
 
 generate-proto:
 	@for PROTO in $(PROTO_SRCS); do protoc -I. $$PROTO --go_out=plugins=grpc:$$GOPATH/src; done
-    @protoc --go_out=. proto/p2p/message.proto
 
 uninstall:
 	@rm -f $GOPATH/bin/airbloc

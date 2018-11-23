@@ -9,10 +9,11 @@ import (
 	"strings"
 
 	"github.com/airbloc/airbloc-go/blockchain"
+	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -25,7 +26,8 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ethCommon.Big1
+	_ = ablCommon.IDFromString
+	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -35,7 +37,7 @@ const AccountsABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"numberOfAccoun
 
 // Accounts is an auto generated Go binding around an Ethereum contract.
 type Accounts struct {
-	Address            ethCommon.Address
+	Address            common.Address
 	AccountsCaller     // Read-only binding to the contract
 	AccountsTransactor // Write-only binding to the contract
 	AccountsFilterer   // Log filterer for contract events
@@ -102,9 +104,9 @@ const (
 )
 
 type AccountsAccount struct {
-	Owner         ethCommon.Address
-	PasswordProof ethCommon.Address
-	Proxy         ethCommon.Address
+	Owner         common.Address
+	PasswordProof common.Address
+	Proxy         common.Address
 	Status        AccountsStatus
 }
 
@@ -113,7 +115,7 @@ func init() {
 }
 
 // NewAccounts creates a new instance of Accounts, bound to a specific deployed contract.
-func NewAccounts(address ethCommon.Address, backend bind.ContractBackend) (*Accounts, error) {
+func NewAccounts(address common.Address, backend bind.ContractBackend) (*Accounts, error) {
 	contract, err := bindAccounts(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -127,7 +129,7 @@ func NewAccounts(address ethCommon.Address, backend bind.ContractBackend) (*Acco
 }
 
 // NewAccountsCaller creates a new read-only instance of Accounts, bound to a specific deployed contract.
-func NewAccountsCaller(address ethCommon.Address, caller bind.ContractCaller) (*AccountsCaller, error) {
+func NewAccountsCaller(address common.Address, caller bind.ContractCaller) (*AccountsCaller, error) {
 	contract, err := bindAccounts(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -136,7 +138,7 @@ func NewAccountsCaller(address ethCommon.Address, caller bind.ContractCaller) (*
 }
 
 // NewAccountsTransactor creates a new write-only instance of Accounts, bound to a specific deployed contract.
-func NewAccountsTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*AccountsTransactor, error) {
+func NewAccountsTransactor(address common.Address, transactor bind.ContractTransactor) (*AccountsTransactor, error) {
 	contract, err := bindAccounts(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -145,7 +147,7 @@ func NewAccountsTransactor(address ethCommon.Address, transactor bind.ContractTr
 }
 
 // NewAccountsFilterer creates a new log filterer instance of Accounts, bound to a specific deployed contract.
-func NewAccountsFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*AccountsFilterer, error) {
+func NewAccountsFilterer(address common.Address, filterer bind.ContractFilterer) (*AccountsFilterer, error) {
 	contract, err := bindAccounts(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -154,7 +156,7 @@ func NewAccountsFilterer(address ethCommon.Address, filterer bind.ContractFilter
 }
 
 // bindAccounts binds a generic wrapper to an already deployed contract.
-func bindAccounts(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindAccounts(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(AccountsABI))
 	if err != nil {
 		return nil, err
@@ -162,7 +164,7 @@ func bindAccounts(address ethCommon.Address, caller bind.ContractCaller, transac
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_Accounts *Accounts) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_Accounts *Accounts) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewAccounts(address, backend)
 }
 
@@ -625,7 +627,7 @@ func (_Accounts *AccountsFilterer) FilterOwnershipRenounced(opts *bind.FilterOpt
 // Solidity: e OwnershipRenounced(previousOwner indexed address)
 func (_Accounts *AccountsFilterer) ParseOwnershipRenouncedFromReceipt(receipt *types.Receipt) (*AccountsOwnershipRenounced, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
+		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
 			event := new(AccountsOwnershipRenounced)
 			if err := _Accounts.contract.UnpackLog(event, "OwnershipRenounced", *log); err != nil {
 				return nil, err
@@ -778,7 +780,7 @@ func (_Accounts *AccountsFilterer) FilterOwnershipTransferred(opts *bind.FilterO
 // Solidity: e OwnershipTransferred(previousOwner indexed address, newOwner indexed address)
 func (_Accounts *AccountsFilterer) ParseOwnershipTransferredFromReceipt(receipt *types.Receipt) (*AccountsOwnershipTransferred, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
+		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
 			event := new(AccountsOwnershipTransferred)
 			if err := _Accounts.contract.UnpackLog(event, "OwnershipTransferred", *log); err != nil {
 				return nil, err
@@ -931,7 +933,7 @@ func (_Accounts *AccountsFilterer) FilterSignUp(opts *bind.FilterOpts, owner []c
 // Solidity: e SignUp(owner indexed address, accountId bytes8)
 func (_Accounts *AccountsFilterer) ParseSignUpFromReceipt(receipt *types.Receipt) (*AccountsSignUp, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0xb98ae0923087f0b489e49e611630c8accd44d415c9fcbd5d59c6511877754ec4") {
+		if log.Topics[0] == common.HexToHash("0xb98ae0923087f0b489e49e611630c8accd44d415c9fcbd5d59c6511877754ec4") {
 			event := new(AccountsSignUp)
 			if err := _Accounts.contract.UnpackLog(event, "SignUp", *log); err != nil {
 				return nil, err
@@ -1085,7 +1087,7 @@ func (_Accounts *AccountsFilterer) FilterTemporaryCreated(opts *bind.FilterOpts,
 // Solidity: e TemporaryCreated(proxy indexed address, identityHash indexed bytes32, accountId bytes8)
 func (_Accounts *AccountsFilterer) ParseTemporaryCreatedFromReceipt(receipt *types.Receipt) (*AccountsTemporaryCreated, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0x7f475d23ee7af49ec9e9b689d8eddd76ab367e3d326ba1658216174b5adbf52e") {
+		if log.Topics[0] == common.HexToHash("0x7f475d23ee7af49ec9e9b689d8eddd76ab367e3d326ba1658216174b5adbf52e") {
 			event := new(AccountsTemporaryCreated)
 			if err := _Accounts.contract.UnpackLog(event, "TemporaryCreated", *log); err != nil {
 				return nil, err
@@ -1243,7 +1245,7 @@ func (_Accounts *AccountsFilterer) FilterUnlocked(opts *bind.FilterOpts, identit
 // Solidity: e Unlocked(identityHash indexed bytes32, accountId indexed bytes8, newOwner address)
 func (_Accounts *AccountsFilterer) ParseUnlockedFromReceipt(receipt *types.Receipt) (*AccountsUnlocked, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0x97e37defaf20fab5209164d8e3b54fdb1bd84d7ec6def1886c587be543d41bc0") {
+		if log.Topics[0] == common.HexToHash("0x97e37defaf20fab5209164d8e3b54fdb1bd84d7ec6def1886c587be543d41bc0") {
 			event := new(AccountsUnlocked)
 			if err := _Accounts.contract.UnpackLog(event, "Unlocked", *log); err != nil {
 				return nil, err

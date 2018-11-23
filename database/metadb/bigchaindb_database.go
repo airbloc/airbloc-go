@@ -14,15 +14,16 @@ import (
 )
 
 type bigchainDB struct {
-	bdb    *client.Client
-	client *http.Client
-	mdb    *mongo.Database
-	key    *txn.KeyPair
-	v      int
+	bdb      *client.Client
+	client   *http.Client
+	proxyUrl string
+	mdb      *mongo.Database
+	key      *txn.KeyPair
+	v        int
 }
 
 // http://localhost:9984 or external gateway
-func NewBigchainDB(bdbUrl, mdbUrl string, key *txn.KeyPair, version int) (Database, error) {
+func NewBigchainDB(bdbUrl, mdbUrl, proxyUrl string, key *txn.KeyPair, version int) (Database, error) {
 	log.Debug("BigchainDB initiated", "endpoint", bdbUrl)
 	config := client.ClientConfig{Url: bdbUrl}
 	bdbClient, err := client.New(config)
@@ -42,11 +43,12 @@ func NewBigchainDB(bdbUrl, mdbUrl string, key *txn.KeyPair, version int) (Databa
 	}
 
 	return &bigchainDB{
-		bdb:    bdbClient,
-		mdb:    mdbClient.Database(BigchainDBName),
-		client: &http.Client{},
-		key:    key,
-		v:      version,
+		bdb:      bdbClient,
+		mdb:      mdbClient.Database(BigchainDBName),
+		proxyUrl: proxyUrl,
+		client:   &http.Client{},
+		key:      key,
+		v:        version,
 	}, nil
 }
 

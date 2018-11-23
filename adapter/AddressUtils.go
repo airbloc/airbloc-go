@@ -9,10 +9,11 @@ import (
 	"strings"
 
 	"github.com/airbloc/airbloc-go/blockchain"
+	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -25,7 +26,8 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ethCommon.Big1
+	_ = ablCommon.IDFromString
+	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -35,7 +37,7 @@ const AddressUtilsABI = "[]"
 
 // AddressUtils is an auto generated Go binding around an Ethereum contract.
 type AddressUtils struct {
-	Address                ethCommon.Address
+	Address                common.Address
 	AddressUtilsCaller     // Read-only binding to the contract
 	AddressUtilsTransactor // Write-only binding to the contract
 	AddressUtilsFilterer   // Log filterer for contract events
@@ -98,7 +100,7 @@ func init() {
 }
 
 // NewAddressUtils creates a new instance of AddressUtils, bound to a specific deployed contract.
-func NewAddressUtils(address ethCommon.Address, backend bind.ContractBackend) (*AddressUtils, error) {
+func NewAddressUtils(address common.Address, backend bind.ContractBackend) (*AddressUtils, error) {
 	contract, err := bindAddressUtils(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -112,7 +114,7 @@ func NewAddressUtils(address ethCommon.Address, backend bind.ContractBackend) (*
 }
 
 // NewAddressUtilsCaller creates a new read-only instance of AddressUtils, bound to a specific deployed contract.
-func NewAddressUtilsCaller(address ethCommon.Address, caller bind.ContractCaller) (*AddressUtilsCaller, error) {
+func NewAddressUtilsCaller(address common.Address, caller bind.ContractCaller) (*AddressUtilsCaller, error) {
 	contract, err := bindAddressUtils(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -121,7 +123,7 @@ func NewAddressUtilsCaller(address ethCommon.Address, caller bind.ContractCaller
 }
 
 // NewAddressUtilsTransactor creates a new write-only instance of AddressUtils, bound to a specific deployed contract.
-func NewAddressUtilsTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*AddressUtilsTransactor, error) {
+func NewAddressUtilsTransactor(address common.Address, transactor bind.ContractTransactor) (*AddressUtilsTransactor, error) {
 	contract, err := bindAddressUtils(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -130,7 +132,7 @@ func NewAddressUtilsTransactor(address ethCommon.Address, transactor bind.Contra
 }
 
 // NewAddressUtilsFilterer creates a new log filterer instance of AddressUtils, bound to a specific deployed contract.
-func NewAddressUtilsFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*AddressUtilsFilterer, error) {
+func NewAddressUtilsFilterer(address common.Address, filterer bind.ContractFilterer) (*AddressUtilsFilterer, error) {
 	contract, err := bindAddressUtils(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -139,7 +141,7 @@ func NewAddressUtilsFilterer(address ethCommon.Address, filterer bind.ContractFi
 }
 
 // bindAddressUtils binds a generic wrapper to an already deployed contract.
-func bindAddressUtils(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindAddressUtils(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(AddressUtilsABI))
 	if err != nil {
 		return nil, err
@@ -147,7 +149,7 @@ func bindAddressUtils(address ethCommon.Address, caller bind.ContractCaller, tra
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_AddressUtils *AddressUtils) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_AddressUtils *AddressUtils) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewAddressUtils(address, backend)
 }
 

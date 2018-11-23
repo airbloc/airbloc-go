@@ -11,16 +11,22 @@ import (
 	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/airbloc/airbloc-go/p2p/common"
-	p2pr "github.com/airbloc/airbloc-go/proto/p2p"
+	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/gogo/protobuf/proto"
 	"github.com/ipfs/go-cid"
 	"github.com/libp2p/go-libp2p"
 	kaddht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/libp2p/go-libp2p-peer"
 	"github.com/libp2p/go-libp2p-peerstore"
+	"github.com/libp2p/go-libp2p/p2p/host/routed"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/multiformats/go-multihash"
 	"github.com/pkg/errors"
+)
+
+const (
+	ProtocolName    = "airbloc"
+	ProtocolVersion = "1.0.0"
 )
 
 type AirblocServer struct {
@@ -30,39 +36,48 @@ type AirblocServer struct {
 	cancel context.CancelFunc
 
 	// network
-	id   cid.Cid
-	host Host
-	dht  *kaddht.IpfsDHT
+	id      cid.Cid
+	pid     common.Pid
+	host    Host
+	dht     *kaddht.IpfsDHT
+	nodekey *key.Key
 
 	// database
 	db localdb.Database
 
 	// topic - handlers
-	types    map[p2pr.Topic]reflect.Type
+	types    map[string]reflect.Type
 	topics   map[reflect.Type]string
 	handlers map[reflect.Type]TopicHandler
 }
 
 func NewAirblocServer(
 	localdb localdb.Database,
-	identity *key.Key,
+	nodekey *key.Key,
 	addr multiaddr.Multiaddr,
 	bootnode bool,
 	bootinfos []peerstore.PeerInfo,
 ) (Server, error) {
-	privKey, err := identity.DeriveLibp2pKeyPair()
+	privKey, err := nodekey.DeriveLibp2pKeyPair()
 	if err != nil {
 		return nil, err
 	}
 
+	pid, err := common.NewPid(ProtocolName, ProtocolVersion)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to generate pid")
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	server := &AirblocServer{
-		ctx:    ctx,
-		cancel: cancel,
-		mutex:  new(sync.Mutex),
+		ctx:     ctx,
+		cancel:  cancel,
+		mutex:   new(sync.Mutex),
+		pid:     pid,
+		nodekey: nodekey,
 
 		db:       localdb,
-		types:    make(map[p2pr.Topic]reflect.Type),
+		types:    make(map[string]reflect.Type),
 		topics:   make(map[reflect.Type]string),
 		handlers: make(map[reflect.Type]TopicHandler),
 	}
@@ -83,6 +98,7 @@ func NewAirblocServer(
 		return nil, err
 	}
 
+	h = routedhost.Wrap(h, server.dht)
 	server.host = NewAirblocHost(NewBasicHost(h), 20)
 
 	if bootnode {
@@ -104,14 +120,14 @@ func NewAirblocServer(
 		}
 	}
 
-	idVal := int32(p2pr.CID_AIRBLOC)
+	idVal := int32(pb.CID_AIRBLOC)
 
 	v1b := cid.V1Builder{
 		Codec:  uint64(idVal),
 		MhType: multihash.KECCAK_256,
 	}
 
-	server.id, err = v1b.Sum([]byte(p2pr.CID_name[idVal]))
+	server.id, err = v1b.Sum([]byte(pb.CID_name[idVal]))
 	if err != nil {
 		cancel()
 		return nil, errors.Wrap(err, "server error : failed to generate cid")
@@ -166,12 +182,7 @@ func (s *AirblocServer) updatePeer() {
 
 // api backend interfaces
 func (s *AirblocServer) Start() error {
-	pid, err := common.NewPid("airbloc", "0.0.1")
-	if err != nil {
-		return errors.Wrap(err, "failed to generate pid")
-	}
-
-	s.RegisterProtocol(pid, func(message common.ProtoMessage) {
+	s.host.RegisterProtocol(s.pid, func(message common.ProtoMessage) {
 		typ, ok := s.types[message.GetTopic()]
 		if !ok {
 			log.Println("unregistered topic")
@@ -180,7 +191,7 @@ func (s *AirblocServer) Start() error {
 
 		topic := s.topics[typ]
 		handler := s.handlers[typ]
-		if topic != message.Topic.String() {
+		if topic != message.Topic {
 			log.Println("message and topic mismatch")
 			return
 		}
@@ -201,23 +212,11 @@ func (s *AirblocServer) Stop() {
 	s.cancel()
 }
 
-func (s *AirblocServer) RegisterProtocol(pid common.Pid, handler ProtocolHandler, adapters ...ProtocolAdapter) {
-	s.host.RegisterProtocol(pid, handler, adapters...)
-}
-
-func (s *AirblocServer) UnregisterProtocol(pid common.Pid) {
-	s.host.UnregisterProtocol(pid)
-}
-
-func (s *AirblocServer) RegisterTopic(topic string, msg proto.Message, handler TopicHandler) error {
-	val, ok := p2pr.Topic_value[topic]
-	if !ok {
-		return errors.New("topic already registered")
-	}
+func (s *AirblocServer) SubscribeTopic(topic string, msg proto.Message, handler TopicHandler) error {
 	typ := common.MessageType(msg)
 
 	s.mutex.Lock()
-	s.types[p2pr.Topic(val)] = typ
+	s.types[topic] = typ
 	s.topics[typ] = topic
 	s.handlers[typ] = handler
 	s.mutex.Unlock()
@@ -225,15 +224,11 @@ func (s *AirblocServer) RegisterTopic(topic string, msg proto.Message, handler T
 	return nil
 }
 
-func (s *AirblocServer) UnregisterTopic(topic string) error {
-	val, ok := p2pr.Topic_value[topic]
-	if !ok {
-		return errors.New("invalid topic")
-	}
-	msgType := s.types[p2pr.Topic(val)]
+func (s *AirblocServer) UnsubscribeTopic(topic string) error {
+	msgType := s.types[topic]
 
 	s.mutex.Lock()
-	delete(s.types, p2pr.Topic(val))
+	delete(s.types, topic)
 	delete(s.topics, msgType)
 	delete(s.handlers, msgType)
 	s.mutex.Unlock()
@@ -241,12 +236,26 @@ func (s *AirblocServer) UnregisterTopic(topic string) error {
 	return nil
 }
 
-func (s *AirblocServer) Send(ctx context.Context, msg common.ProtoMessage, p peer.ID, pids ...common.Pid) error {
-	return s.host.Send(ctx, msg, p, pids...)
+func (s *AirblocServer) Send(ctx context.Context, msg proto.Message, topic string, p peer.ID) error {
+	payload, err := common.NewProtoMessage(msg, topic)
+	if err != nil {
+		return errors.Wrap(err, "send error")
+	}
+	if err := payload.Sign(s.nodekey); err != nil {
+		return errors.Wrap(err, "send error")
+	}
+	return s.host.Send(ctx, *payload, p, s.pid)
 }
 
-func (s *AirblocServer) Publish(ctx context.Context, msg common.ProtoMessage, pids ...common.Pid) error {
-	return s.host.Publish(ctx, msg, pids...)
+func (s *AirblocServer) Publish(ctx context.Context, msg proto.Message, topic string) error {
+	payload, err := common.NewProtoMessage(msg, topic)
+	if err != nil {
+		return errors.Wrap(err, "publish error")
+	}
+	if err := payload.Sign(s.nodekey); err != nil {
+		return errors.Wrap(err, "send error")
+	}
+	return s.host.Publish(ctx, *payload, s.pid)
 }
 
 func (s *AirblocServer) LocalDB() localdb.Database {

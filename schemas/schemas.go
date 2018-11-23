@@ -24,21 +24,15 @@ type Schemas struct {
 	contract *adapter.SchemaRegistry
 }
 
-func New(db metadb.Database, client blockchain.TxClient) (*Schemas, error) {
-	raw, err := client.GetContract(&adapter.SchemaRegistry{})
-	if err != nil {
-		return nil, err
-	}
+func New(db metadb.Database, client blockchain.TxClient) *Schemas {
+	raw, _ := client.GetContract(&adapter.SchemaRegistry{})
+	contract, _ := raw.(*adapter.SchemaRegistry)
 
-	contract, ok := raw.(*adapter.SchemaRegistry)
-	if !ok {
-		return nil, blockchain.ErrContractNotFound
-	}
 	return &Schemas{
 		db:       metadb.NewModel(db, "schema"),
 		client:   client,
 		contract: contract,
-	}, nil
+	}
 }
 
 func (s *Schemas) Register(name string, schema map[string]interface{}) (common.ID, error) {

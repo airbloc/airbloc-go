@@ -21,3 +21,7 @@ func TestSellData(t *testing.T) {
 func TestPurchaseData(t *testing.T) {
 
 }
+
+func TestPncMain(t *testing.T) {
+	main()
+}

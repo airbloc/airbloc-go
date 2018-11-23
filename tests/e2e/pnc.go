@@ -7,3 +7,4 @@ func CreateCollection() {}
 func StoreBundleData()  {}
 func SellData()         {}
 func PurchaseData()     {}
+func PncMain()			{}

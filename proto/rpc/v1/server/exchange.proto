@@ -1,0 +1,48 @@
+syntax = "proto3";
+package airbloc.rpc.v1;
+
+option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
+
+import "proto/rpc/v1/server/data.proto";
+import "proto/rpc/v1/types.proto";
+
+service Exchange {
+    rpc Order(OrderRequest) returns (airbloc.rpc.v1.Hash);
+
+    rpc Settle(airbloc.rpc.v1.Hash) returns (airbloc.rpc.v1.Result);
+    rpc Reject(OrderIdRequest) returns (airbloc.rpc.v1.Result);
+
+    // after Open()
+    rpc CloseOrder(OrderIdRequest) returns (airbloc.rpc.v1.Result);
+}
+
+message Contract {
+    enum Type {
+        RICHARDIAN = 0;
+        SMART = 1;
+    }
+    Type type = 1;
+    airbloc.rpc.v1.Address smartContractAddress = 2;
+    bytes richardianHash = 3;
+}
+
+message OrderRequest {
+    airbloc.rpc.v1.BatchRequest data = 1;
+    Contract contract = 2;
+    string offeror = 3;
+    string offeree = 4;
+    repeated string option = 5;
+    double amount = 6;
+}
+
+message OrderIdRequest {
+    string OrderId = 1;
+}
+
+message ContractId {
+    string ContractId = 1;
+}
+
+message SettleResult {
+    ContractId contractId = 1;
+}

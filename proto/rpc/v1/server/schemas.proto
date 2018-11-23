@@ -1,0 +1,18 @@
+syntax = "proto3";
+package airbloc.rpc.v1;
+
+option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
+
+service Schema {
+    rpc Create(CreateSchemaRequest) returns (CreateSchemaResult);
+}
+
+message CreateSchemaRequest {
+    string name = 1;
+    string schema = 2;
+}
+
+message CreateSchemaResult {
+    bool exists = 1;
+    string id = 2;
+}

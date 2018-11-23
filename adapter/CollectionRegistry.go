@@ -13,7 +13,7 @@ import (
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -26,7 +26,8 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ethCommon.Big1
+	_ = ablCommon.IDFromString
+	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -36,7 +37,7 @@ const CollectionRegistryABI = "[{\"inputs\":[{\"name\":\"_accounts\",\"type\":\"
 
 // CollectionRegistry is an auto generated Go binding around an Ethereum contract.
 type CollectionRegistry struct {
-	Address                      ethCommon.Address
+	Address                      common.Address
 	CollectionRegistryCaller     // Read-only binding to the contract
 	CollectionRegistryTransactor // Write-only binding to the contract
 	CollectionRegistryFilterer   // Log filterer for contract events
@@ -116,7 +117,7 @@ func init() {
 }
 
 // NewCollectionRegistry creates a new instance of CollectionRegistry, bound to a specific deployed contract.
-func NewCollectionRegistry(address ethCommon.Address, backend bind.ContractBackend) (*CollectionRegistry, error) {
+func NewCollectionRegistry(address common.Address, backend bind.ContractBackend) (*CollectionRegistry, error) {
 	contract, err := bindCollectionRegistry(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -130,7 +131,7 @@ func NewCollectionRegistry(address ethCommon.Address, backend bind.ContractBacke
 }
 
 // NewCollectionRegistryCaller creates a new read-only instance of CollectionRegistry, bound to a specific deployed contract.
-func NewCollectionRegistryCaller(address ethCommon.Address, caller bind.ContractCaller) (*CollectionRegistryCaller, error) {
+func NewCollectionRegistryCaller(address common.Address, caller bind.ContractCaller) (*CollectionRegistryCaller, error) {
 	contract, err := bindCollectionRegistry(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -139,7 +140,7 @@ func NewCollectionRegistryCaller(address ethCommon.Address, caller bind.Contract
 }
 
 // NewCollectionRegistryTransactor creates a new write-only instance of CollectionRegistry, bound to a specific deployed contract.
-func NewCollectionRegistryTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*CollectionRegistryTransactor, error) {
+func NewCollectionRegistryTransactor(address common.Address, transactor bind.ContractTransactor) (*CollectionRegistryTransactor, error) {
 	contract, err := bindCollectionRegistry(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -148,7 +149,7 @@ func NewCollectionRegistryTransactor(address ethCommon.Address, transactor bind.
 }
 
 // NewCollectionRegistryFilterer creates a new log filterer instance of CollectionRegistry, bound to a specific deployed contract.
-func NewCollectionRegistryFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*CollectionRegistryFilterer, error) {
+func NewCollectionRegistryFilterer(address common.Address, filterer bind.ContractFilterer) (*CollectionRegistryFilterer, error) {
 	contract, err := bindCollectionRegistry(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -157,7 +158,7 @@ func NewCollectionRegistryFilterer(address ethCommon.Address, filterer bind.Cont
 }
 
 // bindCollectionRegistry binds a generic wrapper to an already deployed contract.
-func bindCollectionRegistry(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindCollectionRegistry(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(CollectionRegistryABI))
 	if err != nil {
 		return nil, err
@@ -165,7 +166,7 @@ func bindCollectionRegistry(address ethCommon.Address, caller bind.ContractCalle
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_CollectionRegistry *CollectionRegistry) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_CollectionRegistry *CollectionRegistry) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewCollectionRegistry(address, backend)
 }
 
@@ -551,7 +552,7 @@ func (_CollectionRegistry *CollectionRegistryFilterer) FilterAllowed(opts *bind.
 // Solidity: e Allowed(collectionId indexed bytes8, userId indexed bytes8)
 func (_CollectionRegistry *CollectionRegistryFilterer) ParseAllowedFromReceipt(receipt *types.Receipt) (*CollectionRegistryAllowed, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0x2575002f9c19a89406e73df97a2c23c867221b5aa503bd19f5fdc8798f009306") {
+		if log.Topics[0] == common.HexToHash("0x2575002f9c19a89406e73df97a2c23c867221b5aa503bd19f5fdc8798f009306") {
 			event := new(CollectionRegistryAllowed)
 			if err := _CollectionRegistry.contract.UnpackLog(event, "Allowed", *log); err != nil {
 				return nil, err
@@ -708,7 +709,7 @@ func (_CollectionRegistry *CollectionRegistryFilterer) FilterDenied(opts *bind.F
 // Solidity: e Denied(collectionId indexed bytes8, userId indexed bytes8)
 func (_CollectionRegistry *CollectionRegistryFilterer) ParseDeniedFromReceipt(receipt *types.Receipt) (*CollectionRegistryDenied, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0x1a57e3d69528db9b16115c4ff4339d855e8468ce95579571daa74bd206d24303") {
+		if log.Topics[0] == common.HexToHash("0x1a57e3d69528db9b16115c4ff4339d855e8468ce95579571daa74bd206d24303") {
 			event := new(CollectionRegistryDenied)
 			if err := _CollectionRegistry.contract.UnpackLog(event, "Denied", *log); err != nil {
 				return nil, err
@@ -866,7 +867,7 @@ func (_CollectionRegistry *CollectionRegistryFilterer) FilterRegistration(opts *
 // Solidity: e Registration(registrar indexed address, appId indexed bytes8, collectionId bytes8)
 func (_CollectionRegistry *CollectionRegistryFilterer) ParseRegistrationFromReceipt(receipt *types.Receipt) (*CollectionRegistryRegistration, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0xed612afce4032a5821a725a428005a5afc5c47bff7cc9c9b8d0d69e078b133fb") {
+		if log.Topics[0] == common.HexToHash("0xed612afce4032a5821a725a428005a5afc5c47bff7cc9c9b8d0d69e078b133fb") {
 			event := new(CollectionRegistryRegistration)
 			if err := _CollectionRegistry.contract.UnpackLog(event, "Registration", *log); err != nil {
 				return nil, err
@@ -1023,7 +1024,7 @@ func (_CollectionRegistry *CollectionRegistryFilterer) FilterUnregistration(opts
 // Solidity: e Unregistration(collectionId indexed bytes8, appId indexed bytes8)
 func (_CollectionRegistry *CollectionRegistryFilterer) ParseUnregistrationFromReceipt(receipt *types.Receipt) (*CollectionRegistryUnregistration, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0x88bf0005675630b29e5b698355f1c09cabdf78e912367fc1850c1d8b33366f2f") {
+		if log.Topics[0] == common.HexToHash("0x88bf0005675630b29e5b698355f1c09cabdf78e912367fc1850c1d8b33366f2f") {
 			event := new(CollectionRegistryUnregistration)
 			if err := _CollectionRegistry.contract.UnpackLog(event, "Unregistration", *log); err != nil {
 				return nil, err

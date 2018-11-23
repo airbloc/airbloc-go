@@ -56,7 +56,7 @@ func parseElementaryType(typeName *fastjson.Value) string {
 	case TypeUint256:
 		return "*big.Int"
 	case TypeAddresss:
-		return "ethCommon.Address"
+		return "common.Address"
 	case TypeString:
 		return "string"
 	case TypeBytes:
@@ -64,7 +64,7 @@ func parseElementaryType(typeName *fastjson.Value) string {
 	case TypeBytes8:
 		return "ablCommon.ID"
 	case TypeBytes32:
-		return "ethCommon.Hash"
+		return "common.Hash"
 	}
 	return ""
 }

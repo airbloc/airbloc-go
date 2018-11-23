@@ -9,10 +9,11 @@ import (
 	"strings"
 
 	"github.com/airbloc/airbloc-go/blockchain"
+	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -25,7 +26,8 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ethCommon.Big1
+	_ = ablCommon.IDFromString
+	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -35,7 +37,7 @@ const SchemaRegistryABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type
 
 // SchemaRegistry is an auto generated Go binding around an Ethereum contract.
 type SchemaRegistry struct {
-	Address                  ethCommon.Address
+	Address                  common.Address
 	SchemaRegistryCaller     // Read-only binding to the contract
 	SchemaRegistryTransactor // Write-only binding to the contract
 	SchemaRegistryFilterer   // Log filterer for contract events
@@ -95,7 +97,7 @@ type SchemaRegistryTransactorRaw struct {
 
 type SchemaRegistrySchema struct {
 	Name  string
-	Owner ethCommon.Address
+	Owner common.Address
 }
 
 func init() {
@@ -103,7 +105,7 @@ func init() {
 }
 
 // NewSchemaRegistry creates a new instance of SchemaRegistry, bound to a specific deployed contract.
-func NewSchemaRegistry(address ethCommon.Address, backend bind.ContractBackend) (*SchemaRegistry, error) {
+func NewSchemaRegistry(address common.Address, backend bind.ContractBackend) (*SchemaRegistry, error) {
 	contract, err := bindSchemaRegistry(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -117,7 +119,7 @@ func NewSchemaRegistry(address ethCommon.Address, backend bind.ContractBackend) 
 }
 
 // NewSchemaRegistryCaller creates a new read-only instance of SchemaRegistry, bound to a specific deployed contract.
-func NewSchemaRegistryCaller(address ethCommon.Address, caller bind.ContractCaller) (*SchemaRegistryCaller, error) {
+func NewSchemaRegistryCaller(address common.Address, caller bind.ContractCaller) (*SchemaRegistryCaller, error) {
 	contract, err := bindSchemaRegistry(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -126,7 +128,7 @@ func NewSchemaRegistryCaller(address ethCommon.Address, caller bind.ContractCall
 }
 
 // NewSchemaRegistryTransactor creates a new write-only instance of SchemaRegistry, bound to a specific deployed contract.
-func NewSchemaRegistryTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*SchemaRegistryTransactor, error) {
+func NewSchemaRegistryTransactor(address common.Address, transactor bind.ContractTransactor) (*SchemaRegistryTransactor, error) {
 	contract, err := bindSchemaRegistry(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -135,7 +137,7 @@ func NewSchemaRegistryTransactor(address ethCommon.Address, transactor bind.Cont
 }
 
 // NewSchemaRegistryFilterer creates a new log filterer instance of SchemaRegistry, bound to a specific deployed contract.
-func NewSchemaRegistryFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*SchemaRegistryFilterer, error) {
+func NewSchemaRegistryFilterer(address common.Address, filterer bind.ContractFilterer) (*SchemaRegistryFilterer, error) {
 	contract, err := bindSchemaRegistry(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -144,7 +146,7 @@ func NewSchemaRegistryFilterer(address ethCommon.Address, filterer bind.Contract
 }
 
 // bindSchemaRegistry binds a generic wrapper to an already deployed contract.
-func bindSchemaRegistry(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindSchemaRegistry(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(SchemaRegistryABI))
 	if err != nil {
 		return nil, err
@@ -152,7 +154,7 @@ func bindSchemaRegistry(address ethCommon.Address, caller bind.ContractCaller, t
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_SchemaRegistry *SchemaRegistry) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_SchemaRegistry *SchemaRegistry) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewSchemaRegistry(address, backend)
 }
 
@@ -420,7 +422,7 @@ func (_SchemaRegistry *SchemaRegistryFilterer) FilterRegistration(opts *bind.Fil
 // Solidity: e Registration(registrar indexed address, _id bytes8)
 func (_SchemaRegistry *SchemaRegistryFilterer) ParseRegistrationFromReceipt(receipt *types.Receipt) (*SchemaRegistryRegistration, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0x34b195a2b14d8eac732b11770bab8ed3823e96642f703b1a973f4a2981208d0f") {
+		if log.Topics[0] == common.HexToHash("0x34b195a2b14d8eac732b11770bab8ed3823e96642f703b1a973f4a2981208d0f") {
 			event := new(SchemaRegistryRegistration)
 			if err := _SchemaRegistry.contract.UnpackLog(event, "Registration", *log); err != nil {
 				return nil, err
@@ -568,7 +570,7 @@ func (_SchemaRegistry *SchemaRegistryFilterer) FilterUnregistration(opts *bind.F
 // Solidity: e Unregistration(_id indexed bytes8)
 func (_SchemaRegistry *SchemaRegistryFilterer) ParseUnregistrationFromReceipt(receipt *types.Receipt) (*SchemaRegistryUnregistration, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0x8c36f878328ed4dfe683ccea03edd5a0c360e665285312270adb9a22592367fb") {
+		if log.Topics[0] == common.HexToHash("0x8c36f878328ed4dfe683ccea03edd5a0c360e665285312270adb9a22592367fb") {
 			event := new(SchemaRegistryUnregistration)
 			if err := _SchemaRegistry.contract.UnpackLog(event, "Unregistration", *log); err != nil {
 				return nil, err

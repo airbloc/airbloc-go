@@ -3,15 +3,16 @@ package p2p
 import (
 	"context"
 	"fmt"
+	"github.com/airbloc/airbloc-go/p2p/common"
+	"github.com/ethereum/go-ethereum/crypto"
 	"log"
 	"testing"
+
 	"time"
 
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/key"
-	"github.com/airbloc/airbloc-go/p2p/common"
-	p2p "github.com/airbloc/airbloc-go/proto/p2p"
-	"github.com/gogo/protobuf/proto"
+	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/libp2p/go-libp2p-peerstore"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/stretchr/testify/assert"
@@ -20,27 +21,15 @@ import (
 const Size = 50
 
 var (
-	pongMsg common.ProtoMessage
-	pingMsg common.ProtoMessage
+	pongMsg *pb.TestPing
+	pingMsg *pb.TestPing
 	keys    []*key.Key
 	addrs   []multiaddr.Multiaddr
 )
 
 func init() {
-	pong, _ := proto.Marshal(&p2p.TestPing{Message: "World!"})
-	pongMsg = common.ProtoMessage{
-		Message: p2p.Message{
-			Topic: p2p.Topic_TEST_PONG,
-			Data:  pong,
-		},
-	}
-	ping, _ := proto.Marshal(&p2p.TestPing{Message: "Hello"})
-	pingMsg = common.ProtoMessage{
-		Message: p2p.Message{
-			Topic: p2p.Topic_TEST_PING,
-			Data:  ping,
-		},
-	}
+	pongMsg = &pb.TestPing{Message: "World!"}
+	pingMsg = &pb.TestPing{Message: "Hello"}
 
 	for i := 1; i <= Size+1; i++ {
 		privKey, _ := key.Generate()
@@ -51,8 +40,23 @@ func init() {
 	}
 }
 
-func makeBasicServer(index int, bootnode bool, bootinfos ...peerstore.PeerInfo) (Server, error) {
-	return NewAirblocServer(localdb.NewMemDB(), keys[index], addrs[index], bootnode, bootinfos)
+func makeBasicServer(ctx context.Context, index int, bootnode bool, bootinfos ...peerstore.PeerInfo) (Server, error) {
+	server, err := NewAirblocServer(localdb.NewMemDB(), keys[index], addrs[index], bootnode, bootinfos)
+	if err != nil {
+		return nil, err
+	}
+	server.setContext(ctx)
+	return server, nil
+}
+
+func handlePing(s Server, ctx context.Context, message common.Message) {
+	log.Println("Ping", message.Info.ID.Pretty(), message.Data.String())
+
+	s.Send(ctx, &pb.TestPing{Message: "World!"}, "ping", message.Info.ID)
+}
+
+func handlePong(s Server, ctx context.Context, message common.Message) {
+	log.Println("Pong", message.Info.ID.Pretty(), message.Data.String())
 }
 
 func TestNewServer(t *testing.T) {
@@ -63,7 +67,7 @@ func TestNewServer(t *testing.T) {
 		cancel()
 	}()
 
-	bootnode, err := makeBasicServer(0, true)
+	bootnode, err := makeBasicServer(ctx, 0, true)
 	assert.NoError(t, err)
 
 	bootinfo, err := bootnode.bootInfo()
@@ -72,26 +76,63 @@ func TestNewServer(t *testing.T) {
 	servers := make([]Server, Size)
 	servers[0] = bootnode
 
-	pid, err := common.NewPid("airbloc", "0.0.1")
-	assert.NoError(t, err)
-
 	for i := 1; i < Size; i++ {
-		server, err := makeBasicServer(i, false, bootinfo)
+		server, err := makeBasicServer(ctx, i, false, bootinfo)
 		assert.NoError(t, err)
 		server.Start()
-		server.setContext(ctx)
 
-		// ping
-		server.RegisterTopic(p2p.Topic_TEST_PING.String(), &p2p.TestPing{}, testPingHandler)
-
-		// pong
-		server.RegisterTopic(p2p.Topic_TEST_PONG.String(), &p2p.TestPong{}, testPongHandler)
+		server.SubscribeTopic("ping", &pb.TestPing{}, handlePing)
+		server.SubscribeTopic("pong", &pb.TestPong{}, handlePong)
 
 		servers[i] = server
 	}
 
-	err = servers[Size/2].Publish(ctx, pingMsg, pid)
+	err = servers[Size/2].Publish(ctx, pingMsg, "ping")
 	assert.NoError(t, err)
 
 	time.Sleep(1 * time.Second)
+}
+
+func TestAirblocHost_Publish(t *testing.T) {
+	log.SetFlags(log.Lshortfile | log.Ltime)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	bootnode, err := makeBasicServer(ctx, 0, true)
+	assert.NoError(t, err)
+
+	bootinfo, err := bootnode.bootInfo()
+	assert.NoError(t, err)
+
+	// make alice and bob
+	alice, err := makeBasicServer(ctx, 1, false, bootinfo)
+	assert.NoError(t, err)
+
+	aliceAddress := keys[1].EthereumAddress.Hex()
+	log.Printf("Alice address : %s\n", aliceAddress)
+
+	bob, err := makeBasicServer(ctx, 2, false, bootinfo)
+	assert.NoError(t, err)
+
+	// start
+	alice.Start()
+	bob.Start()
+
+	// bob listens to alice, try to recover alice's address
+	waitForBob := make(chan string, 1)
+	bob.SubscribeTopic("ping", &pb.TestPing{}, func (s Server, ctx context.Context, message common.Message) {
+		recoveredAddress := crypto.PubkeyToAddress(*message.Sender)
+		waitForBob <- recoveredAddress.Hex()
+	})
+
+	// TODO: without Connect(), it's not working
+	// err = alice.getHost().Connect(ctx, bob.getHost().PeerInfo())
+	// assert.NoError(t, err)
+
+	err = alice.Publish(ctx, pingMsg, "ping")
+	assert.NoError(t, err)
+
+	bobReceivedAddress := <-waitForBob
+	assert.Equal(t, aliceAddress, bobReceivedAddress)
 }

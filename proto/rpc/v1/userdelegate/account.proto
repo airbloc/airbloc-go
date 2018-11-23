@@ -1,0 +1,52 @@
+syntax = "proto3";
+package airbloc.rpc.v1;
+
+option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/userdelegate";
+
+import "proto/rpc/v1/types.proto";
+
+service Account {
+    rpc Create(AccountCreateRequest) returns (AccountCreateResponse);
+    rpc Get(AccountGetRequest) returns (AccountGetResponse);
+    rpc GetByIdentity(AccountGetByIdentityRequest) returns (AccountGetResponse);
+    rpc TestPassword(TestPasswordRequest) returns (TestPasswordResponse);
+}
+
+message AccountCreateRequest {
+    bytes address = 1;
+    bytes passwordSignature = 2;
+}
+
+message AccountCreateResponse {
+    string accountId = 1;
+}
+
+message AccountGetRequest {
+    string accountId = 1;
+}
+
+message AccountGetResponse {
+    enum Status {
+        _NONE = 0;
+        TEMPORARY = 1;
+        CREATED = 2;
+    }
+    string accountId = 1;
+    bytes ownerAddress = 2;
+    Status status = 3;
+    bytes proxyAddress = 4;
+    bytes passwordProof = 5;
+}
+
+message AccountGetByIdentityRequest {
+    string identity = 1;
+}
+
+message TestPasswordRequest {
+    bytes messageHash = 1;
+    bytes signature = 2;
+}
+
+message TestPasswordResponse {
+    bool exists = 1;
+}

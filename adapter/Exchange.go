@@ -9,10 +9,11 @@ import (
 	"strings"
 
 	"github.com/airbloc/airbloc-go/blockchain"
+	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -25,7 +26,8 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ethCommon.Big1
+	_ = ablCommon.IDFromString
+	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -35,7 +37,7 @@ const ExchangeABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"_operator\",\"t
 
 // Exchange is an auto generated Go binding around an Ethereum contract.
 type Exchange struct {
-	Address            ethCommon.Address
+	Address            common.Address
 	ExchangeCaller     // Read-only binding to the contract
 	ExchangeTransactor // Write-only binding to the contract
 	ExchangeFilterer   // Log filterer for contract events
@@ -98,7 +100,7 @@ func init() {
 }
 
 // NewExchange creates a new instance of Exchange, bound to a specific deployed contract.
-func NewExchange(address ethCommon.Address, backend bind.ContractBackend) (*Exchange, error) {
+func NewExchange(address common.Address, backend bind.ContractBackend) (*Exchange, error) {
 	contract, err := bindExchange(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -112,7 +114,7 @@ func NewExchange(address ethCommon.Address, backend bind.ContractBackend) (*Exch
 }
 
 // NewExchangeCaller creates a new read-only instance of Exchange, bound to a specific deployed contract.
-func NewExchangeCaller(address ethCommon.Address, caller bind.ContractCaller) (*ExchangeCaller, error) {
+func NewExchangeCaller(address common.Address, caller bind.ContractCaller) (*ExchangeCaller, error) {
 	contract, err := bindExchange(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -121,7 +123,7 @@ func NewExchangeCaller(address ethCommon.Address, caller bind.ContractCaller) (*
 }
 
 // NewExchangeTransactor creates a new write-only instance of Exchange, bound to a specific deployed contract.
-func NewExchangeTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*ExchangeTransactor, error) {
+func NewExchangeTransactor(address common.Address, transactor bind.ContractTransactor) (*ExchangeTransactor, error) {
 	contract, err := bindExchange(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -130,7 +132,7 @@ func NewExchangeTransactor(address ethCommon.Address, transactor bind.ContractTr
 }
 
 // NewExchangeFilterer creates a new log filterer instance of Exchange, bound to a specific deployed contract.
-func NewExchangeFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*ExchangeFilterer, error) {
+func NewExchangeFilterer(address common.Address, filterer bind.ContractFilterer) (*ExchangeFilterer, error) {
 	contract, err := bindExchange(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -139,7 +141,7 @@ func NewExchangeFilterer(address ethCommon.Address, filterer bind.ContractFilter
 }
 
 // bindExchange binds a generic wrapper to an already deployed contract.
-func bindExchange(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindExchange(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(ExchangeABI))
 	if err != nil {
 		return nil, err
@@ -147,7 +149,7 @@ func bindExchange(address ethCommon.Address, caller bind.ContractCaller, transac
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_Exchange *Exchange) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_Exchange *Exchange) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewExchange(address, backend)
 }
 
@@ -678,7 +680,7 @@ func (_Exchange *ExchangeFilterer) FilterOfferClosed(opts *bind.FilterOpts, _off
 // Solidity: e OfferClosed(_offerId indexed bytes8, _offeror address, _offeree address, _reverted bool)
 func (_Exchange *ExchangeFilterer) ParseOfferClosedFromReceipt(receipt *types.Receipt) (*ExchangeOfferClosed, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0xb576186fa17f96f0991d21a162ff79d8c544b056e64be35c6511d366c4647c14") {
+		if log.Topics[0] == common.HexToHash("0xb576186fa17f96f0991d21a162ff79d8c544b056e64be35c6511d366c4647c14") {
 			event := new(ExchangeOfferClosed)
 			if err := _Exchange.contract.UnpackLog(event, "OfferClosed", *log); err != nil {
 				return nil, err
@@ -826,7 +828,7 @@ func (_Exchange *ExchangeFilterer) FilterOfferOpened(opts *bind.FilterOpts, _off
 // Solidity: e OfferOpened(_offerId indexed bytes8)
 func (_Exchange *ExchangeFilterer) ParseOfferOpenedFromReceipt(receipt *types.Receipt) (*ExchangeOfferOpened, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0xad95aba0b0916a320123c0424d84ac766fc031e506a6bbce9b4402783b589920") {
+		if log.Topics[0] == common.HexToHash("0xad95aba0b0916a320123c0424d84ac766fc031e506a6bbce9b4402783b589920") {
 			event := new(ExchangeOfferOpened)
 			if err := _Exchange.contract.UnpackLog(event, "OfferOpened", *log); err != nil {
 				return nil, err
@@ -975,7 +977,7 @@ func (_Exchange *ExchangeFilterer) FilterOfferPresented(opts *bind.FilterOpts, _
 // Solidity: e OfferPresented(_offerId indexed bytes8, _contract address)
 func (_Exchange *ExchangeFilterer) ParseOfferPresentedFromReceipt(receipt *types.Receipt) (*ExchangeOfferPresented, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0xd090216304141d567e88f9d1c28798912d797b8d0f627d9f2a97d4d5922a1b79") {
+		if log.Topics[0] == common.HexToHash("0xd090216304141d567e88f9d1c28798912d797b8d0f627d9f2a97d4d5922a1b79") {
 			event := new(ExchangeOfferPresented)
 			if err := _Exchange.contract.UnpackLog(event, "OfferPresented", *log); err != nil {
 				return nil, err
@@ -1123,7 +1125,7 @@ func (_Exchange *ExchangeFilterer) FilterOfferRejected(opts *bind.FilterOpts, _o
 // Solidity: e OfferRejected(_offerId indexed bytes8)
 func (_Exchange *ExchangeFilterer) ParseOfferRejectedFromReceipt(receipt *types.Receipt) (*ExchangeOfferRejected, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0x780cea1692b166ae033a8fe67c3e7dd9f1d520e3c999d1c59b9fda6f6ed372e5") {
+		if log.Topics[0] == common.HexToHash("0x780cea1692b166ae033a8fe67c3e7dd9f1d520e3c999d1c59b9fda6f6ed372e5") {
 			event := new(ExchangeOfferRejected)
 			if err := _Exchange.contract.UnpackLog(event, "OfferRejected", *log); err != nil {
 				return nil, err
@@ -1271,7 +1273,7 @@ func (_Exchange *ExchangeFilterer) FilterOfferSettled(opts *bind.FilterOpts, _of
 // Solidity: e OfferSettled(_offerId indexed bytes8)
 func (_Exchange *ExchangeFilterer) ParseOfferSettledFromReceipt(receipt *types.Receipt) (*ExchangeOfferSettled, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0x8563cd74c7f85b9decc8d88aa698ad179ef37e8224ee11e8ce270d9e3fe3ce28") {
+		if log.Topics[0] == common.HexToHash("0x8563cd74c7f85b9decc8d88aa698ad179ef37e8224ee11e8ce270d9e3fe3ce28") {
 			event := new(ExchangeOfferSettled)
 			if err := _Exchange.contract.UnpackLog(event, "OfferSettled", *log); err != nil {
 				return nil, err
@@ -1419,7 +1421,7 @@ func (_Exchange *ExchangeFilterer) FilterOwnershipRenounced(opts *bind.FilterOpt
 // Solidity: e OwnershipRenounced(previousOwner indexed address)
 func (_Exchange *ExchangeFilterer) ParseOwnershipRenouncedFromReceipt(receipt *types.Receipt) (*ExchangeOwnershipRenounced, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
+		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
 			event := new(ExchangeOwnershipRenounced)
 			if err := _Exchange.contract.UnpackLog(event, "OwnershipRenounced", *log); err != nil {
 				return nil, err
@@ -1572,7 +1574,7 @@ func (_Exchange *ExchangeFilterer) FilterOwnershipTransferred(opts *bind.FilterO
 // Solidity: e OwnershipTransferred(previousOwner indexed address, newOwner indexed address)
 func (_Exchange *ExchangeFilterer) ParseOwnershipTransferredFromReceipt(receipt *types.Receipt) (*ExchangeOwnershipTransferred, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
+		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
 			event := new(ExchangeOwnershipTransferred)
 			if err := _Exchange.contract.UnpackLog(event, "OwnershipTransferred", *log); err != nil {
 				return nil, err
@@ -1725,7 +1727,7 @@ func (_Exchange *ExchangeFilterer) FilterRoleAdded(opts *bind.FilterOpts, operat
 // Solidity: e RoleAdded(operator indexed address, role string)
 func (_Exchange *ExchangeFilterer) ParseRoleAddedFromReceipt(receipt *types.Receipt) (*ExchangeRoleAdded, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0xbfec83d64eaa953f2708271a023ab9ee82057f8f3578d548c1a4ba0b5b700489") {
+		if log.Topics[0] == common.HexToHash("0xbfec83d64eaa953f2708271a023ab9ee82057f8f3578d548c1a4ba0b5b700489") {
 			event := new(ExchangeRoleAdded)
 			if err := _Exchange.contract.UnpackLog(event, "RoleAdded", *log); err != nil {
 				return nil, err
@@ -1874,7 +1876,7 @@ func (_Exchange *ExchangeFilterer) FilterRoleRemoved(opts *bind.FilterOpts, oper
 // Solidity: e RoleRemoved(operator indexed address, role string)
 func (_Exchange *ExchangeFilterer) ParseRoleRemovedFromReceipt(receipt *types.Receipt) (*ExchangeRoleRemoved, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0xd211483f91fc6eff862467f8de606587a30c8fc9981056f051b897a418df803a") {
+		if log.Topics[0] == common.HexToHash("0xd211483f91fc6eff862467f8de606587a30c8fc9981056f051b897a418df803a") {
 			event := new(ExchangeRoleRemoved)
 			if err := _Exchange.contract.UnpackLog(event, "RoleRemoved", *log); err != nil {
 				return nil, err

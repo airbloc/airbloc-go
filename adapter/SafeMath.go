@@ -9,10 +9,11 @@ import (
 	"strings"
 
 	"github.com/airbloc/airbloc-go/blockchain"
+	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -25,7 +26,8 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ethCommon.Big1
+	_ = ablCommon.IDFromString
+	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -35,7 +37,7 @@ const SafeMathABI = "[]"
 
 // SafeMath is an auto generated Go binding around an Ethereum contract.
 type SafeMath struct {
-	Address            ethCommon.Address
+	Address            common.Address
 	SafeMathCaller     // Read-only binding to the contract
 	SafeMathTransactor // Write-only binding to the contract
 	SafeMathFilterer   // Log filterer for contract events
@@ -98,7 +100,7 @@ func init() {
 }
 
 // NewSafeMath creates a new instance of SafeMath, bound to a specific deployed contract.
-func NewSafeMath(address ethCommon.Address, backend bind.ContractBackend) (*SafeMath, error) {
+func NewSafeMath(address common.Address, backend bind.ContractBackend) (*SafeMath, error) {
 	contract, err := bindSafeMath(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -112,7 +114,7 @@ func NewSafeMath(address ethCommon.Address, backend bind.ContractBackend) (*Safe
 }
 
 // NewSafeMathCaller creates a new read-only instance of SafeMath, bound to a specific deployed contract.
-func NewSafeMathCaller(address ethCommon.Address, caller bind.ContractCaller) (*SafeMathCaller, error) {
+func NewSafeMathCaller(address common.Address, caller bind.ContractCaller) (*SafeMathCaller, error) {
 	contract, err := bindSafeMath(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -121,7 +123,7 @@ func NewSafeMathCaller(address ethCommon.Address, caller bind.ContractCaller) (*
 }
 
 // NewSafeMathTransactor creates a new write-only instance of SafeMath, bound to a specific deployed contract.
-func NewSafeMathTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*SafeMathTransactor, error) {
+func NewSafeMathTransactor(address common.Address, transactor bind.ContractTransactor) (*SafeMathTransactor, error) {
 	contract, err := bindSafeMath(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -130,7 +132,7 @@ func NewSafeMathTransactor(address ethCommon.Address, transactor bind.ContractTr
 }
 
 // NewSafeMathFilterer creates a new log filterer instance of SafeMath, bound to a specific deployed contract.
-func NewSafeMathFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*SafeMathFilterer, error) {
+func NewSafeMathFilterer(address common.Address, filterer bind.ContractFilterer) (*SafeMathFilterer, error) {
 	contract, err := bindSafeMath(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -139,7 +141,7 @@ func NewSafeMathFilterer(address ethCommon.Address, filterer bind.ContractFilter
 }
 
 // bindSafeMath binds a generic wrapper to an already deployed contract.
-func bindSafeMath(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindSafeMath(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(SafeMathABI))
 	if err != nil {
 		return nil, err
@@ -147,7 +149,7 @@ func bindSafeMath(address ethCommon.Address, caller bind.ContractCaller, transac
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_SafeMath *SafeMath) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_SafeMath *SafeMath) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewSafeMath(address, backend)
 }
 

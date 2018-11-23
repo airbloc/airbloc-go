@@ -86,7 +86,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	ablCommon "github.com/airbloc/airbloc-go/common"
-	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -99,7 +99,8 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ethCommon.Big1
+	_ = ablCommon.IDFromString
+	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -110,7 +111,7 @@ var (
 
 	// {{.Type}} is an auto generated Go binding around an Ethereum contract.
 	type {{.Type}} struct {
-		Address ethCommon.Address
+		Address common.Address
 		{{.Type}}Caller     	// Read-only binding to the contract
 		{{.Type}}Transactor 	// Write-only binding to the contract
 		{{.Type}}Filterer   	// Log filterer for contract events
@@ -189,7 +190,7 @@ var (
 	}
 
 	// New{{.Type}} creates a new instance of {{.Type}}, bound to a specific deployed contract.
-	func New{{.Type}}(address ethCommon.Address, backend bind.ContractBackend) (*{{.Type}}, error) {
+	func New{{.Type}}(address common.Address, backend bind.ContractBackend) (*{{.Type}}, error) {
 		contract, err := bind{{.Type}}(address, backend, backend, backend)
 		if err != nil {
 	    	return nil, err
@@ -203,7 +204,7 @@ var (
 	}
 
 	// New{{.Type}}Caller creates a new read-only instance of {{.Type}}, bound to a specific deployed contract.
-	func New{{.Type}}Caller(address ethCommon.Address, caller bind.ContractCaller) (*{{.Type}}Caller, error) {
+	func New{{.Type}}Caller(address common.Address, caller bind.ContractCaller) (*{{.Type}}Caller, error) {
 	  contract, err := bind{{.Type}}(address, caller, nil, nil)
 	  if err != nil {
 	    return nil, err
@@ -212,7 +213,7 @@ var (
 	}
 
 	// New{{.Type}}Transactor creates a new write-only instance of {{.Type}}, bound to a specific deployed contract.
-	func New{{.Type}}Transactor(address ethCommon.Address, transactor bind.ContractTransactor) (*{{.Type}}Transactor, error) {
+	func New{{.Type}}Transactor(address common.Address, transactor bind.ContractTransactor) (*{{.Type}}Transactor, error) {
 	  contract, err := bind{{.Type}}(address, nil, transactor, nil)
 	  if err != nil {
 	    return nil, err
@@ -221,7 +222,7 @@ var (
 	}
 
 	// New{{.Type}}Filterer creates a new log filterer instance of {{.Type}}, bound to a specific deployed contract.
- 	func New{{.Type}}Filterer(address ethCommon.Address, filterer bind.ContractFilterer) (*{{.Type}}Filterer, error) {
+ 	func New{{.Type}}Filterer(address common.Address, filterer bind.ContractFilterer) (*{{.Type}}Filterer, error) {
  	  contract, err := bind{{.Type}}(address, nil, nil, filterer)
  	  if err != nil {
  	    return nil, err
@@ -230,7 +231,7 @@ var (
  	}
 
 	// bind{{.Type}} binds a generic wrapper to an already deployed contract.
-	func bind{{.Type}}(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	func bind{{.Type}}(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	  parsed, err := abi.JSON(strings.NewReader({{.Type}}ABI))
 	  if err != nil {
 	    return nil, err
@@ -238,7 +239,7 @@ var (
 	  return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 	}
 
-	func (_{{.Type}} *{{.Type}}) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
+	func (_{{.Type}} *{{.Type}}) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 		return New{{.Type}}(address, backend)
 	}
 
@@ -431,7 +432,7 @@ var (
 		// Solidity: {{.Original.String}}
  		func (_{{$contract.Type}} *{{$contract.Type}}Filterer) Parse{{.Normalized.Name}}FromReceipt(receipt *types.Receipt) (*{{$contract.Type}}{{.Normalized.Name}}, error) {
 			for _, log := range receipt.Logs {
-				if log.Topics[0] == ethCommon.HexToHash("0x{{printf "%x" .Original.Id}}") {
+				if log.Topics[0] == common.HexToHash("0x{{printf "%x" .Original.Id}}") {
 					event := new({{$contract.Type}}{{.Normalized.Name}})
 					if err := _{{$contract.Type}}.contract.UnpackLog(event, "{{.Original.Name}}", *log); err != nil {
 						return nil, err

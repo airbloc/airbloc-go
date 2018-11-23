@@ -2,17 +2,18 @@ package p2p
 
 import (
 	"context"
+	"github.com/libp2p/go-libp2p-peer"
 
-	"github.com/airbloc/airbloc-go/api"
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/database/metadb"
+	"github.com/airbloc/airbloc-go/node"
 	"github.com/gogo/protobuf/proto"
 	"github.com/libp2p/go-libp2p-peerstore"
 )
 
 type TopicRegistry interface {
-	RegisterTopic(string, proto.Message, TopicHandler) error
-	UnregisterTopic(string) error
+	SubscribeTopic(string, proto.Message, TopicHandler) error
+	UnsubscribeTopic(string) error
 }
 
 type PeerManager interface {
@@ -23,15 +24,15 @@ type PeerManager interface {
 
 type Server interface {
 	// api backend
-	api.Service
+	node.Service
 
 	// server interfaces
 	PeerManager
 	TopicRegistry
 
-	// host interfaces
-	Sender
-	ProtocolRegistry
+	// sender interfaces
+	Send(context.Context, proto.Message, string, peer.ID) error
+	Publish(context.Context, proto.Message, string) error
 
 	// database interfaces
 	LocalDB() localdb.Database

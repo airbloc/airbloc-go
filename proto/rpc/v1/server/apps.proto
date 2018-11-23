@@ -1,0 +1,39 @@
+syntax = "proto3";
+package airbloc.rpc.v1;
+
+option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
+
+import "proto/rpc/v1/types.proto";
+
+service Apps {
+    rpc Register (RegisterRequest) returns (RegisterResult);
+    rpc Unregister (UnregisterRequest) returns (airbloc.rpc.v1.Result);
+    rpc NewOwner(NewOwnerRequest) returns (airbloc.rpc.v1.Result);
+    rpc CheckOwner(CheckOwnerRequest) returns (CheckOwnerResult);
+}
+
+message NewOwnerRequest {
+    string appId = 1;
+    string owner = 2;
+}
+
+message CheckOwnerRequest {
+    string appId = 1;
+    string owner = 2;
+}
+
+message CheckOwnerResult {
+    bool ok = 1;
+}
+
+message RegisterRequest {
+    string name = 1;
+}
+
+message RegisterResult {
+    string appId = 1;
+}
+
+message UnregisterRequest {
+    string appId = 1;
+}

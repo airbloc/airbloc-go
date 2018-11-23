@@ -2,7 +2,6 @@ package p2p
 
 import (
 	"context"
-
 	"github.com/airbloc/airbloc-go/p2p/common"
 	"github.com/libp2p/go-libp2p-interface-connmgr"
 	"github.com/libp2p/go-libp2p-net"
@@ -16,11 +15,6 @@ type ProtocolRegistry interface {
 	UnregisterProtocol(common.Pid)
 }
 
-type Sender interface {
-	Send(context.Context, common.ProtoMessage, peer.ID, ...common.Pid) error
-	Publish(context.Context, common.ProtoMessage, ...common.Pid) error
-}
-
 type Host interface {
 	// network interfaces
 	Mux() *multistream.MultistreamMuxer
@@ -32,8 +26,11 @@ type Host interface {
 	BootInfo() (peerstore.PeerInfo, error)
 	Peerstore() peerstore.Peerstore
 
+	// sender
+	Send(context.Context, common.ProtoMessage, peer.ID, ...common.Pid) error
+	Publish(context.Context, common.ProtoMessage, ...common.Pid) error
+
 	// host interfaces
 	Connect(context.Context, peerstore.PeerInfo) error
 	ProtocolRegistry
-	Sender
 }

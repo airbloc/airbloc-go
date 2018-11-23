@@ -90,6 +90,11 @@ func (h *BasicHost) UnregisterProtocol(pid common.Pid) {
 }
 
 func (h *BasicHost) Send(ctx context.Context, msg common.ProtoMessage, id peer.ID, pids ...common.Pid) error {
+	err := h.host.Connect(ctx, peerstore.PeerInfo{ID: id})
+	if err != nil {
+		return errors.Wrap(err, "send error")
+	}
+
 	stream, err := h.host.NewStream(ctx, id, common.Pids(pids).ProtocolID()...)
 	if err != nil {
 		return errors.Wrap(err, "stream error : failed to create stream")

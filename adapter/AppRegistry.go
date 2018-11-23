@@ -9,10 +9,11 @@ import (
 	"strings"
 
 	"github.com/airbloc/airbloc-go/blockchain"
+	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
@@ -25,7 +26,8 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ethCommon.Big1
+	_ = ablCommon.IDFromString
+	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
@@ -35,7 +37,7 @@ const AppRegistryABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"renounceOw
 
 // AppRegistry is an auto generated Go binding around an Ethereum contract.
 type AppRegistry struct {
-	Address               ethCommon.Address
+	Address               common.Address
 	AppRegistryCaller     // Read-only binding to the contract
 	AppRegistryTransactor // Write-only binding to the contract
 	AppRegistryFilterer   // Log filterer for contract events
@@ -95,7 +97,7 @@ type AppRegistryTransactorRaw struct {
 
 type AppRegistryApp struct {
 	Name  string
-	Owner ethCommon.Address
+	Owner common.Address
 }
 
 func init() {
@@ -103,7 +105,7 @@ func init() {
 }
 
 // NewAppRegistry creates a new instance of AppRegistry, bound to a specific deployed contract.
-func NewAppRegistry(address ethCommon.Address, backend bind.ContractBackend) (*AppRegistry, error) {
+func NewAppRegistry(address common.Address, backend bind.ContractBackend) (*AppRegistry, error) {
 	contract, err := bindAppRegistry(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -117,7 +119,7 @@ func NewAppRegistry(address ethCommon.Address, backend bind.ContractBackend) (*A
 }
 
 // NewAppRegistryCaller creates a new read-only instance of AppRegistry, bound to a specific deployed contract.
-func NewAppRegistryCaller(address ethCommon.Address, caller bind.ContractCaller) (*AppRegistryCaller, error) {
+func NewAppRegistryCaller(address common.Address, caller bind.ContractCaller) (*AppRegistryCaller, error) {
 	contract, err := bindAppRegistry(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
@@ -126,7 +128,7 @@ func NewAppRegistryCaller(address ethCommon.Address, caller bind.ContractCaller)
 }
 
 // NewAppRegistryTransactor creates a new write-only instance of AppRegistry, bound to a specific deployed contract.
-func NewAppRegistryTransactor(address ethCommon.Address, transactor bind.ContractTransactor) (*AppRegistryTransactor, error) {
+func NewAppRegistryTransactor(address common.Address, transactor bind.ContractTransactor) (*AppRegistryTransactor, error) {
 	contract, err := bindAppRegistry(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
@@ -135,7 +137,7 @@ func NewAppRegistryTransactor(address ethCommon.Address, transactor bind.Contrac
 }
 
 // NewAppRegistryFilterer creates a new log filterer instance of AppRegistry, bound to a specific deployed contract.
-func NewAppRegistryFilterer(address ethCommon.Address, filterer bind.ContractFilterer) (*AppRegistryFilterer, error) {
+func NewAppRegistryFilterer(address common.Address, filterer bind.ContractFilterer) (*AppRegistryFilterer, error) {
 	contract, err := bindAppRegistry(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
@@ -144,7 +146,7 @@ func NewAppRegistryFilterer(address ethCommon.Address, filterer bind.ContractFil
 }
 
 // bindAppRegistry binds a generic wrapper to an already deployed contract.
-func bindAppRegistry(address ethCommon.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+func bindAppRegistry(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := abi.JSON(strings.NewReader(AppRegistryABI))
 	if err != nil {
 		return nil, err
@@ -152,7 +154,7 @@ func bindAppRegistry(address ethCommon.Address, caller bind.ContractCaller, tran
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-func (_AppRegistry *AppRegistry) new(address ethCommon.Address, backend bind.ContractBackend) (interface{}, error) {
+func (_AppRegistry *AppRegistry) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewAppRegistry(address, backend)
 }
 
@@ -508,7 +510,7 @@ func (_AppRegistry *AppRegistryFilterer) FilterOwnershipRenounced(opts *bind.Fil
 // Solidity: e OwnershipRenounced(previousOwner indexed address)
 func (_AppRegistry *AppRegistryFilterer) ParseOwnershipRenouncedFromReceipt(receipt *types.Receipt) (*AppRegistryOwnershipRenounced, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
+		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
 			event := new(AppRegistryOwnershipRenounced)
 			if err := _AppRegistry.contract.UnpackLog(event, "OwnershipRenounced", *log); err != nil {
 				return nil, err
@@ -661,7 +663,7 @@ func (_AppRegistry *AppRegistryFilterer) FilterOwnershipTransferred(opts *bind.F
 // Solidity: e OwnershipTransferred(previousOwner indexed address, newOwner indexed address)
 func (_AppRegistry *AppRegistryFilterer) ParseOwnershipTransferredFromReceipt(receipt *types.Receipt) (*AppRegistryOwnershipTransferred, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
+		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
 			event := new(AppRegistryOwnershipTransferred)
 			if err := _AppRegistry.contract.UnpackLog(event, "OwnershipTransferred", *log); err != nil {
 				return nil, err
@@ -814,7 +816,7 @@ func (_AppRegistry *AppRegistryFilterer) FilterRegistered(opts *bind.FilterOpts,
 // Solidity: e Registered(name indexed string, appId bytes8)
 func (_AppRegistry *AppRegistryFilterer) ParseRegisteredFromReceipt(receipt *types.Receipt) (*AppRegistryRegistered, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == ethCommon.HexToHash("0x81fd67a36836c34ada265e9e349edf3799560c1e24a2149ba1ff6c427179f591") {
+		if log.Topics[0] == common.HexToHash("0x81fd67a36836c34ada265e9e349edf3799560c1e24a2149ba1ff6c427179f591") {
 			event := new(AppRegistryRegistered)
 			if err := _AppRegistry.contract.UnpackLog(event, "Registered", *log); err != nil {
 				return nil, err
