@@ -10,38 +10,24 @@ import (
 
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/key"
-	"github.com/airbloc/airbloc-go/p2p/common"
-	p2p "github.com/airbloc/airbloc-go/proto/p2p"
-	"github.com/gogo/protobuf/proto"
-	peerstore "github.com/libp2p/go-libp2p-peerstore"
-	multiaddr "github.com/multiformats/go-multiaddr"
+	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
+	"github.com/libp2p/go-libp2p-peerstore"
+	"github.com/multiformats/go-multiaddr"
 	"github.com/stretchr/testify/assert"
 )
 
 const Size = 50
 
 var (
-	pongMsg common.ProtoMessage
-	pingMsg common.ProtoMessage
+	pongMsg *pb.TestPing
+	pingMsg *pb.TestPing
 	keys    []*key.Key
 	addrs   []multiaddr.Multiaddr
 )
 
 func init() {
-	pong, _ := proto.Marshal(&p2p.TestPing{Message: "World!"})
-	pongMsg = common.ProtoMessage{
-		Message: p2p.Message{
-			Topic: p2p.Topic_TEST_PONG,
-			Data:  pong,
-		},
-	}
-	ping, _ := proto.Marshal(&p2p.TestPing{Message: "Hello"})
-	pingMsg = common.ProtoMessage{
-		Message: p2p.Message{
-			Topic: p2p.Topic_TEST_PING,
-			Data:  ping,
-		},
-	}
+	pongMsg = &pb.TestPing{Message: "World!"}
+	pingMsg = &pb.TestPing{Message: "Hello"}
 
 	for i := 1; i <= Size+1; i++ {
 		privKey, _ := key.Generate()
@@ -73,9 +59,6 @@ func TestNewServer(t *testing.T) {
 	servers := make([]Server, Size)
 	servers[0] = bootnode
 
-	pid, err := common.NewPid("airbloc", "0.0.1")
-	assert.NoError(t, err)
-
 	for i := 1; i < Size; i++ {
 		server, err := makeBasicServer(i, false, bootinfo)
 		assert.NoError(t, err)
@@ -83,15 +66,15 @@ func TestNewServer(t *testing.T) {
 		server.setContext(ctx)
 
 		// ping
-		server.RegisterTopic(p2p.Topic_TEST_PING.String(), &p2p.TestPing{}, Ping)
+		server.SubscribeTopic("ping", &pb.TestPing{}, Ping)
 
 		// pong
-		server.RegisterTopic(p2p.Topic_TEST_PONG.String(), &p2p.TestPong{}, Pong)
+		server.SubscribeTopic("pong", &pb.TestPong{}, Pong)
 
 		servers[i] = server
 	}
 
-	err = servers[Size/2].Publish(ctx, pingMsg, pid)
+	err = servers[Size/2].Publish(ctx, pingMsg, "ping")
 	assert.NoError(t, err)
 
 	time.Sleep(1 * time.Second)

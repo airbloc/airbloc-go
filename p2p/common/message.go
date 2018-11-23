@@ -18,6 +18,20 @@ type ProtoMessage struct {
 	pb.Message
 }
 
+func NewProtoMessage(msg proto.Message, topic string) (*ProtoMessage, error) {
+	data, err := proto.Marshal(msg)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to marshal message")
+	}
+
+	return &ProtoMessage{
+		Message: pb.Message{
+			Topic: topic,
+			Data:  data,
+		},
+	}, nil
+}
+
 func (message ProtoMessage) ID() peer.ID {
 	return peer.ID(message.GetFrom())
 }

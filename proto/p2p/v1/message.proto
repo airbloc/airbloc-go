@@ -7,47 +7,18 @@ enum CID {
     AIRBLOC = 0;
 }
 
-enum Topic {
-    UNKNOWN = 0;
-
-    RENCRYPTION_KEY_REQUEST = 1;
-    RENCRYPTION_KEY_RESPONSE = 2;
-
-    IDENTITY_REQUEST = 3;
-    IDENTITY_RESPONSE = 4;
-
-    DATASYNC_REQUEST = 5;
-    DATASYNC_RESPONSE = 6;
-
-    DAC_REQUEST = 7;
-    DAC_RESPONSE = 8;
-
-    TEST_PING = 9;
-    TEST_PONG = 10;
-}
-
 message Message {
-    Topic topic = 1;
-    bytes Data = 2;
-    bytes From = 3;
-    bytes Protocol = 4;
+    string topic = 1;
+    bytes data = 2;
+    bytes from = 3;
+    bytes protocol = 4;
+    bytes signature = 5;
 }
 
-message ReEncryptionKeyRequest {}
-message ReEncryptionKeyResponse {}
-
-message IdentityRequest {}
-message IdentityResponse {}
-
-message DatasyncRequest {}
-message DatasyncResponse{}
-
-message DACRequest {}
-message DACResponse {}
-
-message TestPing{
+message TestPing {
     string message = 1;
 }
-message TestPong{
+
+message TestPong {
     string message = 1;
 }
