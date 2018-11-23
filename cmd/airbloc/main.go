@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/airbloc/airbloc-go/node/userdelegateapi"
 	"os"
 	"strings"
 
@@ -18,6 +19,7 @@ var (
 		"exchange":    serverapi.NewExchangeAPI,
 		"schemas":     serverapi.NewSchemaAPI,
 		"warehouse":   serverapi.NewWarehouseAPI,
+		"account":	   userdelegateapi.NewAccountAPI, // TODO: it's not supposed to be in here
 	}
 	AvailableServices = map[string]node.ServiceConstructor{
 		"api": node.NewAPIService,

@@ -1,11 +1,11 @@
-package client
+package ablclient
 
 import (
 	"context"
 	"github.com/airbloc/airbloc-go/account"
-	"github.com/airbloc/airbloc-go/account/api"
 	ablCommon "github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/key"
+	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/userdelegate"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
@@ -17,12 +17,12 @@ var (
 )
 
 type Client struct {
-	manager api.AccountClient
+	manager pb.AccountClient
 }
 
 func NewClient(conn *grpc.ClientConn) (*Client) {
 	return &Client{
-		manager: api.NewAccountClient(conn),
+		manager: pb.NewAccountClient(conn),
 	}
 }
 
@@ -35,8 +35,8 @@ func (client *Client) Create(walletAddress ethCommon.Address, password string) (
 		return nil, errors.Wrap(err, "failed to create signature by password")
 	}
 
-	request := &api.AccountCreateRequest{
-		Address: walletAddress.Bytes(),
+	request := &pb.AccountCreateRequest{
+		Address:           walletAddress.Bytes(),
 		PasswordSignature: sig,
 	}
 
@@ -56,7 +56,7 @@ func (client *Client) Create(walletAddress ethCommon.Address, password string) (
 }
 
 func (client *Client) LogIn(identity string, password string) (*account.Session, error) {
-	request := &api.AccountGetByIdentityRequest{
+	request := &pb.AccountGetByIdentityRequest{
 		Identity: identity,
 	}
 	response, err := client.manager.GetByIdentity(context.Background(), request)
@@ -77,7 +77,7 @@ func (client *Client) LogIn(identity string, password string) (*account.Session,
 	}
 
 	// test the signature to check whether the password is correct
-	testReq := &api.TestPasswordRequest{
+	testReq := &pb.TestPasswordRequest{
 		MessageHash: identityHash[:],
 		Signature:   sig,
 	}

@@ -479,12 +479,13 @@
   version = "v0.2.0"
 
 [[projects]]
-  digest = "1:aa334c6fd3016333b2c03115c354c9a7e2b16084c0155ed08b79fabd568b8d3d"
+  digest = "1:25c0f3460a0476738e4901e09e1e0d0be7383665a9122f3067d0029b63a7b3d7"
   name = "github.com/libp2p/go-libp2p"
   packages = [
     ".",
     "config",
     "p2p/host/basic",
+    "p2p/host/routed",
     "p2p/protocol/identify",
     "p2p/protocol/identify/pb",
     "p2p/protocol/ping",
@@ -1406,6 +1407,8 @@
     "github.com/libp2p/go-libp2p-peer",
     "github.com/libp2p/go-libp2p-peerstore",
     "github.com/libp2p/go-libp2p-protocol",
+    "github.com/libp2p/go-libp2p/p2p/host/basic",
+    "github.com/libp2p/go-libp2p/p2p/host/routed",
     "github.com/loomnetwork/mamamerkle",
     "github.com/mailru/easyjson",
     "github.com/mailru/easyjson/jlexer",

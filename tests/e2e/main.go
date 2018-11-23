@@ -3,10 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	accountClient "github.com/airbloc/airbloc-go/account/client"
-	collectionApi "github.com/airbloc/airbloc-go/collections/api"
-	schemaApi "github.com/airbloc/airbloc-go/schemas/api"
-	warehouseApi "github.com/airbloc/airbloc-go/warehouse/api"
+	"github.com/airbloc/airbloc-go/ablclient"
+	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
@@ -33,8 +31,8 @@ const testSchema = `{
 }`
 
 func testCreateSchema(conn *grpc.ClientConn) string {
-	schemas := schemaApi.NewSchemaClient(conn)
-	result, err := schemas.Create(context.Background(), &schemaApi.CreateSchemaRequest{
+	schemas := pb.NewSchemaClient(conn)
+	result, err := schemas.Create(context.Background(), &pb.CreateSchemaRequest{
 		Name:   fmt.Sprintf("data-test-%d", time.Now().Unix()),
 		Schema: testSchema,
 	})
@@ -45,12 +43,12 @@ func testCreateSchema(conn *grpc.ClientConn) string {
 }
 
 func testCreateCollection(appId string, schemaId string, conn *grpc.ClientConn) string {
-	collections := collectionApi.NewCollectionClient(conn)
+	collections := pb.NewCollectionClient(conn)
 
-	result, err := collections.Create(context.Background(), &collectionApi.CreateCollectionRequest{
+	result, err := collections.Create(context.Background(), &pb.CreateCollectionRequest{
 		AppId:    appId,
 		SchemaId: schemaId,
-		Policy: &collectionApi.Policy{
+		Policy: &pb.Policy{
 			DataOwner:    0.3,
 			DataProvider: 0.7,
 		},
@@ -62,7 +60,7 @@ func testCreateCollection(appId string, schemaId string, conn *grpc.ClientConn) 
 }
 
 func testCreateUserAccount(conn *grpc.ClientConn, index int) string {
-	accounts := accountClient.NewClient(conn)
+	accounts := ablclient.NewClient(conn)
 
 	priv, err := crypto.GenerateKey()
 	if err != nil {
@@ -94,7 +92,7 @@ func main() {
 	collectionId := testCreateCollection(appId, schemaId, conn)
 	log.Printf("Created Collection: %s\n", collectionId)
 
-	warehouse := warehouseApi.NewWarehouseClient(conn)
+	warehouse := pb.NewWarehouseClient(conn)
 	stream, err := warehouse.StoreBundle(context.Background())
 	if err != nil {
 		log.Fatalf("Failed to open stream: %v", err)
@@ -104,7 +102,7 @@ func main() {
 		userId := testCreateUserAccount(conn, i)
 		log.Printf("Created user %d : %s\n", i, userId)
 
-		rawData := &warehouseApi.RawDataRequest{
+		rawData := &pb.RawDataRequest{
 			Collection: collectionId,
 			OwnerId:    userId,
 			Payload:    fmt.Sprintf("{\"name\":\"%s\",\"age\":%d}", userId, i),
