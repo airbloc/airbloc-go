@@ -3,6 +3,10 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"log"
+	"os"
+	"os/signal"
+
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/airbloc/airbloc-go/p2p"
@@ -10,9 +14,6 @@ import (
 	"github.com/libp2p/go-libp2p-peerstore"
 	"github.com/multiformats/go-multiaddr"
 	"gopkg.in/urfave/cli.v1"
-	"log"
-	"os"
-	"os/signal"
 )
 
 func newApp() *cli.App {
@@ -78,7 +79,7 @@ func run(ctx *cli.Context) (err error) {
 		log.Fatalf("failed to parse address: %+v", err)
 	}
 
-	server, err := p2p.NewServer(localdb.NewMemDB(), nodekey, addr, true, []peerstore.PeerInfo{})
+	server, err := p2p.NewAirblocServer(localdb.NewMemDB(), nodekey, addr, true, []peerstore.PeerInfo{})
 	if err != nil {
 		log.Fatalf("unable to create bootstrap server: %+v", err)
 	}

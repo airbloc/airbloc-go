@@ -83,7 +83,7 @@ func (db *bigchainDB) sendIntermediateTx(inTxn *IntermediateTxn) error {
 		return err
 	}
 
-	request, err := http.NewRequest("POST", db.proxyUrl + "/transactions", buffer)
+	request, err := http.NewRequest("POST", db.proxyUrl+"/transactions", buffer)
 	if err != nil {
 		return err
 	}

@@ -3,8 +3,9 @@ package serverapi
 import (
 	"context"
 
-	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"io"
+
+	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/node"

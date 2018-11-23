@@ -3,13 +3,14 @@ package e2e
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/airbloc/airbloc-go/ablclient"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
-	"log"
-	"time"
 )
 
 const testSchema = `{
