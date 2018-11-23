@@ -1,14 +1,22 @@
 Airbloc
 ==========
 
-This repository contains implementation of Airbloc Protocol and networks using Golang.
+[![CircleCI](https://circleci.com/gh/airbloc/token.svg?style=svg)](https://circleci.com/gh/airbloc/airbloc-go)
+[![LICENSE](https://img.shields.io/github/license/airbloc/airbloc-go.svg?style=flat-square)](https://github.com/airbloc/airbloc-go/blob/master/LICENSE)
+[![Go Version](https://img.shields.io/badge/golang-%3E%3D1.10.0-green.svg?style=flat-square)](https://golang.org/)
 
-## Installation
+[Airbloc](https://airbloc.org) is decentralized data exchange protocol which is designed to be scalable, transparent, and  able to handle enterprise-grade massive data. For details, please check our [technical whitepaper](https://abr.ge/2ffuu).
+
+This repository contains official implementation of Airbloc Protocol and networks using Golang.
+
+**Airbloc is under VERY ACTIVE DEVELOPMENT and should be treated as pre-alpha software.** This means it is not meant to be run in production, its APIs are subject to change without warning.
+
+## Getting Started
 
 It is strongly recommended that you use a released version.
 Release binaries are available on the [releases](https://github.com/airbloc/airbloc-go/releases) page.
 
-## Building from Source
+### Building from Source
 
 #### Prerequisites
 
@@ -21,7 +29,7 @@ Go and Node is required to compile clients and smart contracts.
 #### Build
 
 ```
- $ make airbloc
+ $ make all
 ```
 
 If you see some errors related to header files on macOS, please install XCode Command Line Tools.
@@ -29,6 +37,44 @@ If you see some errors related to header files on macOS, please install XCode Co
 ```
 xcode-select --install
 ```
+
+### Running Airbloc
+
+> NOTE: After BetaNet release
+
+```
+ $ airbloc server start
+```
+
+#### Launching Local Network
+
+Before launching Airbloc network on local, Make sure that:
+
+ * [airbloc-bigchaindb-proxy](https://github.com/airbloc/airbloc-bigchaindb-proxy) is running on `localhost:9124`
+ * [BigchainDB](https://bigchaindb-server.readthedocs.io/en/latest/simple-deployment-template/index.html) >= 2.0 network is running on `localhost:9984`
+    * MongoDB used from BigchainDB is running on `localhost:27017`
+ * Ethereum node is running on `localhost:8545`
+
+First, smart contracts should be deployed on the local Ethereum network.
+You can see guides on [Deploying Contract](#deploying-contract) section.
+
+Second, you need to launch a bootstrap node to initiate P2P network:
+```
+ $ bootnode
+```
+
+> `bootnode` will be run on TCP port 9100. You can customize it via `--port` flag.
+
+Finally, you can launch Airbloc server via:
+```
+ $ airbloc server start
+```
+
+Or you can customize ports and other parameters by passing a configuration file via:
+```
+ $ airbloc server start --config /path/to/your/config.yml
+```
+
 
 ## Testing
 
