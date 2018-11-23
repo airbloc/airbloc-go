@@ -4,7 +4,7 @@ DEST = $(shell pwd)/build/bin
 PROTO_DIR := proto
 PROTO_SRCS := $(shell find $(PROTO_DIR) -name *.proto)
 
-all: airbloc
+all: airbloc bootnode
 
 airbloc:
 	./env.sh go install ./cmd/airbloc
