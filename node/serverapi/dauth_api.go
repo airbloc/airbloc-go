@@ -2,13 +2,14 @@ package serverapi
 
 import (
 	"context"
+	"log"
+
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/dauth"
 	"github.com/airbloc/airbloc-go/node"
 	commonpb "github.com/airbloc/airbloc-go/proto/rpc/v1"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/pkg/errors"
-	"log"
 )
 
 type DAuthAPI struct {

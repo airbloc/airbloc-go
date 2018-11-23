@@ -44,7 +44,7 @@ func NewAirblocBackend(config *Config) (Backend, error) {
 
 	// setup ethereum client
 	clientOpt := blockchain.ClientOpt{
-		Confirmation: config.Blockchain.Options.MinConfirmations,
+		Confirmation:   config.Blockchain.Options.MinConfirmations,
 		DeploymentPath: config.Blockchain.DeploymentPath,
 	}
 	ethclient, err := blockchain.NewClient(nodeKey, config.Blockchain.Endpoint, clientOpt)

@@ -3,10 +3,11 @@ package p2p
 import (
 	"context"
 	"fmt"
-	"github.com/airbloc/airbloc-go/p2p/common"
-	"github.com/ethereum/go-ethereum/crypto"
 	"log"
 	"testing"
+
+	"github.com/airbloc/airbloc-go/p2p/common"
+	"github.com/ethereum/go-ethereum/crypto"
 
 	"time"
 
@@ -121,7 +122,7 @@ func TestAirblocHost_Publish(t *testing.T) {
 
 	// bob listens to alice, try to recover alice's address
 	waitForBob := make(chan string, 1)
-	bob.SubscribeTopic("ping", &pb.TestPing{}, func (s Server, ctx context.Context, message common.Message) {
+	bob.SubscribeTopic("ping", &pb.TestPing{}, func(s Server, ctx context.Context, message common.Message) {
 		recoveredAddress := crypto.PubkeyToAddress(*message.Sender)
 		waitForBob <- recoveredAddress.Hex()
 	})
