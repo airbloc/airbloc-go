@@ -8,6 +8,7 @@ import (
 	commonpb "github.com/airbloc/airbloc-go/proto/rpc/v1"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/pkg/errors"
+	"log"
 )
 
 type DAuthAPI struct {
@@ -25,7 +26,8 @@ func (api *DAuthAPI) Allow(ctx context.Context, req *pb.DAuthRequest) (*commonpb
 		return nil, errors.Wrapf(err, "invalid collection ID: %s", req.GetCollectionId())
 	}
 
-	err = api.manager.Allow(collectionId, req.GetPasswordSignature())
+	// err = api.manager.Allow(collectionId, req.GetPasswordSignature())
+	log.Println(collectionId.String())
 	return &commonpb.Result{}, err
 }
 
@@ -35,7 +37,8 @@ func (api *DAuthAPI) Deny(ctx context.Context, req *pb.DAuthRequest) (*commonpb.
 		return nil, errors.Wrapf(err, "invalid collection ID: %s", req.GetCollectionId())
 	}
 
-	err = api.manager.Deny(collectionId, req.GetPasswordSignature())
+	log.Println(collectionId.String())
+	// err = api.manager.Deny(collectionId, req.GetPasswordSignature())
 	return &commonpb.Result{}, err
 }
 

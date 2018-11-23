@@ -1,0 +1,14 @@
+syntax = "proto3";
+package airbloc.rpc.v1;
+
+option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/userdelegate";
+
+import "proto/rpc/v1/types.proto";
+
+/**
+ * DAuth (Data Collection Authentification) API.
+ */
+message DAuthRequest {
+    string collectionId = 1;
+    bytes passwordSignature = 2;
+}
