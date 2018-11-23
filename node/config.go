@@ -15,6 +15,7 @@ type Config struct {
 
 	MetaDB struct {
 		BigchainDBEndpoint string `default:"http://localhost:9984" yaml:"bigchainDbEndpoint"`
+		ProxyEndpoint      string `default:"http://localhost:9983" yaml:"proxyEndpoint"`
 		MongoDBEndpoint    string `default:"mongodb://localhost:27017" yaml:"mongoDbEndpoint"`
 		Version            int    `default:"1"`
 	} `yaml:"metaDb"`

@@ -29,6 +29,7 @@ func NewAirblocBackend(config *Config) (*AirblocBackend, error) {
 	metaDatabase, err := metadb.NewBigchainDB(
 		config.MetaDB.BigchainDBEndpoint,
 		config.MetaDB.MongoDBEndpoint,
+		config.MetaDB.ProxyEndpoint,
 		nodeKey.DeriveBigchainDBKeyPair(),
 		config.MetaDB.Version)
 	if err != nil {
