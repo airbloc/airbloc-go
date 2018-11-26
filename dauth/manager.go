@@ -47,6 +47,24 @@ func (manager *Manager) Allow(collectionId common.ID, passwordSig []byte) error 
 	return nil
 }
 
+// AllowByDelegate
+func (manager *Manager) AllowByDelegate(collectionId common.ID, accountId common.ID) error {
+	if exists, err := manager.Exists(collectionId); err != nil {
+		return errors.Wrap(err, "failed to check collection existence")
+	} else if !exists {
+		return ErrCollectionNotFound
+	}
+
+	tx, err := manager.collectionRegistry.AllowByDelegate(manager.ethclient.Account(), collectionId, accountId)
+	if err != nil {
+		return errors.Wrap(err, "failed to transact AllowByDelegate")
+	}
+	if _, err := manager.ethclient.WaitMined(context.Background(), tx); err != nil {
+		return errors.Wrap(err, "transaction execution failed")
+	}
+	return nil
+}
+
 // Allow allows data provider to collect certain kinds (Collection) of user's data.
 func (manager *Manager) Deny(collectionId common.ID, passwordSig []byte) error {
 	if exists, err := manager.Exists(collectionId); err != nil {
@@ -58,6 +76,24 @@ func (manager *Manager) Deny(collectionId common.ID, passwordSig []byte) error {
 	tx, err := manager.collectionRegistry.AllowByPassword(manager.ethclient.Account(), collectionId, passwordSig)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact AllowByPassword")
+	}
+	if _, err := manager.ethclient.WaitMined(context.Background(), tx); err != nil {
+		return errors.Wrap(err, "transaction execution failed")
+	}
+	return nil
+}
+
+// AllowByDelegate
+func (manager *Manager) DenyByDelegate(collectionId common.ID, accountId common.ID) error {
+	if exists, err := manager.Exists(collectionId); err != nil {
+		return errors.Wrap(err, "failed to check collection existence")
+	} else if !exists {
+		return ErrCollectionNotFound
+	}
+
+	tx, err := manager.collectionRegistry.DenyByDelegate(manager.ethclient.Account(), collectionId, accountId)
+	if err != nil {
+		return errors.Wrap(err, "failed to transact DenyByDelegate")
 	}
 	if _, err := manager.ethclient.WaitMined(context.Background(), tx); err != nil {
 		return errors.Wrap(err, "transaction execution failed")

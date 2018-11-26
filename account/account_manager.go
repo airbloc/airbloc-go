@@ -108,3 +108,7 @@ func (manager *Manager) TestPassword(messageHash ethCommon.Hash, signature []byt
 	log.Trace("Successfully tested password", "accountId", accountId)
 	return true, nil
 }
+
+func (manager *Manager) IsDelegateOf(delegateAddr ethCommon.Address, accountId ablCommon.ID) (bool, error) {
+	return manager.contract.IsDelegateOf(nil, delegateAddr, accountId)
+}
