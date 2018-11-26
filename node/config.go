@@ -53,4 +53,8 @@ type Config struct {
 			PathPrefix string `yaml:"pathPrefix"`
 		}
 	}
+
+	UserDelegate struct {
+		AccountIds []string `yaml:"accountIds"`
+	} `yaml:"userDelegate"`
 }
