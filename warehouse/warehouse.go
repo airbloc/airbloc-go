@@ -40,30 +40,21 @@ func New(
 	ethclient blockchain.TxClient,
 	defaultStorage storage.Storage,
 	supportedProtocols []protocol.Protocol,
-) (*DataWarehouse, error) {
+) *DataWarehouse {
 	protocols := map[string]protocol.Protocol{}
 	for _, protoc := range supportedProtocols {
 		protocols[protoc.Name()] = protoc
 	}
-
-	raw, err := ethclient.GetContract(&adapter.DataRegistry{})
-	if err != nil {
-		return nil, err
-	}
-
-	contract, ok := raw.(*adapter.DataRegistry)
-	if !ok {
-		return nil, blockchain.ErrContractNotFound
-	}
+	contract := ethclient.GetContract(&adapter.DataRegistry{})
 	return &DataWarehouse{
 		kms:            kms,
 		protocols:      protocols,
 		localCache:     localdb.NewModel(localDatabase, "bundle"),
 		metaDatabase:   metadb.NewModel(metaDatabase, "bundles"),
 		ethclient:      ethclient,
-		dataRegistry:   contract,
+		dataRegistry:   contract.(*adapter.DataRegistry),
 		DefaultStorage: defaultStorage,
-	}, nil
+	}
 }
 
 func (warehouse *DataWarehouse) CreateBundle(collection common.ID) *BundleStream {

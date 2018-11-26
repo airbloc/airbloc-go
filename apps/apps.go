@@ -24,21 +24,12 @@ type Manager struct {
 	contract *adapter.AppRegistry
 }
 
-func NewManager(client blockchain.TxClient) (*Manager, error) {
-	raw, err := client.GetContract(&adapter.AppRegistry{})
-	if err != nil {
-		return nil, err
-	}
-
-	contract, ok := raw.(*adapter.AppRegistry)
-	if !ok {
-		return nil, blockchain.ErrContractNotFound
-	}
-
+func NewManager(client blockchain.TxClient) *Manager {
+	contract := client.GetContract(&adapter.AppRegistry{})
 	return &Manager{
 		client:   client,
-		contract: contract,
-	}, nil
+		contract: contract.(*adapter.AppRegistry),
+	}
 }
 
 func (apps *Manager) NewOwner(ctx context.Context, appId ablCommon.ID, newOwner ethCommon.Address) (bool, error) {

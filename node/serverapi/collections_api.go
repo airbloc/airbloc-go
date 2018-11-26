@@ -14,15 +14,12 @@ type CollectionsAPI struct {
 }
 
 func NewCollectionsAPI(backend node.Backend) (node.API, error) {
-	collectionManager, err := collections.New(
+	collectionManager := collections.New(
 		backend.LocalDatabase(),
 		backend.MetaDatabase(),
 		backend.Client(),
 	)
-	if err != nil {
-		return nil, errors.Wrap(err, "collection api : failed to create collection API")
-	}
-	return &CollectionsAPI{collectionManager}, err
+	return &CollectionsAPI{collectionManager}, nil
 }
 
 func (api *CollectionsAPI) Create(ctx context.Context, req *pb.CreateCollectionRequest) (*pb.CreateCollectionResponse, error) {

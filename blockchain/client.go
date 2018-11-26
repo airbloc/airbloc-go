@@ -2,6 +2,7 @@ package blockchain
 
 import (
 	"context"
+	"reflect"
 
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -48,8 +49,12 @@ func (c *Client) SetAccount(key *key.Key) {
 	c.transactor = bind.NewKeyedTransactor(key.PrivateKey)
 }
 
-func (c *Client) GetContract(contract interface{}) (interface{}, error) {
-	return c.contracts.GetContract(contract)
+func (c *Client) GetContract(contractType interface{}) interface{} {
+	contract := c.contracts.GetContract(contractType)
+	if contract == nil {
+		panic("Contract not registered: " + reflect.ValueOf(contractType).Type().Name())
+	}
+	return contract
 }
 
 func (c *Client) waitConfirmation(ctx context.Context) error {

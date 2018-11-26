@@ -22,20 +22,12 @@ type Manager struct {
 	contract *adapter.Accounts
 }
 
-func NewManager(client blockchain.TxClient) (*Manager, error) {
-	raw, err := client.GetContract(&adapter.Accounts{})
-	if err != nil {
-		return nil, err
-	}
-
-	contract, ok := raw.(*adapter.Accounts)
-	if !ok {
-		return nil, blockchain.ErrContractNotFound
-	}
+func NewManager(client blockchain.TxClient) *Manager {
+	contract := client.GetContract(&adapter.Accounts{})
 	return &Manager{
 		client:   client,
-		contract: contract,
-	}, nil
+		contract: contract.(*adapter.Accounts),
+	}
 }
 
 func (manager *Manager) CreateTemporary(identityHash ethCommon.Hash) (ablCommon.ID, error) {

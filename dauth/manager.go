@@ -22,12 +22,10 @@ type Manager struct {
 }
 
 func NewManager(client *blockchain.Client) *Manager {
-	raw, _ := client.GetContract(&adapter.CollectionRegistry{})
-	contract, _ := raw.(*adapter.CollectionRegistry)
-
+	contract := client.GetContract(&adapter.CollectionRegistry{})
 	return &Manager{
 		ethclient:          client,
-		collectionRegistry: contract,
+		collectionRegistry: contract.(*adapter.CollectionRegistry),
 	}
 }
 

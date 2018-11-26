@@ -18,8 +18,8 @@ type AppsAPI struct {
 }
 
 func NewAppsAPI(backend node.Backend) (node.API, error) {
-	appsManager, err := apps.NewManager(backend.Client())
-	return &AppsAPI{appsManager}, err
+	appsManager := apps.NewManager(backend.Client())
+	return &AppsAPI{appsManager}, nil
 }
 
 func (api *AppsAPI) NewOwner(ctx context.Context, req *pb.NewOwnerRequest) (*commonpb.Result, error) {
