@@ -51,7 +51,7 @@ func main() {
 	app.Description = "A node of Airbloc Protocol, which is decentralized data exchange protocol."
 	app.Commands = commands
 	app.Flags = flags
-	app.Action = start("api", "account,collections,data,exchange,schemas,warehouse")
+	app.Action = start("api", "apps,account,collections,data,exchange,schemas,warehouse")
 
 	err := app.Run(os.Args)
 	if err != nil {

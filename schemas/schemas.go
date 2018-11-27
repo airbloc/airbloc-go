@@ -25,13 +25,11 @@ type Schemas struct {
 }
 
 func New(db metadb.Database, client blockchain.TxClient) *Schemas {
-	raw, _ := client.GetContract(&adapter.SchemaRegistry{})
-	contract, _ := raw.(*adapter.SchemaRegistry)
-
+	contract := client.GetContract(&adapter.SchemaRegistry{})
 	return &Schemas{
 		db:       metadb.NewModel(db, "schema"),
 		client:   client,
-		contract: contract,
+		contract: contract.(*adapter.SchemaRegistry),
 	}
 }
 

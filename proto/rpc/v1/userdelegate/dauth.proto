@@ -1,5 +1,5 @@
 syntax = "proto3";
-package airbloc.rpc.v1;
+package airbloc.rpc.v1.userdelegate;
 
 option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/userdelegate";
 
