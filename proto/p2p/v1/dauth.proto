@@ -4,7 +4,8 @@ package airbloc.p2p.v1;
 option go_package = "github.com/airbloc/airbloc-go/proto/p2p/v1";
 
 message DAuthSignUpRequest {
-    string identityHash = 1;
+    string provider = 1;
+    string identityHash = 2;
 }
 
 message DAuthSignUpResponse {

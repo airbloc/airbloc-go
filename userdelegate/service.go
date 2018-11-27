@@ -2,6 +2,7 @@ package userdelegate
 
 import (
 	"context"
+	"fmt"
 	"github.com/airbloc/airbloc-go/account"
 	"github.com/airbloc/airbloc-go/apps"
 	"github.com/airbloc/airbloc-go/collections"
@@ -54,7 +55,7 @@ func (service *Service) AddUser(accId string) error {
 		return errors.Wrapf(err, "invalid account ID %s", accId)
 	}
 
-	// you can delegate a user after the user setting you as a delegate.
+	// you can be delegate of a user after the user designate you as a delegate.
 	if isDelegate, err := service.accounts.IsDelegateOf(service.selfAddr, accountId); err != nil {
 		return errors.Wrapf(err, "failed to call Accounts.IsDelegateOf")
 	} else if !isDelegate {
@@ -74,14 +75,15 @@ func (service *Service) Start() error {
 	for _, accountId := range service.accountIds {
 		service.registerDAuthHandler(accountId)
 	}
+	return nil
 }
 
 func (service *Service) registerDAuthHandler(accountId ablCommon.ID) {
 	accId := accountId.String()
 	dauthReq := &pb.DAuthRequest{}
 
-	service.p2p.SubscribeTopic("dauth-allow-" + accId, dauthReq, service.createDAuthHandler(accountId, true))
-	service.p2p.SubscribeTopic("dauth-deny-" + accId, dauthReq, service.createDAuthHandler(accountId, false))
+	service.p2p.SubscribeTopic("dauth-allow-"+accId, dauthReq, service.createDAuthHandler(accountId, true))
+	service.p2p.SubscribeTopic("dauth-deny-"+accId, dauthReq, service.createDAuthHandler(accountId, false))
 }
 
 func (service *Service) createDAuthHandler(accountId ablCommon.ID, allow bool) p2p.TopicHandler {
@@ -115,9 +117,22 @@ func (service *Service) createDAuthHandler(accountId ablCommon.ID, allow bool) p
 		}
 		if err != nil {
 			log.Println("error: Failed to modify DAuth settings: ", err.Error())
+			return
 		}
 
-		// TODO: reply to the data provider :D
+		// respond to the data provider
+		response := &pb.DAuthResponse{
+			CollectionId: request.GetCollectionId(),
+		}
+		var topicName string
+		if allow {
+			topicName = fmt.Sprintf("dauth-allow-%s-response", accountId.String())
+		} else {
+			topicName = fmt.Sprintf("dauth-deny-%s-response", accountId.String())
+		}
+		if err := server.Send(ctx, response, topicName, message.Info.ID); err != nil {
+			log.Println("error: Failed to send response to data provider:", err.Error())
+		}
 	}
 }
 
