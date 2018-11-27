@@ -2,6 +2,7 @@ package p2p
 
 import (
 	"context"
+	"encoding/hex"
 	"fmt"
 	"log"
 	"testing"
@@ -51,13 +52,13 @@ func makeBasicServer(ctx context.Context, index int, bootnode bool, bootinfos ..
 }
 
 func handlePing(s Server, ctx context.Context, message common.Message) {
-	log.Println("Ping", message.Info.ID.Pretty(), message.Data.String())
+	log.Println("Ping", message.SenderInfo.ID.Pretty(), message.Data.String())
 
-	s.Send(ctx, &pb.TestPing{Message: "World!"}, "ping", message.Info.ID)
+	s.Send(ctx, &pb.TestPing{Message: "World!"}, "ping", message.SenderInfo.ID)
 }
 
 func handlePong(s Server, ctx context.Context, message common.Message) {
-	log.Println("Pong", message.Info.ID.Pretty(), message.Data.String())
+	log.Println("Pong", message.SenderInfo.ID.Pretty(), message.Data.String())
 }
 
 func TestNewServer(t *testing.T) {
@@ -71,7 +72,7 @@ func TestNewServer(t *testing.T) {
 	bootnode, err := makeBasicServer(ctx, 0, true)
 	assert.NoError(t, err)
 
-	bootinfo, err := bootnode.bootInfo()
+	bootinfo, err := bootnode.BootInfo()
 	assert.NoError(t, err)
 
 	servers := make([]Server, Size)
@@ -103,7 +104,9 @@ func TestAirblocHost_Publish(t *testing.T) {
 	bootnode, err := makeBasicServer(ctx, 0, true)
 	assert.NoError(t, err)
 
-	bootinfo, err := bootnode.bootInfo()
+	time.Sleep(1 * time.Second)
+
+	bootinfo, err := bootnode.BootInfo()
 	assert.NoError(t, err)
 
 	// make alice and bob
@@ -112,6 +115,7 @@ func TestAirblocHost_Publish(t *testing.T) {
 
 	aliceAddress := keys[1].EthereumAddress.Hex()
 	log.Printf("Alice address : %s\n", aliceAddress)
+	log.Printf("Alice pubkey : %s\n", hex.EncodeToString(crypto.CompressPubkey(&keys[1].PublicKey)))
 
 	bob, err := makeBasicServer(ctx, 2, false, bootinfo)
 	assert.NoError(t, err)
@@ -123,13 +127,12 @@ func TestAirblocHost_Publish(t *testing.T) {
 	// bob listens to alice, try to recover alice's address
 	waitForBob := make(chan string, 1)
 	bob.SubscribeTopic("ping", &pb.TestPing{}, func(s Server, ctx context.Context, message common.Message) {
-		recoveredAddress := crypto.PubkeyToAddress(*message.Sender)
-		waitForBob <- recoveredAddress.Hex()
+		waitForBob <- message.SenderAddr.Hex()
 	})
 
 	// TODO: without Connect(), it's not working
-	// err = alice.getHost().Connect(ctx, bob.getHost().PeerInfo())
-	// assert.NoError(t, err)
+	err = alice.getHost().Connect(ctx, bob.getHost().PeerInfo())
+	assert.NoError(t, err)
 
 	err = alice.Publish(ctx, pingMsg, "ping")
 	assert.NoError(t, err)

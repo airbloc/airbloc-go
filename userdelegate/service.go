@@ -13,7 +13,6 @@ import (
 	p2pcommon "github.com/airbloc/airbloc-go/p2p/common"
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	ethCommon "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
 	"log"
 )
@@ -75,6 +74,7 @@ func (service *Service) Start() error {
 	for _, accountId := range service.accountIds {
 		service.registerDAuthHandler(accountId)
 	}
+	service.isRunning = true
 	return nil
 }
 
@@ -101,12 +101,11 @@ func (service *Service) createDAuthHandler(accountId ablCommon.ID, allow bool) p
 		}
 
 		// the message sender should be the data provider (the collection's owner)
-		senderAddr := crypto.PubkeyToAddress(*message.Sender)
-		if ok, err := service.isCollectionOwner(ctx, collectionId, senderAddr); err != nil {
+		if ok, err := service.isCollectionOwner(ctx, collectionId, message.SenderAddr); err != nil {
 			log.Println("error: Failed to retrieve collection owner", err.Error())
 			return
 		} else if !ok {
-			log.Println("error: The address", senderAddr.Hex(), "is not a data provider.")
+			log.Println("error: The address", message.SenderAddr.Hex(), "is not a data provider.")
 			return
 		}
 
@@ -130,7 +129,7 @@ func (service *Service) createDAuthHandler(accountId ablCommon.ID, allow bool) p
 		} else {
 			topicName = fmt.Sprintf("dauth-deny-%s-response", accountId.String())
 		}
-		if err := server.Send(ctx, response, topicName, message.Info.ID); err != nil {
+		if err := server.Send(ctx, response, topicName, message.SenderInfo.ID); err != nil {
 			log.Println("error: Failed to send response to data provider:", err.Error())
 		}
 	}
@@ -151,12 +150,12 @@ func (service *Service) signUpHandler(server p2p.Server, ctx context.Context, me
 
 	log.Println(
 		"Created account", accountId.String(),
-		"by request from the data provider", crypto.PubkeyToAddress(*message.Sender).Hex())
+		"by request from the data provider", message.SenderAddr.Hex())
 
 	response := &pb.DAuthSignUpResponse{
 		UserId: accountId.String(),
 	}
-	if err = server.Send(context.Background(), response, "dauth-signup-response", message.Info.ID); err != nil {
+	if err = server.Send(context.Background(), response, "dauth-signup-response", message.SenderInfo.ID); err != nil {
 		log.Println("error: Failed to send response to data provider:", err.Error())
 	}
 }
@@ -172,4 +171,5 @@ func (service *Service) isCollectionOwner(ctx context.Context, collectionId ablC
 }
 
 func (service *Service) Stop() {
+	service.isRunning = false
 }

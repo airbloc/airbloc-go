@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/airbloc/airbloc-go/database/localdb"
-	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/airbloc/airbloc-go/p2p/common"
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
@@ -167,14 +166,13 @@ func (s *AirblocServer) updatePeer() {
 
 	if err != nil {
 		log.Println("failed to get closest peers:", err)
-		return
 	}
 
 	for id := range idch {
 		info, err := s.dht.FindPeer(s.ctx, id)
 		if err != nil {
 			log.Println("failed to find peer", id.Pretty(), ":", err)
-			return
+			continue
 		}
 		s.host.Peerstore().AddAddrs(info.ID, info.Addrs, peerstore.TempAddrTTL)
 	}
@@ -241,9 +239,6 @@ func (s *AirblocServer) Send(ctx context.Context, msg proto.Message, topic strin
 	if err != nil {
 		return errors.Wrap(err, "send error")
 	}
-	if err := payload.Sign(s.nodekey); err != nil {
-		return errors.Wrap(err, "send error")
-	}
 	return s.host.Send(ctx, *payload, p, s.pid)
 }
 
@@ -252,18 +247,7 @@ func (s *AirblocServer) Publish(ctx context.Context, msg proto.Message, topic st
 	if err != nil {
 		return errors.Wrap(err, "publish error")
 	}
-	if err := payload.Sign(s.nodekey); err != nil {
-		return errors.Wrap(err, "send error")
-	}
 	return s.host.Publish(ctx, *payload, s.pid)
-}
-
-func (s *AirblocServer) LocalDB() localdb.Database {
-	return s.db
-}
-
-func (s *AirblocServer) MetaDB() metadb.Database {
-	return nil
 }
 
 // for test
@@ -275,6 +259,6 @@ func (s *AirblocServer) getHost() Host {
 	return s.host
 }
 
-func (s *AirblocServer) bootInfo() (peerstore.PeerInfo, error) {
+func (s *AirblocServer) BootInfo() (peerstore.PeerInfo, error) {
 	return s.host.BootInfo()
 }
