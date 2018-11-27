@@ -86,7 +86,7 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 	}
 
 	return stream.SendAndClose(&pb.StoreResult{
-		BundleId:  bundle.Id.String(),
+		BundleId:  bundle.Id,
 		Uri:       bundle.Uri,
 		DataCount: uint64(bundle.DataCount),
 		GasUsed:   0,
@@ -130,7 +130,7 @@ func (api *WarehouseAPI) StoreEncryptedBundle(stream pb.Warehouse_StoreEncrypted
 	}
 
 	return stream.SendAndClose(&pb.StoreResult{
-		BundleId:  bundle.Id.String(),
+		BundleId:  bundle.Id,
 		Uri:       bundle.Uri,
 		DataCount: uint64(bundle.DataCount),
 		GasUsed:   0,

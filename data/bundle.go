@@ -11,7 +11,7 @@ import (
 )
 
 type Bundle struct {
-	Id         common.ID `json:"-"`
+	Id         string    `json:"-"`
 	Uri        string    `json:"-"`
 	Provider   common.ID `json:"provider"`
 	Collection common.ID `json:"collection"`

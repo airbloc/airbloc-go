@@ -111,10 +111,11 @@ func (warehouse *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to register bundle to blockchain")
 	}
+	createdBundle.Id = fmt.Sprintf("%s/%d", createdBundle.Collection.String(), bundleIndex)
 
 	// save metadata to make the bundle searchable
 	bundleInfo := map[string]interface{}{
-		"bundleId":   fmt.Sprintf("%s/%d", createdBundle.Collection, bundleIndex),
+		"bundleId":   createdBundle.Id,
 		"uri":        createdBundle.Uri,
 		"provider":   createdBundle.Provider.String(),
 		"collection": createdBundle.Collection.String(),
