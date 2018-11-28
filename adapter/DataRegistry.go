@@ -33,7 +33,7 @@ var (
 )
 
 // DataRegistryABI is the input ABI used to generate the binding from.
-const DataRegistryABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_accounts\",\"type\":\"address\"},{\"name\":\"_collections\",\"type\":\"address\"},{\"name\":\"_smt\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"index\",\"type\":\"uint64\"}],\"name\":\"BundleRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"provider\",\"type\":\"address\"}],\"name\":\"Punished\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"}],\"name\":\"OwnershipRenounced\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"usersRoot\",\"type\":\"bytes32\"},{\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"name\":\"uri\",\"type\":\"string\"}],\"name\":\"registerBundle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"bundleIndex\",\"type\":\"uint64\"},{\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"challenge\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"bundleIndex\",\"type\":\"uint64\"},{\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"isMyDataIncluded\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const DataRegistryABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_accounts\",\"type\":\"address\"},{\"name\":\"_collections\",\"type\":\"address\"},{\"name\":\"_smt\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"index\",\"type\":\"uint64\"}],\"name\":\"BundleUnregistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"index\",\"type\":\"uint64\"}],\"name\":\"BundleRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"provider\",\"type\":\"address\"}],\"name\":\"Punished\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"usersRoot\",\"type\":\"bytes32\"},{\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"name\":\"uri\",\"type\":\"string\"}],\"name\":\"registerBundle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"bundleIndex\",\"type\":\"uint64\"},{\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"challenge\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"bundleIndex\",\"type\":\"uint64\"},{\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"isMyDataIncluded\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // DataRegistry is an auto generated Go binding around an Ethereum contract.
 type DataRegistry struct {
@@ -199,6 +199,30 @@ func (_DataRegistry *DataRegistryTransactorRaw) Transact(opts *bind.TransactOpts
 	return _DataRegistry.Contract.contract.Transact(opts, method, params...)
 }
 
+// Challenge is a free data retrieval call binding the contract method 0x1ac30935.
+//
+// Solidity: function challenge(collectionId bytes8, bundleIndex uint64, proof bytes) constant returns()
+func (_DataRegistry *DataRegistryCaller) Challenge(opts *bind.CallOpts, collectionId [8]byte, bundleIndex uint64, proof []byte) error {
+	var ()
+	out := &[]interface{}{}
+	err := _DataRegistry.contract.Call(opts, out, "challenge", collectionId, bundleIndex, proof)
+	return err
+}
+
+// Challenge is a free data retrieval call binding the contract method 0x1ac30935.
+//
+// Solidity: function challenge(collectionId bytes8, bundleIndex uint64, proof bytes) constant returns()
+func (_DataRegistry *DataRegistrySession) Challenge(collectionId [8]byte, bundleIndex uint64, proof []byte) error {
+	return _DataRegistry.Contract.Challenge(&_DataRegistry.CallOpts, collectionId, bundleIndex, proof)
+}
+
+// Challenge is a free data retrieval call binding the contract method 0x1ac30935.
+//
+// Solidity: function challenge(collectionId bytes8, bundleIndex uint64, proof bytes) constant returns()
+func (_DataRegistry *DataRegistryCallerSession) Challenge(collectionId [8]byte, bundleIndex uint64, proof []byte) error {
+	return _DataRegistry.Contract.Challenge(&_DataRegistry.CallOpts, collectionId, bundleIndex, proof)
+}
+
 // IsMyDataIncluded is a free data retrieval call binding the contract method 0x45ab73d1.
 //
 // Solidity: function isMyDataIncluded(collectionId bytes8, bundleIndex uint64, proof bytes) constant returns(bool)
@@ -225,6 +249,32 @@ func (_DataRegistry *DataRegistryCallerSession) IsMyDataIncluded(collectionId [8
 	return _DataRegistry.Contract.IsMyDataIncluded(&_DataRegistry.CallOpts, collectionId, bundleIndex, proof)
 }
 
+// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
+//
+// Solidity: function isOwner() constant returns(bool)
+func (_DataRegistry *DataRegistryCaller) IsOwner(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _DataRegistry.contract.Call(opts, out, "isOwner")
+	return *ret0, err
+}
+
+// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
+//
+// Solidity: function isOwner() constant returns(bool)
+func (_DataRegistry *DataRegistrySession) IsOwner() (bool, error) {
+	return _DataRegistry.Contract.IsOwner(&_DataRegistry.CallOpts)
+}
+
+// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
+//
+// Solidity: function isOwner() constant returns(bool)
+func (_DataRegistry *DataRegistryCallerSession) IsOwner() (bool, error) {
+	return _DataRegistry.Contract.IsOwner(&_DataRegistry.CallOpts)
+}
+
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() constant returns(address)
@@ -249,27 +299,6 @@ func (_DataRegistry *DataRegistrySession) Owner() (common.Address, error) {
 // Solidity: function owner() constant returns(address)
 func (_DataRegistry *DataRegistryCallerSession) Owner() (common.Address, error) {
 	return _DataRegistry.Contract.Owner(&_DataRegistry.CallOpts)
-}
-
-// Challenge is a paid mutator transaction binding the contract method 0x1ac30935.
-//
-// Solidity: function challenge(collectionId bytes8, bundleIndex uint64, proof bytes) returns()
-func (_DataRegistry *DataRegistryTransactor) Challenge(opts *bind.TransactOpts, collectionId [8]byte, bundleIndex uint64, proof []byte) (*types.Transaction, error) {
-	return _DataRegistry.contract.Transact(opts, "challenge", collectionId, bundleIndex, proof)
-}
-
-// Challenge is a paid mutator transaction binding the contract method 0x1ac30935.
-//
-// Solidity: function challenge(collectionId bytes8, bundleIndex uint64, proof bytes) returns()
-func (_DataRegistry *DataRegistrySession) Challenge(collectionId [8]byte, bundleIndex uint64, proof []byte) (*types.Transaction, error) {
-	return _DataRegistry.Contract.Challenge(&_DataRegistry.TransactOpts, collectionId, bundleIndex, proof)
-}
-
-// Challenge is a paid mutator transaction binding the contract method 0x1ac30935.
-//
-// Solidity: function challenge(collectionId bytes8, bundleIndex uint64, proof bytes) returns()
-func (_DataRegistry *DataRegistryTransactorSession) Challenge(collectionId [8]byte, bundleIndex uint64, proof []byte) (*types.Transaction, error) {
-	return _DataRegistry.Contract.Challenge(&_DataRegistry.TransactOpts, collectionId, bundleIndex, proof)
 }
 
 // RegisterBundle is a paid mutator transaction binding the contract method 0xbde66f2c.
@@ -316,23 +345,23 @@ func (_DataRegistry *DataRegistryTransactorSession) RenounceOwnership() (*types.
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(_newOwner address) returns()
-func (_DataRegistry *DataRegistryTransactor) TransferOwnership(opts *bind.TransactOpts, _newOwner common.Address) (*types.Transaction, error) {
-	return _DataRegistry.contract.Transact(opts, "transferOwnership", _newOwner)
+// Solidity: function transferOwnership(newOwner address) returns()
+func (_DataRegistry *DataRegistryTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
+	return _DataRegistry.contract.Transact(opts, "transferOwnership", newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(_newOwner address) returns()
-func (_DataRegistry *DataRegistrySession) TransferOwnership(_newOwner common.Address) (*types.Transaction, error) {
-	return _DataRegistry.Contract.TransferOwnership(&_DataRegistry.TransactOpts, _newOwner)
+// Solidity: function transferOwnership(newOwner address) returns()
+func (_DataRegistry *DataRegistrySession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _DataRegistry.Contract.TransferOwnership(&_DataRegistry.TransactOpts, newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(_newOwner address) returns()
-func (_DataRegistry *DataRegistryTransactorSession) TransferOwnership(_newOwner common.Address) (*types.Transaction, error) {
-	return _DataRegistry.Contract.TransferOwnership(&_DataRegistry.TransactOpts, _newOwner)
+// Solidity: function transferOwnership(newOwner address) returns()
+func (_DataRegistry *DataRegistryTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _DataRegistry.Contract.TransferOwnership(&_DataRegistry.TransactOpts, newOwner)
 }
 
 // DataRegistryBundleRegisteredIterator is returned from FilterBundleRegistered and is used to iterate over the raw logs and unpacked data for BundleRegistered events raised by the DataRegistry contract.
@@ -484,9 +513,9 @@ func (_DataRegistry *DataRegistryFilterer) WatchBundleRegistered(opts *bind.Watc
 	}), nil
 }
 
-// DataRegistryOwnershipRenouncedIterator is returned from FilterOwnershipRenounced and is used to iterate over the raw logs and unpacked data for OwnershipRenounced events raised by the DataRegistry contract.
-type DataRegistryOwnershipRenouncedIterator struct {
-	Event *DataRegistryOwnershipRenounced // Event containing the contract specifics and raw log
+// DataRegistryBundleUnregisteredIterator is returned from FilterBundleUnregistered and is used to iterate over the raw logs and unpacked data for BundleUnregistered events raised by the DataRegistry contract.
+type DataRegistryBundleUnregisteredIterator struct {
+	Event *DataRegistryBundleUnregistered // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -500,7 +529,7 @@ type DataRegistryOwnershipRenouncedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *DataRegistryOwnershipRenouncedIterator) Next() bool {
+func (it *DataRegistryBundleUnregisteredIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -509,7 +538,7 @@ func (it *DataRegistryOwnershipRenouncedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(DataRegistryOwnershipRenounced)
+			it.Event = new(DataRegistryBundleUnregistered)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -524,7 +553,7 @@ func (it *DataRegistryOwnershipRenouncedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(DataRegistryOwnershipRenounced)
+		it.Event = new(DataRegistryBundleUnregistered)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -540,67 +569,68 @@ func (it *DataRegistryOwnershipRenouncedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *DataRegistryOwnershipRenouncedIterator) Error() error {
+func (it *DataRegistryBundleUnregisteredIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *DataRegistryOwnershipRenouncedIterator) Close() error {
+func (it *DataRegistryBundleUnregisteredIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// DataRegistryOwnershipRenounced represents a OwnershipRenounced event raised by the DataRegistry contract.
-type DataRegistryOwnershipRenounced struct {
-	PreviousOwner common.Address
-	Raw           types.Log // Blockchain specific contextual infos
+// DataRegistryBundleUnregistered represents a BundleUnregistered event raised by the DataRegistry contract.
+type DataRegistryBundleUnregistered struct {
+	CollectionId [8]byte
+	Index        uint64
+	Raw          types.Log // Blockchain specific contextual infos
 }
 
-// FilterOwnershipRenounced is a free log retrieval operation binding the contract event 0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820.
+// FilterBundleUnregistered is a free log retrieval operation binding the contract event 0xe67b87439720993f9f3fa67a2cfd45a2c98829ad6cc7b9c9ca23a255552a86fa.
 //
-// Solidity: e OwnershipRenounced(previousOwner indexed address)
-func (_DataRegistry *DataRegistryFilterer) FilterOwnershipRenounced(opts *bind.FilterOpts, previousOwner []common.Address) (*DataRegistryOwnershipRenouncedIterator, error) {
+// Solidity: e BundleUnregistered(collectionId indexed bytes8, index uint64)
+func (_DataRegistry *DataRegistryFilterer) FilterBundleUnregistered(opts *bind.FilterOpts, collectionId [][8]byte) (*DataRegistryBundleUnregisteredIterator, error) {
 
-	var previousOwnerRule []interface{}
-	for _, previousOwnerItem := range previousOwner {
-		previousOwnerRule = append(previousOwnerRule, previousOwnerItem)
+	var collectionIdRule []interface{}
+	for _, collectionIdItem := range collectionId {
+		collectionIdRule = append(collectionIdRule, collectionIdItem)
 	}
 
-	logs, sub, err := _DataRegistry.contract.FilterLogs(opts, "OwnershipRenounced", previousOwnerRule)
+	logs, sub, err := _DataRegistry.contract.FilterLogs(opts, "BundleUnregistered", collectionIdRule)
 	if err != nil {
 		return nil, err
 	}
-	return &DataRegistryOwnershipRenouncedIterator{contract: _DataRegistry.contract, event: "OwnershipRenounced", logs: logs, sub: sub}, nil
+	return &DataRegistryBundleUnregisteredIterator{contract: _DataRegistry.contract, event: "BundleUnregistered", logs: logs, sub: sub}, nil
 }
 
-// FilterOwnershipRenounced parses the event from given transaction receipt.
+// FilterBundleUnregistered parses the event from given transaction receipt.
 //
-// Solidity: e OwnershipRenounced(previousOwner indexed address)
-func (_DataRegistry *DataRegistryFilterer) ParseOwnershipRenouncedFromReceipt(receipt *types.Receipt) (*DataRegistryOwnershipRenounced, error) {
+// Solidity: e BundleUnregistered(collectionId indexed bytes8, index uint64)
+func (_DataRegistry *DataRegistryFilterer) ParseBundleUnregisteredFromReceipt(receipt *types.Receipt) (*DataRegistryBundleUnregistered, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
-			event := new(DataRegistryOwnershipRenounced)
-			if err := _DataRegistry.contract.UnpackLog(event, "OwnershipRenounced", *log); err != nil {
+		if log.Topics[0] == common.HexToHash("0xe67b87439720993f9f3fa67a2cfd45a2c98829ad6cc7b9c9ca23a255552a86fa") {
+			event := new(DataRegistryBundleUnregistered)
+			if err := _DataRegistry.contract.UnpackLog(event, "BundleUnregistered", *log); err != nil {
 				return nil, err
 			}
 			return event, nil
 		}
 	}
-	return nil, errors.New("OwnershipRenounced event not found")
+	return nil, errors.New("BundleUnregistered event not found")
 }
 
-// WatchOwnershipRenounced is a free log subscription operation binding the contract event 0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820.
+// WatchBundleUnregistered is a free log subscription operation binding the contract event 0xe67b87439720993f9f3fa67a2cfd45a2c98829ad6cc7b9c9ca23a255552a86fa.
 //
-// Solidity: e OwnershipRenounced(previousOwner indexed address)
-func (_DataRegistry *DataRegistryFilterer) WatchOwnershipRenounced(opts *bind.WatchOpts, sink chan<- *DataRegistryOwnershipRenounced, previousOwner []common.Address) (event.Subscription, error) {
+// Solidity: e BundleUnregistered(collectionId indexed bytes8, index uint64)
+func (_DataRegistry *DataRegistryFilterer) WatchBundleUnregistered(opts *bind.WatchOpts, sink chan<- *DataRegistryBundleUnregistered, collectionId [][8]byte) (event.Subscription, error) {
 
-	var previousOwnerRule []interface{}
-	for _, previousOwnerItem := range previousOwner {
-		previousOwnerRule = append(previousOwnerRule, previousOwnerItem)
+	var collectionIdRule []interface{}
+	for _, collectionIdItem := range collectionId {
+		collectionIdRule = append(collectionIdRule, collectionIdItem)
 	}
 
-	logs, sub, err := _DataRegistry.contract.WatchLogs(opts, "OwnershipRenounced", previousOwnerRule)
+	logs, sub, err := _DataRegistry.contract.WatchLogs(opts, "BundleUnregistered", collectionIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -610,8 +640,8 @@ func (_DataRegistry *DataRegistryFilterer) WatchOwnershipRenounced(opts *bind.Wa
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(DataRegistryOwnershipRenounced)
-				if err := _DataRegistry.contract.UnpackLog(event, "OwnershipRenounced", log); err != nil {
+				event := new(DataRegistryBundleUnregistered)
+				if err := _DataRegistry.contract.UnpackLog(event, "BundleUnregistered", log); err != nil {
 					return err
 				}
 				event.Raw = log

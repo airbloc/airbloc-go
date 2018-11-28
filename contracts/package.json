@@ -8,15 +8,17 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "console": "truffle console --network test",
+    "truffle": "truffle",
     "compile": "truffle compile",
+    "console": "truffle console --network test",
     "migrate": "truffle migrate --reset --network test"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "openzeppelin-solidity": "^1.12.0",
+    "openzeppelin-solidity": "^2.0.0",
+    "truffle": "^4.1.14",
     "truffle-privatekey-provider": "^0.1.0"
   }
 }

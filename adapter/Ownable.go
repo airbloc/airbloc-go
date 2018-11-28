@@ -33,7 +33,7 @@ var (
 )
 
 // OwnableABI is the input ABI used to generate the binding from.
-const OwnableABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"}],\"name\":\"OwnershipRenounced\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+const OwnableABI = "[{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // Ownable is an auto generated Go binding around an Ethereum contract.
 type Ownable struct {
@@ -191,6 +191,32 @@ func (_Ownable *OwnableTransactorRaw) Transact(opts *bind.TransactOpts, method s
 	return _Ownable.Contract.contract.Transact(opts, method, params...)
 }
 
+// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
+//
+// Solidity: function isOwner() constant returns(bool)
+func (_Ownable *OwnableCaller) IsOwner(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Ownable.contract.Call(opts, out, "isOwner")
+	return *ret0, err
+}
+
+// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
+//
+// Solidity: function isOwner() constant returns(bool)
+func (_Ownable *OwnableSession) IsOwner() (bool, error) {
+	return _Ownable.Contract.IsOwner(&_Ownable.CallOpts)
+}
+
+// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
+//
+// Solidity: function isOwner() constant returns(bool)
+func (_Ownable *OwnableCallerSession) IsOwner() (bool, error) {
+	return _Ownable.Contract.IsOwner(&_Ownable.CallOpts)
+}
+
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() constant returns(address)
@@ -240,171 +266,23 @@ func (_Ownable *OwnableTransactorSession) RenounceOwnership() (*types.Transactio
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(_newOwner address) returns()
-func (_Ownable *OwnableTransactor) TransferOwnership(opts *bind.TransactOpts, _newOwner common.Address) (*types.Transaction, error) {
-	return _Ownable.contract.Transact(opts, "transferOwnership", _newOwner)
+// Solidity: function transferOwnership(newOwner address) returns()
+func (_Ownable *OwnableTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
+	return _Ownable.contract.Transact(opts, "transferOwnership", newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(_newOwner address) returns()
-func (_Ownable *OwnableSession) TransferOwnership(_newOwner common.Address) (*types.Transaction, error) {
-	return _Ownable.Contract.TransferOwnership(&_Ownable.TransactOpts, _newOwner)
+// Solidity: function transferOwnership(newOwner address) returns()
+func (_Ownable *OwnableSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _Ownable.Contract.TransferOwnership(&_Ownable.TransactOpts, newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(_newOwner address) returns()
-func (_Ownable *OwnableTransactorSession) TransferOwnership(_newOwner common.Address) (*types.Transaction, error) {
-	return _Ownable.Contract.TransferOwnership(&_Ownable.TransactOpts, _newOwner)
-}
-
-// OwnableOwnershipRenouncedIterator is returned from FilterOwnershipRenounced and is used to iterate over the raw logs and unpacked data for OwnershipRenounced events raised by the Ownable contract.
-type OwnableOwnershipRenouncedIterator struct {
-	Event *OwnableOwnershipRenounced // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *OwnableOwnershipRenouncedIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(OwnableOwnershipRenounced)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(OwnableOwnershipRenounced)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *OwnableOwnershipRenouncedIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *OwnableOwnershipRenouncedIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// OwnableOwnershipRenounced represents a OwnershipRenounced event raised by the Ownable contract.
-type OwnableOwnershipRenounced struct {
-	PreviousOwner common.Address
-	Raw           types.Log // Blockchain specific contextual infos
-}
-
-// FilterOwnershipRenounced is a free log retrieval operation binding the contract event 0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820.
-//
-// Solidity: e OwnershipRenounced(previousOwner indexed address)
-func (_Ownable *OwnableFilterer) FilterOwnershipRenounced(opts *bind.FilterOpts, previousOwner []common.Address) (*OwnableOwnershipRenouncedIterator, error) {
-
-	var previousOwnerRule []interface{}
-	for _, previousOwnerItem := range previousOwner {
-		previousOwnerRule = append(previousOwnerRule, previousOwnerItem)
-	}
-
-	logs, sub, err := _Ownable.contract.FilterLogs(opts, "OwnershipRenounced", previousOwnerRule)
-	if err != nil {
-		return nil, err
-	}
-	return &OwnableOwnershipRenouncedIterator{contract: _Ownable.contract, event: "OwnershipRenounced", logs: logs, sub: sub}, nil
-}
-
-// FilterOwnershipRenounced parses the event from given transaction receipt.
-//
-// Solidity: e OwnershipRenounced(previousOwner indexed address)
-func (_Ownable *OwnableFilterer) ParseOwnershipRenouncedFromReceipt(receipt *types.Receipt) (*OwnableOwnershipRenounced, error) {
-	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820") {
-			event := new(OwnableOwnershipRenounced)
-			if err := _Ownable.contract.UnpackLog(event, "OwnershipRenounced", *log); err != nil {
-				return nil, err
-			}
-			return event, nil
-		}
-	}
-	return nil, errors.New("OwnershipRenounced event not found")
-}
-
-// WatchOwnershipRenounced is a free log subscription operation binding the contract event 0xf8df31144d9c2f0f6b59d69b8b98abd5459d07f2742c4df920b25aae33c64820.
-//
-// Solidity: e OwnershipRenounced(previousOwner indexed address)
-func (_Ownable *OwnableFilterer) WatchOwnershipRenounced(opts *bind.WatchOpts, sink chan<- *OwnableOwnershipRenounced, previousOwner []common.Address) (event.Subscription, error) {
-
-	var previousOwnerRule []interface{}
-	for _, previousOwnerItem := range previousOwner {
-		previousOwnerRule = append(previousOwnerRule, previousOwnerItem)
-	}
-
-	logs, sub, err := _Ownable.contract.WatchLogs(opts, "OwnershipRenounced", previousOwnerRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(OwnableOwnershipRenounced)
-				if err := _Ownable.contract.UnpackLog(event, "OwnershipRenounced", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
+// Solidity: function transferOwnership(newOwner address) returns()
+func (_Ownable *OwnableTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _Ownable.Contract.TransferOwnership(&_Ownable.TransactOpts, newOwner)
 }
 
 // OwnableOwnershipTransferredIterator is returned from FilterOwnershipTransferred and is used to iterate over the raw logs and unpacked data for OwnershipTransferred events raised by the Ownable contract.

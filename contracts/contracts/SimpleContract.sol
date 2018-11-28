@@ -22,11 +22,10 @@ contract SimpleContract {
         (
             address offeror, 
             , // address offeree,
-            address contractAddr
-        ) = exchange.getOffer(_offerId);
+            address contractAddr,
+        ) = exchange.getOfferCompact(_offerId);
         require(msg.sender == offeror, "should have authority");
         require(contractAddr == address(this), "not this contract");
-        exchange.open(_offerId);
         balances[_offerId] = msg.value;
         agreements[_offerId] = Agreement(false, false);
     }
@@ -35,8 +34,8 @@ contract SimpleContract {
         (
             address offeror,
             address offeree,
-            address contractAddr
-        ) = exchange.getOffer(_offerId);
+            address contractAddr,
+        ) = exchange.getOfferCompact(_offerId);
 
         require(contractAddr == address(this), "not this contract");
 

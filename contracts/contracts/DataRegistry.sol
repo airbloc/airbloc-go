@@ -8,6 +8,7 @@ import "./CollectionRegistry.sol";
 
 contract DataRegistry is Ownable {
 
+    event BundleUnregistered(bytes8 indexed collectionId, uint64 index);
     event BundleRegistered(bytes8 indexed collectionId, uint64 index);
     event Punished(address provider);
 
@@ -56,13 +57,10 @@ contract DataRegistry is Ownable {
             "You have been allowed to collect the data at that time. Why is it a problem?"
         );
 
-        bool challengeIsTrue = sparseMerkleTree.checkMembership(bundle.usersRoot, uint64(userId), proof);
-        if (challengeIsTrue) {
-            // punish(collection.owner);
-//            emit Punished(collection.owner);
-        } else {
-            revert("Proof failed");
-        }
+        bool challengeResult = sparseMerkleTree.checkMembership(bundle.usersRoot, uint64(userId), proof);
+        require(challengeResult, "Proof failed");
+//        punish(collection.owner);
+//        emit Punished(collection.owner);
     }
 
     function isMyDataIncluded(bytes8 collectionId, uint64 bundleIndex, bytes proof) public view returns (bool) {

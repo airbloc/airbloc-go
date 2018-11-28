@@ -106,11 +106,19 @@ const (
 	StatusSETTLED  = 2
 )
 
+type ExchangeLibEscrow struct {
+	Addr common.Address
+	Args
+	Sign
+}
+
 type ExchangeLibOffer struct {
-	ContractAddr common.Address
-	Offeree      common.Address
-	Offeror      common.Address
-	Status       ExchangeLibStatus
+	DataIds
+	Escrow   ExchangeLibEscrow
+	Offeree  common.Address
+	Offeror  common.Address
+	Reverted bool
+	Status   ExchangeLibStatus
 }
 
 type ExchangeLibOrderbook struct {
