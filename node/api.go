@@ -2,13 +2,13 @@ package node
 
 import (
 	"fmt"
+	"github.com/azer/logger"
+	"github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/pkg/errors"
+	"google.golang.org/grpc"
 	"net"
 	"net/http"
 	"strings"
-
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/pkg/errors"
-	"google.golang.org/grpc"
 )
 
 type APIService struct {
@@ -18,10 +18,17 @@ type APIService struct {
 	Address    string
 
 	port int
+
+	// for logging
+	logger *logger.Logger
 }
 
 func NewAPIService(airbloc Backend) (Service, error) {
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+			UnaryServerLogger(),
+		)),
+	)
 	restAPImux := http.NewServeMux()
 
 	proxyHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -44,6 +51,7 @@ func NewAPIService(airbloc Backend) (Service, error) {
 		},
 		Address: address,
 		port:    config.Port,
+		logger:  logger.New("apiservice"),
 	}
 	return service, nil
 }
@@ -59,7 +67,7 @@ func (service *APIService) Start() error {
 		return errors.Wrapf(err, "failed to listen to TCP port %d for RPC", service.port)
 	}
 
-	log.Info("Server started", "address", service.Address)
+	service.logger.Info("Server started at %s", service.Address)
 	if err := service.GrpcServer.Serve(lis); err != http.ErrServerClosed {
 		return errors.Wrapf(err, "failed to start HTTP server")
 	}
