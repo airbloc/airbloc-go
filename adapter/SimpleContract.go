@@ -101,7 +101,13 @@ type SimpleContractAgreement struct {
 }
 
 func init() {
+	// convenient hacks for blockchain.Client
 	blockchain.ContractList["SimpleContract"] = (&SimpleContract{}).new
+
+	blockchain.RegisterSelector("0x688e8391", "close(bytes8)")
+
+	blockchain.RegisterSelector("0x6d552248", "open(bytes8)")
+
 }
 
 // NewSimpleContract creates a new instance of SimpleContract, bound to a specific deployed contract.

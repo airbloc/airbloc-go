@@ -96,7 +96,21 @@ type WhitelistTransactorRaw struct {
 }
 
 func init() {
+	// convenient hacks for blockchain.Client
 	blockchain.ContractList["Whitelist"] = (&Whitelist{}).new
+
+	blockchain.RegisterSelector("0x7b9417c8", "addAddressToWhitelist(address)")
+
+	blockchain.RegisterSelector("0xe2ec6ec3", "addAddressesToWhitelist(address[])")
+
+	blockchain.RegisterSelector("0x286dd3f5", "removeAddressFromWhitelist(address)")
+
+	blockchain.RegisterSelector("0x24953eaa", "removeAddressesFromWhitelist(address[])")
+
+	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
+
+	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
+
 }
 
 // NewWhitelist creates a new instance of Whitelist, bound to a specific deployed contract.
