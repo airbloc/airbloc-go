@@ -99,27 +99,17 @@ func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["Exchange"] = (&Exchange{}).new
 
-	blockchain.RegisterSelector("0x7b9417c8", "addAddressToWhitelist(address)")
-
-	blockchain.RegisterSelector("0xe2ec6ec3", "addAddressesToWhitelist(address[])")
+	blockchain.RegisterSelector("0xe6d16fcb", "addDataIds(bytes8,bytes16[])")
 
 	blockchain.RegisterSelector("0x688e8391", "close(bytes8)")
 
-	blockchain.RegisterSelector("0x6d552248", "open(bytes8)")
+	blockchain.RegisterSelector("0x0cf833fb", "order(bytes8)")
 
-	blockchain.RegisterSelector("0x8221d46f", "order(address,address,address)")
+	blockchain.RegisterSelector("0xf35f380b", "prepare(address,address,address,bytes4,bytes,bytes16[])")
 
 	blockchain.RegisterSelector("0x6622e153", "reject(bytes8)")
 
-	blockchain.RegisterSelector("0x286dd3f5", "removeAddressFromWhitelist(address)")
-
-	blockchain.RegisterSelector("0x24953eaa", "removeAddressesFromWhitelist(address[])")
-
-	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
-
 	blockchain.RegisterSelector("0xa60d9b5f", "settle(bytes8)")
-
-	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
 
 }
 

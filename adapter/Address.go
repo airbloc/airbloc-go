@@ -96,7 +96,9 @@ type AddressTransactorRaw struct {
 }
 
 func init() {
+	// convenient hacks for blockchain.Client
 	blockchain.ContractList["Address"] = (&Address{}).new
+
 }
 
 // NewAddress creates a new instance of Address, bound to a specific deployed contract.

@@ -1,13 +1,14 @@
 package main
 
 import (
+	"os"
+	"strings"
+
 	logger2 "github.com/airbloc/airbloc-go/logger"
 	"github.com/airbloc/airbloc-go/userdelegate"
 	"github.com/azer/logger"
 	"github.com/pkg/errors"
 	"gopkg.in/urfave/cli.v1"
-	"os"
-	"strings"
 
 	"github.com/airbloc/airbloc-go/node/userdelegateapi"
 

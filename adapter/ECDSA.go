@@ -96,7 +96,9 @@ type ECDSATransactorRaw struct {
 }
 
 func init() {
+	// convenient hacks for blockchain.Client
 	blockchain.ContractList["ECDSA"] = (&ECDSA{}).new
+
 }
 
 // NewECDSA creates a new instance of ECDSA, bound to a specific deployed contract.

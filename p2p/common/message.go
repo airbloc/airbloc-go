@@ -3,9 +3,10 @@ package common
 import (
 	"bufio"
 	"context"
-	"github.com/ethereum/go-ethereum/common"
 	"io"
 	"reflect"
+
+	"github.com/ethereum/go-ethereum/common"
 
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/ethereum/go-ethereum/crypto"

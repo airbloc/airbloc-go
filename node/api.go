@@ -2,13 +2,14 @@ package node
 
 import (
 	"fmt"
+	"net"
+	"net/http"
+	"strings"
+
 	"github.com/azer/logger"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
-	"net"
-	"net/http"
-	"strings"
 )
 
 type APIService struct {

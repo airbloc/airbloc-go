@@ -3,10 +3,11 @@ package p2p
 import (
 	"context"
 	"fmt"
-	"github.com/azer/logger"
 	"reflect"
 	"sync"
 	"time"
+
+	"github.com/azer/logger"
 
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/key"

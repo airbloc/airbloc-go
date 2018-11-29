@@ -1,9 +1,10 @@
 package logger
 
 import (
-	"github.com/azer/logger"
 	"os"
 	"strings"
+
+	"github.com/azer/logger"
 )
 
 // Setup sets up global logger configuration.

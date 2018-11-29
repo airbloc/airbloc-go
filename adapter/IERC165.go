@@ -96,7 +96,9 @@ type IERC165TransactorRaw struct {
 }
 
 func init() {
+	// convenient hacks for blockchain.Client
 	blockchain.ContractList["IERC165"] = (&IERC165{}).new
+
 }
 
 // NewIERC165 creates a new instance of IERC165, bound to a specific deployed contract.

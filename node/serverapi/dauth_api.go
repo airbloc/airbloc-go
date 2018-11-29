@@ -2,9 +2,10 @@ package serverapi
 
 import (
 	"context"
+	"log"
+
 	"github.com/airbloc/airbloc-go/account"
 	"github.com/azer/logger"
-	"log"
 
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/dauth"

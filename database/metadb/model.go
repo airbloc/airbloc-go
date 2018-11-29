@@ -3,12 +3,13 @@ package metadb
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/azer/logger"
 	"github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo/findopt"
 	"golang.org/x/crypto/ed25519"
-	"strings"
 )
 
 type Model struct {
