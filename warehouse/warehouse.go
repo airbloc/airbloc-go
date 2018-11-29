@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"github.com/azer/logger"
 	"math/rand"
 	"net/url"
 	"time"
@@ -13,7 +14,6 @@ import (
 	"github.com/airbloc/airbloc-go/data"
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/database/metadb"
-	"github.com/ethereum/go-ethereum/log"
 	"github.com/mongodb/mongo-go-driver/bson"
 
 	"github.com/airbloc/airbloc-go/common"
@@ -31,6 +31,7 @@ type DataWarehouse struct {
 	ethclient      blockchain.TxClient
 	dataRegistry   *adapter.DataRegistry
 	DefaultStorage storage.Storage
+	log            *logger.Logger
 }
 
 func New(
@@ -54,6 +55,7 @@ func New(
 		ethclient:      ethclient,
 		dataRegistry:   contract.(*adapter.DataRegistry),
 		DefaultStorage: defaultStorage,
+		log:            logger.New("warehouse"),
 	}
 }
 
@@ -122,12 +124,14 @@ func (warehouse *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error
 		"dataCount":  createdBundle.DataCount,
 		"ingestedAt": ingestedAt,
 	}
-	txn, err := warehouse.metaDatabase.Create(bundleInfo, nil)
+	_, err = warehouse.metaDatabase.Create(bundleInfo, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to save metadata")
 	}
-	log.Debug("Metadata Stored", "transactionId", txn.ID)
-
+	warehouse.log.Info("Bundle %s registered on", bundleName, logger.Attrs{
+		"index": bundleIndex,
+		"count": bundleInfo["dataCount"],
+	})
 	return createdBundle, nil
 }
 
@@ -136,13 +140,16 @@ func (warehouse *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (int,
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to get hash of the bundle data")
 	}
-	log.Debug("Bundle data hash", "hash", bundleDataHash.Hex())
 
 	userMerkleRoot, err := bundle.SetupUserProof()
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to setup SMT")
 	}
-	log.Debug("Bundle data merkle root", "root", userMerkleRoot.Hex())
+
+	warehouse.log.Info("Bundle data", logger.Attrs{
+		"hash":       bundleDataHash.Hex(),
+		"merkleRoot": userMerkleRoot.Hex(),
+	})
 
 	tx, err := warehouse.dataRegistry.RegisterBundle(
 		warehouse.ethclient.Account(),
@@ -170,7 +177,7 @@ func (warehouse *DataWarehouse) Get(bundleId string) (*data.Bundle, error) {
 	// try to fetch URI from cache. TODO: TTL of the bundle cache
 	uri, err := warehouse.localCache.Get(bundleId)
 	if err != nil {
-		log.Warn("Failed to access local DB", "uri", uri, "error", err)
+		warehouse.log.Error("Warning: failed to access local DB: %s", err.Error(), logger.Attrs{"uri": uri})
 	}
 
 	if uri != nil {

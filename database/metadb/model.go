@@ -2,16 +2,29 @@ package metadb
 
 import (
 	"context"
-
+	"fmt"
+	"github.com/azer/logger"
 	"github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo/findopt"
 	"golang.org/x/crypto/ed25519"
+	"strings"
 )
 
 type Model struct {
 	database Database
 	Name     string
+	log      *logger.Logger
+}
+
+// NewModel creates a collection for given metadatabase, with the name of the data type.
+func NewModel(database Database, name string) *Model {
+	loggerName := fmt.Sprintf("metadb (%s)", strings.ToLower(name))
+	return &Model{
+		Name:     name,
+		database: database,
+		log:      logger.New(loggerName),
+	}
 }
 
 func (model *Model) Create(immutableData map[string]interface{}, mutableData map[string]interface{}) (*transaction.Transaction, error) {
@@ -20,7 +33,13 @@ func (model *Model) Create(immutableData map[string]interface{}, mutableData map
 	assetData["data"] = immutableData
 	asset := transaction.Asset{Data: assetData}
 
-	return model.database.Create(asset, mutableData, BigchainTxModeDefault)
+	tx, err := model.database.Create(asset, mutableData, BigchainTxModeDefault)
+	if err != nil {
+		return tx, err
+	}
+	truncatedId := fmt.Sprintf("%s…%s", (*tx.ID)[:6], (*tx.ID)[58:])
+	model.log.Info("Metadata created with", logger.Attrs{"id": truncatedId})
+	return tx, nil
 }
 
 func (model *Model) RetrieveAsset(query *bson.Document) (*bson.Document, error) {
@@ -41,8 +60,4 @@ func (model *Model) Burn(assetId string) error {
 
 func (model *Model) Close() error {
 	return model.database.Close()
-}
-
-func NewModel(database Database, name string) *Model {
-	return &Model{database, name}
 }
