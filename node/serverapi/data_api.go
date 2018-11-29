@@ -5,7 +5,6 @@ import (
 	"github.com/airbloc/airbloc-go/node"
 	commonpb "github.com/airbloc/airbloc-go/proto/rpc/v1"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )
 
@@ -14,10 +13,7 @@ type DataAPI struct {
 }
 
 func NewDataAPI(backend node.Backend) (node.API, error) {
-	manager, err := datamanager.NewManager(backend.Kms(), backend.LocalDatabase(), backend.Client())
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create Data API")
-	}
+	manager := datamanager.NewManager(backend.Kms(), backend.LocalDatabase(), backend.Client())
 	return &DataAPI{manager}, nil
 }
 

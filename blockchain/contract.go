@@ -12,20 +12,21 @@ import (
 )
 
 var (
-	ErrContractNotFound = errors.New("contract not found")
+	// ContractList is filled by automatically generated contract binds in package `adapter`.
+	ContractList = make(map[string]ContractConstructor)
 )
 
-var ContractList = make(map[string]ContractConstructor)
-
 type ContractManager struct {
-	client  TxClient
-	storage map[reflect.Type]interface{}
+	client     TxClient
+	addrToName map[common.Address]string
+	storage    map[reflect.Type]interface{}
 }
 
 func NewContractManager(client TxClient) *ContractManager {
 	return &ContractManager{
-		client:  client,
-		storage: make(map[reflect.Type]interface{}),
+		client:     client,
+		storage:    make(map[reflect.Type]interface{}),
+		addrToName: make(map[common.Address]string),
 	}
 }
 
@@ -51,17 +52,14 @@ func (cm *ContractManager) load(reader io.Reader) error {
 		if err != nil {
 			return errors.Wrap(err, "contract manager : failed to get contract")
 		}
+		cm.addrToName[addr] = name
 		cm.SetContract(contract)
 	}
 	return nil
 }
 
-func (cm *ContractManager) GetContract(c interface{}) (interface{}, error) {
-	c, ok := cm.storage[reflect.ValueOf(c).Type()]
-	if !ok {
-		return nil, ErrContractNotFound
-	}
-	return c, nil
+func (cm *ContractManager) GetContract(c interface{}) interface{} {
+	return cm.storage[reflect.ValueOf(c).Type()]
 }
 
 func (cm *ContractManager) SetContract(c interface{}) {

@@ -96,7 +96,31 @@ type ExchangeTransactorRaw struct {
 }
 
 func init() {
+	// convenient hacks for blockchain.Client
 	blockchain.ContractList["Exchange"] = (&Exchange{}).new
+
+	blockchain.RegisterSelector("0x7b9417c8", "addAddressToWhitelist(address)")
+
+	blockchain.RegisterSelector("0xe2ec6ec3", "addAddressesToWhitelist(address[])")
+
+	blockchain.RegisterSelector("0x688e8391", "close(bytes8)")
+
+	blockchain.RegisterSelector("0x6d552248", "open(bytes8)")
+
+	blockchain.RegisterSelector("0x8221d46f", "order(address,address,address)")
+
+	blockchain.RegisterSelector("0x6622e153", "reject(bytes8)")
+
+	blockchain.RegisterSelector("0x286dd3f5", "removeAddressFromWhitelist(address)")
+
+	blockchain.RegisterSelector("0x24953eaa", "removeAddressesFromWhitelist(address[])")
+
+	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
+
+	blockchain.RegisterSelector("0xa60d9b5f", "settle(bytes8)")
+
+	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
+
 }
 
 // NewExchange creates a new instance of Exchange, bound to a specific deployed contract.

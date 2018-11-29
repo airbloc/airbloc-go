@@ -96,7 +96,13 @@ type OwnableTransactorRaw struct {
 }
 
 func init() {
+	// convenient hacks for blockchain.Client
 	blockchain.ContractList["Ownable"] = (&Ownable{}).new
+
+	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
+
+	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
+
 }
 
 // NewOwnable creates a new instance of Ownable, bound to a specific deployed contract.

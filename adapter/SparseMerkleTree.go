@@ -96,7 +96,9 @@ type SparseMerkleTreeTransactorRaw struct {
 }
 
 func init() {
+	// convenient hacks for blockchain.Client
 	blockchain.ContractList["SparseMerkleTree"] = (&SparseMerkleTree{}).new
+
 }
 
 // NewSparseMerkleTree creates a new instance of SparseMerkleTree, bound to a specific deployed contract.

@@ -16,20 +16,12 @@ type Exchange struct {
 	contract *adapter.Exchange
 }
 
-func New(client blockchain.TxClient) (*Exchange, error) {
-	raw, err := client.GetContract(&adapter.Exchange{})
-	if err != nil {
-		return nil, err
-	}
-
-	contract, ok := raw.(*adapter.Exchange)
-	if !ok {
-		return nil, blockchain.ErrContractNotFound
-	}
+func New(client blockchain.TxClient) *Exchange {
+	contract := client.GetContract(&adapter.Exchange{})
 	return &Exchange{
 		client:   client,
-		contract: contract,
-	}, nil
+		contract: contract.(*adapter.Exchange),
+	}
 }
 
 func (exchange *Exchange) Prepare(

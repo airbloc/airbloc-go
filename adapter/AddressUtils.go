@@ -96,7 +96,9 @@ type AddressUtilsTransactorRaw struct {
 }
 
 func init() {
+	// convenient hacks for blockchain.Client
 	blockchain.ContractList["AddressUtils"] = (&AddressUtils{}).new
+
 }
 
 // NewAddressUtils creates a new instance of AddressUtils, bound to a specific deployed contract.

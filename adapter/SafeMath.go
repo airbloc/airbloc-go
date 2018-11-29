@@ -96,7 +96,9 @@ type SafeMathTransactorRaw struct {
 }
 
 func init() {
+	// convenient hacks for blockchain.Client
 	blockchain.ContractList["SafeMath"] = (&SafeMath{}).new
+
 }
 
 // NewSafeMath creates a new instance of SafeMath, bound to a specific deployed contract.

@@ -3,7 +3,9 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
-	"log"
+	logger2 "github.com/airbloc/airbloc-go/logger"
+	"github.com/azer/logger"
+	"github.com/pkg/errors"
 	"os"
 	"os/signal"
 
@@ -15,6 +17,8 @@ import (
 	"github.com/multiformats/go-multiaddr"
 	"gopkg.in/urfave/cli.v1"
 )
+
+var log = logger.New("bootnode")
 
 func newApp() *cli.App {
 	app := cli.NewApp()
@@ -48,55 +52,65 @@ func newApp() *cli.App {
 }
 
 func run(ctx *cli.Context) (err error) {
+	logger2.Setup(os.Stdout, "*", "*")
+
 	var nodekey *key.Key
 	if ctx.IsSet("nodekeyhex") {
 		priv, err := crypto.HexToECDSA(ctx.String("nodekeyhex"))
 		if err != nil {
-			log.Fatalf("wrong node key: %+v", err)
+			return errors.Wrap(err, "wrong node key")
 		}
 		nodekey = key.FromECDSA(priv)
 
 	} else if ctx.IsSet("nodekey") {
 		nodekey, err = key.Load(ctx.String("nodekey"))
 		if err != nil {
-			log.Fatalf("failed to load node key: %+v", err)
+			return errors.Wrap(err, "failed to load node key")
 		}
 	} else {
-		log.Println("No node key was given. Generating new key...")
+		log.Info("No node key was given. Generating new key...")
 		nodekey, err = key.Generate()
 		if err != nil {
-			log.Fatalf("failed to generate node key: %+v", err)
+			return errors.Wrap(err, "failed to generate node key")
 		}
 	}
 
 	keypair, err := nodekey.DeriveLibp2pKeyPair()
 	public, err := keypair.GetPublic().Bytes()
-	log.Printf("Node public key: %s\n", base64.StdEncoding.EncodeToString(public))
+	log.Info("Node public key: %s", base64.StdEncoding.EncodeToString(public))
+	log.Info("Node ID: %s", nodekey.EthereumAddress.Hex())
 
 	addrStr := fmt.Sprintf("/ip4/%s/tcp/%d", ctx.String("bind"), ctx.Int("port"))
 	addr, err := multiaddr.NewMultiaddr(addrStr)
 	if err != nil {
-		log.Fatalf("failed to parse address: %+v", err)
+		return errors.Wrap(err, "failed to create multiaddr")
 	}
 
 	server, err := p2p.NewAirblocServer(localdb.NewMemDB(), nodekey, addr, true, []peerstore.PeerInfo{})
 	if err != nil {
-		log.Fatalf("unable to create bootstrap server: %+v", err)
+		return errors.Wrap(err, "unable to start bootnode p2p server")
 	}
 	defer server.Stop()
+
+	bootInfo, err := server.BootInfo()
+	if err != nil {
+		return errors.Wrap(err, "unable to get bootnode address")
+	}
+	log.Info("Address: %s", multiaddr.Join(bootInfo.Addrs...).String()+"/ipfs/"+bootInfo.ID.Pretty())
+	log.Info("You can put the address to p2p.bootNodes in config.yml.")
 
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, os.Interrupt)
 	<-signalCh
 
-	log.Println("Bye 👋")
+	log.Info("Bye 👋")
 	return
 }
 
 func main() {
 	app := newApp()
 	if err := app.Run(os.Args); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		log.Error("Error: %+v", err)
 		os.Exit(1)
 	}
 }

@@ -186,7 +186,11 @@ var (
 	{{end}}
 
 	func init() {
+		// convenient hacks for blockchain.Client
 		blockchain.ContractList["{{.Type}}"] = (&{{.Type}}{}).new
+		{{range .Transacts}}
+			blockchain.RegisterSelector("0x{{printf "%x" .Original.Id}}", "{{.Original.Sig}}")
+		{{end}}
 	}
 
 	// New{{.Type}} creates a new instance of {{.Type}}, bound to a specific deployed contract.

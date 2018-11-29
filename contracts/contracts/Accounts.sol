@@ -23,6 +23,8 @@ contract Accounts is Ownable {
         address owner;
         Status status;
 
+        address delegate;
+
         // password support using account proxy
         address proxy;
         address passwordProof;
@@ -54,6 +56,7 @@ contract Accounts is Ownable {
 
         bytes8 accountId = Utils.generateId(identityHash, msg.sender);
         accounts[accountId].proxy = msg.sender;
+        accounts[accountId].delegate = msg.sender;
         accounts[accountId].status = Status.TEMPORARY;
 
         identityHashToAccount[identityHash] = accountId;
@@ -93,13 +96,25 @@ contract Accounts is Ownable {
 
         bytes8 accountId = Utils.generateId(bytes32(owner), msg.sender);
         accounts[accountId].owner = owner;
+        accounts[accountId].proxy = msg.sender;
+        accounts[accountId].delegate = msg.sender;
         accounts[accountId].status = Status.CREATED;
 
         bytes memory message = abi.encodePacked(owner);
         setPassword(accountId, message, passwordSignature);
 
-        addressToAccount[msg.sender] = accountId;
-        emit SignUp(msg.sender, accountId);
+        addressToAccount[owner] = accountId;
+        emit SignUp(owner, accountId);
+    }
+
+    function setDelegate(address delegate) external {
+        // the delegate and the proxy cannot modify delegate.
+        // a delegate can be set only through the account owner's direct transaction.
+        require(addressToAccount[msg.sender] != bytes8(0),
+            "Account does not exist.");
+
+        Account storage account = accounts[addressToAccount[msg.sender]];
+        account.delegate = delegate;
     }
 
     function setPassword(bytes8 accountId, bytes memory message, bytes memory passwordSignature) internal {
@@ -133,5 +148,9 @@ contract Accounts is Ownable {
 
     function isTemporary(bytes8 accountId) public view returns (bool) {
         return accounts[accountId].status == Status.TEMPORARY;
+    }
+
+    function isDelegateOf(address sender, bytes8 accountId) public view returns (bool) {
+        return accounts[accountId].delegate == sender;
     }
 }

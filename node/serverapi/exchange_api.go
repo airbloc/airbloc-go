@@ -5,7 +5,6 @@ import (
 	"github.com/airbloc/airbloc-go/node"
 	commonpb "github.com/airbloc/airbloc-go/proto/rpc/v1"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )
 
@@ -14,10 +13,7 @@ type ExchangeAPI struct {
 }
 
 func NewExchangeAPI(backend node.Backend) (node.API, error) {
-	ex, err := exchange.New(backend.Client())
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create Exchange API")
-	}
+	ex := exchange.New(backend.Client())
 	return &ExchangeAPI{ex}, nil
 }
 

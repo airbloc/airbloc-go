@@ -16,7 +16,7 @@ type badgerDB struct {
 func NewBadgerDatabase(path string, version int) (Database, error) {
 	if fi, err := os.Stat(path); err == nil {
 		if !fi.IsDir() {
-			return nil, errors.New("database: open " + path + ": not a directory")
+			return nil, errors.Errorf("database: open %s: not a directory", path)
 		}
 	} else if os.IsNotExist(err) {
 		if err := os.MkdirAll(path, 0755); err != nil {

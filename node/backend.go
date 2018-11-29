@@ -5,6 +5,9 @@ import (
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/airbloc/airbloc-go/key"
+	"github.com/airbloc/airbloc-go/p2p"
+	"github.com/libp2p/go-libp2p-peerstore"
+	"github.com/multiformats/go-multiaddr"
 	"github.com/pkg/errors"
 )
 
@@ -16,6 +19,7 @@ type AirblocBackend struct {
 	metaDatabase  metadb.Database
 	localDatabase localdb.Database
 	config        *Config
+	p2pServer     p2p.Server
 	services      map[string]Service
 }
 
@@ -42,6 +46,30 @@ func NewAirblocBackend(config *Config) (Backend, error) {
 
 	kms := key.NewKeyManager(nodeKey, localDatabase)
 
+	// setup P2P
+	// bootnode information should be given from config.
+	var bootInfos []peerstore.PeerInfo
+	for _, addr := range config.P2P.BootNodes {
+		m, err := multiaddr.NewMultiaddr(addr)
+		if err != nil {
+			return nil, errors.Wrapf(err, "invalid libp2p multiaddr: %s", addr)
+		}
+		bootInfo, err := peerstore.InfoFromP2pAddr(m)
+		if err != nil {
+			return nil, errors.Wrapf(err, "invalid P2P peer address: %s", addr)
+		}
+		bootInfos = append(bootInfos, *bootInfo)
+	}
+
+	addr, err := multiaddr.NewMultiaddr(config.P2P.ListenAddr)
+	if err != nil {
+		return nil, errors.Wrapf(err, "invalid listen address: %s", config.P2P.ListenAddr)
+	}
+	p2pServer, err := p2p.NewAirblocServer(localdb.NewMemDB(), nodeKey, addr, false, bootInfos)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to initialize P2P server")
+	}
+
 	// setup ethereum client
 	clientOpt := blockchain.ClientOpt{
 		Confirmation:   config.Blockchain.Options.MinConfirmations,
@@ -59,6 +87,7 @@ func NewAirblocBackend(config *Config) (Backend, error) {
 		metaDatabase:  metaDatabase,
 		localDatabase: localDatabase,
 		config:        config,
+		p2pServer:     p2pServer,
 		services:      make(map[string]Service),
 	}, nil
 }
@@ -79,11 +108,18 @@ func (airbloc *AirblocBackend) LocalDatabase() localdb.Database {
 	return airbloc.localDatabase
 }
 
+func (airbloc *AirblocBackend) P2P() p2p.Server {
+	return airbloc.p2pServer
+}
+
 func (airbloc *AirblocBackend) Config() *Config {
 	return airbloc.config
 }
 
 func (airbloc *AirblocBackend) Start() error {
+	if err := airbloc.P2P().Start(); err != nil {
+		return errors.Wrapf(err, "failed to start P2P service")
+	}
 	for name, service := range airbloc.services {
 		if err := service.Start(); err != nil {
 			return errors.Wrapf(err, "failed to start %s service", name)

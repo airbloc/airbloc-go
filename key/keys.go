@@ -117,10 +117,5 @@ func (key *Key) DeriveBigchainDBKeyPair() *txn.KeyPair {
 
 // DeriveLibp2pKeyPair returns an Ed25519 keypair for Libp2p identity
 func (key *Key) DeriveLibp2pKeyPair() (libp2pCrypto.PrivKey, error) {
-	return libp2pCrypto.UnmarshalEd25519PrivateKey(
-		append(
-			key.rawEd25519PrivKey(),
-			key.rawEd25519Public()...,
-		),
-	)
+	return libp2pCrypto.UnmarshalSecp256k1PrivateKey(crypto.FromECDSA(key.PrivateKey))
 }

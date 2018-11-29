@@ -16,8 +16,8 @@ type AccountAPI struct {
 }
 
 func NewAccountAPI(backend node.Backend) (node.API, error) {
-	manager, err := account.NewManager(backend.Client())
-	return &AccountAPI{manager}, err
+	manager := account.NewManager(backend.Client())
+	return &AccountAPI{manager}, nil
 }
 
 func (api *AccountAPI) AttachToAPI(service *node.APIService) {

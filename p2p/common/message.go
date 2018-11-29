@@ -3,15 +3,12 @@ package common
 import (
 	"bufio"
 	"context"
-	"crypto/ecdsa"
+	"github.com/ethereum/go-ethereum/common"
 	"io"
 	"reflect"
 
-	"github.com/airbloc/airbloc-go/key"
-	"github.com/ethereum/go-ethereum/crypto"
-	"golang.org/x/crypto/sha3"
-
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/gogo/protobuf/proto"
 	"github.com/libp2p/go-libp2p-net"
 	"github.com/libp2p/go-libp2p-peer"
@@ -35,23 +32,6 @@ func NewProtoMessage(msg proto.Message, topic string) (*ProtoMessage, error) {
 			Data:  data,
 		},
 	}, nil
-}
-
-func (message *ProtoMessage) getSignHash() []byte {
-	topic := []byte(message.GetTopic())
-	signData := append(topic, message.GetData()...)
-
-	hash := sha3.Sum256(signData)
-	return hash[:]
-}
-
-func (message *ProtoMessage) Sign(key *key.Key) error {
-	sig, err := crypto.Sign(message.getSignHash(), key.PrivateKey)
-	if err != nil {
-		return errors.Wrap(err, "sign error")
-	}
-	message.Signature = sig
-	return nil
 }
 
 func (message ProtoMessage) ID() peer.ID {
@@ -107,12 +87,20 @@ func (message ProtoMessage) MakeMessage(ctx context.Context, typ reflect.Type) (
 	}
 	m := NewMessage(msg, peerstore.PeerInfo{ID: message.ID()}, pid)
 
-	// recover sender's public key from the signature.
-	senderPub, err := crypto.SigToPub(message.getSignHash(), message.GetSignature())
+	// recover sender's public key from the ID.
+	libp2pPubKey, err := message.ID().ExtractPublicKey()
 	if err != nil {
-		return Message{}, errors.Wrap(err, "failed to recover from signature")
+		return Message{}, errors.Wrap(err, "failed to recover sender address")
 	}
-	m.Sender = senderPub
+	pubKeyBytes, err := libp2pPubKey.Raw()
+	if err != nil {
+		return Message{}, errors.Wrap(err, "failed to recover sender address")
+	}
+	pubKey, err := crypto.DecompressPubkey(pubKeyBytes)
+	if err != nil {
+		return Message{}, errors.Wrap(err, "failed to recover sender address")
+	}
+	m.SenderAddr = crypto.PubkeyToAddress(*pubKey)
 	return m, nil
 }
 
@@ -121,16 +109,16 @@ func MessageType(msg proto.Message) reflect.Type {
 }
 
 type Message struct {
-	Data     proto.Message
-	Info     peerstore.PeerInfo
-	Sender   *ecdsa.PublicKey
-	Protocol Pid
+	Data       proto.Message
+	SenderInfo peerstore.PeerInfo
+	SenderAddr common.Address
+	Protocol   Pid
 }
 
 func NewMessage(data proto.Message, info peerstore.PeerInfo, protocol Pid) Message {
 	return Message{
-		Data:     data,
-		Info:     info,
-		Protocol: protocol,
+		Data:       data,
+		SenderInfo: info,
+		Protocol:   protocol,
 	}
 }

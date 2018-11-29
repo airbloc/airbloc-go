@@ -100,7 +100,9 @@ type RolesRole struct {
 }
 
 func init() {
+	// convenient hacks for blockchain.Client
 	blockchain.ContractList["Roles"] = (&Roles{}).new
+
 }
 
 // NewRoles creates a new instance of Roles, bound to a specific deployed contract.

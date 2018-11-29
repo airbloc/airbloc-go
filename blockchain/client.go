@@ -2,13 +2,14 @@ package blockchain
 
 import (
 	"context"
+	"github.com/azer/logger"
+	"reflect"
 
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethereum/go-ethereum/log"
 )
 
 type Client struct {
@@ -17,6 +18,7 @@ type Client struct {
 	cfg        ClientOpt
 	transactor *bind.TransactOpts
 	contracts  *ContractManager
+	logger     *logger.Logger
 }
 
 func NewClient(key *key.Key, url string, cfg ClientOpt) (*Client, error) {
@@ -29,6 +31,7 @@ func NewClient(key *key.Key, url string, cfg ClientOpt) (*Client, error) {
 		Client: ethClient,
 		ctx:    context.Background(),
 		cfg:    cfg,
+		logger: logger.New("ethereum"),
 	}
 
 	cm := NewContractManager(client)
@@ -48,8 +51,12 @@ func (c *Client) SetAccount(key *key.Key) {
 	c.transactor = bind.NewKeyedTransactor(key.PrivateKey)
 }
 
-func (c *Client) GetContract(contract interface{}) (interface{}, error) {
-	return c.contracts.GetContract(contract)
+func (c *Client) GetContract(contractType interface{}) interface{} {
+	contract := c.contracts.GetContract(contractType)
+	if contract == nil {
+		panic("Contract not registered: " + reflect.ValueOf(contractType).Type().Name())
+	}
+	return contract
 }
 
 func (c *Client) waitConfirmation(ctx context.Context) error {
@@ -73,15 +80,19 @@ func (c *Client) waitConfirmation(ctx context.Context) error {
 
 // Wait Mined
 func (c *Client) WaitMined(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
-	log.Debug("Waiting for transaction to be ⛏", "address", tx.To().Hex(), "txid=", tx.Hash())
+	methodName, details := GetTransactionDetails(c.contracts, tx)
+	timer := c.logger.Timer()
 
 	receipt, err := bind.WaitMined(ctx, c, tx)
 	if err != nil {
 		return nil, err
 	}
 	if receipt.Status == types.ReceiptStatusFailed {
+		// TODO: let me get error reason @frostornge 😎
+		timer.End("Transaction to %s failed", methodName, details)
 		return nil, ErrTxFailed
 	}
+	timer.End("Transacted %s", methodName, details)
 	// err = c.waitConfirmation(ctx)
 	return receipt, err
 }

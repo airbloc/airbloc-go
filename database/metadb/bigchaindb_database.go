@@ -2,11 +2,12 @@ package metadb
 
 import (
 	"context"
+	"github.com/azer/logger"
+	"github.com/pkg/errors"
 	"net/http"
 
 	"github.com/bigchaindb/go-bigchaindb-driver/pkg/client"
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
-	"github.com/ethereum/go-ethereum/log"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/mongodb/mongo-go-driver/mongo/findopt"
@@ -20,36 +21,44 @@ type bigchainDB struct {
 	mdb      *mongo.Database
 	key      *txn.KeyPair
 	v        int
+	log      *logger.Logger
 }
 
 // http://localhost:9984 or external gateway
 func NewBigchainDB(bdbUrl, mdbUrl, proxyUrl string, key *txn.KeyPair, version int) (Database, error) {
-	log.Debug("BigchainDB initiated", "endpoint", bdbUrl)
 	config := client.ClientConfig{Url: bdbUrl}
 	bdbClient, err := client.New(config)
 	if err != nil {
 		return nil, err
 	}
-
-	block, err := bdbClient.GetBlock("0")
-	if err != nil {
-		panic(err)
-	}
-	log.Debug("Connection Test", "block", block)
-
 	mdbClient, err := mongo.NewClient(mdbUrl)
 	if err != nil {
 		return nil, err
 	}
-
-	return &bigchainDB{
+	db := &bigchainDB{
 		bdb:      bdbClient,
 		mdb:      mdbClient.Database(BigchainDBName),
 		proxyUrl: proxyUrl,
 		client:   &http.Client{},
 		key:      key,
 		v:        version,
-	}, nil
+		log:      logger.New("bigchaindb"),
+	}
+	if err := db.dial(); err != nil {
+		return db, errors.Wrap(err, "unable to connect to BigchainDB")
+	}
+	return db, nil
+}
+
+func (db *bigchainDB) dial() error {
+	block, err := db.bdb.GetBlock("0")
+	if err != nil {
+		return err
+	}
+	db.log.Info("Connected to BigchainDB. Received", logger.Attrs{
+		"block": block,
+	})
+	return nil
 }
 
 func (db *bigchainDB) Create(
@@ -67,7 +76,12 @@ func (db *bigchainDB) Create(
 		return
 	}
 
-	err = db.sendIntermediateTx(inTxn)
+	results, err := db.sendIntermediateTx(inTxn)
+	if !results.Exists("id") {
+		return nil, errors.New("server returned no transaction ID")
+	}
+	txId := string(results.GetStringBytes("id"))
+	tx.ID = &txId
 	return
 }
 
@@ -125,7 +139,7 @@ func (db *bigchainDB) Append(
 		return
 	}
 
-	err = db.sendIntermediateTx(inTxn)
+	_, err = db.sendIntermediateTx(inTxn)
 	return
 }
 

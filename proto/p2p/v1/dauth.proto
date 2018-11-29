@@ -1,14 +1,25 @@
 syntax = "proto3";
-package airbloc.rpc.v1;
+package airbloc.p2p.v1;
 
-option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/userdelegate";
+option go_package = "github.com/airbloc/airbloc-go/proto/p2p/v1";
 
-import "proto/rpc/v1/types.proto";
+message DAuthSignUpRequest {
+    string provider = 1;
+    string identityHash = 2;
+}
+
+message DAuthSignUpResponse {
+    string userId = 1;
+}
 
 /**
  * DAuth (Data Collection Authentification) API.
  */
 message DAuthRequest {
     string collectionId = 1;
-    bytes passwordSignature = 2;
+    bool allow = 2;
+}
+
+message DAuthResponse {
+    string collectionId = 1;
 }

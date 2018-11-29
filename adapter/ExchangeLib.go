@@ -126,7 +126,9 @@ type ExchangeLibOrderbook struct {
 }
 
 func init() {
+	// convenient hacks for blockchain.Client
 	blockchain.ContractList["ExchangeLib"] = (&ExchangeLib{}).new
+
 }
 
 // NewExchangeLib creates a new instance of ExchangeLib, bound to a specific deployed contract.
