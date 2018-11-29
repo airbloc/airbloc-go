@@ -11,10 +11,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-var (
-	ErrContractNotFound = errors.New("contract not found")
-)
-
 var ContractList = make(map[string]ContractConstructor)
 
 type ContractManager struct {
@@ -56,12 +52,8 @@ func (cm *ContractManager) load(reader io.Reader) error {
 	return nil
 }
 
-func (cm *ContractManager) GetContract(c interface{}) (interface{}, error) {
-	c, ok := cm.storage[reflect.ValueOf(c).Type()]
-	if !ok {
-		return nil, ErrContractNotFound
-	}
-	return c, nil
+func (cm *ContractManager) GetContract(c interface{}) interface{} {
+	return cm.storage[reflect.ValueOf(c).Type()]
 }
 
 func (cm *ContractManager) SetContract(c interface{}) {

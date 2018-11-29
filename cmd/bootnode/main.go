@@ -85,6 +85,13 @@ func run(ctx *cli.Context) (err error) {
 	}
 	defer server.Stop()
 
+	bootInfo, err := server.BootInfo()
+	if err != nil {
+		log.Fatalf("unable to get bootnode address: %+v", err)
+	}
+	log.Println("Bootnode Address:", multiaddr.Join(bootInfo.Addrs...).String()+"/ipfs/"+bootInfo.ID.Pretty())
+	log.Println("You should put the address to p2p.bootNodes in config.yml.")
+
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, os.Interrupt)
 	<-signalCh

@@ -22,20 +22,12 @@ type Manager struct {
 	contract *adapter.Accounts
 }
 
-func NewManager(client blockchain.TxClient) (*Manager, error) {
-	raw, err := client.GetContract(&adapter.Accounts{})
-	if err != nil {
-		return nil, err
-	}
-
-	contract, ok := raw.(*adapter.Accounts)
-	if !ok {
-		return nil, blockchain.ErrContractNotFound
-	}
+func NewManager(client blockchain.TxClient) *Manager {
+	contract := client.GetContract(&adapter.Accounts{})
 	return &Manager{
 		client:   client,
-		contract: contract,
-	}, nil
+		contract: contract.(*adapter.Accounts),
+	}
 }
 
 func (manager *Manager) CreateTemporary(identityHash ethCommon.Hash) (ablCommon.ID, error) {
@@ -115,4 +107,8 @@ func (manager *Manager) TestPassword(messageHash ethCommon.Hash, signature []byt
 	}
 	log.Trace("Successfully tested password", "accountId", accountId)
 	return true, nil
+}
+
+func (manager *Manager) IsDelegateOf(delegateAddr ethCommon.Address, accountId ablCommon.ID) (bool, error) {
+	return manager.contract.IsDelegateOf(nil, delegateAddr, accountId)
 }

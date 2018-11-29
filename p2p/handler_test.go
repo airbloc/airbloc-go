@@ -9,11 +9,11 @@ import (
 )
 
 func testPingHandler(s Server, ctx context.Context, message common.Message) {
-	log.Println("Ping", message.Info.ID.Pretty(), message.Data.String())
+	log.Println("Ping", message.SenderInfo.ID.Pretty(), message.Data.String())
 
-	s.Send(ctx, &pb.TestPing{Message: "World!"}, "ping", message.Info.ID)
+	s.Send(ctx, &pb.TestPing{Message: "World!"}, "ping", message.SenderInfo.ID)
 }
 
 func testPongHandler(s Server, ctx context.Context, message common.Message) {
-	log.Println("Pong", message.Info.ID.Pretty(), message.Data.String())
+	log.Println("Pong", message.SenderInfo.ID.Pretty(), message.Data.String())
 }

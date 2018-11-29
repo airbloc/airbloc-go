@@ -40,15 +40,14 @@ func NewWarehouseAPI(airbloc node.Backend) (_ node.API, err error) {
 		return nil, errors.Errorf("unknown storage type: %s", config.DefaultStorage)
 	}
 
-	dw, err := warehouse.New(
+	dw := warehouse.New(
 		airbloc.Kms(),
 		airbloc.LocalDatabase(),
 		airbloc.MetaDatabase(),
 		airbloc.Client(),
 		defaultStorage,
-		supportedProtocols,
-	)
-	return &WarehouseAPI{dw}, err
+		supportedProtocols)
+	return &WarehouseAPI{dw}, nil
 }
 
 func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) error {
@@ -87,7 +86,7 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 	}
 
 	return stream.SendAndClose(&pb.StoreResult{
-		BundleId:  bundle.Id.String(),
+		BundleId:  bundle.Id,
 		Uri:       bundle.Uri,
 		DataCount: uint64(bundle.DataCount),
 		GasUsed:   0,
@@ -131,7 +130,7 @@ func (api *WarehouseAPI) StoreEncryptedBundle(stream pb.Warehouse_StoreEncrypted
 	}
 
 	return stream.SendAndClose(&pb.StoreResult{
-		BundleId:  bundle.Id.String(),
+		BundleId:  bundle.Id,
 		Uri:       bundle.Uri,
 		DataCount: uint64(bundle.DataCount),
 		GasUsed:   0,

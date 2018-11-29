@@ -89,6 +89,15 @@ contract CollectionRegistry {
         emit Allowed(_id, userId);
     }
 
+    function allowByDelegate(bytes8 _id, bytes8 _userId) public {
+        require(
+            accounts.isDelegateOf(msg.sender, _userId),
+            "only the delegate can modify.");
+
+        modifyAuth(_id, _userId, true);
+        emit Allowed(_id, _userId);
+    }
+
     function allowByPassword(bytes8 _id, bytes passwordSignature) public {
         bytes32 inputHash = keccak256(abi.encodePacked(_id));
         bytes8 userId = accounts.getAccountIdFromSignature(inputHash, passwordSignature);
@@ -102,6 +111,15 @@ contract CollectionRegistry {
 
         modifyAuth(_id, userId, false);
         emit Denied(_id, userId);
+    }
+
+    function denyByDelegate(bytes8 _id, bytes8 _userId) public {
+        require(
+            accounts.isDelegateOf(msg.sender, _userId),
+            "only the delegate can modify.");
+
+        modifyAuth(_id, _userId, false);
+        emit Denied(_id, _userId);
     }
 
     function denyByPassword(bytes8 _id, bytes passwordSignature) public {

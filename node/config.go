@@ -8,6 +8,11 @@ type Config struct {
 	PrivateKeyPath string `default:"private.key" yaml:"privateKeyPath"`
 	Port           int    `default:"9124" yaml:"port"`
 
+	P2P struct {
+		ListenAddr string `default:"/ip4/0.0.0.0/tcp/2470" yaml:"listenAddr"`
+		BootNodes []string `yaml:"bootNodes"`
+	} `yaml:"p2p"`
+
 	LocalDB struct {
 		Path    string `default:"local/"`
 		Version int    `default:"1"`
@@ -48,4 +53,8 @@ type Config struct {
 			PathPrefix string `yaml:"pathPrefix"`
 		}
 	}
+
+	UserDelegate struct {
+		AccountIds []string `yaml:"accountIds"`
+	} `yaml:"userDelegate"`
 }

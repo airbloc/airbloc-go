@@ -5,6 +5,7 @@ import (
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/airbloc/airbloc-go/key"
+	"github.com/airbloc/airbloc-go/p2p"
 )
 
 type Backend interface {
@@ -13,6 +14,7 @@ type Backend interface {
 	MetaDatabase() metadb.Database
 	LocalDatabase() localdb.Database
 	Config() *Config
+	P2P() p2p.Server
 
 	Service
 	GetService(string) Service

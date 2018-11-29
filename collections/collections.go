@@ -27,22 +27,14 @@ func New(
 	localDb localdb.Database,
 	metaDb metadb.Database,
 	client blockchain.TxClient,
-) (*Collections, error) {
-	raw, err := client.GetContract(&adapter.CollectionRegistry{})
-	if err != nil {
-		return nil, err
-	}
-
-	contract, ok := raw.(*adapter.CollectionRegistry)
-	if !ok {
-		return nil, blockchain.ErrContractNotFound
-	}
+) *Collections {
+	contract := client.GetContract(&adapter.CollectionRegistry{})
 	return &Collections{
 		localDb:  localdb.NewModel(localDb, "collection"),
 		metaDb:   metadb.NewModel(metaDb, "collection"),
 		client:   client,
-		contract: contract,
-	}, nil
+		contract: contract.(*adapter.CollectionRegistry),
+	}
 }
 
 func (s *Collections) Register(ctx context.Context, collection *Collection) (common.ID, error) {

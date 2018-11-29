@@ -7,6 +7,7 @@ import (
 )
 
 type Manager interface {
+	NodeKey() *Key
 	DecryptExternalData(*common.EncryptedData) (*common.Data, error)
 	Encrypt(string) ([]byte, error)
 	Decrypt([]byte) (string, error)
