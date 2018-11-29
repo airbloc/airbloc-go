@@ -38,6 +38,22 @@
   revision = "33151c4543a79b013e8e6799ef45b2ba88c3cd1c"
 
 [[projects]]
+  digest = "1:f89c911f2c7c5306eee33eb166cf334759dfd20b50555bd462b797b4be147026"
+  name = "github.com/azer/is-terminal"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "d890a36967629a256d1488b735cd375e29439507"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:c67dd8288c1cc315477dc27650290f5f2c843827f65216fa503564446cdbbb56"
+  name = "github.com/azer/logger"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "b2064509a05be7b89fecfe472d13843bcf3a8b3d"
+  version = "v1.0.0"
+
+[[projects]]
   branch = "master"
   digest = "1:aa5d58c3659b2f1ce8e2586378891cf744bd06f1b209022c720d598024a259d2"
   name = "github.com/bigchaindb/go-bigchaindb-driver"
@@ -73,10 +89,7 @@
   version = "v0.2.0"
 
 [[projects]]
-<<<<<<< HEAD
   digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
-=======
->>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
   pruneopts = "UT"
@@ -115,10 +128,7 @@
   revision = "2de33835d10275975374b37b2dcfd22c9020a1f5"
 
 [[projects]]
-<<<<<<< HEAD
   digest = "1:99b481bc93060f144d5a4f9695e4c702b2b94ee171f76a9c7621050b3bdfa56e"
-=======
->>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/ethereum/go-ethereum"
   packages = [
     ".",
@@ -188,32 +198,23 @@
   name = "github.com/gogo/protobuf"
   packages = [
     "io",
-<<<<<<< HEAD
     "proto",
-=======
-    "proto"
->>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   ]
   pruneopts = "UT"
   revision = "636bf0302bc95575d69441b25a2603156ffdddf1"
   version = "v1.1.1"
 
 [[projects]]
-<<<<<<< HEAD
-  digest = "1:4c0989ca0bcd10799064318923b9bc2db6b4d6338dd75f3f2d86c3511aaaf5cf"
-=======
->>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
+  digest = "1:9d6dc4d6de69b330d0de86494d6db90c09848c003d5db748f40c925f865c8534"
   name = "github.com/golang/protobuf"
   packages = [
+    "jsonpb",
     "proto",
     "ptypes",
     "ptypes/any",
     "ptypes/duration",
-<<<<<<< HEAD
+    "ptypes/struct",
     "ptypes/timestamp",
-=======
-    "ptypes/timestamp"
->>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   ]
   pruneopts = "UT"
   revision = "aa810b61a9c79d51363740d207bb46cf8e620ed5"
@@ -228,10 +229,7 @@
   revision = "2e65f85255dbc3072edf28d6b5b8efc472979f5a"
 
 [[projects]]
-<<<<<<< HEAD
   digest = "1:3a26588bc48b96825977c1b3df964f8fd842cd6860cc26370588d3563433cf11"
-=======
->>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/google/uuid"
   packages = ["."]
   pruneopts = "UT"
@@ -245,6 +243,14 @@
   pruneopts = "UT"
   revision = "66b9c49e59c6c48f0ffce28c2d8b8a5678502c6d"
   version = "v1.4.0"
+
+[[projects]]
+  digest = "1:1168584a5881d371e96cb0e66ef6db71d7cef0856cc7f311490bc856627f8328"
+  name = "github.com/grpc-ecosystem/go-grpc-middleware"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "c250d6563d4d4c20252cd865923440e829844f4e"
+  version = "v1.0.0"
 
 [[projects]]
   branch = "master"
@@ -325,10 +331,7 @@
   version = "v1.0.0"
 
 [[projects]]
-<<<<<<< HEAD
   digest = "1:9999472bf9c934426d967c507d61f2de84affb8318b8d8c8bc38b3486edbd826"
-=======
->>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/ipfs/go-cid"
   packages = ["."]
   pruneopts = "UT"
@@ -459,10 +462,7 @@
   version = "v1.1"
 
 [[projects]]
-<<<<<<< HEAD
   digest = "1:651240087688933ab0f620305d19c2169a82fe4570525227df57513a7ddd2ffe"
-=======
->>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/libp2p/go-addr-util"
   packages = ["."]
   pruneopts = "UT"
@@ -1005,10 +1005,7 @@
   version = "v1.2.0"
 
 [[projects]]
-<<<<<<< HEAD
   digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
-=======
->>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/pkg/errors"
   packages = ["."]
   pruneopts = "UT"
@@ -1024,10 +1021,7 @@
   version = "v1.0.0"
 
 [[projects]]
-<<<<<<< HEAD
   digest = "1:31d83d1b1c288073c91abadee3caec87de2a1fb5dbe589039264a802e67a26b8"
-=======
->>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/rjeczalik/notify"
   packages = ["."]
   pruneopts = "UT"
@@ -1043,10 +1037,7 @@
   version = "v1.6.0"
 
 [[projects]]
-<<<<<<< HEAD
   digest = "1:919bb3aa6d9d0b67648c219fa4925312bc3c2872da19e818fa769e9c97a2b643"
-=======
->>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/spaolacci/murmur3"
   packages = ["."]
   pruneopts = "UT"
@@ -1073,10 +1064,7 @@
   version = "v1.3.0"
 
 [[projects]]
-<<<<<<< HEAD
   digest = "1:68ea4e23713989dc20b1bded5d9da2c5f9be14ff9885beef481848edd18c26cb"
-=======
->>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/spf13/jwalterweatherman"
   packages = ["."]
   pruneopts = "UT"
@@ -1137,10 +1125,7 @@
   revision = "6b91fda63f2e36186f1c9d0e48578defb69c5d43"
 
 [[projects]]
-<<<<<<< HEAD
   digest = "1:c468422f334a6b46a19448ad59aaffdfc0a36b08fdcc1c749a0b29b6453d7e59"
-=======
->>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "github.com/valyala/bytebufferpool"
   packages = ["."]
   pruneopts = "UT"
@@ -1160,11 +1145,13 @@
   version = "v20180529"
 
 [[projects]]
+  digest = "1:ac6bf759a8e921d2983758846434ecaed1d152cbd63a335a78b9c89d28c67249"
   name = "github.com/valyala/fastjson"
   packages = [
     ".",
-    "fastfloat"
+    "fastfloat",
   ]
+  pruneopts = "UT"
   revision = "37952265e1c05c1765a0b8d01efbde0b5b4e3913"
   version = "v1.0.0"
 
@@ -1275,11 +1262,7 @@
     "ed25519/internal/edwards25519",
     "pbkdf2",
     "scrypt",
-<<<<<<< HEAD
     "sha3",
-=======
-    "sha3"
->>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   ]
   pruneopts = "UT"
   revision = "0c41d7ab0a0ee717d4590a44bcb987dfd9e183eb"
@@ -1361,10 +1344,7 @@
 
 [[projects]]
   branch = "master"
-<<<<<<< HEAD
   digest = "1:077c1c599507b3b3e9156d17d36e1e61928ee9b53a5b420f10f28ebd4a0b275c"
-=======
->>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
   pruneopts = "UT"
@@ -1432,8 +1412,8 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-<<<<<<< HEAD
   input-imports = [
+    "github.com/azer/logger",
     "github.com/bigchaindb/go-bigchaindb-driver/pkg/client",
     "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction",
     "github.com/dgraph-io/badger",
@@ -1441,17 +1421,19 @@
     "github.com/ethereum/go-ethereum/accounts/abi",
     "github.com/ethereum/go-ethereum/accounts/abi/bind",
     "github.com/ethereum/go-ethereum/common",
+    "github.com/ethereum/go-ethereum/common/hexutil",
     "github.com/ethereum/go-ethereum/core/types",
     "github.com/ethereum/go-ethereum/crypto",
     "github.com/ethereum/go-ethereum/crypto/ecies",
     "github.com/ethereum/go-ethereum/crypto/sha3",
     "github.com/ethereum/go-ethereum/ethclient",
     "github.com/ethereum/go-ethereum/event",
-    "github.com/ethereum/go-ethereum/log",
     "github.com/ethereum/go-ethereum/params",
     "github.com/go-interledger/cryptoconditions",
     "github.com/gogo/protobuf/proto",
+    "github.com/golang/protobuf/jsonpb",
     "github.com/golang/protobuf/proto",
+    "github.com/grpc-ecosystem/go-grpc-middleware",
     "github.com/hashicorp/go-version",
     "github.com/ipfs/go-cid",
     "github.com/jinzhu/configor",
@@ -1465,7 +1447,6 @@
     "github.com/libp2p/go-libp2p-peer",
     "github.com/libp2p/go-libp2p-peerstore",
     "github.com/libp2p/go-libp2p-protocol",
-    "github.com/libp2p/go-libp2p/p2p/host/basic",
     "github.com/libp2p/go-libp2p/p2p/host/routed",
     "github.com/loomnetwork/mamamerkle",
     "github.com/mailru/easyjson",
@@ -1482,15 +1463,16 @@
     "github.com/stretchr/testify/assert",
     "github.com/syndtr/goleveldb/leveldb",
     "github.com/valyala/fasthttp",
+    "github.com/valyala/fastjson",
     "golang.org/x/crypto/ed25519",
     "golang.org/x/crypto/pbkdf2",
     "golang.org/x/crypto/sha3",
     "golang.org/x/net/context",
     "google.golang.org/grpc",
+    "google.golang.org/grpc/codes",
+    "google.golang.org/grpc/peer",
+    "google.golang.org/grpc/status",
     "gopkg.in/urfave/cli.v1",
   ]
-=======
-  inputs-digest = "603309276676fc2f489dd3cc75cdfba7068debd2fd86da1a75a64c349cf758b2"
->>>>>>> 9d47b3c857fbf861d64fbd9a48be0653c4867a9e
   solver-name = "gps-cdcl"
   solver-version = 1

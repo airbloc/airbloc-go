@@ -3,13 +3,13 @@ package schemas
 import (
 	"context"
 	"encoding/json"
+	"github.com/azer/logger"
 
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/log"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/pkg/errors"
 )
@@ -22,6 +22,7 @@ type Schemas struct {
 	db       *metadb.Model
 	client   blockchain.TxClient
 	contract *adapter.SchemaRegistry
+	log      *logger.Logger
 }
 
 func New(db metadb.Database, client blockchain.TxClient) *Schemas {
@@ -30,6 +31,7 @@ func New(db metadb.Database, client blockchain.TxClient) *Schemas {
 		db:       metadb.NewModel(db, "schema"),
 		client:   client,
 		contract: contract.(*adapter.SchemaRegistry),
+		log:      logger.New("schemas"),
 	}
 }
 
@@ -62,7 +64,7 @@ func (s *Schemas) Register(name string, schema map[string]interface{}) (common.I
 	}
 
 	schemaId := common.ID(event.Id)
-	log.Debug("Created new schema", "name", name, "schemaId", schemaId.String())
+	s.log.Info("Registered new schema %s with", name, logger.Attrs{"id": schemaId.String()})
 
 	// create metadata
 	metadata := map[string]interface{}{

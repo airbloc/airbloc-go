@@ -12,13 +12,14 @@ import (
 	"github.com/airbloc/airbloc-go/p2p"
 	p2pcommon "github.com/airbloc/airbloc-go/p2p/common"
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
+	"github.com/azer/logger"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
 	"log"
 )
 
 var (
-	ErrDelegationNotAllowed = errors.New("the user is not designated you as a delegate.")
+	ErrDelegationNotAllowed = errors.New("the user haven't been designated you as a delegate.")
 )
 
 type Service struct {
@@ -32,6 +33,8 @@ type Service struct {
 	dauth       *dauth.Manager
 	accounts    *account.Manager
 	collections *collections.Collections
+
+	log *logger.Logger
 }
 
 func NewService(backend node.Backend) (node.Service, error) {
@@ -43,6 +46,7 @@ func NewService(backend node.Backend) (node.Service, error) {
 		dauth:       dauth.NewManager(backend.Client()),
 		accounts:    account.NewManager(backend.Client()),
 		collections: collections.New(backend.LocalDatabase(), backend.MetaDatabase(), backend.Client()),
+		log:         logger.New("userdelegate"),
 	}, nil
 }
 
@@ -74,6 +78,7 @@ func (service *Service) Start() error {
 	for _, accountId := range service.accountIds {
 		service.registerDAuthHandler(accountId)
 	}
+	service.log.Info("Starting service...")
 	service.isRunning = true
 	return nil
 }
@@ -148,9 +153,8 @@ func (service *Service) signUpHandler(server p2p.Server, ctx context.Context, me
 		log.Println("error: Failed to create temporary account:", err.Error())
 	}
 
-	log.Println(
-		"Created account", accountId.String(),
-		"by request from the data provider", message.SenderAddr.Hex())
+	service.log.Info("Created account %s by request from the data provider %s",
+		accountId.String(), message.SenderAddr.Hex())
 
 	response := &pb.DAuthSignUpResponse{
 		UserId: accountId.String(),
@@ -171,5 +175,6 @@ func (service *Service) isCollectionOwner(ctx context.Context, collectionId ablC
 }
 
 func (service *Service) Stop() {
+	service.log.Info("Stopping...")
 	service.isRunning = false
 }

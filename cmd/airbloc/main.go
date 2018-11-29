@@ -1,8 +1,10 @@
 package main
 
 import (
-	"fmt"
+	logger2 "github.com/airbloc/airbloc-go/logger"
 	"github.com/airbloc/airbloc-go/userdelegate"
+	"github.com/azer/logger"
+	"github.com/pkg/errors"
 	"gopkg.in/urfave/cli.v1"
 	"os"
 	"strings"
@@ -11,11 +13,13 @@ import (
 
 	"github.com/airbloc/airbloc-go/node"
 	"github.com/airbloc/airbloc-go/node/serverapi"
-	"github.com/ethereum/go-ethereum/log"
 	"github.com/jinzhu/configor"
 )
 
 var (
+	log = logger.New("airbloc")
+
+	// list of CLI commands and flags
 	commands = []cli.Command{
 		{
 			Name:   "userdelegate",
@@ -29,7 +33,19 @@ var (
 			Usage: "Load configuration from `FILE`",
 			Value: "config.yml",
 		},
+		cli.StringFlag{
+			Name:  "loglevel",
+			Usage: "Log output verbosity [MUTE|INFO|TIMER|*]",
+			Value: "*",
+		},
+		cli.StringFlag{
+			Name:  "logfilter",
+			Usage: "Filter logs from specific packages (e.g. warehouse,users)",
+			Value: "*",
+		},
 	}
+
+	// list of available APIs and services
 	AvailableAPIs = map[string]node.Constructor{
 		"apps":        serverapi.NewAppsAPI,
 		"collections": serverapi.NewCollectionsAPI,
@@ -55,28 +71,23 @@ func main() {
 
 	err := app.Run(os.Args)
 	if err != nil {
-		log.Error(err.Error())
+		log.Error("Error: %+v", err)
 		os.Exit(1)
 	}
 }
 
 func start(serviceNames string, apiNames string) cli.ActionFunc {
 	return func(ctx *cli.Context) error {
-		config := new(node.Config)
-		if err := configor.Load(config, "config.yml"); err != nil {
-			fmt.Fprintln(os.Stderr, "Failed to load configurations.")
-			return err
-		}
+		logger2.Setup(os.Stdout, ctx.String("loglevel"), ctx.String("logfilter"))
 
-		// setup logger
-		glogger := log.NewGlogHandler(log.StreamHandler(os.Stderr, log.TerminalFormat(true)))
-		glogger.Verbosity(log.Lvl(log.LvlTrace))
-		log.Root().SetHandler(glogger)
+		config := new(node.Config)
+		if err := configor.Load(config, ctx.String("config")); err != nil {
+			return errors.Wrapf(err, "failed to load config from %s", ctx.String("config"))
+		}
 
 		backend, err := node.NewAirblocBackend(config)
 		if err != nil {
-			log.Error("Failed to initialize Airbloc backend.")
-			return err
+			return errors.Wrap(err, "failed to initialize backend")
 		}
 		defer backend.Stop()
 
@@ -97,14 +108,14 @@ func registerServices(backend node.Backend, serviceNames []string) {
 	for _, name := range serviceNames {
 		serviceConstructor, exists := AvailableServices[name]
 		if !exists {
-			log.Error("Service does not exist", "name", name)
-			panic(name)
+			log.Error("Error: service %s does not exist.", name)
+			os.Exit(1)
 		}
 
 		service, err := serviceConstructor(backend)
 		if err != nil {
-			log.Error("Failed to create service", "name", name, "error", err)
-			panic(name)
+			log.Error("Error: failed to create service %s: %+v", name, err)
+			os.Exit(1)
 		}
 		backend.AttachService(name, service)
 	}
@@ -113,21 +124,21 @@ func registerServices(backend node.Backend, serviceNames []string) {
 func registerApis(backend node.Backend, apiNames []string) {
 	apiService, ok := backend.GetService("api").(*node.APIService)
 	if !ok {
-		log.Error("API service is not registered")
-		panic(nil)
+		log.Error("Error: API service is not registered.")
+		os.Exit(1)
 	}
 
 	for _, name := range apiNames {
 		apiConstructor, exists := AvailableAPIs[name]
 		if !exists {
-			log.Error("Service does not exist", "name", name)
-			panic(name)
+			log.Error("Error: API %s does not exist.", name)
+			os.Exit(1)
 		}
 
 		api, err := apiConstructor(backend)
 		if err != nil {
-			log.Error("Failed to create service", "name", name, "error", err)
-			panic(name)
+			log.Error("Error: failed to create API %s: %+v", name, err)
+			os.Exit(1)
 		}
 		api.AttachToAPI(apiService)
 	}

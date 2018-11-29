@@ -40,3 +40,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/loomnetwork/mamamerkle"
+
+[[constraint]]
+  name = "github.com/grpc-ecosystem/go-grpc-middleware"
+  version = "1.0.0"

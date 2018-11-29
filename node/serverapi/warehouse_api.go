@@ -2,6 +2,8 @@ package serverapi
 
 import (
 	"context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"io"
 
@@ -63,14 +65,14 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 		if bundleStream == nil {
 			collectionId, err := common.IDFromString(request.GetCollection())
 			if err != nil {
-				return errors.Wrapf(err, "failed to parse collection ID (%s)", request.GetCollection())
+				return status.Errorf(codes.InvalidArgument, "Invalid collection ID: %s", request.GetCollection())
 			}
 			bundleStream = api.warehouse.CreateBundle(collectionId)
 		}
 
 		ownerAnid, err := common.IDFromString(request.GetOwnerId())
 		if err != nil {
-			return errors.Wrapf(err, "failed to parse ANID %s", request.GetOwnerId())
+			return status.Errorf(codes.InvalidArgument, "Invalid user ANID: %s", request.GetOwnerId())
 		}
 
 		datum := &common.Data{

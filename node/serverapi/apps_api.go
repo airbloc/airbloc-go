@@ -2,6 +2,8 @@ package serverapi
 
 import (
 	"context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"github.com/airbloc/airbloc-go/node"
 
@@ -25,13 +27,13 @@ func NewAppsAPI(backend node.Backend) (node.API, error) {
 func (api *AppsAPI) NewOwner(ctx context.Context, req *pb.NewOwnerRequest) (*commonpb.Result, error) {
 	appId, err := ablCommon.IDFromString(req.GetAppId())
 	if err != nil {
-		return nil, errors.Wrap(err, "api : invalid app ID")
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid app ID: %s", req.GetAppId())
 	}
 	address := ethCommon.HexToAddress(req.GetOwner())
 
 	_, err = api.apps.NewOwner(ctx, appId, address)
 	if err != nil {
-		return nil, errors.Wrap(err, "api : failed to set new owner")
+		return nil, status.Errorf(codes.Internal, "Failed to set new owner")
 	}
 	return &commonpb.Result{}, nil
 }
@@ -39,22 +41,21 @@ func (api *AppsAPI) NewOwner(ctx context.Context, req *pb.NewOwnerRequest) (*com
 func (api *AppsAPI) CheckOwner(ctx context.Context, req *pb.CheckOwnerRequest) (*pb.CheckOwnerResult, error) {
 	appId, err := ablCommon.IDFromString(req.GetAppId())
 	if err != nil {
-		return nil, errors.Wrap(err, "api : invalid app ID")
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid app ID: %s", req.GetAppId())
 	}
 	address := ethCommon.HexToAddress(req.GetOwner())
 
 	ok, err := api.apps.CheckOwner(ctx, appId, address)
 	if err != nil {
-		return nil, errors.Wrap(err, "api : failed to check owner")
+		return nil, err
 	}
-
 	return &pb.CheckOwnerResult{Ok: ok}, nil
 }
 
 func (api *AppsAPI) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResult, error) {
 	appId, err := api.apps.Register(ctx, req.GetName())
 	if err != nil {
-		return nil, errors.Wrap(err, "api : failed to register app")
+		return nil, status.Errorf(codes.Internal, "Failed to register app")
 	}
 	return &pb.RegisterResult{
 		AppId: appId.String(),
@@ -68,9 +69,8 @@ func (api *AppsAPI) Unregister(ctx context.Context, req *pb.UnregisterRequest) (
 
 	_, err = api.apps.Unregister(ctx, appId)
 	if err != nil {
-		return nil, errors.Wrap(err, "api : failed to unregister app")
+		return nil, err
 	}
-
 	return &commonpb.Result{}, nil
 }
 

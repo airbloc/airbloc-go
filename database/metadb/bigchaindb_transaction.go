@@ -8,13 +8,14 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/azer/logger"
+	"github.com/valyala/fastjson"
 	"io/ioutil"
 	"net/http"
 	"strings"
 
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/ethereum/go-ethereum/crypto/sha3"
-	"github.com/ethereum/go-ethereum/log"
 	"github.com/go-interledger/cryptoconditions"
 	"github.com/kalaspuffar/base64url"
 	"github.com/mr-tron/base58/base58"
@@ -75,37 +76,47 @@ func (db *bigchainDB) preFulfill(t *txn.Transaction) ([]byte, error) {
 	return db.key.PrivateKey.Sign(rand.Reader, bytesToSign[:], crypto.Hash(0))
 }
 
-func (db *bigchainDB) sendIntermediateTx(inTxn *IntermediateTxn) error {
+func (db *bigchainDB) sendIntermediateTx(inTxn *IntermediateTxn) (*fastjson.Value, error) {
 	buffer := new(bytes.Buffer)
 	err := json.NewEncoder(buffer).Encode(inTxn)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	request, err := http.NewRequest("POST", db.proxyUrl+"/transactions", buffer)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("Accept", "application/json")
 
 	response, err := db.client.Do(request)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer response.Body.Close()
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		return errors.Wrap(err, "failed to read body")
+		return nil, errors.Wrap(err, "failed to read body")
 	}
 
 	if response.StatusCode != 200 {
-		log.Error("BigchainDB request failed!", "status", response.StatusCode, "response", string(body))
-		return errors.Errorf("server returned %s", response.Status)
+		db.log.Error("Transaction failed with", logger.Attrs{
+			"status":   response.StatusCode,
+			"response": string(body)[:16] + "…",
+		})
+		return nil, errors.Errorf("server returned %s", response.Status)
 	}
-	return err
+
+	var p fastjson.Parser
+	results, err := p.ParseBytes(body)
+	if err != nil {
+		db.log.Error("Invalid result returned from server: %s", string(body)[:16]+"…")
+		return nil, errors.New("invalid result returned from server")
+	}
+	return results, err
 }
 
 func (db *bigchainDB) sendTx(tx *txn.Transaction, mode Mode) error {

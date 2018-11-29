@@ -2,10 +2,9 @@ package key
 
 import (
 	"crypto/rand"
+	"github.com/azer/logger"
 
 	"github.com/airbloc/airbloc-go/common"
-	"github.com/ethereum/go-ethereum/log"
-
 	"github.com/airbloc/airbloc-go/database/localdb"
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -17,14 +16,17 @@ import (
 type manager struct {
 	ownerKey      *Key
 	localDatabase localdb.Database
+	log           *logger.Logger
 }
 
 func NewKeyManager(ownerKey *Key, localDatabase localdb.Database) Manager {
-	log.Debug("Private key loaded", "address", ownerKey.EthereumAddress.Hex())
-	return &manager{
+	kms := &manager{
 		ownerKey:      ownerKey,
 		localDatabase: localDatabase,
+		log:           logger.New("kms"),
 	}
+	kms.log.Info("Node key loaded.", logger.Attrs{"address": ownerKey.EthereumAddress.Hex()})
+	return kms
 }
 
 // NodeKey returns the owner key.

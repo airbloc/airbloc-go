@@ -112,7 +112,23 @@ type AccountsAccount struct {
 }
 
 func init() {
+	// convenient hacks for blockchain.Client
 	blockchain.ContractList["Accounts"] = (&Accounts{}).new
+
+	blockchain.RegisterSelector("0xefc81a8c", "create()")
+
+	blockchain.RegisterSelector("0x56003f0f", "createTemporary(bytes32)")
+
+	blockchain.RegisterSelector("0xdb82967c", "createUsingProxy(address,bytes)")
+
+	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
+
+	blockchain.RegisterSelector("0xca5eb5e1", "setDelegate(address)")
+
+	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
+
+	blockchain.RegisterSelector("0x2299219d", "unlockTemporary(bytes32,address,bytes)")
+
 }
 
 // NewAccounts creates a new instance of Accounts, bound to a specific deployed contract.

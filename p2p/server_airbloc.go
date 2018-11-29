@@ -2,7 +2,8 @@ package p2p
 
 import (
 	"context"
-	"log"
+	"fmt"
+	"github.com/azer/logger"
 	"reflect"
 	"sync"
 	"time"
@@ -48,6 +49,9 @@ type AirblocServer struct {
 	types    map[string]reflect.Type
 	topics   map[reflect.Type]string
 	handlers map[reflect.Type]TopicHandler
+
+	// log
+	log *logger.Logger
 }
 
 func NewAirblocServer(
@@ -79,6 +83,7 @@ func NewAirblocServer(
 		types:    make(map[string]reflect.Type),
 		topics:   make(map[reflect.Type]string),
 		handlers: make(map[reflect.Type]TopicHandler),
+		log:      logger.New("p2p"),
 	}
 
 	h, err := libp2p.New(
@@ -132,10 +137,14 @@ func NewAirblocServer(
 		return nil, errors.Wrap(err, "server error : failed to generate cid")
 	}
 
+	server.log.Info("Initialized", logger.Attrs{
+		"protocol":   fmt.Sprintf("%s %s", ProtocolName, ProtocolVersion),
+		"on address": addr.String(),
+	})
 	return server, nil
 }
 
-// DHT
+// Discovery finds and updates new peer connection every minute.
 func (s *AirblocServer) Discovery() {
 	ticker := time.NewTicker(1 * time.Minute)
 	defer ticker.Stop()
@@ -146,6 +155,8 @@ func (s *AirblocServer) Discovery() {
 		case <-ticker.C:
 			s.clearPeer()
 			s.updatePeer()
+		case <-s.ctx.Done():
+			return
 		}
 	}
 }
@@ -160,50 +171,60 @@ func (s *AirblocServer) clearPeer() {
 func (s *AirblocServer) updatePeer() {
 	idch, err := s.dht.GetClosestPeers(s.ctx, s.id.KeyString())
 	if s.ctx.Err() != nil {
-		log.Println("context error:", err)
+		s.log.Error("Failed to discovery peers: context error: %v", s.ctx.Err())
 		return
 	}
 
 	if err != nil {
-		log.Println("failed to get closest peers:", err)
+		s.log.Error("Failed to discovery peers: %v", err)
 	}
 
+	found := 0
 	for id := range idch {
 		info, err := s.dht.FindPeer(s.ctx, id)
 		if err != nil {
-			log.Println("failed to find peer", id.Pretty(), ":", err)
+			s.log.Error("Failed to find peer", logger.Attrs{"id": id.Pretty()})
 			continue
 		}
 		s.host.Peerstore().AddAddrs(info.ID, info.Addrs, peerstore.TempAddrTTL)
+		found++
 	}
+	s.log.Info("Discovery peers", logger.Attrs{"found": found})
 }
 
 // api backend interfaces
 func (s *AirblocServer) Start() error {
-	s.host.RegisterProtocol(s.pid, func(message common.ProtoMessage) {
-		typ, ok := s.types[message.GetTopic()]
-		if !ok {
-			log.Println("unregistered topic")
-			return
-		}
-
-		topic := s.topics[typ]
-		handler := s.handlers[typ]
-		if topic != message.Topic {
-			log.Println("message and topic mismatch")
-			return
-		}
-
-		msg, err := message.MakeMessage(s.ctx, typ)
-		if err != nil {
-			log.Printf("failed to make message : %+v", err)
-			return
-		}
-		handler(s, s.ctx, msg)
-	})
-
+	s.host.RegisterProtocol(s.pid, s.handleMessage)
 	go s.Discovery()
 	return nil
+}
+
+func (s *AirblocServer) handleMessage(message common.ProtoMessage) {
+	typ, ok := s.types[message.GetTopic()]
+	if !ok {
+		s.log.Error("Unknown topic: %s", message.GetTopic())
+		return
+	}
+
+	topic := s.topics[typ]
+	handler := s.handlers[typ]
+	if topic != message.Topic {
+		s.log.Error("Message type mismatch with topic: %s", message.GetTopic())
+		return
+	}
+
+	msg, err := message.MakeMessage(s.ctx, typ)
+	if err != nil {
+		s.log.Error("Failed to make message: %v", err.Error())
+		return
+	}
+
+	timer := s.log.Timer()
+	handler(s, s.ctx, msg)
+	timer.End("Received message", logger.Attrs{
+		"from":  msg.SenderAddr.String(),
+		"topic": topic,
+	})
 }
 
 func (s *AirblocServer) Stop() {

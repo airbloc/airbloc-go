@@ -101,7 +101,13 @@ type SchemaRegistrySchema struct {
 }
 
 func init() {
+	// convenient hacks for blockchain.Client
 	blockchain.ContractList["SchemaRegistry"] = (&SchemaRegistry{}).new
+
+	blockchain.RegisterSelector("0xf2c298be", "register(string)")
+
+	blockchain.RegisterSelector("0x260a818e", "unregister(bytes8)")
+
 }
 
 // NewSchemaRegistry creates a new instance of SchemaRegistry, bound to a specific deployed contract.

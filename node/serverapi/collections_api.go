@@ -5,8 +5,9 @@ import (
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/node"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/pkg/errors"
 	"golang.org/x/net/context"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type CollectionsAPI struct {
@@ -25,12 +26,12 @@ func NewCollectionsAPI(backend node.Backend) (node.API, error) {
 func (api *CollectionsAPI) Create(ctx context.Context, req *pb.CreateCollectionRequest) (*pb.CreateCollectionResponse, error) {
 	schemaId, err := common.IDFromString(req.GetSchemaId())
 	if err != nil {
-		return nil, errors.Wrap(err, "invalid schema ID")
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid schema ID: %s", req.GetSchemaId())
 	}
 
 	appId, err := common.IDFromString(req.GetAppId())
 	if err != nil {
-		return nil, errors.Wrap(err, "invalid app ID")
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid app ID: %s", req.GetAppId())
 	}
 
 	collection := &collections.Collection{
@@ -44,10 +45,12 @@ func (api *CollectionsAPI) Create(ctx context.Context, req *pb.CreateCollectionR
 		},
 	}
 	collectionId, err := api.collections.Register(ctx, collection)
-
+	if err != nil {
+		return nil, err
+	}
 	return &pb.CreateCollectionResponse{
 		CollectionId: collectionId.String(),
-	}, err
+	}, nil
 }
 
 // TODO after localdb integration
