@@ -133,6 +133,18 @@ func (exchange *Exchange) Reject(ctx context.Context, offerId ablCommon.ID) erro
 	return nil
 }
 
+func (exchange *Exchange) GetReceiptsByOfferor(offeror ethCommon.Address) ([][8]byte, error) {
+	return exchange.contract.GetReceiptsByOfferor(nil, offeror)
+}
+
+func (exchange *Exchange) GetReceiptsByOfferee(offeree ethCommon.Address) ([][8]byte, error) {
+	return exchange.contract.GetReceiptsByOfferee(nil, offeree)
+}
+
+func (exchange *Exchange) GetReceiptsByEscrow(escrow ethCommon.Address) ([][8]byte, error) {
+	return exchange.contract.GetReceiptsByEscrow(nil, escrow)
+}
+
 func (exchange *Exchange) CloseOrder(ctx context.Context, offerId ablCommon.ID, abi abi.ABI, args ...interface{}) error {
 	_, _, escrow, _, err := exchange.contract.GetOfferCompact(nil, offerId)
 	if err != nil {

@@ -33,7 +33,7 @@ var (
 )
 
 // ExchangeABI is the input ABI used to generate the binding from.
-const ExchangeABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"escrowIndex\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"toIndex\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"fromIndex\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferPrepared\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferPresented\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferSettled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferRejected\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"_offeror\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"_offeree\",\"type\":\"address\"}],\"name\":\"Receipt\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offeror\",\"type\":\"address\"},{\"name\":\"_offeree\",\"type\":\"address\"},{\"name\":\"_escrow\",\"type\":\"address\"},{\"name\":\"_sign\",\"type\":\"bytes4\"},{\"name\":\"_args\",\"type\":\"bytes\"},{\"name\":\"_dataIds\",\"type\":\"bytes16[]\"}],\"name\":\"prepare\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"},{\"name\":\"_dataIds\",\"type\":\"bytes16[]\"}],\"name\":\"addDataIds\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"order\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"settle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"reject\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"close\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"getOfferCompact\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"getOffer\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"bytes16[]\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"bytes4\"},{\"name\":\"\",\"type\":\"bytes\"},{\"name\":\"\",\"type\":\"uint8\"},{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const ExchangeABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"escrowIndex\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"toIndex\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"fromIndex\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferPrepared\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferPresented\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferSettled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferRejected\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"_offeror\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"_offeree\",\"type\":\"address\"}],\"name\":\"Receipt\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offeror\",\"type\":\"address\"},{\"name\":\"_offeree\",\"type\":\"address\"},{\"name\":\"_escrow\",\"type\":\"address\"},{\"name\":\"_sign\",\"type\":\"bytes4\"},{\"name\":\"_args\",\"type\":\"bytes\"},{\"name\":\"_dataIds\",\"type\":\"bytes16[]\"}],\"name\":\"prepare\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"},{\"name\":\"_dataIds\",\"type\":\"bytes16[]\"}],\"name\":\"addDataIds\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"order\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"settle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"reject\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"close\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_offeror\",\"type\":\"address\"}],\"name\":\"getReceiptsByOfferor\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_offeree\",\"type\":\"address\"}],\"name\":\"getReceiptsByOfferee\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_escrow\",\"type\":\"address\"}],\"name\":\"getReceiptsByEscrow\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"getOfferCompact\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"getOffer\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"bytes16[]\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"bytes4\"},{\"name\":\"\",\"type\":\"bytes\"},{\"name\":\"\",\"type\":\"uint8\"},{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // Exchange is an auto generated Go binding around an Ethereum contract.
 type Exchange struct {
@@ -317,6 +317,84 @@ func (_Exchange *ExchangeSession) GetOfferCompact(_offerId [8]byte) (common.Addr
 // Solidity: function getOfferCompact(_offerId bytes8) constant returns(address, address, address, bool)
 func (_Exchange *ExchangeCallerSession) GetOfferCompact(_offerId [8]byte) (common.Address, common.Address, common.Address, bool, error) {
 	return _Exchange.Contract.GetOfferCompact(&_Exchange.CallOpts, _offerId)
+}
+
+// GetReceiptsByEscrow is a free data retrieval call binding the contract method 0xd7e1989e.
+//
+// Solidity: function getReceiptsByEscrow(_escrow address) constant returns(bytes8[])
+func (_Exchange *ExchangeCaller) GetReceiptsByEscrow(opts *bind.CallOpts, _escrow common.Address) ([][8]byte, error) {
+	var (
+		ret0 = new([][8]byte)
+	)
+	out := ret0
+	err := _Exchange.contract.Call(opts, out, "getReceiptsByEscrow", _escrow)
+	return *ret0, err
+}
+
+// GetReceiptsByEscrow is a free data retrieval call binding the contract method 0xd7e1989e.
+//
+// Solidity: function getReceiptsByEscrow(_escrow address) constant returns(bytes8[])
+func (_Exchange *ExchangeSession) GetReceiptsByEscrow(_escrow common.Address) ([][8]byte, error) {
+	return _Exchange.Contract.GetReceiptsByEscrow(&_Exchange.CallOpts, _escrow)
+}
+
+// GetReceiptsByEscrow is a free data retrieval call binding the contract method 0xd7e1989e.
+//
+// Solidity: function getReceiptsByEscrow(_escrow address) constant returns(bytes8[])
+func (_Exchange *ExchangeCallerSession) GetReceiptsByEscrow(_escrow common.Address) ([][8]byte, error) {
+	return _Exchange.Contract.GetReceiptsByEscrow(&_Exchange.CallOpts, _escrow)
+}
+
+// GetReceiptsByOfferee is a free data retrieval call binding the contract method 0x17329f19.
+//
+// Solidity: function getReceiptsByOfferee(_offeree address) constant returns(bytes8[])
+func (_Exchange *ExchangeCaller) GetReceiptsByOfferee(opts *bind.CallOpts, _offeree common.Address) ([][8]byte, error) {
+	var (
+		ret0 = new([][8]byte)
+	)
+	out := ret0
+	err := _Exchange.contract.Call(opts, out, "getReceiptsByOfferee", _offeree)
+	return *ret0, err
+}
+
+// GetReceiptsByOfferee is a free data retrieval call binding the contract method 0x17329f19.
+//
+// Solidity: function getReceiptsByOfferee(_offeree address) constant returns(bytes8[])
+func (_Exchange *ExchangeSession) GetReceiptsByOfferee(_offeree common.Address) ([][8]byte, error) {
+	return _Exchange.Contract.GetReceiptsByOfferee(&_Exchange.CallOpts, _offeree)
+}
+
+// GetReceiptsByOfferee is a free data retrieval call binding the contract method 0x17329f19.
+//
+// Solidity: function getReceiptsByOfferee(_offeree address) constant returns(bytes8[])
+func (_Exchange *ExchangeCallerSession) GetReceiptsByOfferee(_offeree common.Address) ([][8]byte, error) {
+	return _Exchange.Contract.GetReceiptsByOfferee(&_Exchange.CallOpts, _offeree)
+}
+
+// GetReceiptsByOfferor is a free data retrieval call binding the contract method 0xfaaf7393.
+//
+// Solidity: function getReceiptsByOfferor(_offeror address) constant returns(bytes8[])
+func (_Exchange *ExchangeCaller) GetReceiptsByOfferor(opts *bind.CallOpts, _offeror common.Address) ([][8]byte, error) {
+	var (
+		ret0 = new([][8]byte)
+	)
+	out := ret0
+	err := _Exchange.contract.Call(opts, out, "getReceiptsByOfferor", _offeror)
+	return *ret0, err
+}
+
+// GetReceiptsByOfferor is a free data retrieval call binding the contract method 0xfaaf7393.
+//
+// Solidity: function getReceiptsByOfferor(_offeror address) constant returns(bytes8[])
+func (_Exchange *ExchangeSession) GetReceiptsByOfferor(_offeror common.Address) ([][8]byte, error) {
+	return _Exchange.Contract.GetReceiptsByOfferor(&_Exchange.CallOpts, _offeror)
+}
+
+// GetReceiptsByOfferor is a free data retrieval call binding the contract method 0xfaaf7393.
+//
+// Solidity: function getReceiptsByOfferor(_offeror address) constant returns(bytes8[])
+func (_Exchange *ExchangeCallerSession) GetReceiptsByOfferor(_offeror common.Address) ([][8]byte, error) {
+	return _Exchange.Contract.GetReceiptsByOfferor(&_Exchange.CallOpts, _offeror)
 }
 
 // ToIndex is a free data retrieval call binding the contract method 0x4dae267e.

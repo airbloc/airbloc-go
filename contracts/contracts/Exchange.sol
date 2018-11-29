@@ -98,6 +98,10 @@ contract Exchange {
         return offer.reverted;
     }
 
+    function getReceiptsByOfferor(address _offeror) public view returns (bytes8[] memory) {return toIndex[_offeror];}
+    function getReceiptsByOfferee(address _offeree) public view returns (bytes8[] memory) {return fromIndex[_offeree];}
+    function getReceiptsByEscrow(address _escrow) public view returns (bytes8[] memory) {return escrowIndex[_escrow];}
+
     function _getOffer(bytes8 _offerId)
         internal
         view
