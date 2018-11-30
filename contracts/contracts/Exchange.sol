@@ -11,7 +11,7 @@ contract Exchange {
     event OfferPresented(bytes8 indexed _offerId);
     event OfferSettled(bytes8 indexed _offerId);
     event OfferRejected(bytes8 indexed _offerId);
-    event Receipt(bytes8 indexed _offerId, address indexed _offeror, address indexed _offeree);
+    event Receipt(bytes8 indexed _offerId, address indexed _offeror, address indexed _to);
 
     ExchangeLib.Orderbook orderbook;
     mapping(address => bytes8[]) public toIndex;
@@ -26,22 +26,22 @@ contract Exchange {
     }
 
     function prepare(
-        address _offeror,
-        address _offeree,
+        address _from,
+        address _to,
         address _escrow,
         bytes4 _sign,
         bytes memory _args,
         bytes16[] memory _dataIds
     ) public {
-        require(_offeror != address(0), "invalid offeror address");
-        require(_offeree != address(0), "invalid offere address");
+        require(_from != address(0), "invalid offeror address");
+        require(_to != address(0), "invalid offere address");
         require(_escrow != address(0), "invalid contract address");
         require(IERC165(_escrow).supportsInterface(_sign), "interface not supported");
 
         bytes8 offerId = orderbook.prepare(
             ExchangeLib.Offer({
-                offeror: _offeror,
-                offeree: _offeree,
+                from: _from,
+                to: _to,
                 dataIds: _dataIds,
                 escrow: ExchangeLib.Escrow({
                     addr: _escrow,
@@ -61,7 +61,7 @@ contract Exchange {
     ) public {
         ExchangeLib.Offer storage offer = orderbook.getOffer(_offerId);
         require(offer.status == ExchangeLib.Status.NEUTRAL, "neutral state only");
-        require(msg.sender == offer.offeror, "only offeror can modify offer");
+        require(msg.sender == offer.from, "only from can modify offer");
         require(_dataIds.length <= 255, "dataIds length exceeded (max 255)");
 
         for (uint8 i = 0; i < _dataIds.length; i++) {
@@ -91,15 +91,15 @@ contract Exchange {
         ExchangeLib.Offer storage offer = _getOffer(_offerId);
         orderbook.close(_offerId);
         // add some options (timeout, brokers, etc..)
-        toIndex[offer.offeree].push(_offerId);
-        fromIndex[offer.offeror].push(_offerId);
+        toIndex[offer.to].push(_offerId);
+        fromIndex[offer.from].push(_offerId);
         escrowIndex[offer.escrow.addr].push(_offerId);
-        emit Receipt(_offerId, offer.offeree, offer.offeror);
+        emit Receipt(_offerId, offer.to, offer.from);
         return offer.reverted;
     }
 
-    function getReceiptsByOfferor(address _offeror) public view returns (bytes8[] memory) {return toIndex[_offeror];}
-    function getReceiptsByOfferee(address _offeree) public view returns (bytes8[] memory) {return fromIndex[_offeree];}
+    function getReceiptsByOfferor(address _from) public view returns (bytes8[] memory) {return toIndex[_from];}
+    function getReceiptsByOfferee(address _to) public view returns (bytes8[] memory) {return fromIndex[_to];}
     function getReceiptsByEscrow(address _escrow) public view returns (bytes8[] memory) {return escrowIndex[_escrow];}
 
     function _getOffer(bytes8 _offerId)
@@ -114,16 +114,16 @@ contract Exchange {
         public
         view
         returns (
-            address, // offeror
-            address, // offeree
+            address, // from
+            address, // to
             address, // escrow.addr
             bool     // reverted
         )
     {
         ExchangeLib.Offer storage offer = _getOffer(_offerId);
         return (
-            offer.offeror,
-            offer.offeree,
+            offer.from,
+            offer.to,
             offer.escrow.addr,
             offer.reverted
         );
@@ -133,8 +133,8 @@ contract Exchange {
         public
         view
         returns (
-            address,         //offeror
-            address,         //offeree
+            address,         //from
+            address,         //to
             bytes16[] memory, //dataIds
             // Escrow
             address,      // addr
@@ -148,8 +148,8 @@ contract Exchange {
         ExchangeLib.Offer storage offer = _getOffer(_offerId);
         ExchangeLib.Escrow storage escrow = offer.escrow;
         return (
-            offer.offeror, 
-            offer.offeree, 
+            offer.from,
+            offer.to,
             offer.dataIds,
             escrow.addr,
             escrow.sign,

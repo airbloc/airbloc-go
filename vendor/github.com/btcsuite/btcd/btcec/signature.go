@@ -427,7 +427,9 @@ func signRFC6979(privateKey *PrivateKey, hash []byte) (*Signature, error) {
 	k := nonceRFC6979(privkey.D, hash)
 	inv := new(big.Int).ModInverse(k, N)
 	r, _ := privkey.Curve.ScalarBaseMult(k.Bytes())
-	r.Mod(r, N)
+	if r.Cmp(N) == 1 {
+		r.Sub(r, N)
+	}
 
 	if r.Sign() == 0 {
 		return nil, errors.New("calculated R is zero")

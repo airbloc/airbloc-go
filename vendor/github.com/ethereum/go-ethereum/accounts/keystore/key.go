@@ -66,19 +66,19 @@ type plainKeyJSON struct {
 
 type encryptedKeyJSONV3 struct {
 	Address string     `json:"address"`
-	Crypto  CryptoJSON `json:"crypto"`
+	Crypto  cryptoJSON `json:"crypto"`
 	Id      string     `json:"id"`
 	Version int        `json:"version"`
 }
 
 type encryptedKeyJSONV1 struct {
 	Address string     `json:"address"`
-	Crypto  CryptoJSON `json:"crypto"`
+	Crypto  cryptoJSON `json:"crypto"`
 	Id      string     `json:"id"`
 	Version string     `json:"version"`
 }
 
-type CryptoJSON struct {
+type cryptoJSON struct {
 	Cipher       string                 `json:"cipher"`
 	CipherText   string                 `json:"ciphertext"`
 	CipherParams cipherparamsJSON       `json:"cipherparams"`

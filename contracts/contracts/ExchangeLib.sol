@@ -14,8 +14,8 @@ library ExchangeLib {
     }
 
     struct Offer {
-        address  offeror;
-        address  offeree;
+        address  from;
+        address  to;
         bytes16[] dataIds;
         Escrow   escrow;
         Status   status;
@@ -37,8 +37,8 @@ library ExchangeLib {
                 abi.encodePacked(
                     block.number,
                     msg.sender,
-                    _offer.offeror,
-                    _offer.offeree,
+                    _offer.from,
+                    _offer.to,
                     _offer.escrow.addr
                 )
             )
@@ -53,7 +53,7 @@ library ExchangeLib {
         bytes8 _offerId
     ) internal {
         Offer storage offer = _orderbook.orders[_offerId];
-        require(msg.sender == offer.offeror, "only offeror can order offer");
+        require(msg.sender == offer.from, "only offeror can order offer");
         require(offer.status == Status.NEUTRAL, "neutral state only");
         offer.status = Status.PENDING;
     }
@@ -65,7 +65,7 @@ library ExchangeLib {
     ) internal {
         Offer storage offer = _orderbook.orders[_offerId];
         require(offer.status == Status.PENDING, "pending state only");
-        require(msg.sender == offer.offeree, "only offeree can settle offer");
+        require(msg.sender == offer.to, "only offeree can settle offer");
         offer.status = Status.SETTLED;
     }
 
@@ -75,7 +75,7 @@ library ExchangeLib {
     ) internal {
         Offer storage offer = _orderbook.orders[_offerId];
         require(offer.status == Status.PENDING, "pending state only");
-        require(msg.sender == offer.offeree, "only offeree can reject offer");
+        require(msg.sender == offer.to, "only offeree can reject offer");
         offer.status = Status.REJECTED;
     }
 
@@ -86,7 +86,7 @@ library ExchangeLib {
         Offer storage offer = _orderbook.orders[_offerId];
         Escrow storage escrow = offer.escrow;
         require(offer.status == Status.SETTLED, "settled state only");
-        require(msg.sender == offer.offeree, "only escrow can open transaction");
+        require(msg.sender == offer.to, "only escrow can open transaction");
         offer.status = Status.OPENED;
         return escrow.addr.delegatecall(
             abi.encodePacked(

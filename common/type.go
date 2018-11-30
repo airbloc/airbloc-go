@@ -68,3 +68,7 @@ func (id *ID) UnmarshalJSON(b []byte) error {
 func (id *ID) MarshalJSON() ([]byte, error) {
 	return json.Marshal(id.String())
 }
+
+func AddresFromBytes(rawAddr []byte) common.Address {
+	return common.BytesToAddress(rawAddr)
+}

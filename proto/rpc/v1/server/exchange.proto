@@ -3,20 +3,43 @@ package airbloc.rpc.v1;
 
 option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
 
+import "google/protobuf/empty.proto";
 import "proto/rpc/v1/server/data.proto";
 import "proto/rpc/v1/types.proto";
 
 service Exchange {
     rpc Prepare(OrderRequest) returns (airbloc.rpc.v1.Hash);
-    rpc AddDataIds(repeated airbloc.rpc.v1.Hash);
-    rpc Order(OrderRequest) returns (airbloc.rpc.v1.Hash);
+    rpc AddDataIds(DataIds) returns (google.protobuf.Empty);
+    rpc Order(airbloc.rpc.v1.Hash) returns (google.protobuf.Empty);
+    rpc Settle(airbloc.rpc.v1.Hash) returns (google.protobuf.Empty);
+    rpc Reject(airbloc.rpc.v1.Hash) returns (google.protobuf.Empty);
+    rpc CloseOrder(airbloc.rpc.v1.Hash) returns (Receipt);
 
-    rpc Settle(airbloc.rpc.v1.Hash) returns (airbloc.rpc.v1.Result);
-    rpc Reject(OrderIdRequest) returns (airbloc.rpc.v1.Result);
+    rpc GetOffer(airbloc.rpc.v1.Hash) returns (Offer);
+    rpc GetOfferCompact(airbloc.rpc.v1.Hash) returns (OfferCompact);
+    rpc GetReceiptsByOfferor(airbloc.rpc.v1.Address) returns (Offers);
+    rpc GetReceiptsByOfferee(airbloc.rpc.v1.Address) returns (Offers);
+    rpc GetReceiptsByEscrow(airbloc.rpc.v1.Address) returns (Offers);
+}
 
-    // after Open()
-    rpc CloseOrder(OrderIdRequest) returns (airbloc.rpc.v1.Result);
+enum Status {
+    UNDEFINED = 0;
+    NEUTRAL = 1;
+    PENDING = 2;
+    SETTLED = 3;
+    REJECTED = 4;
+    OPENED = 5;
+    CLOSED = 6;
+}
 
+message RichardianContract {
+    bytes hash = 1;
+}
+
+message SmartContract {
+    airbloc.rpc.v1.Address address = 1;
+    bytes selector = 2;
+    bytes arguments = 3;
 }
 
 message Contract {
@@ -25,27 +48,43 @@ message Contract {
         SMART = 1;
     }
     Type type = 1;
-    airbloc.rpc.v1.Address smartContractAddress = 2;
-    bytes richardianHash = 3;
+    SmartContract smartEscrow = 2;
+    RichardianContract richarEscrow = 3;
+}
+
+message Receipt {
+    airbloc.rpc.v1.Hash offerId = 1;
+    airbloc.rpc.v1.Address from = 2;
+    airbloc.rpc.v1.Address to = 3;
 }
 
 message OrderRequest {
-    airbloc.rpc.v1.BatchRequest data = 1;
-    Contract contract = 2;
-    string offeror = 3;
-    string offeree = 4;
-    repeated string option = 5;
-    double amount = 6;
+    airbloc.rpc.v1.Address from = 1;
+    airbloc.rpc.v1.Address to = 2;
+    Contract contract = 3;
+    repeated bytes dataIds = 4;
 }
 
-message OrderIdRequest {
-    string OrderId = 1;
+message Offer {
+    airbloc.rpc.v1.Address from = 1;
+    airbloc.rpc.v1.Address to = 2;
+    repeated bytes dataIds = 3;
+    Contract contract = 4;
+    Status status = 5;
+    bool reverted = 6;
+}
+message OfferCompact {
+    airbloc.rpc.v1.Address from = 1;
+    airbloc.rpc.v1.Address to = 2;
+    // TODO : richardian contract support
+    airbloc.rpc.v1.Address escrow = 3;
+    bool reverted = 4;
+}
+message Offers {repeated airbloc.rpc.v1.Hash offerIds = 1;}
+
+message DataIds {
+    airbloc.rpc.v1.Hash offerId = 1;
+    repeated bytes dataIds = 2;
 }
 
-message ContractId {
-    string ContractId = 1;
-}
 
-message SettleResult {
-    ContractId contractId = 1;
-}
