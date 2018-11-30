@@ -7,6 +7,8 @@ import "proto/rpc/v1/server/data.proto";
 import "proto/rpc/v1/types.proto";
 
 service Exchange {
+    rpc Prepare(OrderRequest) returns (airbloc.rpc.v1.Hash);
+    rpc AddDataIds(repeated airbloc.rpc.v1.Hash);
     rpc Order(OrderRequest) returns (airbloc.rpc.v1.Hash);
 
     rpc Settle(airbloc.rpc.v1.Hash) returns (airbloc.rpc.v1.Result);
@@ -14,6 +16,7 @@ service Exchange {
 
     // after Open()
     rpc CloseOrder(OrderIdRequest) returns (airbloc.rpc.v1.Result);
+
 }
 
 message Contract {

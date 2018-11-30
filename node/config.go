@@ -9,8 +9,8 @@ type Config struct {
 	Port           int    `default:"9124" yaml:"port"`
 
 	P2P struct {
-		ListenAddr string `default:"/ip4/0.0.0.0/tcp/2470" yaml:"listenAddr"`
-		BootNodes []string `yaml:"bootNodes"`
+		ListenAddr string   `default:"/ip4/0.0.0.0/tcp/2470" yaml:"listenAddr"`
+		BootNodes  []string `yaml:"bootNodes"`
 	} `yaml:"p2p"`
 
 	LocalDB struct {

@@ -33,7 +33,7 @@ var (
 )
 
 // CollectionRegistryABI is the input ABI used to generate the binding from.
-const CollectionRegistryABI = "[{\"inputs\":[{\"name\":\"_accounts\",\"type\":\"address\"},{\"name\":\"_appReg\",\"type\":\"address\"},{\"name\":\"_schemaReg\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"registrar\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"appId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"collectionId\",\"type\":\"bytes8\"}],\"name\":\"Registration\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"appId\",\"type\":\"bytes8\"}],\"name\":\"Unregistration\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"userId\",\"type\":\"bytes8\"}],\"name\":\"Allowed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"userId\",\"type\":\"bytes8\"}],\"name\":\"Denied\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"},{\"name\":\"_schemaId\",\"type\":\"bytes8\"},{\"name\":\"_ratio\",\"type\":\"uint256\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"get\",\"outputs\":[{\"name\":\"appId\",\"type\":\"bytes8\"},{\"name\":\"schemaId\",\"type\":\"bytes8\"},{\"name\":\"incentiveRatioSelf\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"allow\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"},{\"name\":\"_userId\",\"type\":\"bytes8\"}],\"name\":\"allowByDelegate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"allowByPassword\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"deny\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"},{\"name\":\"_userId\",\"type\":\"bytes8\"}],\"name\":\"denyByDelegate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"denyByPassword\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"exists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"user\",\"type\":\"bytes8\"}],\"name\":\"isCollectionAllowed\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"user\",\"type\":\"bytes8\"},{\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"isCollectionAllowedAt\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const CollectionRegistryABI = "[{\"inputs\":[{\"name\":\"_accounts\",\"type\":\"address\"},{\"name\":\"_appReg\",\"type\":\"address\"},{\"name\":\"_schemaReg\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"registrar\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"appId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"collectionId\",\"type\":\"bytes8\"}],\"name\":\"Registration\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"appId\",\"type\":\"bytes8\"}],\"name\":\"Unregistration\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"userId\",\"type\":\"bytes8\"}],\"name\":\"Allowed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"userId\",\"type\":\"bytes8\"}],\"name\":\"Denied\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"},{\"name\":\"_schemaId\",\"type\":\"bytes8\"},{\"name\":\"_ratio\",\"type\":\"uint256\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"get\",\"outputs\":[{\"name\":\"appId\",\"type\":\"bytes8\"},{\"name\":\"schemaId\",\"type\":\"bytes8\"},{\"name\":\"incentiveRatioSelf\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"allow\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"allowByPassword\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"deny\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"denyByPassword\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_id\",\"type\":\"bytes8\"}],\"name\":\"exists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"user\",\"type\":\"bytes8\"}],\"name\":\"isCollectionAllowed\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"user\",\"type\":\"bytes8\"},{\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"isCollectionAllowedAt\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // CollectionRegistry is an auto generated Go binding around an Ethereum contract.
 type CollectionRegistry struct {
@@ -118,13 +118,9 @@ func init() {
 
 	blockchain.RegisterSelector("0x4c9b30b4", "allow(bytes8)")
 
-	blockchain.RegisterSelector("0x6885c572", "allowByDelegate(bytes8,bytes8)")
-
 	blockchain.RegisterSelector("0x4a91ee2a", "allowByPassword(bytes8,bytes)")
 
 	blockchain.RegisterSelector("0x18856694", "deny(bytes8)")
-
-	blockchain.RegisterSelector("0x61e76056", "denyByDelegate(bytes8,bytes8)")
 
 	blockchain.RegisterSelector("0x0c9bb7d2", "denyByPassword(bytes8,bytes)")
 
@@ -365,27 +361,6 @@ func (_CollectionRegistry *CollectionRegistryTransactorSession) Allow(_id [8]byt
 	return _CollectionRegistry.Contract.Allow(&_CollectionRegistry.TransactOpts, _id)
 }
 
-// AllowByDelegate is a paid mutator transaction binding the contract method 0x6885c572.
-//
-// Solidity: function allowByDelegate(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistryTransactor) AllowByDelegate(opts *bind.TransactOpts, _id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.contract.Transact(opts, "allowByDelegate", _id, _userId)
-}
-
-// AllowByDelegate is a paid mutator transaction binding the contract method 0x6885c572.
-//
-// Solidity: function allowByDelegate(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistrySession) AllowByDelegate(_id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.Contract.AllowByDelegate(&_CollectionRegistry.TransactOpts, _id, _userId)
-}
-
-// AllowByDelegate is a paid mutator transaction binding the contract method 0x6885c572.
-//
-// Solidity: function allowByDelegate(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistryTransactorSession) AllowByDelegate(_id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.Contract.AllowByDelegate(&_CollectionRegistry.TransactOpts, _id, _userId)
-}
-
 // AllowByPassword is a paid mutator transaction binding the contract method 0x4a91ee2a.
 //
 // Solidity: function allowByPassword(_id bytes8, passwordSignature bytes) returns()
@@ -426,27 +401,6 @@ func (_CollectionRegistry *CollectionRegistrySession) Deny(_id [8]byte) (*types.
 // Solidity: function deny(_id bytes8) returns()
 func (_CollectionRegistry *CollectionRegistryTransactorSession) Deny(_id [8]byte) (*types.Transaction, error) {
 	return _CollectionRegistry.Contract.Deny(&_CollectionRegistry.TransactOpts, _id)
-}
-
-// DenyByDelegate is a paid mutator transaction binding the contract method 0x61e76056.
-//
-// Solidity: function denyByDelegate(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistryTransactor) DenyByDelegate(opts *bind.TransactOpts, _id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.contract.Transact(opts, "denyByDelegate", _id, _userId)
-}
-
-// DenyByDelegate is a paid mutator transaction binding the contract method 0x61e76056.
-//
-// Solidity: function denyByDelegate(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistrySession) DenyByDelegate(_id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.Contract.DenyByDelegate(&_CollectionRegistry.TransactOpts, _id, _userId)
-}
-
-// DenyByDelegate is a paid mutator transaction binding the contract method 0x61e76056.
-//
-// Solidity: function denyByDelegate(_id bytes8, _userId bytes8) returns()
-func (_CollectionRegistry *CollectionRegistryTransactorSession) DenyByDelegate(_id [8]byte, _userId [8]byte) (*types.Transaction, error) {
-	return _CollectionRegistry.Contract.DenyByDelegate(&_CollectionRegistry.TransactOpts, _id, _userId)
 }
 
 // DenyByPassword is a paid mutator transaction binding the contract method 0x0c9bb7d2.

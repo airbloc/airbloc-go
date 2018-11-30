@@ -2,8 +2,9 @@ package blockchain
 
 import (
 	"context"
-	"github.com/azer/logger"
 	"reflect"
+
+	"github.com/azer/logger"
 
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"

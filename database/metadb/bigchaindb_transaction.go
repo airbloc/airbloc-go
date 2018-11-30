@@ -8,11 +8,12 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/azer/logger"
-	"github.com/valyala/fastjson"
 	"io/ioutil"
 	"net/http"
 	"strings"
+
+	"github.com/azer/logger"
+	"github.com/valyala/fastjson"
 
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/ethereum/go-ethereum/crypto/sha3"

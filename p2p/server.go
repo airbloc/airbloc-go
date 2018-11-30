@@ -2,6 +2,7 @@ package p2p
 
 import (
 	"context"
+
 	"github.com/libp2p/go-libp2p-peerstore"
 
 	"github.com/libp2p/go-libp2p-peer"
