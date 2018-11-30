@@ -6,6 +6,7 @@ private.key
 local/
 local.db
 config.yml
+**/.vscode
 **/node_modules
 **/build
 tests/playground
