@@ -25,6 +25,7 @@ var (
 			Name:   "userdelegate",
 			Usage:  "Launch a user delegate daemon",
 			Action: start("userdelegate", ""),
+			Flags:  flags,
 		},
 	}
 	flags = []cli.Flag{
@@ -50,6 +51,7 @@ var (
 		"apps":        serverapi.NewAppsAPI,
 		"collections": serverapi.NewCollectionsAPI,
 		"data":        serverapi.NewDataAPI,
+		"dauth":       serverapi.NewDAuthAPI,
 		"exchange":    serverapi.NewExchangeAPI,
 		"schemas":     serverapi.NewSchemaAPI,
 		"warehouse":   serverapi.NewWarehouseAPI,
@@ -67,7 +69,7 @@ func main() {
 	app.Description = "A node of Airbloc Protocol, which is decentralized data exchange protocol."
 	app.Commands = commands
 	app.Flags = flags
-	app.Action = start("api", "apps,account,collections,data,exchange,schemas,warehouse")
+	app.Action = start("api", "apps,account,collections,data,dauth,exchange,schemas,warehouse")
 
 	err := app.Run(os.Args)
 	if err != nil {

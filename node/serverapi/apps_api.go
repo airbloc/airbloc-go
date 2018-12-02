@@ -33,7 +33,7 @@ func (api *AppsAPI) NewOwner(ctx context.Context, req *pb.NewOwnerRequest) (*com
 
 	_, err = api.apps.NewOwner(ctx, appId, address)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to set new owner")
+		return nil, err
 	}
 	return &commonpb.Result{}, nil
 }
@@ -55,7 +55,7 @@ func (api *AppsAPI) CheckOwner(ctx context.Context, req *pb.CheckOwnerRequest) (
 func (api *AppsAPI) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResult, error) {
 	appId, err := api.apps.Register(ctx, req.GetName())
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to register app")
+		return nil, err
 	}
 	return &pb.RegisterResult{
 		AppId: appId.String(),
