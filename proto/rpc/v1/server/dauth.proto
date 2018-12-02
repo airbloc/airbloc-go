@@ -9,11 +9,21 @@ import "proto/rpc/v1/types.proto";
  * DAuth (Data Collection Authentification) API.
  */
 service DAuth {
-    rpc Allow(DAuthRequest) returns (airbloc.rpc.v1.Result);
+    rpc SignIn(SignInRequest) returns (SignInResponse);
+    rpc Allow(DAuthRequest) returns (airbloc.rpc.v1.Result)
     rpc Deny(DAuthRequest) returns (airbloc.rpc.v1.Result);
+}
+
+message SignInRequest {
+    string identity = 1;
+    bytes userDelegate = 2;
+}
+
+message SignInResponse {
+    string accountId = 1;
 }
 
 message DAuthRequest {
     string collectionId = 1;
-    bytes identityHash = 2;
+    string accountId = 2;
 }
