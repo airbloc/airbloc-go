@@ -38,8 +38,16 @@ type Service struct {
 }
 
 func NewService(backend node.Backend) (node.Service, error) {
+	var accountIds []ablCommon.ID
+	for _, accIdStr := range backend.Config().UserDelegate.AccountIds {
+		accountId, err := ablCommon.IDFromString(accIdStr)
+		if err != nil {
+			return nil, errors.Wrapf(err, "invalid account ID: %s", accIdStr)
+		}
+		accountIds = append(accountIds, accountId)
+	}
 	return &Service{
-		accountIds:  []ablCommon.ID{},
+		accountIds:  accountIds,
 		p2p:         backend.P2P(),
 		selfAddr:    backend.Kms().NodeKey().EthereumAddress,
 		apps:        apps.NewManager(backend.Client()),
@@ -52,12 +60,7 @@ func NewService(backend node.Backend) (node.Service, error) {
 
 // AddUser adds a user to the delegated user list,
 // therefore manage
-func (service *Service) AddUser(accId string) error {
-	accountId, err := ablCommon.IDFromString(accId)
-	if err != nil {
-		return errors.Wrapf(err, "invalid account ID %s", accId)
-	}
-
+func (service *Service) AddUser(accountId ablCommon.ID) error {
 	// you can be delegate of a user after the user designate you as a delegate.
 	if isDelegate, err := service.accounts.IsDelegateOf(service.selfAddr, accountId); err != nil {
 		return errors.Wrapf(err, "failed to call Accounts.IsDelegateOf")
@@ -80,6 +83,7 @@ func (service *Service) Start() error {
 	}
 	service.log.Info("Starting service...")
 	service.isRunning = true
+	select {}
 	return nil
 }
 
@@ -155,6 +159,7 @@ func (service *Service) signUpHandler(server p2p.Server, ctx context.Context, me
 
 	service.log.Info("Created account %s by request from the data provider %s",
 		accountId.String(), message.SenderAddr.Hex())
+	service.AddUser(accountId)
 
 	response := &pb.DAuthSignUpResponse{
 		UserId: accountId.String(),
