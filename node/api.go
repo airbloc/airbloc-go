@@ -4,17 +4,19 @@ import (
 	"fmt"
 	"github.com/azer/logger"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/pkg/errors"
+	"github.com/soheilhy/cmux"
 	"google.golang.org/grpc"
 	"net"
 	"net/http"
-	"strings"
+	"os"
 )
 
 type APIService struct {
 	GrpcServer *grpc.Server
 	HttpServer *http.Server
-	RestAPIMux *http.ServeMux
+	RestAPIMux *runtime.ServeMux
 	Address    string
 
 	port int
@@ -23,31 +25,21 @@ type APIService struct {
 	logger *logger.Logger
 }
 
-func NewAPIService(airbloc Backend) (Service, error) {
+func NewAPIService(backend Backend) (Service, error) {
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			UnaryServerLogger(),
 		)),
 	)
-	restAPImux := http.NewServeMux()
-
-	proxyHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.ProtoMajor == 2 && strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
-			grpcServer.ServeHTTP(w, r)
-		} else {
-			// redirect other traffics (e.g. Swagger, Prometheus, Custom REST Endpoint, ...)
-			restAPImux.ServeHTTP(w, r)
-		}
-	})
-
-	config := airbloc.Config()
+	restAPImux := runtime.NewServeMux()
+	config := backend.Config()
 	address := fmt.Sprintf("localhost:%d", config.Port)
 	service := &APIService{
 		GrpcServer: grpcServer,
 		RestAPIMux: restAPImux,
 		HttpServer: &http.Server{
 			Addr:    address,
-			Handler: proxyHandler,
+			Handler: restAPImux,
 		},
 		Address: address,
 		port:    config.Port,
@@ -60,18 +52,30 @@ func (service *APIService) Attach(name string, api API) {
 
 }
 
-// Start serves gRPC server on given TCP port.
+// Start serves gRPC server and HTTP REST API Server on given TCP port.
 func (service *APIService) Start() error {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", service.port))
 	if err != nil {
 		return errors.Wrapf(err, "failed to listen to TCP port %d for RPC", service.port)
 	}
 
+	// Route gRPC (HTTP2), REST (HTTP) connection accordingly.
+	m := cmux.New(lis)
+	grpcLis := m.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
+	restLis := m.Match(cmux.HTTP1Fast())
+
+	go service.withErrorHandler(service.GrpcServer.Serve, grpcLis)
+	go service.withErrorHandler(service.HttpServer.Serve, restLis)
+
 	service.logger.Info("Server started at %s", service.Address)
-	if err := service.GrpcServer.Serve(lis); err != http.ErrServerClosed {
-		return errors.Wrapf(err, "failed to start HTTP server")
+	return m.Serve()
+}
+
+func (service *APIService) withErrorHandler(serveMethod func(net.Listener) error, lis net.Listener) {
+	if err := serveMethod(lis); err != http.ErrServerClosed {
+		service.logger.Error("failed to run rpc server: %+v", err)
+		os.Exit(1)
 	}
-	return nil
 }
 
 // Stop stops gRPC server.
