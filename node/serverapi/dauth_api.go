@@ -7,6 +7,7 @@ import (
 	"github.com/airbloc/airbloc-go/node"
 	commonpb "github.com/airbloc/airbloc-go/proto/rpc/v1"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -58,4 +59,5 @@ func (api *DAuthAPI) Deny(ctx context.Context, req *pb.DAuthRequest) (*commonpb.
 
 func (api *DAuthAPI) AttachToAPI(service *node.APIService) {
 	pb.RegisterDAuthServer(service.GrpcServer, api)
+	pb.RegisterDAuthHandlerFromEndpoint(context.Background(), service.RestAPIMux, service.Address, []grpc.DialOption{grpc.WithInsecure()})
 }

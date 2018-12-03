@@ -3,15 +3,31 @@ package airbloc.rpc.v1;
 
 option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
 
+import "google/api/annotations.proto";
 import "proto/rpc/v1/types.proto";
 
 /**
  * DAuth (Data Collection Authentification) API.
  */
 service DAuth {
-    rpc SignIn(SignInRequest) returns (SignInResponse);
-    rpc Allow(DAuthRequest) returns (airbloc.rpc.v1.Result)
-    rpc Deny(DAuthRequest) returns (airbloc.rpc.v1.Result);
+    rpc SignIn(SignInRequest) returns (SignInResponse) {
+        option (google.api.http) = {
+            post: "/v1/dauth/signin"
+            body: "*"
+        };
+    }
+    rpc Allow(DAuthRequest) returns (airbloc.rpc.v1.Result) {
+        option (google.api.http) = {
+            post: "/v1/dauth/{collectionId}/allow"
+            body: "*"
+        };
+    }
+    rpc Deny(DAuthRequest) returns (airbloc.rpc.v1.Result) {
+        option (google.api.http) = {
+            post: "/v1/dauth/{collectionId}/deny"
+            body: "*"
+        };
+    }
 }
 
 message SignInRequest {
