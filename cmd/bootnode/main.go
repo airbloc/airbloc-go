@@ -3,11 +3,12 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"os"
+	"os/signal"
+
 	logger2 "github.com/airbloc/airbloc-go/logger"
 	"github.com/azer/logger"
 	"github.com/pkg/errors"
-	"os"
-	"os/signal"
 
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/key"

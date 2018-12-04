@@ -2,6 +2,7 @@ package key
 
 import (
 	"crypto/rand"
+
 	"github.com/azer/logger"
 
 	"github.com/airbloc/airbloc-go/common"

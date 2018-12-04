@@ -2,11 +2,12 @@ package blockchain
 
 import (
 	"fmt"
+	"math/big"
+
 	"github.com/azer/logger"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/params"
-	"math/big"
 )
 
 var (

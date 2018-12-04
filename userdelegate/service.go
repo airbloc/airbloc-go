@@ -3,6 +3,8 @@ package userdelegate
 import (
 	"context"
 	"fmt"
+	"log"
+
 	"github.com/airbloc/airbloc-go/account"
 	"github.com/airbloc/airbloc-go/apps"
 	"github.com/airbloc/airbloc-go/collections"
@@ -15,7 +17,6 @@ import (
 	"github.com/azer/logger"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
-	"log"
 )
 
 var (

@@ -2,9 +2,10 @@ package metadb
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/azer/logger"
 	"github.com/pkg/errors"
-	"net/http"
 
 	"github.com/bigchaindb/go-bigchaindb-driver/pkg/client"
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
