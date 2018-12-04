@@ -110,7 +110,7 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 
 	appId := testCreateApp(conn)
 	log.Println("Created App ID:", appId)

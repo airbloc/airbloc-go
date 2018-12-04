@@ -9,6 +9,8 @@ import (
 	"github.com/libp2p/go-libp2p-peerstore"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pkg/errors"
+	"os"
+	"os/signal"
 )
 
 // Airbloc implements Airbloc node service.
@@ -123,6 +125,16 @@ func (airbloc *AirblocBackend) Start() error {
 	for name, service := range airbloc.services {
 		if err := service.Start(); err != nil {
 			return errors.Wrapf(err, "failed to start %s service", name)
+		}
+	}
+
+	// wait for interrupt
+	interruptCh := make(chan os.Signal, 1)
+	signal.Notify(interruptCh, os.Interrupt)
+	for {
+		select {
+		case <-interruptCh:
+			break
 		}
 	}
 	return nil

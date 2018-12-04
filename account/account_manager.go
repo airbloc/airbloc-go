@@ -32,8 +32,7 @@ func NewManager(client blockchain.TxClient) *Manager {
 	}
 }
 
-func (manager *Manager) CreateTemporary(identity string) (ablCommon.ID, error) {
-	identityHash := manager.HashIdentity(identity)
+func (manager *Manager) CreateTemporary(identityHash ethCommon.Hash) (ablCommon.ID, error) {
 	tx, err := manager.contract.CreateTemporary(manager.client.Account(), identityHash)
 	if err != nil {
 		return ablCommon.ID{}, err

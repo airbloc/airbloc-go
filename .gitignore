@@ -1,8 +1,10 @@
 abi
 contracts/truffle-config.local.js
 config.json
+config-userdelegate.yml
 deployment.local.json
 private.key
+private.*.key
 local/
 local.db
 config.yml
@@ -12,6 +14,8 @@ config.yml
 tests/playground
 
 # Created by https://www.gitignore.io/api/go,intellij
+
+**/.DS_Store
 
 ### Go ###
 # Binaries for programs and plugins
