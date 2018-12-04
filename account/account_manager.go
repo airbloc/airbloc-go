@@ -2,7 +2,6 @@ package account
 
 import (
 	"context"
-
 	"github.com/azer/logger"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
