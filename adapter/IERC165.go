@@ -95,10 +95,6 @@ type IERC165TransactorRaw struct {
 	Contract *IERC165Transactor // Generic write-only contract binding to access the raw methods on
 }
 
-//
-//
-//
-
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["IERC165"] = (&IERC165{}).new

@@ -53,7 +53,7 @@ contract Exchange {
                     closeSign: _escrowCloseSign,
                     closeArgs: _escrowCloseArgs
                 }),
-                status: ExchangeLib.Status.NEUTRAL,
+                status: ExchangeLib.OfferStatus.NEUTRAL,
                 reverted: false
             })
         );
@@ -65,7 +65,7 @@ contract Exchange {
         bytes16[] memory _dataIds
     ) public {
         ExchangeLib.Offer storage offer = orderbook.getOffer(_offerId);
-        require(offer.status == ExchangeLib.Status.NEUTRAL, "neutral state only");
+        require(offer.status == ExchangeLib.OfferStatus.NEUTRAL, "neutral state only");
         require(msg.sender == offer.from, "only from can modify offer");
         require(_dataIds.length <= 255, "dataIds length exceeded (max 255)");
 
@@ -149,8 +149,8 @@ contract Exchange {
             bytes4,       // close sign
             bytes memory, // close args
             // Status
-            ExchangeLib.Status, // status
-            bool                // reverted
+            ExchangeLib.OfferStatus, // status
+            bool                     // reverted
         )
     {
         ExchangeLib.Offer storage offer = _getOffer(_offerId);

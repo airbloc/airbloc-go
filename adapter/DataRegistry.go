@@ -95,27 +95,19 @@ type DataRegistryTransactorRaw struct {
 	Contract *DataRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-//
-//
-//
-//	type DataRegistryBundle struct {
-//		BundleDataHash	common.Hash
-//		CreatedAt	*big.Int
-//		ProofOfPosessionCount	uint64
-//		Uri	string
-//		UsersRoot	common.Hash
-//
-//	}
-//
+type Bundle struct {
+	BundleDataHash        common.Hash
+	CreatedAt             *big.Int
+	ProofOfPosessionCount uint64
+	Uri                   string
+	UsersRoot             common.Hash
+}
 
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["DataRegistry"] = (&DataRegistry{}).new
-
 	blockchain.RegisterSelector("0xbde66f2c", "registerBundle(bytes8,bytes32,bytes32,string)")
-
 	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
-
 	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
 
 }

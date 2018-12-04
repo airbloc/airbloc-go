@@ -169,27 +169,36 @@ var (
 		Contract *{{.Type}}Transactor // Generic write-only contract binding to access the raw methods on
 	}
 
-	//{{range .Enums}}
-	//	type {{$contract.Type}}{{.Name}} int8
-	//	{{$name := .Name}}
-	//	const (
-	//		{{range $key, $value := .Member}}{{$name}}{{$key}} = {{$value}}
-	//		{{end}}
-	//	)
-	//{{end}}
-	//
-	//{{range .Structs}}
-	//	type {{$contract.Type}}{{.Name}} struct {
-	//		{{range $key, $value := .Member}}{{$key}}	{{$value}}
-	//		{{end}}
-	//	}
-	//{{end}}
+	{{range .Enums}}
+		type {{.Name}} int8
+		{{$name := .Name}}
+		const (
+			{{range $key, $value := .Member}}{{$name}}_{{$key}} {{$name}} = {{$value}}
+			{{end}}
+		)
+
+		var {{$name}}_name = map[int8]string{
+			{{range $key, $value := .Member}}{{$value}}: "{{$key}}",
+			{{end}}
+		}
+
+		var {{$name}}_value = map[string]int8{
+			{{range $key, $value := .Member}}"{{$key}}": {{$value}},
+			{{end}}
+		}
+	{{end}}
+	
+	{{range .Structs}}
+		type {{.Name}} struct {
+			{{range $key, $value := .Member}}{{$key}}	{{$value}}
+			{{end}}
+		}
+	{{end}}
 
 	func init() {
 		// convenient hacks for blockchain.Client
 		blockchain.ContractList["{{.Type}}"] = (&{{.Type}}{}).new
-		{{range .Transacts}}
-			blockchain.RegisterSelector("0x{{printf "%x" .Original.Id}}", "{{.Original.Sig}}")
+		{{range .Transacts}}blockchain.RegisterSelector("0x{{printf "%x" .Original.Id}}", "{{.Original.Sig}}")
 		{{end}}
 	}
 

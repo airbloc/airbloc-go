@@ -95,24 +95,14 @@ type ExchangeTransactorRaw struct {
 	Contract *ExchangeTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-//
-//
-//
-
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["Exchange"] = (&Exchange{}).new
-
 	blockchain.RegisterSelector("0xe6d16fcb", "addDataIds(bytes8,bytes16[])")
-
 	blockchain.RegisterSelector("0x688e8391", "close(bytes8)")
-
 	blockchain.RegisterSelector("0x0cf833fb", "order(bytes8)")
-
 	blockchain.RegisterSelector("0x43ef67fc", "prepare(address,address,address,bytes4,bytes,bytes4,bytes,bytes16[])")
-
 	blockchain.RegisterSelector("0x6622e153", "reject(bytes8)")
-
 	blockchain.RegisterSelector("0xa60d9b5f", "settle(bytes8)")
 
 }

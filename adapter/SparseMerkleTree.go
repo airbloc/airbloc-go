@@ -95,10 +95,6 @@ type SparseMerkleTreeTransactorRaw struct {
 	Contract *SparseMerkleTreeTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-//
-//
-//
-
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["SparseMerkleTree"] = (&SparseMerkleTree{}).new

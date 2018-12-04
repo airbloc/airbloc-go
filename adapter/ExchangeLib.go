@@ -95,45 +95,55 @@ type ExchangeLibTransactorRaw struct {
 	Contract *ExchangeLibTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-//
-//	type ExchangeLibStatus int8
-//
-//	const (
-//		StatusCLOSED = 5
-//		StatusNEUTRAL = 0
-//		StatusOPENED = 4
-//		StatusPENDING = 1
-//		StatusREJECTED = 3
-//		StatusSETTLED = 2
-//
-//	)
-//
-//
-//
-//	type ExchangeLibEscrow struct {
-//		Addr	common.Address
-//		CloseArgs
-//		CloseSign
-//		OpenArgs
-//		OpenSign
-//
-//	}
-//
-//	type ExchangeLibOffer struct {
-//		DataIds
-//		Escrow	ExchangeLibEscrow
-//		From	common.Address
-//		Reverted	bool
-//		Status	ExchangeLibStatus
-//		To	common.Address
-//
-//	}
-//
-//	type ExchangeLibOrderbook struct {
-//		Orders	map[ablCommon.ID]ExchangeLibOffer
-//
-//	}
-//
+type OfferStatus int8
+
+const (
+	OfferStatus_CLOSED   OfferStatus = 5
+	OfferStatus_NEUTRAL  OfferStatus = 0
+	OfferStatus_OPENED   OfferStatus = 4
+	OfferStatus_PENDING  OfferStatus = 1
+	OfferStatus_REJECTED OfferStatus = 3
+	OfferStatus_SETTLED  OfferStatus = 2
+)
+
+var OfferStatus_name = map[int8]string{
+	5: "CLOSED",
+	0: "NEUTRAL",
+	4: "OPENED",
+	1: "PENDING",
+	3: "REJECTED",
+	2: "SETTLED",
+}
+
+var OfferStatus_value = map[string]int8{
+	"CLOSED":   5,
+	"NEUTRAL":  0,
+	"OPENED":   4,
+	"PENDING":  1,
+	"REJECTED": 3,
+	"SETTLED":  2,
+}
+
+type Escrow struct {
+	Addr      common.Address
+	CloseArgs []byte
+	CloseSign [4]byte
+	OpenArgs  []byte
+	OpenSign  [4]byte
+}
+
+type Offer struct {
+	DataIds  [][16]byte
+	Escrow   Escrow
+	From     common.Address
+	Reverted bool
+	Status   OfferStatus
+	To       common.Address
+}
+
+type Orderbook struct {
+	Orders map[ablCommon.ID]Offer
+}
 
 func init() {
 	// convenient hacks for blockchain.Client
