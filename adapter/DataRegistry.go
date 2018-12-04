@@ -95,13 +95,18 @@ type DataRegistryTransactorRaw struct {
 	Contract *DataRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type DataRegistryBundle struct {
-	BundleDataHash        common.Hash
-	CreatedAt             *big.Int
-	ProofOfPosessionCount uint64
-	Uri                   string
-	UsersRoot             common.Hash
-}
+//
+//
+//
+//	type DataRegistryBundle struct {
+//		BundleDataHash	common.Hash
+//		CreatedAt	*big.Int
+//		ProofOfPosessionCount	uint64
+//		Uri	string
+//		UsersRoot	common.Hash
+//
+//	}
+//
 
 func init() {
 	// convenient hacks for blockchain.Client

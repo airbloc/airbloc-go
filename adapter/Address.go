@@ -95,6 +95,10 @@ type AddressTransactorRaw struct {
 	Contract *AddressTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+//
+//
+//
+
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["Address"] = (&Address{}).new

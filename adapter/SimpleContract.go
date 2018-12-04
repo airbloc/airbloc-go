@@ -95,10 +95,15 @@ type SimpleContractTransactorRaw struct {
 	Contract *SimpleContractTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type SimpleContractAgreement struct {
-	Offeree bool
-	Offeror bool
-}
+//
+//
+//
+//	type SimpleContractAgreement struct {
+//		Offeree	bool
+//		Offeror	bool
+//
+//	}
+//
 
 func init() {
 	// convenient hacks for blockchain.Client

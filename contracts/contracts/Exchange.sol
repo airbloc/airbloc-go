@@ -29,14 +29,17 @@ contract Exchange {
         address _from,
         address _to,
         address _escrow,
-        bytes4 _sign,
-        bytes memory _args,
+        bytes4 _escrowOpenSign,
+        bytes memory _escrowOpenArgs,
+        bytes4 _escrowCloseSign,
+        bytes memory _escrowCloseArgs,
         bytes16[] memory _dataIds
     ) public {
         require(_from != address(0), "invalid offeror address");
         require(_to != address(0), "invalid offere address");
         require(_escrow != address(0), "invalid contract address");
-        require(IERC165(_escrow).supportsInterface(_sign), "interface not supported");
+        require(IERC165(_escrow).supportsInterface(_escrowOpenSign), "open interface not supported");
+        require(IERC165(_escrow).supportsInterface(_escrowCloseSign), "close interface not supported");
 
         bytes8 offerId = orderbook.prepare(
             ExchangeLib.Offer({
@@ -45,8 +48,10 @@ contract Exchange {
                 dataIds: _dataIds,
                 escrow: ExchangeLib.Escrow({
                     addr: _escrow,
-                    sign: _sign,
-                    args: _args
+                    openSign: _escrowOpenSign,
+                    openArgs: _escrowOpenArgs,
+                    closeSign: _escrowCloseSign,
+                    closeArgs: _escrowCloseArgs
                 }),
                 status: ExchangeLib.Status.NEUTRAL,
                 reverted: false
@@ -89,7 +94,8 @@ contract Exchange {
 
     function close(bytes8 _offerId) public returns (bool) {
         ExchangeLib.Offer storage offer = _getOffer(_offerId);
-        orderbook.close(_offerId);
+
+        require(orderbook.close(_offerId), "failed to close escrow transaction");
         // add some options (timeout, brokers, etc..)
         toIndex[offer.to].push(_offerId);
         fromIndex[offer.from].push(_offerId);
@@ -138,8 +144,10 @@ contract Exchange {
             bytes16[] memory, //dataIds
             // Escrow
             address,      // addr
-            bytes4,       // sign
-            bytes memory, // args
+            bytes4,       // open sign
+            bytes memory, // open args
+            bytes4,       // close sign
+            bytes memory, // close args
             // Status
             ExchangeLib.Status, // status
             bool                // reverted
@@ -152,8 +160,10 @@ contract Exchange {
             offer.to,
             offer.dataIds,
             escrow.addr,
-            escrow.sign,
-            escrow.args,
+            escrow.openSign,
+            escrow.openArgs,
+            escrow.closeSign,
+            escrow.closeArgs,
             offer.status,
             offer.reverted
         );

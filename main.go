@@ -1,23 +1,29 @@
 package main
 
 import (
-	"os"
+	"log"
 
-	"github.com/apsdehal/go-logger"
-	"github.com/pkg/errors"
+	"github.com/airbloc/airbloc-go/proto/rpc/v1"
 )
 
 func main() {
-	log, err := logger.New("test", 1, os.Stdout)
-	if err != nil {
-		panic(err)
+	rawBarr := [][8]byte{
+		{0xde, 0xed, 0xbe, 0xef},
+		{0xde, 0xed, 0xbe, 0xef},
+		{0xde, 0xed, 0xbe, 0xef},
+		{0xde, 0xed, 0xbe, 0xef},
+		{0xde, 0xed, 0xbe, 0xef},
+		{0xde, 0xed, 0xbe, 0xef},
+		{0xde, 0xed, 0xbe, 0xef},
+		{0xde, 0xed, 0xbe, 0xef},
+		{0xde, 0xed, 0xbe, 0xef},
+		{0xde, 0xed, 0xbe, 0xef},
 	}
 
-	err = errors.New("server error")
+	barr := make([]*v1.Hash, len(rawBarr))
+	for i, raw := range rawBarr {
+		barr[i] = &v1.Hash{Hash: raw[:]}
+	}
 
-	log.Critical("Critical")
-	log.Debug("Debug")
-	log.Error("Error")
-	log.Notice("Notice")
-	log.Info("Info")
+	log.Println(barr)
 }

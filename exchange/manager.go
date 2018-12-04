@@ -4,8 +4,6 @@ import (
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
 	ablCommon "github.com/airbloc/airbloc-go/common"
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
@@ -26,8 +24,9 @@ func NewManager(client blockchain.TxClient) *Manager {
 
 func (manager *Manager) Prepare(
 	ctx context.Context,
-	offeror, offeree ethCommon.Address,
-	escrowAddr ethCommon.Address, escrowFuncSign [4]byte, escrowFuncArgs []byte,
+	offeror, offeree, escrowAddr ethCommon.Address,
+	escrowOpenSign [4]byte, escrowOpenArgs []byte,
+	escrowCloseSign [4]byte, escrowCloseArgs []byte,
 	dataIds ...[16]byte,
 ) (ablCommon.ID, error) {
 	var err error
@@ -39,8 +38,9 @@ func (manager *Manager) Prepare(
 	}
 	tx, err := manager.contract.Prepare(
 		manager.client.Account(),
-		offeror, offeree,
-		escrowAddr, escrowFuncSign, escrowFuncArgs,
+		offeror, offeree, escrowAddr,
+		escrowOpenSign, escrowOpenArgs,
+		escrowCloseSign, escrowCloseArgs,
 		ids,
 	)
 	if err != nil {
@@ -131,6 +131,45 @@ func (manager *Manager) Reject(ctx context.Context, offerId ablCommon.ID) error 
 	return nil
 }
 
+func (manager *Manager) GetOfferCompact(offerId ablCommon.ID) (*OfferCompact, error) {
+	from, to, escrow, reverted, err := manager.contract.GetOfferCompact(nil, offerId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &OfferCompact{
+		From:     from,
+		To:       to,
+		Escrow:   escrow,
+		Reverted: reverted,
+	}, nil
+}
+
+func (manager *Manager) GetOffer(offerId ablCommon.ID) (*Offer, error) {
+	from, to, dataIds, addr, openSign, openArgs, closeSign, closeArgs, status, reverted, err := manager.contract.GetOffer(nil, offerId)
+	if err != nil {
+		return nil, err
+	}
+
+	escrow := &Escrow{
+		Addr:      addr,
+		OpenSign:  openSign,
+		OpenArgs:  openArgs,
+		CloseSign: closeSign,
+		CloseArgs: closeArgs,
+	}
+
+	offer := &Offer{
+		From:     from,
+		To:       to,
+		DataIds:  dataIds,
+		Escrow:   escrow,
+		Status:   status,
+		Reverted: reverted,
+	}
+	return offer, nil
+}
+
 func (manager *Manager) GetReceiptsByOfferor(offeror ethCommon.Address) ([][8]byte, error) {
 	return manager.contract.GetReceiptsByOfferor(nil, offeror)
 }
@@ -143,20 +182,8 @@ func (manager *Manager) GetReceiptsByEscrow(escrow ethCommon.Address) ([][8]byte
 	return manager.contract.GetReceiptsByEscrow(nil, escrow)
 }
 
-func (manager *Manager) CloseOrder(ctx context.Context, offerId ablCommon.ID, abi abi.ABI, args ...interface{}) error {
-	_, _, escrow, _, err := manager.contract.GetOfferCompact(nil, offerId)
-	if err != nil {
-		return err
-	}
-
-	contract := bind.NewBoundContract(
-		escrow, abi,
-		manager.client,
-		manager.client,
-		manager.client,
-	)
-
-	tx, err := contract.Transact(manager.client.Account(), "close", args...)
+func (manager *Manager) CloseOrder(ctx context.Context, offerId ablCommon.ID) error {
+	tx, err := manager.contract.Close(manager.client.Account(), offerId)
 	if err != nil {
 		return err
 	}

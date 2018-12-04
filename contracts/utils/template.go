@@ -169,21 +169,21 @@ var (
 		Contract *{{.Type}}Transactor // Generic write-only contract binding to access the raw methods on
 	}
 
-	{{range .Enums}}
-		type {{$contract.Type}}{{.Name}} int8
-		{{$name := .Name}}
-		const (
-			{{range $key, $value := .Member}}{{$name}}{{$key}} = {{$value}}
-			{{end}}
-		)
-	{{end}}
-
-	{{range .Structs}}
-		type {{$contract.Type}}{{.Name}} struct {
-			{{range $key, $value := .Member}}{{$key}}	{{$value}}
-			{{end}}
-		}
-	{{end}}
+	//{{range .Enums}}
+	//	type {{$contract.Type}}{{.Name}} int8
+	//	{{$name := .Name}}
+	//	const (
+	//		{{range $key, $value := .Member}}{{$name}}{{$key}} = {{$value}}
+	//		{{end}}
+	//	)
+	//{{end}}
+	//
+	//{{range .Structs}}
+	//	type {{$contract.Type}}{{.Name}} struct {
+	//		{{range $key, $value := .Member}}{{$key}}	{{$value}}
+	//		{{end}}
+	//	}
+	//{{end}}
 
 	func init() {
 		// convenient hacks for blockchain.Client

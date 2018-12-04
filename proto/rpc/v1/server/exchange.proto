@@ -38,8 +38,10 @@ message RichardianContract {
 
 message SmartContract {
     airbloc.rpc.v1.Address address = 1;
-    bytes selector = 2;
-    bytes arguments = 3;
+    bytes openSign = 2;
+    bytes openArgs = 3;
+    bytes closeSign = 4;
+    bytes closeArgs = 5;
 }
 
 message Contract {

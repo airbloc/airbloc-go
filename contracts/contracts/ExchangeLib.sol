@@ -9,8 +9,23 @@ library ExchangeLib {
 
     struct Escrow {
         address addr;
-        bytes4  sign;
-        bytes   args;
+        bytes4  openSign;
+        bytes   openArgs;
+        bytes4  closeSign;
+        bytes   closeArgs;
+    }
+
+    function exec(
+        Escrow storage _escrow,
+        bytes4 _sign,
+        bytes memory _args
+    ) internal returns (bool) {
+        return _escrow.addr.delegatecall(
+            abi.encodePacked(
+                _sign,
+                _args      
+            )
+        );
     }
 
     struct Offer {
@@ -85,24 +100,26 @@ library ExchangeLib {
     ) internal returns (bool) {
         Offer storage offer = _orderbook.orders[_offerId];
         Escrow storage escrow = offer.escrow;
+
         require(offer.status == Status.SETTLED, "settled state only");
         require(msg.sender == offer.to, "only escrow can open transaction");
+
         offer.status = Status.OPENED;
-        return escrow.addr.delegatecall(
-            abi.encodePacked(
-                escrow.sign,
-                escrow.args      
-            )
-        );
+        return exec(escrow, escrow.openSign,escrow.openArgs);
     }
 
     function close(
         Orderbook storage _orderbook,
         bytes8 _offerId
-    ) internal {
+    ) internal returns (bool) {
         Offer storage offer = _orderbook.orders[_offerId];
+        Escrow storage escrow = offer.escrow;
+      
+        require(offer.status == Status.OPENED, "opened state only");
         require(msg.sender == offer.escrow.addr, "only contract can close transaction");
+
         offer.status = Status.CLOSED;
+        return exec(escrow, escrow.closeSign, escrow.closeArgs);
     }
 
     function getOffer(

@@ -95,6 +95,10 @@ type OwnableTransactorRaw struct {
 	Contract *OwnableTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+//
+//
+//
+
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["Ownable"] = (&Ownable{}).new

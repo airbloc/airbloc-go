@@ -24,8 +24,14 @@ func IDFromString(idStr string) (ID, error) {
 	if err != nil {
 		return id, err
 	}
-	copy(id[:], byteId)
+	copy(id[:], byteId[:IDLength])
 	return id, nil
+}
+
+func IDFromBytes(idBytes []byte) ID {
+	var id ID
+	copy(id[:], idBytes[:IDLength])
+	return id
 }
 
 func GenerateID(issuer common.Address, time time.Time, seed []byte) (id ID) {
@@ -67,8 +73,4 @@ func (id *ID) UnmarshalJSON(b []byte) error {
 
 func (id *ID) MarshalJSON() ([]byte, error) {
 	return json.Marshal(id.String())
-}
-
-func AddresFromBytes(rawAddr []byte) common.Address {
-	return common.BytesToAddress(rawAddr)
 }
