@@ -205,14 +205,16 @@
   version = "v1.1.1"
 
 [[projects]]
-  digest = "1:5eae7496bdb74a6c7592bc74ea3da8a6a61a361fd52682820900d755bb144194"
+  digest = "1:60bfcd256ec46ee9dc194a84b5c3851b91bf3edd6fbb9600d57b122e9fdb6cc6"
   name = "github.com/golang/protobuf"
   packages = [
     "jsonpb",
     "proto",
+    "protoc-gen-go",
     "protoc-gen-go/descriptor",
     "protoc-gen-go/generator",
     "protoc-gen-go/generator/internal/remap",
+    "protoc-gen-go/grpc",
     "protoc-gen-go/plugin",
     "ptypes",
     "ptypes/any",
@@ -1366,9 +1368,10 @@
   version = "v0.3.0"
 
 [[projects]]
-  digest = "1:1b3b20088f8ae64f4c20787c0f3602c2fd154d0b3386766cfa2c92992621ddf8"
+  digest = "1:0ff5d79ff7df5c47800f11c139615b2e485efd0014b74257c1f46cb6cb3bb84d"
   name = "google.golang.org/genproto"
   packages = [
+    "googleapis/api/annotations",
     "googleapis/rpc/status",
     "protobuf/field_mask",
   ]
@@ -1450,6 +1453,7 @@
     "github.com/ethereum/go-ethereum/core/types",
     "github.com/ethereum/go-ethereum/crypto",
     "github.com/ethereum/go-ethereum/crypto/ecies",
+    "github.com/ethereum/go-ethereum/crypto/secp256k1",
     "github.com/ethereum/go-ethereum/crypto/sha3",
     "github.com/ethereum/go-ethereum/ethclient",
     "github.com/ethereum/go-ethereum/event",
@@ -1458,6 +1462,7 @@
     "github.com/gogo/protobuf/proto",
     "github.com/golang/protobuf/jsonpb",
     "github.com/golang/protobuf/proto",
+    "github.com/golang/protobuf/protoc-gen-go",
     "github.com/grpc-ecosystem/go-grpc-middleware",
     "github.com/grpc-ecosystem/grpc-gateway/runtime",
     "github.com/grpc-ecosystem/grpc-gateway/utilities",
@@ -1496,6 +1501,7 @@
     "golang.org/x/crypto/pbkdf2",
     "golang.org/x/crypto/sha3",
     "golang.org/x/net/context",
+    "google.golang.org/genproto/googleapis/api/annotations",
     "google.golang.org/grpc",
     "google.golang.org/grpc/codes",
     "google.golang.org/grpc/grpclog",
