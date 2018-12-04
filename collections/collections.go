@@ -39,7 +39,7 @@ func New(
 
 func (s *Collections) Register(ctx context.Context, collection *Collection) (common.ID, error) {
 	// damn EVM
-	dataProducerRatio := big.NewFloat(collection.Policy.DataProvider)
+	dataProducerRatio := big.NewFloat(collection.IncentivePolicy.DataProvider)
 	dataProducerRatio.Mul(dataProducerRatio, big.NewFloat(100*params.Ether))
 	solidityDataProducerRatio := new(big.Int)
 	dataProducerRatio.Int(solidityDataProducerRatio)
@@ -47,7 +47,7 @@ func (s *Collections) Register(ctx context.Context, collection *Collection) (com
 	tx, err := s.contract.Register(
 		s.client.Account(),
 		collection.AppId,
-		collection.SchemaId,
+		collection.Schema.Id,
 		solidityDataProducerRatio,
 	)
 
@@ -69,7 +69,8 @@ func (s *Collections) Register(ctx context.Context, collection *Collection) (com
 	// save to metadb
 	metadata := map[string]interface{}{
 		"id":       collectionId.String(),
-		"schemaId": collection.SchemaId.String(),
+		"appId":    collection.AppId.String(),
+		"schemaId": collection.Schema.Id.String(),
 	}
 	if _, err := s.metaDb.Create(metadata, nil); err != nil {
 		return collectionId, errors.Wrap(err, "failed to save metadata")
@@ -113,14 +114,14 @@ func (s *Collections) Get(id common.ID) (*Collection, error) {
 	dataProviderRatioPercentage.Div(result.IncentiveRatioSelf, big.NewInt(params.Ether))
 	dataProviderRatio := float64(dataProviderRatioPercentage.Int64() / 100)
 
-	return &Collection{
-		AppId:    result.AppId,
-		SchemaId: result.SchemaId,
-		Policy: &IncentivePolicy{
+	return NewCollection(
+		result.AppId,
+		result.SchemaId,
+		IncentivePolicy{
 			DataProvider: dataProviderRatio,
 			DataOwner:    1 - dataProviderRatio,
 		},
-	}, nil
+	), nil
 }
 
 func (s *Collections) Exists(id common.ID) (bool, error) {

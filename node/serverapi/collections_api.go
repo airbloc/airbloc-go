@@ -34,16 +34,16 @@ func (api *CollectionsAPI) Create(ctx context.Context, req *pb.CreateCollectionR
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid app ID: %s", req.GetAppId())
 	}
 
-	collection := &collections.Collection{
-		AppId:    appId,
-		SchemaId: schemaId,
-		Policy: &collections.IncentivePolicy{
+	collection := collections.NewCollection(
+		appId,
+		schemaId,
+		collections.IncentivePolicy{
 			DataProvider:  req.Policy.DataProvider,
 			DataProcessor: req.Policy.DataProcessor,
 			DataRelayer:   req.Policy.DataRelayer,
 			DataOwner:     req.Policy.DataOwner,
 		},
-	}
+	)
 	collectionId, err := api.collections.Register(ctx, collection)
 	if err != nil {
 		return nil, err
