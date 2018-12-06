@@ -41,7 +41,7 @@ type Service struct {
 func NewService(backend node.Backend) (node.Service, error) {
 	var accountIds []ablCommon.ID
 	for _, accIdStr := range backend.Config().UserDelegate.AccountIds {
-		accountId, err := ablCommon.IDFromString(accIdStr)
+		accountId, err := ablCommon.HexToID(accIdStr)
 		if err != nil {
 			return nil, errors.Wrapf(err, "invalid account ID: %s", accIdStr)
 		}
@@ -89,7 +89,7 @@ func (service *Service) Start() error {
 }
 
 func (service *Service) registerDAuthHandler(accountId ablCommon.ID) {
-	accId := accountId.String()
+	accId := accountId.Hex()
 	dauthReq := &pb.DAuthRequest{}
 
 	service.p2p.SubscribeTopic("dauth-allow-"+accId, dauthReq, service.createDAuthHandler(accountId, true))
@@ -104,7 +104,7 @@ func (service *Service) createDAuthHandler(accountId ablCommon.ID, allow bool) p
 			return
 		}
 
-		collectionId, err := ablCommon.IDFromString(request.CollectionId)
+		collectionId, err := ablCommon.HexToID(request.CollectionId)
 		if err != nil {
 			log.Println("error: Invalid Collection ID", collectionId, err.Error())
 			return
@@ -135,9 +135,9 @@ func (service *Service) createDAuthHandler(accountId ablCommon.ID, allow bool) p
 		}
 		var topicName string
 		if allow {
-			topicName = fmt.Sprintf("dauth-allow-%s-response", accountId.String())
+			topicName = fmt.Sprintf("dauth-allow-%s-response", accountId.Hex())
 		} else {
-			topicName = fmt.Sprintf("dauth-deny-%s-response", accountId.String())
+			topicName = fmt.Sprintf("dauth-deny-%s-response", accountId.Hex())
 		}
 		if err := server.Send(ctx, response, topicName, message.SenderInfo.ID); err != nil {
 			log.Println("error: Failed to send response to data provider:", err.Error())
@@ -159,11 +159,11 @@ func (service *Service) signUpHandler(server p2p.Server, ctx context.Context, me
 	}
 
 	service.log.Info("Created account %s by request from the data provider %s",
-		accountId.String(), message.SenderAddr.Hex())
+		accountId.Hex(), message.SenderAddr.Hex())
 	service.AddUser(accountId)
 
 	response := &pb.DAuthSignUpResponse{
-		UserId: accountId.String(),
+		UserId: accountId.Hex(),
 	}
 	if err = server.Send(context.Background(), response, "dauth-signup-response", message.SenderInfo.ID); err != nil {
 		log.Println("error: Failed to send response to data provider:", err.Error())

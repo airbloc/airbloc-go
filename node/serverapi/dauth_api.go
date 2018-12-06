@@ -5,8 +5,8 @@ import (
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/dauth"
 	"github.com/airbloc/airbloc-go/node"
-	commonpb "github.com/airbloc/airbloc-go/proto/rpc/v1"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
+	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -31,30 +31,30 @@ func (api *DAuthAPI) SignIn(ctx context.Context, req *pb.SignInRequest) (*pb.Sig
 	}, nil
 }
 
-func (api *DAuthAPI) Allow(ctx context.Context, req *pb.DAuthRequest) (*commonpb.Result, error) {
-	collectionId, err := common.IDFromString(req.GetCollectionId())
+func (api *DAuthAPI) Allow(ctx context.Context, req *pb.DAuthRequest) (*empty.Empty, error) {
+	collectionId, err := common.HexToID(req.GetCollectionId())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid collection ID: %s", req.GetCollectionId())
 	}
-	accountId, err := common.IDFromString(req.GetAccountId())
+	accountId, err := common.HexToID(req.GetAccountId())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid account ID: %s", req.GetAccountId())
 	}
 	err = api.dauthClient.Allow(ctx, collectionId, accountId)
-	return &commonpb.Result{}, err
+	return &empty.Empty{}, err
 }
 
-func (api *DAuthAPI) Deny(ctx context.Context, req *pb.DAuthRequest) (*commonpb.Result, error) {
-	collectionId, err := common.IDFromString(req.GetCollectionId())
+func (api *DAuthAPI) Deny(ctx context.Context, req *pb.DAuthRequest) (*empty.Empty, error) {
+	collectionId, err := common.HexToID(req.GetCollectionId())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid collection ID: %s", req.GetCollectionId())
 	}
-	accountId, err := common.IDFromString(req.GetAccountId())
+	accountId, err := common.HexToID(req.GetAccountId())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid account ID: %s", req.GetAccountId())
 	}
 	err = api.dauthClient.Deny(ctx, collectionId, accountId)
-	return &commonpb.Result{}, err
+	return &empty.Empty{}, err
 }
 
 func (api *DAuthAPI) AttachToAPI(service *node.APIService) {

@@ -45,7 +45,7 @@ func (manager *Manager) CreateTemporary(identityHash ethCommon.Hash) (ablCommon.
 		return ablCommon.ID{}, errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 	accountId := ablCommon.ID(event.AccountId)
-	manager.log.Info("New temporary account created.", logger.Attrs{"id": accountId.String()})
+	manager.log.Info("New temporary account created.", logger.Attrs{"id": accountId.Hex()})
 
 	return accountId, nil
 }

@@ -10,9 +10,9 @@ import (
 
 	"github.com/airbloc/airbloc-go/apps"
 	ablCommon "github.com/airbloc/airbloc-go/common"
-	commonpb "github.com/airbloc/airbloc-go/proto/rpc/v1"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/pkg/errors"
 )
 
@@ -25,8 +25,8 @@ func NewAppsAPI(backend node.Backend) (node.API, error) {
 	return &AppsAPI{appsManager}, nil
 }
 
-func (api *AppsAPI) NewOwner(ctx context.Context, req *pb.NewOwnerRequest) (*commonpb.Result, error) {
-	appId, err := ablCommon.IDFromString(req.GetAppId())
+func (api *AppsAPI) NewOwner(ctx context.Context, req *pb.NewOwnerRequest) (*empty.Empty, error) {
+	appId, err := ablCommon.HexToID(req.GetAppId())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid app ID: %s", req.GetAppId())
 	}
@@ -36,11 +36,11 @@ func (api *AppsAPI) NewOwner(ctx context.Context, req *pb.NewOwnerRequest) (*com
 	if err != nil {
 		return nil, err
 	}
-	return &commonpb.Result{}, nil
+	return &empty.Empty{}, nil
 }
 
 func (api *AppsAPI) CheckOwner(ctx context.Context, req *pb.CheckOwnerRequest) (*pb.CheckOwnerResult, error) {
-	appId, err := ablCommon.IDFromString(req.GetAppId())
+	appId, err := ablCommon.HexToID(req.GetAppId())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid app ID: %s", req.GetAppId())
 	}
@@ -62,8 +62,8 @@ func (api *AppsAPI) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.
 		AppId: appId.String(),
 	}, nil
 }
-func (api *AppsAPI) Unregister(ctx context.Context, req *pb.UnregisterRequest) (*commonpb.Result, error) {
-	appId, err := ablCommon.IDFromString(req.GetAppId())
+func (api *AppsAPI) Unregister(ctx context.Context, req *pb.UnregisterRequest) (*empty.Empty, error) {
+	appId, err := ablCommon.HexToID(req.GetAppId())
 	if err != nil {
 		return nil, errors.Wrap(err, "api : invalid app ID")
 	}
@@ -72,7 +72,7 @@ func (api *AppsAPI) Unregister(ctx context.Context, req *pb.UnregisterRequest) (
 	if err != nil {
 		return nil, err
 	}
-	return &commonpb.Result{}, nil
+	return &empty.Empty{}, nil
 }
 
 func (api *AppsAPI) AttachToAPI(service *node.APIService) {

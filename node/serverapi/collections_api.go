@@ -24,12 +24,12 @@ func NewCollectionsAPI(backend node.Backend) (node.API, error) {
 }
 
 func (api *CollectionsAPI) Create(ctx context.Context, req *pb.CreateCollectionRequest) (*pb.CreateCollectionResponse, error) {
-	schemaId, err := common.IDFromString(req.GetSchemaId())
+	schemaId, err := common.HexToID(req.GetSchemaId())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid schema ID: %s", req.GetSchemaId())
 	}
 
-	appId, err := common.IDFromString(req.GetAppId())
+	appId, err := common.HexToID(req.GetAppId())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid app ID: %s", req.GetAppId())
 	}

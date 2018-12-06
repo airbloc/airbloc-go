@@ -86,7 +86,7 @@ func generateBundleNameOf(bundle *data.Bundle) string {
 	token := hex.EncodeToString(tokenBytes)
 
 	currentTime := time.Now().Format("20060102150405")
-	return fmt.Sprintf("%s-%s-%s.bundle", currentTime, bundle.Collection.String(), token)
+	return fmt.Sprintf("%s-%s-%s.bundle", currentTime, bundle.Collection.Hex(), token)
 }
 
 func (warehouse *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
@@ -114,14 +114,14 @@ func (warehouse *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to register bundle to blockchain")
 	}
-	createdBundle.Id = fmt.Sprintf("%s/%d", createdBundle.Collection.String(), bundleIndex)
+	createdBundle.Id = fmt.Sprintf("%s/%d", createdBundle.Collection.Hex(), bundleIndex)
 
 	// save metadata to make the bundle searchable
 	bundleInfo := map[string]interface{}{
 		"bundleId":   createdBundle.Id,
 		"uri":        createdBundle.Uri,
-		"provider":   createdBundle.Provider.String(),
-		"collection": createdBundle.Collection.String(),
+		"provider":   createdBundle.Provider.Hex(),
+		"collection": createdBundle.Collection.Hex(),
 		"dataCount":  createdBundle.DataCount,
 		"ingestedAt": ingestedAt,
 	}

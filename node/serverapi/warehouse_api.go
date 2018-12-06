@@ -64,14 +64,14 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 			return err
 		}
 		if bundleStream == nil {
-			collectionId, err := common.IDFromString(request.GetCollection())
+			collectionId, err := common.HexToID(request.GetCollection())
 			if err != nil {
 				return status.Errorf(codes.InvalidArgument, "Invalid collection ID: %s", request.GetCollection())
 			}
 			bundleStream = api.warehouse.CreateBundle(collectionId)
 		}
 
-		ownerAnid, err := common.IDFromString(request.GetOwnerId())
+		ownerAnid, err := common.HexToID(request.GetOwnerId())
 		if err != nil {
 			return status.Errorf(codes.InvalidArgument, "Invalid user ANID: %s", request.GetOwnerId())
 		}
@@ -107,14 +107,14 @@ func (api *WarehouseAPI) StoreEncryptedBundle(stream pb.Warehouse_StoreEncrypted
 			return err
 		}
 		if bundleStream == nil {
-			collectionId, err := common.IDFromString(request.GetCollection())
+			collectionId, err := common.HexToID(request.GetCollection())
 			if err != nil {
 				return errors.Wrapf(err, "failed to parse collection ID (%s)", request.Collection)
 			}
 			bundleStream = api.warehouse.CreateBundle(collectionId)
 		}
 
-		ownerAnid, err := common.IDFromString(request.GetOwnerId())
+		ownerAnid, err := common.HexToID(request.GetOwnerId())
 		if err != nil {
 			return errors.Wrapf(err, "failed to parse ANID %s", request.GetOwnerId())
 		}

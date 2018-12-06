@@ -4,9 +4,9 @@ import (
 	ablCommon "github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/exchange"
 	"github.com/airbloc/airbloc-go/node"
-	commonpb "github.com/airbloc/airbloc-go/proto/rpc/v1"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/golang/protobuf/ptypes/empty"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -21,7 +21,7 @@ func NewExchangeAPI(backend node.Backend) (node.API, error) {
 	return &ExchangeAPI{ex}, nil
 }
 
-func (api *ExchangeAPI) Prepare(ctx context.Context, req *pb.OrderRequest) (*commonpb.Hash, error) {
+func (api *ExchangeAPI) Prepare(ctx context.Context, req *pb.OrderRequest) (*pb.OfferId, error) {
 	contract := req.GetContract().GetSmartEscrow()
 
 	to := common.BytesToAddress(req.GetTo().GetAddress())
@@ -46,11 +46,11 @@ func (api *ExchangeAPI) Prepare(ctx context.Context, req *pb.OrderRequest) (*com
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to prepare order request")
 	}
-	return &commonpb.Hash{Hash: offerId[:]}, err
+	return &pb.OfferId{OfferId: offerId.Hex()}, err
 }
 
-func (api *ExchangeAPI) AddDataIds(ctx context.Context, req *pb.DataIds) (*commonpb.Result, error) {
-	offerId := ablCommon.IDFromBytes(req.GetOfferId().GetHash())
+func (api *ExchangeAPI) AddDataIds(ctx context.Context, req *pb.DataIds) (*empty.Empty, error) {
+	offerId := ablCommon.HexToID(req.GetOfferId())
 	rawDataIds := req.GetDataIds()
 	dataIds := make([][16]byte, len(rawDataIds))
 	for i, id := range rawDataIds {
@@ -61,38 +61,38 @@ func (api *ExchangeAPI) AddDataIds(ctx context.Context, req *pb.DataIds) (*commo
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to add data ids")
 	}
-	return &commonpb.Result{}, nil
+	return &empty.Empty{}, nil
 }
 
-func (api *ExchangeAPI) Order(ctx context.Context, req *commonpb.Hash) (*commonpb.Result, error) {
-	offerId := ablCommon.IDFromBytes(req.GetHash())
+func (api *ExchangeAPI) Order(ctx context.Context, req *pb.OfferId) (*empty.Empty, error) {
+	offerId := ablCommon.HexToID(req.GetOfferId())
 	err := api.manager.Order(ctx, offerId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to order")
 	}
-	return &commonpb.Result{}, nil
+	return &empty.Empty{}, nil
 }
 
-func (api *ExchangeAPI) Settle(ctx context.Context, req *commonpb.Hash) (*commonpb.Result, error) {
-	offerId := ablCommon.IDFromBytes(req.GetHash())
+func (api *ExchangeAPI) Settle(ctx context.Context, req *pb.OfferId) (*empty.Empty, error) {
+	offerId := ablCommon.HexToID(req.GetOfferId())
 	err := api.manager.Settle(ctx, offerId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to settle")
 	}
-	return &commonpb.Result{}, nil
+	return &empty.Empty{}, nil
 }
 
-func (api *ExchangeAPI) Reject(ctx context.Context, req *commonpb.Hash) (*commonpb.Result, error) {
-	offerId := ablCommon.IDFromBytes(req.GetHash())
+func (api *ExchangeAPI) Reject(ctx context.Context, req *pb.OfferId) (*empty.Empty, error) {
+	offerId := ablCommon.HexToID(req.GetOfferId())
 	err := api.manager.Reject(ctx, offerId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to reject")
 	}
-	return &commonpb.Result{}, nil
+	return &empty.Empty{}, nil
 }
 
-func (api *ExchangeAPI) CloseOrder(ctx context.Context, req *commonpb.Hash) (*pb.Receipt, error) {
-	offerId := ablCommon.IDFromBytes(req.GetHash())
+func (api *ExchangeAPI) CloseOrder(ctx context.Context, req *pb.OfferId) (*pb.Receipt, error) {
+	offerId := ablCommon.HexToID(req.GetOfferId())
 
 	err := api.manager.CloseOrder(ctx, offerId)
 	if err != nil {
@@ -102,8 +102,8 @@ func (api *ExchangeAPI) CloseOrder(ctx context.Context, req *commonpb.Hash) (*pb
 }
 
 // TODO: hard-coded chainID
-func (api *ExchangeAPI) GetOffer(ctx context.Context, req *commonpb.Hash) (*pb.Offer, error) {
-	offerId := ablCommon.IDFromBytes(req.GetHash())
+func (api *ExchangeAPI) GetOffer(ctx context.Context, req *pb.OfferId) (*pb.Offer, error) {
+	offerId := ablCommon.HexToID(req.GetOfferId())
 
 	offer, err := api.manager.GetOffer(offerId)
 	if err != nil {
@@ -136,8 +136,8 @@ func (api *ExchangeAPI) GetOffer(ctx context.Context, req *commonpb.Hash) (*pb.O
 }
 
 // TODO: hard-coded chainID
-func (api *ExchangeAPI) GetOfferCompact(ctx context.Context, req *commonpb.Hash) (*pb.OfferCompact, error) {
-	offerId := ablCommon.IDFromBytes(req.GetHash())
+func (api *ExchangeAPI) GetOfferCompact(ctx context.Context, req *pb.OfferId) (*pb.OfferCompact, error) {
+	offerId := ablCommon.HexToID(req.GetOfferId())
 
 	offer, err := api.manager.GetOfferCompact(offerId)
 	if err != nil {
@@ -161,15 +161,15 @@ func (api *ExchangeAPI) GetReceiptsByOfferor(ctx context.Context, req *commonpb.
 		return nil, status.Errorf(codes.Internal, "Failed to get receipts")
 	}
 
-	rawOffers := make([]*commonpb.Hash, len(offers))
+	rawOffers := make([]*pb.OfferId, len(offers))
 	for i, offer := range offers {
-		rawOffers[i] = &commonpb.Hash{Hash: offer[:]}
+		rawOffers[i] = &pb.OfferId{OfferId: .}
 	}
 
 	return &pb.Offers{OfferIds: rawOffers}, nil
 }
 
-func (api *ExchangeAPI) GetReceiptsByOfferee(ctx context.Context, req *commonpb.Address) (*pb.Offers, error) {
+func (api *ExchangeAPI) GetReceiptsByOfferee(ctx context.Context, req *ablCommon.Address) (*pb.Offers, error) {
 	offeree := common.BytesToAddress(req.GetAddress())
 
 	offers, err := api.manager.GetReceiptsByOfferee(offeree)
@@ -177,9 +177,9 @@ func (api *ExchangeAPI) GetReceiptsByOfferee(ctx context.Context, req *commonpb.
 		return nil, status.Errorf(codes.Internal, "Failed to get receipts")
 	}
 
-	rawOffers := make([]*commonpb.Hash, len(offers))
+	rawOffers := make([]*pb.OfferId, len(offers))
 	for i, offer := range offers {
-		rawOffers[i] = &commonpb.Hash{Hash: offer[:]}
+		rawOffers[i] = &pb.OfferId{OfferId: offer[:]}
 	}
 
 	return &pb.Offers{OfferIds: rawOffers}, nil
@@ -193,9 +193,9 @@ func (api *ExchangeAPI) GetReceiptsByEscrow(ctx context.Context, req *commonpb.A
 		return nil, status.Errorf(codes.Internal, "Failed to get receipts")
 	}
 
-	rawOffers := make([]*commonpb.Hash, len(offers))
+	rawOffers := make([]*pb.OfferId, len(offers))
 	for i, offer := range offers {
-		rawOffers[i] = &commonpb.Hash{Hash: offer[:]}
+		rawOffers[i] = &pb.OfferId{OfferId: offer[:]}
 	}
 
 	return &pb.Offers{OfferIds: rawOffers}, nil
