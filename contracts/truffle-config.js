@@ -29,7 +29,7 @@ const config = {
         },
         test: {
             provider: getProviderOf('test'),
-            network_id: 2470,
+            network_id: 1337,
             gas: 3000000
         },
         klaytn: {
