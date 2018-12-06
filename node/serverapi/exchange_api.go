@@ -7,7 +7,6 @@ import (
 	commonpb "github.com/airbloc/airbloc-go/proto/rpc/v1"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/ethereum/go-ethereum/common"
-	googlepb "github.com/golang/protobuf/ptypes/empty"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -25,8 +24,7 @@ func NewExchangeAPI(backend node.Backend) (node.API, error) {
 func (api *ExchangeAPI) Prepare(ctx context.Context, req *pb.OrderRequest) (*commonpb.Hash, error) {
 	contract := req.GetContract().GetSmartEscrow()
 
-	from := common.BytesToAddress(req.GetFrom().GetAddress())
-	to := common.BytesToAddress(req.GetFrom().GetAddress())
+	to := common.BytesToAddress(req.GetTo().GetAddress())
 	escrowAddr := common.BytesToAddress(contract.GetAddress().GetAddress())
 
 	var escrowOpenSign, escrowCloseSign [4]byte
@@ -40,8 +38,7 @@ func (api *ExchangeAPI) Prepare(ctx context.Context, req *pb.OrderRequest) (*com
 	}
 
 	offerId, err := api.manager.Prepare(
-		ctx,
-		from, to, escrowAddr,
+		ctx, to, escrowAddr,
 		escrowOpenSign, contract.GetOpenArgs(),
 		escrowCloseSign, contract.GetCloseSign(),
 		dataIds...,
@@ -52,7 +49,7 @@ func (api *ExchangeAPI) Prepare(ctx context.Context, req *pb.OrderRequest) (*com
 	return &commonpb.Hash{Hash: offerId[:]}, err
 }
 
-func (api *ExchangeAPI) AddDataIds(ctx context.Context, req *pb.DataIds) (*googlepb.Empty, error) {
+func (api *ExchangeAPI) AddDataIds(ctx context.Context, req *pb.DataIds) (*commonpb.Result, error) {
 	offerId := ablCommon.IDFromBytes(req.GetOfferId().GetHash())
 	rawDataIds := req.GetDataIds()
 	dataIds := make([][16]byte, len(rawDataIds))
@@ -64,34 +61,34 @@ func (api *ExchangeAPI) AddDataIds(ctx context.Context, req *pb.DataIds) (*googl
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to add data ids")
 	}
-	return &googlepb.Empty{}, nil
+	return &commonpb.Result{}, nil
 }
 
-func (api *ExchangeAPI) Order(ctx context.Context, req *commonpb.Hash) (*googlepb.Empty, error) {
+func (api *ExchangeAPI) Order(ctx context.Context, req *commonpb.Hash) (*commonpb.Result, error) {
 	offerId := ablCommon.IDFromBytes(req.GetHash())
 	err := api.manager.Order(ctx, offerId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to order")
 	}
-	return &googlepb.Empty{}, nil
+	return &commonpb.Result{}, nil
 }
 
-func (api *ExchangeAPI) Settle(ctx context.Context, req *commonpb.Hash) (*googlepb.Empty, error) {
+func (api *ExchangeAPI) Settle(ctx context.Context, req *commonpb.Hash) (*commonpb.Result, error) {
 	offerId := ablCommon.IDFromBytes(req.GetHash())
 	err := api.manager.Settle(ctx, offerId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to settle")
 	}
-	return &googlepb.Empty{}, nil
+	return &commonpb.Result{}, nil
 }
 
-func (api *ExchangeAPI) Reject(ctx context.Context, req *commonpb.Hash) (*googlepb.Empty, error) {
+func (api *ExchangeAPI) Reject(ctx context.Context, req *commonpb.Hash) (*commonpb.Result, error) {
 	offerId := ablCommon.IDFromBytes(req.GetHash())
 	err := api.manager.Reject(ctx, offerId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to reject")
 	}
-	return &googlepb.Empty{}, nil
+	return &commonpb.Result{}, nil
 }
 
 func (api *ExchangeAPI) CloseOrder(ctx context.Context, req *commonpb.Hash) (*pb.Receipt, error) {

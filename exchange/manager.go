@@ -24,7 +24,7 @@ func NewManager(client blockchain.TxClient) *Manager {
 
 func (manager *Manager) Prepare(
 	ctx context.Context,
-	offeror, offeree, escrowAddr ethCommon.Address,
+	offeree, escrowAddr ethCommon.Address,
 	escrowOpenSign [4]byte, escrowOpenArgs []byte,
 	escrowCloseSign [4]byte, escrowCloseArgs []byte,
 	dataIds ...[16]byte,
@@ -38,7 +38,7 @@ func (manager *Manager) Prepare(
 	}
 	tx, err := manager.contract.Prepare(
 		manager.client.Account(),
-		offeror, offeree, escrowAddr,
+		offeree, escrowAddr,
 		escrowOpenSign, escrowOpenArgs,
 		escrowCloseSign, escrowCloseArgs,
 		ids,
