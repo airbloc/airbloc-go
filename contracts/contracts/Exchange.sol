@@ -2,8 +2,9 @@ pragma solidity ^0.4.24;
 
 import "./ExchangeLib.sol";
 import "openzeppelin-solidity/contracts/introspection/IERC165.sol";
+import "openzeppelin-solidity/contracts/utils/ReentrancyGuard.sol";
 
-contract Exchange {
+contract Exchange is ReentrancyGuard {
     using ExchangeLib for ExchangeLib.Offer;
     using ExchangeLib for ExchangeLib.Orderbook;
 
@@ -26,7 +27,6 @@ contract Exchange {
     }
 
     function prepare(
-        address _from,
         address _to,
         address _escrow,
         bytes4 _escrowOpenSign,
@@ -35,7 +35,6 @@ contract Exchange {
         bytes memory _escrowCloseArgs,
         bytes16[] memory _dataIds
     ) public {
-        require(_from != address(0), "invalid offeror address");
         require(_to != address(0), "invalid offere address");
         require(_escrow != address(0), "invalid contract address");
         require(IERC165(_escrow).supportsInterface(_escrowOpenSign), "open interface not supported");
@@ -43,7 +42,7 @@ contract Exchange {
 
         bytes8 offerId = orderbook.prepare(
             ExchangeLib.Offer({
-                from: _from,
+                from: msg.sender,
                 to: _to,
                 dataIds: _dataIds,
                 escrow: ExchangeLib.Escrow({
@@ -80,7 +79,7 @@ contract Exchange {
         emit OfferPresented(_offerId);
     }
 
-    function settle(bytes8 _offerId) public {
+    function settle(bytes8 _offerId) public nonReentrant {
         // add settle options
         orderbook.settle(_offerId);
         require(orderbook.open(_offerId), "failed to open escrow transaction");
@@ -92,7 +91,7 @@ contract Exchange {
         emit OfferRejected(_offerId);
     }
 
-    function close(bytes8 _offerId) public returns (bool) {
+    function close(bytes8 _offerId) public nonReentrant returns (bool) {
         ExchangeLib.Offer storage offer = _getOffer(_offerId);
 
         require(orderbook.close(_offerId), "failed to close escrow transaction");
