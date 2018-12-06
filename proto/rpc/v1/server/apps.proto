@@ -3,23 +3,23 @@ package airbloc.rpc.v1;
 
 option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
 
-import "proto/rpc/v1/types.proto";
+import "google/protobuf/empty.proto";
 
 service Apps {
-    rpc Register (RegisterRequest) returns (RegisterResult);
-    rpc Unregister (UnregisterRequest) returns (airbloc.rpc.v1.Result);
-    rpc NewOwner(NewOwnerRequest) returns (airbloc.rpc.v1.Result);
+    rpc Register (RegisterRequest) returns (google.protobuf.Empty);
+    rpc Unregister (UnregisterRequest) returns (google.protobuf.Empty);
+    rpc NewOwner(NewOwnerRequest) returns (google.protobuf.Empty);
     rpc CheckOwner(CheckOwnerRequest) returns (CheckOwnerResult);
 }
 
 message NewOwnerRequest {
-    string appId = 1;
-    string owner = 2;
+    string appId = 1; // ID
+    string owner = 2; // Address
 }
 
 message CheckOwnerRequest {
-    string appId = 1;
-    string owner = 2;
+    string appId = 1; // ID
+    string owner = 2; // Address
 }
 
 message CheckOwnerResult {
@@ -31,9 +31,9 @@ message RegisterRequest {
 }
 
 message RegisterResult {
-    string appId = 1;
+    string appId = 1; // ID
 }
 
 message UnregisterRequest {
-    string appId = 1;
+    string appId = 1; // ID
 }

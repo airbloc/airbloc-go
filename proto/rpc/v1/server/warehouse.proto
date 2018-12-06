@@ -3,7 +3,6 @@ package airbloc.rpc.v1;
 
 option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
 
-
 service Warehouse {
     rpc StoreBundle(stream RawDataRequest) returns (StoreResult);
     rpc StoreEncryptedBundle(stream EncryptedDataRequest) returns (StoreResult);
@@ -11,20 +10,20 @@ service Warehouse {
 }
 
 message RawDataRequest {
-    string collection = 1;
-    string ownerId = 2;
+    string collectionId = 1; // ID
+    string ownerId = 2; // ID
     string payload = 3;
 }
 
 message EncryptedDataRequest {
-    string collection = 1;
-    string ownerId = 2;
+    string collectionId = 1; // ID
+    string ownerId = 2; // ID
     bytes encryptedPayload = 3;
     bytes capsule = 4;
 }
 
 message StoreResult {
-    string bundleId = 1;
+    string bundleId = 1; // ID
     string uri = 2;
     uint64 dataCount = 3;
     uint64 gasUsed = 4;
