@@ -3,16 +3,14 @@ package airbloc.rpc.v1;
 
 option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
 
-import "google/protobuf/empty.proto";
-import "proto/rpc/v1/server/data.proto";
 import "proto/rpc/v1/types.proto";
 
 service Exchange {
     rpc Prepare(OrderRequest) returns (airbloc.rpc.v1.Hash);
-    rpc AddDataIds(DataIds) returns (google.protobuf.Empty);
-    rpc Order(airbloc.rpc.v1.Hash) returns (google.protobuf.Empty);
-    rpc Settle(airbloc.rpc.v1.Hash) returns (google.protobuf.Empty);
-    rpc Reject(airbloc.rpc.v1.Hash) returns (google.protobuf.Empty);
+    rpc AddDataIds(DataIds) returns (airbloc.rpc.v1.Result);
+    rpc Order(airbloc.rpc.v1.Hash) returns (airbloc.rpc.v1.Result);
+    rpc Settle(airbloc.rpc.v1.Hash) returns (airbloc.rpc.v1.Result);
+    rpc Reject(airbloc.rpc.v1.Hash) returns (airbloc.rpc.v1.Result);
     rpc CloseOrder(airbloc.rpc.v1.Hash) returns (Receipt);
 
     rpc GetOffer(airbloc.rpc.v1.Hash) returns (Offer);
@@ -61,10 +59,9 @@ message Receipt {
 }
 
 message OrderRequest {
-    airbloc.rpc.v1.Address from = 1;
-    airbloc.rpc.v1.Address to = 2;
-    Contract contract = 3;
-    repeated bytes dataIds = 4;
+    airbloc.rpc.v1.Address to = 1;
+    Contract contract = 2;
+    repeated bytes dataIds = 3;
 }
 
 message Offer {
