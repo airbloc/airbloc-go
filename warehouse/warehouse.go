@@ -184,7 +184,7 @@ func (warehouse *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error
 	return createdBundle, nil
 }
 
-func (warehouse *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (int, error) {
+func (warehouse *DataWarehouse) registerBundleOnChain(ctx context.Context, bundle *data.Bundle) (int, error) {
 	bundleDataHash, err := bundle.Hash()
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to get hash of the bundle data")
@@ -210,7 +210,7 @@ func (warehouse *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (int,
 		return 0, errors.Wrap(err, "failed to register a bundle to DataRegistry")
 	}
 
-	receipt, err := warehouse.ethclient.WaitMined(context.Background(), tx)
+	receipt, err := warehouse.ethclient.WaitMined(ctx, tx)
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to wait for tx to be mined")
 	}
