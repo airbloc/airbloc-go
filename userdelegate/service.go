@@ -120,9 +120,9 @@ func (service *Service) createDAuthHandler(accountId ablCommon.ID, allow bool) p
 		}
 
 		if allow {
-			err = service.dauth.AllowByDelegate(collectionId, accountId)
+			err = service.dauth.AllowByDelegate(ctx, collectionId, accountId)
 		} else {
-			err = service.dauth.DenyByDelegate(collectionId, accountId)
+			err = service.dauth.DenyByDelegate(ctx, collectionId, accountId)
 		}
 		if err != nil {
 			log.Println("error: Failed to modify DAuth settings: ", err.Error())
@@ -153,7 +153,7 @@ func (service *Service) signUpHandler(server p2p.Server, ctx context.Context, me
 	}
 
 	identityHash := ethCommon.HexToHash(request.GetIdentityHash())
-	accountId, err := service.accounts.CreateTemporary(identityHash)
+	accountId, err := service.accounts.CreateTemporary(ctx, identityHash)
 	if err != nil {
 		log.Println("error: Failed to create temporary account:", err.Error())
 	}
@@ -165,7 +165,7 @@ func (service *Service) signUpHandler(server p2p.Server, ctx context.Context, me
 	response := &pb.DAuthSignUpResponse{
 		UserId: accountId.Hex(),
 	}
-	if err = server.Send(context.Background(), response, "dauth-signup-response", message.SenderInfo.ID); err != nil {
+	if err = server.Send(ctx, response, "dauth-signup-response", message.SenderInfo.ID); err != nil {
 		log.Println("error: Failed to send response to data provider:", err.Error())
 	}
 }

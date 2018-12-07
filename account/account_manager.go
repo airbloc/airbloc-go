@@ -31,12 +31,12 @@ func NewManager(client blockchain.TxClient) *Manager {
 	}
 }
 
-func (manager *Manager) CreateTemporary(identityHash ethCommon.Hash) (ablCommon.ID, error) {
+func (manager *Manager) CreateTemporary(ctx context.Context, identityHash ethCommon.Hash) (ablCommon.ID, error) {
 	tx, err := manager.contract.CreateTemporary(manager.client.Account(), identityHash)
 	if err != nil {
 		return ablCommon.ID{}, err
 	}
-	receipt, err := manager.client.WaitMined(context.Background(), tx)
+	receipt, err := manager.client.WaitMined(ctx, tx)
 	if err != nil {
 		return ablCommon.ID{}, err
 	}
@@ -50,13 +50,13 @@ func (manager *Manager) CreateTemporary(identityHash ethCommon.Hash) (ablCommon.
 	return accountId, nil
 }
 
-func (manager *Manager) CreateUsingProxy(owner ethCommon.Address, passwordSignature []byte) (ablCommon.ID, error) {
+func (manager *Manager) CreateUsingProxy(ctx context.Context, owner ethCommon.Address, passwordSignature []byte) (ablCommon.ID, error) {
 	tx, err := manager.contract.CreateUsingProxy(manager.client.Account(), owner, passwordSignature)
 	if err != nil {
 		return ablCommon.ID{}, err
 	}
 
-	receipt, err := manager.client.WaitMined(context.Background(), tx)
+	receipt, err := manager.client.WaitMined(ctx, tx)
 	if err != nil {
 		return ablCommon.ID{}, err
 	}

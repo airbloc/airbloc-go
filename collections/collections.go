@@ -55,7 +55,7 @@ func (s *Collections) Register(ctx context.Context, collection *Collection) (com
 		return common.ID{}, err
 	}
 
-	receipt, err := s.client.WaitMined(context.Background(), tx)
+	receipt, err := s.client.WaitMined(ctx, tx)
 	if err != nil {
 		return common.ID{}, err
 	}

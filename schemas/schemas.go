@@ -36,7 +36,7 @@ func New(db metadb.Database, client blockchain.TxClient) *Schemas {
 	}
 }
 
-func (s *Schemas) Register(name string, schema map[string]interface{}) (common.ID, error) {
+func (s *Schemas) Register(ctx context.Context, name string, schema map[string]interface{}) (common.ID, error) {
 	rawSchema, err := json.Marshal(schema)
 	if err != nil {
 		return common.ID{}, errors.Wrap(err, "given schema is not a valid JSON schema")
@@ -54,7 +54,7 @@ func (s *Schemas) Register(name string, schema map[string]interface{}) (common.I
 		return common.ID{}, err
 	}
 
-	receipt, err := s.client.WaitMined(context.Background(), dtx)
+	receipt, err := s.client.WaitMined(ctx, dtx)
 	if err != nil {
 		return common.ID{}, errors.Wrap(err, "failed to wait for tx to be mined")
 	}
@@ -84,13 +84,13 @@ func (s *Schemas) NameExists(name string) (bool, error) {
 	return s.contract.NameExists(nil, hashedName)
 }
 
-func (s *Schemas) Unregister(id common.ID) error {
+func (s *Schemas) Unregister(ctx context.Context, id common.ID) error {
 	tx, err := s.contract.Unregister(s.client.Account(), id)
 	if err != nil {
 		return err
 	}
 
-	if _, err := s.client.WaitMined(context.Background(), tx); err != nil {
+	if _, err := s.client.WaitMined(ctx, tx); err != nil {
 		return err
 	}
 
