@@ -29,7 +29,7 @@ generate-proto:
 		do protoc -I/usr/local/include -I. \
 			-I$$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
 			--go_out=plugins=grpc:$$GOPATH/src \
-			--grpc-gateway_out=logtostderr=true:. \
+			--grpc-gateway_out=logtostderr=true:$$GOPATH/src \
 			$$PROTO; \
 	done
 
