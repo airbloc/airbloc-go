@@ -59,7 +59,7 @@ func (api *AppsAPI) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.
 		return nil, err
 	}
 	return &pb.RegisterResult{
-		AppId: appId.String(),
+		AppId: appId.Hex(),
 	}, nil
 }
 func (api *AppsAPI) Unregister(ctx context.Context, req *pb.UnregisterRequest) (*empty.Empty, error) {

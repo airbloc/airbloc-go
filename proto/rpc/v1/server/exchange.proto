@@ -15,9 +15,9 @@ service Exchange {
 
     rpc GetOffer(OfferId) returns (Offer);
     rpc GetOfferCompact(OfferId) returns (OfferCompact);
-    rpc GetReceiptsByOfferor(OfferId) returns (Offers);
-    rpc GetReceiptsByOfferee(OfferId) returns (Offers);
-    rpc GetReceiptsByEscrow(OfferId) returns (Offers);
+    rpc GetReceiptsByOfferor(ReceiptRequest) returns (Offers);
+    rpc GetReceiptsByOfferee(ReceiptRequest) returns (Offers);
+    rpc GetReceiptsByEscrow(ReceiptRequest) returns (Offers);
 }
 
 enum Status {
@@ -31,15 +31,15 @@ enum Status {
 }
 
 message RichardianContract {
-    bytes hash = 1;
+    string hash = 1; // Hash
 }
 
 message SmartContract {
-    string address = 1;
-    bytes openSign = 2;
-    bytes openArgs = 3;
-    bytes closeSign = 4;
-    bytes closeArgs = 5;
+    string address = 1; // Address
+    bytes openSign = 2; // [4]byte
+    bytes openArgs = 3; // []byte
+    bytes closeSign = 4; // [4]byte
+    bytes closeArgs = 5; // []byte
 }
 
 message Contract {
@@ -53,30 +53,33 @@ message Contract {
 }
 
 message Receipt {
-    string offerId = 1;
-    string from = 2;
-    string to = 3;
+    string offerId = 1; // ID
+    string from = 2; // Address
+    string to = 3; // Address
+}
+message ReceiptRequest {
+    string address = 1; // Address
 }
 
 message OrderRequest {
-    string to = 1;
+    string to = 1; // Address
     Contract contract = 2;
-    repeated bytes dataIds = 3;
+    repeated string dataIds = 3; // ID
 }
 
 message Offer {
-    string from = 1;
-    string to = 2;
-    repeated string dataIds = 3;
+    string from = 1; // Address
+    string to = 2; // Address
+    repeated string dataIds = 3; // ID
     Contract contract = 4;
     Status status = 5;
     bool reverted = 6;
 }
 message OfferCompact {
-    string from = 1;
-    string to = 2;
+    string from = 1; // Address
+    string to = 2; // Address
     // TODO : richardian contract support
-    string escrow = 3;
+    string escrow = 3; // Address
     bool reverted = 4;
 }
 message Offers {repeated string offerIds = 1;}
