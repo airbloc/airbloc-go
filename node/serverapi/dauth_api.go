@@ -27,7 +27,7 @@ func (api *DAuthAPI) SignIn(ctx context.Context, req *pb.SignInRequest) (*pb.Sig
 		return nil, err
 	}
 	return &pb.SignInResponse{
-		AccountId: accountId.String(),
+		AccountId: accountId.Hex(),
 	}, nil
 }
 

@@ -49,7 +49,7 @@ func (api *CollectionsAPI) Create(ctx context.Context, req *pb.CreateCollectionR
 		return nil, err
 	}
 	return &pb.CreateCollectionResponse{
-		CollectionId: collectionId.String(),
+		CollectionId: collectionId.Hex(),
 	}, nil
 }
 

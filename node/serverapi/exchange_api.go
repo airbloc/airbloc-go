@@ -6,6 +6,7 @@ import (
 	"github.com/airbloc/airbloc-go/node"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/golang/protobuf/ptypes/empty"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
@@ -24,8 +25,8 @@ func NewExchangeAPI(backend node.Backend) (node.API, error) {
 func (api *ExchangeAPI) Prepare(ctx context.Context, req *pb.OrderRequest) (*pb.OfferId, error) {
 	contract := req.GetContract().GetSmartEscrow()
 
-	to := common.BytesToAddress(req.GetTo().GetAddress())
-	escrowAddr := common.BytesToAddress(contract.GetAddress().GetAddress())
+	to := common.HexToAddress(req.GetTo())
+	escrowAddr := common.HexToAddress(req.GetContract().GetSmartEscrow().GetAddress())
 
 	var escrowOpenSign, escrowCloseSign [4]byte
 	copy(escrowOpenSign[:], contract.GetOpenSign())
@@ -33,8 +34,15 @@ func (api *ExchangeAPI) Prepare(ctx context.Context, req *pb.OrderRequest) (*pb.
 
 	rawDataIds := req.GetDataIds()
 	dataIds := make([][16]byte, len(rawDataIds))
-	for i, id := range rawDataIds {
-		copy(dataIds[i][:], id)
+	for i, idStr := range rawDataIds {
+		idBytes, err := hexutil.Decode(idStr)
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "Failed to decode dataId")
+		}
+		if len(idBytes) != 16 {
+			return nil, status.Errorf(codes.InvalidArgument, "Wrong id length (expected 16)")
+		}
+		copy(dataIds[i][:], idBytes)
 	}
 
 	offerId, err := api.manager.Prepare(
@@ -50,14 +58,25 @@ func (api *ExchangeAPI) Prepare(ctx context.Context, req *pb.OrderRequest) (*pb.
 }
 
 func (api *ExchangeAPI) AddDataIds(ctx context.Context, req *pb.DataIds) (*empty.Empty, error) {
-	offerId := ablCommon.HexToID(req.GetOfferId())
-	rawDataIds := req.GetDataIds()
-	dataIds := make([][16]byte, len(rawDataIds))
-	for i, id := range rawDataIds {
-		copy(dataIds[i][:], id)
+	offerId, err := ablCommon.HexToID(req.GetOfferId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
 	}
 
-	err := api.manager.AddDataIds(ctx, offerId, dataIds)
+	rawDataIds := req.GetDataIds()
+	dataIds := make([][16]byte, len(rawDataIds))
+	for i, idStr := range rawDataIds {
+		idBytes, err := hexutil.Decode(idStr)
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "Failed to decode dataId")
+		}
+		if len(idBytes) != 16 {
+			return nil, status.Errorf(codes.InvalidArgument, "Wrong id length (expected 16)")
+		}
+		copy(dataIds[i][:], idBytes)
+	}
+
+	err = api.manager.AddDataIds(ctx, offerId, dataIds)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to add data ids")
 	}
@@ -65,8 +84,12 @@ func (api *ExchangeAPI) AddDataIds(ctx context.Context, req *pb.DataIds) (*empty
 }
 
 func (api *ExchangeAPI) Order(ctx context.Context, req *pb.OfferId) (*empty.Empty, error) {
-	offerId := ablCommon.HexToID(req.GetOfferId())
-	err := api.manager.Order(ctx, offerId)
+	offerId, err := ablCommon.HexToID(req.GetOfferId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
+	}
+
+	err = api.manager.Order(ctx, offerId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to order")
 	}
@@ -74,8 +97,12 @@ func (api *ExchangeAPI) Order(ctx context.Context, req *pb.OfferId) (*empty.Empt
 }
 
 func (api *ExchangeAPI) Settle(ctx context.Context, req *pb.OfferId) (*empty.Empty, error) {
-	offerId := ablCommon.HexToID(req.GetOfferId())
-	err := api.manager.Settle(ctx, offerId)
+	offerId, err := ablCommon.HexToID(req.GetOfferId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
+	}
+
+	err = api.manager.Settle(ctx, offerId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to settle")
 	}
@@ -83,8 +110,12 @@ func (api *ExchangeAPI) Settle(ctx context.Context, req *pb.OfferId) (*empty.Emp
 }
 
 func (api *ExchangeAPI) Reject(ctx context.Context, req *pb.OfferId) (*empty.Empty, error) {
-	offerId := ablCommon.HexToID(req.GetOfferId())
-	err := api.manager.Reject(ctx, offerId)
+	offerId, err := ablCommon.HexToID(req.GetOfferId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
+	}
+
+	err = api.manager.Reject(ctx, offerId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to reject")
 	}
@@ -92,18 +123,23 @@ func (api *ExchangeAPI) Reject(ctx context.Context, req *pb.OfferId) (*empty.Emp
 }
 
 func (api *ExchangeAPI) CloseOrder(ctx context.Context, req *pb.OfferId) (*pb.Receipt, error) {
-	offerId := ablCommon.HexToID(req.GetOfferId())
+	offerId, err := ablCommon.HexToID(req.GetOfferId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
+	}
 
-	err := api.manager.CloseOrder(ctx, offerId)
+	err = api.manager.CloseOrder(ctx, offerId)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to close offer")
 	}
 	return &pb.Receipt{}, nil
 }
 
-// TODO: hard-coded chainID
 func (api *ExchangeAPI) GetOffer(ctx context.Context, req *pb.OfferId) (*pb.Offer, error) {
-	offerId := ablCommon.HexToID(req.GetOfferId())
+	offerId, err := ablCommon.HexToID(req.GetOfferId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
+	}
 
 	offer, err := api.manager.GetOffer(offerId)
 	if err != nil {
@@ -111,19 +147,19 @@ func (api *ExchangeAPI) GetOffer(ctx context.Context, req *pb.OfferId) (*pb.Offe
 	}
 	escrow := offer.Escrow
 
-	rawDataIds := make([][]byte, len(offer.DataIds))
+	rawDataIds := make([]string, len(offer.DataIds))
 	for i, id := range offer.DataIds {
-		copy(rawDataIds[i], id[:])
+		rawDataIds[i] = hexutil.Encode(id[:])
 	}
 
 	return &pb.Offer{
-		From:    &commonpb.Address{ChainId: 1337, Address: offer.From.Bytes()},
-		To:      &commonpb.Address{ChainId: 1337, Address: offer.To.Bytes()},
+		From:    offer.From.Hex(),
+		To:      offer.To.Hex(),
 		DataIds: rawDataIds,
 		Contract: &pb.Contract{
 			Type: pb.Contract_SMART,
 			SmartEscrow: &pb.SmartContract{
-				Address:   &commonpb.Address{ChainId: 1337, Address: escrow.Addr.Bytes()},
+				Address:   escrow.Addr.Hex(),
 				OpenSign:  escrow.OpenSign[:],
 				OpenArgs:  escrow.OpenArgs,
 				CloseSign: escrow.CloseSign[:],
@@ -135,9 +171,11 @@ func (api *ExchangeAPI) GetOffer(ctx context.Context, req *pb.OfferId) (*pb.Offe
 	}, nil
 }
 
-// TODO: hard-coded chainID
 func (api *ExchangeAPI) GetOfferCompact(ctx context.Context, req *pb.OfferId) (*pb.OfferCompact, error) {
-	offerId := ablCommon.HexToID(req.GetOfferId())
+	offerId, err := ablCommon.HexToID(req.GetOfferId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
+	}
 
 	offer, err := api.manager.GetOfferCompact(offerId)
 	if err != nil {
@@ -145,57 +183,57 @@ func (api *ExchangeAPI) GetOfferCompact(ctx context.Context, req *pb.OfferId) (*
 	}
 
 	return &pb.OfferCompact{
-		From:     &commonpb.Address{ChainId: 1337, Address: offer.From.Bytes()},
-		To:       &commonpb.Address{ChainId: 1337, Address: offer.To.Bytes()},
-		Escrow:   &commonpb.Address{ChainId: 1337, Address: offer.Escrow.Bytes()},
+		From:     offer.From.Hex(),
+		To:       offer.To.Hex(),
+		Escrow:   offer.Escrow.Hex(),
 		Reverted: offer.Reverted,
 	}, nil
 }
 
 // TODO: ignored chainID
-func (api *ExchangeAPI) GetReceiptsByOfferor(ctx context.Context, req *commonpb.Address) (*pb.Offers, error) {
-	offeror := common.BytesToAddress(req.GetAddress())
+func (api *ExchangeAPI) GetReceiptsByOfferor(ctx context.Context, req *pb.ReceiptRequest) (*pb.Offers, error) {
+	offeror := common.HexToAddress(req.GetAddress())
 
 	offers, err := api.manager.GetReceiptsByOfferor(offeror)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to get receipts")
 	}
 
-	rawOffers := make([]*pb.OfferId, len(offers))
+	rawOffers := make([]string, len(offers))
 	for i, offer := range offers {
-		rawOffers[i] = &pb.OfferId{OfferId: .}
+		rawOffers[i] = hexutil.Encode(offer[:])
 	}
 
 	return &pb.Offers{OfferIds: rawOffers}, nil
 }
 
-func (api *ExchangeAPI) GetReceiptsByOfferee(ctx context.Context, req *ablCommon.Address) (*pb.Offers, error) {
-	offeree := common.BytesToAddress(req.GetAddress())
+func (api *ExchangeAPI) GetReceiptsByOfferee(ctx context.Context, req *pb.ReceiptRequest) (*pb.Offers, error) {
+	offeree := common.HexToAddress(req.GetAddress())
 
 	offers, err := api.manager.GetReceiptsByOfferee(offeree)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to get receipts")
 	}
 
-	rawOffers := make([]*pb.OfferId, len(offers))
+	rawOffers := make([]string, len(offers))
 	for i, offer := range offers {
-		rawOffers[i] = &pb.OfferId{OfferId: offer[:]}
+		rawOffers[i] = hexutil.Encode(offer[:])
 	}
 
 	return &pb.Offers{OfferIds: rawOffers}, nil
 }
 
-func (api *ExchangeAPI) GetReceiptsByEscrow(ctx context.Context, req *commonpb.Address) (*pb.Offers, error) {
-	escrow := common.BytesToAddress(req.GetAddress())
+func (api *ExchangeAPI) GetReceiptsByEscrow(ctx context.Context, req *pb.ReceiptRequest) (*pb.Offers, error) {
+	escrow := common.HexToAddress(req.GetAddress())
 
 	offers, err := api.manager.GetReceiptsByEscrow(escrow)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Failed to get receipts")
 	}
 
-	rawOffers := make([]*pb.OfferId, len(offers))
+	rawOffers := make([]string, len(offers))
 	for i, offer := range offers {
-		rawOffers[i] = &pb.OfferId{OfferId: offer[:]}
+		rawOffers[i] = hexutil.Encode(offer[:])
 	}
 
 	return &pb.Offers{OfferIds: rawOffers}, nil

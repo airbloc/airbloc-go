@@ -64,9 +64,9 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 			return err
 		}
 		if bundleStream == nil {
-			collectionId, err := common.HexToID(request.GetCollection())
+			collectionId, err := common.HexToID(request.GetCollectionId())
 			if err != nil {
-				return status.Errorf(codes.InvalidArgument, "Invalid collection ID: %s", request.GetCollection())
+				return status.Errorf(codes.InvalidArgument, "Invalid collection ID: %s", request.GetCollectionId())
 			}
 			bundleStream = api.warehouse.CreateBundle(collectionId)
 		}
@@ -107,9 +107,9 @@ func (api *WarehouseAPI) StoreEncryptedBundle(stream pb.Warehouse_StoreEncrypted
 			return err
 		}
 		if bundleStream == nil {
-			collectionId, err := common.HexToID(request.GetCollection())
+			collectionId, err := common.HexToID(request.GetCollectionId())
 			if err != nil {
-				return errors.Wrapf(err, "failed to parse collection ID (%s)", request.Collection)
+				return errors.Wrapf(err, "failed to parse collection ID (%s)", request.GetCollectionId())
 			}
 			bundleStream = api.warehouse.CreateBundle(collectionId)
 		}
