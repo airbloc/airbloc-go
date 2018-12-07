@@ -59,5 +59,5 @@ func (api *DAuthAPI) Deny(ctx context.Context, req *pb.DAuthRequest) (*empty.Emp
 
 func (api *DAuthAPI) AttachToAPI(service *node.APIService) {
 	pb.RegisterDAuthServer(service.GrpcServer, api)
-	pb.RegisterDAuthHandlerFromEndpoint(ctx, service.RestAPIMux, service.Address, []grpc.DialOption{grpc.WithInsecure()})
+	pb.RegisterDAuthHandlerFromEndpoint(context.Background(), service.RestAPIMux, service.Address, []grpc.DialOption{grpc.WithInsecure()})
 }
