@@ -10,8 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "truffle": "truffle",
     "compile": "truffle compile",
-    "console": "truffle console --network test",
-    "migrate": "truffle migrate --reset --network test"
+    "console": "truffle console --network",
+    "migrate": "truffle migrate --reset --network"
   },
   "keywords": [],
   "author": "",

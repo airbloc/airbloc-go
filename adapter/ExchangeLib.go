@@ -26,7 +26,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ablCommon.IDFromString
+	_ = ablCommon.HexToID
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
@@ -95,34 +95,54 @@ type ExchangeLibTransactorRaw struct {
 	Contract *ExchangeLibTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type ExchangeLibStatus int8
+type OfferStatus int8
 
 const (
-	StatusCLOSED   = 5
-	StatusNEUTRAL  = 0
-	StatusOPENED   = 4
-	StatusPENDING  = 1
-	StatusREJECTED = 3
-	StatusSETTLED  = 2
+	OfferStatus_CLOSED   OfferStatus = 5
+	OfferStatus_NEUTRAL  OfferStatus = 0
+	OfferStatus_OPENED   OfferStatus = 4
+	OfferStatus_PENDING  OfferStatus = 1
+	OfferStatus_REJECTED OfferStatus = 3
+	OfferStatus_SETTLED  OfferStatus = 2
 )
 
-type ExchangeLibEscrow struct {
-	Addr common.Address
-	Args
-	Sign
+var OfferStatus_name = map[int8]string{
+	5: "CLOSED",
+	0: "NEUTRAL",
+	4: "OPENED",
+	1: "PENDING",
+	3: "REJECTED",
+	2: "SETTLED",
 }
 
-type ExchangeLibOffer struct {
-	DataIds
-	Escrow   ExchangeLibEscrow
-	Offeree  common.Address
-	Offeror  common.Address
+var OfferStatus_value = map[string]int8{
+	"CLOSED":   5,
+	"NEUTRAL":  0,
+	"OPENED":   4,
+	"PENDING":  1,
+	"REJECTED": 3,
+	"SETTLED":  2,
+}
+
+type Escrow struct {
+	Addr      common.Address
+	CloseArgs []byte
+	CloseSign [4]byte
+	OpenArgs  []byte
+	OpenSign  [4]byte
+}
+
+type Offer struct {
+	DataIds  [][16]byte
+	Escrow   Escrow
+	From     common.Address
 	Reverted bool
-	Status   ExchangeLibStatus
+	Status   OfferStatus
+	To       common.Address
 }
 
-type ExchangeLibOrderbook struct {
-	Orders map[ablCommon.ID]ExchangeLibOffer
+type Orderbook struct {
+	Orders map[ablCommon.ID]Offer
 }
 
 func init() {

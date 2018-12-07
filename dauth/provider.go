@@ -49,7 +49,7 @@ func (client *ProviderClient) SignIn(ctx context.Context, identity string, userD
 		return ablCommon.ID{}, errors.Wrap(err, "unable to call Accounts.GetByIdentity")
 	}
 	client.log.Info("SignIn(\"%s\"): Already signed up.", identity, logger.Attrs{
-		"id":     acc.ID.String(),
+		"id":     acc.ID.Hex(),
 		"status": acc.Status,
 		"proxy":  acc.Proxy.Hex(),
 	})
@@ -81,7 +81,7 @@ func (client *ProviderClient) SignUp(ctx context.Context, identity string, userD
 	// wait for the response. NOTE THAT this is not fault-torelant yet:
 	// see https://github.com/airbloc/airbloc-go/issues/62
 	waitForResponse := make(chan string, 1)
-	client.p2p.SubscribeTopic("dauth-signup-response", &pb.DAuthSignUpResponse{}, func(server p2p.Server, c context.Context, resp common.Message) {
+	err = client.p2p.SubscribeTopic("dauth-signup-response", &pb.DAuthSignUpResponse{}, func(server p2p.Server, c context.Context, resp common.Message) {
 		if !resp.SenderInfo.ID.MatchesPublicKey(userDelegatePub) {
 			return
 		}
@@ -92,8 +92,11 @@ func (client *ProviderClient) SignUp(ctx context.Context, identity string, userD
 		}
 		waitForResponse <- response.GetUserId()
 	})
+	if err != nil {
+		return ablCommon.ID{}, errors.Wrap(err, "failed to subscribe topic")
+	}
 	userId := <-waitForResponse
-	return ablCommon.IDFromString(userId)
+	return ablCommon.HexToID(userId)
 }
 
 func (client *ProviderClient) Allow(ctx context.Context, collectionId ablCommon.ID, accountId ablCommon.ID) error {
@@ -105,10 +108,8 @@ func (client *ProviderClient) Deny(ctx context.Context, collectionId ablCommon.I
 }
 
 func (client *ProviderClient) sendDauthRequest(ctx context.Context, collectionId ablCommon.ID, accountId ablCommon.ID, typ string) error {
-	req := &pb.DAuthRequest{
-		CollectionId: collectionId.String(),
-	}
-	topicName := fmt.Sprintf("dauth-%s-%s", typ, accountId.String())
+	req := &pb.DAuthRequest{CollectionId: collectionId.Hex()}
+	topicName := fmt.Sprintf("dauth-%s-%s", typ, accountId.Hex())
 
 	if err := client.p2p.Publish(ctx, req, topicName); err != nil {
 		return errors.Wrapf(err, "failed to publish DAuth %s message", typ)

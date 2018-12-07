@@ -2,8 +2,9 @@ pragma solidity ^0.4.24;
 
 import "./ExchangeLib.sol";
 import "openzeppelin-solidity/contracts/introspection/IERC165.sol";
+import "openzeppelin-solidity/contracts/utils/ReentrancyGuard.sol";
 
-contract Exchange {
+contract Exchange is ReentrancyGuard {
     using ExchangeLib for ExchangeLib.Offer;
     using ExchangeLib for ExchangeLib.Orderbook;
 
@@ -11,7 +12,7 @@ contract Exchange {
     event OfferPresented(bytes8 indexed _offerId);
     event OfferSettled(bytes8 indexed _offerId);
     event OfferRejected(bytes8 indexed _offerId);
-    event Receipt(bytes8 indexed _offerId, address indexed _offeror, address indexed _offeree);
+    event Receipt(bytes8 indexed _offerId, address indexed _offeror, address indexed _to);
 
     ExchangeLib.Orderbook orderbook;
     mapping(address => bytes8[]) public toIndex;
@@ -26,29 +27,32 @@ contract Exchange {
     }
 
     function prepare(
-        address _offeror,
-        address _offeree,
+        address _to,
         address _escrow,
-        bytes4 _sign,
-        bytes memory _args,
+        bytes4 _escrowOpenSign,
+        bytes memory _escrowOpenArgs,
+        bytes4 _escrowCloseSign,
+        bytes memory _escrowCloseArgs,
         bytes16[] memory _dataIds
     ) public {
-        require(_offeror != address(0), "invalid offeror address");
-        require(_offeree != address(0), "invalid offere address");
+        require(_to != address(0), "invalid offere address");
         require(_escrow != address(0), "invalid contract address");
-        require(IERC165(_escrow).supportsInterface(_sign), "interface not supported");
+        require(IERC165(_escrow).supportsInterface(_escrowOpenSign), "open interface not supported");
+        require(IERC165(_escrow).supportsInterface(_escrowCloseSign), "close interface not supported");
 
         bytes8 offerId = orderbook.prepare(
             ExchangeLib.Offer({
-                offeror: _offeror,
-                offeree: _offeree,
+                from: msg.sender,
+                to: _to,
                 dataIds: _dataIds,
                 escrow: ExchangeLib.Escrow({
                     addr: _escrow,
-                    sign: _sign,
-                    args: _args
+                    openSign: _escrowOpenSign,
+                    openArgs: _escrowOpenArgs,
+                    closeSign: _escrowCloseSign,
+                    closeArgs: _escrowCloseArgs
                 }),
-                status: ExchangeLib.Status.NEUTRAL,
+                status: ExchangeLib.OfferStatus.NEUTRAL,
                 reverted: false
             })
         );
@@ -60,8 +64,8 @@ contract Exchange {
         bytes16[] memory _dataIds
     ) public {
         ExchangeLib.Offer storage offer = orderbook.getOffer(_offerId);
-        require(offer.status == ExchangeLib.Status.NEUTRAL, "neutral state only");
-        require(msg.sender == offer.offeror, "only offeror can modify offer");
+        require(offer.status == ExchangeLib.OfferStatus.NEUTRAL, "neutral state only");
+        require(msg.sender == offer.from, "only from can modify offer");
         require(_dataIds.length <= 255, "dataIds length exceeded (max 255)");
 
         for (uint8 i = 0; i < _dataIds.length; i++) {
@@ -75,7 +79,7 @@ contract Exchange {
         emit OfferPresented(_offerId);
     }
 
-    function settle(bytes8 _offerId) public {
+    function settle(bytes8 _offerId) public nonReentrant {
         // add settle options
         orderbook.settle(_offerId);
         require(orderbook.open(_offerId), "failed to open escrow transaction");
@@ -87,19 +91,20 @@ contract Exchange {
         emit OfferRejected(_offerId);
     }
 
-    function close(bytes8 _offerId) public returns (bool) {
+    function close(bytes8 _offerId) public nonReentrant returns (bool) {
         ExchangeLib.Offer storage offer = _getOffer(_offerId);
-        orderbook.close(_offerId);
+
+        require(orderbook.close(_offerId), "failed to close escrow transaction");
         // add some options (timeout, brokers, etc..)
-        toIndex[offer.offeree].push(_offerId);
-        fromIndex[offer.offeror].push(_offerId);
+        toIndex[offer.to].push(_offerId);
+        fromIndex[offer.from].push(_offerId);
         escrowIndex[offer.escrow.addr].push(_offerId);
-        emit Receipt(_offerId, offer.offeree, offer.offeror);
+        emit Receipt(_offerId, offer.to, offer.from);
         return offer.reverted;
     }
 
-    function getReceiptsByOfferor(address _offeror) public view returns (bytes8[] memory) {return toIndex[_offeror];}
-    function getReceiptsByOfferee(address _offeree) public view returns (bytes8[] memory) {return fromIndex[_offeree];}
+    function getReceiptsByOfferor(address _from) public view returns (bytes8[] memory) {return toIndex[_from];}
+    function getReceiptsByOfferee(address _to) public view returns (bytes8[] memory) {return fromIndex[_to];}
     function getReceiptsByEscrow(address _escrow) public view returns (bytes8[] memory) {return escrowIndex[_escrow];}
 
     function _getOffer(bytes8 _offerId)
@@ -114,16 +119,16 @@ contract Exchange {
         public
         view
         returns (
-            address, // offeror
-            address, // offeree
+            address, // from
+            address, // to
             address, // escrow.addr
             bool     // reverted
         )
     {
         ExchangeLib.Offer storage offer = _getOffer(_offerId);
         return (
-            offer.offeror,
-            offer.offeree,
+            offer.from,
+            offer.to,
             offer.escrow.addr,
             offer.reverted
         );
@@ -133,27 +138,31 @@ contract Exchange {
         public
         view
         returns (
-            address,         //offeror
-            address,         //offeree
+            address,         //from
+            address,         //to
             bytes16[] memory, //dataIds
             // Escrow
             address,      // addr
-            bytes4,       // sign
-            bytes memory, // args
+            bytes4,       // open sign
+            bytes memory, // open args
+            bytes4,       // close sign
+            bytes memory, // close args
             // Status
-            ExchangeLib.Status, // status
-            bool                // reverted
+            ExchangeLib.OfferStatus, // status
+            bool                     // reverted
         )
     {
         ExchangeLib.Offer storage offer = _getOffer(_offerId);
         ExchangeLib.Escrow storage escrow = offer.escrow;
         return (
-            offer.offeror, 
-            offer.offeree, 
+            offer.from,
+            offer.to,
             offer.dataIds,
             escrow.addr,
-            escrow.sign,
-            escrow.args,
+            escrow.openSign,
+            escrow.openArgs,
+            escrow.closeSign,
+            escrow.closeArgs,
             offer.status,
             offer.reverted
         );

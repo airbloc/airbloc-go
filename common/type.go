@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -17,15 +18,21 @@ const (
 
 type ID [IDLength]byte
 
-// IDFromString converts heximedical string ID (ex: deadbeef1a2b3c4d) to ID instance.
-func IDFromString(idStr string) (ID, error) {
+// HexToID converts heximedical string ID (ex: deadbeef1a2b3c4d) to ID instance.
+func HexToID(idStr string) (ID, error) {
 	var id ID
-	byteId, err := hex.DecodeString(idStr)
+	byteId, err := hexutil.Decode(idStr)
 	if err != nil {
 		return id, err
 	}
-	copy(id[:], byteId)
+	copy(id[:], byteId[:IDLength])
 	return id, nil
+}
+
+func BytesToID(idBytes []byte) ID {
+	var id ID
+	copy(id[:], idBytes[:IDLength])
+	return id
 }
 
 func GenerateID(issuer common.Address, time time.Time, seed []byte) (id ID) {
@@ -44,8 +51,8 @@ func GenerateID(issuer common.Address, time time.Time, seed []byte) (id ID) {
 	return
 }
 
-func (id *ID) String() string {
-	return hex.EncodeToString(id[:])
+func (id *ID) Hex() string {
+	return hexutil.Encode(id[:])
 }
 
 func (id *ID) UnmarshalJSON(b []byte) error {
@@ -66,5 +73,5 @@ func (id *ID) UnmarshalJSON(b []byte) error {
 }
 
 func (id *ID) MarshalJSON() ([]byte, error) {
-	return json.Marshal(id.String())
+	return json.Marshal(id.Hex())
 }

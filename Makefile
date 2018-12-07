@@ -3,6 +3,7 @@ DEST = $(shell pwd)/build/bin
 
 PROTO_DIR := proto
 PROTO_SRCS := $(shell find $(PROTO_DIR) -name *.proto)
+RPC_PROTO_SRCS := $(shell find $(PROTO_DIR)/rpc -name *.proto)
 
 all: airbloc bootnode
 
@@ -24,7 +25,21 @@ generate-bind:
 	@go run contracts/generate_adapter.go
 
 generate-proto:
-	@for PROTO in $(PROTO_SRCS); do protoc -I. $$PROTO --go_out=plugins=grpc:$$GOPATH/src; done
+	@for PROTO in $(PROTO_SRCS); \
+		do protoc -I/usr/local/include -I. \
+			-I$$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
+			--go_out=plugins=grpc:$$GOPATH/src \
+			--grpc-gateway_out=logtostderr=true:$$GOPATH/src \
+			$$PROTO; \
+	done
+
+generate-python-pb:
+	@mkdir -p build/gen
+	@python -m grpc_tools.protoc -I. \
+		-I$$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
+		--python_out=./build/gen \
+		--grpc_python_out=./build/gen \
+		$(RPC_PROTO_SRCS)
 
 uninstall:
 	@rm -f $GOPATH/bin/airbloc

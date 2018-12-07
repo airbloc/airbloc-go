@@ -68,8 +68,8 @@ func (s *Collections) Register(ctx context.Context, collection *Collection) (com
 
 	// save to metadb
 	metadata := map[string]interface{}{
-		"id":       collectionId.String(),
-		"schemaId": collection.SchemaId.String(),
+		"id":       collectionId.Hex(),
+		"schemaId": collection.SchemaId.Hex(),
 	}
 	if _, err := s.metaDb.Create(metadata, nil); err != nil {
 		return collectionId, errors.Wrap(err, "failed to save metadata")
@@ -94,7 +94,7 @@ func (s *Collections) Unregister(ctx context.Context, collectionId common.ID) er
 		return errors.Wrap(err, "failed to receive Unregistration event")
 	}
 
-	query := bson.NewDocument(bson.EC.String("data.id", collectionId.String()))
+	query := bson.NewDocument(bson.EC.String("data.id", collectionId.Hex()))
 	metadata, err := s.metaDb.RetrieveAsset(query)
 	if err != nil {
 		return errors.Wrap(err, "failed to find the asset on metadb")

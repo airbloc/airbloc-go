@@ -65,12 +65,12 @@ func (s *Schemas) Register(name string, schema map[string]interface{}) (common.I
 	}
 
 	schemaId := common.ID(event.Id)
-	s.log.Info("Registered new schema %s with", name, logger.Attrs{"id": schemaId.String()})
+	s.log.Info("Registered new schema %s with", name, logger.Attrs{"id": schemaId.Hex()})
 
 	// create metadata
 	metadata := map[string]interface{}{
 		"name":   name,
-		"id":     schemaId.String(),
+		"id":     schemaId.Hex(),
 		"schema": string(rawSchema),
 	}
 	if _, err := s.db.Create(metadata, nil); err != nil {
@@ -94,7 +94,7 @@ func (s *Schemas) Unregister(id common.ID) error {
 		return err
 	}
 
-	query := bson.NewDocument(bson.EC.String("data.id", id.String()))
+	query := bson.NewDocument(bson.EC.String("data.id", id.Hex()))
 	metadata, err := s.db.RetrieveAsset(query)
 	if err != nil {
 		return errors.Wrap(err, "failed to find the asset on metadb")

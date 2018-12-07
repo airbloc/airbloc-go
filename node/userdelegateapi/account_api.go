@@ -28,13 +28,14 @@ func (api *AccountAPI) Create(
 	ctx context.Context,
 	req *pb.AccountCreateRequest,
 ) (*pb.AccountCreateResponse, error) {
-	address := ethCommon.BytesToAddress(req.GetAddress())
-	id, err := api.manager.CreateUsingProxy(address, req.GetPasswordSignature())
-	return &pb.AccountCreateResponse{AccountId: id.String()}, err
+	address := ethCommon.HexToAddress(req.GetAddress())
+	passSig := req.GetPasswordSignature()
+	id, err := api.manager.CreateUsingProxy(address, passSig)
+	return &pb.AccountCreateResponse{AccountId: id.Hex()}, err
 }
 
 func (api *AccountAPI) Get(ctx context.Context, req *pb.AccountGetRequest) (*pb.AccountGetResponse, error) {
-	accountId, err := ablCommon.IDFromString(req.GetAccountId())
+	accountId, err := ablCommon.HexToID(req.GetAccountId())
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to parse account ID: %s", req.GetAccountId())
 	}
@@ -45,11 +46,11 @@ func (api *AccountAPI) Get(ctx context.Context, req *pb.AccountGetRequest) (*pb.
 	}
 
 	return &pb.AccountGetResponse{
-		AccountId:     acc.ID.String(),
-		OwnerAddress:  acc.Owner.Bytes(),
-		Status:        pb.AccountGetResponse_Status(acc.Status),
-		ProxyAddress:  acc.Proxy.Bytes(),
+		AccountId:     acc.ID.Hex(),
+		OwnerAddress:  acc.Owner.Hex(),
+		ProxyAddress:  acc.Proxy.Hex(),
 		PasswordProof: acc.PasswordProof.Bytes(),
+		Status:        pb.AccountGetResponse_Status(acc.Status),
 	}, nil
 }
 
@@ -63,18 +64,17 @@ func (api *AccountAPI) GetByIdentity(
 	}
 
 	return &pb.AccountGetResponse{
-		AccountId:     acc.ID.String(),
-		OwnerAddress:  acc.Owner.Bytes(),
-		Status:        pb.AccountGetResponse_Status(acc.Status),
-		ProxyAddress:  acc.Proxy.Bytes(),
+		AccountId:     acc.ID.Hex(),
+		OwnerAddress:  acc.Owner.Hex(),
+		ProxyAddress:  acc.Proxy.Hex(),
 		PasswordProof: acc.PasswordProof.Bytes(),
+		Status:        pb.AccountGetResponse_Status(acc.Status),
 	}, nil
 }
 
 func (api *AccountAPI) TestPassword(ctx context.Context, req *pb.TestPasswordRequest) (*pb.TestPasswordResponse, error) {
-	exists, err := api.manager.TestPassword(
-		ethCommon.BytesToHash(req.GetMessageHash()),
-		req.GetSignature())
-
+	msgHash := ethCommon.HexToHash(req.GetMessageHash())
+	msgSign := req.GetSignature()
+	exists, err := api.manager.TestPassword(msgHash, msgSign)
 	return &pb.TestPasswordResponse{Exists: exists}, err
 }

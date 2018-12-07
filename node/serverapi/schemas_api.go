@@ -41,7 +41,7 @@ func (api *SchemaAPI) Create(ctx context.Context, req *pb.CreateSchemaRequest) (
 		return nil, err
 	}
 	return &pb.CreateSchemaResult{
-		Id:     id.String(),
+		Id:     id.Hex(),
 		Exists: false,
 	}, nil
 }

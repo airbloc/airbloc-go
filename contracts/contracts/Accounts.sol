@@ -13,7 +13,7 @@ contract Accounts is Ownable {
     event TemporaryCreated(address indexed proxy, bytes32 indexed identityHash, bytes8 accountId);
     event Unlocked(bytes32 indexed identityHash, bytes8 indexed accountId, address newOwner);
 
-    enum Status {
+    enum AccountStatus {
         NONE,
         TEMPORARY,
         CREATED
@@ -21,7 +21,7 @@ contract Accounts is Ownable {
 
     struct Account {
         address owner;
-        Status status;
+        AccountStatus status;
 
         address delegate;
 
@@ -45,7 +45,7 @@ contract Accounts is Ownable {
 
         bytes8 accountId = Utils.generateId(bytes32(0), msg.sender);
         accounts[accountId].owner = msg.sender;
-        accounts[accountId].status = Status.CREATED;
+        accounts[accountId].status = AccountStatus.CREATED;
 
         addressToAccount[msg.sender] = accountId;
         emit SignUp(msg.sender, accountId);
@@ -57,7 +57,7 @@ contract Accounts is Ownable {
         bytes8 accountId = Utils.generateId(identityHash, msg.sender);
         accounts[accountId].proxy = msg.sender;
         accounts[accountId].delegate = msg.sender;
-        accounts[accountId].status = Status.TEMPORARY;
+        accounts[accountId].status = AccountStatus.TEMPORARY;
 
         identityHashToAccount[identityHash] = accountId;
         emit TemporaryCreated(msg.sender, identityHash, accountId);
@@ -68,7 +68,7 @@ contract Accounts is Ownable {
         bytes32 identityHash = keccak256(abi.encodePacked(identityPreimage));
         bytes8 accountId = identityHashToAccount[identityHash];
 
-        require(isTemporary(accountId));
+        require(isTemporary(accountId), "it's not temporary account");
         Account storage account = accounts[accountId];
 
         require(
@@ -85,7 +85,7 @@ contract Accounts is Ownable {
         bytes memory message = abi.encodePacked(identityPreimage, newOwner);
         setPassword(accountId, message, passwordSignature);
 
-        account.status = Status.CREATED;
+        account.status = AccountStatus.CREATED;
         emit Unlocked(identityHash, accountId, newOwner);
     }
 
@@ -98,7 +98,7 @@ contract Accounts is Ownable {
         accounts[accountId].owner = owner;
         accounts[accountId].proxy = msg.sender;
         accounts[accountId].delegate = msg.sender;
-        accounts[accountId].status = Status.CREATED;
+        accounts[accountId].status = AccountStatus.CREATED;
 
         bytes memory message = abi.encodePacked(owner);
         setPassword(accountId, message, passwordSignature);
@@ -110,8 +110,7 @@ contract Accounts is Ownable {
     function setDelegate(address delegate) external {
         // the delegate and the proxy cannot modify delegate.
         // a delegate can be set only through the account owner's direct transaction.
-        require(addressToAccount[msg.sender] != bytes8(0),
-            "Account does not exist.");
+        require(addressToAccount[msg.sender] != bytes8(0), "Account does not exist.");
 
         Account storage account = accounts[addressToAccount[msg.sender]];
         account.delegate = delegate;
@@ -132,7 +131,7 @@ contract Accounts is Ownable {
 
     function getAccountId(address sender) public view returns (bytes8) {
         bytes8 accountId = addressToAccount[sender];
-        require(accounts[accountId].status != Status.NONE, "unknown address");
+        require(accounts[accountId].status != AccountStatus.NONE, "unknown address");
         return accountId;
     }
 
@@ -140,14 +139,14 @@ contract Accounts is Ownable {
         address passwordProof = messageHash.recover(signature);
         bytes8 accountId = passwordToAccount[passwordProof];
 
-        if (accounts[accountId].status == Status.NONE) {
+        if (accounts[accountId].status == AccountStatus.NONE) {
             revert("password mismatch");
         }
         return accountId;
     }
 
     function isTemporary(bytes8 accountId) public view returns (bool) {
-        return accounts[accountId].status == Status.TEMPORARY;
+        return accounts[accountId].status == AccountStatus.TEMPORARY;
     }
 
     function isDelegateOf(address sender, bytes8 accountId) public view returns (bool) {

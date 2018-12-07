@@ -1,23 +1,17 @@
 package main
 
 import (
-	"os"
-
-	"github.com/apsdehal/go-logger"
-	"github.com/pkg/errors"
+	"encoding/hex"
+	"log"
 )
 
 func main() {
-	log, err := logger.New("test", 1, os.Stdout)
+	input := "b86041f2a688f2480000000000000001"
+	bs, err := hex.DecodeString(input)
 	if err != nil {
 		panic(err)
 	}
-
-	err = errors.New("server error")
-
-	log.Critical("Critical")
-	log.Debug("Debug")
-	log.Error("Error")
-	log.Notice("Notice")
-	log.Info("Info")
+	for i, b := range bs {
+		log.Printf("%3d %3v %3s", i, b, input[i*2:i*2+2])
+	}
 }

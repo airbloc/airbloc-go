@@ -4,13 +4,12 @@
 package server
 
 import (
+	context "context"
 	fmt "fmt"
-	math "math"
-
-	v1 "github.com/airbloc/airbloc-go/proto/rpc/v1"
 	proto "github.com/golang/protobuf/proto"
-	context "golang.org/x/net/context"
+	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
+	math "math"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -22,7 +21,47 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
+
+type Status int32
+
+const (
+	Status_UNDEFINED Status = 0
+	Status_NEUTRAL   Status = 1
+	Status_PENDING   Status = 2
+	Status_SETTLED   Status = 3
+	Status_REJECTED  Status = 4
+	Status_OPENED    Status = 5
+	Status_CLOSED    Status = 6
+)
+
+var Status_name = map[int32]string{
+	0: "UNDEFINED",
+	1: "NEUTRAL",
+	2: "PENDING",
+	3: "SETTLED",
+	4: "REJECTED",
+	5: "OPENED",
+	6: "CLOSED",
+}
+
+var Status_value = map[string]int32{
+	"UNDEFINED": 0,
+	"NEUTRAL":   1,
+	"PENDING":   2,
+	"SETTLED":   3,
+	"REJECTED":  4,
+	"OPENED":    5,
+	"CLOSED":    6,
+}
+
+func (x Status) String() string {
+	return proto.EnumName(Status_name, int32(x))
+}
+
+func (Status) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_f1fe3a28a37672a4, []int{0}
+}
 
 type Contract_Type int32
 
@@ -46,23 +85,133 @@ func (x Contract_Type) String() string {
 }
 
 func (Contract_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_f1fe3a28a37672a4, []int{0, 0}
+	return fileDescriptor_f1fe3a28a37672a4, []int{2, 0}
+}
+
+type RichardianContract struct {
+	Hash                 string   `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RichardianContract) Reset()         { *m = RichardianContract{} }
+func (m *RichardianContract) String() string { return proto.CompactTextString(m) }
+func (*RichardianContract) ProtoMessage()    {}
+func (*RichardianContract) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f1fe3a28a37672a4, []int{0}
+}
+
+func (m *RichardianContract) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RichardianContract.Unmarshal(m, b)
+}
+func (m *RichardianContract) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RichardianContract.Marshal(b, m, deterministic)
+}
+func (m *RichardianContract) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RichardianContract.Merge(m, src)
+}
+func (m *RichardianContract) XXX_Size() int {
+	return xxx_messageInfo_RichardianContract.Size(m)
+}
+func (m *RichardianContract) XXX_DiscardUnknown() {
+	xxx_messageInfo_RichardianContract.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RichardianContract proto.InternalMessageInfo
+
+func (m *RichardianContract) GetHash() string {
+	if m != nil {
+		return m.Hash
+	}
+	return ""
+}
+
+type SmartContract struct {
+	Address              string   `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	OpenSign             []byte   `protobuf:"bytes,2,opt,name=openSign,proto3" json:"openSign,omitempty"`
+	OpenArgs             []byte   `protobuf:"bytes,3,opt,name=openArgs,proto3" json:"openArgs,omitempty"`
+	CloseSign            []byte   `protobuf:"bytes,4,opt,name=closeSign,proto3" json:"closeSign,omitempty"`
+	CloseArgs            []byte   `protobuf:"bytes,5,opt,name=closeArgs,proto3" json:"closeArgs,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *SmartContract) Reset()         { *m = SmartContract{} }
+func (m *SmartContract) String() string { return proto.CompactTextString(m) }
+func (*SmartContract) ProtoMessage()    {}
+func (*SmartContract) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f1fe3a28a37672a4, []int{1}
+}
+
+func (m *SmartContract) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SmartContract.Unmarshal(m, b)
+}
+func (m *SmartContract) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SmartContract.Marshal(b, m, deterministic)
+}
+func (m *SmartContract) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SmartContract.Merge(m, src)
+}
+func (m *SmartContract) XXX_Size() int {
+	return xxx_messageInfo_SmartContract.Size(m)
+}
+func (m *SmartContract) XXX_DiscardUnknown() {
+	xxx_messageInfo_SmartContract.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SmartContract proto.InternalMessageInfo
+
+func (m *SmartContract) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+func (m *SmartContract) GetOpenSign() []byte {
+	if m != nil {
+		return m.OpenSign
+	}
+	return nil
+}
+
+func (m *SmartContract) GetOpenArgs() []byte {
+	if m != nil {
+		return m.OpenArgs
+	}
+	return nil
+}
+
+func (m *SmartContract) GetCloseSign() []byte {
+	if m != nil {
+		return m.CloseSign
+	}
+	return nil
+}
+
+func (m *SmartContract) GetCloseArgs() []byte {
+	if m != nil {
+		return m.CloseArgs
+	}
+	return nil
 }
 
 type Contract struct {
-	Type                 Contract_Type `protobuf:"varint,1,opt,name=type,proto3,enum=airbloc.rpc.v1.Contract_Type" json:"type,omitempty"`
-	SmartContractAddress *v1.Address   `protobuf:"bytes,2,opt,name=smartContractAddress,proto3" json:"smartContractAddress,omitempty"`
-	RichardianHash       []byte        `protobuf:"bytes,3,opt,name=richardianHash,proto3" json:"richardianHash,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
+	Type                 Contract_Type       `protobuf:"varint,1,opt,name=type,proto3,enum=airbloc.rpc.v1.Contract_Type" json:"type,omitempty"`
+	SmartEscrow          *SmartContract      `protobuf:"bytes,2,opt,name=smartEscrow,proto3" json:"smartEscrow,omitempty"`
+	RicharEscrow         *RichardianContract `protobuf:"bytes,3,opt,name=richarEscrow,proto3" json:"richarEscrow,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
+	XXX_unrecognized     []byte              `json:"-"`
+	XXX_sizecache        int32               `json:"-"`
 }
 
 func (m *Contract) Reset()         { *m = Contract{} }
 func (m *Contract) String() string { return proto.CompactTextString(m) }
 func (*Contract) ProtoMessage()    {}
 func (*Contract) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f1fe3a28a37672a4, []int{0}
+	return fileDescriptor_f1fe3a28a37672a4, []int{2}
 }
 
 func (m *Contract) XXX_Unmarshal(b []byte) error {
@@ -90,37 +239,128 @@ func (m *Contract) GetType() Contract_Type {
 	return Contract_RICHARDIAN
 }
 
-func (m *Contract) GetSmartContractAddress() *v1.Address {
+func (m *Contract) GetSmartEscrow() *SmartContract {
 	if m != nil {
-		return m.SmartContractAddress
+		return m.SmartEscrow
 	}
 	return nil
 }
 
-func (m *Contract) GetRichardianHash() []byte {
+func (m *Contract) GetRicharEscrow() *RichardianContract {
 	if m != nil {
-		return m.RichardianHash
+		return m.RicharEscrow
 	}
 	return nil
+}
+
+type Receipt struct {
+	OfferId              string   `protobuf:"bytes,1,opt,name=offerId,proto3" json:"offerId,omitempty"`
+	From                 string   `protobuf:"bytes,2,opt,name=from,proto3" json:"from,omitempty"`
+	To                   string   `protobuf:"bytes,3,opt,name=to,proto3" json:"to,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Receipt) Reset()         { *m = Receipt{} }
+func (m *Receipt) String() string { return proto.CompactTextString(m) }
+func (*Receipt) ProtoMessage()    {}
+func (*Receipt) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f1fe3a28a37672a4, []int{3}
+}
+
+func (m *Receipt) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Receipt.Unmarshal(m, b)
+}
+func (m *Receipt) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Receipt.Marshal(b, m, deterministic)
+}
+func (m *Receipt) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Receipt.Merge(m, src)
+}
+func (m *Receipt) XXX_Size() int {
+	return xxx_messageInfo_Receipt.Size(m)
+}
+func (m *Receipt) XXX_DiscardUnknown() {
+	xxx_messageInfo_Receipt.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Receipt proto.InternalMessageInfo
+
+func (m *Receipt) GetOfferId() string {
+	if m != nil {
+		return m.OfferId
+	}
+	return ""
+}
+
+func (m *Receipt) GetFrom() string {
+	if m != nil {
+		return m.From
+	}
+	return ""
+}
+
+func (m *Receipt) GetTo() string {
+	if m != nil {
+		return m.To
+	}
+	return ""
+}
+
+type ReceiptRequest struct {
+	Address              string   `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ReceiptRequest) Reset()         { *m = ReceiptRequest{} }
+func (m *ReceiptRequest) String() string { return proto.CompactTextString(m) }
+func (*ReceiptRequest) ProtoMessage()    {}
+func (*ReceiptRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f1fe3a28a37672a4, []int{4}
+}
+
+func (m *ReceiptRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ReceiptRequest.Unmarshal(m, b)
+}
+func (m *ReceiptRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ReceiptRequest.Marshal(b, m, deterministic)
+}
+func (m *ReceiptRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ReceiptRequest.Merge(m, src)
+}
+func (m *ReceiptRequest) XXX_Size() int {
+	return xxx_messageInfo_ReceiptRequest.Size(m)
+}
+func (m *ReceiptRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ReceiptRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ReceiptRequest proto.InternalMessageInfo
+
+func (m *ReceiptRequest) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
 }
 
 type OrderRequest struct {
-	Data                 *BatchRequest `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	Contract             *Contract     `protobuf:"bytes,2,opt,name=contract,proto3" json:"contract,omitempty"`
-	Offeror              string        `protobuf:"bytes,3,opt,name=offeror,proto3" json:"offeror,omitempty"`
-	Offeree              string        `protobuf:"bytes,4,opt,name=offeree,proto3" json:"offeree,omitempty"`
-	Option               []string      `protobuf:"bytes,5,rep,name=option,proto3" json:"option,omitempty"`
-	Amount               float64       `protobuf:"fixed64,6,opt,name=amount,proto3" json:"amount,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
+	To                   string    `protobuf:"bytes,1,opt,name=to,proto3" json:"to,omitempty"`
+	Contract             *Contract `protobuf:"bytes,2,opt,name=contract,proto3" json:"contract,omitempty"`
+	DataIds              []string  `protobuf:"bytes,3,rep,name=dataIds,proto3" json:"dataIds,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
 func (m *OrderRequest) Reset()         { *m = OrderRequest{} }
 func (m *OrderRequest) String() string { return proto.CompactTextString(m) }
 func (*OrderRequest) ProtoMessage()    {}
 func (*OrderRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f1fe3a28a37672a4, []int{1}
+	return fileDescriptor_f1fe3a28a37672a4, []int{5}
 }
 
 func (m *OrderRequest) XXX_Unmarshal(b []byte) error {
@@ -141,11 +381,11 @@ func (m *OrderRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_OrderRequest proto.InternalMessageInfo
 
-func (m *OrderRequest) GetData() *BatchRequest {
+func (m *OrderRequest) GetTo() string {
 	if m != nil {
-		return m.Data
+		return m.To
 	}
-	return nil
+	return ""
 }
 
 func (m *OrderRequest) GetContract() *Contract {
@@ -155,195 +395,351 @@ func (m *OrderRequest) GetContract() *Contract {
 	return nil
 }
 
-func (m *OrderRequest) GetOfferor() string {
+func (m *OrderRequest) GetDataIds() []string {
 	if m != nil {
-		return m.Offeror
-	}
-	return ""
-}
-
-func (m *OrderRequest) GetOfferee() string {
-	if m != nil {
-		return m.Offeree
-	}
-	return ""
-}
-
-func (m *OrderRequest) GetOption() []string {
-	if m != nil {
-		return m.Option
+		return m.DataIds
 	}
 	return nil
 }
 
-func (m *OrderRequest) GetAmount() float64 {
-	if m != nil {
-		return m.Amount
-	}
-	return 0
+type Offer struct {
+	From                 string    `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
+	To                   string    `protobuf:"bytes,2,opt,name=to,proto3" json:"to,omitempty"`
+	DataIds              []string  `protobuf:"bytes,3,rep,name=dataIds,proto3" json:"dataIds,omitempty"`
+	Contract             *Contract `protobuf:"bytes,4,opt,name=contract,proto3" json:"contract,omitempty"`
+	Status               Status    `protobuf:"varint,5,opt,name=status,proto3,enum=airbloc.rpc.v1.Status" json:"status,omitempty"`
+	Reverted             bool      `protobuf:"varint,6,opt,name=reverted,proto3" json:"reverted,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
-type OrderIdRequest struct {
-	OrderId              string   `protobuf:"bytes,1,opt,name=OrderId,proto3" json:"OrderId,omitempty"`
+func (m *Offer) Reset()         { *m = Offer{} }
+func (m *Offer) String() string { return proto.CompactTextString(m) }
+func (*Offer) ProtoMessage()    {}
+func (*Offer) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f1fe3a28a37672a4, []int{6}
+}
+
+func (m *Offer) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Offer.Unmarshal(m, b)
+}
+func (m *Offer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Offer.Marshal(b, m, deterministic)
+}
+func (m *Offer) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Offer.Merge(m, src)
+}
+func (m *Offer) XXX_Size() int {
+	return xxx_messageInfo_Offer.Size(m)
+}
+func (m *Offer) XXX_DiscardUnknown() {
+	xxx_messageInfo_Offer.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Offer proto.InternalMessageInfo
+
+func (m *Offer) GetFrom() string {
+	if m != nil {
+		return m.From
+	}
+	return ""
+}
+
+func (m *Offer) GetTo() string {
+	if m != nil {
+		return m.To
+	}
+	return ""
+}
+
+func (m *Offer) GetDataIds() []string {
+	if m != nil {
+		return m.DataIds
+	}
+	return nil
+}
+
+func (m *Offer) GetContract() *Contract {
+	if m != nil {
+		return m.Contract
+	}
+	return nil
+}
+
+func (m *Offer) GetStatus() Status {
+	if m != nil {
+		return m.Status
+	}
+	return Status_UNDEFINED
+}
+
+func (m *Offer) GetReverted() bool {
+	if m != nil {
+		return m.Reverted
+	}
+	return false
+}
+
+type OfferCompact struct {
+	From string `protobuf:"bytes,1,opt,name=from,proto3" json:"from,omitempty"`
+	To   string `protobuf:"bytes,2,opt,name=to,proto3" json:"to,omitempty"`
+	// TODO : richardian contract support
+	Escrow               string   `protobuf:"bytes,3,opt,name=escrow,proto3" json:"escrow,omitempty"`
+	Reverted             bool     `protobuf:"varint,4,opt,name=reverted,proto3" json:"reverted,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *OrderIdRequest) Reset()         { *m = OrderIdRequest{} }
-func (m *OrderIdRequest) String() string { return proto.CompactTextString(m) }
-func (*OrderIdRequest) ProtoMessage()    {}
-func (*OrderIdRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f1fe3a28a37672a4, []int{2}
+func (m *OfferCompact) Reset()         { *m = OfferCompact{} }
+func (m *OfferCompact) String() string { return proto.CompactTextString(m) }
+func (*OfferCompact) ProtoMessage()    {}
+func (*OfferCompact) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f1fe3a28a37672a4, []int{7}
 }
 
-func (m *OrderIdRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_OrderIdRequest.Unmarshal(m, b)
+func (m *OfferCompact) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_OfferCompact.Unmarshal(m, b)
 }
-func (m *OrderIdRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_OrderIdRequest.Marshal(b, m, deterministic)
+func (m *OfferCompact) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_OfferCompact.Marshal(b, m, deterministic)
 }
-func (m *OrderIdRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OrderIdRequest.Merge(m, src)
+func (m *OfferCompact) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OfferCompact.Merge(m, src)
 }
-func (m *OrderIdRequest) XXX_Size() int {
-	return xxx_messageInfo_OrderIdRequest.Size(m)
+func (m *OfferCompact) XXX_Size() int {
+	return xxx_messageInfo_OfferCompact.Size(m)
 }
-func (m *OrderIdRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_OrderIdRequest.DiscardUnknown(m)
+func (m *OfferCompact) XXX_DiscardUnknown() {
+	xxx_messageInfo_OfferCompact.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_OrderIdRequest proto.InternalMessageInfo
+var xxx_messageInfo_OfferCompact proto.InternalMessageInfo
 
-func (m *OrderIdRequest) GetOrderId() string {
+func (m *OfferCompact) GetFrom() string {
 	if m != nil {
-		return m.OrderId
+		return m.From
 	}
 	return ""
 }
 
-type ContractId struct {
-	ContractId           string   `protobuf:"bytes,1,opt,name=ContractId,proto3" json:"ContractId,omitempty"`
+func (m *OfferCompact) GetTo() string {
+	if m != nil {
+		return m.To
+	}
+	return ""
+}
+
+func (m *OfferCompact) GetEscrow() string {
+	if m != nil {
+		return m.Escrow
+	}
+	return ""
+}
+
+func (m *OfferCompact) GetReverted() bool {
+	if m != nil {
+		return m.Reverted
+	}
+	return false
+}
+
+type Offers struct {
+	OfferIds             []string `protobuf:"bytes,1,rep,name=offerIds,proto3" json:"offerIds,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *ContractId) Reset()         { *m = ContractId{} }
-func (m *ContractId) String() string { return proto.CompactTextString(m) }
-func (*ContractId) ProtoMessage()    {}
-func (*ContractId) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f1fe3a28a37672a4, []int{3}
+func (m *Offers) Reset()         { *m = Offers{} }
+func (m *Offers) String() string { return proto.CompactTextString(m) }
+func (*Offers) ProtoMessage()    {}
+func (*Offers) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f1fe3a28a37672a4, []int{8}
 }
 
-func (m *ContractId) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ContractId.Unmarshal(m, b)
+func (m *Offers) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Offers.Unmarshal(m, b)
 }
-func (m *ContractId) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ContractId.Marshal(b, m, deterministic)
+func (m *Offers) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Offers.Marshal(b, m, deterministic)
 }
-func (m *ContractId) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ContractId.Merge(m, src)
+func (m *Offers) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Offers.Merge(m, src)
 }
-func (m *ContractId) XXX_Size() int {
-	return xxx_messageInfo_ContractId.Size(m)
+func (m *Offers) XXX_Size() int {
+	return xxx_messageInfo_Offers.Size(m)
 }
-func (m *ContractId) XXX_DiscardUnknown() {
-	xxx_messageInfo_ContractId.DiscardUnknown(m)
+func (m *Offers) XXX_DiscardUnknown() {
+	xxx_messageInfo_Offers.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_ContractId proto.InternalMessageInfo
+var xxx_messageInfo_Offers proto.InternalMessageInfo
 
-func (m *ContractId) GetContractId() string {
+func (m *Offers) GetOfferIds() []string {
 	if m != nil {
-		return m.ContractId
+		return m.OfferIds
+	}
+	return nil
+}
+
+type OfferId struct {
+	OfferId              string   `protobuf:"bytes,1,opt,name=offerId,proto3" json:"offerId,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *OfferId) Reset()         { *m = OfferId{} }
+func (m *OfferId) String() string { return proto.CompactTextString(m) }
+func (*OfferId) ProtoMessage()    {}
+func (*OfferId) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f1fe3a28a37672a4, []int{9}
+}
+
+func (m *OfferId) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_OfferId.Unmarshal(m, b)
+}
+func (m *OfferId) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_OfferId.Marshal(b, m, deterministic)
+}
+func (m *OfferId) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OfferId.Merge(m, src)
+}
+func (m *OfferId) XXX_Size() int {
+	return xxx_messageInfo_OfferId.Size(m)
+}
+func (m *OfferId) XXX_DiscardUnknown() {
+	xxx_messageInfo_OfferId.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_OfferId proto.InternalMessageInfo
+
+func (m *OfferId) GetOfferId() string {
+	if m != nil {
+		return m.OfferId
 	}
 	return ""
 }
 
-type SettleResult struct {
-	ContractId           *ContractId `protobuf:"bytes,1,opt,name=contractId,proto3" json:"contractId,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
+type DataIds struct {
+	OfferId              string   `protobuf:"bytes,1,opt,name=offerId,proto3" json:"offerId,omitempty"`
+	DataIds              []string `protobuf:"bytes,2,rep,name=dataIds,proto3" json:"dataIds,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *SettleResult) Reset()         { *m = SettleResult{} }
-func (m *SettleResult) String() string { return proto.CompactTextString(m) }
-func (*SettleResult) ProtoMessage()    {}
-func (*SettleResult) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f1fe3a28a37672a4, []int{4}
+func (m *DataIds) Reset()         { *m = DataIds{} }
+func (m *DataIds) String() string { return proto.CompactTextString(m) }
+func (*DataIds) ProtoMessage()    {}
+func (*DataIds) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f1fe3a28a37672a4, []int{10}
 }
 
-func (m *SettleResult) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SettleResult.Unmarshal(m, b)
+func (m *DataIds) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DataIds.Unmarshal(m, b)
 }
-func (m *SettleResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SettleResult.Marshal(b, m, deterministic)
+func (m *DataIds) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DataIds.Marshal(b, m, deterministic)
 }
-func (m *SettleResult) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SettleResult.Merge(m, src)
+func (m *DataIds) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DataIds.Merge(m, src)
 }
-func (m *SettleResult) XXX_Size() int {
-	return xxx_messageInfo_SettleResult.Size(m)
+func (m *DataIds) XXX_Size() int {
+	return xxx_messageInfo_DataIds.Size(m)
 }
-func (m *SettleResult) XXX_DiscardUnknown() {
-	xxx_messageInfo_SettleResult.DiscardUnknown(m)
+func (m *DataIds) XXX_DiscardUnknown() {
+	xxx_messageInfo_DataIds.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_SettleResult proto.InternalMessageInfo
+var xxx_messageInfo_DataIds proto.InternalMessageInfo
 
-func (m *SettleResult) GetContractId() *ContractId {
+func (m *DataIds) GetOfferId() string {
 	if m != nil {
-		return m.ContractId
+		return m.OfferId
+	}
+	return ""
+}
+
+func (m *DataIds) GetDataIds() []string {
+	if m != nil {
+		return m.DataIds
 	}
 	return nil
 }
 
 func init() {
+	proto.RegisterEnum("airbloc.rpc.v1.Status", Status_name, Status_value)
 	proto.RegisterEnum("airbloc.rpc.v1.Contract_Type", Contract_Type_name, Contract_Type_value)
+	proto.RegisterType((*RichardianContract)(nil), "airbloc.rpc.v1.RichardianContract")
+	proto.RegisterType((*SmartContract)(nil), "airbloc.rpc.v1.SmartContract")
 	proto.RegisterType((*Contract)(nil), "airbloc.rpc.v1.Contract")
+	proto.RegisterType((*Receipt)(nil), "airbloc.rpc.v1.Receipt")
+	proto.RegisterType((*ReceiptRequest)(nil), "airbloc.rpc.v1.ReceiptRequest")
 	proto.RegisterType((*OrderRequest)(nil), "airbloc.rpc.v1.OrderRequest")
-	proto.RegisterType((*OrderIdRequest)(nil), "airbloc.rpc.v1.OrderIdRequest")
-	proto.RegisterType((*ContractId)(nil), "airbloc.rpc.v1.ContractId")
-	proto.RegisterType((*SettleResult)(nil), "airbloc.rpc.v1.SettleResult")
+	proto.RegisterType((*Offer)(nil), "airbloc.rpc.v1.Offer")
+	proto.RegisterType((*OfferCompact)(nil), "airbloc.rpc.v1.OfferCompact")
+	proto.RegisterType((*Offers)(nil), "airbloc.rpc.v1.Offers")
+	proto.RegisterType((*OfferId)(nil), "airbloc.rpc.v1.OfferId")
+	proto.RegisterType((*DataIds)(nil), "airbloc.rpc.v1.DataIds")
 }
 
 func init() { proto.RegisterFile("proto/rpc/v1/server/exchange.proto", fileDescriptor_f1fe3a28a37672a4) }
 
 var fileDescriptor_f1fe3a28a37672a4 = []byte{
-	// 485 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x93, 0xc1, 0x6e, 0xd3, 0x40,
-	0x10, 0x86, 0x71, 0x9b, 0xa4, 0xc9, 0x24, 0x8a, 0xaa, 0x55, 0x55, 0x56, 0x11, 0x44, 0xc1, 0x07,
-	0x14, 0x21, 0xb0, 0x89, 0x8b, 0x38, 0xc0, 0x85, 0x34, 0x45, 0xaa, 0x41, 0x80, 0xb4, 0xed, 0x89,
-	0xdb, 0x66, 0x3d, 0x8d, 0x8d, 0x12, 0xaf, 0x59, 0x6f, 0x22, 0xfa, 0x04, 0x3c, 0x21, 0x17, 0x9e,
-	0x06, 0xd9, 0x59, 0x47, 0x8e, 0x71, 0x2e, 0x3d, 0x45, 0xf3, 0xff, 0xdf, 0xce, 0xfe, 0x33, 0x1b,
-	0x83, 0x9d, 0x28, 0xa9, 0xa5, 0xab, 0x12, 0xe1, 0x6e, 0x26, 0x6e, 0x8a, 0x6a, 0x83, 0xca, 0xc5,
-	0x5f, 0x22, 0xe4, 0xf1, 0x02, 0x9d, 0xdc, 0x24, 0x7d, 0x1e, 0xa9, 0xf9, 0x52, 0x0a, 0x47, 0x25,
-	0xc2, 0xd9, 0x4c, 0x06, 0xc3, 0xba, 0x33, 0x01, 0xd7, 0x7c, 0xcb, 0x0f, 0xe8, 0x9e, 0xaf, 0xef,
-	0x13, 0x4c, 0xb7, 0x8e, 0xfd, 0xc7, 0x82, 0xf6, 0x4c, 0xc6, 0x5a, 0x71, 0xa1, 0xc9, 0x04, 0x1a,
-	0x99, 0x47, 0xad, 0x91, 0x35, 0xee, 0x7b, 0x4f, 0x9d, 0xfd, 0x5b, 0x9c, 0x82, 0x73, 0x6e, 0xef,
-	0x13, 0x64, 0x39, 0x4a, 0x3e, 0xc3, 0x59, 0xba, 0xe2, 0x4a, 0x17, 0xde, 0x34, 0x08, 0x14, 0xa6,
-	0x29, 0x3d, 0x1a, 0x59, 0xe3, 0xae, 0xf7, 0xb8, 0xda, 0xc2, 0xd8, 0xac, 0xf6, 0x10, 0x79, 0x0e,
-	0x7d, 0x15, 0x89, 0x90, 0xab, 0x20, 0xe2, 0xf1, 0x35, 0x4f, 0x43, 0x7a, 0x3c, 0xb2, 0xc6, 0x3d,
-	0x56, 0x51, 0xed, 0x67, 0xd0, 0xc8, 0x22, 0x90, 0x3e, 0x00, 0xf3, 0x67, 0xd7, 0x53, 0x76, 0xe5,
-	0x4f, 0xbf, 0x9e, 0x3e, 0x22, 0x1d, 0x68, 0xde, 0x7c, 0x99, 0xb2, 0xdb, 0x53, 0xcb, 0xfe, 0x6b,
-	0x41, 0xef, 0x9b, 0x0a, 0x50, 0x31, 0xfc, 0xb9, 0xc6, 0x54, 0x93, 0xd7, 0xd0, 0xc8, 0x16, 0x92,
-	0xcf, 0xd6, 0xf5, 0x9e, 0x54, 0x83, 0x5d, 0x72, 0x2d, 0x42, 0xc3, 0xb2, 0x9c, 0x24, 0x6f, 0xa0,
-	0x2d, 0x4c, 0x40, 0x33, 0x0e, 0x3d, 0xb4, 0x11, 0xb6, 0x23, 0x09, 0x85, 0x13, 0x79, 0x77, 0x87,
-	0x4a, 0xaa, 0x3c, 0x7c, 0x87, 0x15, 0xe5, 0xce, 0x41, 0xa4, 0x8d, 0x92, 0x83, 0x48, 0xce, 0xa1,
-	0x25, 0x13, 0x1d, 0xc9, 0x98, 0x36, 0x47, 0xc7, 0xe3, 0x0e, 0x33, 0x55, 0xa6, 0xf3, 0x95, 0x5c,
-	0xc7, 0x9a, 0xb6, 0x46, 0xd6, 0xd8, 0x62, 0xa6, 0xb2, 0x5f, 0x40, 0x3f, 0x9f, 0xcd, 0x0f, 0x8a,
-	0xe9, 0x28, 0x9c, 0x18, 0x25, 0x1f, 0xb0, 0xc3, 0x8a, 0xd2, 0x7e, 0x09, 0x50, 0xa4, 0xf4, 0x03,
-	0x32, 0x2c, 0x57, 0x06, 0x2d, 0x29, 0xf6, 0x27, 0xe8, 0xdd, 0xa0, 0xd6, 0x4b, 0x64, 0x98, 0xae,
-	0x97, 0x9a, 0xbc, 0x03, 0x10, 0xfb, 0x7c, 0xd7, 0x1b, 0x1c, 0xda, 0x82, 0x1f, 0xb0, 0x12, 0xed,
-	0xfd, 0x3e, 0x82, 0xf6, 0x47, 0xf3, 0xbf, 0x25, 0xef, 0xa1, 0x99, 0x27, 0x22, 0xff, 0x6d, 0xbe,
-	0xfc, 0x4a, 0x83, 0xb3, 0xaa, 0x9b, 0xbd, 0x37, 0x79, 0x0b, 0xad, 0x6d, 0x2a, 0x52, 0xeb, 0x0f,
-	0xce, 0xab, 0xaa, 0x49, 0xff, 0x01, 0x5a, 0x0c, 0x7f, 0xa0, 0xd0, 0x64, 0x58, 0x7b, 0xeb, 0x6e,
-	0x7f, 0x07, 0x3b, 0x5c, 0x01, 0xcc, 0x96, 0x32, 0xc5, 0x6d, 0xf6, 0x07, 0x76, 0xb9, 0xbc, 0xf8,
-	0x3e, 0x59, 0x44, 0x3a, 0x5c, 0xcf, 0x1d, 0x21, 0x57, 0xae, 0x61, 0x8a, 0xdf, 0x57, 0x0b, 0xe9,
-	0xd6, 0x7c, 0xbe, 0xf3, 0x56, 0x2e, 0x5e, 0xfc, 0x0b, 0x00, 0x00, 0xff, 0xff, 0xcb, 0xd9, 0xbb,
-	0xd7, 0x10, 0x04, 0x00, 0x00,
+	// 798 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x56, 0x5f, 0x73, 0xea, 0x44,
+	0x14, 0xbf, 0xe1, 0x4f, 0x80, 0x53, 0x2e, 0x66, 0x56, 0x45, 0x06, 0xab, 0x53, 0xa3, 0x0f, 0xcc,
+	0x9d, 0x31, 0x19, 0x7a, 0x7d, 0x50, 0x67, 0xae, 0x4a, 0x49, 0x4a, 0x71, 0x5a, 0xe8, 0x2c, 0xf4,
+	0xc5, 0xb7, 0x90, 0x2c, 0x7f, 0x1c, 0x60, 0xe3, 0x66, 0x41, 0xf9, 0x30, 0x7e, 0x1e, 0x3f, 0x8b,
+	0x6f, 0x7e, 0x04, 0x67, 0x37, 0x9b, 0x14, 0x0a, 0xb1, 0xde, 0x3e, 0xb1, 0x67, 0x7f, 0xe7, 0xfc,
+	0xce, 0xdf, 0x3d, 0x04, 0xcc, 0x90, 0x51, 0x4e, 0x6d, 0x16, 0xfa, 0xf6, 0xb6, 0x6d, 0x47, 0x84,
+	0x6d, 0x09, 0xb3, 0xc9, 0x1f, 0xfe, 0xdc, 0x5b, 0xcf, 0x88, 0x25, 0x41, 0x54, 0xf3, 0x16, 0x6c,
+	0xb2, 0xa4, 0xbe, 0xc5, 0x42, 0xdf, 0xda, 0xb6, 0x9b, 0x9f, 0xce, 0x28, 0x9d, 0x2d, 0x89, 0x2d,
+	0xd1, 0xc9, 0x66, 0x6a, 0x93, 0x55, 0xc8, 0x77, 0xb1, 0xb2, 0xd9, 0x02, 0x84, 0x17, 0xfe, 0xdc,
+	0x63, 0xc1, 0xc2, 0x5b, 0x77, 0xe9, 0x9a, 0x33, 0xcf, 0xe7, 0x08, 0x41, 0x61, 0xee, 0x45, 0xf3,
+	0x86, 0x76, 0xa1, 0xb5, 0x2a, 0x58, 0x9e, 0xcd, 0x3f, 0x35, 0x78, 0x3d, 0x5a, 0x79, 0x8c, 0xa7,
+	0x5a, 0x0d, 0x28, 0x79, 0x41, 0xc0, 0x48, 0x14, 0x29, 0xc5, 0x44, 0x44, 0x4d, 0x28, 0xd3, 0x90,
+	0xac, 0x47, 0x8b, 0xd9, 0xba, 0x91, 0xbb, 0xd0, 0x5a, 0x55, 0x9c, 0xca, 0x09, 0xd6, 0x61, 0xb3,
+	0xa8, 0x91, 0x7f, 0xc4, 0x84, 0x8c, 0xce, 0xa1, 0xe2, 0x2f, 0x69, 0x44, 0xa4, 0x61, 0x41, 0x82,
+	0x8f, 0x17, 0x29, 0x2a, 0x4d, 0x8b, 0x7b, 0xa8, 0xb8, 0x30, 0xff, 0xd6, 0xa0, 0x9c, 0x86, 0xd6,
+	0x86, 0x02, 0xdf, 0x85, 0x44, 0xc6, 0x55, 0xbb, 0xfc, 0xcc, 0x3a, 0x2c, 0x89, 0x95, 0xe8, 0x59,
+	0xe3, 0x5d, 0x48, 0xb0, 0x54, 0x45, 0x3f, 0xc2, 0x59, 0x24, 0xd2, 0x73, 0x23, 0x9f, 0xd1, 0xdf,
+	0x65, 0xd8, 0x67, 0xc7, 0x96, 0x07, 0x15, 0xc0, 0xfb, 0x16, 0xe8, 0x1a, 0xaa, 0x4c, 0x96, 0x52,
+	0x31, 0xe4, 0x25, 0x83, 0xf9, 0x94, 0xe1, 0xb8, 0xdc, 0xf8, 0xc0, 0xce, 0xfc, 0x02, 0x0a, 0x22,
+	0x2c, 0x54, 0x03, 0xc0, 0xfd, 0xee, 0x4d, 0x07, 0x3b, 0xfd, 0xce, 0xc0, 0x78, 0x85, 0x2a, 0x50,
+	0x1c, 0xdd, 0x75, 0xf0, 0xd8, 0xd0, 0xcc, 0x1e, 0x94, 0x30, 0xf1, 0xc9, 0x22, 0x94, 0x4d, 0xa0,
+	0xd3, 0x29, 0x61, 0xfd, 0x20, 0x69, 0x82, 0x12, 0x45, 0x13, 0xa7, 0x8c, 0xae, 0x64, 0x26, 0x15,
+	0x2c, 0xcf, 0xa8, 0x06, 0x39, 0x4e, 0x65, 0x64, 0x15, 0x9c, 0xe3, 0xd4, 0x7c, 0x03, 0x35, 0x45,
+	0x84, 0xc9, 0x6f, 0x1b, 0x12, 0xfd, 0x47, 0x53, 0xcd, 0x35, 0x54, 0x87, 0x2c, 0x20, 0x2c, 0xd1,
+	0x8c, 0xb9, 0xb4, 0x84, 0x0b, 0x7d, 0x03, 0x65, 0x5f, 0x65, 0xa4, 0xaa, 0xd7, 0xc8, 0xaa, 0x3b,
+	0x4e, 0x35, 0x85, 0xbf, 0xc0, 0xe3, 0x5e, 0x3f, 0x10, 0xd3, 0x90, 0x17, 0xfe, 0x94, 0x68, 0xfe,
+	0xa5, 0x41, 0x71, 0x28, 0x72, 0x49, 0x33, 0xd1, 0x8e, 0x32, 0xc9, 0xa5, 0xde, 0x33, 0x79, 0x0e,
+	0xe2, 0x2a, 0xfc, 0xef, 0xb8, 0x2c, 0xd0, 0x23, 0xee, 0xf1, 0x4d, 0x3c, 0x69, 0xb5, 0xcb, 0xfa,
+	0xd1, 0x24, 0x48, 0x14, 0x2b, 0x2d, 0x31, 0xd6, 0x8c, 0x6c, 0x09, 0xe3, 0x24, 0x68, 0xe8, 0x17,
+	0x5a, 0xab, 0x8c, 0x53, 0xd9, 0x9c, 0x42, 0x55, 0x26, 0xd2, 0xa5, 0xab, 0x50, 0x3d, 0xaf, 0x67,
+	0xf3, 0xa9, 0x83, 0x4e, 0x1e, 0xe7, 0xa8, 0x82, 0x95, 0x74, 0xe0, 0xa7, 0xf0, 0xc4, 0xcf, 0x57,
+	0xa0, 0x4b, 0x3f, 0xf1, 0x03, 0x8c, 0xc7, 0x40, 0xb4, 0x51, 0x94, 0x23, 0x95, 0xcd, 0x2f, 0xa1,
+	0x34, 0x54, 0x23, 0x92, 0x39, 0x3c, 0xe6, 0x3b, 0x28, 0x39, 0xaa, 0x7e, 0xd9, 0x13, 0xb6, 0x57,
+	0xf3, 0xdc, 0x41, 0xcd, 0xdf, 0x04, 0xa0, 0xc7, 0xf5, 0x41, 0xaf, 0xa1, 0xf2, 0x30, 0x70, 0xdc,
+	0xeb, 0xfe, 0xc0, 0x75, 0x8c, 0x57, 0xe8, 0x0c, 0x4a, 0x03, 0xf7, 0x61, 0x8c, 0x3b, 0xb7, 0x86,
+	0x26, 0x84, 0x7b, 0x77, 0xe0, 0xf4, 0x07, 0x3d, 0x23, 0x27, 0x84, 0x91, 0x3b, 0x1e, 0xdf, 0xba,
+	0x8e, 0x91, 0x47, 0x55, 0x28, 0x63, 0xf7, 0x67, 0xb7, 0x3b, 0x76, 0x1d, 0xa3, 0x80, 0x00, 0xf4,
+	0xe1, 0xbd, 0x2b, 0x08, 0x8a, 0xe2, 0xdc, 0xbd, 0x1d, 0x8e, 0x5c, 0xc7, 0xd0, 0x2f, 0xff, 0x29,
+	0x42, 0xd9, 0x55, 0xcb, 0x0f, 0xfd, 0x04, 0xa5, 0x7b, 0x46, 0x42, 0x8f, 0x11, 0x74, 0xfe, 0xb4,
+	0x57, 0xfb, 0x73, 0xdb, 0xfc, 0xe4, 0x08, 0x55, 0xe9, 0xbc, 0x03, 0xe8, 0x04, 0x41, 0x92, 0xf6,
+	0x91, 0x9a, 0x02, 0x9a, 0x75, 0x2b, 0x5e, 0xa8, 0x56, 0xb2, 0x50, 0x2d, 0x57, 0x2c, 0x54, 0xf4,
+	0x2d, 0x14, 0xa5, 0x1f, 0x94, 0xe5, 0x20, 0xd3, 0xf2, 0x3b, 0xd0, 0x47, 0x84, 0xf3, 0x25, 0x79,
+	0x91, 0x29, 0x26, 0xbf, 0x12, 0x9f, 0xbf, 0xbf, 0xe9, 0x0f, 0x00, 0x5d, 0xb1, 0x3d, 0x9f, 0x09,
+	0xfa, 0x08, 0x48, 0x36, 0xcf, 0xf7, 0x50, 0xee, 0x11, 0x1e, 0xbf, 0xd0, 0x4c, 0xeb, 0x8f, 0x4f,
+	0x02, 0xe8, 0x06, 0x3e, 0x48, 0x6c, 0x93, 0x47, 0x91, 0x49, 0x71, 0x7e, 0x12, 0x48, 0xcc, 0x06,
+	0xf0, 0x51, 0x8f, 0x70, 0x15, 0x53, 0x74, 0xb5, 0x93, 0x20, 0x65, 0xe8, 0xf3, 0x8c, 0xb0, 0x93,
+	0x29, 0xa8, 0x9f, 0x64, 0x8d, 0x4e, 0xf3, 0x11, 0xf2, 0x62, 0xbe, 0x3b, 0xf8, 0xf0, 0x80, 0x4f,
+	0xfd, 0x59, 0xbc, 0x90, 0xee, 0xea, 0xed, 0x2f, 0xed, 0xd9, 0x82, 0xcf, 0x37, 0x13, 0xcb, 0xa7,
+	0x2b, 0x5b, 0xe9, 0x24, 0xbf, 0x5f, 0xcf, 0xa8, 0x7d, 0xe2, 0x03, 0x61, 0xa2, 0xcb, 0xcb, 0xb7,
+	0xff, 0x06, 0x00, 0x00, 0xff, 0xff, 0x06, 0x04, 0x25, 0x14, 0x3e, 0x08, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -358,11 +754,17 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ExchangeClient interface {
-	Order(ctx context.Context, in *OrderRequest, opts ...grpc.CallOption) (*v1.Hash, error)
-	Settle(ctx context.Context, in *v1.Hash, opts ...grpc.CallOption) (*v1.Result, error)
-	Reject(ctx context.Context, in *OrderIdRequest, opts ...grpc.CallOption) (*v1.Result, error)
-	// after Open()
-	CloseOrder(ctx context.Context, in *OrderIdRequest, opts ...grpc.CallOption) (*v1.Result, error)
+	Prepare(ctx context.Context, in *OrderRequest, opts ...grpc.CallOption) (*OfferId, error)
+	AddDataIds(ctx context.Context, in *DataIds, opts ...grpc.CallOption) (*empty.Empty, error)
+	Order(ctx context.Context, in *OfferId, opts ...grpc.CallOption) (*empty.Empty, error)
+	Settle(ctx context.Context, in *OfferId, opts ...grpc.CallOption) (*empty.Empty, error)
+	Reject(ctx context.Context, in *OfferId, opts ...grpc.CallOption) (*empty.Empty, error)
+	CloseOrder(ctx context.Context, in *OfferId, opts ...grpc.CallOption) (*Receipt, error)
+	GetOffer(ctx context.Context, in *OfferId, opts ...grpc.CallOption) (*Offer, error)
+	GetOfferCompact(ctx context.Context, in *OfferId, opts ...grpc.CallOption) (*OfferCompact, error)
+	GetReceiptsByOfferor(ctx context.Context, in *ReceiptRequest, opts ...grpc.CallOption) (*Offers, error)
+	GetReceiptsByOfferee(ctx context.Context, in *ReceiptRequest, opts ...grpc.CallOption) (*Offers, error)
+	GetReceiptsByEscrow(ctx context.Context, in *ReceiptRequest, opts ...grpc.CallOption) (*Offers, error)
 }
 
 type exchangeClient struct {
@@ -373,8 +775,26 @@ func NewExchangeClient(cc *grpc.ClientConn) ExchangeClient {
 	return &exchangeClient{cc}
 }
 
-func (c *exchangeClient) Order(ctx context.Context, in *OrderRequest, opts ...grpc.CallOption) (*v1.Hash, error) {
-	out := new(v1.Hash)
+func (c *exchangeClient) Prepare(ctx context.Context, in *OrderRequest, opts ...grpc.CallOption) (*OfferId, error) {
+	out := new(OfferId)
+	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Exchange/Prepare", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *exchangeClient) AddDataIds(ctx context.Context, in *DataIds, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Exchange/AddDataIds", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *exchangeClient) Order(ctx context.Context, in *OfferId, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Exchange/Order", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -382,8 +802,8 @@ func (c *exchangeClient) Order(ctx context.Context, in *OrderRequest, opts ...gr
 	return out, nil
 }
 
-func (c *exchangeClient) Settle(ctx context.Context, in *v1.Hash, opts ...grpc.CallOption) (*v1.Result, error) {
-	out := new(v1.Result)
+func (c *exchangeClient) Settle(ctx context.Context, in *OfferId, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Exchange/Settle", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -391,8 +811,8 @@ func (c *exchangeClient) Settle(ctx context.Context, in *v1.Hash, opts ...grpc.C
 	return out, nil
 }
 
-func (c *exchangeClient) Reject(ctx context.Context, in *OrderIdRequest, opts ...grpc.CallOption) (*v1.Result, error) {
-	out := new(v1.Result)
+func (c *exchangeClient) Reject(ctx context.Context, in *OfferId, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Exchange/Reject", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -400,9 +820,54 @@ func (c *exchangeClient) Reject(ctx context.Context, in *OrderIdRequest, opts ..
 	return out, nil
 }
 
-func (c *exchangeClient) CloseOrder(ctx context.Context, in *OrderIdRequest, opts ...grpc.CallOption) (*v1.Result, error) {
-	out := new(v1.Result)
+func (c *exchangeClient) CloseOrder(ctx context.Context, in *OfferId, opts ...grpc.CallOption) (*Receipt, error) {
+	out := new(Receipt)
 	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Exchange/CloseOrder", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *exchangeClient) GetOffer(ctx context.Context, in *OfferId, opts ...grpc.CallOption) (*Offer, error) {
+	out := new(Offer)
+	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Exchange/GetOffer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *exchangeClient) GetOfferCompact(ctx context.Context, in *OfferId, opts ...grpc.CallOption) (*OfferCompact, error) {
+	out := new(OfferCompact)
+	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Exchange/GetOfferCompact", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *exchangeClient) GetReceiptsByOfferor(ctx context.Context, in *ReceiptRequest, opts ...grpc.CallOption) (*Offers, error) {
+	out := new(Offers)
+	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Exchange/GetReceiptsByOfferor", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *exchangeClient) GetReceiptsByOfferee(ctx context.Context, in *ReceiptRequest, opts ...grpc.CallOption) (*Offers, error) {
+	out := new(Offers)
+	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Exchange/GetReceiptsByOfferee", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *exchangeClient) GetReceiptsByEscrow(ctx context.Context, in *ReceiptRequest, opts ...grpc.CallOption) (*Offers, error) {
+	out := new(Offers)
+	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Exchange/GetReceiptsByEscrow", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -411,19 +876,61 @@ func (c *exchangeClient) CloseOrder(ctx context.Context, in *OrderIdRequest, opt
 
 // ExchangeServer is the server API for Exchange service.
 type ExchangeServer interface {
-	Order(context.Context, *OrderRequest) (*v1.Hash, error)
-	Settle(context.Context, *v1.Hash) (*v1.Result, error)
-	Reject(context.Context, *OrderIdRequest) (*v1.Result, error)
-	// after Open()
-	CloseOrder(context.Context, *OrderIdRequest) (*v1.Result, error)
+	Prepare(context.Context, *OrderRequest) (*OfferId, error)
+	AddDataIds(context.Context, *DataIds) (*empty.Empty, error)
+	Order(context.Context, *OfferId) (*empty.Empty, error)
+	Settle(context.Context, *OfferId) (*empty.Empty, error)
+	Reject(context.Context, *OfferId) (*empty.Empty, error)
+	CloseOrder(context.Context, *OfferId) (*Receipt, error)
+	GetOffer(context.Context, *OfferId) (*Offer, error)
+	GetOfferCompact(context.Context, *OfferId) (*OfferCompact, error)
+	GetReceiptsByOfferor(context.Context, *ReceiptRequest) (*Offers, error)
+	GetReceiptsByOfferee(context.Context, *ReceiptRequest) (*Offers, error)
+	GetReceiptsByEscrow(context.Context, *ReceiptRequest) (*Offers, error)
 }
 
 func RegisterExchangeServer(s *grpc.Server, srv ExchangeServer) {
 	s.RegisterService(&_Exchange_serviceDesc, srv)
 }
 
-func _Exchange_Order_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Exchange_Prepare_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OrderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExchangeServer).Prepare(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/airbloc.rpc.v1.Exchange/Prepare",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExchangeServer).Prepare(ctx, req.(*OrderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Exchange_AddDataIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DataIds)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExchangeServer).AddDataIds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/airbloc.rpc.v1.Exchange/AddDataIds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExchangeServer).AddDataIds(ctx, req.(*DataIds))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Exchange_Order_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OfferId)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -435,13 +942,13 @@ func _Exchange_Order_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: "/airbloc.rpc.v1.Exchange/Order",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ExchangeServer).Order(ctx, req.(*OrderRequest))
+		return srv.(ExchangeServer).Order(ctx, req.(*OfferId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Exchange_Settle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v1.Hash)
+	in := new(OfferId)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -453,13 +960,13 @@ func _Exchange_Settle_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: "/airbloc.rpc.v1.Exchange/Settle",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ExchangeServer).Settle(ctx, req.(*v1.Hash))
+		return srv.(ExchangeServer).Settle(ctx, req.(*OfferId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Exchange_Reject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OrderIdRequest)
+	in := new(OfferId)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -471,13 +978,13 @@ func _Exchange_Reject_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: "/airbloc.rpc.v1.Exchange/Reject",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ExchangeServer).Reject(ctx, req.(*OrderIdRequest))
+		return srv.(ExchangeServer).Reject(ctx, req.(*OfferId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Exchange_CloseOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OrderIdRequest)
+	in := new(OfferId)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -489,7 +996,97 @@ func _Exchange_CloseOrder_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/airbloc.rpc.v1.Exchange/CloseOrder",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ExchangeServer).CloseOrder(ctx, req.(*OrderIdRequest))
+		return srv.(ExchangeServer).CloseOrder(ctx, req.(*OfferId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Exchange_GetOffer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OfferId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExchangeServer).GetOffer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/airbloc.rpc.v1.Exchange/GetOffer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExchangeServer).GetOffer(ctx, req.(*OfferId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Exchange_GetOfferCompact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OfferId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExchangeServer).GetOfferCompact(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/airbloc.rpc.v1.Exchange/GetOfferCompact",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExchangeServer).GetOfferCompact(ctx, req.(*OfferId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Exchange_GetReceiptsByOfferor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReceiptRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExchangeServer).GetReceiptsByOfferor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/airbloc.rpc.v1.Exchange/GetReceiptsByOfferor",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExchangeServer).GetReceiptsByOfferor(ctx, req.(*ReceiptRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Exchange_GetReceiptsByOfferee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReceiptRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExchangeServer).GetReceiptsByOfferee(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/airbloc.rpc.v1.Exchange/GetReceiptsByOfferee",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExchangeServer).GetReceiptsByOfferee(ctx, req.(*ReceiptRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Exchange_GetReceiptsByEscrow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReceiptRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExchangeServer).GetReceiptsByEscrow(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/airbloc.rpc.v1.Exchange/GetReceiptsByEscrow",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExchangeServer).GetReceiptsByEscrow(ctx, req.(*ReceiptRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -498,6 +1095,14 @@ var _Exchange_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "airbloc.rpc.v1.Exchange",
 	HandlerType: (*ExchangeServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Prepare",
+			Handler:    _Exchange_Prepare_Handler,
+		},
+		{
+			MethodName: "AddDataIds",
+			Handler:    _Exchange_AddDataIds_Handler,
+		},
 		{
 			MethodName: "Order",
 			Handler:    _Exchange_Order_Handler,
@@ -513,6 +1118,26 @@ var _Exchange_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CloseOrder",
 			Handler:    _Exchange_CloseOrder_Handler,
+		},
+		{
+			MethodName: "GetOffer",
+			Handler:    _Exchange_GetOffer_Handler,
+		},
+		{
+			MethodName: "GetOfferCompact",
+			Handler:    _Exchange_GetOfferCompact_Handler,
+		},
+		{
+			MethodName: "GetReceiptsByOfferor",
+			Handler:    _Exchange_GetReceiptsByOfferor_Handler,
+		},
+		{
+			MethodName: "GetReceiptsByOfferee",
+			Handler:    _Exchange_GetReceiptsByOfferee_Handler,
+		},
+		{
+			MethodName: "GetReceiptsByEscrow",
+			Handler:    _Exchange_GetReceiptsByEscrow_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

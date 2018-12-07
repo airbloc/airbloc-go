@@ -45,7 +45,7 @@ func (client *Client) Create(walletAddress ethCommon.Address, password string) (
 	if err != nil {
 		return nil, errors.Wrap(err, "RPC call failed")
 	}
-	accountId, err := ablCommon.IDFromString(response.GetAccountId())
+	accountId, err := ablCommon.HexToID(response.GetAccountId())
 	if err != nil {
 		return nil, errors.Wrapf(err, "invalid ID returned from the server: %s", response.GetAccountId())
 	}
@@ -64,7 +64,7 @@ func (client *Client) LogIn(identity string, password string) (*account.Session,
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to log in: %s", identity)
 	}
-	accountId, err := ablCommon.IDFromString(response.GetAccountId())
+	accountId, err := ablCommon.HexToID(response.GetAccountId())
 	if err != nil {
 		return nil, errors.Wrapf(err, "invalid ID returned from the server: %s", response.GetAccountId())
 	}

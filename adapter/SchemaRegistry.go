@@ -26,7 +26,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ablCommon.IDFromString
+	_ = ablCommon.HexToID
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
@@ -95,7 +95,7 @@ type SchemaRegistryTransactorRaw struct {
 	Contract *SchemaRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type SchemaRegistrySchema struct {
+type Schema struct {
 	Name  string
 	Owner common.Address
 }
@@ -103,9 +103,7 @@ type SchemaRegistrySchema struct {
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["SchemaRegistry"] = (&SchemaRegistry{}).new
-
 	blockchain.RegisterSelector("0xf2c298be", "register(string)")
-
 	blockchain.RegisterSelector("0x260a818e", "unregister(bytes8)")
 
 }

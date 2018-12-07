@@ -26,14 +26,14 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ablCommon.IDFromString
+	_ = ablCommon.HexToID
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
 
 // AccountsABI is the input ABI used to generate the binding from.
-const AccountsABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"numberOfAccounts\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"identityHashToAccount\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"name\":\"accounts\",\"outputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"status\",\"type\":\"uint8\"},{\"name\":\"proxy\",\"type\":\"address\"},{\"name\":\"passwordProof\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"SignUp\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"proxy\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"identityHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"TemporaryCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"identityHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"accountId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"Unlocked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[],\"name\":\"create\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"identityHash\",\"type\":\"bytes32\"}],\"name\":\"createTemporary\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"identityPreimage\",\"type\":\"bytes32\"},{\"name\":\"newOwner\",\"type\":\"address\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"unlockTemporary\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"createUsingProxy\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"getAccountId\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"messageHash\",\"type\":\"bytes32\"},{\"name\":\"signature\",\"type\":\"bytes\"}],\"name\":\"getAccountIdFromSignature\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"isTemporary\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const AccountsABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"numberOfAccounts\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"identityHashToAccount\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"name\":\"accounts\",\"outputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"status\",\"type\":\"uint8\"},{\"name\":\"delegate\",\"type\":\"address\"},{\"name\":\"proxy\",\"type\":\"address\"},{\"name\":\"passwordProof\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"SignUp\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"proxy\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"identityHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"TemporaryCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"identityHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"accountId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"Unlocked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[],\"name\":\"create\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"identityHash\",\"type\":\"bytes32\"}],\"name\":\"createTemporary\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"identityPreimage\",\"type\":\"bytes32\"},{\"name\":\"newOwner\",\"type\":\"address\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"unlockTemporary\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"createUsingProxy\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"setDelegate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"getAccountId\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"messageHash\",\"type\":\"bytes32\"},{\"name\":\"signature\",\"type\":\"bytes\"}],\"name\":\"getAccountIdFromSignature\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"isTemporary\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"sender\",\"type\":\"address\"},{\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"isDelegateOf\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // Accounts is an auto generated Go binding around an Ethereum contract.
 type Accounts struct {
@@ -95,35 +95,43 @@ type AccountsTransactorRaw struct {
 	Contract *AccountsTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type AccountsStatus int8
+type AccountStatus int8
 
 const (
-	StatusCREATED   = 2
-	StatusNONE      = 0
-	StatusTEMPORARY = 1
+	AccountStatus_CREATED   AccountStatus = 2
+	AccountStatus_NONE      AccountStatus = 0
+	AccountStatus_TEMPORARY AccountStatus = 1
 )
 
-type AccountsAccount struct {
+var AccountStatus_name = map[int8]string{
+	2: "CREATED",
+	0: "NONE",
+	1: "TEMPORARY",
+}
+
+var AccountStatus_value = map[string]int8{
+	"CREATED":   2,
+	"NONE":      0,
+	"TEMPORARY": 1,
+}
+
+type Account struct {
+	Delegate      common.Address
 	Owner         common.Address
 	PasswordProof common.Address
 	Proxy         common.Address
-	Status        AccountsStatus
+	Status        AccountStatus
 }
 
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["Accounts"] = (&Accounts{}).new
-
 	blockchain.RegisterSelector("0xefc81a8c", "create()")
-
 	blockchain.RegisterSelector("0x56003f0f", "createTemporary(bytes32)")
-
 	blockchain.RegisterSelector("0xdb82967c", "createUsingProxy(address,bytes)")
-
 	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
-
+	blockchain.RegisterSelector("0xca5eb5e1", "setDelegate(address)")
 	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
-
 	blockchain.RegisterSelector("0x2299219d", "unlockTemporary(bytes32,address,bytes)")
 
 }
@@ -222,16 +230,18 @@ func (_Accounts *AccountsTransactorRaw) Transact(opts *bind.TransactOpts, method
 
 // Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
 //
-// Solidity: function accounts( bytes8) constant returns(owner address, status uint8, proxy address, passwordProof address)
+// Solidity: function accounts( bytes8) constant returns(owner address, status uint8, delegate address, proxy address, passwordProof address)
 func (_Accounts *AccountsCaller) Accounts(opts *bind.CallOpts, arg0 [8]byte) (struct {
 	Owner         common.Address
 	Status        uint8
+	Delegate      common.Address
 	Proxy         common.Address
 	PasswordProof common.Address
 }, error) {
 	ret := new(struct {
 		Owner         common.Address
 		Status        uint8
+		Delegate      common.Address
 		Proxy         common.Address
 		PasswordProof common.Address
 	})
@@ -242,10 +252,11 @@ func (_Accounts *AccountsCaller) Accounts(opts *bind.CallOpts, arg0 [8]byte) (st
 
 // Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
 //
-// Solidity: function accounts( bytes8) constant returns(owner address, status uint8, proxy address, passwordProof address)
+// Solidity: function accounts( bytes8) constant returns(owner address, status uint8, delegate address, proxy address, passwordProof address)
 func (_Accounts *AccountsSession) Accounts(arg0 [8]byte) (struct {
 	Owner         common.Address
 	Status        uint8
+	Delegate      common.Address
 	Proxy         common.Address
 	PasswordProof common.Address
 }, error) {
@@ -254,10 +265,11 @@ func (_Accounts *AccountsSession) Accounts(arg0 [8]byte) (struct {
 
 // Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
 //
-// Solidity: function accounts( bytes8) constant returns(owner address, status uint8, proxy address, passwordProof address)
+// Solidity: function accounts( bytes8) constant returns(owner address, status uint8, delegate address, proxy address, passwordProof address)
 func (_Accounts *AccountsCallerSession) Accounts(arg0 [8]byte) (struct {
 	Owner         common.Address
 	Status        uint8
+	Delegate      common.Address
 	Proxy         common.Address
 	PasswordProof common.Address
 }, error) {
@@ -340,6 +352,32 @@ func (_Accounts *AccountsSession) IdentityHashToAccount(arg0 [32]byte) ([8]byte,
 // Solidity: function identityHashToAccount( bytes32) constant returns(bytes8)
 func (_Accounts *AccountsCallerSession) IdentityHashToAccount(arg0 [32]byte) ([8]byte, error) {
 	return _Accounts.Contract.IdentityHashToAccount(&_Accounts.CallOpts, arg0)
+}
+
+// IsDelegateOf is a free data retrieval call binding the contract method 0x3e1da046.
+//
+// Solidity: function isDelegateOf(sender address, accountId bytes8) constant returns(bool)
+func (_Accounts *AccountsCaller) IsDelegateOf(opts *bind.CallOpts, sender common.Address, accountId [8]byte) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Accounts.contract.Call(opts, out, "isDelegateOf", sender, accountId)
+	return *ret0, err
+}
+
+// IsDelegateOf is a free data retrieval call binding the contract method 0x3e1da046.
+//
+// Solidity: function isDelegateOf(sender address, accountId bytes8) constant returns(bool)
+func (_Accounts *AccountsSession) IsDelegateOf(sender common.Address, accountId [8]byte) (bool, error) {
+	return _Accounts.Contract.IsDelegateOf(&_Accounts.CallOpts, sender, accountId)
+}
+
+// IsDelegateOf is a free data retrieval call binding the contract method 0x3e1da046.
+//
+// Solidity: function isDelegateOf(sender address, accountId bytes8) constant returns(bool)
+func (_Accounts *AccountsCallerSession) IsDelegateOf(sender common.Address, accountId [8]byte) (bool, error) {
+	return _Accounts.Contract.IsDelegateOf(&_Accounts.CallOpts, sender, accountId)
 }
 
 // IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
@@ -528,6 +566,27 @@ func (_Accounts *AccountsSession) RenounceOwnership() (*types.Transaction, error
 // Solidity: function renounceOwnership() returns()
 func (_Accounts *AccountsTransactorSession) RenounceOwnership() (*types.Transaction, error) {
 	return _Accounts.Contract.RenounceOwnership(&_Accounts.TransactOpts)
+}
+
+// SetDelegate is a paid mutator transaction binding the contract method 0xca5eb5e1.
+//
+// Solidity: function setDelegate(delegate address) returns()
+func (_Accounts *AccountsTransactor) SetDelegate(opts *bind.TransactOpts, delegate common.Address) (*types.Transaction, error) {
+	return _Accounts.contract.Transact(opts, "setDelegate", delegate)
+}
+
+// SetDelegate is a paid mutator transaction binding the contract method 0xca5eb5e1.
+//
+// Solidity: function setDelegate(delegate address) returns()
+func (_Accounts *AccountsSession) SetDelegate(delegate common.Address) (*types.Transaction, error) {
+	return _Accounts.Contract.SetDelegate(&_Accounts.TransactOpts, delegate)
+}
+
+// SetDelegate is a paid mutator transaction binding the contract method 0xca5eb5e1.
+//
+// Solidity: function setDelegate(delegate address) returns()
+func (_Accounts *AccountsTransactorSession) SetDelegate(delegate common.Address) (*types.Transaction, error) {
+	return _Accounts.Contract.SetDelegate(&_Accounts.TransactOpts, delegate)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.

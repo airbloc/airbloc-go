@@ -26,7 +26,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ablCommon.IDFromString
+	_ = ablCommon.HexToID
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
@@ -95,7 +95,7 @@ type AppRegistryTransactorRaw struct {
 	Contract *AppRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type AppRegistryApp struct {
+type App struct {
 	Name  string
 	Owner common.Address
 }
@@ -103,15 +103,10 @@ type AppRegistryApp struct {
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["AppRegistry"] = (&AppRegistry{}).new
-
 	blockchain.RegisterSelector("0xa856fe78", "newOwner(bytes8,address)")
-
 	blockchain.RegisterSelector("0xf2c298be", "register(string)")
-
 	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
-
 	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
-
 	blockchain.RegisterSelector("0x260a818e", "unregister(bytes8)")
 
 }

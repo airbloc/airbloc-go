@@ -26,7 +26,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ablCommon.IDFromString
+	_ = ablCommon.HexToID
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
@@ -95,7 +95,7 @@ type SimpleContractTransactorRaw struct {
 	Contract *SimpleContractTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type SimpleContractAgreement struct {
+type Agreement struct {
 	Offeree bool
 	Offeror bool
 }
@@ -103,9 +103,7 @@ type SimpleContractAgreement struct {
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["SimpleContract"] = (&SimpleContract{}).new
-
 	blockchain.RegisterSelector("0x688e8391", "close(bytes8)")
-
 	blockchain.RegisterSelector("0x6d552248", "open(bytes8)")
 
 }

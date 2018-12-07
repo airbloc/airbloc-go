@@ -46,7 +46,7 @@ func (manager *Manager) Get(dataId string) (*ablCommon.Data, error) {
 		return nil, errors.Wrapf(err, "failed to parse data ID %s", dataId)
 	}
 
-	bundle, err := manager.warehouse.Get(id.BundleID.String())
+	bundle, err := manager.warehouse.Get(id.BundleID.Hex())
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to retrieve bundle of data %s", dataId)
 	}
@@ -66,7 +66,7 @@ func (manager *Manager) GetBatch(batch *data.Batch) ([]*ablCommon.Data, error) {
 
 	for dataId := range batch.Iterator() {
 		if _, alreadyFetched := bundles[dataId.BundleID]; !alreadyFetched {
-			b, err := manager.warehouse.Get(dataId.BundleID.String())
+			b, err := manager.warehouse.Get(dataId.BundleID.Hex())
 			if err != nil {
 				return nil, errors.Wrapf(err, "failed to retrieve bundle of data %s", dataId.String())
 			}

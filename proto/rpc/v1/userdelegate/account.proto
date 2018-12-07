@@ -3,8 +3,6 @@ package airbloc.rpc.v1;
 
 option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/userdelegate";
 
-import "proto/rpc/v1/types.proto";
-
 service Account {
     rpc Create(AccountCreateRequest) returns (AccountCreateResponse);
     rpc Get(AccountGetRequest) returns (AccountGetResponse);
@@ -13,16 +11,16 @@ service Account {
 }
 
 message AccountCreateRequest {
-    bytes address = 1;
+    string address = 1; // Address
     bytes passwordSignature = 2;
 }
 
 message AccountCreateResponse {
-    string accountId = 1;
+    string accountId = 1; // ID
 }
 
 message AccountGetRequest {
-    string accountId = 1;
+    string accountId = 1; // ID
 }
 
 message AccountGetResponse {
@@ -31,10 +29,10 @@ message AccountGetResponse {
         TEMPORARY = 1;
         CREATED = 2;
     }
-    string accountId = 1;
-    bytes ownerAddress = 2;
+    string accountId = 1; // ID
+    string ownerAddress = 2; // Address
     Status status = 3;
-    bytes proxyAddress = 4;
+    string proxyAddress = 4; // Address
     bytes passwordProof = 5;
 }
 
@@ -43,7 +41,7 @@ message AccountGetByIdentityRequest {
 }
 
 message TestPasswordRequest {
-    bytes messageHash = 1;
+    string messageHash = 1; // Hash
     bytes signature = 2;
 }
 

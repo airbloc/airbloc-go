@@ -24,7 +24,7 @@ type DataID struct {
 }
 
 func NewDataID(dataId string) (*DataID, error) {
-	bundleId, err := IDFromString(dataId[:IDLength])
+	bundleId, err := HexToID(dataId[:IDLength])
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse data ID from the given data ID.")
 	}
@@ -41,5 +41,5 @@ func NewDataID(dataId string) (*DataID, error) {
 }
 
 func (id *DataID) String() string {
-	return fmt.Sprintf("%s/%d", id.BundleID.String(), id.Index)
+	return fmt.Sprintf("%s/%d", id.BundleID.Hex(), id.Index)
 }
