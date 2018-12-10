@@ -2,7 +2,6 @@ package ablclient
 
 import (
 	"context"
-	"github.com/ethereum/go-ethereum/common/hexutil"
 
 	"github.com/airbloc/airbloc-go/account"
 	ablCommon "github.com/airbloc/airbloc-go/common"
@@ -28,7 +27,7 @@ func NewClient(conn *grpc.ClientConn) *Client {
 	}
 }
 
-func (client *Client) Create(ctx context.Context, walletAddress ethCommon.Address, password string) (*account.Session, error) {
+func (client *Client) Create(walletAddress ethCommon.Address, password string) (*account.Session, error) {
 	identity := crypto.Keccak256Hash(walletAddress.Bytes())
 	priv := key.DeriveFromPassword(identity, password)
 
@@ -38,11 +37,11 @@ func (client *Client) Create(ctx context.Context, walletAddress ethCommon.Addres
 	}
 
 	request := &pb.AccountCreateRequest{
-		Address:           walletAddress.Hex(),
+		Address:           walletAddress.Bytes(),
 		PasswordSignature: sig,
 	}
 
-	response, err := client.manager.Create(ctx, request)
+	response, err := client.manager.Create(context.Background(), request)
 	if err != nil {
 		return nil, errors.Wrap(err, "RPC call failed")
 	}
@@ -57,11 +56,11 @@ func (client *Client) Create(ctx context.Context, walletAddress ethCommon.Addres
 	}, nil
 }
 
-func (client *Client) LogIn(ctx context.Context, identity string, password string) (*account.Session, error) {
+func (client *Client) LogIn(identity string, password string) (*account.Session, error) {
 	request := &pb.AccountGetByIdentityRequest{
 		Identity: identity,
 	}
-	response, err := client.manager.GetByIdentity(ctx, request)
+	response, err := client.manager.GetByIdentity(context.Background(), request)
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to log in: %s", identity)
 	}
@@ -69,7 +68,7 @@ func (client *Client) LogIn(ctx context.Context, identity string, password strin
 	if err != nil {
 		return nil, errors.Wrapf(err, "invalid ID returned from the server: %s", response.GetAccountId())
 	}
-	session := account.NewSession(accountId, ethCommon.HexToAddress(response.GetOwnerAddress()), password)
+	session := account.NewSession(accountId, ethCommon.BytesToAddress(response.GetOwnerAddress()), password)
 
 	// generate test signature
 	identityHash := crypto.Keccak256Hash([]byte(identity))
@@ -80,10 +79,10 @@ func (client *Client) LogIn(ctx context.Context, identity string, password strin
 
 	// test the signature to check whether the password is correct
 	testReq := &pb.TestPasswordRequest{
-		MessageHash: hexutil.Encode(identityHash[:]),
+		MessageHash: identityHash[:],
 		Signature:   sig,
 	}
-	testResp, err := client.manager.TestPassword(ctx, testReq)
+	testResp, err := client.manager.TestPassword(context.Background(), testReq)
 	if err != nil {
 		return nil, errors.Wrapf(err, "RPC call TestPassword failed")
 	} else if !testResp.Exists {

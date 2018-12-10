@@ -147,7 +147,7 @@ func NewAirblocServer(
 
 // Discovery finds and updates new peer connection every minute.
 func (s *AirblocServer) Discovery() {
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(1 * time.Minute)
 	defer ticker.Stop()
 
 	s.updatePeer()
@@ -178,7 +178,6 @@ func (s *AirblocServer) updatePeer() {
 
 	if err != nil {
 		s.log.Error("Failed to discovery peers: %v", err)
-		return
 	}
 
 	found := 0

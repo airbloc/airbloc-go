@@ -35,20 +35,20 @@ func TestChallengeDataTransaction(t *testing.T) {
 	log.Println(hexutil.Encode(crypto.FromECDSA(k.PrivateKey)))
 }
 
-func testUserSignup(ctx context.Context, conn *grpc.ClientConn, index int) string {
+func testUserSignup(conn *grpc.ClientConn, index int) string {
 	dauth := pb.NewDAuthClient(conn)
 	req := &pb.SignInRequest{
 		Identity:     fmt.Sprintf("test-user-%d@airbloc.org", index),
 		UserDelegate: common.FromHex("0x3949EfD67b33D4FEe196BDe8E945acE3F9ee3EE6"),
 	}
-	resp, err := dauth.SignIn(ctx, req)
+	resp, err := dauth.SignIn(context.Background(), req)
 	if err != nil {
 		log.Fatalln(errors.Wrap(err, "failed to create account").Error())
 	}
 	return resp.GetAccountId()
 }
 
-func testDAuth(ctx context.Context, conn *grpc.ClientConn, collectionId string, accountId string, allow bool) {
+func testDAuth(conn *grpc.ClientConn, collectionId string, accountId string, allow bool) {
 	dauth := pb.NewDAuthClient(conn)
 	req := &pb.DAuthRequest{
 		CollectionId: collectionId,
@@ -58,42 +58,39 @@ func testDAuth(ctx context.Context, conn *grpc.ClientConn, collectionId string, 
 	if !allow {
 		dauthModifyMethod = dauth.Deny
 	}
-	_, err := dauthModifyMethod(ctx, req)
+	_, err := dauthModifyMethod(context.Background(), req)
 	if err != nil {
 		log.Fatalln(errors.Wrap(err, "failed to modify dauth").Error())
 	}
 }
 
 func TestUserDelegateMain(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
 	conn, err := grpc.Dial("localhost:9124", grpc.WithInsecure())
 	if err != nil {
 		panic(err.Error())
 	}
 	defer conn.Close()
 
-	appId := testCreateApp(t, ctx, conn)
+	appId := testCreateApp(conn)
 	log.Println("Created App ID:", appId)
 
-	schemaId := testCreateSchema(t, ctx, conn)
+	schemaId := testCreateSchema(conn)
 	log.Printf("Created Schema ID: %s\n", schemaId)
 
-	collectionId := testCreateCollection(t, ctx, appId, schemaId, conn)
+	collectionId := testCreateCollection(appId, schemaId, conn)
 	log.Printf("Created Collection: %s\n", collectionId)
 
 	// create 10 accounts through DAuth signup
 	var accountIds []string
 	for i := 1; i <= 10; i++ {
-		accountId := testUserSignup(ctx, conn, i)
+		accountId := testUserSignup(conn, i)
 		accountIds = append(accountIds, accountId)
 	}
 
 	// DAuth it
 	for i, accountId := range accountIds {
 		allow := i%2 == 0
-		testDAuth(ctx, conn, collectionId, accountId, allow)
+		testDAuth(conn, collectionId, accountId, allow)
 		log.Printf("%s dauth: allow=%v", accountId, allow)
 	}
 }
