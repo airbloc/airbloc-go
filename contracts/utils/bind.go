@@ -243,7 +243,7 @@ var bindType = map[Lang]func(kind abi.Type) string{
 func wrapArray(stringKind string, innerLen int, innerMapping string) (string, []string) {
 	remainder := stringKind[innerLen:]
 	//find all the sizes
-	matches := regexp.MustCompile(`\[(\d*)]`).FindAllStringSubmatch(remainder, -1)
+	matches := regexp.MustCompile(`\[(\d*)\]`).FindAllStringSubmatch(remainder, -1)
 	parts := make([]string, 0, len(matches))
 	for _, match := range matches {
 		//get group 1 from the regex match
@@ -328,7 +328,7 @@ func bindUnnestedTypeJava(stringKind string) (int, string) {
 
 	switch {
 	case strings.HasPrefix(stringKind, "address"):
-		parts := regexp.MustCompile(`address(\[[0-9]*])?`).FindStringSubmatch(stringKind)
+		parts := regexp.MustCompile(`address(\[[0-9]*\])?`).FindStringSubmatch(stringKind)
 		if len(parts) != 2 {
 			return len(stringKind), stringKind
 		}
@@ -429,7 +429,7 @@ func namedTypeJava(javaKind string, solKind abi.Type) string {
 	case "BigInt[]":
 		return "BigInts"
 	default:
-		parts := regexp.MustCompile(`(u)?int([0-9]*)(\[[0-9]*])?`).FindStringSubmatch(solKind.String())
+		parts := regexp.MustCompile(`(u)?int([0-9]*)(\[[0-9]*\])?`).FindStringSubmatch(solKind.String())
 		if len(parts) != 4 {
 			return javaKind
 		}
