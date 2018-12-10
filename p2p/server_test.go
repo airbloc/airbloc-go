@@ -112,6 +112,7 @@ func TestAirblocHost_Publish(t *testing.T) {
 	// make alice and bob
 	alice, err := makeBasicServer(ctx, 1, false, bootinfo)
 	assert.NoError(t, err)
+	alice.Start()
 
 	aliceAddress := keys[1].EthereumAddress.Hex()
 	log.Printf("Alice address : %s\n", aliceAddress)
@@ -119,20 +120,15 @@ func TestAirblocHost_Publish(t *testing.T) {
 
 	bob, err := makeBasicServer(ctx, 2, false, bootinfo)
 	assert.NoError(t, err)
-
-	// start
-	alice.Start()
 	bob.Start()
+
+	time.Sleep(2 * time.Second)
 
 	// bob listens to alice, try to recover alice's address
 	waitForBob := make(chan string, 1)
 	bob.SubscribeTopic("ping", &pb.TestPing{}, func(s Server, ctx context.Context, message common.Message) {
 		waitForBob <- message.SenderAddr.Hex()
 	})
-
-	// TODO: without Connect(), it's not working
-	err = alice.getHost().Connect(ctx, bob.getHost().PeerInfo())
-	assert.NoError(t, err)
 
 	err = alice.Publish(ctx, pingMsg, "ping")
 	assert.NoError(t, err)
