@@ -110,6 +110,14 @@ If you modify Protobuf definitions in `proto/`, you should regenerate the protob
  $ make generate-proto
 ```
 
+### Attach Provider Console
+
+If you want attach to specific provider, you can use these commands
+
+```
+$ npm run console NETWORK_NAME
+```
+
 ### Compiling Contract
 
 If there's some changes in contract, contract bindings should be also re-generated.
@@ -117,7 +125,8 @@ If there's some changes in contract, contract bindings should be also re-generat
 ```
  $ cd contracts/
  $ npm run compile
- $ go run generate_adapter.go
+ $ cd ..
+ $ make generate-bind
 ```
 
 ### Deploying Contract
@@ -142,7 +151,7 @@ Then you can deploy contracts:
 
 ```
  $ cd contracts/
- $ npm run deploy-NETWORK_NAME
+ $ npm run deploy NETWORK_NAME
  ...
  Writing deployments to deployment.local.json
 ```

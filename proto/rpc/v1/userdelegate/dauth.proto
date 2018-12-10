@@ -3,17 +3,17 @@ package airbloc.rpc.v1.userdelegate;
 
 option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/userdelegate";
 
-import "proto/rpc/v1/types.proto";
+import "google/protobuf/empty.proto";
 
 /**
  * DAuth (Data Collection Authentification) API.
  */
 service DAuth {
-    rpc Allow(DAuthRequest) returns (airbloc.rpc.v1.Result);
-    rpc Deny(DAuthRequest) returns (airbloc.rpc.v1.Result);
+    rpc Allow(DAuthRequest) returns (google.protobuf.Empty);
+    rpc Deny(DAuthRequest) returns (google.protobuf.Empty);
 }
 
 message DAuthRequest {
-    string collectionId = 1;
+    string collectionId = 1; // ID
     bytes passwordSignature = 2;
 }

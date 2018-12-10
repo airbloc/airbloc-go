@@ -10,7 +10,7 @@ import (
 )
 
 func TestSession_Sign(t *testing.T) {
-	accountId, _ := common.IDFromString("deadbeefdeadbeef")
+	accountId, _ := common.HexToID("deadbeefdeadbeef")
 	walletAddress := common2.HexToAddress("0xdeadbeef397a8ea5464f8cc753645d42e14b79ea")
 	password := "foobar1234"
 	session := NewSession(accountId, walletAddress, password)

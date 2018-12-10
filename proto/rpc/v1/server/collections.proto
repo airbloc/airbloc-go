@@ -16,14 +16,14 @@ message Policy {
 }
 
 message CreateCollectionRequest {
-    string appId = 1;
-    string schemaId = 2;
+    string appId = 1; // ID
+    string schemaId = 2; // ID
     reserved 3 to 10;
     Policy policy = 11;
 }
 
 message CreateCollectionResponse {
-    string collectionId = 1;
+    string collectionId = 1; // ID
 }
 
 message ListCollectionRequest {
@@ -32,8 +32,8 @@ message ListCollectionRequest {
 }
 
 message CollectionResponse {
-    string appId = 1;
-    string schemaId = 2;
+    string appId = 1; // ID
+    string schemaId = 2; // ID
 // TODO : return incentive policy
 //    reserved 3 to 10;
 //    string incentivePolicy = 11;

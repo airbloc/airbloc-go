@@ -6,3 +6,4 @@
 
 # For syntax highlighting on Github
 *.sol linguist-language=Solidity
+*.proto linguist-language=Protocol Buffer

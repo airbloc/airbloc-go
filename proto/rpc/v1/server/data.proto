@@ -3,7 +3,7 @@ package airbloc.rpc.v1;
 
 option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
 
-import "proto/rpc/v1/types.proto";
+import "google/protobuf/empty.proto";
 
 /**
  * Data Management API.
@@ -12,33 +12,33 @@ service Data {
     rpc Get(DataId) returns (DataResult);
     rpc BatchGet(BatchRequest) returns (BatchGetResult);
 
-    rpc SetPermission(SetDataPermissionRequest) returns (airbloc.rpc.v1.Result);
-    rpc SetPermissionBatch(SetBatchDataPermissionRequest) returns (airbloc.rpc.v1.Results);
+    rpc SetPermission(SetDataPermissionRequest) returns (google.protobuf.Empty);
+    rpc SetPermissionBatch(SetBatchDataPermissionRequest) returns (google.protobuf.Empty);
 
-    rpc Delete(DataId) returns (airbloc.rpc.v1.Result);
-    rpc DeleteBatch(BatchRequest) returns (airbloc.rpc.v1.Results);
+    rpc Delete(DataId) returns (google.protobuf.Empty);
+    rpc DeleteBatch(BatchRequest) returns (google.protobuf.Empty);
 
     rpc Select(stream DataId) returns (BatchRequest);
-    rpc Release(BatchRequest) returns (airbloc.rpc.v1.Result);
+    rpc Release(BatchRequest) returns (google.protobuf.Empty);
 }
 
 message BatchRequest {
-    string batchId = 1;
+    string batchId = 1; // ID
 }
 
 message DataId {
-    string dataId = 1;
+    string dataId = 1; // ID
 }
 
 message DataResult {
     message Permission {
-        string consumerId = 1;
+        string consumerId = 1; // ID
         bool allowAccess = 2;
     }
 
-    string dataId = 1;
-    string collectionId = 2;
-    string ownerUserAid = 3;
+    string dataId = 1; // ID
+    string collectionId = 2; // ID
+    string ownerUserAid = 3; // ID
     string uri = 4;
     uint64 registeredAt = 5;
     repeated Permission permissions = 6;
@@ -49,13 +49,13 @@ message BatchGetResult {
 }
 
 message SetDataPermissionRequest {
-    string dataId = 1;
-    string consumerId = 2;
+    string dataId = 1; // ID
+    string consumerId = 2; // ID
     bool allowAccess = 3;
 }
 
 message SetBatchDataPermissionRequest {
-    string batchId = 1;
-    string consumerId = 2;
+    string batchId = 1; // ID
+    string consumerId = 2; // ID
     bool allowAccess = 3;
 }

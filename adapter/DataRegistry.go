@@ -26,7 +26,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ablCommon.IDFromString
+	_ = ablCommon.HexToID
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
@@ -95,7 +95,7 @@ type DataRegistryTransactorRaw struct {
 	Contract *DataRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type DataRegistryBundle struct {
+type Bundle struct {
 	BundleDataHash        common.Hash
 	CreatedAt             *big.Int
 	ProofOfPosessionCount uint64
@@ -106,11 +106,8 @@ type DataRegistryBundle struct {
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["DataRegistry"] = (&DataRegistry{}).new
-
 	blockchain.RegisterSelector("0xbde66f2c", "registerBundle(bytes8,bytes32,bytes32,string)")
-
 	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
-
 	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
 
 }

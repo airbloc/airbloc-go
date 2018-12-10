@@ -88,7 +88,7 @@ func testCreateUserAccount(conn *grpc.ClientConn, index int) string {
 	if err != nil {
 		log.Fatalln(errors.Wrap(err, "failed to create account").Error())
 	}
-	return session.AccountId.String()
+	return session.AccountId.Hex()
 }
 
 func testCreateUserAccountParallel(conn *grpc.ClientConn) (userIds [numberOfUsers]string) {
@@ -110,7 +110,7 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 
 	appId := testCreateApp(conn)
 	log.Println("Created App ID:", appId)
@@ -138,9 +138,9 @@ func main() {
 
 		for i := 0; i < numberOfUsers; i++ {
 			rawData := &pb.RawDataRequest{
-				Collection: collectionId,
-				OwnerId:    userIds[i],
-				Payload:    fmt.Sprintf("{\"name\":\"%s\",\"age\":%d}", userIds[i], i),
+				CollectionId: collectionId,
+				OwnerId:      userIds[i],
+				Payload:      fmt.Sprintf("{\"name\":\"%s\",\"age\":%d}", userIds[i], i),
 			}
 			if err := stream.Send(rawData); err != nil {
 				log.Fatalf("Failed to send datum %v: %+v", rawData, err)

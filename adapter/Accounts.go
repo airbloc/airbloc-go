@@ -95,38 +95,43 @@ type AccountsTransactorRaw struct {
 	Contract *AccountsTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type AccountsStatus int8
+type Status int8
 
 const (
-	StatusCREATED   = 2
-	StatusNONE      = 0
-	StatusTEMPORARY = 1
+	Status_CREATED   Status = 2
+	Status_NONE      Status = 0
+	Status_TEMPORARY Status = 1
 )
 
-type AccountsAccount struct {
+var Status_name = map[int8]string{
+	2: "CREATED",
+	0: "NONE",
+	1: "TEMPORARY",
+}
+
+var Status_value = map[string]int8{
+	"CREATED":   2,
+	"NONE":      0,
+	"TEMPORARY": 1,
+}
+
+type Account struct {
 	Delegate      common.Address
 	Owner         common.Address
 	PasswordProof common.Address
 	Proxy         common.Address
-	Status        AccountsStatus
+	Status        Status
 }
 
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["Accounts"] = (&Accounts{}).new
-
 	blockchain.RegisterSelector("0xefc81a8c", "create()")
-
 	blockchain.RegisterSelector("0x56003f0f", "createTemporary(bytes32)")
-
 	blockchain.RegisterSelector("0xdb82967c", "createUsingProxy(address,bytes)")
-
 	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
-
 	blockchain.RegisterSelector("0xca5eb5e1", "setDelegate(address)")
-
 	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
-
 	blockchain.RegisterSelector("0x2299219d", "unlockTemporary(bytes32,address,bytes)")
 
 }

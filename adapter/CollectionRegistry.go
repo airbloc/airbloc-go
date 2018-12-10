@@ -95,19 +95,19 @@ type CollectionRegistryTransactorRaw struct {
 	Contract *CollectionRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type CollectionRegistryAuth struct {
+type Auth struct {
 	AuthorizedAt *big.Int
 	IsAllowed    bool
 }
 
-type CollectionRegistryCollection struct {
+type Collection struct {
 	AppId            ablCommon.ID
-	DataCollectionOf map[ablCommon.ID]CollectionRegistryAuth
-	Policy           CollectionRegistryIncentivePolicy
+	DataCollectionOf map[ablCommon.ID]Auth
+	Policy           IncentivePolicy
 	SchemaId         ablCommon.ID
 }
 
-type CollectionRegistryIncentivePolicy struct {
+type IncentivePolicy struct {
 	Owner *big.Int
 	Self  *big.Int
 }
@@ -115,21 +115,13 @@ type CollectionRegistryIncentivePolicy struct {
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["CollectionRegistry"] = (&CollectionRegistry{}).new
-
 	blockchain.RegisterSelector("0x4c9b30b4", "allow(bytes8)")
-
 	blockchain.RegisterSelector("0x6885c572", "allowByDelegate(bytes8,bytes8)")
-
 	blockchain.RegisterSelector("0x4a91ee2a", "allowByPassword(bytes8,bytes)")
-
 	blockchain.RegisterSelector("0x18856694", "deny(bytes8)")
-
 	blockchain.RegisterSelector("0x61e76056", "denyByDelegate(bytes8,bytes8)")
-
 	blockchain.RegisterSelector("0x0c9bb7d2", "denyByPassword(bytes8,bytes)")
-
 	blockchain.RegisterSelector("0xa3b42cba", "register(bytes8,bytes8,uint256)")
-
 	blockchain.RegisterSelector("0x260a818e", "unregister(bytes8)")
 
 }

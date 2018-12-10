@@ -24,13 +24,13 @@
 #   go-tests = true
 #   unused-packages = true
 
-required = [
-    "github.com/golang/protobuf/protoc-gen-go",
-]
-
 [prune]
   go-tests = true
   unused-packages = true
+
+[[override]]
+  name = "github.com/golang/protobuf"
+  branch = "master"
 
 [[constraint]]
   name = "github.com/ethereum/go-ethereum"
