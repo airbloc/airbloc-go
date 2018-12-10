@@ -95,21 +95,21 @@ type AccountsTransactorRaw struct {
 	Contract *AccountsTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type Status int8
+type AccountsStatus int8
 
 const (
-	Status_CREATED   Status = 2
-	Status_NONE      Status = 0
-	Status_TEMPORARY Status = 1
+	AccountsStatus_CREATED   AccountsStatus = 2
+	AccountsStatus_NONE      AccountsStatus = 0
+	AccountsStatus_TEMPORARY AccountsStatus = 1
 )
 
-var Status_name = map[int8]string{
+var AccountsStatus_name = map[int8]string{
 	2: "CREATED",
 	0: "NONE",
 	1: "TEMPORARY",
 }
 
-var Status_value = map[string]int8{
+var AccountsStatus_value = map[string]int8{
 	"CREATED":   2,
 	"NONE":      0,
 	"TEMPORARY": 1,
@@ -120,7 +120,7 @@ type Account struct {
 	Owner         common.Address
 	PasswordProof common.Address
 	Proxy         common.Address
-	Status        Status
+	Status        AccountsStatus
 }
 
 func init() {

@@ -102,8 +102,8 @@ type Auth struct {
 
 type Collection struct {
 	AppId            ablCommon.ID
-	DataCollectionOf map[ablCommon.ID]Auth
-	Policy           IncentivePolicy
+	DataCollectionOf map[ablCommon.ID]CollectionRegistryAuth
+	Policy           CollectionRegistryIncentivePolicy
 	SchemaId         ablCommon.ID
 }
 

@@ -108,8 +108,7 @@ func parseUserDefinedType(typeName *fastjson.Value) string {
 	case strings.HasPrefix(string(typeBytes), TypeEnumPrefix):
 		canonical = strings.TrimPrefix(string(typeBytes), TypeEnumPrefix)
 	}
-	split := strings.Split(canonical, ".")
-	return split[len(split)-1]
+	return strings.Replace(canonical, ".", "", -1)
 }
 
 func parseMappingType(typeName *fastjson.Value) string {
