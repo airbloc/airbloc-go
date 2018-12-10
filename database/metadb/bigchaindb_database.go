@@ -160,6 +160,6 @@ func (db *bigchainDB) Burn(txid string, mode Mode) error {
 }
 
 func (db *bigchainDB) Close() (err error) {
-	err = db.mdb.Client().Disconnect(ctx)
+	err = db.mdb.Client().Disconnect(context.Background())
 	return
 }
