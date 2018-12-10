@@ -26,14 +26,14 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ablCommon.HexToID
+	_ = ablCommon.IDFromString
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
 )
 
 // ExchangeABI is the input ABI used to generate the binding from.
-const ExchangeABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"escrowIndex\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"toIndex\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"fromIndex\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferPrepared\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferPresented\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferSettled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferRejected\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"_offeror\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"_to\",\"type\":\"address\"}],\"name\":\"Receipt\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_escrow\",\"type\":\"address\"},{\"name\":\"_escrowOpenSign\",\"type\":\"bytes4\"},{\"name\":\"_escrowOpenArgs\",\"type\":\"bytes\"},{\"name\":\"_escrowCloseSign\",\"type\":\"bytes4\"},{\"name\":\"_escrowCloseArgs\",\"type\":\"bytes\"},{\"name\":\"_dataIds\",\"type\":\"bytes16[]\"}],\"name\":\"prepare\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"},{\"name\":\"_dataIds\",\"type\":\"bytes16[]\"}],\"name\":\"addDataIds\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"order\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"settle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"reject\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"close\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"}],\"name\":\"getReceiptsByOfferor\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_to\",\"type\":\"address\"}],\"name\":\"getReceiptsByOfferee\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_escrow\",\"type\":\"address\"}],\"name\":\"getReceiptsByEscrow\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"getOfferCompact\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"getOffer\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"bytes16[]\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"bytes4\"},{\"name\":\"\",\"type\":\"bytes\"},{\"name\":\"\",\"type\":\"bytes4\"},{\"name\":\"\",\"type\":\"bytes\"},{\"name\":\"\",\"type\":\"uint8\"},{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const ExchangeABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"escrowIndex\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"toIndex\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"fromIndex\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferPrepared\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferPresented\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferSettled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferRejected\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"_offeror\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"_offeree\",\"type\":\"address\"}],\"name\":\"Receipt\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offeror\",\"type\":\"address\"},{\"name\":\"_offeree\",\"type\":\"address\"},{\"name\":\"_escrow\",\"type\":\"address\"},{\"name\":\"_sign\",\"type\":\"bytes4\"},{\"name\":\"_args\",\"type\":\"bytes\"},{\"name\":\"_dataIds\",\"type\":\"bytes16[]\"}],\"name\":\"prepare\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"},{\"name\":\"_dataIds\",\"type\":\"bytes16[]\"}],\"name\":\"addDataIds\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"order\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"settle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"reject\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"close\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_offeror\",\"type\":\"address\"}],\"name\":\"getReceiptsByOfferor\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_offeree\",\"type\":\"address\"}],\"name\":\"getReceiptsByOfferee\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_escrow\",\"type\":\"address\"}],\"name\":\"getReceiptsByEscrow\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"getOfferCompact\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"getOffer\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"bytes16[]\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"bytes4\"},{\"name\":\"\",\"type\":\"bytes\"},{\"name\":\"\",\"type\":\"uint8\"},{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // Exchange is an auto generated Go binding around an Ethereum contract.
 type Exchange struct {
@@ -101,7 +101,7 @@ func init() {
 	blockchain.RegisterSelector("0xe6d16fcb", "addDataIds(bytes8,bytes16[])")
 	blockchain.RegisterSelector("0x688e8391", "close(bytes8)")
 	blockchain.RegisterSelector("0x0cf833fb", "order(bytes8)")
-	blockchain.RegisterSelector("0x80b1cb23", "prepare(address,address,bytes4,bytes,bytes4,bytes,bytes16[])")
+	blockchain.RegisterSelector("0xf35f380b", "prepare(address,address,address,bytes4,bytes,bytes16[])")
 	blockchain.RegisterSelector("0x6622e153", "reject(bytes8)")
 	blockchain.RegisterSelector("0xa60d9b5f", "settle(bytes8)")
 
@@ -253,8 +253,8 @@ func (_Exchange *ExchangeCallerSession) FromIndex(arg0 common.Address, arg1 *big
 
 // GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
 //
-// Solidity: function getOffer(_offerId bytes8) constant returns(address, address, bytes16[], address, bytes4, bytes, bytes4, bytes, uint8, bool)
-func (_Exchange *ExchangeCaller) GetOffer(opts *bind.CallOpts, _offerId [8]byte) (common.Address, common.Address, [][16]byte, common.Address, [4]byte, []byte, [4]byte, []byte, uint8, bool, error) {
+// Solidity: function getOffer(_offerId bytes8) constant returns(address, address, bytes16[], address, bytes4, bytes, uint8, bool)
+func (_Exchange *ExchangeCaller) GetOffer(opts *bind.CallOpts, _offerId [8]byte) (common.Address, common.Address, [][16]byte, common.Address, [4]byte, []byte, uint8, bool, error) {
 	var (
 		ret0 = new(common.Address)
 		ret1 = new(common.Address)
@@ -262,10 +262,8 @@ func (_Exchange *ExchangeCaller) GetOffer(opts *bind.CallOpts, _offerId [8]byte)
 		ret3 = new(common.Address)
 		ret4 = new([4]byte)
 		ret5 = new([]byte)
-		ret6 = new([4]byte)
-		ret7 = new([]byte)
-		ret8 = new(uint8)
-		ret9 = new(bool)
+		ret6 = new(uint8)
+		ret7 = new(bool)
 	)
 	out := &[]interface{}{
 		ret0,
@@ -276,24 +274,22 @@ func (_Exchange *ExchangeCaller) GetOffer(opts *bind.CallOpts, _offerId [8]byte)
 		ret5,
 		ret6,
 		ret7,
-		ret8,
-		ret9,
 	}
 	err := _Exchange.contract.Call(opts, out, "getOffer", _offerId)
-	return *ret0, *ret1, *ret2, *ret3, *ret4, *ret5, *ret6, *ret7, *ret8, *ret9, err
+	return *ret0, *ret1, *ret2, *ret3, *ret4, *ret5, *ret6, *ret7, err
 }
 
 // GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
 //
-// Solidity: function getOffer(_offerId bytes8) constant returns(address, address, bytes16[], address, bytes4, bytes, bytes4, bytes, uint8, bool)
-func (_Exchange *ExchangeSession) GetOffer(_offerId [8]byte) (common.Address, common.Address, [][16]byte, common.Address, [4]byte, []byte, [4]byte, []byte, uint8, bool, error) {
+// Solidity: function getOffer(_offerId bytes8) constant returns(address, address, bytes16[], address, bytes4, bytes, uint8, bool)
+func (_Exchange *ExchangeSession) GetOffer(_offerId [8]byte) (common.Address, common.Address, [][16]byte, common.Address, [4]byte, []byte, uint8, bool, error) {
 	return _Exchange.Contract.GetOffer(&_Exchange.CallOpts, _offerId)
 }
 
 // GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
 //
-// Solidity: function getOffer(_offerId bytes8) constant returns(address, address, bytes16[], address, bytes4, bytes, bytes4, bytes, uint8, bool)
-func (_Exchange *ExchangeCallerSession) GetOffer(_offerId [8]byte) (common.Address, common.Address, [][16]byte, common.Address, [4]byte, []byte, [4]byte, []byte, uint8, bool, error) {
+// Solidity: function getOffer(_offerId bytes8) constant returns(address, address, bytes16[], address, bytes4, bytes, uint8, bool)
+func (_Exchange *ExchangeCallerSession) GetOffer(_offerId [8]byte) (common.Address, common.Address, [][16]byte, common.Address, [4]byte, []byte, uint8, bool, error) {
 	return _Exchange.Contract.GetOffer(&_Exchange.CallOpts, _offerId)
 }
 
@@ -359,54 +355,54 @@ func (_Exchange *ExchangeCallerSession) GetReceiptsByEscrow(_escrow common.Addre
 
 // GetReceiptsByOfferee is a free data retrieval call binding the contract method 0x17329f19.
 //
-// Solidity: function getReceiptsByOfferee(_to address) constant returns(bytes8[])
-func (_Exchange *ExchangeCaller) GetReceiptsByOfferee(opts *bind.CallOpts, _to common.Address) ([][8]byte, error) {
+// Solidity: function getReceiptsByOfferee(_offeree address) constant returns(bytes8[])
+func (_Exchange *ExchangeCaller) GetReceiptsByOfferee(opts *bind.CallOpts, _offeree common.Address) ([][8]byte, error) {
 	var (
 		ret0 = new([][8]byte)
 	)
 	out := ret0
-	err := _Exchange.contract.Call(opts, out, "getReceiptsByOfferee", _to)
+	err := _Exchange.contract.Call(opts, out, "getReceiptsByOfferee", _offeree)
 	return *ret0, err
 }
 
 // GetReceiptsByOfferee is a free data retrieval call binding the contract method 0x17329f19.
 //
-// Solidity: function getReceiptsByOfferee(_to address) constant returns(bytes8[])
-func (_Exchange *ExchangeSession) GetReceiptsByOfferee(_to common.Address) ([][8]byte, error) {
-	return _Exchange.Contract.GetReceiptsByOfferee(&_Exchange.CallOpts, _to)
+// Solidity: function getReceiptsByOfferee(_offeree address) constant returns(bytes8[])
+func (_Exchange *ExchangeSession) GetReceiptsByOfferee(_offeree common.Address) ([][8]byte, error) {
+	return _Exchange.Contract.GetReceiptsByOfferee(&_Exchange.CallOpts, _offeree)
 }
 
 // GetReceiptsByOfferee is a free data retrieval call binding the contract method 0x17329f19.
 //
-// Solidity: function getReceiptsByOfferee(_to address) constant returns(bytes8[])
-func (_Exchange *ExchangeCallerSession) GetReceiptsByOfferee(_to common.Address) ([][8]byte, error) {
-	return _Exchange.Contract.GetReceiptsByOfferee(&_Exchange.CallOpts, _to)
+// Solidity: function getReceiptsByOfferee(_offeree address) constant returns(bytes8[])
+func (_Exchange *ExchangeCallerSession) GetReceiptsByOfferee(_offeree common.Address) ([][8]byte, error) {
+	return _Exchange.Contract.GetReceiptsByOfferee(&_Exchange.CallOpts, _offeree)
 }
 
 // GetReceiptsByOfferor is a free data retrieval call binding the contract method 0xfaaf7393.
 //
-// Solidity: function getReceiptsByOfferor(_from address) constant returns(bytes8[])
-func (_Exchange *ExchangeCaller) GetReceiptsByOfferor(opts *bind.CallOpts, _from common.Address) ([][8]byte, error) {
+// Solidity: function getReceiptsByOfferor(_offeror address) constant returns(bytes8[])
+func (_Exchange *ExchangeCaller) GetReceiptsByOfferor(opts *bind.CallOpts, _offeror common.Address) ([][8]byte, error) {
 	var (
 		ret0 = new([][8]byte)
 	)
 	out := ret0
-	err := _Exchange.contract.Call(opts, out, "getReceiptsByOfferor", _from)
+	err := _Exchange.contract.Call(opts, out, "getReceiptsByOfferor", _offeror)
 	return *ret0, err
 }
 
 // GetReceiptsByOfferor is a free data retrieval call binding the contract method 0xfaaf7393.
 //
-// Solidity: function getReceiptsByOfferor(_from address) constant returns(bytes8[])
-func (_Exchange *ExchangeSession) GetReceiptsByOfferor(_from common.Address) ([][8]byte, error) {
-	return _Exchange.Contract.GetReceiptsByOfferor(&_Exchange.CallOpts, _from)
+// Solidity: function getReceiptsByOfferor(_offeror address) constant returns(bytes8[])
+func (_Exchange *ExchangeSession) GetReceiptsByOfferor(_offeror common.Address) ([][8]byte, error) {
+	return _Exchange.Contract.GetReceiptsByOfferor(&_Exchange.CallOpts, _offeror)
 }
 
 // GetReceiptsByOfferor is a free data retrieval call binding the contract method 0xfaaf7393.
 //
-// Solidity: function getReceiptsByOfferor(_from address) constant returns(bytes8[])
-func (_Exchange *ExchangeCallerSession) GetReceiptsByOfferor(_from common.Address) ([][8]byte, error) {
-	return _Exchange.Contract.GetReceiptsByOfferor(&_Exchange.CallOpts, _from)
+// Solidity: function getReceiptsByOfferor(_offeror address) constant returns(bytes8[])
+func (_Exchange *ExchangeCallerSession) GetReceiptsByOfferor(_offeror common.Address) ([][8]byte, error) {
+	return _Exchange.Contract.GetReceiptsByOfferor(&_Exchange.CallOpts, _offeror)
 }
 
 // ToIndex is a free data retrieval call binding the contract method 0x4dae267e.
@@ -498,25 +494,25 @@ func (_Exchange *ExchangeTransactorSession) Order(_offerId [8]byte) (*types.Tran
 	return _Exchange.Contract.Order(&_Exchange.TransactOpts, _offerId)
 }
 
-// Prepare is a paid mutator transaction binding the contract method 0x80b1cb23.
+// Prepare is a paid mutator transaction binding the contract method 0xf35f380b.
 //
-// Solidity: function prepare(_to address, _escrow address, _escrowOpenSign bytes4, _escrowOpenArgs bytes, _escrowCloseSign bytes4, _escrowCloseArgs bytes, _dataIds bytes16[]) returns()
-func (_Exchange *ExchangeTransactor) Prepare(opts *bind.TransactOpts, _to common.Address, _escrow common.Address, _escrowOpenSign [4]byte, _escrowOpenArgs []byte, _escrowCloseSign [4]byte, _escrowCloseArgs []byte, _dataIds [][16]byte) (*types.Transaction, error) {
-	return _Exchange.contract.Transact(opts, "prepare", _to, _escrow, _escrowOpenSign, _escrowOpenArgs, _escrowCloseSign, _escrowCloseArgs, _dataIds)
+// Solidity: function prepare(_offeror address, _offeree address, _escrow address, _sign bytes4, _args bytes, _dataIds bytes16[]) returns()
+func (_Exchange *ExchangeTransactor) Prepare(opts *bind.TransactOpts, _offeror common.Address, _offeree common.Address, _escrow common.Address, _sign [4]byte, _args []byte, _dataIds [][16]byte) (*types.Transaction, error) {
+	return _Exchange.contract.Transact(opts, "prepare", _offeror, _offeree, _escrow, _sign, _args, _dataIds)
 }
 
-// Prepare is a paid mutator transaction binding the contract method 0x80b1cb23.
+// Prepare is a paid mutator transaction binding the contract method 0xf35f380b.
 //
-// Solidity: function prepare(_to address, _escrow address, _escrowOpenSign bytes4, _escrowOpenArgs bytes, _escrowCloseSign bytes4, _escrowCloseArgs bytes, _dataIds bytes16[]) returns()
-func (_Exchange *ExchangeSession) Prepare(_to common.Address, _escrow common.Address, _escrowOpenSign [4]byte, _escrowOpenArgs []byte, _escrowCloseSign [4]byte, _escrowCloseArgs []byte, _dataIds [][16]byte) (*types.Transaction, error) {
-	return _Exchange.Contract.Prepare(&_Exchange.TransactOpts, _to, _escrow, _escrowOpenSign, _escrowOpenArgs, _escrowCloseSign, _escrowCloseArgs, _dataIds)
+// Solidity: function prepare(_offeror address, _offeree address, _escrow address, _sign bytes4, _args bytes, _dataIds bytes16[]) returns()
+func (_Exchange *ExchangeSession) Prepare(_offeror common.Address, _offeree common.Address, _escrow common.Address, _sign [4]byte, _args []byte, _dataIds [][16]byte) (*types.Transaction, error) {
+	return _Exchange.Contract.Prepare(&_Exchange.TransactOpts, _offeror, _offeree, _escrow, _sign, _args, _dataIds)
 }
 
-// Prepare is a paid mutator transaction binding the contract method 0x80b1cb23.
+// Prepare is a paid mutator transaction binding the contract method 0xf35f380b.
 //
-// Solidity: function prepare(_to address, _escrow address, _escrowOpenSign bytes4, _escrowOpenArgs bytes, _escrowCloseSign bytes4, _escrowCloseArgs bytes, _dataIds bytes16[]) returns()
-func (_Exchange *ExchangeTransactorSession) Prepare(_to common.Address, _escrow common.Address, _escrowOpenSign [4]byte, _escrowOpenArgs []byte, _escrowCloseSign [4]byte, _escrowCloseArgs []byte, _dataIds [][16]byte) (*types.Transaction, error) {
-	return _Exchange.Contract.Prepare(&_Exchange.TransactOpts, _to, _escrow, _escrowOpenSign, _escrowOpenArgs, _escrowCloseSign, _escrowCloseArgs, _dataIds)
+// Solidity: function prepare(_offeror address, _offeree address, _escrow address, _sign bytes4, _args bytes, _dataIds bytes16[]) returns()
+func (_Exchange *ExchangeTransactorSession) Prepare(_offeror common.Address, _offeree common.Address, _escrow common.Address, _sign [4]byte, _args []byte, _dataIds [][16]byte) (*types.Transaction, error) {
+	return _Exchange.Contract.Prepare(&_Exchange.TransactOpts, _offeror, _offeree, _escrow, _sign, _args, _dataIds)
 }
 
 // Reject is a paid mutator transaction binding the contract method 0x6622e153.
@@ -1224,14 +1220,14 @@ func (it *ExchangeReceiptIterator) Close() error {
 type ExchangeReceipt struct {
 	OfferId [8]byte
 	Offeror common.Address
-	To      common.Address
+	Offeree common.Address
 	Raw     types.Log // Blockchain specific contextual infos
 }
 
 // FilterReceipt is a free log retrieval operation binding the contract event 0xc5289be5f34d9c261429f87950e84b7904ca18a5804dc86a8a3cfc119b5aeff9.
 //
-// Solidity: e Receipt(_offerId indexed bytes8, _offeror indexed address, _to indexed address)
-func (_Exchange *ExchangeFilterer) FilterReceipt(opts *bind.FilterOpts, _offerId [][8]byte, _offeror []common.Address, _to []common.Address) (*ExchangeReceiptIterator, error) {
+// Solidity: e Receipt(_offerId indexed bytes8, _offeror indexed address, _offeree indexed address)
+func (_Exchange *ExchangeFilterer) FilterReceipt(opts *bind.FilterOpts, _offerId [][8]byte, _offeror []common.Address, _offeree []common.Address) (*ExchangeReceiptIterator, error) {
 
 	var _offerIdRule []interface{}
 	for _, _offerIdItem := range _offerId {
@@ -1241,12 +1237,12 @@ func (_Exchange *ExchangeFilterer) FilterReceipt(opts *bind.FilterOpts, _offerId
 	for _, _offerorItem := range _offeror {
 		_offerorRule = append(_offerorRule, _offerorItem)
 	}
-	var _toRule []interface{}
-	for _, _toItem := range _to {
-		_toRule = append(_toRule, _toItem)
+	var _offereeRule []interface{}
+	for _, _offereeItem := range _offeree {
+		_offereeRule = append(_offereeRule, _offereeItem)
 	}
 
-	logs, sub, err := _Exchange.contract.FilterLogs(opts, "Receipt", _offerIdRule, _offerorRule, _toRule)
+	logs, sub, err := _Exchange.contract.FilterLogs(opts, "Receipt", _offerIdRule, _offerorRule, _offereeRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1255,7 +1251,7 @@ func (_Exchange *ExchangeFilterer) FilterReceipt(opts *bind.FilterOpts, _offerId
 
 // FilterReceipt parses the event from given transaction receipt.
 //
-// Solidity: e Receipt(_offerId indexed bytes8, _offeror indexed address, _to indexed address)
+// Solidity: e Receipt(_offerId indexed bytes8, _offeror indexed address, _offeree indexed address)
 func (_Exchange *ExchangeFilterer) ParseReceiptFromReceipt(receipt *types.Receipt) (*ExchangeReceipt, error) {
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xc5289be5f34d9c261429f87950e84b7904ca18a5804dc86a8a3cfc119b5aeff9") {
@@ -1271,8 +1267,8 @@ func (_Exchange *ExchangeFilterer) ParseReceiptFromReceipt(receipt *types.Receip
 
 // WatchReceipt is a free log subscription operation binding the contract event 0xc5289be5f34d9c261429f87950e84b7904ca18a5804dc86a8a3cfc119b5aeff9.
 //
-// Solidity: e Receipt(_offerId indexed bytes8, _offeror indexed address, _to indexed address)
-func (_Exchange *ExchangeFilterer) WatchReceipt(opts *bind.WatchOpts, sink chan<- *ExchangeReceipt, _offerId [][8]byte, _offeror []common.Address, _to []common.Address) (event.Subscription, error) {
+// Solidity: e Receipt(_offerId indexed bytes8, _offeror indexed address, _offeree indexed address)
+func (_Exchange *ExchangeFilterer) WatchReceipt(opts *bind.WatchOpts, sink chan<- *ExchangeReceipt, _offerId [][8]byte, _offeror []common.Address, _offeree []common.Address) (event.Subscription, error) {
 
 	var _offerIdRule []interface{}
 	for _, _offerIdItem := range _offerId {
@@ -1282,12 +1278,12 @@ func (_Exchange *ExchangeFilterer) WatchReceipt(opts *bind.WatchOpts, sink chan<
 	for _, _offerorItem := range _offeror {
 		_offerorRule = append(_offerorRule, _offerorItem)
 	}
-	var _toRule []interface{}
-	for _, _toItem := range _to {
-		_toRule = append(_toRule, _toItem)
+	var _offereeRule []interface{}
+	for _, _offereeItem := range _offeree {
+		_offereeRule = append(_offereeRule, _offereeItem)
 	}
 
-	logs, sub, err := _Exchange.contract.WatchLogs(opts, "Receipt", _offerIdRule, _offerorRule, _toRule)
+	logs, sub, err := _Exchange.contract.WatchLogs(opts, "Receipt", _offerIdRule, _offerorRule, _offereeRule)
 	if err != nil {
 		return nil, err
 	}
