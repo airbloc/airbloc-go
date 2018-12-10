@@ -30,7 +30,7 @@ func (api *AccountAPI) Create(
 ) (*pb.AccountCreateResponse, error) {
 	address := ethCommon.HexToAddress(req.GetAddress())
 	passSig := req.GetPasswordSignature()
-	id, err := api.manager.CreateUsingProxy(ctx, address, passSig)
+	id, err := api.manager.CreateUsingProxy(address, passSig)
 	return &pb.AccountCreateResponse{AccountId: id.Hex()}, err
 }
 

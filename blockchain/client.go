@@ -46,7 +46,7 @@ func NewClient(key *key.Key, rawurl string, cfg ClientOpt) (*Client, error) {
 
 	client := &Client{
 		Client: ethClient,
-		ctx:    ctx,
+		ctx:    context.Background(),
 		cfg:    cfg,
 		logger: log,
 	}

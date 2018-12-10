@@ -30,7 +30,7 @@ func NewManager(client blockchain.TxClient) *Manager {
 }
 
 // Allow allows data provider to collect certain kinds (Collection) of user's data.
-func (manager *Manager) Allow(ctx context.Context, collectionId common.ID, passwordSig []byte) error {
+func (manager *Manager) Allow(collectionId common.ID, passwordSig []byte) error {
 	if exists, err := manager.Exists(collectionId); err != nil {
 		return errors.Wrap(err, "failed to check collection existence")
 	} else if !exists {
@@ -41,14 +41,14 @@ func (manager *Manager) Allow(ctx context.Context, collectionId common.ID, passw
 	if err != nil {
 		return errors.Wrap(err, "failed to transact AllowByPassword")
 	}
-	if _, err := manager.ethclient.WaitMined(ctx, tx); err != nil {
+	if _, err := manager.ethclient.WaitMined(context.Background(), tx); err != nil {
 		return errors.Wrap(err, "transaction execution failed")
 	}
 	return nil
 }
 
 // AllowByDelegate
-func (manager *Manager) AllowByDelegate(ctx context.Context, collectionId common.ID, accountId common.ID) error {
+func (manager *Manager) AllowByDelegate(collectionId common.ID, accountId common.ID) error {
 	if exists, err := manager.Exists(collectionId); err != nil {
 		return errors.Wrap(err, "failed to check collection existence")
 	} else if !exists {
@@ -59,14 +59,14 @@ func (manager *Manager) AllowByDelegate(ctx context.Context, collectionId common
 	if err != nil {
 		return errors.Wrap(err, "failed to transact AllowByDelegate")
 	}
-	if _, err := manager.ethclient.WaitMined(ctx, tx); err != nil {
+	if _, err := manager.ethclient.WaitMined(context.Background(), tx); err != nil {
 		return errors.Wrap(err, "transaction execution failed")
 	}
 	return nil
 }
 
 // Allow allows data provider to collect certain kinds (Collection) of user's data.
-func (manager *Manager) Deny(ctx context.Context, collectionId common.ID, passwordSig []byte) error {
+func (manager *Manager) Deny(collectionId common.ID, passwordSig []byte) error {
 	if exists, err := manager.Exists(collectionId); err != nil {
 		return errors.Wrap(err, "failed to check collection existence")
 	} else if !exists {
@@ -77,14 +77,14 @@ func (manager *Manager) Deny(ctx context.Context, collectionId common.ID, passwo
 	if err != nil {
 		return errors.Wrap(err, "failed to transact AllowByPassword")
 	}
-	if _, err := manager.ethclient.WaitMined(ctx, tx); err != nil {
+	if _, err := manager.ethclient.WaitMined(context.Background(), tx); err != nil {
 		return errors.Wrap(err, "transaction execution failed")
 	}
 	return nil
 }
 
 // AllowByDelegate
-func (manager *Manager) DenyByDelegate(ctx context.Context, collectionId common.ID, accountId common.ID) error {
+func (manager *Manager) DenyByDelegate(collectionId common.ID, accountId common.ID) error {
 	if exists, err := manager.Exists(collectionId); err != nil {
 		return errors.Wrap(err, "failed to check collection existence")
 	} else if !exists {
@@ -95,7 +95,7 @@ func (manager *Manager) DenyByDelegate(ctx context.Context, collectionId common.
 	if err != nil {
 		return errors.Wrap(err, "failed to transact DenyByDelegate")
 	}
-	if _, err := manager.ethclient.WaitMined(ctx, tx); err != nil {
+	if _, err := manager.ethclient.WaitMined(context.Background(), tx); err != nil {
 		return errors.Wrap(err, "transaction execution failed")
 	}
 	return nil
