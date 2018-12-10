@@ -95,18 +95,18 @@ type ExchangeLibTransactorRaw struct {
 	Contract *ExchangeLibTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type ExchangeLibStatus int8
+type ExchangeLibOfferStatus int8
 
 const (
-	ExchangeLibStatus_CLOSED   ExchangeLibStatus = 5
-	ExchangeLibStatus_NEUTRAL  ExchangeLibStatus = 0
-	ExchangeLibStatus_OPENED   ExchangeLibStatus = 4
-	ExchangeLibStatus_PENDING  ExchangeLibStatus = 1
-	ExchangeLibStatus_REJECTED ExchangeLibStatus = 3
-	ExchangeLibStatus_SETTLED  ExchangeLibStatus = 2
+	ExchangeLibOfferStatus_CLOSED   ExchangeLibOfferStatus = 5
+	ExchangeLibOfferStatus_NEUTRAL  ExchangeLibOfferStatus = 0
+	ExchangeLibOfferStatus_OPENED   ExchangeLibOfferStatus = 4
+	ExchangeLibOfferStatus_PENDING  ExchangeLibOfferStatus = 1
+	ExchangeLibOfferStatus_REJECTED ExchangeLibOfferStatus = 3
+	ExchangeLibOfferStatus_SETTLED  ExchangeLibOfferStatus = 2
 )
 
-var ExchangeLibStatus_name = map[int8]string{
+var ExchangeLibOfferStatus_name = map[int8]string{
 	5: "CLOSED",
 	0: "NEUTRAL",
 	4: "OPENED",
@@ -115,7 +115,7 @@ var ExchangeLibStatus_name = map[int8]string{
 	2: "SETTLED",
 }
 
-var ExchangeLibStatus_value = map[string]int8{
+var ExchangeLibOfferStatus_value = map[string]int8{
 	"CLOSED":   5,
 	"NEUTRAL":  0,
 	"OPENED":   4,
@@ -125,22 +125,24 @@ var ExchangeLibStatus_value = map[string]int8{
 }
 
 type Escrow struct {
-	Addr common.Address
-	Args []byte
-	Sign [4]byte
+	Addr      common.Address
+	CloseArgs []byte
+	CloseSign [4]byte
+	OpenArgs  []byte
+	OpenSign  [4]byte
 }
 
 type Offer struct {
 	DataIds  [][16]byte
-	Escrow   ExchangeLibEscrow
-	Offeree  common.Address
-	Offeror  common.Address
+	Escrow   Escrow
+	From     common.Address
 	Reverted bool
-	Status   ExchangeLibStatus
+	Status   ExchangeLibOfferStatus
+	To       common.Address
 }
 
 type Orderbook struct {
-	Orders map[ablCommon.ID]ExchangeLibOffer
+	Orders map[ablCommon.ID]Offer
 }
 
 func init() {
