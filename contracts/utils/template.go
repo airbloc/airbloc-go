@@ -99,7 +99,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ablCommon.IDFromString
+	_ = ablCommon.HexToID
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
