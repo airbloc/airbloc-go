@@ -147,7 +147,7 @@ func NewAirblocServer(
 
 // Discovery finds and updates new peer connection every minute.
 func (s *AirblocServer) Discovery() {
-	ticker := time.NewTicker(1 * time.Minute)
+	ticker := time.NewTicker(30 * time.Second)
 	defer ticker.Stop()
 
 	s.updatePeer()
@@ -184,13 +184,13 @@ func (s *AirblocServer) updatePeer() {
 	for id := range idch {
 		info, err := s.dht.FindPeer(s.ctx, id)
 		if err != nil {
-			s.log.Error("Failed to find peer", logger.Attrs{"id": id.Pretty()})
+			s.log.Error("Warning: Peer found, but cannot connect", logger.Attrs{"to": id.Pretty()})
 			continue
 		}
 		s.host.Peerstore().AddAddrs(info.ID, info.Addrs, peerstore.TempAddrTTL)
 		found++
 	}
-	s.log.Info("Discovery peers", logger.Attrs{"found": found})
+	s.log.Info("Connected", logger.Attrs{"peers": found})
 }
 
 // api backend interfaces
@@ -257,6 +257,10 @@ func (s *AirblocServer) UnsubscribeTopic(topic string) error {
 }
 
 func (s *AirblocServer) Send(ctx context.Context, msg proto.Message, topic string, p peer.ID) error {
+	s.log.Info("Sending P2P message", logger.Attrs{
+		"topic": topic,
+		"id":    p.Pretty(),
+	})
 	payload, err := common.NewProtoMessage(msg, topic)
 	if err != nil {
 		return errors.Wrap(err, "send error")
@@ -265,6 +269,7 @@ func (s *AirblocServer) Send(ctx context.Context, msg proto.Message, topic strin
 }
 
 func (s *AirblocServer) Publish(ctx context.Context, msg proto.Message, topic string) error {
+	s.log.Info("Broadcasting P2P message", logger.Attrs{"topic": topic})
 	payload, err := common.NewProtoMessage(msg, topic)
 	if err != nil {
 		return errors.Wrap(err, "publish error")

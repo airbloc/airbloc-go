@@ -44,6 +44,7 @@ func (client *ProviderClient) SignIn(ctx context.Context, identity string, userD
 	acc, err := client.accounts.GetByIdentity(identity)
 	if err != nil {
 		if err == account.ErrNoAccount {
+			client.log.Info("No account for %s. creating new one...", identity)
 			return client.SignUp(ctx, identity, userDelegate)
 		}
 		return ablCommon.ID{}, errors.Wrap(err, "unable to call Accounts.GetByIdentity")
@@ -57,17 +58,17 @@ func (client *ProviderClient) SignIn(ctx context.Context, identity string, userD
 }
 
 // SignUp requests user delegate to create new temporary account using given identity data.
-func (client *ProviderClient) SignUp(ctx context.Context, identity string, userDelegate []byte) (ablCommon.ID, error) {
+func (client *ProviderClient) SignUp(ctx context.Context, identity string, userDelegatePub []byte) (ablCommon.ID, error) {
 	identityHash := client.accounts.HashIdentity(identity)
 	req := &pb.DAuthSignUpRequest{
 		IdentityHash: identityHash.Hex(),
 	}
-	userDelegatePub, err := libp2pCrypto.UnmarshalSecp256k1PublicKey(userDelegate)
+	public, err := libp2pCrypto.UnmarshalSecp256k1PublicKey(userDelegatePub)
 	if err != nil {
 		return ablCommon.ID{}, errors.Wrapf(err,
-			"invalid user delegate public key: %s", hex.EncodeToString(userDelegate))
+			"invalid user delegate public key: %s", hex.EncodeToString(userDelegatePub))
 	}
-	destId, err := peer.IDFromPublicKey(userDelegatePub)
+	destId, err := peer.IDFromPublicKey(public)
 	if err != nil {
 		return ablCommon.ID{}, errors.Wrap(err,
 			"failed to get libp2p peer ID from given pubkey")
@@ -82,7 +83,7 @@ func (client *ProviderClient) SignUp(ctx context.Context, identity string, userD
 	// see https://github.com/airbloc/airbloc-go/issues/62
 	waitForResponse := make(chan string, 1)
 	client.p2p.SubscribeTopic("dauth-signup-response", &pb.DAuthSignUpResponse{}, func(server p2p.Server, c context.Context, resp common.Message) {
-		if !resp.SenderInfo.ID.MatchesPublicKey(userDelegatePub) {
+		if !resp.SenderInfo.ID.MatchesPublicKey(public) {
 			return
 		}
 		response, ok := resp.Data.(*pb.DAuthSignUpResponse)
