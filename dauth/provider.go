@@ -91,7 +91,7 @@ func (client *ProviderClient) SignUp(ctx context.Context, identity string, userD
 			client.log.Error("Invalid response returned.")
 			return
 		}
-		waitForResponse <- response.GetUserId()
+		waitForResponse <- response.GetAccountId()
 	})
 	if err != nil {
 		return ablCommon.ID{}, errors.Wrap(err, "failed to subscribe topic")

@@ -171,7 +171,7 @@ func (service *Service) signUpHandler(server p2p.Server, ctx context.Context, me
 	service.AddUser(accountId)
 
 	response := &pb.DAuthSignUpResponse{
-		UserId: accountId.Hex(),
+		AccountId: accountId.Hex(),
 	}
 	if err = server.Send(context.Background(), response, "dauth-signup-response", message.SenderInfo.ID); err != nil {
 		service.log.Error("Failed to send response to data provider: %s", err.Error())
