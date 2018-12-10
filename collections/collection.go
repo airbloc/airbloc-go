@@ -10,24 +10,12 @@ type Collection struct {
 	Id common.ID
 
 	// owner of the collection
-	AppId common.ID
-
+	AppId           common.ID
 	IncentivePolicy IncentivePolicy
 
 	// format of the data the app want to collect
 	Schema    schemas.Schema
 	CreatedAt time.Time
-
-	// display-purpose data (Saved in MetaDB)
-	DisplayedName string
-	Category      Category
-	Label         string
-}
-
-// Category is a (displayed) group of data collections defined by application.
-type Category struct {
-	Id            string
-	DisplayedName string
 }
 
 // IncentivePolicy is a policy about sharing revenue of the data

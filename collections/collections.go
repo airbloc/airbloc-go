@@ -2,36 +2,25 @@ package collections
 
 import (
 	"context"
-	"math/big"
-
 	"github.com/airbloc/airbloc-go/common"
-	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/ethereum/go-ethereum/params"
-	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/pkg/errors"
+	"math/big"
 
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
-	"github.com/airbloc/airbloc-go/database/localdb"
 )
 
-// TODO: localdb integration
 type Collections struct {
-	localDb  *localdb.Model
-	metaDb   *metadb.Model
 	client   blockchain.TxClient
 	contract *adapter.CollectionRegistry
 }
 
 func New(
-	localDb localdb.Database,
-	metaDb metadb.Database,
 	client blockchain.TxClient,
 ) *Collections {
 	contract := client.GetContract(&adapter.CollectionRegistry{})
 	return &Collections{
-		localDb:  localdb.NewModel(localDb, "collection"),
-		metaDb:   metadb.NewModel(metaDb, "collection"),
 		client:   client,
 		contract: contract.(*adapter.CollectionRegistry),
 	}
@@ -50,32 +39,18 @@ func (s *Collections) Register(ctx context.Context, collection *Collection) (com
 		collection.Schema.Id,
 		solidityDataProducerRatio,
 	)
-
 	if err != nil {
 		return common.ID{}, err
 	}
-
 	receipt, err := s.client.WaitMined(context.Background(), tx)
 	if err != nil {
 		return common.ID{}, err
 	}
-
 	event, err := s.contract.ParseRegistrationFromReceipt(receipt)
 	if err != nil {
 		return common.ID{}, err
 	}
-	collectionId := common.ID(event.CollectionId)
-
-	// save to metadb
-	metadata := map[string]interface{}{
-		"id":       collectionId.String(),
-		"appId":    collection.AppId.String(),
-		"schemaId": collection.Schema.Id.String(),
-	}
-	if _, err := s.metaDb.Create(metadata, nil); err != nil {
-		return collectionId, errors.Wrap(err, "failed to save metadata")
-	}
-	return collectionId, nil
+	return common.ID(event.CollectionId), nil
 }
 
 func (s *Collections) Unregister(ctx context.Context, collectionId common.ID) error {
@@ -94,13 +69,7 @@ func (s *Collections) Unregister(ctx context.Context, collectionId common.ID) er
 	if err != nil {
 		return errors.Wrap(err, "failed to receive Unregistration event")
 	}
-
-	query := bson.NewDocument(bson.EC.String("data.id", collectionId.String()))
-	metadata, err := s.metaDb.RetrieveAsset(query)
-	if err != nil {
-		return errors.Wrap(err, "failed to find the asset on metadb")
-	}
-	return s.metaDb.Burn(metadata.Lookup("id").StringValue())
+	return nil
 }
 
 func (s *Collections) Get(id common.ID) (*Collection, error) {
