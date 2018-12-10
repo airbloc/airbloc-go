@@ -67,7 +67,7 @@ func NewAirblocBackend(config *Config) (Backend, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "invalid listen address: %s", config.P2P.ListenAddr)
 	}
-	p2pServer, err := p2p.NewAirblocServer(localdb.NewMemDB(), nodeKey, addr, false, bootInfos)
+	p2pServer, err := p2p.NewAirblocServer(nodeKey, addr, bootInfos)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to initialize P2P server")
 	}

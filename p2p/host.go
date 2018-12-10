@@ -24,7 +24,6 @@ type Host interface {
 
 	// peer information
 	PeerInfo() peerstore.PeerInfo
-	BootInfo() (peerstore.PeerInfo, error)
 	Peerstore() peerstore.Peerstore
 
 	// sender

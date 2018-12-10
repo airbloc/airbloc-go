@@ -3,8 +3,6 @@ package p2p
 import (
 	"context"
 
-	"github.com/libp2p/go-libp2p-peerstore"
-
 	"github.com/libp2p/go-libp2p-peer"
 
 	"github.com/gogo/protobuf/proto"
@@ -32,8 +30,6 @@ type Server interface {
 	// sender interfaces
 	Send(context.Context, proto.Message, string, peer.ID) error
 	Publish(context.Context, proto.Message, string) error
-
-	BootInfo() (peerstore.PeerInfo, error)
 
 	// for test
 	getHost() Host
