@@ -32,7 +32,7 @@ func (api *AppsAPI) NewOwner(ctx context.Context, req *pb.NewOwnerRequest) (*com
 	}
 	address := ethCommon.HexToAddress(req.GetOwner())
 
-	_, err = api.apps.NewOwner(ctx, appId, address)
+	_, err = api.apps.TransferOwnership(ctx, appId, address)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (api *AppsAPI) CheckOwner(ctx context.Context, req *pb.CheckOwnerRequest) (
 	}
 	address := ethCommon.HexToAddress(req.GetOwner())
 
-	ok, err := api.apps.CheckOwner(ctx, appId, address)
+	ok, err := api.apps.IsOwner(ctx, appId, address)
 	if err != nil {
 		return nil, err
 	}

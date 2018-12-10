@@ -15,11 +15,7 @@ type CollectionsAPI struct {
 }
 
 func NewCollectionsAPI(backend node.Backend) (node.API, error) {
-	collectionManager := collections.New(
-		backend.LocalDatabase(),
-		backend.MetaDatabase(),
-		backend.Client(),
-	)
+	collectionManager := collections.New(backend.Client())
 	return &CollectionsAPI{collectionManager}, nil
 }
 
