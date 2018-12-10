@@ -30,7 +30,7 @@ func NewClient(key *key.Key, url string, cfg ClientOpt) (*Client, error) {
 
 	client := &Client{
 		Client: ethClient,
-		ctx:    context.Background(),
+		ctx:    ctx,
 		cfg:    cfg,
 		logger: logger.New("ethereum"),
 	}
