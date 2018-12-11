@@ -16,7 +16,7 @@ type TopicRegistry interface {
 type PeerManager interface {
 	Discovery()
 	clearPeer()
-	updatePeer()
+	updatePeer() int
 }
 
 type Server interface {

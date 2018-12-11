@@ -44,7 +44,7 @@ type AirblocServer struct {
 
 	// topic - handlers
 	types    map[string]reflect.Type
-	handlers map[reflect.Type]TopicHandler
+	handlers map[string]TopicHandler
 
 	// log
 	log *logger.Logger
@@ -78,7 +78,7 @@ func NewAirblocServer(
 		nodekey: nodekey,
 
 		types:    make(map[string]reflect.Type),
-		handlers: make(map[reflect.Type]TopicHandler),
+		handlers: make(map[string]TopicHandler),
 		log:      logger.New("p2p"),
 	}
 
@@ -131,15 +131,19 @@ func NewAirblocServer(
 
 // Discovery finds and updates new peer connection every minute.
 func (s *AirblocServer) Discovery() {
-	ticker := time.NewTicker(30 * time.Second)
+	ticker := time.NewTicker(3 * time.Second)
 	defer ticker.Stop()
 
+	numOfPeers := 0
 	s.updatePeer()
 	for {
 		select {
 		case <-ticker.C:
-			s.clearPeer()
-			s.updatePeer()
+			found := s.updatePeer()
+			if numOfPeers != found {
+				s.log.Info("Connected", logger.Attrs{"peers": found})
+				numOfPeers = found
+			}
 		case <-s.ctx.Done():
 			return
 		}
@@ -153,11 +157,11 @@ func (s *AirblocServer) clearPeer() {
 	}
 }
 
-func (s *AirblocServer) updatePeer() {
+func (s *AirblocServer) updatePeer() int {
 	idch, err := s.dht.GetClosestPeers(s.ctx, s.id.KeyString())
 	if s.ctx.Err() != nil {
 		s.log.Error("Failed to discovery peers: context error: %v", s.ctx.Err())
-		return
+		return 0
 	}
 
 	if err != nil {
@@ -174,7 +178,7 @@ func (s *AirblocServer) updatePeer() {
 		s.host.Peerstore().AddAddrs(info.ID, info.Addrs, peerstore.TempAddrTTL)
 		found++
 	}
-	s.log.Info("Connected", logger.Attrs{"peers": found})
+	return found
 }
 
 // api backend interfaces
@@ -198,7 +202,7 @@ func (s *AirblocServer) handleMessage(message common.ProtoMessage) {
 	}
 
 	timer := s.log.Timer()
-	handler := s.handlers[typ]
+	handler := s.handlers[topic]
 	handler(s, s.ctx, msg)
 	timer.End("Received message", logger.Attrs{
 		"from":  msg.SenderAddr.String(),
@@ -215,18 +219,16 @@ func (s *AirblocServer) SubscribeTopic(topic string, msg proto.Message, handler 
 
 	s.mutex.Lock()
 	s.types[topic] = typ
-	s.handlers[typ] = handler
+	s.handlers[topic] = handler
 	s.mutex.Unlock()
 
 	return nil
 }
 
 func (s *AirblocServer) UnsubscribeTopic(topic string) error {
-	msgType := s.types[topic]
-
 	s.mutex.Lock()
 	delete(s.types, topic)
-	delete(s.handlers, msgType)
+	delete(s.handlers, topic)
 	s.mutex.Unlock()
 
 	return nil
