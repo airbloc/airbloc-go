@@ -122,6 +122,10 @@ func (airbloc *AirblocBackend) Start() error {
 	if err := airbloc.P2P().Start(); err != nil {
 		return errors.Wrapf(err, "failed to start P2P service")
 	}
+	if err := p2p.StartNameServer(airbloc.P2P()); err != nil {
+		return errors.Wrapf(err, "failed to start P2P address lookup service")
+	}
+
 	for name, service := range airbloc.services {
 		if err := service.Start(); err != nil {
 			return errors.Wrapf(err, "failed to start %s service", name)
