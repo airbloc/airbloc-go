@@ -9,7 +9,7 @@ message DAuthSignUpRequest {
 }
 
 message DAuthSignUpResponse {
-    string userId = 1; // ID
+    string accountId = 1; // ID
 }
 
 /**

@@ -2,36 +2,25 @@ package collections
 
 import (
 	"context"
-	"math/big"
-
 	"github.com/airbloc/airbloc-go/common"
-	"github.com/airbloc/airbloc-go/database/metadb"
 	"github.com/ethereum/go-ethereum/params"
-	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/pkg/errors"
+	"math/big"
 
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
-	"github.com/airbloc/airbloc-go/database/localdb"
 )
 
-// TODO: localdb integration
 type Collections struct {
-	localDb  *localdb.Model
-	metaDb   *metadb.Model
 	client   blockchain.TxClient
 	contract *adapter.CollectionRegistry
 }
 
 func New(
-	localDb localdb.Database,
-	metaDb metadb.Database,
 	client blockchain.TxClient,
 ) *Collections {
 	contract := client.GetContract(&adapter.CollectionRegistry{})
 	return &Collections{
-		localDb:  localdb.NewModel(localDb, "collection"),
-		metaDb:   metadb.NewModel(metaDb, "collection"),
 		client:   client,
 		contract: contract.(*adapter.CollectionRegistry),
 	}
@@ -39,7 +28,7 @@ func New(
 
 func (s *Collections) Register(ctx context.Context, collection *Collection) (common.ID, error) {
 	// damn EVM
-	dataProducerRatio := big.NewFloat(collection.Policy.DataProvider)
+	dataProducerRatio := big.NewFloat(collection.IncentivePolicy.DataProvider)
 	dataProducerRatio.Mul(dataProducerRatio, big.NewFloat(100*params.Ether))
 	solidityDataProducerRatio := new(big.Int)
 	dataProducerRatio.Int(solidityDataProducerRatio)
@@ -47,34 +36,21 @@ func (s *Collections) Register(ctx context.Context, collection *Collection) (com
 	tx, err := s.contract.Register(
 		s.client.Account(),
 		collection.AppId,
-		collection.SchemaId,
+		collection.Schema.Id,
 		solidityDataProducerRatio,
 	)
-
 	if err != nil {
 		return common.ID{}, err
 	}
-
 	receipt, err := s.client.WaitMined(context.Background(), tx)
 	if err != nil {
 		return common.ID{}, err
 	}
-
 	event, err := s.contract.ParseRegistrationFromReceipt(receipt)
 	if err != nil {
 		return common.ID{}, err
 	}
-	collectionId := common.ID(event.CollectionId)
-
-	// save to metadb
-	metadata := map[string]interface{}{
-		"id":       collectionId.Hex(),
-		"schemaId": collection.SchemaId.Hex(),
-	}
-	if _, err := s.metaDb.Create(metadata, nil); err != nil {
-		return collectionId, errors.Wrap(err, "failed to save metadata")
-	}
-	return collectionId, nil
+	return common.ID(event.CollectionId), nil
 }
 
 func (s *Collections) Unregister(ctx context.Context, collectionId common.ID) error {
@@ -93,13 +69,7 @@ func (s *Collections) Unregister(ctx context.Context, collectionId common.ID) er
 	if err != nil {
 		return errors.Wrap(err, "failed to receive Unregistration event")
 	}
-
-	query := bson.NewDocument(bson.EC.String("data.id", collectionId.Hex()))
-	metadata, err := s.metaDb.RetrieveAsset(query)
-	if err != nil {
-		return errors.Wrap(err, "failed to find the asset on metadb")
-	}
-	return s.metaDb.Burn(metadata.Lookup("id").StringValue())
+	return nil
 }
 
 func (s *Collections) Get(id common.ID) (*Collection, error) {
@@ -113,14 +83,14 @@ func (s *Collections) Get(id common.ID) (*Collection, error) {
 	dataProviderRatioPercentage.Div(result.IncentiveRatioSelf, big.NewInt(params.Ether))
 	dataProviderRatio := float64(dataProviderRatioPercentage.Int64() / 100)
 
-	return &Collection{
-		AppId:    result.AppId,
-		SchemaId: result.SchemaId,
-		Policy: &IncentivePolicy{
+	return NewCollection(
+		result.AppId,
+		result.SchemaId,
+		IncentivePolicy{
 			DataProvider: dataProviderRatio,
 			DataOwner:    1 - dataProviderRatio,
 		},
-	}, nil
+	), nil
 }
 
 func (s *Collections) Exists(id common.ID) (bool, error) {

@@ -2,9 +2,8 @@ package userdelegate
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
-	"log"
-
 	"github.com/airbloc/airbloc-go/account"
 	"github.com/airbloc/airbloc-go/apps"
 	"github.com/airbloc/airbloc-go/collections"
@@ -16,6 +15,7 @@ import (
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/azer/logger"
 	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
 )
 
@@ -26,8 +26,11 @@ var (
 type Service struct {
 	accountIds []ablCommon.ID
 	p2p        p2p.Server
-	selfAddr   ethCommon.Address
 	isRunning  bool
+
+	// node identity information
+	id   string
+	addr ethCommon.Address
 
 	// managers for blockchain interaction
 	apps        *apps.Manager
@@ -47,14 +50,17 @@ func NewService(backend node.Backend) (node.Service, error) {
 		}
 		accountIds = append(accountIds, accountId)
 	}
+	key := backend.Kms().NodeKey()
+	nodeId := base64.StdEncoding.EncodeToString(crypto.FromECDSAPub(&key.PublicKey))
 	return &Service{
 		accountIds:  accountIds,
 		p2p:         backend.P2P(),
-		selfAddr:    backend.Kms().NodeKey().EthereumAddress,
+		addr:        key.EthereumAddress,
+		id:          nodeId,
 		apps:        apps.NewManager(backend.Client()),
 		dauth:       dauth.NewManager(backend.Client()),
 		accounts:    account.NewManager(backend.Client()),
-		collections: collections.New(backend.LocalDatabase(), backend.MetaDatabase(), backend.Client()),
+		collections: collections.New(backend.Client()),
 		log:         logger.New("userdelegate"),
 	}, nil
 }
@@ -63,7 +69,7 @@ func NewService(backend node.Backend) (node.Service, error) {
 // therefore manage
 func (service *Service) AddUser(accountId ablCommon.ID) error {
 	// you can be delegate of a user after the user designate you as a delegate.
-	if isDelegate, err := service.accounts.IsDelegateOf(service.selfAddr, accountId); err != nil {
+	if isDelegate, err := service.accounts.IsDelegateOf(service.addr, accountId); err != nil {
 		return errors.Wrapf(err, "failed to call Accounts.IsDelegateOf")
 	} else if !isDelegate {
 		return ErrDelegationNotAllowed
@@ -84,7 +90,8 @@ func (service *Service) Start() error {
 	}
 	service.log.Info("Starting service...")
 	service.isRunning = true
-	select {}
+
+	service.log.Info("User Delegate ID=%s", service.id)
 	return nil
 }
 
@@ -100,22 +107,22 @@ func (service *Service) createDAuthHandler(accountId ablCommon.ID, allow bool) p
 	return func(server p2p.Server, ctx context.Context, message p2pcommon.Message) {
 		request, ok := message.Data.(*pb.DAuthRequest)
 		if !ok {
-			log.Println("error: Invalid topic.")
+			service.log.Error("Topic is mismatched with data format.")
 			return
 		}
 
 		collectionId, err := ablCommon.HexToID(request.CollectionId)
 		if err != nil {
-			log.Println("error: Invalid Collection ID", collectionId, err.Error())
+			service.log.Error("Invalid Collection ID %s: %s", collectionId, err.Error())
 			return
 		}
 
 		// the message sender should be the data provider (the collection's owner)
 		if ok, err := service.isCollectionOwner(ctx, collectionId, message.SenderAddr); err != nil {
-			log.Println("error: Failed to retrieve collection owner", err.Error())
+			service.log.Error("Failed to retrieve collection owner: %s", err.Error())
 			return
 		} else if !ok {
-			log.Println("error: The address", message.SenderAddr.Hex(), "is not a data provider.")
+			service.log.Error("The address %s is not a data provider.", message.SenderAddr.Hex())
 			return
 		}
 
@@ -125,7 +132,7 @@ func (service *Service) createDAuthHandler(accountId ablCommon.ID, allow bool) p
 			err = service.dauth.DenyByDelegate(collectionId, accountId)
 		}
 		if err != nil {
-			log.Println("error: Failed to modify DAuth settings: ", err.Error())
+			service.log.Error("Failed to modify DAuth settings: %s", err.Error())
 			return
 		}
 
@@ -140,7 +147,7 @@ func (service *Service) createDAuthHandler(accountId ablCommon.ID, allow bool) p
 			topicName = fmt.Sprintf("dauth-deny-%s-response", accountId.Hex())
 		}
 		if err := server.Send(ctx, response, topicName, message.SenderInfo.ID); err != nil {
-			log.Println("error: Failed to send response to data provider:", err.Error())
+			service.log.Error("Failed to send response to data provider: %s", err.Error())
 		}
 	}
 }
@@ -148,14 +155,15 @@ func (service *Service) createDAuthHandler(accountId ablCommon.ID, allow bool) p
 func (service *Service) signUpHandler(server p2p.Server, ctx context.Context, message p2pcommon.Message) {
 	request, ok := message.Data.(*pb.DAuthSignUpRequest)
 	if !ok {
-		log.Println("error: Invalid topic.")
+		service.log.Error("Topic is mismatched with data format.")
 		return
 	}
 
 	identityHash := ethCommon.HexToHash(request.GetIdentityHash())
 	accountId, err := service.accounts.CreateTemporary(identityHash)
 	if err != nil {
-		log.Println("error: Failed to create temporary account:", err.Error())
+		service.log.Error("Failed to create temporary account: %s", err.Error())
+		return
 	}
 
 	service.log.Info("Created account %s by request from the data provider %s",
@@ -163,10 +171,10 @@ func (service *Service) signUpHandler(server p2p.Server, ctx context.Context, me
 	service.AddUser(accountId)
 
 	response := &pb.DAuthSignUpResponse{
-		UserId: accountId.Hex(),
+		AccountId: accountId.Hex(),
 	}
 	if err = server.Send(context.Background(), response, "dauth-signup-response", message.SenderInfo.ID); err != nil {
-		log.Println("error: Failed to send response to data provider:", err.Error())
+		service.log.Error("Failed to send response to data provider: %s", err.Error())
 	}
 }
 
@@ -177,7 +185,7 @@ func (service *Service) isCollectionOwner(ctx context.Context, collectionId ablC
 	if err != nil {
 		return false, errors.Wrap(err, "unable to retrieve collection")
 	}
-	return service.apps.CheckOwner(ctx, collection.AppId, senderAddr)
+	return service.apps.IsOwner(ctx, collection.AppId, senderAddr)
 }
 
 func (service *Service) Stop() {

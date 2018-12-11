@@ -131,11 +131,9 @@ func (airbloc *AirblocBackend) Start() error {
 	// wait for interrupt
 	interruptCh := make(chan os.Signal, 1)
 	signal.Notify(interruptCh, os.Interrupt)
-	for {
-		select {
-		case <-interruptCh:
-			break
-		}
+	select {
+	case <-interruptCh:
+		break
 	}
 	return nil
 }
@@ -144,6 +142,7 @@ func (airbloc *AirblocBackend) Stop() {
 	for _, service := range airbloc.services {
 		service.Stop()
 	}
+	airbloc.p2pServer.Stop()
 	airbloc.ethclient.Close()
 	airbloc.localDatabase.Close()
 	airbloc.metaDatabase.Close()

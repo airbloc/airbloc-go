@@ -45,7 +45,7 @@ contract CollectionRegistry {
     }
 
     function register(bytes8 _appId, bytes8 _schemaId, uint256 _ratio) public {
-        require(apps.checkOwner(_appId, msg.sender), "only owner can register collection.");
+        require(apps.isOwner(_appId, msg.sender), "only owner can register collection.");
         require(schemas.exists(_schemaId), "given schema does not exist");
 
         bytes32 unique = keccak256(abi.encodePacked(_appId, _schemaId, _ratio));
@@ -68,7 +68,7 @@ contract CollectionRegistry {
         require(exists(_id), "collection does not exist");
 
         bytes8 appId = collections[_id].appId;
-        require(apps.checkOwner(appId, msg.sender), "only owner can register collection.");
+        require(apps.isOwner(appId, msg.sender), "only owner can register collection.");
 
         delete collections[_id];
         emit Unregistration(_id, appId);

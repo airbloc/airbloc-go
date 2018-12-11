@@ -95,18 +95,18 @@ type ExchangeLibTransactorRaw struct {
 	Contract *ExchangeLibTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type OfferStatus int8
+type ExchangeLibOfferStatus int8
 
 const (
-	OfferStatus_CLOSED   OfferStatus = 5
-	OfferStatus_NEUTRAL  OfferStatus = 0
-	OfferStatus_OPENED   OfferStatus = 4
-	OfferStatus_PENDING  OfferStatus = 1
-	OfferStatus_REJECTED OfferStatus = 3
-	OfferStatus_SETTLED  OfferStatus = 2
+	ExchangeLibOfferStatus_CLOSED   ExchangeLibOfferStatus = 5
+	ExchangeLibOfferStatus_NEUTRAL  ExchangeLibOfferStatus = 0
+	ExchangeLibOfferStatus_OPENED   ExchangeLibOfferStatus = 4
+	ExchangeLibOfferStatus_PENDING  ExchangeLibOfferStatus = 1
+	ExchangeLibOfferStatus_REJECTED ExchangeLibOfferStatus = 3
+	ExchangeLibOfferStatus_SETTLED  ExchangeLibOfferStatus = 2
 )
 
-var OfferStatus_name = map[int8]string{
+var ExchangeLibOfferStatus_name = map[int8]string{
 	5: "CLOSED",
 	0: "NEUTRAL",
 	4: "OPENED",
@@ -115,7 +115,7 @@ var OfferStatus_name = map[int8]string{
 	2: "SETTLED",
 }
 
-var OfferStatus_value = map[string]int8{
+var ExchangeLibOfferStatus_value = map[string]int8{
 	"CLOSED":   5,
 	"NEUTRAL":  0,
 	"OPENED":   4,
@@ -137,7 +137,7 @@ type Offer struct {
 	Escrow   Escrow
 	From     common.Address
 	Reverted bool
-	Status   OfferStatus
+	Status   ExchangeLibOfferStatus
 	To       common.Address
 }
 

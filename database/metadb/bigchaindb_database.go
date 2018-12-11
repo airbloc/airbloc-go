@@ -3,6 +3,7 @@ package metadb
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/azer/logger"
 	"github.com/pkg/errors"
@@ -32,10 +33,14 @@ func NewBigchainDB(bdbUrl, mdbUrl, proxyUrl string, key *txn.KeyPair, version in
 	if err != nil {
 		return nil, err
 	}
-	mdbClient, err := mongo.NewClient(mdbUrl)
+
+	// connect to MongoDB
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	mdbClient, err := mongo.Connect(ctx, mdbUrl)
 	if err != nil {
 		return nil, err
 	}
+
 	db := &bigchainDB{
 		bdb:      bdbClient,
 		mdb:      mdbClient.Database(BigchainDBName),
