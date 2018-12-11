@@ -83,6 +83,7 @@ func (manager *Manager) Get(accountId ablCommon.ID) (*Account, error) {
 		Owner:         account.Owner,
 		Status:        Status(account.Status),
 		Proxy:         account.Proxy,
+		Delegate:      account.Delegate,
 		PasswordProof: account.PasswordProof,
 	}, nil
 }

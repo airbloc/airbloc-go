@@ -18,5 +18,6 @@ type Account struct {
 	Status        Status
 	Owner         ethCommon.Address
 	Proxy         ethCommon.Address
+	Delegate      ethCommon.Address
 	PasswordProof ethCommon.Address
 }
