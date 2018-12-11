@@ -24,6 +24,11 @@ func NewBasicHost(host host.Host) Host {
 	}
 }
 
+// ID returns the (local) peer.ID associated with this Host.
+func (h *BasicHost) ID() peer.ID {
+	return h.host.ID()
+}
+
 // Mux returns host's multistreamMuxer
 func (h *BasicHost) Mux() *multistream.MultistreamMuxer {
 	return h.host.Mux()
