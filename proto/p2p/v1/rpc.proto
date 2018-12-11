@@ -1,0 +1,10 @@
+syntax = "proto3";
+package airbloc.p2p.v1;
+
+option go_package = "github.com/airbloc/airbloc-go/proto/p2p/v1";
+
+message RPCResponse {
+    bool ok = 1;
+    string error = 2;
+    bytes successfulReply = 3;
+}
