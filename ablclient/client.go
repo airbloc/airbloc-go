@@ -37,7 +37,7 @@ func (client *Client) Create(walletAddress ethCommon.Address, password string) (
 	}
 
 	request := &pb.AccountCreateRequest{
-		Address:           walletAddress.Bytes(),
+		Address:           walletAddress.Hex(),
 		PasswordSignature: sig,
 	}
 
@@ -68,7 +68,7 @@ func (client *Client) LogIn(identity string, password string) (*account.Session,
 	if err != nil {
 		return nil, errors.Wrapf(err, "invalid ID returned from the server: %s", response.GetAccountId())
 	}
-	session := account.NewSession(accountId, ethCommon.BytesToAddress(response.GetOwnerAddress()), password)
+	session := account.NewSession(accountId, ethCommon.HexToAddress(response.GetOwnerAddress()), password)
 
 	// generate test signature
 	identityHash := crypto.Keccak256Hash([]byte(identity))
@@ -79,7 +79,7 @@ func (client *Client) LogIn(identity string, password string) (*account.Session,
 
 	// test the signature to check whether the password is correct
 	testReq := &pb.TestPasswordRequest{
-		MessageHash: identityHash[:],
+		MessageHash: identityHash.Hex(),
 		Signature:   sig,
 	}
 	testResp, err := client.manager.TestPassword(context.Background(), testReq)

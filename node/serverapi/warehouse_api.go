@@ -2,6 +2,9 @@ package serverapi
 
 import (
 	"context"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -31,15 +34,36 @@ func NewWarehouseAPI(airbloc node.Backend) (_ node.API, err error) {
 	}
 
 	var defaultStorage storage.Storage
-	if config.DefaultStorage == "local" {
+	switch storage.Type_value[config.DefaultStorage] {
+	case storage.Local:
+		cfg := config.LocalStorage
 		defaultStorage, err = storage.NewLocalStorage(
-			config.LocalStorage.SavePath,
-			config.LocalStorage.Endpoint)
+			cfg.SavePath,
+			cfg.Endpoint)
 
 		if err != nil {
 			return nil, err
 		}
-	} else {
+	case storage.CloudS3:
+		cfg := config.S3
+
+		sess, err := session.NewSession(&aws.Config{
+			Credentials: credentials.NewStaticCredentials(
+				cfg.AccessKey,
+				cfg.SecretKey,
+				"",
+			),
+			Region: aws.String(cfg.Region),
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		defaultStorage = storage.NewS3Storage(cfg.Bucket, cfg.PathPrefix, sess)
+		if err != nil {
+			return nil, err
+		}
+	default:
 		return nil, errors.Errorf("unknown storage type: %s", config.DefaultStorage)
 	}
 
