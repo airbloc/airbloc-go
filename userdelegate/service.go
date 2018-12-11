@@ -14,9 +14,11 @@ import (
 	p2pcommon "github.com/airbloc/airbloc-go/p2p/common"
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/azer/logger"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
+	"time"
 )
 
 var (
@@ -65,6 +67,29 @@ func NewService(backend node.Backend) (node.Service, error) {
 	}, nil
 }
 
+func (service *Service) Sync(ctx context.Context) error {
+	accounts := service.accounts.GetContract()
+
+	proxyAddress := []ethCommon.Address{service.addr}
+	options := &bind.FilterOpts{
+		Start:   0,
+		End:     nil,
+		Context: ctx,
+	}
+	events, err := accounts.FilterTemporaryCreated(options, proxyAddress, [][32]byte{})
+	if err != nil {
+		return errors.Wrap(err, "failed to scan events in Accounts")
+	}
+	for events.Next() {
+		accountId := ablCommon.ID(events.Event.AccountId)
+		service.AddUser(accountId)
+	}
+	if events.Error() != nil {
+		return errors.Wrap(events.Error(), "failed to iterate over events in Accounts")
+	}
+	return nil
+}
+
 // AddUser adds a user to the delegated user list,
 // therefore manage
 func (service *Service) AddUser(accountId ablCommon.ID) error {
@@ -84,11 +109,20 @@ func (service *Service) AddUser(accountId ablCommon.ID) error {
 
 func (service *Service) Start() error {
 	service.p2p.SubscribeTopic("dauth-signup", &pb.DAuthSignUpRequest{}, service.signUpHandler)
+	service.log.Info("Starting service...")
+
+	ctx, cancelSync := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancelSync()
+
+	timer := service.log.Timer()
+	if err := service.Sync(ctx); err != nil {
+		return err
+	}
+	timer.End("%d accounts have been scanned", len(service.accountIds))
 
 	for _, accountId := range service.accountIds {
 		service.registerDAuthHandler(accountId)
 	}
-	service.log.Info("Starting service...")
 	service.isRunning = true
 
 	service.log.Info("User Delegate ID=%s", service.id)
