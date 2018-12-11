@@ -7,7 +7,6 @@ import (
 	"github.com/azer/logger"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/golang/protobuf/proto"
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/libp2p/go-libp2p-peer"
 	"github.com/pkg/errors"
 	"time"
@@ -71,7 +70,7 @@ func (r *rpc) Invoke(ctx context.Context, to common.Address, method string, args
 	defer cancel()
 
 	// lookup peer ID of given address
-	targetId, err := r.Lookup(ctx, to)
+	targetId, err := Lookup(ctx, r.server, to, r.ackTimeout)
 	if err != nil {
 		return nil, errors.Wrap(err, "lookup error")
 	}
@@ -152,57 +151,6 @@ func (r *rpc) Handle(method string, argsType, replyType proto.Message, handler R
 		}
 	}
 	return r.server.SubscribeTopic(requestTopic, argsType, callback)
-}
-
-func (r *rpc) Lookup(ctx context.Context, addr common.Address) (peer.ID, error) {
-	ctx, cancel := context.WithTimeout(ctx, r.ackTimeout)
-	defer cancel()
-
-	topicName := "/lookup/" + addr.String()
-
-	// 1. publish the lookup message
-	if err := r.server.Publish(ctx, &empty.Empty{}, topicName); err != nil {
-		return "", errors.Wrap(err, "failed to publish lookup message")
-	}
-
-	// 2. listen to lookup ACKs
-	waitForAck := make(chan peer.ID)
-	ackHandler := func(_ Server, ctx context.Context, msg p2pcommon.Message) {
-		waitForAck <- msg.SenderInfo.ID
-	}
-	if err := r.server.SubscribeTopic(topicName+"/ack", &empty.Empty{}, ackHandler); err != nil {
-		return "", errors.Wrap(err, "failed to listen to lookup ACKs")
-	}
-
-	// 3. wait for ACKs
-	for {
-		select {
-		case id := <-waitForAck:
-			// 4.1. return peer.ID matching with given address
-			addrOfId, _ := p2pcommon.AddrFromID(id)
-			if addrOfId == addr {
-				return id, nil
-			}
-		case <-ctx.Done():
-			// 4.2. can't find any matching peer in given timeout
-			return "", ErrAddressNotFound
-		}
-	}
-}
-
-func (r *rpc) ListenForLookup() error {
-	addr, err := p2pcommon.AddrFromID(r.server.getHost().ID())
-	if err != nil {
-		return errors.Wrap(err, "invalid peer ID")
-	}
-	topicName := "/lookup/" + addr.String()
-
-	return r.server.SubscribeTopic("/lookup/"+addr.String(), &empty.Empty{}, func(_ Server, ctx context.Context, msg p2pcommon.Message) {
-		// send ACK (empty message)
-		if err := r.server.Send(ctx, &empty.Empty{}, topicName+"/ack", msg.SenderInfo.ID); err != nil {
-			r.log.Error("error: unable to send handshake reply: %s", err.Error(), msg.SenderInfo.ID.Loggable())
-		}
-	})
 }
 
 func topicFromMethod(method string) (requestTopic, replyTopic string) {
