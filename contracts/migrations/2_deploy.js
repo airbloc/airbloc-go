@@ -12,6 +12,7 @@ const DEPLOYMENT_OUTPUT_PATH = '../deployment.local.json';
 
 
 module.exports = function (deployer) {
+    console.log(arguments);
     deployer.then(async () => {
         // contracts without any dependencies will go here:
         await deployer.deploy([
