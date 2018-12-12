@@ -12,7 +12,6 @@ import (
 
 	"time"
 
-	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/key"
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/libp2p/go-libp2p-peerstore"
@@ -42,8 +41,8 @@ func init() {
 	}
 }
 
-func makeBasicServer(ctx context.Context, index int, bootnode bool, bootinfos ...peerstore.PeerInfo) (Server, error) {
-	server, err := NewAirblocServer(localdb.NewMemDB(), keys[index], addrs[index], bootnode, bootinfos)
+func makeBasicServer(ctx context.Context, index int, bootinfos ...peerstore.PeerInfo) (Server, error) {
+	server, err := NewAirblocServer(keys[index], addrs[index], bootinfos)
 	if err != nil {
 		return nil, err
 	}
@@ -69,17 +68,14 @@ func TestNewServer(t *testing.T) {
 		cancel()
 	}()
 
-	bootnode, err := makeBasicServer(ctx, 0, true)
+	bootinfo, err := StartBootstrapServer(ctx, keys[0], addrs[0])
 	assert.NoError(t, err)
 
-	bootinfo, err := bootnode.BootInfo()
-	assert.NoError(t, err)
+	time.Sleep(1 * time.Second)
 
 	servers := make([]Server, Size)
-	servers[0] = bootnode
-
 	for i := 1; i < Size; i++ {
-		server, err := makeBasicServer(ctx, i, false, bootinfo)
+		server, err := makeBasicServer(ctx, i, bootinfo)
 		assert.NoError(t, err)
 		server.Start()
 
@@ -101,16 +97,13 @@ func TestAirblocHost_Publish(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	bootnode, err := makeBasicServer(ctx, 0, true)
+	bootinfo, err := StartBootstrapServer(ctx, keys[0], addrs[0])
 	assert.NoError(t, err)
 
 	time.Sleep(1 * time.Second)
 
-	bootinfo, err := bootnode.BootInfo()
-	assert.NoError(t, err)
-
 	// make alice and bob
-	alice, err := makeBasicServer(ctx, 1, false, bootinfo)
+	alice, err := makeBasicServer(ctx, 1, bootinfo)
 	assert.NoError(t, err)
 	alice.Start()
 
@@ -118,7 +111,7 @@ func TestAirblocHost_Publish(t *testing.T) {
 	log.Printf("Alice address : %s\n", aliceAddress)
 	log.Printf("Alice pubkey : %s\n", hex.EncodeToString(crypto.CompressPubkey(&keys[1].PublicKey)))
 
-	bob, err := makeBasicServer(ctx, 2, false, bootinfo)
+	bob, err := makeBasicServer(ctx, 2, bootinfo)
 	assert.NoError(t, err)
 	bob.Start()
 

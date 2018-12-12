@@ -2,7 +2,10 @@ package blockchain
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"net/url"
 	"reflect"
+	"strings"
 
 	"github.com/azer/logger"
 
@@ -22,8 +25,21 @@ type Client struct {
 	logger     *logger.Logger
 }
 
-func NewClient(key *key.Key, url string, cfg ClientOpt) (*Client, error) {
-	ethClient, err := ethclient.Dial(url)
+func NewClient(key *key.Key, rawurl string, cfg ClientOpt) (*Client, error) {
+	log := logger.New("ethereum")
+
+	// URL validation
+	l, err := url.Parse(rawurl)
+	if err != nil {
+		return nil, errors.Wrapf(err, "invalid URL: %s", rawurl)
+	}
+	if l.Scheme != "ws" {
+		log.Error("Warning: You're using %s endpoint for Ethereum. Using WebSocket is recommended.",
+			strings.ToUpper(l.Scheme))
+	}
+
+	// try to connect to Ethereum
+	ethClient, err := ethclient.Dial(rawurl)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +48,7 @@ func NewClient(key *key.Key, url string, cfg ClientOpt) (*Client, error) {
 		Client: ethClient,
 		ctx:    context.Background(),
 		cfg:    cfg,
-		logger: logger.New("ethereum"),
+		logger: log,
 	}
 
 	cm := NewContractManager(client)

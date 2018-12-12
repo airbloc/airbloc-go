@@ -73,7 +73,7 @@ func (manager *Manager) Deny(collectionId common.ID, passwordSig []byte) error {
 		return ErrCollectionNotFound
 	}
 
-	tx, err := manager.collectionRegistry.AllowByPassword(manager.ethclient.Account(), collectionId, passwordSig)
+	tx, err := manager.collectionRegistry.DenyByPassword(manager.ethclient.Account(), collectionId, passwordSig)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact AllowByPassword")
 	}
@@ -99,6 +99,12 @@ func (manager *Manager) DenyByDelegate(collectionId common.ID, accountId common.
 		return errors.Wrap(err, "transaction execution failed")
 	}
 	return nil
+}
+
+// IsCollectionAllowed returns true if the given user allowed data collection
+// of the given collection (data type) through DAuth.
+func (manager *Manager) IsCollectionAllowed(collectionId common.ID, accountId common.ID) (bool, error) {
+	return manager.collectionRegistry.IsCollectionAllowed(nil, collectionId, accountId)
 }
 
 // Exists checks that given collection is exists.

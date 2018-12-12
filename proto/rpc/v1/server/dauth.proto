@@ -32,7 +32,7 @@ service DAuth {
 
 message SignInRequest {
     string identity = 1;
-    bytes userDelegate = 2;
+    string userDelegate = 2; // Address
 }
 
 message SignInResponse {

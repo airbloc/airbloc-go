@@ -2,10 +2,10 @@ package e2e
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"github.com/airbloc/airbloc-go/key"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
@@ -37,9 +37,10 @@ func TestChallengeDataTransaction(t *testing.T) {
 
 func testUserSignup(conn *grpc.ClientConn, index int) string {
 	dauth := pb.NewDAuthClient(conn)
+	pub, _ := base64.StdEncoding.DecodeString("BCcAUp859mBwSiXCZU3y931BcdDmR7nuCSaDIxkf0LwXMKLxsuVF6O0O4AdoiZ2enfccMaCfs7reFFg/yOiWk4w=")
 	req := &pb.SignInRequest{
 		Identity:     fmt.Sprintf("test-user-%d@airbloc.org", index),
-		UserDelegate: common.FromHex("0x3949EfD67b33D4FEe196BDe8E945acE3F9ee3EE6"),
+		UserDelegate: pub,
 	}
 	resp, err := dauth.SignIn(context.Background(), req)
 	if err != nil {

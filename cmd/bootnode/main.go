@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/base64"
 	"fmt"
 	"os"
@@ -10,11 +11,9 @@ import (
 	"github.com/azer/logger"
 	"github.com/pkg/errors"
 
-	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/airbloc/airbloc-go/p2p"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/libp2p/go-libp2p-peerstore"
 	"github.com/multiformats/go-multiaddr"
 	"gopkg.in/urfave/cli.v1"
 )
@@ -52,19 +51,19 @@ func newApp() *cli.App {
 	return app
 }
 
-func run(ctx *cli.Context) (err error) {
+func run(options *cli.Context) (err error) {
 	logger2.Setup(os.Stdout, "*", "*")
 
 	var nodekey *key.Key
-	if ctx.IsSet("nodekeyhex") {
-		priv, err := crypto.HexToECDSA(ctx.String("nodekeyhex"))
+	if options.IsSet("nodekeyhex") {
+		priv, err := crypto.HexToECDSA(options.String("nodekeyhex"))
 		if err != nil {
 			return errors.Wrap(err, "wrong node key")
 		}
 		nodekey = key.FromECDSA(priv)
 
-	} else if ctx.IsSet("nodekey") {
-		nodekey, err = key.Load(ctx.String("nodekey"))
+	} else if options.IsSet("nodekey") {
+		nodekey, err = key.Load(options.String("nodekey"))
 		if err != nil {
 			return errors.Wrap(err, "failed to load node key")
 		}
@@ -81,22 +80,19 @@ func run(ctx *cli.Context) (err error) {
 	log.Info("Node public key: %s", base64.StdEncoding.EncodeToString(public))
 	log.Info("Node ID: %s", nodekey.EthereumAddress.Hex())
 
-	addrStr := fmt.Sprintf("/ip4/%s/tcp/%d", ctx.String("bind"), ctx.Int("port"))
+	addrStr := fmt.Sprintf("/ip4/%s/tcp/%d", options.String("bind"), options.Int("port"))
 	addr, err := multiaddr.NewMultiaddr(addrStr)
 	if err != nil {
 		return errors.Wrap(err, "failed to create multiaddr")
 	}
 
-	server, err := p2p.NewAirblocServer(localdb.NewMemDB(), nodekey, addr, true, []peerstore.PeerInfo{})
+	ctx, stop := context.WithCancel(context.Background())
+	bootInfo, err := p2p.StartBootstrapServer(ctx, nodekey, addr)
 	if err != nil {
 		return errors.Wrap(err, "unable to start bootnode p2p server")
 	}
-	defer server.Stop()
+	defer stop()
 
-	bootInfo, err := server.BootInfo()
-	if err != nil {
-		return errors.Wrap(err, "unable to get bootnode address")
-	}
 	log.Info("Address: %s", multiaddr.Join(bootInfo.Addrs...).String()+"/ipfs/"+bootInfo.ID.Pretty())
 	log.Info("You can put the address to p2p.bootNodes in config.yml.")
 
