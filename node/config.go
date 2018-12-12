@@ -50,6 +50,7 @@ type Config struct {
 			Region     string `yaml:"region"`
 			AccessKey  string `yaml:"accessKey"`
 			SecretKey  string `yaml:"secretKey"`
+			Token      string `default:"" yaml:"token"`
 			Bucket     string `yaml:"bucket"`
 			PathPrefix string `yaml:"prefix"`
 		}

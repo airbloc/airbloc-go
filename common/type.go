@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
-	"github.com/ethereum/go-ethereum/common/hexutil"
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -21,7 +20,7 @@ type ID [IDLength]byte
 // HexToID converts heximedical string ID (ex: deadbeef1a2b3c4d) to ID instance.
 func HexToID(idStr string) (ID, error) {
 	var id ID
-	byteId, err := hexutil.Decode(idStr)
+	byteId, err := hex.DecodeString(idStr)
 	if err != nil {
 		return id, err
 	}
@@ -52,7 +51,7 @@ func GenerateID(issuer common.Address, time time.Time, seed []byte) (id ID) {
 }
 
 func (id *ID) Hex() string {
-	return hexutil.Encode(id[:])
+	return hex.EncodeToString(id[:])
 }
 
 func (id *ID) UnmarshalJSON(b []byte) error {
