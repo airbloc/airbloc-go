@@ -16,7 +16,7 @@ import (
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 )
 
-const numberOfUsers = 10
+const numberOfUsers = 3
 const testSchema = `{
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "http://airbloc.io/testdata.schema.json",
@@ -40,7 +40,9 @@ func testCreateApp(t *testing.T, ctx context.Context, conn *grpc.ClientConn) str
 	result, err := apps.Register(ctx, &pb.RegisterRequest{
 		Name: fmt.Sprintf("app-test-%d", time.Now().Unix()),
 	})
-	assert.NoError(t, err)
+	if !assert.NoError(t, err) {
+		t.FailNow()
+	}
 	return result.GetAppId()
 }
 
@@ -50,7 +52,9 @@ func testCreateSchema(t *testing.T, ctx context.Context, conn *grpc.ClientConn) 
 		Name:   fmt.Sprintf("data-test-%d", time.Now().Unix()),
 		Schema: testSchema,
 	})
-	assert.NoError(t, err)
+	if !assert.NoError(t, err) {
+		t.FailNow()
+	}
 	return result.GetId()
 }
 
@@ -64,7 +68,9 @@ func testCreateCollection(t *testing.T, ctx context.Context, appId string, schem
 			DataProvider: 0.7,
 		},
 	})
-	assert.NoError(t, err)
+	if !assert.NoError(t, err) {
+		t.FailNow()
+	}
 	return result.GetCollectionId()
 }
 
@@ -72,13 +78,17 @@ func testCreateUserAccount(t *testing.T, conn *grpc.ClientConn, index int) strin
 	accounts := ablclient.NewClient(conn)
 
 	priv, err := crypto.GenerateKey()
-	assert.NoError(t, err)
+	if !assert.NoError(t, err) {
+		t.FailNow()
+	}
 
 	walletAddress := crypto.PubkeyToAddress(priv.PublicKey)
 	password := fmt.Sprintf("password%d", index)
 
 	session, err := accounts.Create(walletAddress, password)
-	assert.NoError(t, err)
+	if !assert.NoError(t, err) {
+		t.FailNow()
+	}
 	return session.AccountId.Hex()
 }
 
@@ -126,7 +136,9 @@ func TestPnc(t *testing.T) {
 	for n := 0; n < 2; n++ {
 		log.Println("Creating Bundle #", n)
 		stream, err := warehouse.StoreBundle(ctx)
-		assert.NoError(t, err)
+		if !assert.NoError(t, err) {
+			t.FailNow()
+		}
 
 		for i := 0; i < numberOfUsers; i++ {
 			rawData := &pb.RawDataRequest{
@@ -134,11 +146,15 @@ func TestPnc(t *testing.T) {
 				OwnerId:      userIds[i],
 				Payload:      fmt.Sprintf("{\"name\":\"%s\",\"age\":%d}", userIds[i], i),
 			}
-			assert.NoError(t, stream.Send(rawData), "datum", rawData.String())
+			if !assert.NoError(t, stream.Send(rawData), "datum", rawData.String()) {
+				t.FailNow()
+			}
 		}
 
 		result, err := stream.CloseAndRecv()
-		assert.NoError(t, err)
+		if !assert.NoError(t, err) {
+			t.FailNow()
+		}
 
 		log.Println("Stored URI:", result.Uri)
 		log.Println("Stored Data Count:", result.DataCount)

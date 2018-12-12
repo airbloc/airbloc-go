@@ -16,10 +16,10 @@ message DAuthSignUpResponse {
  * DAuth (Data Collection Authentification) API.
  */
 message DAuthRequest {
-    string collectionId = 1; // ID
-    bool allow = 2;
+    string accountId = 1;
+    string collectionId = 2; // ID
+    bool allow = 3;
 }
 
 message DAuthResponse {
-    string collectionId = 1; // ID
 }

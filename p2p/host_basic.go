@@ -10,7 +10,6 @@ import (
 	"github.com/libp2p/go-libp2p-net"
 	"github.com/libp2p/go-libp2p-peer"
 	"github.com/libp2p/go-libp2p-peerstore"
-	"github.com/multiformats/go-multiaddr"
 	"github.com/multiformats/go-multistream"
 	"github.com/pkg/errors"
 )
@@ -23,6 +22,11 @@ func NewBasicHost(host host.Host) Host {
 	return &BasicHost{
 		host: host,
 	}
+}
+
+// ID returns the (local) peer.ID associated with this Host.
+func (h *BasicHost) ID() peer.ID {
+	return h.host.ID()
 }
 
 // Mux returns host's multistreamMuxer
@@ -43,17 +47,6 @@ func (h *BasicHost) ConnManager() ifconnmgr.ConnManager {
 // PeerInfo generates peerstore.PeerInfo object and returns it
 func (h *BasicHost) PeerInfo() peerstore.PeerInfo {
 	return peerstore.PeerInfo{ID: h.host.ID(), Addrs: h.host.Addrs()}
-}
-
-// BootInfo generates bootnode's providing address info and returns it
-func (h *BasicHost) BootInfo() (peerstore.PeerInfo, error) {
-	info := h.PeerInfo()
-	iaddr, err := multiaddr.NewMultiaddr("/ipfs/" + info.ID.Pretty())
-	if err != nil {
-		return peerstore.PeerInfo{}, err
-	}
-	bootinfo, err := peerstore.InfoFromP2pAddr(info.Addrs[1].Encapsulate(iaddr))
-	return *bootinfo, err
 }
 
 // Peerstore returns host's peerstore

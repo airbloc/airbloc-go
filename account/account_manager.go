@@ -2,6 +2,7 @@ package account
 
 import (
 	"context"
+
 	"github.com/azer/logger"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
@@ -83,6 +84,7 @@ func (manager *Manager) Get(accountId ablCommon.ID) (*Account, error) {
 		Owner:         account.Owner,
 		Status:        Status(account.Status),
 		Proxy:         account.Proxy,
+		Delegate:      account.Delegate,
 		PasswordProof: account.PasswordProof,
 	}, nil
 }
@@ -116,4 +118,8 @@ func (manager *Manager) TestPassword(messageHash ethCommon.Hash, signature []byt
 
 func (manager *Manager) IsDelegateOf(delegateAddr ethCommon.Address, accountId ablCommon.ID) (bool, error) {
 	return manager.contract.IsDelegateOf(nil, delegateAddr, accountId)
+}
+
+func (manager *Manager) GetContract() *adapter.Accounts {
+	return manager.contract
 }

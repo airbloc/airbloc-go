@@ -3,19 +3,15 @@ package dauth
 import (
 	"context"
 	"crypto/ecdsa"
-	"encoding/hex"
-	"fmt"
 
 	"github.com/airbloc/airbloc-go/account"
 	"github.com/airbloc/airbloc-go/blockchain"
 	ablCommon "github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/airbloc/airbloc-go/p2p"
-	"github.com/airbloc/airbloc-go/p2p/common"
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/azer/logger"
-	libp2pCrypto "github.com/libp2p/go-libp2p-crypto"
-	"github.com/libp2p/go-libp2p-peer"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
 )
 
@@ -24,7 +20,7 @@ import (
 type ProviderClient struct {
 	providerId *ecdsa.PublicKey
 	accounts   *account.Manager
-	p2p        p2p.Server
+	p2pRpc     p2p.RPC
 	log        *logger.Logger
 }
 
@@ -34,14 +30,14 @@ func NewProviderClient(kms key.Manager, client blockchain.TxClient, p2pServer p2
 	return &ProviderClient{
 		providerId: &kms.NodeKey().PublicKey,
 		accounts:   accounts,
-		p2p:        p2pServer,
+		p2pRpc:     p2p.NewRPC(p2pServer),
 		log:        logger.New("dauth"),
 	}
 }
 
 // SignIn creates a new account if there is no account corresponding to the identity (e.g. email),
 // otherwise it returns the ID of the existing account.
-func (client *ProviderClient) SignIn(ctx context.Context, identity string, userDelegate []byte) (ablCommon.ID, error) {
+func (client *ProviderClient) SignIn(ctx context.Context, identity string, userDelegate common.Address) (ablCommon.ID, error) {
 	acc, err := client.accounts.GetByIdentity(identity)
 	if err != nil {
 		if err == account.ErrNoAccount {
@@ -59,46 +55,18 @@ func (client *ProviderClient) SignIn(ctx context.Context, identity string, userD
 }
 
 // SignUp requests user delegate to create new temporary account using given identity data.
-func (client *ProviderClient) SignUp(ctx context.Context, identity string, userDelegatePub []byte) (ablCommon.ID, error) {
+func (client *ProviderClient) SignUp(ctx context.Context, identity string, userDelegate common.Address) (ablCommon.ID, error) {
 	identityHash := client.accounts.HashIdentity(identity)
 	req := &pb.DAuthSignUpRequest{
 		IdentityHash: identityHash.Hex(),
 	}
-	public, err := libp2pCrypto.UnmarshalSecp256k1PublicKey(userDelegatePub)
-	if err != nil {
-		return ablCommon.ID{}, errors.Wrapf(err,
-			"invalid user delegate public key: %s", hex.EncodeToString(userDelegatePub))
-	}
-	destId, err := peer.IDFromPublicKey(public)
-	if err != nil {
-		return ablCommon.ID{}, errors.Wrap(err,
-			"failed to get libp2p peer ID from given pubkey")
-	}
 
 	// request to user delegate through Airbloc network
-	if err := client.p2p.Send(ctx, req, "dauth-signup", destId); err != nil {
-		return ablCommon.ID{}, errors.Wrap(err, "failed to send dauth-signup message")
+	reply := new(pb.DAuthSignUpResponse)
+	if _, err := client.p2pRpc.Invoke(ctx, userDelegate, "dauth-signup", req, reply); err != nil {
+		return ablCommon.ID{}, err
 	}
-
-	// wait for the response. NOTE THAT this is not fault-torelant yet:
-	// see https://github.com/airbloc/airbloc-go/issues/62
-	waitForResponse := make(chan string, 1)
-	err = client.p2p.SubscribeTopic("dauth-signup-response", &pb.DAuthSignUpResponse{}, func(server p2p.Server, c context.Context, resp common.Message) {
-		if !resp.SenderInfo.ID.MatchesPublicKey(public) {
-			return
-		}
-		response, ok := resp.Data.(*pb.DAuthSignUpResponse)
-		if !ok {
-			client.log.Error("Invalid response returned.")
-			return
-		}
-		waitForResponse <- response.GetAccountId()
-	})
-	if err != nil {
-		return ablCommon.ID{}, errors.Wrap(err, "failed to subscribe topic")
-	}
-	userId := <-waitForResponse
-	return ablCommon.HexToID(userId)
+	return ablCommon.HexToID(reply.GetAccountId())
 }
 
 func (client *ProviderClient) Allow(ctx context.Context, collectionId ablCommon.ID, accountId ablCommon.ID) error {
@@ -110,10 +78,16 @@ func (client *ProviderClient) Deny(ctx context.Context, collectionId ablCommon.I
 }
 
 func (client *ProviderClient) sendDauthRequest(ctx context.Context, collectionId ablCommon.ID, accountId ablCommon.ID, typ string) error {
-	req := &pb.DAuthRequest{CollectionId: collectionId.Hex()}
-	topicName := fmt.Sprintf("dauth-%s-%s", typ, accountId.Hex())
+	acc, err := client.accounts.Get(accountId)
+	if err != nil {
+		return err
+	}
 
-	if err := client.p2p.Publish(ctx, req, topicName); err != nil {
+	req := &pb.DAuthRequest{
+		AccountId:    accountId.Hex(),
+		CollectionId: collectionId.Hex(),
+	}
+	if _, err := client.p2pRpc.Invoke(ctx, acc.Delegate, "dauth-"+typ, req, &pb.DAuthResponse{}); err != nil {
 		return errors.Wrapf(err, "failed to publish DAuth %s message", typ)
 	}
 	return nil

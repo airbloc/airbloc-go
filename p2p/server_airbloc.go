@@ -9,7 +9,6 @@ import (
 
 	"github.com/azer/logger"
 
-	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/airbloc/airbloc-go/p2p/common"
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
@@ -43,24 +42,23 @@ type AirblocServer struct {
 	dht     *kaddht.IpfsDHT
 	nodekey *key.Key
 
-	// database
-	db localdb.Database
-
 	// topic - handlers
 	types    map[string]reflect.Type
-	handlers map[reflect.Type]TopicHandler
+	handlers map[string]TopicHandler
 
 	// log
 	log *logger.Logger
 }
 
 func NewAirblocServer(
-	localdb localdb.Database,
 	nodekey *key.Key,
 	addr multiaddr.Multiaddr,
-	bootnode bool,
 	bootinfos []peerstore.PeerInfo,
 ) (Server, error) {
+	if len(bootinfos) < 1 {
+		return nil, errors.New("bootnode informations should be give at least one.")
+	}
+
 	privKey, err := nodekey.DeriveLibp2pKeyPair()
 	if err != nil {
 		return nil, err
@@ -79,9 +77,8 @@ func NewAirblocServer(
 		pid:     pid,
 		nodekey: nodekey,
 
-		db:       localdb,
 		types:    make(map[string]reflect.Type),
-		handlers: make(map[reflect.Type]TopicHandler),
+		handlers: make(map[string]TopicHandler),
 		log:      logger.New("p2p"),
 	}
 
@@ -104,22 +101,11 @@ func NewAirblocServer(
 	h = routedhost.Wrap(h, server.dht)
 	server.host = NewAirblocHost(NewBasicHost(h), 20)
 
-	if bootnode {
-		if err := server.dht.Bootstrap(ctx); err != nil {
+	// connect to bootstrap nodes for initializing DHT
+	for _, bootinfo := range bootinfos {
+		if err := h.Connect(ctx, bootinfo); err != nil {
 			cancel()
-			return nil, errors.Wrap(err, "server error : failed to launch bootstrap node")
-		}
-	} else {
-		if len(bootinfos) < 1 {
-			cancel()
-			return nil, errors.New("server error : input bootinfos should contains at least 1 element")
-		}
-
-		for _, bootinfo := range bootinfos {
-			if err := h.Connect(ctx, bootinfo); err != nil {
-				cancel()
-				return nil, errors.Wrap(err, "server error : failed to connect bootstrap node")
-			}
+			return nil, errors.Wrap(err, "failed to connect to bootstrap node")
 		}
 	}
 
@@ -145,15 +131,19 @@ func NewAirblocServer(
 
 // Discovery finds and updates new peer connection every minute.
 func (s *AirblocServer) Discovery() {
-	ticker := time.NewTicker(30 * time.Second)
+	ticker := time.NewTicker(3 * time.Second)
 	defer ticker.Stop()
 
+	numOfPeers := 0
 	s.updatePeer()
 	for {
 		select {
 		case <-ticker.C:
-			s.clearPeer()
-			s.updatePeer()
+			found := s.updatePeer()
+			if numOfPeers != found {
+				s.log.Info("Connected", logger.Attrs{"peers": found})
+				numOfPeers = found
+			}
 		case <-s.ctx.Done():
 			return
 		}
@@ -167,11 +157,11 @@ func (s *AirblocServer) clearPeer() {
 	}
 }
 
-func (s *AirblocServer) updatePeer() {
+func (s *AirblocServer) updatePeer() int {
 	idch, err := s.dht.GetClosestPeers(s.ctx, s.id.KeyString())
 	if s.ctx.Err() != nil {
 		s.log.Error("Failed to discovery peers: context error: %v", s.ctx.Err())
-		return
+		return 0
 	}
 
 	if err != nil {
@@ -188,7 +178,7 @@ func (s *AirblocServer) updatePeer() {
 		s.host.Peerstore().AddAddrs(info.ID, info.Addrs, peerstore.TempAddrTTL)
 		found++
 	}
-	s.log.Info("Connected", logger.Attrs{"peers": found})
+	return found
 }
 
 // api backend interfaces
@@ -212,7 +202,7 @@ func (s *AirblocServer) handleMessage(message common.ProtoMessage) {
 	}
 
 	timer := s.log.Timer()
-	handler := s.handlers[typ]
+	handler := s.handlers[topic]
 	handler(s, s.ctx, msg)
 	timer.End("Received message", logger.Attrs{
 		"from":  msg.SenderAddr.String(),
@@ -229,18 +219,16 @@ func (s *AirblocServer) SubscribeTopic(topic string, msg proto.Message, handler 
 
 	s.mutex.Lock()
 	s.types[topic] = typ
-	s.handlers[typ] = handler
+	s.handlers[topic] = handler
 	s.mutex.Unlock()
 
 	return nil
 }
 
 func (s *AirblocServer) UnsubscribeTopic(topic string) error {
-	msgType := s.types[topic]
-
 	s.mutex.Lock()
 	delete(s.types, topic)
-	delete(s.handlers, msgType)
+	delete(s.handlers, topic)
 	s.mutex.Unlock()
 
 	return nil
@@ -274,8 +262,4 @@ func (s *AirblocServer) setContext(ctx context.Context) {
 
 func (s *AirblocServer) getHost() Host {
 	return s.host
-}
-
-func (s *AirblocServer) BootInfo() (peerstore.PeerInfo, error) {
-	return s.host.BootInfo()
 }

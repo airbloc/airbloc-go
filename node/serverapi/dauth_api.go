@@ -2,10 +2,12 @@ package serverapi
 
 import (
 	"context"
+
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/dauth"
 	"github.com/airbloc/airbloc-go/node"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
+	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -22,7 +24,8 @@ func NewDAuthAPI(backend node.Backend) (node.API, error) {
 }
 
 func (api *DAuthAPI) SignIn(ctx context.Context, req *pb.SignInRequest) (*pb.SignInResponse, error) {
-	accountId, err := api.dauthClient.SignIn(ctx, req.GetIdentity(), req.GetUserDelegate())
+	userDelegateAddr := ethCommon.HexToAddress(req.GetUserDelegate())
+	accountId, err := api.dauthClient.SignIn(ctx, req.GetIdentity(), userDelegateAddr)
 	if err != nil {
 		return nil, err
 	}

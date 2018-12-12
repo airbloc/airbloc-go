@@ -89,19 +89,10 @@ func (message ProtoMessage) MakeMessage(ctx context.Context, typ reflect.Type) (
 	m := NewMessage(msg, peerstore.PeerInfo{ID: message.ID()}, pid)
 
 	// recover sender's public key from the ID.
-	libp2pPubKey, err := message.ID().ExtractPublicKey()
+	m.SenderAddr, err = AddrFromID(m.SenderInfo.ID)
 	if err != nil {
-		return Message{}, errors.Wrap(err, "failed to recover sender address")
+		return m, errors.Wrap(err, "failed to recover sender address")
 	}
-	pubKeyBytes, err := libp2pPubKey.Raw()
-	if err != nil {
-		return Message{}, errors.Wrap(err, "failed to recover sender address")
-	}
-	pubKey, err := crypto.DecompressPubkey(pubKeyBytes)
-	if err != nil {
-		return Message{}, errors.Wrap(err, "failed to recover sender address")
-	}
-	m.SenderAddr = crypto.PubkeyToAddress(*pubKey)
 	return m, nil
 }
 
@@ -122,4 +113,22 @@ func NewMessage(data proto.Message, info peerstore.PeerInfo, protocol Pid) Messa
 		SenderInfo: info,
 		Protocol:   protocol,
 	}
+}
+
+// AddrFromID converts a peer.ID (made from SECP256k1 public) into the Ethereum address.
+func AddrFromID(id peer.ID) (addr common.Address, err error) {
+	libp2pPubKey, err := id.ExtractPublicKey()
+	if err != nil {
+		return
+	}
+	pubKeyBytes, err := libp2pPubKey.Raw()
+	if err != nil {
+		return
+	}
+	pubKey, err := crypto.DecompressPubkey(pubKeyBytes)
+	if err != nil {
+		return
+	}
+	addr = crypto.PubkeyToAddress(*pubKey)
+	return
 }

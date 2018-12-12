@@ -17,6 +17,9 @@ type ProtocolRegistry interface {
 }
 
 type Host interface {
+	// ID returns the (local) peer.ID associated with this Host
+	ID() peer.ID
+
 	// network interfaces
 	Mux() *multistream.MultistreamMuxer
 	Network() net.Network
@@ -24,7 +27,6 @@ type Host interface {
 
 	// peer information
 	PeerInfo() peerstore.PeerInfo
-	BootInfo() (peerstore.PeerInfo, error)
 	Peerstore() peerstore.Peerstore
 
 	// sender

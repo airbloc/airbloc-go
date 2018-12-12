@@ -25,7 +25,7 @@ func HexToID(idStr string) (ID, error) {
 		return id, err
 	}
 	copy(id[:], byteId[:IDLength])
-	return id, nil
+	return BytesToID(byteId), nil
 }
 
 func BytesToID(idBytes []byte) ID {
