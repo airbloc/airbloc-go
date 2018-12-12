@@ -1,9 +1,10 @@
 package collections
 
 import (
+	"time"
+
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/schemas"
-	"time"
 )
 
 type Collection struct {

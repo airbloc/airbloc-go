@@ -2,10 +2,11 @@ package collections
 
 import (
 	"context"
+	"math/big"
+
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/pkg/errors"
-	"math/big"
 
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
