@@ -2,6 +2,7 @@ package serverapi
 
 import (
 	"context"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -51,7 +52,7 @@ func NewWarehouseAPI(airbloc node.Backend) (_ node.API, err error) {
 			Credentials: credentials.NewStaticCredentials(
 				cfg.AccessKey,
 				cfg.SecretKey,
-				"",
+				cfg.Token,
 			),
 			Region: aws.String(cfg.Region),
 		})

@@ -52,7 +52,7 @@ type HttpsProtocol struct {
 }
 
 func NewHttpsProtocol(timeout time.Duration, maxConnsPerHost int) *HttpsProtocol {
-	return &HttpsProtocol{*NewHttpProtocol(timeout, maxConnsPerHost)}
+	return &HttpsProtocol{HttpProtocol: *NewHttpProtocol(timeout, maxConnsPerHost)}
 }
 
 func (https *HttpsProtocol) Name() string {

@@ -2,51 +2,62 @@ package storage
 
 import (
 	"bytes"
+	"fmt"
+	"net/url"
+	"path/filepath"
+	"regexp"
+
 	"github.com/airbloc/airbloc-go/data"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/pkg/errors"
-	"net/url"
-	"path"
-	"path/filepath"
 )
+
+var S3ProtocolFmt = "%s.s3.%s.amazonaws.com"
+var S3ProtocolExp = regexp.MustCompile(`https://([^.]+).s3.([^.]+).amazonaws.com/([^ ]+)`)
 
 type S3Storage struct {
 	client *s3.S3
+	region string
 	bucket string
 	prefix string
 }
 
-func NewS3Storage(bucket, prefix string, sess *session.Session, opts ...*aws.Config) Storage {
+func NewS3Storage(bucket, prefix string, sess *session.Session) Storage {
 	return &S3Storage{
-		client: s3.New(sess, opts...),
+		client: s3.New(sess),
+		region: *sess.Config.Region,
 		bucket: bucket,
 		prefix: prefix,
 	}
 }
 
+func ExtractS3ObjectInfo(rawUrl string) (region, bucket, key string) {
+	s := S3ProtocolExp.FindStringSubmatch(rawUrl)[1:]
+	return s[0], s[1], s[2]
+}
+
 func (ss *S3Storage) Save(bundleId string, bundle *data.Bundle) (*url.URL, error) {
-	bundlePath := filepath.Join(ss.prefix, bundleId+".bundle")
 	bundleUri := &url.URL{
-		Scheme: "s3",
-		Path:   path.Join(ss.bucket, bundlePath),
+		Scheme: "https",
+		Host:   fmt.Sprintf(S3ProtocolFmt, ss.bucket, ss.region),
+		Path:   filepath.Join(ss.prefix, bundleId+".bundle"),
 	}
 	return bundleUri, ss.Update(bundleUri, bundle)
 }
 
 func (ss *S3Storage) Update(bundlePath *url.URL, bundle *data.Bundle) error {
-	if bundlePath.Scheme != "s3" {
-		return errors.New("s3 update: invalid bundle url")
-	}
 	bundleData, err := bundle.Marshal()
 	if err != nil {
 		return errors.Wrap(err, "s3 update: marshal error")
 	}
+
 	reqObj := &s3.PutObjectInput{
-		Key:             aws.String(bundlePath.String()),
+		Key:             aws.String(bundlePath.Path),
 		Body:            bytes.NewReader(bundleData),
 		Bucket:          aws.String(ss.bucket),
+		ACL:             aws.String(s3.BucketCannedACLPublicRead),
 		ContentType:     aws.String("application/json"),
 		ContentEncoding: aws.String("utf-8"),
 	}
@@ -60,7 +71,7 @@ func (ss *S3Storage) Update(bundlePath *url.URL, bundle *data.Bundle) error {
 
 func (ss *S3Storage) Delete(bundlePath *url.URL) error {
 	reqObj := &s3.DeleteObjectInput{
-		Key:    aws.String(bundlePath.String()),
+		Key:    aws.String(bundlePath.Path),
 		Bucket: aws.String(ss.bucket),
 	}
 
