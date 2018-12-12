@@ -4,12 +4,13 @@ package reuseport
 
 import (
 	"context"
-	"golang.org/x/sys/unix"
 	"net"
 	"os"
 	"strconv"
 	"syscall"
 	"time"
+
+	"golang.org/x/sys/unix"
 
 	"github.com/libp2p/go-reuseport/singlepoll"
 	sockaddrnet "github.com/libp2p/go-sockaddr/net"
