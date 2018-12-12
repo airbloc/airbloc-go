@@ -65,7 +65,7 @@ var (
 )
 
 type errorBody struct {
-	Error   string     `protobuf:"bytes,1,name=error" json:"error"`
+	Error string `protobuf:"bytes,1,name=error" json:"error"`
 	// This is to make the error more compatible with users that expect errors to be Status objects:
 	// https://github.com/grpc/grpc/blob/master/src/proto/grpc/status/status.proto
 	// It should be the exact same message as the Error field.
