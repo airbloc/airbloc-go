@@ -7,4 +7,4 @@ func CreateProxyAccount()       {}
 func WatchDAuthEvent()          {}
 func ChallengeDAuthEvent()      {}
 func ChallengeDataTransaction() {}
-func UserDelegateMain()         {}
+func UserDelegate()             {}
