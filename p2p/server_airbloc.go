@@ -48,7 +48,6 @@ type AirblocServer struct {
 
 	// topic - handlers
 	types    map[string]reflect.Type
-	topics   map[reflect.Type]string
 	handlers map[reflect.Type]TopicHandler
 
 	// log
@@ -82,7 +81,6 @@ func NewAirblocServer(
 
 		db:       localdb,
 		types:    make(map[string]reflect.Type),
-		topics:   make(map[reflect.Type]string),
 		handlers: make(map[reflect.Type]TopicHandler),
 		log:      logger.New("p2p"),
 	}
@@ -147,7 +145,7 @@ func NewAirblocServer(
 
 // Discovery finds and updates new peer connection every minute.
 func (s *AirblocServer) Discovery() {
-	ticker := time.NewTicker(1 * time.Minute)
+	ticker := time.NewTicker(30 * time.Second)
 	defer ticker.Stop()
 
 	s.updatePeer()
@@ -184,13 +182,13 @@ func (s *AirblocServer) updatePeer() {
 	for id := range idch {
 		info, err := s.dht.FindPeer(s.ctx, id)
 		if err != nil {
-			s.log.Error("Failed to find peer", logger.Attrs{"id": id.Pretty()})
+			s.log.Error("Warning: Peer found, but cannot connect", logger.Attrs{"to": id.Pretty()})
 			continue
 		}
 		s.host.Peerstore().AddAddrs(info.ID, info.Addrs, peerstore.TempAddrTTL)
 		found++
 	}
-	s.log.Info("Discovery peers", logger.Attrs{"found": found})
+	s.log.Info("Connected", logger.Attrs{"peers": found})
 }
 
 // api backend interfaces
@@ -201,19 +199,12 @@ func (s *AirblocServer) Start() error {
 }
 
 func (s *AirblocServer) handleMessage(message common.ProtoMessage) {
-	typ, ok := s.types[message.GetTopic()]
+	topic := message.GetTopic()
+	typ, ok := s.types[topic]
 	if !ok {
 		s.log.Error("Unknown topic: %s", message.GetTopic())
 		return
 	}
-
-	topic := s.topics[typ]
-	handler := s.handlers[typ]
-	if topic != message.Topic {
-		s.log.Error("Message type mismatch with topic: %s", message.GetTopic())
-		return
-	}
-
 	msg, err := message.MakeMessage(s.ctx, typ)
 	if err != nil {
 		s.log.Error("Failed to make message: %v", err.Error())
@@ -221,6 +212,7 @@ func (s *AirblocServer) handleMessage(message common.ProtoMessage) {
 	}
 
 	timer := s.log.Timer()
+	handler := s.handlers[typ]
 	handler(s, s.ctx, msg)
 	timer.End("Received message", logger.Attrs{
 		"from":  msg.SenderAddr.String(),
@@ -237,7 +229,6 @@ func (s *AirblocServer) SubscribeTopic(topic string, msg proto.Message, handler 
 
 	s.mutex.Lock()
 	s.types[topic] = typ
-	s.topics[typ] = topic
 	s.handlers[typ] = handler
 	s.mutex.Unlock()
 
@@ -249,7 +240,6 @@ func (s *AirblocServer) UnsubscribeTopic(topic string) error {
 
 	s.mutex.Lock()
 	delete(s.types, topic)
-	delete(s.topics, msgType)
 	delete(s.handlers, msgType)
 	s.mutex.Unlock()
 
@@ -257,6 +247,10 @@ func (s *AirblocServer) UnsubscribeTopic(topic string) error {
 }
 
 func (s *AirblocServer) Send(ctx context.Context, msg proto.Message, topic string, p peer.ID) error {
+	s.log.Info("Sending P2P message", logger.Attrs{
+		"topic": topic,
+		"id":    p.Pretty(),
+	})
 	payload, err := common.NewProtoMessage(msg, topic)
 	if err != nil {
 		return errors.Wrap(err, "send error")
@@ -265,6 +259,7 @@ func (s *AirblocServer) Send(ctx context.Context, msg proto.Message, topic strin
 }
 
 func (s *AirblocServer) Publish(ctx context.Context, msg proto.Message, topic string) error {
+	s.log.Info("Broadcasting P2P message", logger.Attrs{"topic": topic})
 	payload, err := common.NewProtoMessage(msg, topic)
 	if err != nil {
 		return errors.Wrap(err, "publish error")

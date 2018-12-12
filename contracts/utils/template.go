@@ -99,7 +99,7 @@ var (
 	_ = ethereum.NotFound
 	_ = abi.U256
 	_ = bind.Bind
-	_ = ablCommon.IDFromString
+	_ = ablCommon.HexToID
 	_ = common.Big1
 	_ = types.BloomLookup
 	_ = event.NewSubscription
@@ -170,19 +170,19 @@ var (
 	}
 
 	{{range .Enums}}
-		type {{.Name}} int8
+		type {{$contract.Type}}{{.Name}} int8
 		{{$name := .Name}}
 		const (
-			{{range $key, $value := .Member}}{{$name}}_{{$key}} {{$name}} = {{$value}}
+			{{range $key, $value := .Member}}{{$contract.Type}}{{$name}}_{{$key}} {{$contract.Type}}{{$name}} = {{$value}}
 			{{end}}
 		)
 
-		var {{$name}}_name = map[int8]string{
+		var {{$contract.Type}}{{$name}}_name = map[int8]string{
 			{{range $key, $value := .Member}}{{$value}}: "{{$key}}",
 			{{end}}
 		}
 
-		var {{$name}}_value = map[string]int8{
+		var {{$contract.Type}}{{$name}}_value = map[string]int8{
 			{{range $key, $value := .Member}}"{{$key}}": {{$value}},
 			{{end}}
 		}

@@ -32,8 +32,8 @@ func NewManager(client blockchain.TxClient) *Manager {
 	}
 }
 
-func (apps *Manager) NewOwner(ctx context.Context, appId ablCommon.ID, newOwner ethCommon.Address) (bool, error) {
-	tx, err := apps.contract.NewOwner(apps.client.Account(), appId, newOwner)
+func (apps *Manager) TransferOwnership(ctx context.Context, appId ablCommon.ID, newOwner ethCommon.Address) (bool, error) {
+	tx, err := apps.contract.TransferAppOwner(apps.client.Account(), appId, newOwner)
 	if err != nil {
 		return false, errors.Wrap(err, ErrCannotCreateTx)
 	}
@@ -49,8 +49,8 @@ func (apps *Manager) NewOwner(ctx context.Context, appId ablCommon.ID, newOwner 
 	return true, nil
 }
 
-func (apps *Manager) CheckOwner(ctx context.Context, appId ablCommon.ID, owner ethCommon.Address) (bool, error) {
-	result, err := apps.contract.CheckOwner(nil, appId, owner)
+func (apps *Manager) IsOwner(ctx context.Context, appId ablCommon.ID, owner ethCommon.Address) (bool, error) {
+	result, err := apps.contract.IsOwner(nil, appId, owner)
 	if err != nil {
 		return false, errors.Wrap(err, ErrCannotCall)
 	}

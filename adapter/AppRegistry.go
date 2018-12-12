@@ -33,7 +33,7 @@ var (
 )
 
 // AppRegistryABI is the input ABI used to generate the binding from.
-const AppRegistryABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"name\":\"apps\",\"outputs\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"owner\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"appId\",\"type\":\"bytes8\"}],\"name\":\"Registered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"},{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"newOwner\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"},{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"checkOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_name\",\"type\":\"string\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"}],\"name\":\"check\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const AppRegistryABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"name\":\"apps\",\"outputs\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"owner\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"appId\",\"type\":\"bytes8\"}],\"name\":\"Registered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_name\",\"type\":\"string\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"appId\",\"type\":\"bytes8\"},{\"name\":\"_newOwner\",\"type\":\"address\"}],\"name\":\"transferAppOwner\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"},{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_appName\",\"type\":\"string\"}],\"name\":\"exists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_appId\",\"type\":\"bytes8\"}],\"name\":\"exists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // AppRegistry is an auto generated Go binding around an Ethereum contract.
 type AppRegistry struct {
@@ -103,9 +103,9 @@ type App struct {
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["AppRegistry"] = (&AppRegistry{}).new
-	blockchain.RegisterSelector("0xa856fe78", "newOwner(bytes8,address)")
 	blockchain.RegisterSelector("0xf2c298be", "register(string)")
 	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
+	blockchain.RegisterSelector("0x7fccb4ba", "transferAppOwner(bytes8,address)")
 	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
 	blockchain.RegisterSelector("0x260a818e", "unregister(bytes8)")
 
@@ -239,82 +239,56 @@ func (_AppRegistry *AppRegistryCallerSession) Apps(arg0 [8]byte) (struct {
 	return _AppRegistry.Contract.Apps(&_AppRegistry.CallOpts, arg0)
 }
 
-// Check is a free data retrieval call binding the contract method 0x398bc4e8.
+// Exists is a free data retrieval call binding the contract method 0x97e4fea7.
 //
-// Solidity: function check(_appId bytes8) constant returns(bool)
-func (_AppRegistry *AppRegistryCaller) Check(opts *bind.CallOpts, _appId [8]byte) (bool, error) {
+// Solidity: function exists(_appId bytes8) constant returns(bool)
+func (_AppRegistry *AppRegistryCaller) Exists(opts *bind.CallOpts, _appId [8]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
 	out := ret0
-	err := _AppRegistry.contract.Call(opts, out, "check", _appId)
+	err := _AppRegistry.contract.Call(opts, out, "exists", _appId)
 	return *ret0, err
 }
 
-// Check is a free data retrieval call binding the contract method 0x398bc4e8.
+// Exists is a free data retrieval call binding the contract method 0x97e4fea7.
 //
-// Solidity: function check(_appId bytes8) constant returns(bool)
-func (_AppRegistry *AppRegistrySession) Check(_appId [8]byte) (bool, error) {
-	return _AppRegistry.Contract.Check(&_AppRegistry.CallOpts, _appId)
+// Solidity: function exists(_appId bytes8) constant returns(bool)
+func (_AppRegistry *AppRegistrySession) Exists(_appId [8]byte) (bool, error) {
+	return _AppRegistry.Contract.Exists(&_AppRegistry.CallOpts, _appId)
 }
 
-// Check is a free data retrieval call binding the contract method 0x398bc4e8.
+// Exists is a free data retrieval call binding the contract method 0x97e4fea7.
 //
-// Solidity: function check(_appId bytes8) constant returns(bool)
-func (_AppRegistry *AppRegistryCallerSession) Check(_appId [8]byte) (bool, error) {
-	return _AppRegistry.Contract.Check(&_AppRegistry.CallOpts, _appId)
+// Solidity: function exists(_appId bytes8) constant returns(bool)
+func (_AppRegistry *AppRegistryCallerSession) Exists(_appId [8]byte) (bool, error) {
+	return _AppRegistry.Contract.Exists(&_AppRegistry.CallOpts, _appId)
 }
 
-// CheckOwner is a free data retrieval call binding the contract method 0x672b7beb.
+// IsOwner is a free data retrieval call binding the contract method 0xb2acbc13.
 //
-// Solidity: function checkOwner(_appId bytes8, _owner address) constant returns(bool)
-func (_AppRegistry *AppRegistryCaller) CheckOwner(opts *bind.CallOpts, _appId [8]byte, _owner common.Address) (bool, error) {
+// Solidity: function isOwner(_appId bytes8, _owner address) constant returns(bool)
+func (_AppRegistry *AppRegistryCaller) IsOwner(opts *bind.CallOpts, _appId [8]byte, _owner common.Address) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
 	out := ret0
-	err := _AppRegistry.contract.Call(opts, out, "checkOwner", _appId, _owner)
+	err := _AppRegistry.contract.Call(opts, out, "isOwner", _appId, _owner)
 	return *ret0, err
 }
 
-// CheckOwner is a free data retrieval call binding the contract method 0x672b7beb.
+// IsOwner is a free data retrieval call binding the contract method 0xb2acbc13.
 //
-// Solidity: function checkOwner(_appId bytes8, _owner address) constant returns(bool)
-func (_AppRegistry *AppRegistrySession) CheckOwner(_appId [8]byte, _owner common.Address) (bool, error) {
-	return _AppRegistry.Contract.CheckOwner(&_AppRegistry.CallOpts, _appId, _owner)
+// Solidity: function isOwner(_appId bytes8, _owner address) constant returns(bool)
+func (_AppRegistry *AppRegistrySession) IsOwner(_appId [8]byte, _owner common.Address) (bool, error) {
+	return _AppRegistry.Contract.IsOwner(&_AppRegistry.CallOpts, _appId, _owner)
 }
 
-// CheckOwner is a free data retrieval call binding the contract method 0x672b7beb.
+// IsOwner is a free data retrieval call binding the contract method 0xb2acbc13.
 //
-// Solidity: function checkOwner(_appId bytes8, _owner address) constant returns(bool)
-func (_AppRegistry *AppRegistryCallerSession) CheckOwner(_appId [8]byte, _owner common.Address) (bool, error) {
-	return _AppRegistry.Contract.CheckOwner(&_AppRegistry.CallOpts, _appId, _owner)
-}
-
-// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
-//
-// Solidity: function isOwner() constant returns(bool)
-func (_AppRegistry *AppRegistryCaller) IsOwner(opts *bind.CallOpts) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _AppRegistry.contract.Call(opts, out, "isOwner")
-	return *ret0, err
-}
-
-// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
-//
-// Solidity: function isOwner() constant returns(bool)
-func (_AppRegistry *AppRegistrySession) IsOwner() (bool, error) {
-	return _AppRegistry.Contract.IsOwner(&_AppRegistry.CallOpts)
-}
-
-// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
-//
-// Solidity: function isOwner() constant returns(bool)
-func (_AppRegistry *AppRegistryCallerSession) IsOwner() (bool, error) {
-	return _AppRegistry.Contract.IsOwner(&_AppRegistry.CallOpts)
+// Solidity: function isOwner(_appId bytes8, _owner address) constant returns(bool)
+func (_AppRegistry *AppRegistryCallerSession) IsOwner(_appId [8]byte, _owner common.Address) (bool, error) {
+	return _AppRegistry.Contract.IsOwner(&_AppRegistry.CallOpts, _appId, _owner)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
@@ -341,27 +315,6 @@ func (_AppRegistry *AppRegistrySession) Owner() (common.Address, error) {
 // Solidity: function owner() constant returns(address)
 func (_AppRegistry *AppRegistryCallerSession) Owner() (common.Address, error) {
 	return _AppRegistry.Contract.Owner(&_AppRegistry.CallOpts)
-}
-
-// NewOwner is a paid mutator transaction binding the contract method 0xa856fe78.
-//
-// Solidity: function newOwner(_appId bytes8, _newOwner address) returns()
-func (_AppRegistry *AppRegistryTransactor) NewOwner(opts *bind.TransactOpts, _appId [8]byte, _newOwner common.Address) (*types.Transaction, error) {
-	return _AppRegistry.contract.Transact(opts, "newOwner", _appId, _newOwner)
-}
-
-// NewOwner is a paid mutator transaction binding the contract method 0xa856fe78.
-//
-// Solidity: function newOwner(_appId bytes8, _newOwner address) returns()
-func (_AppRegistry *AppRegistrySession) NewOwner(_appId [8]byte, _newOwner common.Address) (*types.Transaction, error) {
-	return _AppRegistry.Contract.NewOwner(&_AppRegistry.TransactOpts, _appId, _newOwner)
-}
-
-// NewOwner is a paid mutator transaction binding the contract method 0xa856fe78.
-//
-// Solidity: function newOwner(_appId bytes8, _newOwner address) returns()
-func (_AppRegistry *AppRegistryTransactorSession) NewOwner(_appId [8]byte, _newOwner common.Address) (*types.Transaction, error) {
-	return _AppRegistry.Contract.NewOwner(&_AppRegistry.TransactOpts, _appId, _newOwner)
 }
 
 // Register is a paid mutator transaction binding the contract method 0xf2c298be.
@@ -404,6 +357,27 @@ func (_AppRegistry *AppRegistrySession) RenounceOwnership() (*types.Transaction,
 // Solidity: function renounceOwnership() returns()
 func (_AppRegistry *AppRegistryTransactorSession) RenounceOwnership() (*types.Transaction, error) {
 	return _AppRegistry.Contract.RenounceOwnership(&_AppRegistry.TransactOpts)
+}
+
+// TransferAppOwner is a paid mutator transaction binding the contract method 0x7fccb4ba.
+//
+// Solidity: function transferAppOwner(appId bytes8, _newOwner address) returns()
+func (_AppRegistry *AppRegistryTransactor) TransferAppOwner(opts *bind.TransactOpts, appId [8]byte, _newOwner common.Address) (*types.Transaction, error) {
+	return _AppRegistry.contract.Transact(opts, "transferAppOwner", appId, _newOwner)
+}
+
+// TransferAppOwner is a paid mutator transaction binding the contract method 0x7fccb4ba.
+//
+// Solidity: function transferAppOwner(appId bytes8, _newOwner address) returns()
+func (_AppRegistry *AppRegistrySession) TransferAppOwner(appId [8]byte, _newOwner common.Address) (*types.Transaction, error) {
+	return _AppRegistry.Contract.TransferAppOwner(&_AppRegistry.TransactOpts, appId, _newOwner)
+}
+
+// TransferAppOwner is a paid mutator transaction binding the contract method 0x7fccb4ba.
+//
+// Solidity: function transferAppOwner(appId bytes8, _newOwner address) returns()
+func (_AppRegistry *AppRegistryTransactorSession) TransferAppOwner(appId [8]byte, _newOwner common.Address) (*types.Transaction, error) {
+	return _AppRegistry.Contract.TransferAppOwner(&_AppRegistry.TransactOpts, appId, _newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
