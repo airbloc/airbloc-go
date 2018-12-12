@@ -1,6 +1,9 @@
 package node
 
 import (
+	"os"
+	"os/signal"
+
 	"github.com/airbloc/airbloc-go/blockchain"
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/database/metadb"
@@ -9,8 +12,6 @@ import (
 	"github.com/libp2p/go-libp2p-peerstore"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pkg/errors"
-	"os"
-	"os/signal"
 )
 
 // Airbloc implements Airbloc node service.
