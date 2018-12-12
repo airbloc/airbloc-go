@@ -2,14 +2,15 @@ package storage
 
 import (
 	"bytes"
-	"cloud.google.com/go/storage"
 	"context"
-	"github.com/airbloc/airbloc-go/data"
-	"github.com/pkg/errors"
-	"google.golang.org/api/option"
 	"io"
 	"net/url"
 	"path/filepath"
+
+	"cloud.google.com/go/storage"
+	"github.com/airbloc/airbloc-go/data"
+	"github.com/pkg/errors"
+	"google.golang.org/api/option"
 )
 
 type GoogleCloudStorage struct {
@@ -61,9 +62,6 @@ func (gs *GoogleCloudStorage) Save(bundleId string, bundle *data.Bundle) (*url.U
 }
 
 func (gs *GoogleCloudStorage) Update(bundlePath *url.URL, bundle *data.Bundle) error {
-	if bundlePath.Scheme != "gs" {
-		return errors.New("gs update: invalid bundle url")
-	}
 	bundleData, err := bundle.Marshal()
 	if err != nil {
 		return errors.Wrap(err, "gs update: marshal error")
