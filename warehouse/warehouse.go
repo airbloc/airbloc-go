@@ -60,8 +60,8 @@ func New(
 	}
 }
 
-func (warehouse *DataWarehouse) CreateBundle(collection common.ID) *BundleStream {
-	return newBundleStream(warehouse, collection)
+func (warehouse *DataWarehouse) CreateBundle(provider, collection common.ID) *BundleStream {
+	return newBundleStream(warehouse, provider, collection)
 }
 
 func (warehouse *DataWarehouse) validate(collection common.ID, data *common.Data) error {
@@ -96,7 +96,7 @@ func (warehouse *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error
 	ingestedAt := time.Now()
 
 	createdBundle := &data.Bundle{
-		Provider:   common.ID{}, /* TODO: implement appID */
+		Provider:   stream.provider, /* TODO: implement appID */
 		Collection: stream.collection,
 		DataCount:  stream.DataCount,
 		IngestedAt: ingestedAt,

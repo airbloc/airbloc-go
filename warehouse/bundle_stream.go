@@ -5,14 +5,16 @@ import (
 )
 
 type BundleStream struct {
+	provider   common.ID
 	collection common.ID
 	warehouse  *DataWarehouse
 	data       []*common.EncryptedData
 	DataCount  int
 }
 
-func newBundleStream(warehouse *DataWarehouse, collection common.ID) *BundleStream {
+func newBundleStream(warehouse *DataWarehouse, provider, collection common.ID) *BundleStream {
 	return &BundleStream{
+		provider:   provider,
 		collection: collection,
 		warehouse:  warehouse,
 		data:       []*common.EncryptedData{},
