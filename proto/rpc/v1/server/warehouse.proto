@@ -10,16 +10,18 @@ service Warehouse {
 }
 
 message RawDataRequest {
-    string collectionId = 1; // ID
-    string ownerId = 2; // ID
-    string payload = 3;
+    string providerId = 1; // ID
+    string collectionId = 2; // ID
+    string ownerId = 3; // ID
+    string payload = 4;
 }
 
 message EncryptedDataRequest {
-    string collectionId = 1; // ID
-    string ownerId = 2; // ID
-    bytes encryptedPayload = 3;
-    bytes capsule = 4;
+    string providerId = 1; //ID
+    string collectionId = 2; // ID
+    string ownerId = 3; // ID
+    bytes encryptedPayload = 4;
+    bytes capsule = 5;
 }
 
 message StoreResult {
