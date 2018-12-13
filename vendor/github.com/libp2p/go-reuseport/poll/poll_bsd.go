@@ -4,9 +4,8 @@ package poll
 
 import (
 	"context"
-	"time"
-
 	"golang.org/x/sys/unix"
+	"time"
 )
 
 type Poller struct {

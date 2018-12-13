@@ -4,9 +4,8 @@ package poll
 
 import (
 	"context"
-	"sync"
-
 	"golang.org/x/sys/unix"
+	"sync"
 
 	"github.com/gxed/eventfd"
 )

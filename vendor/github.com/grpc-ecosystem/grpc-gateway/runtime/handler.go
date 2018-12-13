@@ -7,7 +7,6 @@ import (
 	"net/textproto"
 
 	"context"
-
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/any"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime/internal"
