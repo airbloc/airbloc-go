@@ -7,9 +7,8 @@
 package reuseport
 
 import (
-	"os"
-
 	"golang.org/x/sys/unix"
+	"os"
 )
 
 func boolint(b bool) int {

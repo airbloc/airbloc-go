@@ -3,11 +3,10 @@
 package reuseport
 
 import (
+	"golang.org/x/sys/unix"
 	"sync"
 	"syscall"
 	"time"
-
-	"golang.org/x/sys/unix"
 
 	sockaddrnet "github.com/libp2p/go-sockaddr/net"
 )

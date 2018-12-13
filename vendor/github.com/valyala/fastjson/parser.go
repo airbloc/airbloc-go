@@ -2,10 +2,9 @@ package fastjson
 
 import (
 	"fmt"
+	"github.com/valyala/fastjson/fastfloat"
 	"strconv"
 	"strings"
-
-	"github.com/valyala/fastjson/fastfloat"
 )
 
 // Parser parses JSON.
