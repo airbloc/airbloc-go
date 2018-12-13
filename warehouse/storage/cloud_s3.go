@@ -2,9 +2,7 @@ package storage
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
-	"log"
 	"net/url"
 	"path/filepath"
 	"regexp"
@@ -41,15 +39,16 @@ func ExtractS3ObjectInfo(rawUrl string) (region, bucket, key string) {
 }
 
 func (ss *S3Storage) Save(bundleId string, bundle *data.Bundle) (*url.URL, error) {
-	log.Println(bundleId)
-	d, _ := json.MarshalIndent(bundle, "", "    ")
-	log.Println(string(d))
 	bundleUri := &url.URL{
 		Scheme: "https",
 		Host:   fmt.Sprintf(S3ProtocolFmt, ss.bucket, ss.region),
-		Path:   filepath.Join(ss.prefix, bundleId+".bundle"),
+		Path:   filepath.Join(ss.prefix, bundleId),
 	}
-	return bundleUri, ss.Update(bundleUri, bundle)
+	err := ss.Update(bundleUri, bundle)
+	if err != nil {
+		return nil, err
+	}
+	return bundleUri, nil
 }
 
 func (ss *S3Storage) Update(bundlePath *url.URL, bundle *data.Bundle) error {
