@@ -10,13 +10,13 @@ import (
 
 	"github.com/airbloc/airbloc-go/ablclient"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 )
 
-const numberOfUsers = 10
+const numberOfUsers = 3
 const testSchema = `{
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "http://airbloc.io/testdata.schema.json",
@@ -40,7 +40,7 @@ func testCreateApp(t *testing.T, ctx context.Context, conn *grpc.ClientConn) str
 	result, err := apps.Register(ctx, &pb.RegisterRequest{
 		Name: fmt.Sprintf("app-test-%d", time.Now().Unix()),
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	return result.GetAppId()
 }
 
@@ -50,7 +50,7 @@ func testCreateSchema(t *testing.T, ctx context.Context, conn *grpc.ClientConn) 
 		Name:   fmt.Sprintf("data-test-%d", time.Now().Unix()),
 		Schema: testSchema,
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	return result.GetId()
 }
 
@@ -64,7 +64,7 @@ func testCreateCollection(t *testing.T, ctx context.Context, appId string, schem
 			DataProvider: 0.7,
 		},
 	})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	return result.GetCollectionId()
 }
 
@@ -72,13 +72,13 @@ func testCreateUserAccount(t *testing.T, conn *grpc.ClientConn, index int) strin
 	accounts := ablclient.NewClient(conn)
 
 	priv, err := crypto.GenerateKey()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	walletAddress := crypto.PubkeyToAddress(priv.PublicKey)
 	password := fmt.Sprintf("password%d", index)
 
 	session, err := accounts.Create(walletAddress, password)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	return session.AccountId.Hex()
 }
 
@@ -126,19 +126,20 @@ func TestPnc(t *testing.T) {
 	for n := 0; n < 2; n++ {
 		log.Println("Creating Bundle #", n)
 		stream, err := warehouse.StoreBundle(ctx)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		for i := 0; i < numberOfUsers; i++ {
 			rawData := &pb.RawDataRequest{
+				ProviderId:   appId,
 				CollectionId: collectionId,
 				OwnerId:      userIds[i],
 				Payload:      fmt.Sprintf("{\"name\":\"%s\",\"age\":%d}", userIds[i], i),
 			}
-			assert.NoError(t, stream.Send(rawData), "datum", rawData.String())
+			require.NoError(t, stream.Send(rawData), "datum", rawData.String())
 		}
 
 		result, err := stream.CloseAndRecv()
-		assert.NoError(t, err)
+		require.NoError(t, err)
 
 		log.Println("Stored URI:", result.Uri)
 		log.Println("Stored Data Count:", result.DataCount)
