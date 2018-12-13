@@ -5,9 +5,8 @@ package singlepoll
 import (
 	"context"
 	"errors"
-	"sync"
-
 	"golang.org/x/sys/unix"
+	"sync"
 
 	"github.com/gxed/eventfd"
 	logging "github.com/ipfs/go-log"

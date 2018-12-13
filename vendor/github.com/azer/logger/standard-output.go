@@ -3,11 +3,10 @@ package logger
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/azer/is-terminal"
 	"os"
 	"strings"
 	"time"
-
-	"github.com/azer/is-terminal"
 )
 
 func NewStandardOutput(file *os.File) OutputWriter {
