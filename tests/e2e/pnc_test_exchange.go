@@ -4,49 +4,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
-	"github.com/stretchr/testify/require"
-	"google.golang.org/grpc"
-
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
-
-func testExchangeProcess(
-	t *testing.T,
-	ctx context.Context,
-	req *pb.OrderRequest,
-	reject, revert bool,
-	aliceConn, bobConn *grpc.ClientConn,
-) {
-	alice := pb.NewExchangeClient(aliceConn)
-	bob := pb.NewExchangeClient(bobConn)
-
-	var receipt *pb.Receipt = nil
-
-	offerId := testExchangePrepare(t, ctx, req, alice)
-	testExchangeOrder(t, ctx, offerId, alice)
-	switch {
-	case reject && revert:
-		testExchangeReject(t, ctx, offerId, bob)
-		testExchangeCloseRevert(t, ctx, offerId, bob)
-		require.True(t, t.Failed())
-	case !reject && revert:
-		testExchangeSettle(t, ctx, offerId, bob)
-		receipt = testExchangeCloseRevert(t, ctx, offerId, bob)
-		require.False(t, t.Failed())
-	case reject && !revert:
-		testExchangeReject(t, ctx, offerId, bob)
-		testExchangeCloseNonRevert(t, ctx, offerId, bob)
-		require.True(t, t.Failed())
-	case !(reject && revert):
-		testExchangeSettle(t, ctx, offerId, bob)
-		receipt = testExchangeCloseNonRevert(t, ctx, offerId, bob)
-		require.False(t, t.Failed())
-	}
-
-	require.NotNil(t, receipt)
-}
 
 func testExchangePrepare(
 	t *testing.T,
