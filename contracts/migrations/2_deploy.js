@@ -5,6 +5,7 @@ const AppRegistry = artifacts.require("AppRegistry");
 const SchemaRegistry = artifacts.require("SchemaRegistry");
 const CollectionRegistry = artifacts.require("CollectionRegistry");
 const Exchange = artifacts.require("Exchange");
+const SimpleContract = artifacts.require("SimpleContract");
 const SparseMerkleTree = artifacts.require("SparseMerkleTree");
 const DataRegistry = artifacts.require("DataRegistry");
 
@@ -24,6 +25,7 @@ module.exports = function (deployer) {
         ]);
         await deployer.deploy(CollectionRegistry, Accounts.address, AppRegistry.address, SchemaRegistry.address);
         await deployer.deploy(DataRegistry, Accounts.address, CollectionRegistry.address, SparseMerkleTree.address);
+        await deployer.deploy(SimpleContract, Exchange.address);
 
         const deployments = {
             Accounts: Accounts.address,
@@ -31,6 +33,7 @@ module.exports = function (deployer) {
             SchemaRegistry: SchemaRegistry.address,
             CollectionRegistry: CollectionRegistry.address,
             Exchange: Exchange.address,
+            SimpleContract: SimpleContract.address,
             SparseMerkleTree: SparseMerkleTree.address,
             DataRegistry: DataRegistry.address,
         };

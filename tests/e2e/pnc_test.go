@@ -2,11 +2,15 @@ package e2e
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/airbloc/airbloc-go/ablclient"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -16,7 +20,8 @@ import (
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 )
 
-const numberOfUsers = 3
+const numberOfUsers = 20
+const numberOfBundles = 5
 const testSchema = `{
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "http://airbloc.io/testdata.schema.json",
@@ -101,9 +106,7 @@ func TestPnc(t *testing.T) {
 	defer cancel()
 
 	conn, err := grpc.Dial("localhost:9124", grpc.WithInsecure())
-	if err != nil {
-		panic(err.Error())
-	}
+	require.NoError(t, err)
 	defer func() { _ = conn.Close() }()
 
 	appId := testCreateApp(t, ctx, conn)
@@ -121,9 +124,10 @@ func TestPnc(t *testing.T) {
 		userIds[i] = testCreateUserAccount(t, conn, i)
 	}
 
-	// make two bundles!
+	// warehouse: store bundle data
 	warehouse := pb.NewWarehouseClient(conn)
-	for n := 0; n < 2; n++ {
+	storeResults := make([]*pb.StoreResult, numberOfBundles)
+	for n := 0; n < numberOfBundles; n++ {
 		log.Println("Creating Bundle #", n)
 		stream, err := warehouse.StoreBundle(ctx)
 		require.NoError(t, err)
@@ -138,11 +142,37 @@ func TestPnc(t *testing.T) {
 			require.NoError(t, stream.Send(rawData), "datum", rawData.String())
 		}
 
-		result, err := stream.CloseAndRecv()
+		storeResults[n], err = stream.CloseAndRecv()
 		require.NoError(t, err)
 
-		log.Println("Stored URI:", result.Uri)
-		log.Println("Stored Data Count:", result.DataCount)
-		log.Println("Bundle ID:", result.BundleId)
+		log.Println("Stored URI:", storeResults[n].Uri)
+		log.Println("Stored Data Count:", storeResults[n].DataCount)
+		log.Println("Bundle ID:", storeResults[n].BundleId)
 	}
+
+	// exchange: trade bundle data
+	deployments := make(map[string]common.Address)
+	file, err := os.OpenFile("deployment.local.json", os.O_RDONLY, os.ModePerm)
+	require.NoError(t, err)
+	require.NoError(t, json.NewDecoder(file).Decode(&deployments))
+
+	/*
+		Exchange TODOs:
+		- Add common api
+		    - get current account
+		    - get current node status
+		    - etc...
+		- sign/args generation (or just make input of func to abi)
+	*/
+	//exchange := pb.NewExchangeClient(conn)
+	//for _, bundleData := range storeResults {
+	//	req := &pb.OrderRequest{
+	//		Contract: &pb.Contract{
+	//			Type: pb.Contract_SMART,
+	//			SmartEscrow: &pb.SmartContract{
+	//				Address: deployments["SimpleContract"].Hex(),
+	//			},
+	//		},
+	//	}
+	//}
 }
