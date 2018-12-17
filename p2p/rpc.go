@@ -75,17 +75,18 @@ func (r *rpc) Invoke(ctx context.Context, to common.Address, method string, args
 		return nil, errors.Wrap(err, "lookup error")
 	}
 
-	// send request message
-	if err := r.server.Send(ctx, args, requestTopic, targetId); err != nil {
-		return nil, errors.Wrapf(err, "failed to invoke %s", method)
-	}
-
+	// prepare to receive reply
 	waitForResponse := make(chan p2pcommon.Message)
 	responseCallback := func(_ Server, _ context.Context, msg p2pcommon.Message) {
 		waitForResponse <- msg
 	}
 	if err := r.server.SubscribeTopic(replyTopic, &pb.RPCResponse{}, responseCallback); err != nil {
 		return nil, errors.Wrapf(err, "failed to register reply callback of %s", method)
+	}
+
+	// send request message
+	if err := r.server.Send(ctx, args, requestTopic, targetId); err != nil {
+		return nil, errors.Wrapf(err, "failed to invoke %s", method)
 	}
 
 	var replyMsg p2pcommon.Message

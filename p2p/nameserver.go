@@ -18,18 +18,18 @@ func Lookup(ctx context.Context, server Server, addr common.Address, ackTimeout 
 
 	topicName := "/lookup/" + addr.String()
 
-	// 1. publish the lookup message
-	if err := server.Publish(ctx, &empty.Empty{}, topicName); err != nil {
-		return "", errors.Wrap(err, "failed to publish lookup message")
-	}
-
-	// 2. listen to lookup ACKs
+	// 1. prepare for listening lookup ACKs
 	waitForAck := make(chan peer.ID)
 	ackHandler := func(_ Server, ctx context.Context, msg p2pcommon.Message) {
 		waitForAck <- msg.SenderInfo.ID
 	}
 	if err := server.SubscribeTopic(topicName+"/ack", &empty.Empty{}, ackHandler); err != nil {
 		return "", errors.Wrap(err, "failed to listen to lookup ACKs")
+	}
+
+	// 2. publish the lookup message
+	if err := server.Publish(ctx, &empty.Empty{}, topicName); err != nil {
+		return "", errors.Wrap(err, "failed to publish lookup message")
 	}
 
 	// 3. wait for ACKs
@@ -58,7 +58,7 @@ func StartNameServer(server Server) error {
 	}
 	topicName := "/lookup/" + addr.String()
 
-	return server.SubscribeTopic("/lookup/"+addr.String(), &empty.Empty{}, func(_ Server, ctx context.Context, msg p2pcommon.Message) {
+	return server.SubscribeTopic(topicName, &empty.Empty{}, func(_ Server, ctx context.Context, msg p2pcommon.Message) {
 		// send ACK (empty message)
 		if err := server.Send(ctx, &empty.Empty{}, topicName+"/ack", msg.SenderInfo.ID); err != nil {
 			log.Error("error: unable to send handshake reply: %s", err.Error(), msg.SenderInfo.ID.Loggable())
