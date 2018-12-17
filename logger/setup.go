@@ -9,6 +9,12 @@ import (
 
 // Setup sets up global logger configuration.
 func Setup(output *os.File, verbosityLevel, filterSettings string) {
+	// neturalize the default STDERR logger by pointing /dev/null.
+	devNull, err := os.Open(os.DevNull)
+	if err == nil {
+		logger.SetOutput(devNull)
+	}
+
 	ow := logger.NewStandardOutput(output)
 	logWriter, _ := ow.(logger.StandardWriter)
 
@@ -18,7 +24,6 @@ func Setup(output *os.File, verbosityLevel, filterSettings string) {
 	defaultOutputSettings := parseVerbosityLevel(verbosityLevel)
 	logWriter.Settings = parsePackageSettings(filterSettings, defaultOutputSettings)
 
-	// TODO: it is more safe to replace runtime.writers[0]
 	logger.Hook(logWriter)
 }
 
