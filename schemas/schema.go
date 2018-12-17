@@ -34,7 +34,7 @@ func NewSchema(name string, schema string) (*Schema, error) {
 
 // IsValidFormat returns true if the format of the data matches with
 // the schema specified in the data collection.
-func (schema *Schema) IsValidFormat(data common.Data) (bool, error) {
+func (schema *Schema) IsValidFormat(data *common.Data) (bool, error) {
 	payload := gojsonschema.NewStringLoader(data.Payload)
 	results, err := schema.jsonSchema.Validate(payload)
 	if err != nil {

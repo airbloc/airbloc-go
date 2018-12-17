@@ -77,6 +77,20 @@ func (s *Schemas) NameExists(name string) (bool, error) {
 	return s.contract.NameExists(nil, hashedName)
 }
 
+// Get retrieves a schema from metadatabase.
+func (s *Schemas) Get(id common.ID) (*Schema, error) {
+	result, err := s.db.RetrieveAsset(bson.M{"id": id.Hex()})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to retrieve schema from MetaDB")
+	}
+	schema, err := NewSchema(result["name"].(string), result["schema"].(string))
+	if err != nil {
+		return nil, err
+	}
+	schema.Id = id
+	return schema, nil
+}
+
 func (s *Schemas) Unregister(id common.ID) error {
 	tx, err := s.contract.Unregister(s.client.Account(), id)
 	if err != nil {
