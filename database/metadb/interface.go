@@ -5,7 +5,6 @@ import (
 
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/mongo/findopt"
 	"golang.org/x/crypto/ed25519"
 )
 
@@ -31,8 +30,8 @@ var (
 
 type Database interface {
 	Create(txn.Asset, txn.Metadata, Mode) (*txn.Transaction, error)
-	RetrieveOne(context.Context, *bson.Document, ...findopt.One) (*bson.Document, error)
-	RetrieveMany(context.Context, *bson.Document, ...findopt.Find) (*bson.Document, error)
+	RetrieveOne(context.Context, bson.M) (bson.M, error)
+	RetrieveMany(context.Context, bson.M) ([]bson.M, error)
 	Append(string, ed25519.PublicKey, txn.Metadata, Mode) error
 	Burn(string, Mode) error
 	Close() error
