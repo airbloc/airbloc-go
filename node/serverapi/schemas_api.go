@@ -1,8 +1,6 @@
 package serverapi
 
 import (
-	"encoding/json"
-
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -27,13 +25,12 @@ func (api *SchemaAPI) AttachToAPI(service *node.APIService) {
 
 // TODO
 func (api *SchemaAPI) Create(ctx context.Context, req *pb.CreateSchemaRequest) (*pb.CreateSchemaResult, error) {
-	data := make(map[string]interface{})
-	err := json.Unmarshal([]byte(req.Schema), &data)
+	schema, err := schemas.NewSchema(req.GetName(), req.GetSchema())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid JSON schema: %s", err.Error())
 	}
 
-	id, err := api.schemas.Register(req.Name, data)
+	id, err := api.schemas.Register(schema)
 	if err == schemas.ErrNameExists {
 		return &pb.CreateSchemaResult{Exists: true}, nil
 	}

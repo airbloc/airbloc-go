@@ -2,8 +2,6 @@ package schemas
 
 import (
 	"context"
-	"encoding/json"
-
 	"github.com/azer/logger"
 
 	"github.com/airbloc/airbloc-go/adapter"
@@ -36,20 +34,15 @@ func New(db metadb.Database, client blockchain.TxClient) *Schemas {
 	}
 }
 
-func (s *Schemas) Register(name string, schema map[string]interface{}) (common.ID, error) {
-	rawSchema, err := json.Marshal(schema)
-	if err != nil {
-		return common.ID{}, errors.Wrap(err, "given schema is not a valid JSON schema")
-	}
-
-	if nameExists, err := s.NameExists(name); err != nil {
+func (s *Schemas) Register(schema *Schema) (common.ID, error) {
+	if nameExists, err := s.NameExists(schema.Name); err != nil {
 		return common.ID{}, err
 	} else if nameExists {
 		return common.ID{}, ErrNameExists
 	}
 
 	// register schema to the blockchain and get ID
-	dtx, err := s.contract.Register(s.client.Account(), name)
+	dtx, err := s.contract.Register(s.client.Account(), schema.Name)
 	if err != nil {
 		return common.ID{}, err
 	}
@@ -65,13 +58,13 @@ func (s *Schemas) Register(name string, schema map[string]interface{}) (common.I
 	}
 
 	schemaId := common.ID(event.Id)
-	s.log.Info("Registered new schema %s with", name, logger.Attrs{"id": schemaId.Hex()})
+	s.log.Info("Registered new schema %s with", schema.Name, logger.Attrs{"id": schemaId.Hex()})
 
 	// create metadata
 	metadata := map[string]interface{}{
-		"name":   name,
+		"name":   schema.Name,
 		"id":     schemaId.Hex(),
-		"schema": string(rawSchema),
+		"schema": schema.Schema,
 	}
 	if _, err := s.db.Create(metadata, nil); err != nil {
 		return schemaId, errors.Wrap(err, "failed to save metadata")
@@ -89,15 +82,12 @@ func (s *Schemas) Unregister(id common.ID) error {
 	if err != nil {
 		return err
 	}
-
 	if _, err := s.client.WaitMined(context.Background(), tx); err != nil {
 		return err
 	}
-
-	query := bson.NewDocument(bson.EC.String("data.id", id.Hex()))
-	metadata, err := s.db.RetrieveAsset(query)
+	result, err := s.db.RetrieveAsset(bson.M{"id": id.Hex()})
 	if err != nil {
 		return errors.Wrap(err, "failed to find the asset on metadb")
 	}
-	return s.db.Burn(metadata.Lookup("id").StringValue())
+	return s.db.Burn(result["_id"].(string))
 }
