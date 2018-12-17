@@ -1,3 +1,9 @@
+// Copyright (C) MongoDB, Inc. 2017-present.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use this file except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
 package bson
 
 import (
@@ -18,7 +24,8 @@ var encPool = sync.Pool{
 	},
 }
 
-// An Encoder writes a serialization format to an output stream.
+// An Encoder writes a serialization format to an output stream. It writes to a bsonrw.ValueWriter
+// as the destination of BSON data.
 type Encoder struct {
 	r  *bsoncodec.Registry
 	vw bsonrw.ValueWriter
@@ -57,7 +64,7 @@ func (e *Encoder) Encode(val interface{}) error {
 	if err != nil {
 		return err
 	}
-	return encoder.EncodeValue(bsoncodec.EncodeContext{Registry: e.r}, e.vw, val)
+	return encoder.EncodeValue(bsoncodec.EncodeContext{Registry: e.r}, e.vw, reflect.ValueOf(val))
 }
 
 // Reset will reset the state of the encoder, using the same *Registry used in

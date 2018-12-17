@@ -37,10 +37,6 @@
   version = "1.8.14"
 
 [[constraint]]
-  name = "github.com/mongodb/mongo-go-driver"
-  version = "0.0.17"
-
-[[constraint]]
   branch = "master"
   name = "github.com/loomnetwork/mamamerkle"
 
@@ -59,3 +55,7 @@
 [[constraint]]
   name = "github.com/xeipuuv/gojsonschema"
   version = "1.0.0"
+
+[[constraint]]
+  name = "github.com/mongodb/mongo-go-driver"
+  version = "0.1.0"

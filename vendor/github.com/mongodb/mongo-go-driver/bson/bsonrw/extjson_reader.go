@@ -1,3 +1,9 @@
+// Copyright (C) MongoDB, Inc. 2017-present.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use this file except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
 package bsonrw
 
 import (
@@ -6,8 +12,7 @@ import (
 	"sync"
 
 	"github.com/mongodb/mongo-go-driver/bson/bsontype"
-	"github.com/mongodb/mongo-go-driver/bson/decimal"
-	"github.com/mongodb/mongo-go-driver/bson/objectid"
+	"github.com/mongodb/mongo-go-driver/bson/primitive"
 )
 
 // ExtJSONValueReaderPool is a pool for ValueReaders that read ExtJSON.
@@ -181,10 +186,13 @@ func (ejvr *extJSONValueReader) skipArray() error {
 	return err
 }
 
-func (ejvr *extJSONValueReader) invalidTransitionErr(destination mode) error {
+func (ejvr *extJSONValueReader) invalidTransitionErr(destination mode, name string, modes []mode) error {
 	te := TransitionError{
+		name:        name,
 		current:     ejvr.stack[ejvr.frame].mode,
 		destination: destination,
+		modes:       modes,
+		action:      "read",
 	}
 	if ejvr.frame != 0 {
 		te.parent = ejvr.stack[ejvr.frame-1].mode
@@ -196,14 +204,18 @@ func (ejvr *extJSONValueReader) typeError(t bsontype.Type) error {
 	return fmt.Errorf("positioned on %s, but attempted to read %s", ejvr.stack[ejvr.frame].vType, t)
 }
 
-func (ejvr *extJSONValueReader) ensureElementValue(t bsontype.Type, destination mode) error {
+func (ejvr *extJSONValueReader) ensureElementValue(t bsontype.Type, destination mode, callerName string, addModes ...mode) error {
 	switch ejvr.stack[ejvr.frame].mode {
 	case mElement, mValue:
 		if ejvr.stack[ejvr.frame].vType != t {
 			return ejvr.typeError(t)
 		}
 	default:
-		return ejvr.invalidTransitionErr(destination)
+		modes := []mode{mElement, mValue}
+		if addModes != nil {
+			modes = append(modes, addModes...)
+		}
+		return ejvr.invalidTransitionErr(destination, callerName, modes)
 	}
 
 	return nil
@@ -217,7 +229,7 @@ func (ejvr *extJSONValueReader) Skip() error {
 	switch ejvr.stack[ejvr.frame].mode {
 	case mElement, mValue:
 	default:
-		return ejvr.invalidTransitionErr(0)
+		return ejvr.invalidTransitionErr(0, "Skip", []mode{mElement, mValue})
 	}
 
 	defer ejvr.pop()
@@ -264,7 +276,7 @@ func (ejvr *extJSONValueReader) ReadArray() (ArrayReader, error) {
 	case mArray:
 		return ejvr, nil
 	default:
-		if err := ejvr.ensureElementValue(bsontype.Array, mArray); err != nil {
+		if err := ejvr.ensureElementValue(bsontype.Array, mArray, "ReadArray", mTopLevel, mArray); err != nil {
 			return nil, err
 		}
 	}
@@ -275,7 +287,7 @@ func (ejvr *extJSONValueReader) ReadArray() (ArrayReader, error) {
 }
 
 func (ejvr *extJSONValueReader) ReadBinary() (b []byte, btype byte, err error) {
-	if err := ejvr.ensureElementValue(bsontype.Binary, 0); err != nil {
+	if err := ejvr.ensureElementValue(bsontype.Binary, 0, "ReadBinary"); err != nil {
 		return nil, 0, err
 	}
 
@@ -291,7 +303,7 @@ func (ejvr *extJSONValueReader) ReadBinary() (b []byte, btype byte, err error) {
 }
 
 func (ejvr *extJSONValueReader) ReadBoolean() (bool, error) {
-	if err := ejvr.ensureElementValue(bsontype.Boolean, 0); err != nil {
+	if err := ejvr.ensureElementValue(bsontype.Boolean, 0, "ReadBoolean"); err != nil {
 		return false, err
 	}
 
@@ -320,12 +332,12 @@ func (ejvr *extJSONValueReader) ReadDocument() (DocumentReader, error) {
 		ejvr.pushDocument()
 		return ejvr, nil
 	default:
-		return nil, ejvr.invalidTransitionErr(mDocument)
+		return nil, ejvr.invalidTransitionErr(mDocument, "ReadDocument", []mode{mTopLevel, mElement, mValue})
 	}
 }
 
 func (ejvr *extJSONValueReader) ReadCodeWithScope() (code string, dr DocumentReader, err error) {
-	if err = ejvr.ensureElementValue(bsontype.CodeWithScope, 0); err != nil {
+	if err = ejvr.ensureElementValue(bsontype.CodeWithScope, 0, "ReadCodeWithScope"); err != nil {
 		return "", nil, err
 	}
 
@@ -340,14 +352,14 @@ func (ejvr *extJSONValueReader) ReadCodeWithScope() (code string, dr DocumentRea
 	return code, ejvr, err
 }
 
-func (ejvr *extJSONValueReader) ReadDBPointer() (ns string, oid objectid.ObjectID, err error) {
-	if err = ejvr.ensureElementValue(bsontype.DBPointer, 0); err != nil {
-		return "", objectid.NilObjectID, err
+func (ejvr *extJSONValueReader) ReadDBPointer() (ns string, oid primitive.ObjectID, err error) {
+	if err = ejvr.ensureElementValue(bsontype.DBPointer, 0, "ReadDBPointer"); err != nil {
+		return "", primitive.NilObjectID, err
 	}
 
 	v, err := ejvr.p.readValue(bsontype.DBPointer)
 	if err != nil {
-		return "", objectid.NilObjectID, err
+		return "", primitive.NilObjectID, err
 	}
 
 	ns, oid, err = v.parseDBPointer()
@@ -357,7 +369,7 @@ func (ejvr *extJSONValueReader) ReadDBPointer() (ns string, oid objectid.ObjectI
 }
 
 func (ejvr *extJSONValueReader) ReadDateTime() (int64, error) {
-	if err := ejvr.ensureElementValue(bsontype.DateTime, 0); err != nil {
+	if err := ejvr.ensureElementValue(bsontype.DateTime, 0, "ReadDateTime"); err != nil {
 		return 0, err
 	}
 
@@ -372,14 +384,14 @@ func (ejvr *extJSONValueReader) ReadDateTime() (int64, error) {
 	return d, err
 }
 
-func (ejvr *extJSONValueReader) ReadDecimal128() (decimal.Decimal128, error) {
-	if err := ejvr.ensureElementValue(bsontype.Decimal128, 0); err != nil {
-		return decimal.Decimal128{}, err
+func (ejvr *extJSONValueReader) ReadDecimal128() (primitive.Decimal128, error) {
+	if err := ejvr.ensureElementValue(bsontype.Decimal128, 0, "ReadDecimal128"); err != nil {
+		return primitive.Decimal128{}, err
 	}
 
 	v, err := ejvr.p.readValue(bsontype.Decimal128)
 	if err != nil {
-		return decimal.Decimal128{}, err
+		return primitive.Decimal128{}, err
 	}
 
 	d, err := v.parseDecimal128()
@@ -389,7 +401,7 @@ func (ejvr *extJSONValueReader) ReadDecimal128() (decimal.Decimal128, error) {
 }
 
 func (ejvr *extJSONValueReader) ReadDouble() (float64, error) {
-	if err := ejvr.ensureElementValue(bsontype.Double, 0); err != nil {
+	if err := ejvr.ensureElementValue(bsontype.Double, 0, "ReadDouble"); err != nil {
 		return 0, err
 	}
 
@@ -405,7 +417,7 @@ func (ejvr *extJSONValueReader) ReadDouble() (float64, error) {
 }
 
 func (ejvr *extJSONValueReader) ReadInt32() (int32, error) {
-	if err := ejvr.ensureElementValue(bsontype.Int32, 0); err != nil {
+	if err := ejvr.ensureElementValue(bsontype.Int32, 0, "ReadInt32"); err != nil {
 		return 0, err
 	}
 
@@ -421,7 +433,7 @@ func (ejvr *extJSONValueReader) ReadInt32() (int32, error) {
 }
 
 func (ejvr *extJSONValueReader) ReadInt64() (int64, error) {
-	if err := ejvr.ensureElementValue(bsontype.Int64, 0); err != nil {
+	if err := ejvr.ensureElementValue(bsontype.Int64, 0, "ReadInt64"); err != nil {
 		return 0, err
 	}
 
@@ -437,7 +449,7 @@ func (ejvr *extJSONValueReader) ReadInt64() (int64, error) {
 }
 
 func (ejvr *extJSONValueReader) ReadJavascript() (code string, err error) {
-	if err = ejvr.ensureElementValue(bsontype.JavaScript, 0); err != nil {
+	if err = ejvr.ensureElementValue(bsontype.JavaScript, 0, "ReadJavascript"); err != nil {
 		return "", err
 	}
 
@@ -453,7 +465,7 @@ func (ejvr *extJSONValueReader) ReadJavascript() (code string, err error) {
 }
 
 func (ejvr *extJSONValueReader) ReadMaxKey() error {
-	if err := ejvr.ensureElementValue(bsontype.MaxKey, 0); err != nil {
+	if err := ejvr.ensureElementValue(bsontype.MaxKey, 0, "ReadMaxKey"); err != nil {
 		return err
 	}
 
@@ -469,7 +481,7 @@ func (ejvr *extJSONValueReader) ReadMaxKey() error {
 }
 
 func (ejvr *extJSONValueReader) ReadMinKey() error {
-	if err := ejvr.ensureElementValue(bsontype.MinKey, 0); err != nil {
+	if err := ejvr.ensureElementValue(bsontype.MinKey, 0, "ReadMinKey"); err != nil {
 		return err
 	}
 
@@ -485,7 +497,7 @@ func (ejvr *extJSONValueReader) ReadMinKey() error {
 }
 
 func (ejvr *extJSONValueReader) ReadNull() error {
-	if err := ejvr.ensureElementValue(bsontype.Null, 0); err != nil {
+	if err := ejvr.ensureElementValue(bsontype.Null, 0, "ReadNull"); err != nil {
 		return err
 	}
 
@@ -502,14 +514,14 @@ func (ejvr *extJSONValueReader) ReadNull() error {
 	return nil
 }
 
-func (ejvr *extJSONValueReader) ReadObjectID() (objectid.ObjectID, error) {
-	if err := ejvr.ensureElementValue(bsontype.ObjectID, 0); err != nil {
-		return objectid.ObjectID{}, err
+func (ejvr *extJSONValueReader) ReadObjectID() (primitive.ObjectID, error) {
+	if err := ejvr.ensureElementValue(bsontype.ObjectID, 0, "ReadObjectID"); err != nil {
+		return primitive.ObjectID{}, err
 	}
 
 	v, err := ejvr.p.readValue(bsontype.ObjectID)
 	if err != nil {
-		return objectid.ObjectID{}, err
+		return primitive.ObjectID{}, err
 	}
 
 	oid, err := v.parseObjectID()
@@ -519,7 +531,7 @@ func (ejvr *extJSONValueReader) ReadObjectID() (objectid.ObjectID, error) {
 }
 
 func (ejvr *extJSONValueReader) ReadRegex() (pattern string, options string, err error) {
-	if err = ejvr.ensureElementValue(bsontype.Regex, 0); err != nil {
+	if err = ejvr.ensureElementValue(bsontype.Regex, 0, "ReadRegex"); err != nil {
 		return "", "", err
 	}
 
@@ -535,7 +547,7 @@ func (ejvr *extJSONValueReader) ReadRegex() (pattern string, options string, err
 }
 
 func (ejvr *extJSONValueReader) ReadString() (string, error) {
-	if err := ejvr.ensureElementValue(bsontype.String, 0); err != nil {
+	if err := ejvr.ensureElementValue(bsontype.String, 0, "ReadString"); err != nil {
 		return "", err
 	}
 
@@ -553,7 +565,7 @@ func (ejvr *extJSONValueReader) ReadString() (string, error) {
 }
 
 func (ejvr *extJSONValueReader) ReadSymbol() (symbol string, err error) {
-	if err = ejvr.ensureElementValue(bsontype.Symbol, 0); err != nil {
+	if err = ejvr.ensureElementValue(bsontype.Symbol, 0, "ReadSymbol"); err != nil {
 		return "", err
 	}
 
@@ -569,7 +581,7 @@ func (ejvr *extJSONValueReader) ReadSymbol() (symbol string, err error) {
 }
 
 func (ejvr *extJSONValueReader) ReadTimestamp() (t uint32, i uint32, err error) {
-	if err = ejvr.ensureElementValue(bsontype.Timestamp, 0); err != nil {
+	if err = ejvr.ensureElementValue(bsontype.Timestamp, 0, "ReadTimestamp"); err != nil {
 		return 0, 0, err
 	}
 
@@ -585,7 +597,7 @@ func (ejvr *extJSONValueReader) ReadTimestamp() (t uint32, i uint32, err error) 
 }
 
 func (ejvr *extJSONValueReader) ReadUndefined() error {
-	if err := ejvr.ensureElementValue(bsontype.Undefined, 0); err != nil {
+	if err := ejvr.ensureElementValue(bsontype.Undefined, 0, "ReadUndefined"); err != nil {
 		return err
 	}
 
@@ -604,7 +616,7 @@ func (ejvr *extJSONValueReader) ReadElement() (string, ValueReader, error) {
 	switch ejvr.stack[ejvr.frame].mode {
 	case mTopLevel, mDocument, mCodeWithScope:
 	default:
-		return "", nil, ejvr.invalidTransitionErr(mElement)
+		return "", nil, ejvr.invalidTransitionErr(mElement, "ReadElement", []mode{mTopLevel, mDocument, mCodeWithScope})
 	}
 
 	name, t, err := ejvr.p.readKey()
@@ -632,7 +644,7 @@ func (ejvr *extJSONValueReader) ReadValue() (ValueReader, error) {
 	switch ejvr.stack[ejvr.frame].mode {
 	case mArray:
 	default:
-		return nil, ejvr.invalidTransitionErr(mValue)
+		return nil, ejvr.invalidTransitionErr(mValue, "ReadValue", []mode{mArray})
 	}
 
 	t, err := ejvr.p.peekType()

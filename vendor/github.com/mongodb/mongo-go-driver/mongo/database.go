@@ -9,18 +9,15 @@ package mongo
 import (
 	"context"
 
-	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/bsoncodec"
-	"github.com/mongodb/mongo-go-driver/core/command"
-	"github.com/mongodb/mongo-go-driver/core/description"
-	"github.com/mongodb/mongo-go-driver/core/dispatch"
-	"github.com/mongodb/mongo-go-driver/core/readconcern"
-	"github.com/mongodb/mongo-go-driver/core/readpref"
-	"github.com/mongodb/mongo-go-driver/core/writeconcern"
-	"github.com/mongodb/mongo-go-driver/mongo/collectionopt"
-	"github.com/mongodb/mongo-go-driver/mongo/dbopt"
-	"github.com/mongodb/mongo-go-driver/mongo/listcollectionopt"
-	"github.com/mongodb/mongo-go-driver/mongo/runcmdopt"
+	"github.com/mongodb/mongo-go-driver/mongo/options"
+	"github.com/mongodb/mongo-go-driver/mongo/readconcern"
+	"github.com/mongodb/mongo-go-driver/mongo/readpref"
+	"github.com/mongodb/mongo-go-driver/mongo/writeconcern"
+	"github.com/mongodb/mongo-go-driver/x/bsonx"
+	"github.com/mongodb/mongo-go-driver/x/mongo/driver"
+	"github.com/mongodb/mongo-go-driver/x/network/command"
+	"github.com/mongodb/mongo-go-driver/x/network/description"
 )
 
 // Database performs operations on a given database.
@@ -35,11 +32,8 @@ type Database struct {
 	registry       *bsoncodec.Registry
 }
 
-func newDatabase(client *Client, name string, opts ...dbopt.Option) *Database {
-	dbOpt, err := dbopt.BundleDatabase(opts...).Unbundle()
-	if err != nil {
-		return nil
-	}
+func newDatabase(client *Client, name string, opts ...*options.DatabaseOptions) *Database {
+	dbOpt := options.MergeDatabaseOptions(opts...)
 
 	rc := client.readConcern
 	if dbOpt.ReadConcern != nil {
@@ -70,7 +64,10 @@ func newDatabase(client *Client, name string, opts ...dbopt.Option) *Database {
 		description.LatencySelector(db.client.localThreshold),
 	})
 
-	db.writeSelector = description.WriteSelector()
+	db.writeSelector = description.CompositeSelector([]description.ServerSelector{
+		description.WriteSelector(),
+		description.LatencySelector(db.client.localThreshold),
+	})
 
 	return db
 }
@@ -86,24 +83,23 @@ func (db *Database) Name() string {
 }
 
 // Collection gets a handle for a given collection in the database.
-func (db *Database) Collection(name string, opts ...collectionopt.Option) *Collection {
+func (db *Database) Collection(name string, opts ...*options.CollectionOptions) *Collection {
 	return newCollection(db, name, opts...)
 }
 
-// RunCommand runs a command on the database. A user can supply a custom
-// context to this method, or nil to default to context.Background().
-func (db *Database) RunCommand(ctx context.Context, runCommand interface{}, opts ...runcmdopt.Option) (bson.Reader, error) {
+func (db *Database) processRunCommand(ctx context.Context, cmd interface{}, opts ...*options.RunCmdOptions) (command.Read,
+	description.ServerSelector, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
-	runCmd, _, err := runcmdopt.BundleRunCmd(opts...).Unbundle()
-	if err != nil {
-		return nil, err
-	}
-
 	sess := sessionFromContext(ctx)
+	runCmd := options.MergeRunCmdOptions(opts...)
+
+	if err := db.client.ValidSession(sess); err != nil {
+		return command.Read{}, nil, err
+	}
 
 	rp := runCmd.ReadPreference
 	if rp == nil {
@@ -111,31 +107,78 @@ func (db *Database) RunCommand(ctx context.Context, runCommand interface{}, opts
 			rp = sess.CurrentRp // override with transaction read pref if specified
 		}
 		if rp == nil {
-			rp = db.readPreference // inherit from db if nothing specified in options
+			rp = readpref.Primary() // set to primary if nothing specified in options
 		}
 	}
 
-	runCmdDoc, err := transformDocument(db.registry, runCommand)
+	runCmdDoc, err := transformDocument(db.registry, cmd)
 	if err != nil {
-		return nil, err
+		return command.Read{}, nil, err
 	}
-	return dispatch.Read(ctx,
-		command.Read{
-			DB:       db.Name(),
-			Command:  runCmdDoc,
-			ReadPref: rp,
-			Session:  sess,
-			Clock:    db.client.clock,
-		},
+
+	readSelect := description.CompositeSelector([]description.ServerSelector{
+		description.ReadPrefSelector(rp),
+		description.LatencySelector(db.client.localThreshold),
+	})
+
+	return command.Read{
+		DB:       db.Name(),
+		Command:  runCmdDoc,
+		ReadPref: rp,
+		Session:  sess,
+		Clock:    db.client.clock,
+	}, readSelect, nil
+}
+
+// RunCommand runs a command on the database. A user can supply a custom
+// context to this method, or nil to default to context.Background().
+func (db *Database) RunCommand(ctx context.Context, runCommand interface{}, opts ...*options.RunCmdOptions) *SingleResult {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	readCmd, readSelect, err := db.processRunCommand(ctx, runCommand, opts...)
+	if err != nil {
+		return &SingleResult{err: err}
+	}
+
+	doc, err := driver.Read(ctx,
+		readCmd,
 		db.client.topology,
-		db.writeSelector,
+		readSelect,
 		db.client.id,
 		db.client.topology.SessionPool,
 	)
+
+	return &SingleResult{err: replaceTopologyErr(err), rdr: doc}
+}
+
+// RunCommandCursor runs a command on the database and returns a cursor over the resulting reader. A user can supply
+// a custom context to this method, or nil to default to context.Background().
+func (db *Database) RunCommandCursor(ctx context.Context, runCommand interface{}, opts ...*options.RunCmdOptions) (Cursor, error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	readCmd, readSelect, err := db.processRunCommand(ctx, runCommand, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := driver.ReadCursor(
+		ctx,
+		readCmd,
+		db.client.topology,
+		readSelect,
+		db.client.id,
+		db.client.topology.SessionPool,
+	)
+
+	return result, replaceTopologyErr(err)
 }
 
 // Drop drops this database from mongodb.
-func (db *Database) Drop(ctx context.Context, opts ...dbopt.DropDB) error {
+func (db *Database) Drop(ctx context.Context) error {
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -152,7 +195,7 @@ func (db *Database) Drop(ctx context.Context, opts ...dbopt.DropDB) error {
 		Session: sess,
 		Clock:   db.client.clock,
 	}
-	_, err = dispatch.DropDatabase(
+	_, err = driver.DropDatabase(
 		ctx, cmd,
 		db.client.topology,
 		db.writeSelector,
@@ -160,46 +203,50 @@ func (db *Database) Drop(ctx context.Context, opts ...dbopt.DropDB) error {
 		db.client.topology.SessionPool,
 	)
 	if err != nil && !command.IsNotFound(err) {
-		return err
+		return replaceTopologyErr(err)
 	}
 	return nil
 }
 
 // ListCollections list collections from mongodb database.
-func (db *Database) ListCollections(ctx context.Context, filter *bson.Document, opts ...listcollectionopt.ListCollections) (command.Cursor, error) {
+func (db *Database) ListCollections(ctx context.Context, filter interface{}, opts ...*options.ListCollectionsOptions) (Cursor, error) {
 	if ctx == nil {
 		ctx = context.Background()
-	}
-	listCollOpts, _, err := listcollectionopt.BundleListCollections(opts...).Unbundle(true)
-	if err != nil {
-		return nil, err
 	}
 
 	sess := sessionFromContext(ctx)
 
-	err = db.client.ValidSession(sess)
+	err := db.client.ValidSession(sess)
 	if err != nil {
 		return nil, err
 	}
 
+	var filterDoc bsonx.Doc
+	if filter != nil {
+		filterDoc, err = transformDocument(db.registry, filter)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	cmd := command.ListCollections{
 		DB:       db.name,
-		Filter:   filter,
-		Opts:     listCollOpts,
+		Filter:   filterDoc,
 		ReadPref: db.readPreference,
 		Session:  sess,
 		Clock:    db.client.clock,
 	}
 
-	cursor, err := dispatch.ListCollections(
+	cursor, err := driver.ListCollections(
 		ctx, cmd,
 		db.client.topology,
 		db.readSelector,
 		db.client.id,
 		db.client.topology.SessionPool,
+		opts...,
 	)
 	if err != nil && !command.IsNotFound(err) {
-		return nil, err
+		return nil, replaceTopologyErr(err)
 	}
 
 	return cursor, nil
@@ -219,4 +266,13 @@ func (db *Database) ReadPreference() *readpref.ReadPref {
 // WriteConcern returns the write concern of this database.
 func (db *Database) WriteConcern() *writeconcern.WriteConcern {
 	return db.writeConcern
+}
+
+// Watch returns a change stream cursor used to receive information of changes to the database. This method is preferred
+// to running a raw aggregation with a $changeStream stage because it supports resumability in the case of some errors.
+// The database must have read concern majority or no read concern for a change stream to be created successfully.
+func (db *Database) Watch(ctx context.Context, pipeline interface{},
+	opts ...*options.ChangeStreamOptions) (Cursor, error) {
+
+	return newDbChangeStream(ctx, db, pipeline, opts...)
 }
