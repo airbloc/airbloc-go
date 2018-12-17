@@ -3,6 +3,7 @@ package collections
 import (
 	"context"
 	"github.com/airbloc/airbloc-go/common"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/pkg/errors"
 	"math/big"
@@ -93,10 +94,36 @@ func (s *Collections) Get(id common.ID) (*Collection, error) {
 	), nil
 }
 
+func (s *Collections) ListID(appId common.ID) ([]common.ID, error) {
+	filterOpts := &bind.FilterOpts{
+		Start: 0,
+		End:   nil,
+	}
+	events, err := s.contract.FilterRegistration(filterOpts, nil, [][8]byte{appId})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to scan Registrations in CollectionRegistry")
+	}
+	defer events.Close()
+
+	var collections []common.ID
+	for events.Next() {
+		collectionId := common.ID(events.Event.CollectionId)
+		collections = append(collections, collectionId)
+	}
+	if events.Error() != nil {
+		return nil, errors.Wrap(events.Error(), "failed to iterate over Registrations in CollectionRegistry")
+	}
+	return collections, nil
+}
+
 func (s *Collections) Exists(id common.ID) (bool, error) {
 	return s.contract.Exists(nil, id)
 }
 
 func (s *Collections) IsCollectionAllowed(id, userId common.ID) (bool, error) {
 	return s.contract.IsCollectionAllowed(nil, id, userId)
+}
+
+func (s *Collections) GetContract() *adapter.CollectionRegistry {
+	return s.contract
 }
