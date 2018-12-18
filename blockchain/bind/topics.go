@@ -163,7 +163,11 @@ func parseTopics(out interface{}, fields abi.Arguments, topics []common.Hash) er
 				// Ran out of custom types, try the crazies
 				switch {
 				case arg.Type.T == abi.FixedBytesTy:
-					reflect.Copy(field, reflect.ValueOf(topics[0][common.HashLength-arg.Type.Size:]))
+					if arg.Indexed {
+						reflect.Copy(field, reflect.ValueOf(topics[0][:arg.Type.Size]))
+					} else {
+						reflect.Copy(field, reflect.ValueOf(topics[0][common.HashLength-arg.Type.Size:]))
+					}
 
 				default:
 					return fmt.Errorf("unsupported indexed type: %v", arg.Type)
