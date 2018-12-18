@@ -20,7 +20,7 @@ contract SimpleContract {
 
     function open(bytes8 _offerId) public payable {
         (
-            address offeror, 
+            address offeror,
             , // address offeree,
             address contractAddr,
         ) = exchange.getOfferCompact(_offerId);

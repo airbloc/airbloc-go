@@ -95,33 +95,41 @@ type AccountsTransactorRaw struct {
 	Contract *AccountsTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type AccountsStatus int8
-
-const (
-	AccountsStatus_CREATED   AccountsStatus = 2
-	AccountsStatus_NONE      AccountsStatus = 0
-	AccountsStatus_TEMPORARY AccountsStatus = 1
-)
-
-var AccountsStatus_name = map[int8]string{
-	2: "CREATED",
-	0: "NONE",
-	1: "TEMPORARY",
-}
-
-var AccountsStatus_value = map[string]int8{
-	"CREATED":   2,
-	"NONE":      0,
-	"TEMPORARY": 1,
-}
-
-type Account struct {
-	Delegate      common.Address
-	Owner         common.Address
-	PasswordProof common.Address
-	Proxy         common.Address
-	Status        AccountsStatus
-}
+//
+//	type AccountsAccountStatus int8
+//
+//	const (
+//		AccountsAccountStatus_CREATED AccountsAccountStatus = 2
+//		AccountsAccountStatus_NONE AccountsAccountStatus = 0
+//		AccountsAccountStatus_TEMPORARY AccountsAccountStatus = 1
+//
+//	)
+//
+//	var AccountsAccountStatus_name = map[int8]string{
+//		2: "CREATED",
+//		0: "NONE",
+//		1: "TEMPORARY",
+//
+//	}
+//
+//	var AccountsAccountStatus_value = map[string]int8{
+//		"CREATED": 2,
+//		"NONE": 0,
+//		"TEMPORARY": 1,
+//
+//	}
+//
+//
+//
+//	type Account struct {
+//		Delegate	common.Address
+//		Owner	common.Address
+//		PasswordProof	common.Address
+//		Proxy	common.Address
+//		Status	AccountsAccountStatus
+//
+//	}
+//
 
 func init() {
 	// convenient hacks for blockchain.Client

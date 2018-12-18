@@ -95,22 +95,29 @@ type CollectionRegistryTransactorRaw struct {
 	Contract *CollectionRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type Auth struct {
-	AuthorizedAt *big.Int
-	IsAllowed    bool
-}
-
-type Collection struct {
-	AppId            ablCommon.ID
-	DataCollectionOf map[ablCommon.ID]Auth
-	Policy           IncentivePolicy
-	SchemaId         ablCommon.ID
-}
-
-type IncentivePolicy struct {
-	Owner *big.Int
-	Self  *big.Int
-}
+//
+//
+//
+//	type Auth struct {
+//		AuthorizedAt	*big.Int
+//		IsAllowed	bool
+//
+//	}
+//
+//	type Collection struct {
+//		AppId	ablCommon.ID
+//		DataCollectionOf	map[ablCommon.ID]Auth
+//		Policy	IncentivePolicy
+//		SchemaId	ablCommon.ID
+//
+//	}
+//
+//	type IncentivePolicy struct {
+//		Owner	*big.Int
+//		Self	*big.Int
+//
+//	}
+//
 
 func init() {
 	// convenient hacks for blockchain.Client

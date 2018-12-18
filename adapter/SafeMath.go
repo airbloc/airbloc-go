@@ -95,6 +95,10 @@ type SafeMathTransactorRaw struct {
 	Contract *SafeMathTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+//
+//
+//
+
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["SafeMath"] = (&SafeMath{}).new
