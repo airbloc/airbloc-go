@@ -15,7 +15,7 @@ type Escrow struct {
 type Offer struct {
 	From     common.Address
 	To       common.Address
-	DataIds  [][16]byte
+	DataIds  [][20]byte
 	Escrow   *Escrow
 	Status   uint8
 	Reverted bool

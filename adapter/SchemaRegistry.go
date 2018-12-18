@@ -95,10 +95,15 @@ type SchemaRegistryTransactorRaw struct {
 	Contract *SchemaRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type Schema struct {
-	Name  string
-	Owner common.Address
-}
+//
+//
+//
+//	type Schema struct {
+//		Name	string
+//		Owner	common.Address
+//
+//	}
+//
 
 func init() {
 	// convenient hacks for blockchain.Client

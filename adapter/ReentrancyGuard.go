@@ -95,6 +95,10 @@ type ReentrancyGuardTransactorRaw struct {
 	Contract *ReentrancyGuardTransactor // Generic write-only contract binding to access the raw methods on
 }
 
+//
+//
+//
+
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["ReentrancyGuard"] = (&ReentrancyGuard{}).new
