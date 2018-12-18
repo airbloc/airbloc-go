@@ -72,15 +72,20 @@ func New(
 
 	contract := ethclient.GetContract(&adapter.DataRegistry{})
 	return &DataWarehouse{
-		kms:            kms,
+		kms:        kms,
+		localCache: localdb.NewModel(localDatabase, "bundle"),
+
+		metaDatabase: metadb.NewModel(metaDatabase, "bundles"),
+		ethclient:    ethclient,
+		dataRegistry: contract.(*adapter.DataRegistry),
+		collections:  collections.New(ethclient),
+		schemas:      schemas.New(metaDatabase, ethclient),
+
 		protocols:      protocols,
-		localCache:     localdb.NewModel(localDatabase, "bundle"),
-		metaDatabase:   metadb.NewModel(metaDatabase, "bundles"),
-		ethclient:      ethclient,
-		dataRegistry:   contract.(*adapter.DataRegistry),
 		DefaultStorage: defaultStorage,
 		dauthValidator: dauthValidator,
-		log:            logger.New("warehouse"),
+
+		log: logger.New("warehouse"),
 	}
 }
 
