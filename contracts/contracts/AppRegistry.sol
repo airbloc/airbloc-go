@@ -3,7 +3,6 @@ pragma solidity ^0.4.24;
 import "./SchemaRegistry.sol";
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
-import "./CollectionRegistry.sol";
 import "./Utils.sol";
 
 contract AppRegistry is Ownable {
