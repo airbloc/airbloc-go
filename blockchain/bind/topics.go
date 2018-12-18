@@ -71,7 +71,7 @@ func makeTopics(query ...[]interface{}) ([][]common.Hash, error) {
 
 				switch {
 				case val.Kind() == reflect.Array && reflect.TypeOf(rule).Elem().Kind() == reflect.Uint8:
-					reflect.Copy(reflect.ValueOf(topic[common.HashLength-val.Len():]), val)
+					reflect.Copy(reflect.ValueOf(topic[:val.Len()]), val)
 
 				default:
 					return nil, fmt.Errorf("unsupported indexed type: %T", rule)
