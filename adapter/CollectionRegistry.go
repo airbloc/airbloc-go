@@ -896,7 +896,7 @@ type CollectionRegistryRegistration struct {
 // FilterRegistration is a free log retrieval operation binding the contract event 0xed612afce4032a5821a725a428005a5afc5c47bff7cc9c9b8d0d69e078b133fb.
 //
 // Solidity: e Registration(registrar indexed address, appId indexed bytes8, collectionId bytes8)
-func (_CollectionRegistry *CollectionRegistryFilterer) FilterRegistration(opts *bind.FilterOpts, registrar []common.Address, appId [][8]byte) (*CollectionRegistryRegistrationIterator, error) {
+func (_CollectionRegistry *CollectionRegistryFilterer) FilterRegistration(opts *bind.FilterOpts, registrar []common.Address, appId [][32]byte) (*CollectionRegistryRegistrationIterator, error) {
 
 	var registrarRule []interface{}
 	for _, registrarItem := range registrar {
