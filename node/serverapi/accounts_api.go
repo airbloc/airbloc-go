@@ -18,13 +18,16 @@ func NewAccountsAPI(backend node.Backend) (node.API, error) {
 }
 
 func (api *AccountsAPI) Exists(ctx context.Context, req *pb.AccountExistsRequest) (*pb.AccountExistsResponse, error) {
-	_, err := api.accounts.GetByIdentity(req.GetIdentity())
+	acc, err := api.accounts.GetByIdentity(req.GetIdentity())
 	if err == account.ErrNoAccount {
 		return &pb.AccountExistsResponse{Exists: false}, nil
 	} else if err != nil {
 		return nil, err
 	}
-	return &pb.AccountExistsResponse{Exists: true}, nil
+	return &pb.AccountExistsResponse{
+		Exists:    true,
+		AccountId: acc.ID.Hex(),
+	}, nil
 }
 
 func (api *AccountsAPI) AttachToAPI(service *node.APIService) {

@@ -14,4 +14,5 @@ message AccountExistsRequest {
 
 message AccountExistsResponse {
     bool exists = 1;
+    string accountId = 2;
 }
