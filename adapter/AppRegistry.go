@@ -95,10 +95,15 @@ type AppRegistryTransactorRaw struct {
 	Contract *AppRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-type App struct {
-	Name  string
-	Owner common.Address
-}
+//
+//
+//
+//	type App struct {
+//		Name	string
+//		Owner	common.Address
+//
+//	}
+//
 
 func init() {
 	// convenient hacks for blockchain.Client

@@ -27,10 +27,10 @@ func (manager *Manager) Prepare(
 	offeree, escrowAddr ethCommon.Address,
 	escrowOpenSign [4]byte, escrowOpenArgs []byte,
 	escrowCloseSign [4]byte, escrowCloseArgs []byte,
-	dataIds ...[16]byte,
+	dataIds ...[20]byte,
 ) (ablCommon.ID, error) {
 	var err error
-	var ids [][16]byte
+	var ids [][20]byte
 	// if length of dataIds exceeds 20,
 	// this won't put dataIds when Prepare() calls. and makes array ids keeps nil state
 	if len(dataIds) < 20 {
@@ -78,7 +78,7 @@ func (manager *Manager) Prepare(
 	return offerId, err
 }
 
-func (manager *Manager) AddDataIds(ctx context.Context, offerId ablCommon.ID, dataIds [][16]byte) error {
+func (manager *Manager) AddDataIds(ctx context.Context, offerId ablCommon.ID, dataIds [][20]byte) error {
 	tx, err := manager.contract.AddDataIds(manager.client.Account(), offerId, dataIds)
 	if err != nil {
 		return err
