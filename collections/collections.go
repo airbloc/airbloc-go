@@ -74,6 +74,8 @@ func (s *Collections) Unregister(ctx context.Context, collectionId common.ID) er
 }
 
 func (s *Collections) Get(id common.ID) (*Collection, error) {
+	println("Collection.Get: ID:", id.Hex())
+	println("Collection.Addr", s.contract.Address.Hex())
 	result, err := s.contract.Get(nil, id)
 	if err != nil {
 		return nil, err
@@ -84,22 +86,25 @@ func (s *Collections) Get(id common.ID) (*Collection, error) {
 	dataProviderRatioPercentage.Div(result.IncentiveRatioSelf, big.NewInt(params.Ether))
 	dataProviderRatio := float64(dataProviderRatioPercentage.Int64() / 100)
 
-	return NewCollection(
+	collection := NewCollection(
 		result.AppId,
 		result.SchemaId,
 		IncentivePolicy{
 			DataProvider: dataProviderRatio,
 			DataOwner:    1 - dataProviderRatio,
 		},
-	), nil
+	)
+	collection.Id = id
+	return collection, nil
 }
 
-func (s *Collections) ListID(appId common.ID) ([]common.ID, error) {
+func (s *Collections) ListID(ctx context.Context, appId common.ID) ([]common.ID, error) {
 	filterOpts := &bind.FilterOpts{
-		Start: 0,
-		End:   nil,
+		Start:   0,
+		End:     nil,
+		Context: ctx,
 	}
-	events, err := s.contract.FilterRegistration(filterOpts, nil, [][8]byte{appId})
+	events, err := s.contract.FilterRegistration(filterOpts, nil, common.IDFilter(appId))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to scan Registrations in CollectionRegistry")
 	}
@@ -112,6 +117,23 @@ func (s *Collections) ListID(appId common.ID) ([]common.ID, error) {
 	}
 	if events.Error() != nil {
 		return nil, errors.Wrap(events.Error(), "failed to iterate over Registrations in CollectionRegistry")
+	}
+	return collections, nil
+}
+
+func (s *Collections) List(ctx context.Context, appId common.ID) ([]*Collection, error) {
+	collectionIds, err := s.ListID(ctx, appId)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get collection IDs")
+	}
+
+	var collections []*Collection
+	for _, collectionId := range collectionIds {
+		collection, err := s.Get(collectionId)
+		if err != nil {
+			return nil, errors.Wrapf(err, "unable to get collection %s", collectionId.Hex())
+		}
+		collections = append(collections, collection)
 	}
 	return collections, nil
 }

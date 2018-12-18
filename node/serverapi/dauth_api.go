@@ -50,7 +50,7 @@ func (api *DAuthAPI) GetAuthorizations(ctx context.Context, req *pb.GetAuthoriza
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid account ID: %s", req.GetAccountId())
 	}
 
-	collectionIds, err := api.collections.ListID(appId)
+	collectionIds, err := api.collections.ListID(ctx, appId)
 	if err != nil {
 		return nil, err
 	}
