@@ -82,9 +82,9 @@ import (
 	"strings"
 
 	"github.com/airbloc/airbloc-go/blockchain"
+	"github.com/airbloc/airbloc-go/blockchain/bind"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	ablCommon "github.com/airbloc/airbloc-go/common"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -98,7 +98,7 @@ var (
 	_ = strings.NewReader
 	_ = ethereum.NotFound
 	_ = abi.U256
-	_ = bind.Bind
+	_ = bind.NewKeyedTransactor
 	_ = ablCommon.HexToID
 	_ = common.Big1
 	_ = types.BloomLookup
