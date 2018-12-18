@@ -4,8 +4,8 @@ package bind
 
 import (
 	"context"
-	"errors"
 	"fmt"
+	"github.com/pkg/errors"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum"
@@ -157,6 +157,9 @@ func (c *BoundContract) Call(opts *CallOpts, result interface{}, method string, 
 	}
 	if err != nil {
 		return err
+	}
+	if reason, ok := HasRevertError(output); ok {
+		return errors.Wrap(errors.New(reason), "error returned by contract")
 	}
 	return c.abi.Unpack(result, method, output)
 }
