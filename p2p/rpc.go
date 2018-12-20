@@ -2,6 +2,8 @@ package p2p
 
 import (
 	"context"
+	"time"
+
 	p2pcommon "github.com/airbloc/airbloc-go/p2p/common"
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/azer/logger"
@@ -9,7 +11,6 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/libp2p/go-libp2p-peer"
 	"github.com/pkg/errors"
-	"time"
 )
 
 var (

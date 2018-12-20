@@ -47,7 +47,7 @@ type Config struct {
 		}
 
 		S3 struct {
-			Region     string `yaml:"region"`
+			Region     string `default:"ap-northeast-1" yaml:"region"`
 			AccessKey  string `yaml:"accessKey"`
 			SecretKey  string `yaml:"secretKey"`
 			Token      string `default:"" yaml:"token"`

@@ -3,6 +3,8 @@ package userdelegate
 import (
 	"context"
 	"encoding/base64"
+	"time"
+
 	"github.com/airbloc/airbloc-go/account"
 	"github.com/airbloc/airbloc-go/apps"
 	"github.com/airbloc/airbloc-go/collections"
@@ -17,7 +19,6 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/golang/protobuf/proto"
 	"github.com/pkg/errors"
-	"time"
 )
 
 var (

@@ -2,7 +2,6 @@ package e2e
 
 import (
 	"context"
-	"encoding/base64"
 	"fmt"
 	"log"
 	"testing"
@@ -38,10 +37,9 @@ func TestChallengeDataTransaction(t *testing.T) {
 
 func testUserSignup(conn *grpc.ClientConn, index int) string {
 	dauth := pb.NewDAuthClient(conn)
-	pub, _ := base64.StdEncoding.DecodeString("BCcAUp859mBwSiXCZU3y931BcdDmR7nuCSaDIxkf0LwXMKLxsuVF6O0O4AdoiZ2enfccMaCfs7reFFg/yOiWk4w=")
 	req := &pb.SignInRequest{
 		Identity:     fmt.Sprintf("test-user-%d@airbloc.org", index),
-		UserDelegate: pub,
+		UserDelegate: "BCcAUp859mBwSiXCZU3y931BcdDmR7nuCSaDIxkf0LwXMKLxsuVF6O0O4AdoiZ2enfccMaCfs7reFFg/yOiWk4w=",
 	}
 	resp, err := dauth.SignIn(context.Background(), req)
 	if err != nil {

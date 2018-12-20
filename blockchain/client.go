@@ -2,10 +2,11 @@ package blockchain
 
 import (
 	"context"
-	"github.com/pkg/errors"
 	"net/url"
 	"reflect"
 	"strings"
+
+	"github.com/pkg/errors"
 
 	"github.com/azer/logger"
 
