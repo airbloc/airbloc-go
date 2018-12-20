@@ -2,13 +2,14 @@ package p2p
 
 import (
 	"context"
+	"time"
+
 	p2pcommon "github.com/airbloc/airbloc-go/p2p/common"
 	"github.com/azer/logger"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/libp2p/go-libp2p-peer"
 	"github.com/pkg/errors"
-	"time"
 )
 
 // Lookup querys address on P2P network and returns peer ID matching with the address.
