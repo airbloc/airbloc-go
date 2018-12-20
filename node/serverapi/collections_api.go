@@ -49,9 +49,26 @@ func (api *CollectionsAPI) Create(ctx context.Context, req *pb.CreateCollectionR
 	}, nil
 }
 
-// TODO after localdb integration
 func (api *CollectionsAPI) List(ctx context.Context, req *pb.ListCollectionRequest) (*pb.ListCollectionResponse, error) {
-	return nil, nil
+	appId, err := common.HexToID(req.GetAppId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid app ID: %s", req.GetAppId())
+	}
+
+	cols, err := api.collections.List(ctx, appId)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &pb.ListCollectionResponse{Total: int32(len(cols))}
+	for _, col := range cols {
+		collection := &pb.ListCollectionResponse_Collection{
+			Id:       col.Id.Hex(),
+			SchemaId: col.Schema.Id.Hex(),
+		}
+		response.Collections = append(response.Collections, collection)
+	}
+	return response, nil
 }
 
 func (api *CollectionsAPI) AttachToAPI(service *node.APIService) {

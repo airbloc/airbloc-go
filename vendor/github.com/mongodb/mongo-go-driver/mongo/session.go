@@ -10,13 +10,14 @@ import (
 	"context"
 	"errors"
 
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/core/command"
-	"github.com/mongodb/mongo-go-driver/core/description"
-	"github.com/mongodb/mongo-go-driver/core/dispatch"
-	"github.com/mongodb/mongo-go-driver/core/session"
-	"github.com/mongodb/mongo-go-driver/core/topology"
-	"github.com/mongodb/mongo-go-driver/mongo/transactionopt"
+	"github.com/mongodb/mongo-go-driver/bson/primitive"
+	"github.com/mongodb/mongo-go-driver/mongo/options"
+	"github.com/mongodb/mongo-go-driver/x/bsonx"
+	"github.com/mongodb/mongo-go-driver/x/mongo/driver"
+	"github.com/mongodb/mongo-go-driver/x/mongo/driver/session"
+	"github.com/mongodb/mongo-go-driver/x/mongo/driver/topology"
+	"github.com/mongodb/mongo-go-driver/x/network/command"
+	"github.com/mongodb/mongo-go-driver/x/network/description"
 )
 
 // ErrWrongClient is returned when a user attempts to pass in a session created by a different client than
@@ -44,13 +45,13 @@ type sessionKey struct {
 // and to enable causally consistent behavior for applications.
 type Session interface {
 	EndSession(context.Context)
-	StartTransaction(...transactionopt.Transaction) error
+	StartTransaction(...*options.TransactionOptions) error
 	AbortTransaction(context.Context) error
 	CommitTransaction(context.Context) error
-	ClusterTime() *bson.Document
-	AdvanceClusterTime(*bson.Document) error
-	OperationTime() *bson.Timestamp
-	AdvanceOperationTime(*bson.Timestamp) error
+	ClusterTime() bsonx.Doc
+	AdvanceClusterTime(bsonx.Doc) error
+	OperationTime() *primitive.Timestamp
+	AdvanceOperationTime(*primitive.Timestamp) error
 	session()
 }
 
@@ -71,7 +72,7 @@ func (s *sessionImpl) EndSession(ctx context.Context) {
 }
 
 // StartTransaction starts a transaction for this session.
-func (s *sessionImpl) StartTransaction(opts ...transactionopt.Transaction) error {
+func (s *sessionImpl) StartTransaction(opts ...*options.TransactionOptions) error {
 	err := s.CheckStartTransaction()
 	if err != nil {
 		return err
@@ -79,12 +80,14 @@ func (s *sessionImpl) StartTransaction(opts ...transactionopt.Transaction) error
 
 	s.didCommitAfterStart = false
 
-	tranOpts, err := transactionopt.BundleTransaction(opts...).Unbundle(true)
-	if err != nil {
-		return err
+	topts := options.MergeTransactionOptions(opts...)
+	coreOpts := &session.TransactionOptions{
+		ReadConcern:    topts.ReadConcern,
+		ReadPreference: topts.ReadPreference,
+		WriteConcern:   topts.WriteConcern,
 	}
 
-	return s.Client.StartTransaction(tranOpts...)
+	return s.Client.StartTransaction(coreOpts)
 }
 
 // AbortTransaction aborts the session's transaction, returning any errors and error codes
@@ -99,7 +102,7 @@ func (s *sessionImpl) AbortTransaction(ctx context.Context) error {
 	}
 
 	s.Aborting = true
-	_, err = dispatch.AbortTransaction(ctx, cmd, s.topo, description.WriteSelector())
+	_, err = driver.AbortTransaction(ctx, cmd, s.topo, description.WriteSelector())
 
 	_ = s.Client.AbortTransaction()
 	return err
@@ -133,26 +136,26 @@ func (s *sessionImpl) CommitTransaction(ctx context.Context) error {
 			s.Committing = false
 		}()
 	}
-	_, err = dispatch.CommitTransaction(ctx, cmd, s.topo, description.WriteSelector())
+	_, err = driver.CommitTransaction(ctx, cmd, s.topo, description.WriteSelector())
 	if err == nil {
 		return s.Client.CommitTransaction()
 	}
 	return err
 }
 
-func (s *sessionImpl) ClusterTime() *bson.Document {
+func (s *sessionImpl) ClusterTime() bsonx.Doc {
 	return s.Client.ClusterTime
 }
 
-func (s *sessionImpl) AdvanceClusterTime(d *bson.Document) error {
+func (s *sessionImpl) AdvanceClusterTime(d bsonx.Doc) error {
 	return s.Client.AdvanceClusterTime(d)
 }
 
-func (s *sessionImpl) OperationTime() *bson.Timestamp {
+func (s *sessionImpl) OperationTime() *primitive.Timestamp {
 	return s.Client.OperationTime
 }
 
-func (s *sessionImpl) AdvanceOperationTime(ts *bson.Timestamp) error {
+func (s *sessionImpl) AdvanceOperationTime(ts *primitive.Timestamp) error {
 	return s.Client.AdvanceOperationTime(ts)
 }
 

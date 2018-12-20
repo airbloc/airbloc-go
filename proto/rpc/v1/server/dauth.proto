@@ -16,6 +16,12 @@ service DAuth {
             body: "*"
         };
     }
+
+    // GetAuthorization returns a list of the data authorization settings
+    // which are done to collections of this app by given user.
+    rpc GetAuthorizations(GetAuthorizationsRequest) returns (GetAuthorizationsResponse) {
+        option (google.api.http) = {get: "/v1/dauth"};
+    }
     rpc Allow(DAuthRequest) returns (google.protobuf.Empty) {
         option (google.api.http) = {
             post: "/v1/dauth/{collectionId}/allow"
@@ -42,4 +48,18 @@ message SignInResponse {
 message DAuthRequest {
     string collectionId = 1;
     string accountId = 2;
+}
+
+message GetAuthorizationsRequest {
+    string accountId = 1;
+    string appId = 2; // TODO: Temporary
+}
+
+message GetAuthorizationsResponse {
+    message Authorization {
+        string collectionId = 1; // ID
+        bool authorized = 2;
+    }
+    bool hasAuthorizedBefore = 1;
+    repeated Authorization authorizations = 2;
 }

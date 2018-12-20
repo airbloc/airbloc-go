@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"github.com/airbloc/airbloc-go/collections"
+	"github.com/airbloc/airbloc-go/dauth"
+	"github.com/airbloc/airbloc-go/schemas"
 	"math/rand"
 	"net/url"
 	"time"
@@ -24,15 +27,31 @@ import (
 	"github.com/pkg/errors"
 )
 
+var (
+	// errValidationFailed is returned when an incoming data
+	// failed to met condition of the one of the validators (DAuth, Schema, ...)
+	errValidationFailed = errors.New("data validation failed.")
+)
+
 type DataWarehouse struct {
-	kms            key.Manager
+	kms        key.Manager
+	localCache *localdb.Model
+
+	// for data registration
+	metaDatabase *metadb.Model
+	ethclient    blockchain.TxClient
+	dataRegistry *adapter.DataRegistry
+	schemas      *schemas.Schemas
+	collections  *collections.Collections
+
+	// data storage layer
 	protocols      map[string]protocol.Protocol
-	localCache     *localdb.Model
-	metaDatabase   *metadb.Model
-	ethclient      blockchain.TxClient
-	dataRegistry   *adapter.DataRegistry
 	DefaultStorage storage.Storage
-	log            *logger.Logger
+
+	// data validators
+	dauthValidator *dauth.Validator
+
+	log *logger.Logger
 }
 
 func New(
@@ -47,24 +66,53 @@ func New(
 	for _, protoc := range supportedProtocols {
 		protocols[protoc.Name()] = protoc
 	}
+
+	dauthManager := dauth.NewManager(ethclient)
+	dauthValidator := dauth.NewValidator(dauthManager)
+
 	contract := ethclient.GetContract(&adapter.DataRegistry{})
 	return &DataWarehouse{
-		kms:            kms,
+		kms:        kms,
+		localCache: localdb.NewModel(localDatabase, "bundle"),
+
+		metaDatabase: metadb.NewModel(metaDatabase, "bundles"),
+		ethclient:    ethclient,
+		dataRegistry: contract.(*adapter.DataRegistry),
+		collections:  collections.New(ethclient),
+		schemas:      schemas.New(metaDatabase, ethclient),
+
 		protocols:      protocols,
-		localCache:     localdb.NewModel(localDatabase, "bundle"),
-		metaDatabase:   metadb.NewModel(metaDatabase, "bundles"),
-		ethclient:      ethclient,
-		dataRegistry:   contract.(*adapter.DataRegistry),
 		DefaultStorage: defaultStorage,
-		log:            logger.New("warehouse"),
+		dauthValidator: dauthValidator,
+
+		log: logger.New("warehouse"),
 	}
 }
 
-func (warehouse *DataWarehouse) CreateBundle(collection common.ID) *BundleStream {
-	return newBundleStream(warehouse, collection)
+func (warehouse *DataWarehouse) CreateBundle(collectionId common.ID) (*BundleStream, error) {
+	collection, err := warehouse.collections.Get(collectionId)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to retrieve a collection")
+	}
+	schema, err := warehouse.schemas.Get(collection.Schema.Id)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to retrieve a schema")
+	}
+	collection.Schema = *schema
+	return openBundleStream(warehouse, collection), nil
 }
 
-func (warehouse *DataWarehouse) validate(collection common.ID, data *common.Data) error {
+func (warehouse *DataWarehouse) validate(collection *collections.Collection, data *common.Data) error {
+	if !warehouse.dauthValidator.IsCollectible(collection.Id, data) {
+		return errors.Wrap(errValidationFailed, "user hasn't been authorized the data collection")
+	}
+
+	isValidFormat, err := collection.Schema.IsValidFormat(data)
+	if err != nil {
+		return err
+	} else if !isValidFormat {
+		return errors.Wrap(errValidationFailed, "wrong format")
+	}
 	return nil
 }
 
@@ -97,7 +145,7 @@ func (warehouse *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error
 
 	createdBundle := &data.Bundle{
 		Provider:   common.ID{}, /* TODO: implement appID */
-		Collection: stream.collection,
+		Collection: stream.collection.Id,
 		DataCount:  stream.DataCount,
 		IngestedAt: ingestedAt,
 		Data:       stream.data,
@@ -188,15 +236,13 @@ func (warehouse *DataWarehouse) Get(bundleId string) (*data.Bundle, error) {
 	}
 
 	// search URI from metadatabase
-	query := bson.NewDocument(bson.EC.String("data.data.bundleId", bundleId))
-	metadata, err := warehouse.metaDatabase.RetrieveAsset(query)
+	metadata, err := warehouse.metaDatabase.RetrieveAsset(bson.M{"bundleId": bundleId})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to query on metadatabase")
 	}
-
-	parsedUri, err := url.Parse(metadata.Lookup("data", "uri").StringValue())
+	parsedUri, err := url.Parse(metadata["uri"].(string))
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse URI")
+		return nil, errors.Wrap(err, "invalid URI")
 	}
 	return warehouse.Fetch(parsedUri)
 }

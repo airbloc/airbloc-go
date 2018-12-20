@@ -1,3 +1,9 @@
+// Copyright (C) MongoDB, Inc. 2017-present.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use this file except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
 package bson
 
 import (
@@ -19,7 +25,8 @@ var decPool = sync.Pool{
 	},
 }
 
-// A Decoder reads and decodes BSON documents from a stream.
+// A Decoder reads and decodes BSON documents from a stream. It reads from a bsonrw.ValueReader as
+// the source of BSON data.
 type Decoder struct {
 	r  *bsoncodec.Registry
 	vr bsonrw.ValueReader
@@ -55,15 +62,16 @@ func (d *Decoder) Decode(val interface{}) error {
 		return unmarshaler.UnmarshalBSON(buf)
 	}
 
-	rval := reflect.TypeOf(val)
+	rval := reflect.ValueOf(val)
 	if rval.Kind() != reflect.Ptr {
 		return fmt.Errorf("argument to Decode must be a pointer to a type, but got %v", rval)
 	}
-	decoder, err := d.r.LookupDecoder(rval.Elem())
+	rval = rval.Elem()
+	decoder, err := d.r.LookupDecoder(rval.Type())
 	if err != nil {
 		return err
 	}
-	return decoder.DecodeValue(bsoncodec.DecodeContext{Registry: d.r}, d.vr, val)
+	return decoder.DecodeValue(bsoncodec.DecodeContext{Registry: d.r}, d.vr, rval)
 }
 
 // Reset will reset the state of the decoder, using the same *Registry used in

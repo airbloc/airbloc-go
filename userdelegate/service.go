@@ -76,6 +76,7 @@ func (service *Service) Sync(ctx context.Context) error {
 		Context: ctx,
 	}
 	events, err := accounts.FilterTemporaryCreated(options, proxyAddress, [][32]byte{})
+	defer events.Close()
 	if err != nil {
 		return errors.Wrap(err, "failed to scan events in Accounts")
 	}

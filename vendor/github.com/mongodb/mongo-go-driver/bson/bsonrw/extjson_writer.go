@@ -1,9 +1,16 @@
+// Copyright (C) MongoDB, Inc. 2017-present.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use this file except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
 package bsonrw
 
 import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
+	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"io"
 	"math"
 	"sort"
@@ -12,9 +19,6 @@ import (
 	"sync"
 	"time"
 	"unicode/utf8"
-
-	"github.com/mongodb/mongo-go-driver/bson/decimal"
-	"github.com/mongodb/mongo-go-driver/bson/objectid"
 )
 
 var ejvwPool = sync.Pool{
@@ -105,6 +109,18 @@ func newExtJSONWriter(w io.Writer, canonical, escapeHTML bool) *extJSONValueWrit
 	}
 }
 
+func newExtJSONWriterFromSlice(buf []byte, canonical, escapeHTML bool) *extJSONValueWriter {
+	stack := make([]ejvwState, 1, 5)
+	stack[0] = ejvwState{mode: mTopLevel}
+
+	return &extJSONValueWriter{
+		buf:        buf,
+		stack:      stack,
+		canonical:  canonical,
+		escapeHTML: escapeHTML,
+	}
+}
+
 func (ejvw *extJSONValueWriter) reset(buf []byte, canonical, escapeHTML bool) {
 	if ejvw.stack == nil {
 		ejvw.stack = make([]ejvwState, 1, 5)
@@ -148,10 +164,13 @@ func (ejvw *extJSONValueWriter) pop() {
 	}
 }
 
-func (ejvw *extJSONValueWriter) invalidTransitionErr(destination mode) error {
+func (ejvw *extJSONValueWriter) invalidTransitionErr(destination mode, name string, modes []mode) error {
 	te := TransitionError{
+		name:        name,
 		current:     ejvw.stack[ejvw.frame].mode,
 		destination: destination,
+		modes:       modes,
+		action:      "write",
 	}
 	if ejvw.frame != 0 {
 		te.parent = ejvw.stack[ejvw.frame-1].mode
@@ -159,11 +178,15 @@ func (ejvw *extJSONValueWriter) invalidTransitionErr(destination mode) error {
 	return te
 }
 
-func (ejvw *extJSONValueWriter) ensureElementValue(destination mode) error {
+func (ejvw *extJSONValueWriter) ensureElementValue(destination mode, callerName string, addmodes ...mode) error {
 	switch ejvw.stack[ejvw.frame].mode {
 	case mElement, mValue:
 	default:
-		return ejvw.invalidTransitionErr(destination)
+		modes := []mode{mElement, mValue}
+		if addmodes != nil {
+			modes = append(modes, addmodes...)
+		}
+		return ejvw.invalidTransitionErr(destination, callerName, modes)
 	}
 
 	return nil
@@ -181,7 +204,7 @@ func (ejvw *extJSONValueWriter) writeExtendedSingleValue(key string, value strin
 }
 
 func (ejvw *extJSONValueWriter) WriteArray() (ArrayWriter, error) {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mArray, "WriteArray"); err != nil {
 		return nil, err
 	}
 
@@ -196,7 +219,7 @@ func (ejvw *extJSONValueWriter) WriteBinary(b []byte) error {
 }
 
 func (ejvw *extJSONValueWriter) WriteBinaryWithSubtype(b []byte, btype byte) error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mode(0), "WriteBinaryWithSubtype"); err != nil {
 		return err
 	}
 
@@ -212,7 +235,7 @@ func (ejvw *extJSONValueWriter) WriteBinaryWithSubtype(b []byte, btype byte) err
 }
 
 func (ejvw *extJSONValueWriter) WriteBoolean(b bool) error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mode(0), "WriteBoolean"); err != nil {
 		return err
 	}
 
@@ -224,7 +247,7 @@ func (ejvw *extJSONValueWriter) WriteBoolean(b bool) error {
 }
 
 func (ejvw *extJSONValueWriter) WriteCodeWithScope(code string) (DocumentWriter, error) {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mCodeWithScope, "WriteCodeWithScope"); err != nil {
 		return nil, err
 	}
 
@@ -239,8 +262,8 @@ func (ejvw *extJSONValueWriter) WriteCodeWithScope(code string) (DocumentWriter,
 	return ejvw, nil
 }
 
-func (ejvw *extJSONValueWriter) WriteDBPointer(ns string, oid objectid.ObjectID) error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+func (ejvw *extJSONValueWriter) WriteDBPointer(ns string, oid primitive.ObjectID) error {
+	if err := ejvw.ensureElementValue(mode(0), "WriteDBPointer"); err != nil {
 		return err
 	}
 
@@ -258,7 +281,7 @@ func (ejvw *extJSONValueWriter) WriteDBPointer(ns string, oid objectid.ObjectID)
 }
 
 func (ejvw *extJSONValueWriter) WriteDateTime(dt int64) error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mode(0), "WriteDateTime"); err != nil {
 		return err
 	}
 
@@ -277,8 +300,8 @@ func (ejvw *extJSONValueWriter) WriteDateTime(dt int64) error {
 	return nil
 }
 
-func (ejvw *extJSONValueWriter) WriteDecimal128(d decimal.Decimal128) error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+func (ejvw *extJSONValueWriter) WriteDecimal128(d primitive.Decimal128) error {
+	if err := ejvw.ensureElementValue(mode(0), "WriteDecimal128"); err != nil {
 		return err
 	}
 
@@ -295,7 +318,7 @@ func (ejvw *extJSONValueWriter) WriteDocument() (DocumentWriter, error) {
 		return ejvw, nil
 	}
 
-	if err := ejvw.ensureElementValue(mDocument); err != nil {
+	if err := ejvw.ensureElementValue(mDocument, "WriteDocument", mTopLevel); err != nil {
 		return nil, err
 	}
 
@@ -305,7 +328,7 @@ func (ejvw *extJSONValueWriter) WriteDocument() (DocumentWriter, error) {
 }
 
 func (ejvw *extJSONValueWriter) WriteDouble(f float64) error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mode(0), "WriteDouble"); err != nil {
 		return err
 	}
 
@@ -332,7 +355,7 @@ func (ejvw *extJSONValueWriter) WriteDouble(f float64) error {
 }
 
 func (ejvw *extJSONValueWriter) WriteInt32(i int32) error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mode(0), "WriteInt32"); err != nil {
 		return err
 	}
 
@@ -351,7 +374,7 @@ func (ejvw *extJSONValueWriter) WriteInt32(i int32) error {
 }
 
 func (ejvw *extJSONValueWriter) WriteInt64(i int64) error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mode(0), "WriteInt64"); err != nil {
 		return err
 	}
 
@@ -370,7 +393,7 @@ func (ejvw *extJSONValueWriter) WriteInt64(i int64) error {
 }
 
 func (ejvw *extJSONValueWriter) WriteJavascript(code string) error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mode(0), "WriteJavascript"); err != nil {
 		return err
 	}
 
@@ -385,7 +408,7 @@ func (ejvw *extJSONValueWriter) WriteJavascript(code string) error {
 }
 
 func (ejvw *extJSONValueWriter) WriteMaxKey() error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mode(0), "WriteMaxKey"); err != nil {
 		return err
 	}
 
@@ -397,7 +420,7 @@ func (ejvw *extJSONValueWriter) WriteMaxKey() error {
 }
 
 func (ejvw *extJSONValueWriter) WriteMinKey() error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mode(0), "WriteMinKey"); err != nil {
 		return err
 	}
 
@@ -409,7 +432,7 @@ func (ejvw *extJSONValueWriter) WriteMinKey() error {
 }
 
 func (ejvw *extJSONValueWriter) WriteNull() error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mode(0), "WriteNull"); err != nil {
 		return err
 	}
 
@@ -420,8 +443,8 @@ func (ejvw *extJSONValueWriter) WriteNull() error {
 	return nil
 }
 
-func (ejvw *extJSONValueWriter) WriteObjectID(oid objectid.ObjectID) error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+func (ejvw *extJSONValueWriter) WriteObjectID(oid primitive.ObjectID) error {
+	if err := ejvw.ensureElementValue(mode(0), "WriteObjectID"); err != nil {
 		return err
 	}
 
@@ -433,7 +456,7 @@ func (ejvw *extJSONValueWriter) WriteObjectID(oid objectid.ObjectID) error {
 }
 
 func (ejvw *extJSONValueWriter) WriteRegex(pattern string, options string) error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mode(0), "WriteRegex"); err != nil {
 		return err
 	}
 
@@ -451,7 +474,7 @@ func (ejvw *extJSONValueWriter) WriteRegex(pattern string, options string) error
 }
 
 func (ejvw *extJSONValueWriter) WriteString(s string) error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mode(0), "WriteString"); err != nil {
 		return err
 	}
 
@@ -466,7 +489,7 @@ func (ejvw *extJSONValueWriter) WriteString(s string) error {
 }
 
 func (ejvw *extJSONValueWriter) WriteSymbol(symbol string) error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mode(0), "WriteSymbol"); err != nil {
 		return err
 	}
 
@@ -481,7 +504,7 @@ func (ejvw *extJSONValueWriter) WriteSymbol(symbol string) error {
 }
 
 func (ejvw *extJSONValueWriter) WriteTimestamp(t uint32, i uint32) error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mode(0), "WriteTimestamp"); err != nil {
 		return err
 	}
 
@@ -499,7 +522,7 @@ func (ejvw *extJSONValueWriter) WriteTimestamp(t uint32, i uint32) error {
 }
 
 func (ejvw *extJSONValueWriter) WriteUndefined() error {
-	if err := ejvw.ensureElementValue(mode(0)); err != nil {
+	if err := ejvw.ensureElementValue(mode(0), "WriteUndefined"); err != nil {
 		return err
 	}
 
@@ -516,7 +539,7 @@ func (ejvw *extJSONValueWriter) WriteDocumentElement(key string) (ValueWriter, e
 		ejvw.buf = append(ejvw.buf, []byte(fmt.Sprintf(`"%s":`, key))...)
 		ejvw.push(mElement)
 	default:
-		return nil, ejvw.invalidTransitionErr(mElement)
+		return nil, ejvw.invalidTransitionErr(mElement, "WriteDocumentElement", []mode{mDocument, mTopLevel, mCodeWithScope})
 	}
 
 	return ejvw, nil
@@ -560,7 +583,7 @@ func (ejvw *extJSONValueWriter) WriteArrayElement() (ValueWriter, error) {
 	case mArray:
 		ejvw.push(mValue)
 	default:
-		return nil, ejvw.invalidTransitionErr(mValue)
+		return nil, ejvw.invalidTransitionErr(mValue, "WriteArrayElement", []mode{mArray})
 	}
 
 	return ejvw, nil
@@ -580,7 +603,7 @@ func (ejvw *extJSONValueWriter) WriteArrayEnd() error {
 
 		ejvw.pop()
 	default:
-		return fmt.Errorf("incorret mode to end array: %s", ejvw.stack[ejvw.frame].mode)
+		return fmt.Errorf("incorrect mode to end array: %s", ejvw.stack[ejvw.frame].mode)
 	}
 
 	return nil

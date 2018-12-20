@@ -27,19 +27,14 @@ message CreateCollectionResponse {
 }
 
 message ListCollectionRequest {
-    int32 pageIndex = 1;
-    int32 itemsPerPage = 2;
-}
-
-message CollectionResponse {
-    string appId = 1; // ID
-    string schemaId = 2; // ID
-// TODO : return incentive policy
-//    reserved 3 to 10;
-//    string incentivePolicy = 11;
+    string appId = 1; // TODO: Temporary
 }
 
 message ListCollectionResponse {
+    message Collection {
+        string id = 1; // ID
+        string schemaId = 2; // ID
+    }
     int32 total = 1;
-    repeated CollectionResponse collections = 2;
+    repeated Collection collections = 2;
 }

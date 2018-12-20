@@ -17,11 +17,11 @@ var (
 // NOTE that this is for server-side management (user delegate, account proxy);
 // it is not supposed to be called by client directly.
 type Manager struct {
-	ethclient          *blockchain.Client
+	ethclient          blockchain.TxClient
 	collectionRegistry *adapter.CollectionRegistry
 }
 
-func NewManager(client *blockchain.Client) *Manager {
+func NewManager(client blockchain.TxClient) *Manager {
 	contract := client.GetContract(&adapter.CollectionRegistry{})
 	return &Manager{
 		ethclient:          client,

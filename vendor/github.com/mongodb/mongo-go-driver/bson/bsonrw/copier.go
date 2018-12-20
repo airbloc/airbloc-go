@@ -1,13 +1,18 @@
+// Copyright (C) MongoDB, Inc. 2017-present.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use this file except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
 package bsonrw
 
 import (
 	"fmt"
 	"io"
 
-	"github.com/mongodb/mongo-go-driver/bson/bsoncore"
 	"github.com/mongodb/mongo-go-driver/bson/bsontype"
-	"github.com/mongodb/mongo-go-driver/bson/decimal"
-	"github.com/mongodb/mongo-go-driver/bson/objectid"
+	"github.com/mongodb/mongo-go-driver/bson/primitive"
+	"github.com/mongodb/mongo-go-driver/x/bsonx/bsoncore"
 )
 
 // Copier is a type that allows copying between ValueReaders, ValueWriters, and
@@ -48,6 +53,17 @@ func (c Copier) CopyDocumentFromBytes(dst ValueWriter, src []byte) error {
 		return err
 	}
 
+	err = c.CopyBytesToDocumentWriter(dw, src)
+	if err != nil {
+		return err
+	}
+
+	return dw.WriteDocumentEnd()
+}
+
+// CopyBytesToDocumentWriter copies the values from a BSON document represented as a []byte to a
+// DocumentWriter.
+func (c Copier) CopyBytesToDocumentWriter(dst DocumentWriter, src []byte) error {
 	// TODO(skriptble): Create errors types here. Anything thats a tag should be a property.
 	length, rem, ok := bsoncore.ReadLength(src)
 	if !ok {
@@ -77,7 +93,7 @@ func (c Copier) CopyDocumentFromBytes(dst ValueWriter, src []byte) error {
 		if !ok {
 			return fmt.Errorf("invalid key found. remaining bytes=%v", rem)
 		}
-		dvw, err := dw.WriteDocumentElement(key)
+		dvw, err := dst.WriteDocumentElement(key)
 		if err != nil {
 			return err
 		}
@@ -90,8 +106,7 @@ func (c Copier) CopyDocumentFromBytes(dst ValueWriter, src []byte) error {
 			return err
 		}
 	}
-
-	return dw.WriteDocumentEnd()
+	return nil
 }
 
 // CopyDocumentToBytes copies an entire document from the ValueReader and
@@ -103,15 +118,9 @@ func (c Copier) CopyDocumentToBytes(src ValueReader) ([]byte, error) {
 // AppendDocumentBytes functions the same as CopyDocumentToBytes, but will
 // append the result to dst.
 func (c Copier) AppendDocumentBytes(dst []byte, src ValueReader) ([]byte, error) {
-	if vr, ok := src.(*valueReader); ok {
-		length, err := vr.peakLength()
-		if err != nil {
-			return dst, err
-		}
-		dst = append(dst, vr.d[vr.offset:vr.offset+int64(length)]...)
-		vr.offset += int64(length)
-		vr.pop()
-		return dst, nil
+	if br, ok := src.(BytesReader); ok {
+		_, dst, err := br.ReadValueBytes(dst)
+		return dst, err
 	}
 
 	vw := vwPool.Get().(*valueWriter)
@@ -205,7 +214,7 @@ func (c Copier) CopyValue(dst ValueWriter, src ValueReader) error {
 		}
 		err = dst.WriteUndefined()
 	case bsontype.ObjectID:
-		var oid objectid.ObjectID
+		var oid primitive.ObjectID
 		oid, err = src.ReadObjectID()
 		if err != nil {
 			break
@@ -240,7 +249,7 @@ func (c Copier) CopyValue(dst ValueWriter, src ValueReader) error {
 		err = dst.WriteRegex(pattern, options)
 	case bsontype.DBPointer:
 		var ns string
-		var pointer objectid.ObjectID
+		var pointer primitive.ObjectID
 		ns, pointer, err = src.ReadDBPointer()
 		if err != nil {
 			break
@@ -296,7 +305,7 @@ func (c Copier) CopyValue(dst ValueWriter, src ValueReader) error {
 		}
 		err = dst.WriteInt64(i64)
 	case bsontype.Decimal128:
-		var d128 decimal.Decimal128
+		var d128 primitive.Decimal128
 		d128, err = src.ReadDecimal128()
 		if err != nil {
 			break

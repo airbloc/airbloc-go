@@ -1,3 +1,9 @@
+// Copyright (C) MongoDB, Inc. 2017-present.
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may
+// not use this file except in compliance with the License. You may obtain
+// a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
 package bsonrw
 
 import (
@@ -11,8 +17,7 @@ import (
 	"unicode"
 
 	"github.com/mongodb/mongo-go-driver/bson/bsontype"
-	"github.com/mongodb/mongo-go-driver/bson/decimal"
-	"github.com/mongodb/mongo-go-driver/bson/objectid"
+	"github.com/mongodb/mongo-go-driver/bson/primitive"
 )
 
 var _ ValueReader = (*valueReader)(nil)
@@ -80,15 +85,29 @@ type valueReader struct {
 	frame int64
 }
 
-// NewBSONValueReader returns a ValueReader using b for the underlying BSON
-// representation.
+// NewBSONDocumentReader returns a ValueReader using b for the underlying BSON
+// representation. Parameter b must be a BSON Document.
 //
 // TODO(skriptble): There's a lack of symmetry between the reader and writer, since the reader takes
 // a []byte while the writer takes an io.Writer. We should have two versions of each, one that takes
 // a []byte and one that takes an io.Reader or io.Writer. The []byte version will need to return a
 // thing that can return the finished []byte since it might be reallocated when appended to.
-func NewBSONValueReader(b []byte) ValueReader {
+func NewBSONDocumentReader(b []byte) ValueReader {
 	return newValueReader(b)
+}
+
+// NewBSONValueReader returns a ValueReader that starts in the Value mode instead of in top
+// level document mode. This enables the creation of a ValueReader for a single BSON value.
+func NewBSONValueReader(t bsontype.Type, val []byte) ValueReader {
+	stack := make([]vrState, 1, 5)
+	stack[0] = vrState{
+		mode:  mValue,
+		vType: t,
+	}
+	return &valueReader{
+		d:     val,
+		stack: stack,
+	}
 }
 
 func newValueReader(b []byte) *valueReader {
@@ -197,10 +216,13 @@ func (vr *valueReader) pop() {
 	}
 }
 
-func (vr *valueReader) invalidTransitionErr(destination mode) error {
+func (vr *valueReader) invalidTransitionErr(destination mode, name string, modes []mode) error {
 	te := TransitionError{
+		name:        name,
 		current:     vr.stack[vr.frame].mode,
 		destination: destination,
+		modes:       modes,
+		action:      "read",
 	}
 	if vr.frame != 0 {
 		te.parent = vr.stack[vr.frame-1].mode
@@ -216,14 +238,14 @@ func (vr *valueReader) invalidDocumentLengthError() error {
 	return fmt.Errorf("document is invalid, end byte is at %d, but null byte found at %d", vr.stack[vr.frame].end, vr.offset)
 }
 
-func (vr *valueReader) ensureElementValue(t bsontype.Type, destination mode) error {
+func (vr *valueReader) ensureElementValue(t bsontype.Type, destination mode, callerName string) error {
 	switch vr.stack[vr.frame].mode {
 	case mElement, mValue:
 		if vr.stack[vr.frame].vType != t {
 			return vr.typeError(t)
 		}
 	default:
-		return vr.invalidTransitionErr(destination)
+		return vr.invalidTransitionErr(destination, callerName, []mode{mElement, mValue})
 	}
 
 	return nil
@@ -238,14 +260,14 @@ func (vr *valueReader) nextElementLength() (int32, error) {
 	var err error
 	switch vr.stack[vr.frame].vType {
 	case bsontype.Array, bsontype.EmbeddedDocument, bsontype.CodeWithScope:
-		length, err = vr.peakLength()
+		length, err = vr.peekLength()
 	case bsontype.Binary:
-		length, err = vr.peakLength()
+		length, err = vr.peekLength()
 		length += 4 + 1 // binary length + subtype byte
 	case bsontype.Boolean:
 		length = 1
 	case bsontype.DBPointer:
-		length, err = vr.peakLength()
+		length, err = vr.peekLength()
 		length += 4 + 12 // string length + ObjectID length
 	case bsontype.DateTime, bsontype.Double, bsontype.Int64, bsontype.Timestamp:
 		length = 8
@@ -254,7 +276,7 @@ func (vr *valueReader) nextElementLength() (int32, error) {
 	case bsontype.Int32:
 		length = 4
 	case bsontype.JavaScript, bsontype.String, bsontype.Symbol:
-		length, err = vr.peakLength()
+		length, err = vr.peekLength()
 		length += 4
 	case bsontype.MaxKey, bsontype.MinKey, bsontype.Null, bsontype.Undefined:
 		length = 0
@@ -281,27 +303,36 @@ func (vr *valueReader) nextElementLength() (int32, error) {
 
 func (vr *valueReader) ReadValueBytes(dst []byte) (bsontype.Type, []byte, error) {
 	switch vr.stack[vr.frame].mode {
+	case mTopLevel:
+		length, err := vr.peekLength()
+		if err != nil {
+			return bsontype.Type(0), nil, err
+		}
+		dst, err = vr.appendBytes(dst, length)
+		if err != nil {
+			return bsontype.Type(0), nil, err
+		}
+		return bsontype.Type(0), dst, nil
 	case mElement, mValue:
+		length, err := vr.nextElementLength()
+		if err != nil {
+			return bsontype.Type(0), dst, err
+		}
+
+		dst, err = vr.appendBytes(dst, length)
+		t := vr.stack[vr.frame].vType
+		vr.pop()
+		return t, dst, err
 	default:
-		return bsontype.Type(0), nil, vr.invalidTransitionErr(0)
+		return bsontype.Type(0), nil, vr.invalidTransitionErr(0, "ReadValueBytes", []mode{mElement, mValue})
 	}
-
-	length, err := vr.nextElementLength()
-	if err != nil {
-		return bsontype.Type(0), dst, err
-	}
-
-	dst, err = vr.appendBytes(dst, length)
-	t := vr.stack[vr.frame].vType
-	vr.pop()
-	return t, dst, err
 }
 
 func (vr *valueReader) Skip() error {
 	switch vr.stack[vr.frame].mode {
 	case mElement, mValue:
 	default:
-		return vr.invalidTransitionErr(0)
+		return vr.invalidTransitionErr(0, "Skip", []mode{mElement, mValue})
 	}
 
 	length, err := vr.nextElementLength()
@@ -315,7 +346,7 @@ func (vr *valueReader) Skip() error {
 }
 
 func (vr *valueReader) ReadArray() (ArrayReader, error) {
-	if err := vr.ensureElementValue(bsontype.Array, mArray); err != nil {
+	if err := vr.ensureElementValue(bsontype.Array, mArray, "ReadArray"); err != nil {
 		return nil, err
 	}
 
@@ -328,7 +359,7 @@ func (vr *valueReader) ReadArray() (ArrayReader, error) {
 }
 
 func (vr *valueReader) ReadBinary() (b []byte, btype byte, err error) {
-	if err := vr.ensureElementValue(bsontype.Binary, 0); err != nil {
+	if err := vr.ensureElementValue(bsontype.Binary, 0, "ReadBinary"); err != nil {
 		return nil, 0, err
 	}
 
@@ -359,7 +390,7 @@ func (vr *valueReader) ReadBinary() (b []byte, btype byte, err error) {
 }
 
 func (vr *valueReader) ReadBoolean() (bool, error) {
-	if err := vr.ensureElementValue(bsontype.Boolean, 0); err != nil {
+	if err := vr.ensureElementValue(bsontype.Boolean, 0, "ReadBoolean"); err != nil {
 		return false, err
 	}
 
@@ -394,7 +425,7 @@ func (vr *valueReader) ReadDocument() (DocumentReader, error) {
 			return nil, vr.typeError(bsontype.EmbeddedDocument)
 		}
 	default:
-		return nil, vr.invalidTransitionErr(mDocument)
+		return nil, vr.invalidTransitionErr(mDocument, "ReadDocument", []mode{mTopLevel, mElement, mValue})
 	}
 
 	err := vr.pushDocument()
@@ -406,7 +437,7 @@ func (vr *valueReader) ReadDocument() (DocumentReader, error) {
 }
 
 func (vr *valueReader) ReadCodeWithScope() (code string, dr DocumentReader, err error) {
-	if err := vr.ensureElementValue(bsontype.CodeWithScope, 0); err != nil {
+	if err := vr.ensureElementValue(bsontype.CodeWithScope, 0, "ReadCodeWithScope"); err != nil {
 		return "", nil, err
 	}
 
@@ -441,8 +472,8 @@ func (vr *valueReader) ReadCodeWithScope() (code string, dr DocumentReader, err 
 	return code, vr, nil
 }
 
-func (vr *valueReader) ReadDBPointer() (ns string, oid objectid.ObjectID, err error) {
-	if err := vr.ensureElementValue(bsontype.DBPointer, 0); err != nil {
+func (vr *valueReader) ReadDBPointer() (ns string, oid primitive.ObjectID, err error) {
+	if err := vr.ensureElementValue(bsontype.DBPointer, 0, "ReadDBPointer"); err != nil {
 		return "", oid, err
 	}
 
@@ -463,7 +494,7 @@ func (vr *valueReader) ReadDBPointer() (ns string, oid objectid.ObjectID, err er
 }
 
 func (vr *valueReader) ReadDateTime() (int64, error) {
-	if err := vr.ensureElementValue(bsontype.DateTime, 0); err != nil {
+	if err := vr.ensureElementValue(bsontype.DateTime, 0, "ReadDateTime"); err != nil {
 		return 0, err
 	}
 
@@ -476,25 +507,25 @@ func (vr *valueReader) ReadDateTime() (int64, error) {
 	return i, nil
 }
 
-func (vr *valueReader) ReadDecimal128() (decimal.Decimal128, error) {
-	if err := vr.ensureElementValue(bsontype.Decimal128, 0); err != nil {
-		return decimal.Decimal128{}, err
+func (vr *valueReader) ReadDecimal128() (primitive.Decimal128, error) {
+	if err := vr.ensureElementValue(bsontype.Decimal128, 0, "ReadDecimal128"); err != nil {
+		return primitive.Decimal128{}, err
 	}
 
 	b, err := vr.readBytes(16)
 	if err != nil {
-		return decimal.Decimal128{}, err
+		return primitive.Decimal128{}, err
 	}
 
 	l := binary.LittleEndian.Uint64(b[0:8])
 	h := binary.LittleEndian.Uint64(b[8:16])
 
 	vr.pop()
-	return decimal.NewDecimal128(h, l), nil
+	return primitive.NewDecimal128(h, l), nil
 }
 
 func (vr *valueReader) ReadDouble() (float64, error) {
-	if err := vr.ensureElementValue(bsontype.Double, 0); err != nil {
+	if err := vr.ensureElementValue(bsontype.Double, 0, "ReadDouble"); err != nil {
 		return 0, err
 	}
 
@@ -508,7 +539,7 @@ func (vr *valueReader) ReadDouble() (float64, error) {
 }
 
 func (vr *valueReader) ReadInt32() (int32, error) {
-	if err := vr.ensureElementValue(bsontype.Int32, 0); err != nil {
+	if err := vr.ensureElementValue(bsontype.Int32, 0, "ReadInt32"); err != nil {
 		return 0, err
 	}
 
@@ -517,7 +548,7 @@ func (vr *valueReader) ReadInt32() (int32, error) {
 }
 
 func (vr *valueReader) ReadInt64() (int64, error) {
-	if err := vr.ensureElementValue(bsontype.Int64, 0); err != nil {
+	if err := vr.ensureElementValue(bsontype.Int64, 0, "ReadInt64"); err != nil {
 		return 0, err
 	}
 
@@ -526,7 +557,7 @@ func (vr *valueReader) ReadInt64() (int64, error) {
 }
 
 func (vr *valueReader) ReadJavascript() (code string, err error) {
-	if err := vr.ensureElementValue(bsontype.JavaScript, 0); err != nil {
+	if err := vr.ensureElementValue(bsontype.JavaScript, 0, "ReadJavascript"); err != nil {
 		return "", err
 	}
 
@@ -535,7 +566,7 @@ func (vr *valueReader) ReadJavascript() (code string, err error) {
 }
 
 func (vr *valueReader) ReadMaxKey() error {
-	if err := vr.ensureElementValue(bsontype.MaxKey, 0); err != nil {
+	if err := vr.ensureElementValue(bsontype.MaxKey, 0, "ReadMaxKey"); err != nil {
 		return err
 	}
 
@@ -544,7 +575,7 @@ func (vr *valueReader) ReadMaxKey() error {
 }
 
 func (vr *valueReader) ReadMinKey() error {
-	if err := vr.ensureElementValue(bsontype.MinKey, 0); err != nil {
+	if err := vr.ensureElementValue(bsontype.MinKey, 0, "ReadMinKey"); err != nil {
 		return err
 	}
 
@@ -553,7 +584,7 @@ func (vr *valueReader) ReadMinKey() error {
 }
 
 func (vr *valueReader) ReadNull() error {
-	if err := vr.ensureElementValue(bsontype.Null, 0); err != nil {
+	if err := vr.ensureElementValue(bsontype.Null, 0, "ReadNull"); err != nil {
 		return err
 	}
 
@@ -561,17 +592,17 @@ func (vr *valueReader) ReadNull() error {
 	return nil
 }
 
-func (vr *valueReader) ReadObjectID() (objectid.ObjectID, error) {
-	if err := vr.ensureElementValue(bsontype.ObjectID, 0); err != nil {
-		return objectid.ObjectID{}, err
+func (vr *valueReader) ReadObjectID() (primitive.ObjectID, error) {
+	if err := vr.ensureElementValue(bsontype.ObjectID, 0, "ReadObjectID"); err != nil {
+		return primitive.ObjectID{}, err
 	}
 
 	oidbytes, err := vr.readBytes(12)
 	if err != nil {
-		return objectid.ObjectID{}, err
+		return primitive.ObjectID{}, err
 	}
 
-	var oid objectid.ObjectID
+	var oid primitive.ObjectID
 	copy(oid[:], oidbytes)
 
 	vr.pop()
@@ -579,7 +610,7 @@ func (vr *valueReader) ReadObjectID() (objectid.ObjectID, error) {
 }
 
 func (vr *valueReader) ReadRegex() (string, string, error) {
-	if err := vr.ensureElementValue(bsontype.Regex, 0); err != nil {
+	if err := vr.ensureElementValue(bsontype.Regex, 0, "ReadRegex"); err != nil {
 		return "", "", err
 	}
 
@@ -598,7 +629,7 @@ func (vr *valueReader) ReadRegex() (string, string, error) {
 }
 
 func (vr *valueReader) ReadString() (string, error) {
-	if err := vr.ensureElementValue(bsontype.String, 0); err != nil {
+	if err := vr.ensureElementValue(bsontype.String, 0, "ReadString"); err != nil {
 		return "", err
 	}
 
@@ -607,7 +638,7 @@ func (vr *valueReader) ReadString() (string, error) {
 }
 
 func (vr *valueReader) ReadSymbol() (symbol string, err error) {
-	if err := vr.ensureElementValue(bsontype.Symbol, 0); err != nil {
+	if err := vr.ensureElementValue(bsontype.Symbol, 0, "ReadSymbol"); err != nil {
 		return "", err
 	}
 
@@ -616,7 +647,7 @@ func (vr *valueReader) ReadSymbol() (symbol string, err error) {
 }
 
 func (vr *valueReader) ReadTimestamp() (t uint32, i uint32, err error) {
-	if err := vr.ensureElementValue(bsontype.Timestamp, 0); err != nil {
+	if err := vr.ensureElementValue(bsontype.Timestamp, 0, "ReadTimestamp"); err != nil {
 		return 0, 0, err
 	}
 
@@ -635,7 +666,7 @@ func (vr *valueReader) ReadTimestamp() (t uint32, i uint32, err error) {
 }
 
 func (vr *valueReader) ReadUndefined() error {
-	if err := vr.ensureElementValue(bsontype.Undefined, 0); err != nil {
+	if err := vr.ensureElementValue(bsontype.Undefined, 0, "ReadUndefined"); err != nil {
 		return err
 	}
 
@@ -647,7 +678,7 @@ func (vr *valueReader) ReadElement() (string, ValueReader, error) {
 	switch vr.stack[vr.frame].mode {
 	case mTopLevel, mDocument, mCodeWithScope:
 	default:
-		return "", nil, vr.invalidTransitionErr(mElement)
+		return "", nil, vr.invalidTransitionErr(mElement, "ReadElement", []mode{mTopLevel, mDocument, mCodeWithScope})
 	}
 
 	t, err := vr.readByte()
@@ -677,7 +708,7 @@ func (vr *valueReader) ReadValue() (ValueReader, error) {
 	switch vr.stack[vr.frame].mode {
 	case mArray:
 	default:
-		return nil, vr.invalidTransitionErr(mValue)
+		return nil, vr.invalidTransitionErr(mValue, "ReadValue", []mode{mArray})
 	}
 
 	t, err := vr.readByte()
@@ -797,7 +828,7 @@ func (vr *valueReader) readString() (string, error) {
 	return string(vr.d[start : start+int64(length)-1]), nil
 }
 
-func (vr *valueReader) peakLength() (int32, error) {
+func (vr *valueReader) peekLength() (int32, error) {
 	if vr.offset+4 > int64(len(vr.d)) {
 		return 0, io.EOF
 	}

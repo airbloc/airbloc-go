@@ -11,28 +11,16 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/bsoncodec"
-	"github.com/mongodb/mongo-go-driver/core/command"
-	"github.com/mongodb/mongo-go-driver/core/description"
-	"github.com/mongodb/mongo-go-driver/core/dispatch"
-	"github.com/mongodb/mongo-go-driver/core/option"
-	"github.com/mongodb/mongo-go-driver/core/readconcern"
-	"github.com/mongodb/mongo-go-driver/core/readpref"
-	"github.com/mongodb/mongo-go-driver/core/session"
-	"github.com/mongodb/mongo-go-driver/core/writeconcern"
-	"github.com/mongodb/mongo-go-driver/mongo/aggregateopt"
-	"github.com/mongodb/mongo-go-driver/mongo/bulkwriteopt"
-	"github.com/mongodb/mongo-go-driver/mongo/changestreamopt"
-	"github.com/mongodb/mongo-go-driver/mongo/collectionopt"
-	"github.com/mongodb/mongo-go-driver/mongo/countopt"
-	"github.com/mongodb/mongo-go-driver/mongo/deleteopt"
-	"github.com/mongodb/mongo-go-driver/mongo/distinctopt"
-	"github.com/mongodb/mongo-go-driver/mongo/dropcollopt"
-	"github.com/mongodb/mongo-go-driver/mongo/findopt"
-	"github.com/mongodb/mongo-go-driver/mongo/insertopt"
-	"github.com/mongodb/mongo-go-driver/mongo/replaceopt"
-	"github.com/mongodb/mongo-go-driver/mongo/updateopt"
+	"github.com/mongodb/mongo-go-driver/mongo/options"
+	"github.com/mongodb/mongo-go-driver/mongo/readconcern"
+	"github.com/mongodb/mongo-go-driver/mongo/readpref"
+	"github.com/mongodb/mongo-go-driver/mongo/writeconcern"
+	"github.com/mongodb/mongo-go-driver/x/bsonx"
+	"github.com/mongodb/mongo-go-driver/x/mongo/driver"
+	"github.com/mongodb/mongo-go-driver/x/mongo/driver/session"
+	"github.com/mongodb/mongo-go-driver/x/network/command"
+	"github.com/mongodb/mongo-go-driver/x/network/description"
 )
 
 // Collection performs operations on a given collection.
@@ -48,11 +36,8 @@ type Collection struct {
 	registry       *bsoncodec.Registry
 }
 
-func newCollection(db *Database, name string, opts ...collectionopt.Option) *Collection {
-	collOpt, err := collectionopt.BundleCollection(opts...).Unbundle()
-	if err != nil {
-		return nil
-	}
+func newCollection(db *Database, name string, opts ...*options.CollectionOptions) *Collection {
+	collOpt := options.MergeCollectionOptions(opts...)
 
 	rc := db.readConcern
 	if collOpt.ReadConcern != nil {
@@ -69,8 +54,18 @@ func newCollection(db *Database, name string, opts ...collectionopt.Option) *Col
 		rp = collOpt.ReadPreference
 	}
 
+	reg := db.registry
+	if collOpt.Registry != nil {
+		reg = collOpt.Registry
+	}
+
 	readSelector := description.CompositeSelector([]description.ServerSelector{
 		description.ReadPrefSelector(rp),
+		description.LatencySelector(db.client.localThreshold),
+	})
+
+	writeSelector := description.CompositeSelector([]description.ServerSelector{
+		description.WriteSelector(),
 		description.LatencySelector(db.client.localThreshold),
 	})
 
@@ -82,8 +77,8 @@ func newCollection(db *Database, name string, opts ...collectionopt.Option) *Col
 		readConcern:    rc,
 		writeConcern:   wc,
 		readSelector:   readSelector,
-		writeSelector:  db.writeSelector,
-		registry:       db.registry,
+		writeSelector:  writeSelector,
+		registry:       reg,
 	}
 
 	return coll
@@ -99,16 +94,14 @@ func (coll *Collection) copy() *Collection {
 		readPreference: coll.readPreference,
 		readSelector:   coll.readSelector,
 		writeSelector:  coll.writeSelector,
+		registry:       coll.registry,
 	}
 }
 
 // Clone creates a copy of this collection with updated options, if any are given.
-func (coll *Collection) Clone(opts ...collectionopt.Option) (*Collection, error) {
+func (coll *Collection) Clone(opts ...*options.CollectionOptions) (*Collection, error) {
 	copyColl := coll.copy()
-	optsColl, err := collectionopt.BundleCollection(opts...).Unbundle()
-	if err != nil {
-		return nil, err
-	}
+	optsColl := options.MergeCollectionOptions(opts...)
 
 	if optsColl.ReadConcern != nil {
 		copyColl.readConcern = optsColl.ReadConcern
@@ -120,6 +113,10 @@ func (coll *Collection) Clone(opts ...collectionopt.Option) (*Collection, error)
 
 	if optsColl.ReadPreference != nil {
 		copyColl.readPreference = optsColl.ReadPreference
+	}
+
+	if optsColl.Registry != nil {
+		copyColl.registry = optsColl.Registry
 	}
 
 	copyColl.readSelector = description.CompositeSelector([]description.ServerSelector{
@@ -145,10 +142,11 @@ func (coll *Collection) Database() *Database {
 	return coll.db
 }
 
-// BulkWrite performs a bulk write operation. A custom context can be supplied to this method or nil to default to
-// context.Background().
+// BulkWrite performs a bulk write operation.
+//
+// See https://docs.mongodb.com/manual/core/bulk-write-operations/.
 func (coll *Collection) BulkWrite(ctx context.Context, models []WriteModel,
-	opts ...bulkwriteopt.BulkWrite) (*BulkWriteResult, error) {
+	opts ...*options.BulkWriteOptions) (*BulkWriteResult, error) {
 
 	if len(models) == 0 {
 		return nil, errors.New("a bulk write must contain at least one write model")
@@ -158,17 +156,19 @@ func (coll *Collection) BulkWrite(ctx context.Context, models []WriteModel,
 		ctx = context.Background()
 	}
 
-	bwOpts, sess, err := bulkwriteopt.BundleBulkWrite(opts...).Unbundle()
+	sess := sessionFromContext(ctx)
+
+	err := coll.client.ValidSession(sess)
 	if err != nil {
 		return nil, err
 	}
 
-	dispatchModels := make([]dispatch.WriteModel, len(models))
+	dispatchModels := make([]driver.WriteModel, len(models))
 	for i, model := range models {
 		dispatchModels[i] = model.convertModel()
 	}
 
-	res, err := dispatch.BulkWrite(
+	res, err := driver.BulkWrite(
 		ctx,
 		coll.namespace(),
 		dispatchModels,
@@ -179,21 +179,20 @@ func (coll *Collection) BulkWrite(ctx context.Context, models []WriteModel,
 		coll.client.retryWrites,
 		sess,
 		coll.writeConcern,
-		bwOpts.Ordered,
 		coll.client.clock,
-		bwOpts.BypassDocumentValidation,
-		bwOpts.BypassDocumentValidationSet,
+		coll.registry,
+		opts...,
 	)
 
 	if err != nil {
-		if conv, ok := err.(dispatch.BulkWriteException); ok {
+		if conv, ok := err.(driver.BulkWriteException); ok {
 			return &BulkWriteResult{}, BulkWriteException{
 				WriteConcernError: convertWriteConcernError(conv.WriteConcernError),
 				WriteErrors:       convertBulkWriteErrors(conv.WriteErrors),
 			}
 		}
 
-		return &BulkWriteResult{}, err
+		return &BulkWriteResult{}, replaceTopologyErr(err)
 	}
 
 	return &BulkWriteResult{
@@ -206,34 +205,15 @@ func (coll *Collection) BulkWrite(ctx context.Context, models []WriteModel,
 	}, nil
 }
 
-// InsertOne inserts a single document into the collection. A user can supply
-// a custom context to this method, or nil to default to context.Background().
-//
-// This method uses TransformDocument to turn the document parameter into a
-// *bson.Document. See TransformDocument for the list of valid types for
-// document.
-//
-// TODO(skriptble): Determine if we should unwrap the value for the
-// InsertOneResult or just return the bson.Element or a bson.Value.
+// InsertOne inserts a single document into the collection.
 func (coll *Collection) InsertOne(ctx context.Context, document interface{},
-	opts ...insertopt.One) (*InsertOneResult, error) {
+	opts ...*options.InsertOneOptions) (*InsertOneResult, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
-	doc, err := transformDocument(coll.registry, document)
-	if err != nil {
-		return nil, err
-	}
-
-	insertedID, err := ensureID(doc)
-	if err != nil {
-		return nil, err
-	}
-
-	// convert options into []option.InsertOptioner and dedup
-	oneOpts, _, err := insertopt.BundleOne(opts...).Unbundle(true)
+	doc, insertedID, err := transformAndEnsureID(coll.registry, document)
 	if err != nil {
 		return nil, err
 	}
@@ -252,20 +232,27 @@ func (coll *Collection) InsertOne(ctx context.Context, document interface{},
 	oldns := coll.namespace()
 	cmd := command.Insert{
 		NS:           command.Namespace{DB: oldns.DB, Collection: oldns.Collection},
-		Docs:         []*bson.Document{doc},
-		Opts:         oneOpts,
+		Docs:         []bsonx.Doc{doc},
 		WriteConcern: wc,
 		Session:      sess,
 		Clock:        coll.client.clock,
 	}
 
-	res, err := dispatch.Insert(
+	// convert to InsertManyOptions so these can be argued to dispatch.Insert
+	insertOpts := make([]*options.InsertManyOptions, len(opts))
+	for i, opt := range opts {
+		insertOpts[i] = options.InsertMany()
+		insertOpts[i].BypassDocumentValidation = opt.BypassDocumentValidation
+	}
+
+	res, err := driver.Insert(
 		ctx, cmd,
 		coll.client.topology,
 		coll.writeSelector,
 		coll.client.id,
 		coll.client.topology.SessionPool,
 		coll.client.retryWrites,
+		insertOpts...,
 	)
 
 	rr, err := processWriteError(res.WriteConcernError, res.WriteErrors, err)
@@ -276,32 +263,19 @@ func (coll *Collection) InsertOne(ctx context.Context, document interface{},
 	return &InsertOneResult{InsertedID: insertedID}, err
 }
 
-// InsertMany inserts the provided documents. A user can supply a custom context to this
-// method.
-//
-// Currently, batching is not implemented for this operation. Because of this, extremely large
-// sets of documents will not fit into a single BSON document to be sent to the server, so the
-// operation will fail.
-//
-// This method uses TransformDocument to turn the documents parameter into a
-// *bson.Document. See TransformDocument for the list of valid types for
-// documents.
+// InsertMany inserts the provided documents.
 func (coll *Collection) InsertMany(ctx context.Context, documents []interface{},
-	opts ...insertopt.Many) (*InsertManyResult, error) {
+	opts ...*options.InsertManyOptions) (*InsertManyResult, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
 	result := make([]interface{}, len(documents))
-	docs := make([]*bson.Document, len(documents))
+	docs := make([]bsonx.Doc, len(documents))
 
 	for i, doc := range documents {
-		bdoc, err := transformDocument(coll.registry, doc)
-		if err != nil {
-			return nil, err
-		}
-		insertedID, err := ensureID(bdoc)
+		bdoc, insertedID, err := transformAndEnsureID(coll.registry, doc)
 		if err != nil {
 			return nil, err
 		}
@@ -310,15 +284,9 @@ func (coll *Collection) InsertMany(ctx context.Context, documents []interface{},
 		result[i] = insertedID
 	}
 
-	// convert options into []option.InsertOptioner and dedup
-	manyOpts, _, err := insertopt.BundleMany(opts...).Unbundle(true)
-	if err != nil {
-		return nil, err
-	}
-
 	sess := sessionFromContext(ctx)
 
-	err = coll.client.ValidSession(sess)
+	err := coll.client.ValidSession(sess)
 	if err != nil {
 		return nil, err
 	}
@@ -332,19 +300,19 @@ func (coll *Collection) InsertMany(ctx context.Context, documents []interface{},
 	cmd := command.Insert{
 		NS:           command.Namespace{DB: oldns.DB, Collection: oldns.Collection},
 		Docs:         docs,
-		Opts:         manyOpts,
 		WriteConcern: wc,
 		Session:      sess,
 		Clock:        coll.client.clock,
 	}
 
-	res, err := dispatch.Insert(
+	res, err := driver.Insert(
 		ctx, cmd,
 		coll.client.topology,
 		coll.writeSelector,
 		coll.client.id,
 		coll.client.topology.SessionPool,
 		coll.client.retryWrites,
+		opts...,
 	)
 
 	switch err {
@@ -352,7 +320,7 @@ func (coll *Collection) InsertMany(ctx context.Context, documents []interface{},
 	case command.ErrUnacknowledgedWrite:
 		return &InsertManyResult{InsertedIDs: result}, ErrUnacknowledgedWrite
 	default:
-		return nil, err
+		return nil, replaceTopologyErr(err)
 	}
 	if len(res.WriteErrors) > 0 || res.WriteConcernError != nil {
 		bwErrors := make([]BulkWriteError, 0, len(res.WriteErrors))
@@ -376,14 +344,9 @@ func (coll *Collection) InsertMany(ctx context.Context, documents []interface{},
 	return &InsertManyResult{InsertedIDs: result}, err
 }
 
-// DeleteOne deletes a single document from the collection. A user can supply
-// a custom context to this method, or nil to default to context.Background().
-//
-// This method uses TransformDocument to turn the filter parameter into a
-// *bson.Document. See TransformDocument for the list of valid types for
-// filter.
+// DeleteOne deletes a single document from the collection.
 func (coll *Collection) DeleteOne(ctx context.Context, filter interface{},
-	opts ...deleteopt.Delete) (*DeleteResult, error) {
+	opts ...*options.DeleteOptions) (*DeleteResult, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
@@ -393,15 +356,11 @@ func (coll *Collection) DeleteOne(ctx context.Context, filter interface{},
 	if err != nil {
 		return nil, err
 	}
-	deleteDocs := []*bson.Document{
-		bson.NewDocument(
-			bson.EC.SubDocument("q", f),
-			bson.EC.Int32("limit", 1)),
-	}
-
-	deleteOpts, _, err := deleteopt.BundleDelete(opts...).Unbundle(true)
-	if err != nil {
-		return nil, err
+	deleteDocs := []bsonx.Doc{
+		{
+			{"q", bsonx.Document(f)},
+			{"limit", bsonx.Int32(1)},
+		},
 	}
 
 	sess := sessionFromContext(ctx)
@@ -420,19 +379,19 @@ func (coll *Collection) DeleteOne(ctx context.Context, filter interface{},
 	cmd := command.Delete{
 		NS:           command.Namespace{DB: oldns.DB, Collection: oldns.Collection},
 		Deletes:      deleteDocs,
-		Opts:         deleteOpts,
 		WriteConcern: wc,
 		Session:      sess,
 		Clock:        coll.client.clock,
 	}
 
-	res, err := dispatch.Delete(
+	res, err := driver.Delete(
 		ctx, cmd,
 		coll.client.topology,
 		coll.writeSelector,
 		coll.client.id,
 		coll.client.topology.SessionPool,
 		coll.client.retryWrites,
+		opts...,
 	)
 
 	rr, err := processWriteError(res.WriteConcernError, res.WriteErrors, err)
@@ -442,15 +401,9 @@ func (coll *Collection) DeleteOne(ctx context.Context, filter interface{},
 	return &DeleteResult{DeletedCount: int64(res.N)}, err
 }
 
-// DeleteMany deletes multiple documents from the collection. A user can
-// supply a custom context to this method, or nil to default to
-// context.Background().
-//
-// This method uses TransformDocument to turn the filter parameter into a
-// *bson.Document. See TransformDocument for the list of valid types for
-// filter.
+// DeleteMany deletes multiple documents from the collection.
 func (coll *Collection) DeleteMany(ctx context.Context, filter interface{},
-	opts ...deleteopt.Delete) (*DeleteResult, error) {
+	opts ...*options.DeleteOptions) (*DeleteResult, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
@@ -460,12 +413,7 @@ func (coll *Collection) DeleteMany(ctx context.Context, filter interface{},
 	if err != nil {
 		return nil, err
 	}
-	deleteDocs := []*bson.Document{bson.NewDocument(bson.EC.SubDocument("q", f), bson.EC.Int32("limit", 0))}
-
-	deleteOpts, _, err := deleteopt.BundleDelete(opts...).Unbundle(true)
-	if err != nil {
-		return nil, err
-	}
+	deleteDocs := []bsonx.Doc{{{"q", bsonx.Document(f)}, {"limit", bsonx.Int32(0)}}}
 
 	sess := sessionFromContext(ctx)
 
@@ -483,19 +431,19 @@ func (coll *Collection) DeleteMany(ctx context.Context, filter interface{},
 	cmd := command.Delete{
 		NS:           command.Namespace{DB: oldns.DB, Collection: oldns.Collection},
 		Deletes:      deleteDocs,
-		Opts:         deleteOpts,
 		WriteConcern: wc,
 		Session:      sess,
 		Clock:        coll.client.clock,
 	}
 
-	res, err := dispatch.Delete(
+	res, err := driver.Delete(
 		ctx, cmd,
 		coll.client.topology,
 		coll.writeSelector,
 		coll.client.id,
 		coll.client.topology.SessionPool,
 		false,
+		opts...,
 	)
 
 	rr, err := processWriteError(res.WriteConcernError, res.WriteErrors, err)
@@ -506,19 +454,19 @@ func (coll *Collection) DeleteMany(ctx context.Context, filter interface{},
 }
 
 func (coll *Collection) updateOrReplaceOne(ctx context.Context, filter,
-	update *bson.Document, sess *session.Client, opts ...option.UpdateOptioner) (*UpdateResult, error) {
+	update bsonx.Doc, sess *session.Client, opts ...*options.UpdateOptions) (*UpdateResult, error) {
 
 	// TODO: should session be taken from ctx or left as argument?
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
-	updateDocs := []*bson.Document{
-		bson.NewDocument(
-			bson.EC.SubDocument("q", filter),
-			bson.EC.SubDocument("u", update),
-			bson.EC.Boolean("multi", false),
-		),
+	updateDocs := []bsonx.Doc{
+		{
+			{"q", bsonx.Document(filter)},
+			{"u", bsonx.Document(update)},
+			{"multi", bsonx.Boolean(false)},
+		},
 	}
 
 	wc := coll.writeConcern
@@ -530,22 +478,22 @@ func (coll *Collection) updateOrReplaceOne(ctx context.Context, filter,
 	cmd := command.Update{
 		NS:           command.Namespace{DB: oldns.DB, Collection: oldns.Collection},
 		Docs:         updateDocs,
-		Opts:         opts,
 		WriteConcern: wc,
 		Session:      sess,
 		Clock:        coll.client.clock,
 	}
 
-	r, err := dispatch.Update(
+	r, err := driver.Update(
 		ctx, cmd,
 		coll.client.topology,
 		coll.writeSelector,
 		coll.client.id,
 		coll.client.topology.SessionPool,
 		coll.client.retryWrites,
+		opts...,
 	)
 	if err != nil && err != command.ErrUnacknowledgedWrite {
-		return nil, err
+		return nil, replaceTopologyErr(err)
 	}
 
 	res := &UpdateResult{
@@ -564,14 +512,9 @@ func (coll *Collection) updateOrReplaceOne(ctx context.Context, filter,
 	return res, err
 }
 
-// UpdateOne updates a single document in the collection. A user can supply a
-// custom context to this method, or nil to default to context.Background().
-//
-// This method uses TransformDocument to turn the filter and update parameter
-// into a *bson.Document. See TransformDocument for the list of valid types for
-// filter and update.
+// UpdateOne updates a single document in the collection.
 func (coll *Collection) UpdateOne(ctx context.Context, filter interface{}, update interface{},
-	options ...updateopt.Update) (*UpdateResult, error) {
+	opts ...*options.UpdateOptions) (*UpdateResult, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
@@ -591,11 +534,6 @@ func (coll *Collection) UpdateOne(ctx context.Context, filter interface{}, updat
 		return nil, err
 	}
 
-	updOpts, _, err := updateopt.BundleUpdate(options...).Unbundle(true)
-	if err != nil {
-		return nil, err
-	}
-
 	sess := sessionFromContext(ctx)
 
 	err = coll.client.ValidSession(sess)
@@ -603,17 +541,12 @@ func (coll *Collection) UpdateOne(ctx context.Context, filter interface{}, updat
 		return nil, err
 	}
 
-	return coll.updateOrReplaceOne(ctx, f, u, sess, updOpts...)
+	return coll.updateOrReplaceOne(ctx, f, u, sess, opts...)
 }
 
-// UpdateMany updates multiple documents in the collection. A user can supply
-// a custom context to this method, or nil to default to context.Background().
-//
-// This method uses TransformDocument to turn the filter and update parameter
-// into a *bson.Document. See TransformDocument for the list of valid types for
-// filter and update.
+// UpdateMany updates multiple documents in the collection.
 func (coll *Collection) UpdateMany(ctx context.Context, filter interface{}, update interface{},
-	opts ...updateopt.Update) (*UpdateResult, error) {
+	opts ...*options.UpdateOptions) (*UpdateResult, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
@@ -633,17 +566,12 @@ func (coll *Collection) UpdateMany(ctx context.Context, filter interface{}, upda
 		return nil, err
 	}
 
-	updateDocs := []*bson.Document{
-		bson.NewDocument(
-			bson.EC.SubDocument("q", f),
-			bson.EC.SubDocument("u", u),
-			bson.EC.Boolean("multi", true),
-		),
-	}
-
-	updOpts, _, err := updateopt.BundleUpdate(opts...).Unbundle(true)
-	if err != nil {
-		return nil, err
+	updateDocs := []bsonx.Doc{
+		{
+			{"q", bsonx.Document(f)},
+			{"u", bsonx.Document(u)},
+			{"multi", bsonx.Boolean(true)},
+		},
 	}
 
 	sess := sessionFromContext(ctx)
@@ -662,22 +590,22 @@ func (coll *Collection) UpdateMany(ctx context.Context, filter interface{}, upda
 	cmd := command.Update{
 		NS:           command.Namespace{DB: oldns.DB, Collection: oldns.Collection},
 		Docs:         updateDocs,
-		Opts:         updOpts,
 		WriteConcern: wc,
 		Session:      sess,
 		Clock:        coll.client.clock,
 	}
 
-	r, err := dispatch.Update(
+	r, err := driver.Update(
 		ctx, cmd,
 		coll.client.topology,
 		coll.writeSelector,
 		coll.client.id,
 		coll.client.topology.SessionPool,
 		false,
+		opts...,
 	)
 	if err != nil && err != command.ErrUnacknowledgedWrite {
-		return nil, err
+		return nil, replaceTopologyErr(err)
 	}
 	res := &UpdateResult{
 		MatchedCount:  r.MatchedCount,
@@ -696,14 +624,9 @@ func (coll *Collection) UpdateMany(ctx context.Context, filter interface{}, upda
 	return res, err
 }
 
-// ReplaceOne replaces a single document in the collection. A user can supply
-// a custom context to this method, or nil to default to context.Background().
-//
-// This method uses TransformDocument to turn the filter and replacement
-// parameter into a *bson.Document. See TransformDocument for the list of
-// valid types for filter and replacement.
+// ReplaceOne replaces a single document in the collection.
 func (coll *Collection) ReplaceOne(ctx context.Context, filter interface{},
-	replacement interface{}, opts ...replaceopt.Replace) (*UpdateResult, error) {
+	replacement interface{}, opts ...*options.ReplaceOptions) (*UpdateResult, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
@@ -719,13 +642,8 @@ func (coll *Collection) ReplaceOne(ctx context.Context, filter interface{},
 		return nil, err
 	}
 
-	if elem, ok := r.ElementAtOK(0); ok && strings.HasPrefix(elem.Key(), "$") {
+	if len(r) > 0 && strings.HasPrefix(r[0].Key, "$") {
 		return nil, errors.New("replacement document cannot contains keys beginning with '$")
-	}
-
-	repOpts, _, err := replaceopt.BundleReplace(opts...).Unbundle(true)
-	if err != nil {
-		return nil, err
 	}
 
 	sess := sessionFromContext(ctx)
@@ -735,24 +653,23 @@ func (coll *Collection) ReplaceOne(ctx context.Context, filter interface{},
 		return nil, err
 	}
 
-	updateOptions := make([]option.UpdateOptioner, 0, len(opts))
-	for _, opt := range repOpts {
-		updateOptions = append(updateOptions, opt)
+	updateOptions := make([]*options.UpdateOptions, 0, len(opts))
+	for _, opt := range opts {
+		uOpts := options.Update()
+		uOpts.BypassDocumentValidation = opt.BypassDocumentValidation
+		uOpts.Collation = opt.Collation
+		uOpts.Upsert = opt.Upsert
+		updateOptions = append(updateOptions, uOpts)
 	}
 
 	return coll.updateOrReplaceOne(ctx, f, r, sess, updateOptions...)
 }
 
-// Aggregate runs an aggregation framework pipeline. A user can supply a custom context to
-// this method.
+// Aggregate runs an aggregation framework pipeline.
 //
 // See https://docs.mongodb.com/manual/aggregation/.
-//
-// This method uses TransformDocument to turn the pipeline parameter into a
-// *bson.Document. See TransformDocument for the list of valid types for
-// pipeline.
 func (coll *Collection) Aggregate(ctx context.Context, pipeline interface{},
-	opts ...aggregateopt.Aggregate) (Cursor, error) {
+	opts ...*options.AggregateOptions) (Cursor, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
@@ -763,11 +680,7 @@ func (coll *Collection) Aggregate(ctx context.Context, pipeline interface{},
 		return nil, err
 	}
 
-	// convert options into []option.Optioner and dedup
-	aggOpts, _, err := aggregateopt.BundleAggregate(opts...).Unbundle(true)
-	if err != nil {
-		return nil, err
-	}
+	aggOpts := options.MergeAggregateOptions(opts...)
 
 	sess := sessionFromContext(ctx)
 
@@ -790,7 +703,6 @@ func (coll *Collection) Aggregate(ctx context.Context, pipeline interface{},
 	cmd := command.Aggregate{
 		NS:           command.Namespace{DB: oldns.DB, Collection: oldns.Collection},
 		Pipeline:     pipelineArr,
-		Opts:         aggOpts,
 		ReadPref:     coll.readPreference,
 		WriteConcern: wc,
 		ReadConcern:  rc,
@@ -798,35 +710,29 @@ func (coll *Collection) Aggregate(ctx context.Context, pipeline interface{},
 		Clock:        coll.client.clock,
 	}
 
-	return dispatch.Aggregate(
+	cursor, err := driver.Aggregate(
 		ctx, cmd,
 		coll.client.topology,
 		coll.readSelector,
 		coll.writeSelector,
 		coll.client.id,
 		coll.client.topology.SessionPool,
+		coll.registry,
+		aggOpts,
 	)
+
+	return cursor, replaceTopologyErr(err)
 }
 
-// Count gets the number of documents matching the filter. A user can supply a
-// custom context to this method, or nil to default to context.Background().
-//
-// This method uses TransformDocument to turn the filter parameter into a
-// *bson.Document. See TransformDocument for the list of valid types for
-// filter.
+// Count gets the number of documents matching the filter.
 func (coll *Collection) Count(ctx context.Context, filter interface{},
-	opts ...countopt.Count) (int64, error) {
+	opts ...*options.CountOptions) (int64, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
 	f, err := transformDocument(coll.registry, filter)
-	if err != nil {
-		return 0, err
-	}
-
-	countOpts, _, err := countopt.BundleCount(opts...).Unbundle(true)
 	if err != nil {
 		return 0, err
 	}
@@ -847,40 +753,36 @@ func (coll *Collection) Count(ctx context.Context, filter interface{},
 	cmd := command.Count{
 		NS:          command.Namespace{DB: oldns.DB, Collection: oldns.Collection},
 		Query:       f,
-		Opts:        countOpts,
 		ReadPref:    coll.readPreference,
 		ReadConcern: rc,
 		Session:     sess,
 		Clock:       coll.client.clock,
 	}
 
-	return dispatch.Count(
+	count, err := driver.Count(
 		ctx, cmd,
 		coll.client.topology,
 		coll.readSelector,
 		coll.client.id,
 		coll.client.topology.SessionPool,
+		coll.registry,
+		opts...,
 	)
+
+	return count, replaceTopologyErr(err)
 }
 
-// CountDocuments gets the number of documents matching the filter. A user can supply a
-// custom context to this method, or nil to default to context.Background().
-//
-// This method uses countDocumentsAggregatePipeline to turn the filter parameter and options
-// into aggregate pipeline.
+// CountDocuments gets the number of documents matching the filter.
 func (coll *Collection) CountDocuments(ctx context.Context, filter interface{},
-	opts ...countopt.Count) (int64, error) {
+	opts ...*options.CountOptions) (int64, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
-	pipelineArr, err := countDocumentsAggregatePipeline(coll.registry, filter, opts...)
-	if err != nil {
-		return 0, err
-	}
+	countOpts := options.MergeCountOptions(opts...)
 
-	countOpts, _, err := countopt.BundleCount(opts...).Unbundle(true)
+	pipelineArr, err := countDocumentsAggregatePipeline(coll.registry, filter, countOpts)
 	if err != nil {
 		return 0, err
 	}
@@ -901,37 +803,36 @@ func (coll *Collection) CountDocuments(ctx context.Context, filter interface{},
 	cmd := command.CountDocuments{
 		NS:          command.Namespace{DB: oldns.DB, Collection: oldns.Collection},
 		Pipeline:    pipelineArr,
-		Opts:        countOpts,
 		ReadPref:    coll.readPreference,
 		ReadConcern: rc,
 		Session:     sess,
 		Clock:       coll.client.clock,
 	}
-	return dispatch.CountDocuments(
+
+	count, err := driver.CountDocuments(
 		ctx, cmd,
 		coll.client.topology,
 		coll.readSelector,
 		coll.client.id,
 		coll.client.topology.SessionPool,
+		coll.registry,
+		countOpts,
 	)
+
+	return count, replaceTopologyErr(err)
 }
 
 // EstimatedDocumentCount gets an estimate of the count of documents in a collection using collection metadata.
 func (coll *Collection) EstimatedDocumentCount(ctx context.Context,
-	opts ...countopt.EstimatedDocumentCount) (int64, error) {
+	opts ...*options.EstimatedDocumentCountOptions) (int64, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
-	countOpts, _, err := countopt.BundleEstimatedDocumentCount(opts...).Unbundle(true)
-	if err != nil {
-		return 0, err
-	}
-
 	sess := sessionFromContext(ctx)
 
-	err = coll.client.ValidSession(sess)
+	err := coll.client.ValidSession(sess)
 	if err != nil {
 		return 0, err
 	}
@@ -944,48 +845,47 @@ func (coll *Collection) EstimatedDocumentCount(ctx context.Context,
 	oldns := coll.namespace()
 	cmd := command.Count{
 		NS:          command.Namespace{DB: oldns.DB, Collection: oldns.Collection},
-		Query:       bson.NewDocument(),
-		Opts:        countOpts,
+		Query:       bsonx.Doc{},
 		ReadPref:    coll.readPreference,
 		ReadConcern: rc,
 		Session:     sess,
 		Clock:       coll.client.clock,
 	}
-	return dispatch.Count(
+
+	countOpts := options.Count()
+	if len(opts) >= 1 {
+		countOpts = countOpts.SetMaxTime(*opts[len(opts)-1].MaxTime)
+	}
+
+	count, err := driver.Count(
 		ctx, cmd,
 		coll.client.topology,
 		coll.readSelector,
 		coll.client.id,
 		coll.client.topology.SessionPool,
+		coll.registry,
+		countOpts,
 	)
+
+	return count, replaceTopologyErr(err)
 }
 
 // Distinct finds the distinct values for a specified field across a single
-// collection. A user can supply a custom context to this method, or nil to
-// default to context.Background().
-//
-// This method uses TransformDocument to turn the filter parameter into a
-// *bson.Document. See TransformDocument for the list of valid types for
-// filter.
+// collection.
 func (coll *Collection) Distinct(ctx context.Context, fieldName string, filter interface{},
-	opts ...distinctopt.Distinct) ([]interface{}, error) {
+	opts ...*options.DistinctOptions) ([]interface{}, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
-	var f *bson.Document
+	var f bsonx.Doc
 	var err error
 	if filter != nil {
 		f, err = transformDocument(coll.registry, filter)
 		if err != nil {
 			return nil, err
 		}
-	}
-
-	distinctOpts, _, err := distinctopt.BundleDistinct(opts...).Unbundle(true)
-	if err != nil {
-		return nil, err
 	}
 
 	sess := sessionFromContext(ctx)
@@ -1005,41 +905,36 @@ func (coll *Collection) Distinct(ctx context.Context, fieldName string, filter i
 		NS:          command.Namespace{DB: oldns.DB, Collection: oldns.Collection},
 		Field:       fieldName,
 		Query:       f,
-		Opts:        distinctOpts,
 		ReadPref:    coll.readPreference,
 		ReadConcern: rc,
 		Session:     sess,
 		Clock:       coll.client.clock,
 	}
 
-	res, err := dispatch.Distinct(
+	res, err := driver.Distinct(
 		ctx, cmd,
 		coll.client.topology,
 		coll.readSelector,
 		coll.client.id,
 		coll.client.topology.SessionPool,
+		opts...,
 	)
 	if err != nil {
-		return nil, err
+		return nil, replaceTopologyErr(err)
 	}
 
 	return res.Values, nil
 }
 
-// Find finds the documents matching a model. A user can supply a custom context to this
-// method.
-//
-// This method uses TransformDocument to turn the filter parameter into a
-// *bson.Document. See TransformDocument for the list of valid types for
-// filter.
+// Find finds the documents matching a model.
 func (coll *Collection) Find(ctx context.Context, filter interface{},
-	opts ...findopt.Find) (Cursor, error) {
+	opts ...*options.FindOptions) (Cursor, error) {
 
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
-	var f *bson.Document
+	var f bsonx.Doc
 	var err error
 	if filter != nil {
 		f, err = transformDocument(coll.registry, filter)
@@ -1048,11 +943,6 @@ func (coll *Collection) Find(ctx context.Context, filter interface{},
 		}
 	}
 
-	findOpts, _, err := findopt.BundleFind(opts...).Unbundle(true)
-	if err != nil {
-		return nil, err
-	}
-
 	sess := sessionFromContext(ctx)
 
 	err = coll.client.ValidSession(sess)
@@ -1069,56 +959,47 @@ func (coll *Collection) Find(ctx context.Context, filter interface{},
 	cmd := command.Find{
 		NS:          command.Namespace{DB: oldns.DB, Collection: oldns.Collection},
 		Filter:      f,
-		Opts:        findOpts,
 		ReadPref:    coll.readPreference,
 		ReadConcern: rc,
 		Session:     sess,
 		Clock:       coll.client.clock,
 	}
 
-	return dispatch.Find(
+	cursor, err := driver.Find(
 		ctx, cmd,
 		coll.client.topology,
 		coll.readSelector,
 		coll.client.id,
 		coll.client.topology.SessionPool,
+		coll.registry,
+		opts...,
 	)
+
+	return cursor, replaceTopologyErr(err)
 }
 
-// FindOne returns up to one document that matches the model. A user can
-// supply a custom context to this method, or nil to default to
-// context.Background().
-//
-// This method uses TransformDocument to turn the filter parameter into a
-// *bson.Document. See TransformDocument for the list of valid types for
-// filter.
+// FindOne returns up to one document that matches the model.
 func (coll *Collection) FindOne(ctx context.Context, filter interface{},
-	opts ...findopt.One) *DocumentResult {
+	opts ...*options.FindOneOptions) *SingleResult {
 
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
-	var f *bson.Document
+	var f bsonx.Doc
 	var err error
 	if filter != nil {
 		f, err = transformDocument(coll.registry, filter)
 		if err != nil {
-			return &DocumentResult{err: err}
+			return &SingleResult{err: err}
 		}
 	}
-
-	findOneOpts, _, err := findopt.BundleOne(opts...).Unbundle(true)
-	if err != nil {
-		return &DocumentResult{err: err}
-	}
-	findOneOpts = append(findOneOpts, findopt.Limit(1).ConvertFindOption())
 
 	sess := sessionFromContext(ctx)
 
 	err = coll.client.ValidSession(sess)
 	if err != nil {
-		return &DocumentResult{err: err}
+		return &SingleResult{err: err}
 	}
 
 	rc := coll.readConcern
@@ -1130,62 +1011,74 @@ func (coll *Collection) FindOne(ctx context.Context, filter interface{},
 	cmd := command.Find{
 		NS:          command.Namespace{DB: oldns.DB, Collection: oldns.Collection},
 		Filter:      f,
-		Opts:        findOneOpts,
 		ReadPref:    coll.readPreference,
 		ReadConcern: rc,
 		Session:     sess,
 		Clock:       coll.client.clock,
 	}
 
-	cursor, err := dispatch.Find(
+	findOpts := make([]*options.FindOptions, len(opts))
+	for i, opt := range opts {
+		findOpts[i] = &options.FindOptions{
+			AllowPartialResults: opt.AllowPartialResults,
+			BatchSize:           opt.BatchSize,
+			Collation:           opt.Collation,
+			Comment:             opt.Comment,
+			CursorType:          opt.CursorType,
+			Hint:                opt.Hint,
+			Max:                 opt.Max,
+			MaxAwaitTime:        opt.MaxAwaitTime,
+			Min:                 opt.Min,
+			NoCursorTimeout:     opt.NoCursorTimeout,
+			OplogReplay:         opt.OplogReplay,
+			Projection:          opt.Projection,
+			ReturnKey:           opt.ReturnKey,
+			ShowRecordID:        opt.ShowRecordID,
+			Skip:                opt.Skip,
+			Snapshot:            opt.Snapshot,
+			Sort:                opt.Sort,
+		}
+	}
+
+	cursor, err := driver.Find(
 		ctx, cmd,
 		coll.client.topology,
 		coll.readSelector,
 		coll.client.id,
 		coll.client.topology.SessionPool,
+		coll.registry,
+		findOpts...,
 	)
 	if err != nil {
-		return &DocumentResult{err: err}
+		return &SingleResult{err: replaceTopologyErr(err)}
 	}
 
-	return &DocumentResult{cur: cursor, reg: coll.registry}
+	return &SingleResult{cur: cursor, reg: coll.registry}
 }
 
 // FindOneAndDelete find a single document and deletes it, returning the
-// original in result.  The document to return may be nil.
-//
-// A user can supply a custom context to this method, or nil to default to
-// context.Background().
-//
-// This method uses TransformDocument to turn the filter parameter into a
-// *bson.Document. See TransformDocument for the list of valid types for
-// filter.
+// original in result.
 func (coll *Collection) FindOneAndDelete(ctx context.Context, filter interface{},
-	opts ...findopt.DeleteOne) *DocumentResult {
+	opts ...*options.FindOneAndDeleteOptions) *SingleResult {
 
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
-	var f *bson.Document
+	var f bsonx.Doc
 	var err error
 	if filter != nil {
 		f, err = transformDocument(coll.registry, filter)
 		if err != nil {
-			return &DocumentResult{err: err}
+			return &SingleResult{err: err}
 		}
-	}
-
-	findOpts, _, err := findopt.BundleDeleteOne(opts...).Unbundle(true)
-	if err != nil {
-		return &DocumentResult{err: err}
 	}
 
 	sess := sessionFromContext(ctx)
 
 	err = coll.client.ValidSession(sess)
 	if err != nil {
-		return &DocumentResult{err: err}
+		return &SingleResult{err: err}
 	}
 
 	oldns := coll.namespace()
@@ -1197,38 +1090,32 @@ func (coll *Collection) FindOneAndDelete(ctx context.Context, filter interface{}
 	cmd := command.FindOneAndDelete{
 		NS:           command.Namespace{DB: oldns.DB, Collection: oldns.Collection},
 		Query:        f,
-		Opts:         findOpts,
 		WriteConcern: wc,
 		Session:      sess,
 		Clock:        coll.client.clock,
 	}
 
-	res, err := dispatch.FindOneAndDelete(
+	res, err := driver.FindOneAndDelete(
 		ctx, cmd,
 		coll.client.topology,
 		coll.writeSelector,
 		coll.client.id,
 		coll.client.topology.SessionPool,
 		coll.client.retryWrites,
+		coll.registry,
+		opts...,
 	)
 	if err != nil {
-		return &DocumentResult{err: err}
+		return &SingleResult{err: replaceTopologyErr(err)}
 	}
 
-	return &DocumentResult{rdr: res.Value, reg: coll.registry}
+	return &SingleResult{rdr: res.Value, reg: coll.registry}
 }
 
 // FindOneAndReplace finds a single document and replaces it, returning either
-// the original or the replaced document. The document to return may be nil.
-//
-// A user can supply a custom context to this method, or nil to default to
-// context.Background().
-//
-// This method uses TransformDocument to turn the filter and replacement
-// parameter into a *bson.Document. See TransformDocument for the list of
-// valid types for filter and replacement.
+// the original or the replaced document.
 func (coll *Collection) FindOneAndReplace(ctx context.Context, filter interface{},
-	replacement interface{}, opts ...findopt.ReplaceOne) *DocumentResult {
+	replacement interface{}, opts ...*options.FindOneAndReplaceOptions) *SingleResult {
 
 	if ctx == nil {
 		ctx = context.Background()
@@ -1236,28 +1123,23 @@ func (coll *Collection) FindOneAndReplace(ctx context.Context, filter interface{
 
 	f, err := transformDocument(coll.registry, filter)
 	if err != nil {
-		return &DocumentResult{err: err}
+		return &SingleResult{err: err}
 	}
 
 	r, err := transformDocument(coll.registry, replacement)
 	if err != nil {
-		return &DocumentResult{err: err}
+		return &SingleResult{err: err}
 	}
 
-	if elem, ok := r.ElementAtOK(0); ok && strings.HasPrefix(elem.Key(), "$") {
-		return &DocumentResult{err: errors.New("replacement document cannot contains keys beginning with '$")}
-	}
-
-	findOpts, _, err := findopt.BundleReplaceOne(opts...).Unbundle(true)
-	if err != nil {
-		return &DocumentResult{err: err}
+	if len(r) > 0 && strings.HasPrefix(r[0].Key, "$") {
+		return &SingleResult{err: errors.New("replacement document cannot contains keys beginning with '$")}
 	}
 
 	sess := sessionFromContext(ctx)
 
 	err = coll.client.ValidSession(sess)
 	if err != nil {
-		return &DocumentResult{err: err}
+		return &SingleResult{err: err}
 	}
 
 	wc := coll.writeConcern
@@ -1270,38 +1152,32 @@ func (coll *Collection) FindOneAndReplace(ctx context.Context, filter interface{
 		NS:           command.Namespace{DB: oldns.DB, Collection: oldns.Collection},
 		Query:        f,
 		Replacement:  r,
-		Opts:         findOpts,
 		WriteConcern: wc,
 		Session:      sess,
 		Clock:        coll.client.clock,
 	}
 
-	res, err := dispatch.FindOneAndReplace(
+	res, err := driver.FindOneAndReplace(
 		ctx, cmd,
 		coll.client.topology,
 		coll.writeSelector,
 		coll.client.id,
 		coll.client.topology.SessionPool,
 		coll.client.retryWrites,
+		coll.registry,
+		opts...,
 	)
 	if err != nil {
-		return &DocumentResult{err: err}
+		return &SingleResult{err: replaceTopologyErr(err)}
 	}
 
-	return &DocumentResult{rdr: res.Value, reg: coll.registry}
+	return &SingleResult{rdr: res.Value, reg: coll.registry}
 }
 
 // FindOneAndUpdate finds a single document and updates it, returning either
-// the original or the updated. The document to return may be nil.
-//
-// A user can supply a custom context to this method, or nil to default to
-// context.Background().
-//
-// This method uses TransformDocument to turn the filter and update parameter
-// into a *bson.Document. See TransformDocument for the list of valid types for
-// filter and update.
+// the original or the updated.
 func (coll *Collection) FindOneAndUpdate(ctx context.Context, filter interface{},
-	update interface{}, opts ...findopt.UpdateOne) *DocumentResult {
+	update interface{}, opts ...*options.FindOneAndUpdateOptions) *SingleResult {
 
 	if ctx == nil {
 		ctx = context.Background()
@@ -1309,28 +1185,23 @@ func (coll *Collection) FindOneAndUpdate(ctx context.Context, filter interface{}
 
 	f, err := transformDocument(coll.registry, filter)
 	if err != nil {
-		return &DocumentResult{err: err}
+		return &SingleResult{err: err}
 	}
 
 	u, err := transformDocument(coll.registry, update)
 	if err != nil {
-		return &DocumentResult{err: err}
+		return &SingleResult{err: err}
 	}
 
-	if elem, ok := u.ElementAtOK(0); !ok || !strings.HasPrefix(elem.Key(), "$") {
-		return &DocumentResult{err: errors.New("update document must contain key beginning with '$")}
-	}
-
-	findOpts, _, err := findopt.BundleUpdateOne(opts...).Unbundle(true)
-	if err != nil {
-		return &DocumentResult{err: err}
+	if len(u) > 0 && !strings.HasPrefix(u[0].Key, "$") {
+		return &SingleResult{err: errors.New("update document must contain key beginning with '$")}
 	}
 
 	sess := sessionFromContext(ctx)
 
 	err = coll.client.ValidSession(sess)
 	if err != nil {
-		return &DocumentResult{err: err}
+		return &SingleResult{err: err}
 	}
 
 	wc := coll.writeConcern
@@ -1343,32 +1214,35 @@ func (coll *Collection) FindOneAndUpdate(ctx context.Context, filter interface{}
 		NS:           command.Namespace{DB: oldns.DB, Collection: oldns.Collection},
 		Query:        f,
 		Update:       u,
-		Opts:         findOpts,
 		WriteConcern: wc,
 		Session:      sess,
 		Clock:        coll.client.clock,
 	}
 
-	res, err := dispatch.FindOneAndUpdate(
+	res, err := driver.FindOneAndUpdate(
 		ctx, cmd,
 		coll.client.topology,
 		coll.writeSelector,
 		coll.client.id,
 		coll.client.topology.SessionPool,
 		coll.client.retryWrites,
+		coll.registry,
+		opts...,
 	)
 	if err != nil {
-		return &DocumentResult{err: err}
+		return &SingleResult{err: replaceTopologyErr(err)}
 	}
 
-	return &DocumentResult{rdr: res.Value, reg: coll.registry}
+	return &SingleResult{rdr: res.Value, reg: coll.registry}
 }
 
 // Watch returns a change stream cursor used to receive notifications of changes to the collection.
+//
 // This method is preferred to running a raw aggregation with a $changeStream stage because it
-// supports resumability in the case of some errors.
+// supports resumability in the case of some errors. The collection must have read concern majority or no read concern
+// for a change stream to be created successfully.
 func (coll *Collection) Watch(ctx context.Context, pipeline interface{},
-	opts ...changestreamopt.ChangeStream) (Cursor, error) {
+	opts ...*options.ChangeStreamOptions) (Cursor, error) {
 	return newChangeStream(ctx, coll, pipeline, opts...)
 }
 
@@ -1378,7 +1252,7 @@ func (coll *Collection) Indexes() IndexView {
 }
 
 // Drop drops this collection from database.
-func (coll *Collection) Drop(ctx context.Context, opts ...dropcollopt.DropColl) error {
+func (coll *Collection) Drop(ctx context.Context) error {
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -1402,7 +1276,7 @@ func (coll *Collection) Drop(ctx context.Context, opts ...dropcollopt.DropColl) 
 		Session:      sess,
 		Clock:        coll.client.clock,
 	}
-	_, err = dispatch.DropCollection(
+	_, err = driver.DropCollection(
 		ctx, cmd,
 		coll.client.topology,
 		coll.writeSelector,
@@ -1410,7 +1284,7 @@ func (coll *Collection) Drop(ctx context.Context, opts ...dropcollopt.DropColl) 
 		coll.client.topology.SessionPool,
 	)
 	if err != nil && !command.IsNotFound(err) {
-		return err
+		return replaceTopologyErr(err)
 	}
 	return nil
 }

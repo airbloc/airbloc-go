@@ -12,7 +12,6 @@ import (
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
-	"github.com/mongodb/mongo-go-driver/mongo/findopt"
 	"golang.org/x/crypto/ed25519"
 )
 
@@ -93,39 +92,46 @@ func (db *bigchainDB) Create(
 
 func (db *bigchainDB) RetrieveOne(
 	ctx context.Context,
-	query *bson.Document,
-	opts ...findopt.One,
-) (*bson.Document, error) {
+	query bson.M,
+) (bson.M, error) {
 	metaDB := db.mdb.Collection(BigchainAssetCollection)
-	res := metaDB.FindOne(ctx, query, opts...)
+	res := metaDB.FindOne(ctx, query)
 
-	doc := bson.NewDocument()
-	err := res.Decode(&doc)
+	var result bson.M
+	err := res.Decode(&result)
 	if err != nil {
 		return nil, err
 	}
 
 	// TODO: filter burned assets
-	return doc, nil
+	return result, nil
 }
 
 func (db *bigchainDB) RetrieveMany(
 	ctx context.Context,
-	query *bson.Document,
-	opts ...findopt.Find,
-) (*bson.Document, error) {
+	query bson.M,
+) ([]bson.M, error) {
 	metaDB := db.mdb.Collection(BigchainAssetCollection)
 
-	cursor, err := metaDB.Find(ctx, query, opts...)
+	cursor, err := metaDB.Find(ctx, query)
 	if err != nil {
 		return nil, err
 	}
+	defer cursor.Close(ctx)
 
-	doc := bson.NewDocument()
-	cursor.Decode(&doc)
-
+	var results []bson.M
+	for cursor.Next(ctx) {
+		var result bson.M
+		if err := cursor.Decode(&result); err != nil {
+			return nil, err
+		}
+		results = append(results, result)
+	}
+	if cursor.Err() != nil {
+		return nil, cursor.Err()
+	}
 	// TODO: filter burned assets
-	return doc, nil
+	return results, nil
 }
 
 func (db *bigchainDB) Append(

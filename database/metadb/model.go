@@ -8,7 +8,6 @@ import (
 	"github.com/azer/logger"
 	"github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/mongo/findopt"
 	"golang.org/x/crypto/ed25519"
 )
 
@@ -29,11 +28,10 @@ func NewModel(database Database, name string) *Model {
 }
 
 func (model *Model) Create(immutableData map[string]interface{}, mutableData map[string]interface{}) (*transaction.Transaction, error) {
-	assetData := make(map[string]interface{})
-	assetData["type"] = model.Name
-	assetData["data"] = immutableData
-	asset := transaction.Asset{Data: assetData}
-
+	asset := transaction.Asset{Data: map[string]interface{}{
+		"type": model.Name,
+		"data": immutableData,
+	}}
 	tx, err := model.database.Create(asset, mutableData, BigchainTxModeDefault)
 	if err != nil {
 		return tx, err
@@ -43,12 +41,50 @@ func (model *Model) Create(immutableData map[string]interface{}, mutableData map
 	return tx, nil
 }
 
-func (model *Model) RetrieveAsset(query *bson.Document) (*bson.Document, error) {
-	panic("implement me")
+func unwrap(rawAsset interface{}) bson.M {
+	// Unwraps {
+	//   "_id": MongoObjectId,
+	//   "id": BigchainDBTxID,
+	//   "data": {
+	//     "type": ModelType,
+	//     "data": ModelData
+	//   }
+	// }
+	// into {"_id": BigchainDBTxID, ...ModelData}
+	asset := rawAsset.(bson.M)
+	assetData := asset["data"].(bson.M)
+	data := assetData["data"].(bson.M)
+
+	data["_id"] = asset["_id"]
+	return data
 }
 
-func (model *Model) RetrieveMany(context.Context, *bson.Document, ...findopt.Find) (*bson.Document, error) {
-	panic("implement me")
+func (model *Model) RetrieveAsset(query bson.M) (bson.M, error) {
+	// since data is included in "data" object, we need to wrap query
+	wrappedQuery := bson.M{"data.data": query}
+
+	asset, err := model.database.RetrieveOne(context.Background(), wrappedQuery)
+	if err != nil {
+		return nil, err
+	}
+	return unwrap(asset), err
+}
+
+func (model *Model) RetrieveMany(ctx context.Context, query bson.M) ([]bson.M, error) {
+	// since data is included in "data" object, we need to wrap query
+	wrappedQuery := bson.M{"data.data": query}
+
+	assets, err := model.database.RetrieveMany(ctx, wrappedQuery)
+	if err != nil {
+		return nil, err
+	}
+
+	// unwrap results
+	var results []bson.M
+	for _, asset := range assets {
+		results = append(results, unwrap(asset))
+	}
+	return results, nil
 }
 
 func (model *Model) Append(string, ed25519.PublicKey, transaction.Metadata, Mode) error {

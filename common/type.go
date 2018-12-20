@@ -24,6 +24,9 @@ func HexToID(idStr string) (ID, error) {
 	if err != nil {
 		return id, err
 	}
+	if len(byteId) != IDLength {
+		return id, errors.Errorf("invalid ID: %s", idStr)
+	}
 	copy(id[:], byteId[:IDLength])
 	return BytesToID(byteId), nil
 }
@@ -73,4 +76,21 @@ func (id *ID) UnmarshalJSON(b []byte) error {
 
 func (id *ID) MarshalJSON() ([]byte, error) {
 	return json.Marshal(id.Hex())
+}
+
+func IDListToByteList(ids []ID) [][8]byte {
+	byteIds := make([][8]byte, len(ids))
+	for i, id := range ids {
+		byteIds[i] = id
+	}
+	return byteIds
+}
+
+// IDFilter fucks with go-ethereum/accounts/abi/bind/topics.go
+func IDFilter(ids ...ID) [][32]byte {
+	byteIds := make([][32]byte, len(ids))
+	for i, id := range ids {
+		copy(byteIds[i][:8], id[:])
+	}
+	return byteIds
 }
