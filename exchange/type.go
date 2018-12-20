@@ -5,25 +5,21 @@ import (
 )
 
 type Escrow struct {
-	Addr      common.Address
-	OpenSign  [4]byte
-	OpenArgs  []byte
-	CloseSign [4]byte
-	CloseArgs []byte
+	Addr common.Address
+	Sign [4]byte
+	Args []byte
 }
 
 type Offer struct {
-	From     common.Address
-	To       common.Address
-	DataIds  [][16]byte
-	Escrow   *Escrow
-	Status   uint8
-	Reverted bool
+	From    common.Address
+	To      common.Address
+	DataIds [][20]byte
+	Escrow  *Escrow
+	Status  uint8
 }
 
 type OfferCompact struct {
-	From     common.Address
-	To       common.Address
-	Escrow   common.Address
-	Reverted bool
+	From   common.Address
+	To     common.Address
+	Escrow common.Address
 }

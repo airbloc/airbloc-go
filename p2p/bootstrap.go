@@ -2,6 +2,7 @@ package p2p
 
 import (
 	"context"
+
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-host"

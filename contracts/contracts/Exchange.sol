@@ -1,7 +1,6 @@
 pragma solidity ^0.4.24;
 
 import "./ExchangeLib.sol";
-import "openzeppelin-solidity/contracts/introspection/IERC165.sol";
 import "openzeppelin-solidity/contracts/utils/ReentrancyGuard.sol";
 
 contract Exchange is ReentrancyGuard {
@@ -12,7 +11,7 @@ contract Exchange is ReentrancyGuard {
     event OfferPresented(bytes8 indexed _offerId);
     event OfferSettled(bytes8 indexed _offerId);
     event OfferRejected(bytes8 indexed _offerId);
-    event Receipt(bytes8 indexed _offerId, address indexed _offeror, address indexed _to);
+    event Receipt(bytes8 indexed _offerId, address indexed _from, address indexed _to);
 
     ExchangeLib.Orderbook orderbook;
     mapping(address => bytes8[]) public toIndex;
@@ -29,16 +28,12 @@ contract Exchange is ReentrancyGuard {
     function prepare(
         address _to,
         address _escrow,
-        bytes4 _escrowOpenSign,
-        bytes memory _escrowOpenArgs,
-        bytes4 _escrowCloseSign,
-        bytes memory _escrowCloseArgs,
-        bytes16[] memory _dataIds
+        bytes4 _escrowSign,
+        bytes memory _escrowArgs,
+        bytes20[] memory _dataIds
     ) public {
         require(_to != address(0), "invalid offere address");
         require(_escrow != address(0), "invalid contract address");
-        require(IERC165(_escrow).supportsInterface(_escrowOpenSign), "open interface not supported");
-        require(IERC165(_escrow).supportsInterface(_escrowCloseSign), "close interface not supported");
 
         bytes8 offerId = orderbook.prepare(
             ExchangeLib.Offer({
@@ -47,10 +42,8 @@ contract Exchange is ReentrancyGuard {
                 dataIds: _dataIds,
                 escrow: ExchangeLib.Escrow({
                     addr: _escrow,
-                    openSign: _escrowOpenSign,
-                    openArgs: _escrowOpenArgs,
-                    closeSign: _escrowCloseSign,
-                    closeArgs: _escrowCloseArgs
+                    sign: _escrowSign,
+                    args: _escrowArgs
                 }),
                 status: ExchangeLib.OfferStatus.NEUTRAL,
                 reverted: false
@@ -61,7 +54,7 @@ contract Exchange is ReentrancyGuard {
 
     function addDataIds(
         bytes8 _offerId,
-        bytes16[] memory _dataIds
+        bytes20[] memory _dataIds
     ) public {
         ExchangeLib.Offer storage offer = orderbook.getOffer(_offerId);
         require(offer.status == ExchangeLib.OfferStatus.NEUTRAL, "neutral state only");
@@ -79,28 +72,22 @@ contract Exchange is ReentrancyGuard {
         emit OfferPresented(_offerId);
     }
 
+    event SettleResult(bool res);
     function settle(bytes8 _offerId) public nonReentrant {
         // add settle options
-        orderbook.settle(_offerId);
-        require(orderbook.open(_offerId), "failed to open escrow transaction");
+        require(orderbook.settle(_offerId), "failed to settle order");
+        ExchangeLib.Offer storage offer = _getOffer(_offerId);
+
+        toIndex[offer.to].push(_offerId);
+        fromIndex[offer.from].push(_offerId);
+        escrowIndex[offer.escrow.addr].push(_offerId);
         emit OfferSettled(_offerId);
+        emit Receipt(_offerId, offer.to, offer.from);
     }
 
     function reject(bytes8 _offerId) public {
         orderbook.reject(_offerId);
         emit OfferRejected(_offerId);
-    }
-
-    function close(bytes8 _offerId) public nonReentrant returns (bool) {
-        ExchangeLib.Offer storage offer = _getOffer(_offerId);
-
-        require(orderbook.close(_offerId), "failed to close escrow transaction");
-        // add some options (timeout, brokers, etc..)
-        toIndex[offer.to].push(_offerId);
-        fromIndex[offer.from].push(_offerId);
-        escrowIndex[offer.escrow.addr].push(_offerId);
-        emit Receipt(_offerId, offer.to, offer.from);
-        return offer.reverted;
     }
 
     function getReceiptsByOfferor(address _from) public view returns (bytes8[] memory) {return toIndex[_from];}
@@ -121,16 +108,14 @@ contract Exchange is ReentrancyGuard {
         returns (
             address, // from
             address, // to
-            address, // escrow.addr
-            bool     // reverted
+            address // escrow.addr
         )
     {
         ExchangeLib.Offer storage offer = _getOffer(_offerId);
         return (
             offer.from,
             offer.to,
-            offer.escrow.addr,
-            offer.reverted
+            offer.escrow.addr
         );
     }
 
@@ -140,16 +125,13 @@ contract Exchange is ReentrancyGuard {
         returns (
             address,         //from
             address,         //to
-            bytes16[] memory, //dataIds
+            bytes20[] memory, //dataIds
             // Escrow
             address,      // addr
-            bytes4,       // open sign
-            bytes memory, // open args
-            bytes4,       // close sign
-            bytes memory, // close args
+            bytes4,       // sign
+            bytes memory, // args
             // Status
-            ExchangeLib.OfferStatus, // status
-            bool                     // reverted
+            ExchangeLib.OfferStatus // status
         )
     {
         ExchangeLib.Offer storage offer = _getOffer(_offerId);
@@ -159,12 +141,9 @@ contract Exchange is ReentrancyGuard {
             offer.to,
             offer.dataIds,
             escrow.addr,
-            escrow.openSign,
-            escrow.openArgs,
-            escrow.closeSign,
-            escrow.closeArgs,
-            offer.status,
-            offer.reverted
+            escrow.sign,
+            escrow.args,
+            offer.status
         );
     }
 }

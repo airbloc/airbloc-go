@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"sync"
 
 	"github.com/airbloc/airbloc-go/data"
 	"github.com/pkg/errors"
@@ -14,9 +15,10 @@ import (
 type LocalStorage struct {
 	SavePath string
 	Endpoint string
+	mu       *sync.Mutex
 }
 
-func NewLocalStorage(savePath string, endpoint string) (*LocalStorage, error) {
+func NewLocalStorage(savePath string, endpoint string) (Storage, error) {
 	if _, err := os.Stat(savePath); os.IsNotExist(err) {
 		err := os.MkdirAll(savePath, 0755)
 		if err != nil {
@@ -27,6 +29,7 @@ func NewLocalStorage(savePath string, endpoint string) (*LocalStorage, error) {
 	return &LocalStorage{
 		SavePath: savePath,
 		Endpoint: endpoint,
+		mu:       new(sync.Mutex),
 	}, nil
 }
 

@@ -5,36 +5,36 @@ import "openzeppelin-solidity/contracts/utils/Address.sol";
 library ExchangeLib {
     using Address for address;
 
-    enum OfferStatus {NEUTRAL, PENDING, SETTLED, REJECTED, OPENED, CLOSED}
+    enum OfferStatus {NEUTRAL, PENDING, SETTLED, REJECTED}
 
     struct Escrow {
         address addr;
-        bytes4  openSign;
-        bytes   openArgs;
-        bytes4  closeSign;
-        bytes   closeArgs;
+        bytes4  sign;
+        bytes   args;
     }
 
     function exec(
         Escrow storage _escrow,
-        bytes4 _sign,
-        bytes memory _args
+        bytes20 _offerId
     ) internal returns (bool) {
-        return _escrow.addr.delegatecall(
-            abi.encodePacked(
-                _sign,
-                _args      
-            )
-        );
+        bytes memory data = abi.encode(_offerId);
+        if (_escrow.args.length > 0) {
+            data = abi.encodePacked(
+                _escrow.args,
+                _offerId
+            );
+        }
+        data = abi.encodePacked(_escrow.sign, data);
+        return _escrow.addr.call(data);
     }
 
     struct Offer {
-        address  from;
-        address  to;
-        bytes16[] dataIds;
-        Escrow   escrow;
-        OfferStatus   status;
-        bool     reverted;
+        address     from;
+        address     to;
+        bytes20[]   dataIds;
+        Escrow      escrow;
+        OfferStatus status;
+        bool        reverted;
     }
 
     struct Orderbook {
@@ -77,11 +77,13 @@ library ExchangeLib {
     function settle(
         Orderbook storage _orderbook,
         bytes8 _offerId
-    ) internal {
+    ) internal returns (bool) {
         Offer storage offer = _orderbook.orders[_offerId];
+        Escrow storage escrow = offer.escrow;
         require(offer.status == OfferStatus.PENDING, "pending state only");
         require(msg.sender == offer.to, "only offeree can settle offer");
         offer.status = OfferStatus.SETTLED;
+        return exec(escrow, _offerId);
     }
 
     function reject(
@@ -92,34 +94,6 @@ library ExchangeLib {
         require(offer.status == OfferStatus.PENDING, "pending state only");
         require(msg.sender == offer.to, "only offeree can reject offer");
         offer.status = OfferStatus.REJECTED;
-    }
-
-    function open(
-        Orderbook storage _orderbook,
-        bytes8 _offerId
-    ) internal returns (bool) {
-        Offer storage offer = _orderbook.orders[_offerId];
-        Escrow storage escrow = offer.escrow;
-
-        require(offer.status == OfferStatus.SETTLED, "settled state only");
-        require(msg.sender == offer.to, "only escrow can open transaction");
-
-        offer.status = OfferStatus.OPENED;
-        return exec(escrow, escrow.openSign,escrow.openArgs);
-    }
-
-    function close(
-        Orderbook storage _orderbook,
-        bytes8 _offerId
-    ) internal returns (bool) {
-        Offer storage offer = _orderbook.orders[_offerId];
-        Escrow storage escrow = offer.escrow;
-      
-        require(offer.status == OfferStatus.OPENED, "opened state only");
-        require(msg.sender == offer.escrow.addr, "only contract can close transaction");
-
-        offer.status = OfferStatus.CLOSED;
-        return exec(escrow, escrow.closeSign, escrow.closeArgs);
     }
 
     function getOffer(

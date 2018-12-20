@@ -1,6 +1,9 @@
 package serverapi
 
 import (
+	"encoding/hex"
+	"log"
+
 	ablCommon "github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/exchange"
 	"github.com/airbloc/airbloc-go/node"
@@ -28,18 +31,17 @@ func (api *ExchangeAPI) Prepare(ctx context.Context, req *pb.OrderRequest) (*pb.
 	to := common.HexToAddress(req.GetTo())
 	escrowAddr := common.HexToAddress(req.GetContract().GetSmartEscrow().GetAddress())
 
-	var escrowOpenSign, escrowCloseSign [4]byte
-	copy(escrowOpenSign[:], contract.GetOpenSign())
-	copy(escrowCloseSign[:], contract.GetCloseSign())
+	var escrowSign [4]byte
+	copy(escrowSign[:], contract.GetEscrowSign())
 
 	rawDataIds := req.GetDataIds()
-	dataIds := make([][16]byte, len(rawDataIds))
+	dataIds := make([][20]byte, len(rawDataIds))
 	for i, idStr := range rawDataIds {
-		idBytes, err := hexutil.Decode(idStr)
+		idBytes, err := hex.DecodeString(idStr)
 		if err != nil {
 			return nil, status.Errorf(codes.InvalidArgument, "Failed to decode dataId")
 		}
-		if len(idBytes) != 16 {
+		if len(idBytes) != 20 {
 			return nil, status.Errorf(codes.InvalidArgument, "Wrong id length (expected 16)")
 		}
 		copy(dataIds[i][:], idBytes)
@@ -47,11 +49,11 @@ func (api *ExchangeAPI) Prepare(ctx context.Context, req *pb.OrderRequest) (*pb.
 
 	offerId, err := api.manager.Prepare(
 		ctx, to, escrowAddr,
-		escrowOpenSign, contract.GetOpenArgs(),
-		escrowCloseSign, contract.GetCloseSign(),
+		escrowSign, contract.GetEscrowArgs(),
 		dataIds...,
 	)
 	if err != nil {
+		log.Println(err)
 		return nil, status.Errorf(codes.Internal, "Failed to prepare order request")
 	}
 	return &pb.OfferId{OfferId: offerId.Hex()}, err
@@ -64,7 +66,7 @@ func (api *ExchangeAPI) AddDataIds(ctx context.Context, req *pb.DataIds) (*empty
 	}
 
 	rawDataIds := req.GetDataIds()
-	dataIds := make([][16]byte, len(rawDataIds))
+	dataIds := make([][20]byte, len(rawDataIds))
 	for i, idStr := range rawDataIds {
 		idBytes, err := hexutil.Decode(idStr)
 		if err != nil {
@@ -96,17 +98,23 @@ func (api *ExchangeAPI) Order(ctx context.Context, req *pb.OfferId) (*empty.Empt
 	return &empty.Empty{}, nil
 }
 
-func (api *ExchangeAPI) Settle(ctx context.Context, req *pb.OfferId) (*empty.Empty, error) {
+func (api *ExchangeAPI) Settle(ctx context.Context, req *pb.OfferId) (*pb.Receipt, error) {
 	offerId, err := ablCommon.HexToID(req.GetOfferId())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
 	}
 
-	err = api.manager.Settle(ctx, offerId)
+	receipt, err := api.manager.Settle(ctx, offerId)
 	if err != nil {
+		log.Println(err)
 		return nil, status.Errorf(codes.Internal, "Failed to settle")
 	}
-	return &empty.Empty{}, nil
+
+	return &pb.Receipt{
+		OfferId: hex.EncodeToString(receipt.OfferId[:]),
+		From:    receipt.From.Hex(),
+		To:      receipt.To.Hex(),
+	}, nil
 }
 
 func (api *ExchangeAPI) Reject(ctx context.Context, req *pb.OfferId) (*empty.Empty, error) {
@@ -120,19 +128,6 @@ func (api *ExchangeAPI) Reject(ctx context.Context, req *pb.OfferId) (*empty.Emp
 		return nil, status.Errorf(codes.Internal, "Failed to reject")
 	}
 	return &empty.Empty{}, nil
-}
-
-func (api *ExchangeAPI) CloseOrder(ctx context.Context, req *pb.OfferId) (*pb.Receipt, error) {
-	offerId, err := ablCommon.HexToID(req.GetOfferId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
-	}
-
-	err = api.manager.CloseOrder(ctx, offerId)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to close offer")
-	}
-	return &pb.Receipt{}, nil
 }
 
 func (api *ExchangeAPI) GetOffer(ctx context.Context, req *pb.OfferId) (*pb.Offer, error) {
@@ -159,15 +154,12 @@ func (api *ExchangeAPI) GetOffer(ctx context.Context, req *pb.OfferId) (*pb.Offe
 		Contract: &pb.Contract{
 			Type: pb.Contract_SMART,
 			SmartEscrow: &pb.SmartContract{
-				Address:   escrow.Addr.Hex(),
-				OpenSign:  escrow.OpenSign[:],
-				OpenArgs:  escrow.OpenArgs,
-				CloseSign: escrow.CloseSign[:],
-				CloseArgs: escrow.CloseArgs,
+				Address:    escrow.Addr.Hex(),
+				EscrowSign: escrow.Sign[:],
+				EscrowArgs: escrow.Args,
 			},
 		},
-		Status:   pb.Status(offer.Status),
-		Reverted: offer.Reverted,
+		Status: pb.Status(offer.Status),
 	}, nil
 }
 
@@ -183,10 +175,9 @@ func (api *ExchangeAPI) GetOfferCompact(ctx context.Context, req *pb.OfferId) (*
 	}
 
 	return &pb.OfferCompact{
-		From:     offer.From.Hex(),
-		To:       offer.To.Hex(),
-		Escrow:   offer.Escrow.Hex(),
-		Reverted: offer.Reverted,
+		From:   offer.From.Hex(),
+		To:     offer.To.Hex(),
+		Escrow: offer.Escrow.Hex(),
 	}, nil
 }
 

@@ -32,6 +32,10 @@ const config = {
             network_id: 1337,
             gas: 3000000
         },
+        local: {
+            provider: getProviderOf('local'),
+            network_id: 5777,
+        },
         klaytn: {
             host: '127.0.0.1',
             port: 8551,
