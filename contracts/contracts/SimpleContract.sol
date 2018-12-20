@@ -2,71 +2,32 @@ pragma solidity ^0.4.24;
 
 import "./Exchange.sol";
 import "./ExchangeLib.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/IERC20.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/SafeERC20.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/ERC20Mintable.sol";
+import "openzeppelin-solidity/contracts/utils/ReentrancyGuard.sol";
 
-contract SimpleContract {
-
-    struct Agreement {
-        bool offeror;
-        bool offeree;
-    }
+contract SimpleContract is ReentrancyGuard {
+    using SafeERC20 for IERC20;
 
     Exchange private exchange;
-    mapping(bytes8 => Agreement) agreements;
-    mapping(bytes8 => uint256) balances;
 
     constructor(Exchange _exchange) public {
         exchange = _exchange;
     }
 
-    function open(bytes8 _offerId) public payable {
+    function transact(address _token, uint256 _amount, bytes8 _offerId) public nonReentrant {
         (
-            address offeror,
-            , // address offeree,
-            address contractAddr,
-        ) = exchange.getOfferCompact(_offerId);
-        require(msg.sender == offeror, "should have authority");
-        require(contractAddr == address(this), "not this contract");
-        balances[_offerId] = msg.value;
-        agreements[_offerId] = Agreement(false, false);
-    }
-
-    function close(bytes8 _offerId) public {
-        (
-            address offeror,
-            address offeree,
-            address contractAddr,
+        address from,
+        address to,
+        address contractAddr
         ) = exchange.getOfferCompact(_offerId);
 
+        require(msg.sender == address(exchange), "should have authority");
         require(contractAddr == address(this), "not this contract");
 
-        bool isOfferor = msg.sender == offeror;
-        bool isOfferee = msg.sender == offeree;
-
-        require(
-            isOfferor && isOfferee,
-            "should have authority");
-
-        if (
-            agreements[_offerId].offeror &&
-            agreements[_offerId].offeree
-        ) {
-            bool reverted = exchange.close(_offerId);
-            uint256 amount = balances[_offerId];
-            delete agreements[_offerId];
-
-            if (!reverted) {
-                offeror.transfer(amount);
-            } else {
-                offeree.transfer(amount);
-            }
-
-            return;
-        }
-
-        if (isOfferor) {
-            agreements[_offerId].offeror = true;
-        } else {
-            agreements[_offerId].offeree = true;
-        }
+        IERC20 token = IERC20(_token);
+        require(token.allowance(from, address(this)) <= token.balanceOf(from) , "low balance");
+        token.safeTransferFrom(from, to, _amount);
     }
 }

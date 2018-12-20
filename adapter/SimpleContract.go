@@ -33,7 +33,7 @@ var (
 )
 
 // SimpleContractABI is the input ABI used to generate the binding from.
-const SimpleContractABI = "[{\"inputs\":[{\"name\":\"_exchange\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"open\",\"outputs\":[],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"close\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+const SimpleContractABI = "[{\"inputs\":[{\"name\":\"_exchange\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"constant\":false,\"inputs\":[{\"name\":\"_token\",\"type\":\"address\"},{\"name\":\"_amount\",\"type\":\"uint256\"},{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"transact\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 
 // SimpleContract is an auto generated Go binding around an Ethereum contract.
 type SimpleContract struct {
@@ -98,18 +98,11 @@ type SimpleContractTransactorRaw struct {
 //
 //
 //
-//	type Agreement struct {
-//		Offeree	bool
-//		Offeror	bool
-//
-//	}
-//
 
 func init() {
 	// convenient hacks for blockchain.Client
 	blockchain.ContractList["SimpleContract"] = (&SimpleContract{}).new
-	blockchain.RegisterSelector("0x688e8391", "close(bytes8)")
-	blockchain.RegisterSelector("0x6d552248", "open(bytes8)")
+	blockchain.RegisterSelector("0x0bd9e0f8", "transact(address,uint256,bytes8)")
 
 }
 
@@ -205,44 +198,23 @@ func (_SimpleContract *SimpleContractTransactorRaw) Transact(opts *bind.Transact
 	return _SimpleContract.Contract.contract.Transact(opts, method, params...)
 }
 
-// Close is a paid mutator transaction binding the contract method 0x688e8391.
+// Transact is a paid mutator transaction binding the contract method 0x0bd9e0f8.
 //
-// Solidity: function close(_offerId bytes8) returns()
-func (_SimpleContract *SimpleContractTransactor) Close(opts *bind.TransactOpts, _offerId [8]byte) (*types.Transaction, error) {
-	return _SimpleContract.contract.Transact(opts, "close", _offerId)
+// Solidity: function transact(_token address, _amount uint256, _offerId bytes8) returns()
+func (_SimpleContract *SimpleContractTransactor) Transact(opts *bind.TransactOpts, _token common.Address, _amount *big.Int, _offerId [8]byte) (*types.Transaction, error) {
+	return _SimpleContract.contract.Transact(opts, "transact", _token, _amount, _offerId)
 }
 
-// Close is a paid mutator transaction binding the contract method 0x688e8391.
+// Transact is a paid mutator transaction binding the contract method 0x0bd9e0f8.
 //
-// Solidity: function close(_offerId bytes8) returns()
-func (_SimpleContract *SimpleContractSession) Close(_offerId [8]byte) (*types.Transaction, error) {
-	return _SimpleContract.Contract.Close(&_SimpleContract.TransactOpts, _offerId)
+// Solidity: function transact(_token address, _amount uint256, _offerId bytes8) returns()
+func (_SimpleContract *SimpleContractSession) Transact(_token common.Address, _amount *big.Int, _offerId [8]byte) (*types.Transaction, error) {
+	return _SimpleContract.Contract.Transact(&_SimpleContract.TransactOpts, _token, _amount, _offerId)
 }
 
-// Close is a paid mutator transaction binding the contract method 0x688e8391.
+// Transact is a paid mutator transaction binding the contract method 0x0bd9e0f8.
 //
-// Solidity: function close(_offerId bytes8) returns()
-func (_SimpleContract *SimpleContractTransactorSession) Close(_offerId [8]byte) (*types.Transaction, error) {
-	return _SimpleContract.Contract.Close(&_SimpleContract.TransactOpts, _offerId)
-}
-
-// Open is a paid mutator transaction binding the contract method 0x6d552248.
-//
-// Solidity: function open(_offerId bytes8) returns()
-func (_SimpleContract *SimpleContractTransactor) Open(opts *bind.TransactOpts, _offerId [8]byte) (*types.Transaction, error) {
-	return _SimpleContract.contract.Transact(opts, "open", _offerId)
-}
-
-// Open is a paid mutator transaction binding the contract method 0x6d552248.
-//
-// Solidity: function open(_offerId bytes8) returns()
-func (_SimpleContract *SimpleContractSession) Open(_offerId [8]byte) (*types.Transaction, error) {
-	return _SimpleContract.Contract.Open(&_SimpleContract.TransactOpts, _offerId)
-}
-
-// Open is a paid mutator transaction binding the contract method 0x6d552248.
-//
-// Solidity: function open(_offerId bytes8) returns()
-func (_SimpleContract *SimpleContractTransactorSession) Open(_offerId [8]byte) (*types.Transaction, error) {
-	return _SimpleContract.Contract.Open(&_SimpleContract.TransactOpts, _offerId)
+// Solidity: function transact(_token address, _amount uint256, _offerId bytes8) returns()
+func (_SimpleContract *SimpleContractTransactorSession) Transact(_token common.Address, _amount *big.Int, _offerId [8]byte) (*types.Transaction, error) {
+	return _SimpleContract.Contract.Transact(&_SimpleContract.TransactOpts, _token, _amount, _offerId)
 }

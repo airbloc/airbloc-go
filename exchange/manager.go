@@ -5,7 +5,6 @@ import (
 	"github.com/airbloc/airbloc-go/blockchain"
 	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethCommon "github.com/ethereum/go-ethereum/common"
-	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )
 
@@ -25,8 +24,7 @@ func NewManager(client blockchain.TxClient) *Manager {
 func (manager *Manager) Prepare(
 	ctx context.Context,
 	offeree, escrowAddr ethCommon.Address,
-	escrowOpenSign [4]byte, escrowOpenArgs []byte,
-	escrowCloseSign [4]byte, escrowCloseArgs []byte,
+	escrowSign [4]byte, escrowArgs []byte,
 	dataIds ...[20]byte,
 ) (ablCommon.ID, error) {
 	var err error
@@ -39,8 +37,7 @@ func (manager *Manager) Prepare(
 	tx, err := manager.contract.Prepare(
 		manager.client.Account(),
 		offeree, escrowAddr,
-		escrowOpenSign, escrowOpenArgs,
-		escrowCloseSign, escrowCloseArgs,
+		escrowSign, escrowArgs,
 		ids,
 	)
 	if err != nil {
@@ -51,12 +48,7 @@ func (manager *Manager) Prepare(
 	if err != nil {
 		return ablCommon.ID{}, err
 	}
-
-	event, err := manager.contract.ParseOfferPreparedFromReceipt(receipt)
-	if err != nil {
-		return ablCommon.ID{}, errors.Wrap(err, "failed to parse event from the receipt")
-	}
-	offerId := ablCommon.ID(event.OfferId)
+	offerId := ablCommon.BytesToID(receipt.Logs[0].Topics[1].Bytes())
 
 	// then, splits ids into chunks which maximum length is 20.
 	// and adds in offer struct one by one.
@@ -105,17 +97,26 @@ func (manager *Manager) Order(ctx context.Context, offerId ablCommon.ID) error {
 	return nil
 }
 
-func (manager *Manager) Settle(ctx context.Context, offerId ablCommon.ID) error {
+func (manager *Manager) Settle(ctx context.Context, offerId ablCommon.ID) (*adapter.ExchangeReceipt, error) {
+	manager.client.Account().GasLimit = 6000000
 	tx, err := manager.contract.Settle(manager.client.Account(), offerId)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	_, err = manager.client.WaitMined(ctx, tx)
+	receipt, err := manager.client.WaitMined(ctx, tx)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	evt, err := manager.contract.ParseReceiptFromReceipt(receipt)
+	if err != nil {
+		return nil, err
+	}
+	// FIXME: right zero padding
+	evt.OfferId = offerId
+
+	return evt, nil
 }
 
 func (manager *Manager) Reject(ctx context.Context, offerId ablCommon.ID) error {
@@ -132,40 +133,36 @@ func (manager *Manager) Reject(ctx context.Context, offerId ablCommon.ID) error 
 }
 
 func (manager *Manager) GetOfferCompact(offerId ablCommon.ID) (*OfferCompact, error) {
-	from, to, escrow, reverted, err := manager.contract.GetOfferCompact(nil, offerId)
+	from, to, escrow, err := manager.contract.GetOfferCompact(nil, offerId)
 	if err != nil {
 		return nil, err
 	}
 
 	return &OfferCompact{
-		From:     from,
-		To:       to,
-		Escrow:   escrow,
-		Reverted: reverted,
+		From:   from,
+		To:     to,
+		Escrow: escrow,
 	}, nil
 }
 
 func (manager *Manager) GetOffer(offerId ablCommon.ID) (*Offer, error) {
-	from, to, dataIds, addr, openSign, openArgs, closeSign, closeArgs, status, reverted, err := manager.contract.GetOffer(nil, offerId)
+	from, to, dataIds, addr, sign, args, status, err := manager.contract.GetOffer(nil, offerId)
 	if err != nil {
 		return nil, err
 	}
 
 	escrow := &Escrow{
-		Addr:      addr,
-		OpenSign:  openSign,
-		OpenArgs:  openArgs,
-		CloseSign: closeSign,
-		CloseArgs: closeArgs,
+		Addr: addr,
+		Sign: sign,
+		Args: args,
 	}
 
 	offer := &Offer{
-		From:     from,
-		To:       to,
-		DataIds:  dataIds,
-		Escrow:   escrow,
-		Status:   status,
-		Reverted: reverted,
+		From:    from,
+		To:      to,
+		DataIds: dataIds,
+		Escrow:  escrow,
+		Status:  status,
 	}
 	return offer, nil
 }
@@ -180,17 +177,4 @@ func (manager *Manager) GetReceiptsByOfferee(offeree ethCommon.Address) ([][8]by
 
 func (manager *Manager) GetReceiptsByEscrow(escrow ethCommon.Address) ([][8]byte, error) {
 	return manager.contract.GetReceiptsByEscrow(nil, escrow)
-}
-
-func (manager *Manager) CloseOrder(ctx context.Context, offerId ablCommon.ID) error {
-	tx, err := manager.contract.Close(manager.client.Account(), offerId)
-	if err != nil {
-		return err
-	}
-
-	_, err = manager.client.WaitMined(ctx, tx)
-	if err != nil {
-		return err
-	}
-	return nil
 }

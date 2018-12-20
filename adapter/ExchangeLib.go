@@ -99,9 +99,7 @@ type ExchangeLibTransactorRaw struct {
 //	type ExchangeLibOfferStatus int8
 //
 //	const (
-//		ExchangeLibOfferStatus_CLOSED ExchangeLibOfferStatus = 5
 //		ExchangeLibOfferStatus_NEUTRAL ExchangeLibOfferStatus = 0
-//		ExchangeLibOfferStatus_OPENED ExchangeLibOfferStatus = 4
 //		ExchangeLibOfferStatus_PENDING ExchangeLibOfferStatus = 1
 //		ExchangeLibOfferStatus_REJECTED ExchangeLibOfferStatus = 3
 //		ExchangeLibOfferStatus_SETTLED ExchangeLibOfferStatus = 2
@@ -109,9 +107,7 @@ type ExchangeLibTransactorRaw struct {
 //	)
 //
 //	var ExchangeLibOfferStatus_name = map[int8]string{
-//		5: "CLOSED",
 //		0: "NEUTRAL",
-//		4: "OPENED",
 //		1: "PENDING",
 //		3: "REJECTED",
 //		2: "SETTLED",
@@ -119,9 +115,7 @@ type ExchangeLibTransactorRaw struct {
 //	}
 //
 //	var ExchangeLibOfferStatus_value = map[string]int8{
-//		"CLOSED": 5,
 //		"NEUTRAL": 0,
-//		"OPENED": 4,
 //		"PENDING": 1,
 //		"REJECTED": 3,
 //		"SETTLED": 2,
@@ -132,10 +126,8 @@ type ExchangeLibTransactorRaw struct {
 //
 //	type Escrow struct {
 //		Addr	common.Address
-//		CloseArgs	[]byte
-//		CloseSign	[4]byte
-//		OpenArgs	[]byte
-//		OpenSign	[4]byte
+//		Args	[]byte
+//		Sign	[4]byte
 //
 //	}
 //

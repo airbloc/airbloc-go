@@ -9,9 +9,8 @@ service Exchange {
     rpc Prepare(OrderRequest) returns (OfferId);
     rpc AddDataIds(DataIds) returns (google.protobuf.Empty);
     rpc Order(OfferId) returns (google.protobuf.Empty);
-    rpc Settle(OfferId) returns (google.protobuf.Empty);
+    rpc Settle(OfferId) returns (Receipt);
     rpc Reject(OfferId) returns (google.protobuf.Empty);
-    rpc CloseOrder(OfferId) returns (Receipt);
 
     rpc GetOffer(OfferId) returns (Offer);
     rpc GetOfferCompact(OfferId) returns (OfferCompact);
@@ -36,10 +35,8 @@ message RichardianContract {
 
 message SmartContract {
     string address = 1; // Address
-    bytes openSign = 2; // [4]byte
-    bytes openArgs = 3; // []byte
-    bytes closeSign = 4; // [4]byte
-    bytes closeArgs = 5; // []byte
+    bytes escrowSign = 2; // [4]byte
+    bytes escrowArgs = 3; // []byte
 }
 
 message Contract {
