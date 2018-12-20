@@ -31,7 +31,7 @@ module.exports = function (deployer, network) {
         // test
         await deployer.deploy(ERC20Mintable);
 
-        let deployments = {
+        const deployments = {
             Accounts: Accounts.address,
             AppRegistry: AppRegistry.address,
             SchemaRegistry: SchemaRegistry.address,
