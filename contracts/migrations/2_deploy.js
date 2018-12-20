@@ -9,11 +9,13 @@ const SimpleContract = artifacts.require("SimpleContract");
 const SparseMerkleTree = artifacts.require("SparseMerkleTree");
 const DataRegistry = artifacts.require("DataRegistry");
 
+// test
+const ERC20Mintable = artifacts.require("ERC20Mintable");
+
 const DEPLOYMENT_OUTPUT_PATH = '../deployment.local.json';
 
 
-module.exports = function (deployer) {
-    console.log(arguments);
+module.exports = function (deployer, network) {
     deployer.then(async () => {
         // contracts without any dependencies will go here:
         await deployer.deploy([
@@ -26,8 +28,10 @@ module.exports = function (deployer) {
         await deployer.deploy(CollectionRegistry, Accounts.address, AppRegistry.address, SchemaRegistry.address);
         await deployer.deploy(DataRegistry, Accounts.address, CollectionRegistry.address, SparseMerkleTree.address);
         await deployer.deploy(SimpleContract, Exchange.address);
+        // test
+        await deployer.deploy(ERC20Mintable);
 
-        const deployments = {
+        let deployments = {
             Accounts: Accounts.address,
             AppRegistry: AppRegistry.address,
             SchemaRegistry: SchemaRegistry.address,
@@ -38,9 +42,13 @@ module.exports = function (deployer) {
             DataRegistry: DataRegistry.address,
         };
 
+        if (network === 'test' || network === 'local') {
+            deployments.ERC20Mintable = ERC20Mintable.address;
+        }
+
         console.log('Writing deployments to deployment.local.json');
         fs.writeFileSync(DEPLOYMENT_OUTPUT_PATH, JSON.stringify(deployments, null, '  '));
 
-        console.log('You should run "go run generate_adapter.go" if any ABIs have been changed.');
+        console.log('You should run "make generate-bind" if any ABIs have been changed.');
     });
 };
