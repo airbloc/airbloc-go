@@ -89,7 +89,7 @@ func New(
 	}
 }
 
-func (warehouse *DataWarehouse) CreateBundle(collectionId common.ID) (*BundleStream, error) {
+func (warehouse *DataWarehouse) CreateBundle(provider, collectionId common.ID) (*BundleStream, error) {
 	collection, err := warehouse.collections.Get(collectionId)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to retrieve a collection")
@@ -144,7 +144,7 @@ func (warehouse *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error
 	ingestedAt := time.Now()
 
 	createdBundle := &data.Bundle{
-		Provider:   common.ID{}, /* TODO: implement appID */
+		Provider:   stream.provider,
 		Collection: stream.collection.Id,
 		DataCount:  stream.DataCount,
 		IngestedAt: ingestedAt,
