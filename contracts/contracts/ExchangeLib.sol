@@ -30,7 +30,7 @@ library ExchangeLib {
 
     struct Offer {
         address     from;
-        address     to;
+        address      to;
         bytes20[]   dataIds;
         Escrow      escrow;
         OfferStatus status;

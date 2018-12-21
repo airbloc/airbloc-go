@@ -2,6 +2,7 @@ pragma solidity ^0.4.24;
 
 import "./ExchangeLib.sol";
 import "openzeppelin-solidity/contracts/utils/ReentrancyGuard.sol";
+import "./AppRegistry.sol";
 
 contract Exchange is ReentrancyGuard {
     using ExchangeLib for ExchangeLib.Offer;
@@ -18,27 +19,31 @@ contract Exchange is ReentrancyGuard {
     mapping(address => bytes8[]) public fromIndex;
     mapping(address => bytes8[]) public escrowIndex;
 
+    AppRegistry appReg;
+
     uint256 constant DEFAULT_TIMEOUT = 240; // block = 3600 sec = 60 min = 1 hour
     uint256 constant MAX_OPT_LENGTH = 10;
 
-    constructor() public {
+    constructor(AppRegistry _appReg) public {
         orderbook = ExchangeLib.Orderbook();
+        appReg = _appReg;
     }
 
     function prepare(
-        address _to,
+        bytes8 _to,
         address _escrow,
         bytes4 _escrowSign,
         bytes memory _escrowArgs,
         bytes20[] memory _dataIds
     ) public {
-        require(_to != address(0), "invalid offere address");
+        require(appReg.exists(_to), "invalid app");
         require(_escrow != address(0), "invalid contract address");
 
+        (, address to) = appReg.apps(_to);
         bytes8 offerId = orderbook.prepare(
             ExchangeLib.Offer({
                 from: msg.sender,
-                to: _to,
+                to: to,
                 dataIds: _dataIds,
                 escrow: ExchangeLib.Escrow({
                     addr: _escrow,
