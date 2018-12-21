@@ -24,7 +24,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type CreateSchemaRequest struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// a unique name of the schema.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// a [JSON Schema](https://json-schema.org/) for data.
 	Schema               string   `protobuf:"bytes,2,opt,name=schema,proto3" json:"schema,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -71,7 +73,9 @@ func (m *CreateSchemaRequest) GetSchema() string {
 }
 
 type CreateSchemaResult struct {
-	Exists               bool     `protobuf:"varint,1,opt,name=exists,proto3" json:"exists,omitempty"`
+	// true if the name already exists.
+	Exists bool `protobuf:"varint,1,opt,name=exists,proto3" json:"exists,omitempty"`
+	// ID of the created schema.
 	Id                   string   `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -154,6 +158,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type SchemaClient interface {
+	// Create creates JSON schema and registers it into the blockchain.
 	Create(ctx context.Context, in *CreateSchemaRequest, opts ...grpc.CallOption) (*CreateSchemaResult, error)
 }
 
@@ -176,6 +181,7 @@ func (c *schemaClient) Create(ctx context.Context, in *CreateSchemaRequest, opts
 
 // SchemaServer is the server API for Schema service.
 type SchemaServer interface {
+	// Create creates JSON schema and registers it into the blockchain.
 	Create(context.Context, *CreateSchemaRequest) (*CreateSchemaResult, error)
 }
 

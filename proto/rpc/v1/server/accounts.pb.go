@@ -23,6 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type AccountExistsRequest struct {
+	// identity (e.g. Email, Phone No.)
 	Identity             string   `protobuf:"bytes,1,opt,name=identity,proto3" json:"identity,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -62,7 +63,8 @@ func (m *AccountExistsRequest) GetIdentity() string {
 }
 
 type AccountExistsResponse struct {
-	Exists               bool     `protobuf:"varint,1,opt,name=exists,proto3" json:"exists,omitempty"`
+	Exists bool `protobuf:"varint,1,opt,name=exists,proto3" json:"exists,omitempty"`
+	// ID of the account corresponding to the given identity, if the account exists
 	AccountId            string   `protobuf:"bytes,2,opt,name=accountId,proto3" json:"accountId,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

@@ -3,40 +3,76 @@ package airbloc.rpc.v1;
 
 option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
 
+/**
+ * Data Collection and Warehousing API for Data Providers.
+ */
 service Warehouse {
+    /**
+     * StoreBundle receives a data stream, encrypts and stores them as a bundle,
+     * and registers the data bundle onto the blockchain.
+     */
     rpc StoreBundle(stream RawDataRequest) returns (StoreResult);
+
+    /**
+     * StoreBundle receives a stream of the data already encrypted, stores them as a bundle,
+     * and registers the data bundle onto the blockchain.
+     */
     rpc StoreEncryptedBundle(stream EncryptedDataRequest) returns (StoreResult);
+
+    /**
+     * DeleteBundle removes given bundle from the warehouse and the blockchain.
+     */
     rpc DeleteBundle(DeleteBundleRequest) returns (DeleteBundleResult);
 }
 
 message RawDataRequest {
-    string providerId = 1; // ID
-    string collectionId = 2; // ID
-    string ownerId = 3; // ID
-    string payload = 4;
+    // ID of the collection
+    string collectionId = 1;
+
+    // ID of the user (Data Owner)
+    string ownerId = 2;
+
+    // JSON payload, which follows schema of the given collection.
+    string payload = 3;
 }
 
 message EncryptedDataRequest {
-    string providerId = 1; //ID
-    string collectionId = 2; // ID
-    string ownerId = 3; // ID
-    bytes encryptedPayload = 4;
-    bytes capsule = 5;
+    // ID of the collection
+    string collectionId = 1;
+
+    // ID of the user (Data Owner)
+    string ownerId = 2;
+
+    // pre-encrypted JSON payload, which follows schema of the given collection.
+    // the payload must be encrypted through ECIES-SECP256k1 using the key in a capsule.
+    bytes encryptedPayload = 3;
+
+    // symmetric key of the encryptedPayload, encrypted using the provider's key.
+    bytes capsule = 4;
 }
 
 message StoreResult {
-    string bundleId = 1; // ID
+    // the ID of the bundle in "<collectionId>/<index>" format.
+    string bundleId = 1;
+
+    // public-accessible URI of the bundle.
     string uri = 2;
+
+    // count of the data that have been successfully ingested.
+    // if some of your data is being filtered by some reason (e.g. DAuth, Schema Validation),
+    // then this count may lower than the amout you've ingested.
     uint64 dataCount = 3;
+
+    // amount of gas (transaction fee) used for registration to blockchain.
     uint64 gasUsed = 4;
 }
 
 message DeleteBundleRequest {
+    // public-accessible URI of the bundle.
     string uri = 1;
 }
 
 message DeleteBundleResult {
+    // amount of gas (transaction fee) used for interaction to blockchain.
     uint64 gasUsed = 1;
 }
-
-
