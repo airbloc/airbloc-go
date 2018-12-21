@@ -25,7 +25,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type SignInRequest struct {
-	Identity             string   `protobuf:"bytes,1,opt,name=identity,proto3" json:"identity,omitempty"`
+	// Identity information (e.g. Email, Phone Number)
+	Identity string `protobuf:"bytes,1,opt,name=identity,proto3" json:"identity,omitempty"`
+	// An address of the user delegate.
 	UserDelegate         string   `protobuf:"bytes,2,opt,name=userDelegate,proto3" json:"userDelegate,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -111,7 +113,9 @@ func (m *SignInResponse) GetAccountId() string {
 }
 
 type DAuthRequest struct {
-	CollectionId         string   `protobuf:"bytes,1,opt,name=collectionId,proto3" json:"collectionId,omitempty"`
+	// Collection (Data Type) ID the user want to authorize
+	CollectionId string `protobuf:"bytes,1,opt,name=collectionId,proto3" json:"collectionId,omitempty"`
+	// ID of the user.
 	AccountId            string   `protobuf:"bytes,2,opt,name=accountId,proto3" json:"accountId,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -158,7 +162,8 @@ func (m *DAuthRequest) GetAccountId() string {
 }
 
 type GetAuthorizationsRequest struct {
-	AccountId            string   `protobuf:"bytes,1,opt,name=accountId,proto3" json:"accountId,omitempty"`
+	AccountId string `protobuf:"bytes,1,opt,name=accountId,proto3" json:"accountId,omitempty"`
+	// your app ID. @exclude TODO: Temporary
 	AppId                string   `protobuf:"bytes,2,opt,name=appId,proto3" json:"appId,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -205,7 +210,9 @@ func (m *GetAuthorizationsRequest) GetAppId() string {
 }
 
 type GetAuthorizationsResponse struct {
-	HasAuthorizedBefore  bool                                       `protobuf:"varint,1,opt,name=hasAuthorizedBefore,proto3" json:"hasAuthorizedBefore,omitempty"`
+	// true if the user has been done DAuth to given app at least one time.
+	HasAuthorizedBefore bool `protobuf:"varint,1,opt,name=hasAuthorizedBefore,proto3" json:"hasAuthorizedBefore,omitempty"`
+	// list of the authorization settings of the user to the app.
 	Authorizations       []*GetAuthorizationsResponse_Authorization `protobuf:"bytes,2,rep,name=authorizations,proto3" json:"authorizations,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                                   `json:"-"`
 	XXX_unrecognized     []byte                                     `json:"-"`
@@ -359,11 +366,25 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type DAuthClient interface {
+	//*
+	// SignIn takes an email of user and returns an user account ID if the account is exists.
+	// Otherwise, it creates new account using the email, and returns an ID of the newly created account.
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
+	//*
 	// GetAuthorization returns a list of the data authorization settings
 	// which are done to collections of this app by given user.
 	GetAuthorizations(ctx context.Context, in *GetAuthorizationsRequest, opts ...grpc.CallOption) (*GetAuthorizationsResponse, error)
+	//*
+	// Allow turns on user's data collection authorization settings for the given collection.
+	//
+	// Note that this is one-time only; Once you set an authorization to the collection,
+	// then you cannot change it through this API. Only users can modify the settings.
 	Allow(ctx context.Context, in *DAuthRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//*
+	// Deny turns off user's data collection authorization settings for the given collection.
+	//
+	// Note that this is one-time only; Once you set an authorization to the collection,
+	// then you cannot change it through this API. Only users can modify the settings.
 	Deny(ctx context.Context, in *DAuthRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
@@ -413,11 +434,25 @@ func (c *dAuthClient) Deny(ctx context.Context, in *DAuthRequest, opts ...grpc.C
 
 // DAuthServer is the server API for DAuth service.
 type DAuthServer interface {
+	//*
+	// SignIn takes an email of user and returns an user account ID if the account is exists.
+	// Otherwise, it creates new account using the email, and returns an ID of the newly created account.
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
+	//*
 	// GetAuthorization returns a list of the data authorization settings
 	// which are done to collections of this app by given user.
 	GetAuthorizations(context.Context, *GetAuthorizationsRequest) (*GetAuthorizationsResponse, error)
+	//*
+	// Allow turns on user's data collection authorization settings for the given collection.
+	//
+	// Note that this is one-time only; Once you set an authorization to the collection,
+	// then you cannot change it through this API. Only users can modify the settings.
 	Allow(context.Context, *DAuthRequest) (*empty.Empty, error)
+	//*
+	// Deny turns off user's data collection authorization settings for the given collection.
+	//
+	// Note that this is one-time only; Once you set an authorization to the collection,
+	// then you cannot change it through this API. Only users can modify the settings.
 	Deny(context.Context, *DAuthRequest) (*empty.Empty, error)
 }
 
