@@ -1,5 +1,6 @@
 # go-ethereum hack: please see https://github.com/ethereum/go-ethereum/issues/2738#issuecomment-365239248
 vendor/github.com/ethereum/go-ethereum/crypto/secp256k1/libsecp256k1
+vendor/
 
 abi
 contracts/truffle-config.local.js
