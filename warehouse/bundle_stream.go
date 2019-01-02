@@ -3,6 +3,8 @@ package warehouse
 import (
 	"github.com/airbloc/airbloc-go/collections"
 	"github.com/airbloc/airbloc-go/common"
+	"github.com/azer/logger"
+	"github.com/pkg/errors"
 )
 
 type BundleStream struct {
