@@ -25,7 +25,7 @@ func (api *DataAPI) Get(ctx context.Context, dataId *pb.DataId) (*pb.DataResult,
 	return nil, nil
 }
 
-func (api *DataAPI) BatchGet(ctx context.Context, batchId *pb.BatchRequest) (*pb.BatchGetResult, error) {
+func (api *DataAPI) GetBatch(ctx context.Context, batchId *pb.BatchRequest) (*pb.GetBatchResult, error) {
 	return nil, nil
 }
 

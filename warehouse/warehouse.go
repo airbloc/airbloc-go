@@ -89,7 +89,7 @@ func New(
 	}
 }
 
-func (warehouse *DataWarehouse) CreateBundle(provider, collectionId common.ID) (*BundleStream, error) {
+func (warehouse *DataWarehouse) CreateBundle(collectionId common.ID) (*BundleStream, error) {
 	collection, err := warehouse.collections.Get(collectionId)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to retrieve a collection")
@@ -99,8 +99,7 @@ func (warehouse *DataWarehouse) CreateBundle(provider, collectionId common.ID) (
 		return nil, errors.Wrap(err, "unable to retrieve a schema")
 	}
 	collection.Schema = *schema
-
-	return newBundleStream(warehouse, provider, collection), nil
+	return newBundleStream(warehouse, collection.AppId, collection), nil
 }
 
 func (warehouse *DataWarehouse) validate(collection *collections.Collection, data *common.Data) error {

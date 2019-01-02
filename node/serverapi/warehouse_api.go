@@ -89,15 +89,11 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 			return err
 		}
 		if bundleStream == nil {
-			providerId, err := common.HexToID(request.GetProviderId())
-			if err != nil {
-				return status.Errorf(codes.InvalidArgument, "Invalid provider ID: %s", request.GetProviderId())
-			}
 			collectionId, err := common.HexToID(request.GetCollectionId())
 			if err != nil {
 				return status.Errorf(codes.InvalidArgument, "Invalid collection ID: %s", request.GetCollectionId())
 			}
-			bundleStream, err = api.warehouse.CreateBundle(providerId, collectionId)
+			bundleStream, err = api.warehouse.CreateBundle(collectionId)
 			if err != nil {
 				return err
 			}
@@ -139,15 +135,11 @@ func (api *WarehouseAPI) StoreEncryptedBundle(stream pb.Warehouse_StoreEncrypted
 			return err
 		}
 		if bundleStream == nil {
-			providerId, err := common.HexToID(request.GetProviderId())
-			if err != nil {
-				return status.Errorf(codes.InvalidArgument, "Invalid provider ID: %s", request.GetProviderId())
-			}
 			collectionId, err := common.HexToID(request.GetCollectionId())
 			if err != nil {
 				return status.Errorf(codes.InvalidArgument, "Invalid collection ID: %s", request.GetCollectionId())
 			}
-			bundleStream, err = api.warehouse.CreateBundle(providerId, collectionId)
+			bundleStream, err = api.warehouse.CreateBundle(collectionId)
 			if err != nil {
 				return err
 			}
