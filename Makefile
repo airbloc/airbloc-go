@@ -10,8 +10,7 @@ RPC_PROTO_SRCS := $(shell find $(PROTO_DIR)/rpc -name *.proto)
 all: airbloc bootnode
 
 deps:
-	@go build -v ...
-	@go get -u github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc
+	@go build -v ./...
 
 airbloc:
 	@go build -o "$(DEST)/airbloc" ./cmd/airbloc
