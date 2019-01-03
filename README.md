@@ -2,10 +2,14 @@ Airbloc
 ==========
 
 [![CircleCI](https://circleci.com/gh/airbloc/token.svg?style=svg)](https://circleci.com/gh/airbloc/airbloc-go)
-[![LICENSE](https://img.shields.io/github/license/airbloc/airbloc-go.svg?style=flat-square)](https://github.com/airbloc/airbloc-go/blob/master/LICENSE)
-[![Go Version](https://img.shields.io/badge/golang-%3E%3D1.10.0-green.svg?style=flat-square)](https://golang.org/)
 
-[Airbloc](https://airbloc.org) is decentralized data exchange protocol which is designed to be scalable, transparent, and  able to handle enterprise-grade massive data. For details, please check our [technical whitepaper](https://abr.ge/2ffuu).
+[Airbloc](https://airbloc.org) is user-oriented data exchange protocol which is designed to be scalable, transparent, and able to handle enterprise-grade massive data.
+
+  * **User-Oriented**: 
+  * **Privacy:** Airbloc protocol protects privacy through data encryption and privacy shield technology, with GDPR compliances.
+  * **Scalability:** 
+
+For details, please check our [technical whitepaper](https://abr.ge/2ffuu).
 
 This repository contains official implementation of Airbloc Protocol and networks using Golang.
 
@@ -29,6 +33,7 @@ Go and Node is required to compile clients and smart contracts.
 #### Build
 
 ```
+ $ make deps
  $ make all
 ```
 
@@ -40,20 +45,26 @@ xcode-select --install
 
 ### Running Airbloc
 
-> NOTE: After BetaNet release
 
 ```
- $ airbloc server start
+ $ ./launch.sh
 ```
 
-#### Launching Local Network
+#### Running Airbloc Server
+> You may need to set up configurations before running Airbloc.
+
+```
+ $ airbloc
+```
+
+#### Launching from Local Environment
 
 Before launching Airbloc network on local, Make sure that:
 
  * [airbloc-bigchaindb-proxy](https://github.com/airbloc/airbloc-bigchaindb-proxy) is running on `localhost:9124`
  * [BigchainDB](https://bigchaindb-server.readthedocs.io/en/latest/simple-deployment-template/index.html) >= 2.0 network is running on `localhost:9984`
     * MongoDB used from BigchainDB is running on `localhost:27017`
- * Ethereum node is running on `localhost:8545`
+ * [Ethereum](https://ethereum.org) node is running on `localhost:8545`
 
 First, smart contracts should be deployed on the local Ethereum network.
 You can see guides on [Deploying Contract](#deploying-contract) section.
@@ -88,15 +99,10 @@ Test files are located in `test/` directory.
 
 #### Local End-to-End (E2E) Testing
 
-Before launching Airbloc network on local, Make sure that
-
- * [airbloc-bigchaindb-proxy](https://github.com/airbloc/airbloc-bigchaindb-proxy) is running on `localhost:9124`
- * [BigchainDB](https://bigchaindb-server.readthedocs.io/en/latest/simple-deployment-template/index.html) >= 2.0 network is running on `localhost:9984`
-    * MongoDB used from BigchainDB is running on `localhost:27017`
- * Ethereum node is running on `localhost:8545`
 
 ```
- $ go run test/e2e/main.go
+ $ ./launch.sh
+ $ go test test/e2e/pnc.go
 ```
 
 ## Development
@@ -134,8 +140,6 @@ If there's some changes in contract, contract bindings should be also re-generat
 First, you should create `contracts/truffle-config.local.js` and implement your own provider.
 
 ```js
-const fs = require('fs');
-
 // import your own provider (e.g. truffle-privatekey-provider, truffle-ledger-provider)
 
 module.exports = {
@@ -153,7 +157,6 @@ Then you can deploy contracts:
  $ cd contracts/
  $ npm run deploy NETWORK_NAME
  ...
- Writing deployments to deployment.local.json
 ```
 
 After deploying, `deployment.local.json` file will be generated in your source root.
