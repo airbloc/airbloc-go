@@ -52,18 +52,24 @@ func unwrap(rawAsset interface{}) bson.M {
 	// }
 	// into {"_id": BigchainDBTxID, ...ModelData}
 	asset := rawAsset.(bson.M)
-	assetData := asset["data"].(bson.M)
-	data := assetData["data"].(bson.M)
+	assetData := asset["data"].(bson.D).Map()
+	data := assetData["data"].(bson.D).Map()
 
 	data["_id"] = asset["_id"]
 	return data
 }
 
-func (model *Model) RetrieveAsset(query bson.M) (bson.M, error) {
-	// since data is included in "data" object, we need to wrap query
-	wrappedQuery := bson.M{"data.data": query}
+func wrap(query bson.M) bson.M {
+	// since data is included in "data.data" object, we need to wrap query
+	wrappedQuery := bson.M{}
+	for fieldName, value := range query {
+		wrappedQuery["data.data."+fieldName] = value
+	}
+	return wrappedQuery
+}
 
-	asset, err := model.database.RetrieveOne(context.Background(), wrappedQuery)
+func (model *Model) RetrieveAsset(query bson.M) (bson.M, error) {
+	asset, err := model.database.RetrieveOne(context.Background(), wrap(query))
 	if err != nil {
 		return nil, err
 	}
@@ -71,10 +77,7 @@ func (model *Model) RetrieveAsset(query bson.M) (bson.M, error) {
 }
 
 func (model *Model) RetrieveMany(ctx context.Context, query bson.M) ([]bson.M, error) {
-	// since data is included in "data" object, we need to wrap query
-	wrappedQuery := bson.M{"data.data": query}
-
-	assets, err := model.database.RetrieveMany(ctx, wrappedQuery)
+	assets, err := model.database.RetrieveMany(ctx, wrap(query))
 	if err != nil {
 		return nil, err
 	}

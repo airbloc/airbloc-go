@@ -1,4 +1,6 @@
-.PHONY: all airbloc generate-proto clean install uninstall run test test-all
+export GO111MODULE=on
+
+.PHONY: all deps airbloc generate-proto clean install uninstall run test test-all contracts
 DEST = $(shell pwd)/build/bin
 
 PROTO_DIR := proto
@@ -7,12 +9,15 @@ RPC_PROTO_SRCS := $(shell find $(PROTO_DIR)/rpc -name *.proto)
 
 all: airbloc bootnode
 
+deps:
+	@go build -v ./...
+
 airbloc:
-	./env.sh go install ./cmd/airbloc
+	@go build -o "$(DEST)/airbloc" ./cmd/airbloc
 	@echo "$(DEST)/airbloc"
 
 bootnode:
-	./env.sh go install ./cmd/bootnode
+	@go build -o "$(DEST)/bootnode" ./cmd/bootnode
 	@echo "$(DEST)/bootnode"
 
 clean:
@@ -21,17 +26,33 @@ clean:
 install: airbloc
 	@cp -f $(DEST)/airbloc $GOPATH/bin/
 
-generate-bind:
+contracts:
+	@cd contracts; npm run compile
+
+generate-bind: contracts
 	@go run contracts/generate_adapter.go
 
 generate-proto:
-	@for PROTO in $(PROTO_SRCS); \
-		do protoc -I/usr/local/include -I. \
+	@for PROTO in $(PROTO_SRCS); do \
+	  protoc -I/usr/local/include -I. \
 			-I$$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
 			--go_out=plugins=grpc:$$GOPATH/src \
 			--grpc-gateway_out=logtostderr=true:$$GOPATH/src \
 			$$PROTO; \
 	done
+
+docs:
+	@mkdir -p build/docs
+	@for VERSION in $(PROTO_DIR)/rpc/*; do \
+		for VARIANTS_PATH in $$VERSION/*; do \
+			VARIANT=`echo $$VARIANTS_PATH | rev | cut -d/ -f1 | rev`; \
+			protoc -I/usr/local/include -I. \
+				-I$$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
+				--doc_out=./build/docs/ \
+				--doc_opt=markdown,$$VARIANT.md \
+				$$VARIANTS_PATH/*.proto; \
+		done; \
+	done;
 
 generate-python-pb:
 	@mkdir -p build/gen

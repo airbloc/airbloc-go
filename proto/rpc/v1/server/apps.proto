@@ -5,6 +5,9 @@ option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
 
 import "google/protobuf/empty.proto";
 
+/**
+ * Application Registration API for Data Providers.
+ */
 service Apps {
     rpc Register (RegisterRequest) returns (RegisterResult);
     rpc Unregister (UnregisterRequest) returns (google.protobuf.Empty);

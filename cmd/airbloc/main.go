@@ -49,7 +49,6 @@ var (
 
 	// list of available APIs and services
 	AvailableAPIs = map[string]node.Constructor{
-		"accounts":    serverapi.NewAccountsAPI,
 		"apps":        serverapi.NewAppsAPI,
 		"collections": serverapi.NewCollectionsAPI,
 		"data":        serverapi.NewDataAPI,
@@ -57,7 +56,9 @@ var (
 		"exchange":    serverapi.NewExchangeAPI,
 		"schemas":     serverapi.NewSchemaAPI,
 		"warehouse":   serverapi.NewWarehouseAPI,
-		"account":     userdelegateapi.NewAccountAPI, // TODO: it's not supposed to be in here
+
+		"server.accounts":       serverapi.NewAccountsAPI,
+		"userdelegate.accounts": userdelegateapi.NewAccountAPI,
 	}
 	AvailableServices = map[string]node.ServiceConstructor{
 		"api":          node.NewAPIService,
@@ -71,7 +72,7 @@ func main() {
 	app.Description = "A node of Airbloc Protocol, which is decentralized data exchange protocol."
 	app.Commands = commands
 	app.Flags = flags
-	app.Action = start("api", "apps,accounts,collections,data,dauth,exchange,schemas,warehouse")
+	app.Action = start("api", "apps,server.accounts,collections,data,dauth,exchange,schemas,warehouse")
 
 	err := app.Run(os.Args)
 	if err != nil {

@@ -3,16 +3,22 @@ package airbloc.rpc.v1;
 
 option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
 
+/**
+ * Account View API for Data Providers.
+ */
 service Accounts {
     // Exists return true if account exists with given identity information (e.g. Email).
     rpc Exists(AccountExistsRequest) returns (AccountExistsResponse);
 }
 
 message AccountExistsRequest {
+    // identity (e.g. Email, Phone No.)
     string identity = 1;
 }
 
 message AccountExistsResponse {
     bool exists = 1;
+
+    // ID of the account corresponding to the given identity, if the account exists
     string accountId = 2;
 }

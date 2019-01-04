@@ -10,6 +10,10 @@ import "google/protobuf/empty.proto";
  * DAuth (Data Collection Authentification) API.
  */
 service DAuth {
+    /**
+     * SignIn takes an email of user and returns an user account ID if the account is exists.
+     * Otherwise, it creates new account using the email, and returns an ID of the newly created account.
+     */
     rpc SignIn(SignInRequest) returns (SignInResponse) {
         option (google.api.http) = {
             post: "/v1/dauth/signin"
@@ -17,17 +21,33 @@ service DAuth {
         };
     }
 
-    // GetAuthorization returns a list of the data authorization settings
-    // which are done to collections of this app by given user.
+    /**
+     * GetAuthorization returns a list of the data authorization settings
+     * which are done to collections of this app by given user.
+     */
     rpc GetAuthorizations(GetAuthorizationsRequest) returns (GetAuthorizationsResponse) {
         option (google.api.http) = {get: "/v1/dauth"};
     }
+
+    /**
+     * Allow turns on user's data collection authorization settings for the given collection.
+     *
+     * Note that this is one-time only; Once you set an authorization to the collection,
+     * then you cannot change it through this API. Only users can modify the settings.
+     */
     rpc Allow(DAuthRequest) returns (google.protobuf.Empty) {
         option (google.api.http) = {
             post: "/v1/dauth/{collectionId}/allow"
             body: "*"
         };
     }
+
+    /**
+     * Deny turns off user's data collection authorization settings for the given collection.
+     *
+     * Note that this is one-time only; Once you set an authorization to the collection,
+     * then you cannot change it through this API. Only users can modify the settings.
+     */
     rpc Deny(DAuthRequest) returns (google.protobuf.Empty) {
         option (google.api.http) = {
             post: "/v1/dauth/{collectionId}/deny"
@@ -37,8 +57,11 @@ service DAuth {
 }
 
 message SignInRequest {
+    // Identity information (e.g. Email, Phone Number)
     string identity = 1;
-    string userDelegate = 2; // Address
+
+    // An address of the user delegate.
+    string userDelegate = 2;
 }
 
 message SignInResponse {
@@ -46,20 +69,29 @@ message SignInResponse {
 }
 
 message DAuthRequest {
+    // Collection (Data Type) ID the user want to authorize
     string collectionId = 1;
+
+    // ID of the user.
     string accountId = 2;
 }
 
 message GetAuthorizationsRequest {
     string accountId = 1;
-    string appId = 2; // TODO: Temporary
+
+    // your app ID. @exclude TODO: Temporary
+    string appId = 2;
 }
 
 message GetAuthorizationsResponse {
     message Authorization {
         string collectionId = 1; // ID
-        bool authorized = 2;
+        bool authorized = 2; // true if the user has been authorized data collection.
     }
+
+    // true if the user has been done DAuth to given app at least one time.
     bool hasAuthorizedBefore = 1;
+
+    // list of the authorization settings of the user to the app.
     repeated Authorization authorizations = 2;
 }

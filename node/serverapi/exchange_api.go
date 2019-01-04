@@ -42,7 +42,7 @@ func (api *ExchangeAPI) Prepare(ctx context.Context, req *pb.OrderRequest) (*pb.
 			return nil, status.Errorf(codes.InvalidArgument, "Failed to decode dataId")
 		}
 		if len(idBytes) != 20 {
-			return nil, status.Errorf(codes.InvalidArgument, "Wrong id length (expected 16)")
+			return nil, status.Errorf(codes.InvalidArgument, "Wrong ID length (expected 16)")
 		}
 		copy(dataIds[i][:], idBytes)
 	}
