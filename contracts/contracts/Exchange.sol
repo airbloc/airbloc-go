@@ -30,20 +30,19 @@ contract Exchange is ReentrancyGuard {
     }
 
     function prepare(
-        bytes8 _to,
+        address _to,
         address _escrow,
         bytes4 _escrowSign,
         bytes memory _escrowArgs,
         bytes20[] memory _dataIds
     ) public {
-        require(appReg.exists(_to), "invalid app");
+        require(_to != address(0), "invalid app");
         require(_escrow != address(0), "invalid contract address");
 
-        (, address to) = appReg.apps(_to);
         bytes8 offerId = orderbook.prepare(
             ExchangeLib.Offer({
                 from: msg.sender,
-                to: to,
+                to: _to,
                 dataIds: _dataIds,
                 escrow: ExchangeLib.Escrow({
                     addr: _escrow,
