@@ -180,6 +180,163 @@ func (m *CreateCollectionResponse) GetCollectionId() string {
 	return ""
 }
 
+type GetCollectionRequest struct {
+	CollectionId         string   `protobuf:"bytes,1,opt,name=collectionId,proto3" json:"collectionId,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetCollectionRequest) Reset()         { *m = GetCollectionRequest{} }
+func (m *GetCollectionRequest) String() string { return proto.CompactTextString(m) }
+func (*GetCollectionRequest) ProtoMessage()    {}
+func (*GetCollectionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_902b54d9242d285e, []int{3}
+}
+
+func (m *GetCollectionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetCollectionRequest.Unmarshal(m, b)
+}
+func (m *GetCollectionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetCollectionRequest.Marshal(b, m, deterministic)
+}
+func (m *GetCollectionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetCollectionRequest.Merge(m, src)
+}
+func (m *GetCollectionRequest) XXX_Size() int {
+	return xxx_messageInfo_GetCollectionRequest.Size(m)
+}
+func (m *GetCollectionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetCollectionRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetCollectionRequest proto.InternalMessageInfo
+
+func (m *GetCollectionRequest) GetCollectionId() string {
+	if m != nil {
+		return m.CollectionId
+	}
+	return ""
+}
+
+type GetCollectionResult struct {
+	Id                   string                      `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string                      `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Policy               *Policy                     `protobuf:"bytes,3,opt,name=policy,proto3" json:"policy,omitempty"`
+	Schema               *GetCollectionResult_Schema `protobuf:"bytes,4,opt,name=schema,proto3" json:"schema,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                    `json:"-"`
+	XXX_unrecognized     []byte                      `json:"-"`
+	XXX_sizecache        int32                       `json:"-"`
+}
+
+func (m *GetCollectionResult) Reset()         { *m = GetCollectionResult{} }
+func (m *GetCollectionResult) String() string { return proto.CompactTextString(m) }
+func (*GetCollectionResult) ProtoMessage()    {}
+func (*GetCollectionResult) Descriptor() ([]byte, []int) {
+	return fileDescriptor_902b54d9242d285e, []int{4}
+}
+
+func (m *GetCollectionResult) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetCollectionResult.Unmarshal(m, b)
+}
+func (m *GetCollectionResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetCollectionResult.Marshal(b, m, deterministic)
+}
+func (m *GetCollectionResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetCollectionResult.Merge(m, src)
+}
+func (m *GetCollectionResult) XXX_Size() int {
+	return xxx_messageInfo_GetCollectionResult.Size(m)
+}
+func (m *GetCollectionResult) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetCollectionResult.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetCollectionResult proto.InternalMessageInfo
+
+func (m *GetCollectionResult) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *GetCollectionResult) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *GetCollectionResult) GetPolicy() *Policy {
+	if m != nil {
+		return m.Policy
+	}
+	return nil
+}
+
+func (m *GetCollectionResult) GetSchema() *GetCollectionResult_Schema {
+	if m != nil {
+		return m.Schema
+	}
+	return nil
+}
+
+type GetCollectionResult_Schema struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Schema               string   `protobuf:"bytes,3,opt,name=schema,proto3" json:"schema,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetCollectionResult_Schema) Reset()         { *m = GetCollectionResult_Schema{} }
+func (m *GetCollectionResult_Schema) String() string { return proto.CompactTextString(m) }
+func (*GetCollectionResult_Schema) ProtoMessage()    {}
+func (*GetCollectionResult_Schema) Descriptor() ([]byte, []int) {
+	return fileDescriptor_902b54d9242d285e, []int{4, 0}
+}
+
+func (m *GetCollectionResult_Schema) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetCollectionResult_Schema.Unmarshal(m, b)
+}
+func (m *GetCollectionResult_Schema) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetCollectionResult_Schema.Marshal(b, m, deterministic)
+}
+func (m *GetCollectionResult_Schema) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetCollectionResult_Schema.Merge(m, src)
+}
+func (m *GetCollectionResult_Schema) XXX_Size() int {
+	return xxx_messageInfo_GetCollectionResult_Schema.Size(m)
+}
+func (m *GetCollectionResult_Schema) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetCollectionResult_Schema.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetCollectionResult_Schema proto.InternalMessageInfo
+
+func (m *GetCollectionResult_Schema) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *GetCollectionResult_Schema) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *GetCollectionResult_Schema) GetSchema() string {
+	if m != nil {
+		return m.Schema
+	}
+	return ""
+}
+
 type ListCollectionRequest struct {
 	AppId                string   `protobuf:"bytes,1,opt,name=appId,proto3" json:"appId,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -191,7 +348,7 @@ func (m *ListCollectionRequest) Reset()         { *m = ListCollectionRequest{} }
 func (m *ListCollectionRequest) String() string { return proto.CompactTextString(m) }
 func (*ListCollectionRequest) ProtoMessage()    {}
 func (*ListCollectionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_902b54d9242d285e, []int{3}
+	return fileDescriptor_902b54d9242d285e, []int{5}
 }
 
 func (m *ListCollectionRequest) XXX_Unmarshal(b []byte) error {
@@ -220,18 +377,18 @@ func (m *ListCollectionRequest) GetAppId() string {
 }
 
 type ListCollectionResponse struct {
-	Total                int32                                `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
-	Collections          []*ListCollectionResponse_Collection `protobuf:"bytes,2,rep,name=collections,proto3" json:"collections,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                             `json:"-"`
-	XXX_unrecognized     []byte                               `json:"-"`
-	XXX_sizecache        int32                                `json:"-"`
+	Total                int32                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
+	Collections          []*GetCollectionResult `protobuf:"bytes,2,rep,name=collections,proto3" json:"collections,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
+	XXX_unrecognized     []byte                 `json:"-"`
+	XXX_sizecache        int32                  `json:"-"`
 }
 
 func (m *ListCollectionResponse) Reset()         { *m = ListCollectionResponse{} }
 func (m *ListCollectionResponse) String() string { return proto.CompactTextString(m) }
 func (*ListCollectionResponse) ProtoMessage()    {}
 func (*ListCollectionResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_902b54d9242d285e, []int{4}
+	return fileDescriptor_902b54d9242d285e, []int{6}
 }
 
 func (m *ListCollectionResponse) XXX_Unmarshal(b []byte) error {
@@ -259,67 +416,22 @@ func (m *ListCollectionResponse) GetTotal() int32 {
 	return 0
 }
 
-func (m *ListCollectionResponse) GetCollections() []*ListCollectionResponse_Collection {
+func (m *ListCollectionResponse) GetCollections() []*GetCollectionResult {
 	if m != nil {
 		return m.Collections
 	}
 	return nil
 }
 
-type ListCollectionResponse_Collection struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	SchemaId             string   `protobuf:"bytes,2,opt,name=schemaId,proto3" json:"schemaId,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *ListCollectionResponse_Collection) Reset()         { *m = ListCollectionResponse_Collection{} }
-func (m *ListCollectionResponse_Collection) String() string { return proto.CompactTextString(m) }
-func (*ListCollectionResponse_Collection) ProtoMessage()    {}
-func (*ListCollectionResponse_Collection) Descriptor() ([]byte, []int) {
-	return fileDescriptor_902b54d9242d285e, []int{4, 0}
-}
-
-func (m *ListCollectionResponse_Collection) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ListCollectionResponse_Collection.Unmarshal(m, b)
-}
-func (m *ListCollectionResponse_Collection) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ListCollectionResponse_Collection.Marshal(b, m, deterministic)
-}
-func (m *ListCollectionResponse_Collection) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListCollectionResponse_Collection.Merge(m, src)
-}
-func (m *ListCollectionResponse_Collection) XXX_Size() int {
-	return xxx_messageInfo_ListCollectionResponse_Collection.Size(m)
-}
-func (m *ListCollectionResponse_Collection) XXX_DiscardUnknown() {
-	xxx_messageInfo_ListCollectionResponse_Collection.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ListCollectionResponse_Collection proto.InternalMessageInfo
-
-func (m *ListCollectionResponse_Collection) GetId() string {
-	if m != nil {
-		return m.Id
-	}
-	return ""
-}
-
-func (m *ListCollectionResponse_Collection) GetSchemaId() string {
-	if m != nil {
-		return m.SchemaId
-	}
-	return ""
-}
-
 func init() {
 	proto.RegisterType((*Policy)(nil), "airbloc.rpc.v1.Policy")
 	proto.RegisterType((*CreateCollectionRequest)(nil), "airbloc.rpc.v1.CreateCollectionRequest")
 	proto.RegisterType((*CreateCollectionResponse)(nil), "airbloc.rpc.v1.CreateCollectionResponse")
+	proto.RegisterType((*GetCollectionRequest)(nil), "airbloc.rpc.v1.GetCollectionRequest")
+	proto.RegisterType((*GetCollectionResult)(nil), "airbloc.rpc.v1.GetCollectionResult")
+	proto.RegisterType((*GetCollectionResult_Schema)(nil), "airbloc.rpc.v1.GetCollectionResult.Schema")
 	proto.RegisterType((*ListCollectionRequest)(nil), "airbloc.rpc.v1.ListCollectionRequest")
 	proto.RegisterType((*ListCollectionResponse)(nil), "airbloc.rpc.v1.ListCollectionResponse")
-	proto.RegisterType((*ListCollectionResponse_Collection)(nil), "airbloc.rpc.v1.ListCollectionResponse.Collection")
 }
 
 func init() {
@@ -327,32 +439,37 @@ func init() {
 }
 
 var fileDescriptor_902b54d9242d285e = []byte{
-	// 399 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x53, 0xc1, 0xae, 0xd2, 0x40,
-	0x14, 0xcd, 0x14, 0x68, 0x1e, 0xb7, 0xfa, 0x62, 0x26, 0xcf, 0x67, 0x43, 0x5c, 0x34, 0x8d, 0x4f,
-	0xbb, 0x61, 0x9a, 0xc2, 0xc6, 0x95, 0x0b, 0x71, 0x83, 0x31, 0x91, 0xd4, 0xb8, 0xd1, 0xd5, 0x30,
-	0x4c, 0x60, 0x92, 0xc2, 0xd4, 0x99, 0xa1, 0x86, 0xa5, 0xbf, 0xe0, 0xff, 0x98, 0xf8, 0x69, 0xa6,
-	0xd3, 0x02, 0x2d, 0xa2, 0xb0, 0x22, 0xe7, 0xdc, 0x73, 0x2f, 0xe7, 0x9c, 0x49, 0xe1, 0x21, 0x57,
-	0xd2, 0xc8, 0x58, 0xe5, 0x2c, 0x2e, 0x92, 0x58, 0x73, 0x55, 0x70, 0x15, 0x33, 0x99, 0x65, 0x9c,
-	0x19, 0x21, 0x37, 0x9a, 0xd8, 0x39, 0xbe, 0xa5, 0x42, 0xcd, 0x33, 0xc9, 0x88, 0xca, 0x19, 0x29,
-	0x92, 0xf0, 0x27, 0x02, 0x77, 0x26, 0x33, 0xc1, 0x76, 0x38, 0x84, 0x47, 0xef, 0xa8, 0xa1, 0x33,
-	0x25, 0x0b, 0xb1, 0xe0, 0xca, 0x47, 0x01, 0x8a, 0x50, 0xda, 0xe2, 0xf0, 0x0b, 0x78, 0x5c, 0x63,
-	0xc6, 0xb5, 0x96, 0xca, 0x77, 0xac, 0xa8, 0x4d, 0xe2, 0x00, 0xbc, 0x92, 0x48, 0x79, 0x46, 0x77,
-	0x5c, 0xf9, 0x1d, 0xab, 0x69, 0x52, 0xf8, 0x39, 0xf4, 0x4b, 0xf8, 0xf1, 0xfb, 0x86, 0x2b, 0xbf,
-	0x6b, 0xe7, 0x47, 0x22, 0xfc, 0x81, 0xe0, 0xd9, 0x44, 0x71, 0x6a, 0xf8, 0xe4, 0x10, 0x20, 0xe5,
-	0xdf, 0xb6, 0x5c, 0x1b, 0x7c, 0x07, 0x3d, 0x9a, 0xe7, 0xd3, 0x85, 0xb5, 0xd7, 0x4f, 0x2b, 0x80,
-	0x07, 0x70, 0xa3, 0xd9, 0x8a, 0xaf, 0xe9, 0x74, 0x61, 0x2d, 0xf5, 0xd3, 0x03, 0xc6, 0x04, 0xdc,
-	0xdc, 0x26, 0xf4, 0xbd, 0x00, 0x45, 0xde, 0xe8, 0x9e, 0xb4, 0x3b, 0x20, 0x55, 0xfe, 0xb4, 0x56,
-	0xbd, 0xef, 0xde, 0x74, 0x9e, 0x78, 0xe1, 0x1b, 0xf0, 0xff, 0xb6, 0xa0, 0x73, 0xb9, 0xd1, 0xbc,
-	0x6c, 0xea, 0xd8, 0xec, 0xc1, 0x4a, 0x8b, 0x0b, 0x87, 0xf0, 0xf4, 0x83, 0xd0, 0xe6, 0xca, 0x00,
-	0xe1, 0x2f, 0x04, 0xf7, 0xa7, 0xfa, 0xfa, 0xdf, 0xee, 0xa0, 0x67, 0xa4, 0xa1, 0x99, 0x5d, 0xe8,
-	0xa5, 0x15, 0xc0, 0x9f, 0xc0, 0x6b, 0xbc, 0xae, 0xef, 0x04, 0x9d, 0xc8, 0x1b, 0x25, 0xa7, 0xd1,
-	0xce, 0x9f, 0x24, 0x0d, 0xaa, 0x79, 0x65, 0xf0, 0x1a, 0xe0, 0x38, 0xc2, 0xb7, 0xe0, 0x88, 0xbd,
-	0x4d, 0x47, 0xfc, 0xb7, 0xe4, 0xd1, 0x6f, 0xd4, 0x5a, 0xfd, 0x0a, 0x6e, 0xd5, 0x1e, 0x7e, 0x75,
-	0x6a, 0xe9, 0x1f, 0x0f, 0x3b, 0x88, 0x2e, 0x0b, 0xeb, 0x42, 0x3e, 0x43, 0xb7, 0xcc, 0x85, 0x1f,
-	0x2e, 0xa5, 0xad, 0x0e, 0xbf, 0xbc, 0xae, 0x94, 0xb7, 0xe3, 0x2f, 0xc9, 0x52, 0x98, 0xd5, 0x76,
-	0x4e, 0x98, 0x5c, 0xc7, 0xf5, 0xce, 0xfe, 0x77, 0xb8, 0x94, 0xf1, 0x99, 0x2f, 0x6c, 0xee, 0x5a,
-	0x72, 0xfc, 0x27, 0x00, 0x00, 0xff, 0xff, 0xad, 0x67, 0x9e, 0x7f, 0x7f, 0x03, 0x00, 0x00,
+	// 475 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x54, 0x4d, 0x6f, 0xd3, 0x40,
+	0x14, 0x94, 0xed, 0xc4, 0x6a, 0x9e, 0xa1, 0x42, 0x8f, 0x10, 0xac, 0x88, 0x43, 0x64, 0x5a, 0x88,
+	0x90, 0x6a, 0x2b, 0xe9, 0x8d, 0x03, 0x87, 0xb6, 0xa8, 0x2a, 0x42, 0x22, 0x32, 0xe2, 0x02, 0xa7,
+	0xcd, 0xe6, 0xa9, 0xb5, 0xe4, 0x64, 0xcd, 0xee, 0x26, 0xa8, 0x47, 0xfe, 0x42, 0xff, 0x2a, 0x7f,
+	0x00, 0x65, 0xbd, 0xcd, 0x87, 0x93, 0x2a, 0x3e, 0x25, 0x6f, 0x76, 0x66, 0x3d, 0x33, 0xbb, 0x36,
+	0x9c, 0x16, 0x52, 0x68, 0x91, 0xc8, 0x82, 0x27, 0x8b, 0x41, 0xa2, 0x48, 0x2e, 0x48, 0x26, 0x5c,
+	0xe4, 0x39, 0x71, 0x9d, 0x89, 0x99, 0x8a, 0xcd, 0x3a, 0x1e, 0xb3, 0x4c, 0x8e, 0x73, 0xc1, 0x63,
+	0x59, 0xf0, 0x78, 0x31, 0x88, 0x1e, 0x1c, 0xf0, 0x47, 0x22, 0xcf, 0xf8, 0x3d, 0x46, 0xf0, 0xec,
+	0x8a, 0x69, 0x36, 0x92, 0x62, 0x91, 0x4d, 0x48, 0x86, 0x4e, 0xcf, 0xe9, 0x3b, 0xe9, 0x16, 0x86,
+	0x27, 0xf0, 0xdc, 0xce, 0x9c, 0x94, 0x12, 0x32, 0x74, 0x0d, 0x69, 0x1b, 0xc4, 0x1e, 0x04, 0x4b,
+	0x20, 0xa5, 0x9c, 0xdd, 0x93, 0x0c, 0x3d, 0xc3, 0xd9, 0x84, 0xf0, 0x0d, 0xb4, 0x96, 0xe3, 0xb7,
+	0x3f, 0x33, 0x92, 0x61, 0xc3, 0xac, 0xaf, 0x81, 0xe8, 0xaf, 0x03, 0xaf, 0x2f, 0x25, 0x31, 0x4d,
+	0x97, 0xab, 0x00, 0x29, 0xfd, 0x9e, 0x93, 0xd2, 0xd8, 0x86, 0x26, 0x2b, 0x8a, 0x9b, 0x89, 0xb1,
+	0xd7, 0x4a, 0xcb, 0x01, 0xbb, 0x70, 0xa4, 0xf8, 0x1d, 0x4d, 0xd9, 0xcd, 0xc4, 0x58, 0x6a, 0xa5,
+	0xab, 0x19, 0x63, 0xf0, 0x0b, 0x93, 0x30, 0x0c, 0x7a, 0x4e, 0x3f, 0x18, 0x76, 0xe2, 0xed, 0x0e,
+	0xe2, 0x32, 0x7f, 0x6a, 0x59, 0x5f, 0x1a, 0x47, 0xde, 0x8b, 0x20, 0xfa, 0x04, 0xe1, 0xae, 0x05,
+	0x55, 0x88, 0x99, 0xa2, 0x65, 0x53, 0xeb, 0x66, 0x57, 0x56, 0xb6, 0xb0, 0xe8, 0x23, 0xb4, 0xaf,
+	0x49, 0xef, 0xfa, 0xaf, 0xa3, 0xfd, 0xe7, 0xc0, 0xcb, 0x8a, 0x58, 0xcd, 0x73, 0x8d, 0xc7, 0xe0,
+	0x66, 0x8f, 0x0a, 0x37, 0x9b, 0x20, 0x42, 0x63, 0xc6, 0xa6, 0x64, 0x13, 0x9b, 0xff, 0x1b, 0x69,
+	0xbd, 0x3a, 0x69, 0xf1, 0x02, 0xfc, 0xb2, 0x29, 0x73, 0x0c, 0xc1, 0xf0, 0x43, 0x95, 0xbf, 0xc7,
+	0x48, 0xfc, 0xdd, 0x28, 0x52, 0xab, 0xec, 0x5e, 0x81, 0x5f, 0x22, 0xb5, 0x1c, 0x76, 0x56, 0x4f,
+	0xf4, 0x0c, 0x6a, 0xa7, 0xe8, 0x0c, 0x5e, 0x7d, 0xcd, 0x94, 0xae, 0x79, 0xe4, 0xd1, 0x1c, 0x3a,
+	0x55, 0xba, 0x3d, 0x9e, 0x36, 0x34, 0xb5, 0xd0, 0x2c, 0x37, 0xfc, 0x66, 0x5a, 0x0e, 0xf8, 0x19,
+	0x82, 0x8d, 0xd7, 0x21, 0x74, 0x7b, 0x5e, 0x3f, 0x18, 0xbe, 0xad, 0x91, 0x36, 0xdd, 0xd4, 0x0d,
+	0x1f, 0x5c, 0x80, 0x35, 0x03, 0x7f, 0x81, 0x5f, 0x5e, 0x13, 0x7c, 0x5f, 0xdd, 0xea, 0x89, 0x1b,
+	0xdc, 0xed, 0x1f, 0x26, 0xda, 0x20, 0x3f, 0xa0, 0xb1, 0x8c, 0x88, 0xa7, 0x55, 0xc5, 0xde, 0x9e,
+	0xba, 0xef, 0x0e, 0xd1, 0xec, 0xb6, 0x23, 0xf0, 0xae, 0x49, 0xe3, 0xc9, 0x81, 0xec, 0xe5, 0xa6,
+	0x75, 0x1a, 0xba, 0x38, 0xff, 0x39, 0xb8, 0xcd, 0xf4, 0xdd, 0x7c, 0x1c, 0x73, 0x31, 0x4d, 0xac,
+	0xe0, 0xf1, 0xf7, 0xec, 0x56, 0x24, 0x7b, 0x3e, 0x4e, 0x63, 0xdf, 0x80, 0xe7, 0xff, 0x03, 0x00,
+	0x00, 0xff, 0xff, 0x0c, 0xec, 0x91, 0x7f, 0xba, 0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -369,6 +486,7 @@ const _ = grpc.SupportPackageIsVersion4
 type CollectionClient interface {
 	Create(ctx context.Context, in *CreateCollectionRequest, opts ...grpc.CallOption) (*CreateCollectionResponse, error)
 	List(ctx context.Context, in *ListCollectionRequest, opts ...grpc.CallOption) (*ListCollectionResponse, error)
+	Get(ctx context.Context, in *GetCollectionRequest, opts ...grpc.CallOption) (*GetCollectionResult, error)
 }
 
 type collectionClient struct {
@@ -397,10 +515,20 @@ func (c *collectionClient) List(ctx context.Context, in *ListCollectionRequest, 
 	return out, nil
 }
 
+func (c *collectionClient) Get(ctx context.Context, in *GetCollectionRequest, opts ...grpc.CallOption) (*GetCollectionResult, error) {
+	out := new(GetCollectionResult)
+	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Collection/Get", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CollectionServer is the server API for Collection service.
 type CollectionServer interface {
 	Create(context.Context, *CreateCollectionRequest) (*CreateCollectionResponse, error)
 	List(context.Context, *ListCollectionRequest) (*ListCollectionResponse, error)
+	Get(context.Context, *GetCollectionRequest) (*GetCollectionResult, error)
 }
 
 func RegisterCollectionServer(s *grpc.Server, srv CollectionServer) {
@@ -443,6 +571,24 @@ func _Collection_List_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Collection_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCollectionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CollectionServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/airbloc.rpc.v1.Collection/Get",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CollectionServer).Get(ctx, req.(*GetCollectionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Collection_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "airbloc.rpc.v1.Collection",
 	HandlerType: (*CollectionServer)(nil),
@@ -454,6 +600,10 @@ var _Collection_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "List",
 			Handler:    _Collection_List_Handler,
+		},
+		{
+			MethodName: "Get",
+			Handler:    _Collection_Get_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

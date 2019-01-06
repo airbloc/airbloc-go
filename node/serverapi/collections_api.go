@@ -5,6 +5,8 @@ import (
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/node"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
+	"github.com/airbloc/airbloc-go/schemas"
+	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -12,11 +14,14 @@ import (
 
 type CollectionsAPI struct {
 	collections *collections.Collections
+	schemas     *schemas.Schemas
 }
 
 func NewCollectionsAPI(backend node.Backend) (node.API, error) {
-	collectionManager := collections.New(backend.Client())
-	return &CollectionsAPI{collectionManager}, nil
+	return &CollectionsAPI{
+		collections: collections.New(backend.Client()),
+		schemas:     schemas.New(backend.MetaDatabase(), backend.Client()),
+	}, nil
 }
 
 func (api *CollectionsAPI) Create(ctx context.Context, req *pb.CreateCollectionRequest) (*pb.CreateCollectionResponse, error) {
@@ -49,22 +54,51 @@ func (api *CollectionsAPI) Create(ctx context.Context, req *pb.CreateCollectionR
 	}, nil
 }
 
+func (api *CollectionsAPI) Get(ctx context.Context, req *pb.GetCollectionRequest) (*pb.GetCollectionResult, error) {
+	collectionId, err := common.HexToID(req.GetCollectionId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid app ID: %s", req.GetCollectionId())
+	}
+	collection, err := api.collections.Get(collectionId)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to retrieve collection %s", collectionId.Hex())
+	}
+	schema, err := api.schemas.Get(collection.Schema.Id)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to retrieve schema %s", collection.Schema.Id.Hex())
+	}
+
+	return &pb.GetCollectionResult{
+		Id:   req.GetCollectionId(),
+		Name: req.GetCollectionId(), // TODO: return collection name
+		Schema: &pb.GetCollectionResult_Schema{
+			Id:     schema.Id.Hex(),
+			Name:   schema.Name,
+			Schema: schema.Schema,
+		},
+		Policy: &pb.Policy{
+			DataOwner:    collection.IncentivePolicy.DataOwner,
+			DataProvider: collection.IncentivePolicy.DataProvider,
+		},
+	}, nil
+}
+
 func (api *CollectionsAPI) List(ctx context.Context, req *pb.ListCollectionRequest) (*pb.ListCollectionResponse, error) {
 	appId, err := common.HexToID(req.GetAppId())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid app ID: %s", req.GetAppId())
 	}
 
-	cols, err := api.collections.List(ctx, appId)
+	collectionIds, err := api.collections.ListID(ctx, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	response := &pb.ListCollectionResponse{Total: int32(len(cols))}
-	for _, col := range cols {
-		collection := &pb.ListCollectionResponse_Collection{
-			Id:       col.Id.Hex(),
-			SchemaId: col.Schema.Id.Hex(),
+	response := &pb.ListCollectionResponse{Total: int32(len(collectionIds))}
+	for _, id := range collectionIds {
+		collection, err := api.Get(ctx, &pb.GetCollectionRequest{CollectionId: id.Hex()})
+		if err != nil {
+			return nil, err
 		}
 		response.Collections = append(response.Collections, collection)
 	}

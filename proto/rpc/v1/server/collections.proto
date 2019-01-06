@@ -6,6 +6,7 @@ option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
 service Collection {
     rpc Create(CreateCollectionRequest) returns (CreateCollectionResponse);
     rpc List(ListCollectionRequest) returns (ListCollectionResponse);
+    rpc Get(GetCollectionRequest) returns (GetCollectionResult);
 }
 
 message Policy {
@@ -26,15 +27,27 @@ message CreateCollectionResponse {
     string collectionId = 1; // ID
 }
 
+message GetCollectionRequest {
+    string collectionId = 1;
+}
+
+message GetCollectionResult {
+    message Schema {
+        string id = 1; // ID
+        string name = 2;
+        string schema = 3;
+    }
+    string id = 1; // ID
+    string name = 2;
+    Policy policy = 3;
+    Schema schema = 4;
+}
+
 message ListCollectionRequest {
     string appId = 1; // TODO: Temporary
 }
 
 message ListCollectionResponse {
-    message Collection {
-        string id = 1; // ID
-        string schemaId = 2; // ID
-    }
     int32 total = 1;
-    repeated Collection collections = 2;
+    repeated GetCollectionResult collections = 2;
 }
