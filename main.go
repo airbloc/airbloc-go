@@ -1,17 +1,21 @@
 package main
 
 import (
-	"encoding/hex"
-	"log"
+	"fmt"
+	"github.com/airbloc/airbloc-go/key"
 )
 
+var files = []string{
+	"private.key",
+	"private.userdelegate.key",
+}
+
 func main() {
-	input := "b86041f2a688f2480000000000000001"
-	bs, err := hex.DecodeString(input)
-	if err != nil {
-		panic(err)
-	}
-	for i, b := range bs {
-		log.Printf("%3d %3v %3s", i, b, input[i*2:i*2+2])
+	// this code generates two private key
+	for _, filename := range files {
+		k, _ := key.Generate()
+		k.Save(filename)
+		fmt.Printf("%s generated (Address: %s)\n",
+			filename, k.EthereumAddress.Hex())
 	}
 }
