@@ -7,6 +7,7 @@ import (
 	"github.com/airbloc/airbloc-go/collections"
 	"github.com/airbloc/airbloc-go/dauth"
 	"github.com/airbloc/airbloc-go/schemas"
+	"log"
 	"math/rand"
 	"net/url"
 	"time"
@@ -18,7 +19,6 @@ import (
 	"github.com/airbloc/airbloc-go/data"
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/database/metadb"
-	"github.com/mongodb/mongo-go-driver/bson"
 
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/key"
@@ -157,12 +157,12 @@ func (warehouse *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error
 	}
 	createdBundle.Uri = uri.String()
 
-	// register to on-chain
+	// register to on-chainㄴ
 	bundleIndex, err := warehouse.registerBundleOnChain(createdBundle)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to register bundle to blockchain")
 	}
-	createdBundle.Id = fmt.Sprintf("%s/%d", createdBundle.Collection.Hex(), bundleIndex)
+	createdBundle.Id = fmt.Sprintf("%s%d", createdBundle.Collection.Hex(), bundleIndex)
 
 	// save metadata to make the bundle searchable
 	bundleInfo := map[string]interface{}{
@@ -219,32 +219,21 @@ func (warehouse *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (int,
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to parse a event from the receipt")
 	}
+	id := common.ID(registerResult.CollectionId)
+	log.Println(id.Hex())
 	return int(registerResult.Index), nil
 }
 
-func (warehouse *DataWarehouse) Get(bundleId string) (*data.Bundle, error) {
-	// try to fetch URI from cache. TODO: TTL of the bundle cache
-	uri, err := warehouse.localCache.Get(bundleId)
+func (warehouse *DataWarehouse) Get(id *common.DataID) (*data.Bundle, error) {
+	bundle, err := warehouse.dataRegistry.Bundles(nil, id.CollectionID, id.BundleIndex)
 	if err != nil {
-		warehouse.log.Error("Warning: failed to access local DB: %s", err.Error(), logger.Attrs{"uri": uri})
+		return nil, errors.Wrap(err, "failed to get uri")
 	}
-
-	if uri != nil {
-		if uri, err := url.Parse(string(uri)); err == nil {
-			return warehouse.Fetch(uri)
-		}
-	}
-
-	// search URI from metadatabase
-	metadata, err := warehouse.metaDatabase.RetrieveAsset(bson.M{"bundleId": bundleId})
+	uri, err := url.Parse(bundle.Uri)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to query on metadatabase")
+		return nil, errors.Wrap(err, "failed to get bundle data")
 	}
-	parsedUri, err := url.Parse(metadata["uri"].(string))
-	if err != nil {
-		return nil, errors.Wrap(err, "invalid URI")
-	}
-	return warehouse.Fetch(parsedUri)
+	return warehouse.Fetch(uri)
 }
 
 func (warehouse *DataWarehouse) Fetch(uri *url.URL) (*data.Bundle, error) {
