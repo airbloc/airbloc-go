@@ -7,6 +7,7 @@ import (
 
 	"github.com/airbloc/airbloc-go/account"
 	"github.com/airbloc/airbloc-go/apps"
+	"github.com/airbloc/airbloc-go/blockchain/bind"
 	"github.com/airbloc/airbloc-go/collections"
 	ablCommon "github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/dauth"
@@ -14,7 +15,6 @@ import (
 	"github.com/airbloc/airbloc-go/p2p"
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/azer/logger"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/golang/protobuf/proto"

@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/airbloc/airbloc-go/adapter"
+	"github.com/airbloc/airbloc-go/blockchain/bind"
 	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	ethbind "github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/params"
@@ -31,14 +32,14 @@ func prepareEscrow(t *testing.T, ctx context.Context, config *testConfig) *pb.Co
 	// mint 10000 Tokens
 	tx, err := token.Mint(self, self.From, new(big.Int).Mul(big.NewInt(10000), big.NewInt(params.Ether)))
 	require.NoError(t, err)
-	_, err = bind.WaitMined(ctx, client, tx)
+	_, err = ethbind.WaitMined(ctx, client, tx)
 	require.NoError(t, err)
 	log.Println("10000 new tokens are minted.")
 
 	// approve SimpleContract (Trade Escrow Contract) to take 10000 tokens from me
 	tx, err = token.Approve(self, config.DeployedContracts["SimpleContract"], new(big.Int).Mul(big.NewInt(10000), big.NewInt(params.Ether)))
 	require.NoError(t, err)
-	_, err = bind.WaitMined(ctx, client, tx)
+	_, err = ethbind.WaitMined(ctx, client, tx)
 	require.NoError(t, err)
 	log.Println("Allowed taking 10000 tokens")
 

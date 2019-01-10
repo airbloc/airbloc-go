@@ -2,12 +2,12 @@ package serverapi
 
 import (
 	"context"
+	"github.com/airbloc/airbloc-go/blockchain/bind"
 	"github.com/airbloc/airbloc-go/collections"
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/dauth"
 	"github.com/airbloc/airbloc-go/node"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/pkg/errors"

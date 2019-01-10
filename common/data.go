@@ -2,7 +2,7 @@ package common
 
 import (
 	"fmt"
-	"strconv"
+	"math/big"
 
 	"github.com/pkg/errors"
 )
@@ -19,27 +19,39 @@ type EncryptedData struct {
 }
 
 type DataID struct {
-	BundleID ID
-	Index    int
+	CollectionID ID
+	BundleIndex  *big.Int
+	OwnerID      ID
 }
 
 func NewDataID(dataId string) (*DataID, error) {
-	bundleId, err := HexToID(dataId[:IDLength])
+	collectionID, err := HexToID(dataId[:IDLength])
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse data ID from the given data ID.")
+		return nil, errors.Wrap(err, "failed to parse collection ID from the given data ID.")
 	}
 
-	index, err := strconv.Atoi(dataId[IDLength+1:])
+	bundleIndex, ok := new(big.Int).SetString(dataId[IDLength+1:IDLength*2], 16)
+	if !ok {
+		return nil, errors.New("cannot parse hex string to bundleIndex")
+	}
+
+	ownerID, err := HexToID(dataId[IDLength*2+1 : IDLength*3])
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse data index from the given data ID.")
+		return nil, errors.Wrap(err, "failed to parse owner ID from the given data ID")
 	}
 
 	return &DataID{
-		BundleID: bundleId,
-		Index:    index,
+		CollectionID: collectionID,
+		BundleIndex:  bundleIndex,
+		OwnerID:      ownerID,
 	}, nil
 }
 
 func (id *DataID) String() string {
-	return fmt.Sprintf("%s/%d", id.BundleID.Hex(), id.Index)
+	return fmt.Sprintf(
+		"%s%s%s",
+		id.CollectionID.Hex(),
+		id.BundleIndex.Text(16),
+		id.OwnerID.Hex(),
+	)
 }

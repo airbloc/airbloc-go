@@ -3,7 +3,7 @@ package blockchain
 import (
 	"context"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/airbloc/airbloc-go/blockchain/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 )

@@ -4,8 +4,8 @@ import (
 	"context"
 	"math/big"
 
+	"github.com/airbloc/airbloc-go/blockchain/bind"
 	"github.com/airbloc/airbloc-go/common"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/pkg/errors"
 

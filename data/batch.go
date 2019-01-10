@@ -1,6 +1,7 @@
 package data
 
 import (
+	"math/big"
 	"strings"
 
 	"github.com/airbloc/airbloc-go/common"
@@ -9,28 +10,33 @@ import (
 // Batch contains and points multiple data ID.
 // it manages data IDs using trie-like structure.
 type Batch struct {
-	Id    string
+	ID    string
 	Count int
-	set   map[common.ID][]int
+	set   map[common.ID]map[*big.Int][]common.ID
 }
 
 func newBatch(id string) *Batch {
 	return &Batch{
-		Id:    id,
+		ID:    id,
 		Count: 0,
-		set:   map[common.ID][]int{},
+		set:   make(map[common.ID]map[*big.Int][]common.ID),
 	}
 }
 
 // Append adds a data ID to the batch.
-func (batch *Batch) Append(dataId common.DataID) {
-	indices := batch.set[dataId.BundleID]
-	if indices == nil {
-		indices = []int{}
+func (batch *Batch) Append(dataID common.DataID) {
+	bundles := batch.set[dataID.CollectionID]
+	if bundles == nil {
+		bundles = make(map[*big.Int][]common.ID)
 	}
-	indices = append(indices, dataId.Index)
 
-	batch.set[dataId.BundleID] = indices
+	ownerIDs := bundles[dataID.BundleIndex]
+	if ownerIDs == nil {
+		ownerIDs = []common.ID{}
+	}
+	ownerIDs = append(ownerIDs, dataID.OwnerID)
+
+	batch.set[dataID.CollectionID][dataID.BundleIndex] = ownerIDs
 	batch.Count += 1
 }
 
@@ -39,9 +45,15 @@ func (batch *Batch) Append(dataId common.DataID) {
 func (batch *Batch) Iterator() chan common.DataID {
 	ch := make(chan common.DataID)
 	go func() {
-		for bundleId, indices := range batch.set {
-			for _, index := range indices {
-				ch <- common.DataID{bundleId, index}
+		for collectionID, bundles := range batch.set {
+			for bundleIndex, ownerIDs := range bundles {
+				for _, ownerID := range ownerIDs {
+					ch <- common.DataID{
+						CollectionID: collectionID,
+						BundleIndex:  bundleIndex,
+						OwnerID:      ownerID,
+					}
+				}
 			}
 		}
 		close(ch)
@@ -52,8 +64,8 @@ func (batch *Batch) Iterator() chan common.DataID {
 // Marshall encodes a batch to the bytes.
 func (batch *Batch) Marshal() []byte {
 	var csv strings.Builder
-	for dataId := range batch.Iterator() {
-		csv.WriteString(dataId.String())
+	for dataID := range batch.Iterator() {
+		csv.WriteString(dataID.String())
 		csv.WriteString(",")
 	}
 
@@ -66,15 +78,15 @@ func (batch *Batch) Marshal() []byte {
 }
 
 // UnmarshalBatch decodes a batch from the bytes.
-func UnmarshalBatch(batchId string, rawBatch []byte) (*Batch, error) {
-	dataIds := strings.Split(string(rawBatch), ",")
-	batch := newBatch(batchId)
-	for _, rawDataId := range dataIds {
-		dataId, err := common.NewDataID(rawDataId)
+func UnmarshalBatch(batchID string, rawBatch []byte) (*Batch, error) {
+	dataIDs := strings.Split(string(rawBatch), ",")
+	batch := newBatch(batchID)
+	for _, rawDataID := range dataIDs {
+		dataID, err := common.NewDataID(rawDataID)
 		if err != nil {
 			return nil, err
 		}
-		batch.Append(*dataId)
+		batch.Append(*dataID)
 	}
 	return batch, nil
 }

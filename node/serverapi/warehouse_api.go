@@ -26,8 +26,8 @@ type WarehouseAPI struct {
 	warehouse *warehouse.DataWarehouse
 }
 
-func NewWarehouseAPI(airbloc node.Backend) (_ node.API, err error) {
-	config := airbloc.Config().Warehouse
+func NewWarehouseAPI(backend node.Backend) (_ node.API, err error) {
+	config := backend.Config().Warehouse
 
 	supportedProtocols := []protocol.Protocol{
 		protocol.NewHttpProtocol(config.Http.Timeout, config.Http.MaxConnsPerHost),
@@ -69,12 +69,14 @@ func NewWarehouseAPI(airbloc node.Backend) (_ node.API, err error) {
 	}
 
 	dw := warehouse.New(
-		airbloc.Kms(),
-		airbloc.LocalDatabase(),
-		airbloc.MetaDatabase(),
-		airbloc.Client(),
+		backend.Kms(),
+		backend.LocalDatabase(),
+		backend.MetaDatabase(),
+		backend.Client(),
 		defaultStorage,
-		supportedProtocols)
+		supportedProtocols,
+	)
+
 	return &WarehouseAPI{dw}, nil
 }
 
