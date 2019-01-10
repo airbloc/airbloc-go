@@ -21,7 +21,7 @@ contract DataRegistry is Ownable {
         // will be further used in Data Availability Challenge
         uint64 proofOfPosessionCount;
     }
-    mapping (bytes8 => Bundle[]) bundles;
+    mapping (bytes8 => Bundle[]) public bundles;
 
     Accounts accounts;
     CollectionRegistry collections;
