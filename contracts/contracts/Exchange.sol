@@ -19,14 +19,11 @@ contract Exchange is ReentrancyGuard {
     mapping(address => bytes8[]) public fromIndex;
     mapping(address => bytes8[]) public escrowIndex;
 
-    AppRegistry appReg;
-
     uint256 constant DEFAULT_TIMEOUT = 240; // block = 3600 sec = 60 min = 1 hour
     uint256 constant MAX_OPT_LENGTH = 10;
 
-    constructor(AppRegistry _appReg) public {
+    constructor() public {
         orderbook = ExchangeLib.Orderbook();
-        appReg = _appReg;
     }
 
     function prepare(
