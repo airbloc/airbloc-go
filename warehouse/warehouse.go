@@ -241,3 +241,25 @@ func (warehouse *DataWarehouse) Fetch(uri *url.URL) (*data.Bundle, error) {
 	}
 	return protoc.Read(uri)
 }
+
+func (warehouse *DataWarehouse) List(providerId common.ID) ([]*data.Bundle, error) {
+	bundleDataList, err := warehouse.metaDatabase.RetrieveMany(context.TODO(), bson.M{"provider": providerId.Hex()})
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to list bundles")
+	}
+
+	var bundles []*data.Bundle
+	for _, bundleData := range bundleDataList {
+		collectionId, _ := common.HexToID(bundleData["collection"].(string))
+		ingestedAt, _ := time.Parse(time.RFC3339Nano, bundleData["ingestedAt"].(string))
+		bundles = append(bundles, &data.Bundle{
+			Id:         bundleData["bundleId"].(string),
+			Uri:        bundleData["uri"].(string),
+			DataCount:  bundleData["dataCount"].(int),
+			IngestedAt: ingestedAt,
+			Provider:   providerId,
+			Collection: collectionId,
+		})
+	}
+	return bundles, nil
+}

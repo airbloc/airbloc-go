@@ -173,8 +173,33 @@ func (api *WarehouseAPI) StoreEncryptedBundle(stream pb.Warehouse_StoreEncrypted
 	})
 }
 
-func (api *WarehouseAPI) DeleteBundle(context context.Context, request *pb.DeleteBundleRequest) (*pb.DeleteBundleResult, error) {
+func (api *WarehouseAPI) DeleteBundle(ctx context.Context, request *pb.DeleteBundleRequest) (*pb.DeleteBundleResult, error) {
 	return nil, nil
+}
+
+func (api *WarehouseAPI) ListBundle(ctx context.Context, req *pb.ListBundleRequest) (*pb.ListBundleResult, error) {
+	providerId, err := common.HexToID(req.GetProviderId())
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid provider ID: %s", req.GetProviderId())
+	}
+	bundles, err := api.warehouse.List(providerId)
+	if err != nil {
+		return nil, err
+	}
+
+	var bundleResults []*pb.ListBundleResult_Bundle
+	for _, bundle := range bundles {
+		bundleResults = append(bundleResults, &pb.ListBundleResult_Bundle{
+			CollectionId: bundle.Collection.Hex(),
+			Index:        1010,
+			CreatedAt:    uint64(bundle.IngestedAt.Unix()),
+			DataCount:    uint64(bundle.DataCount),
+			Uri:          bundle.Uri,
+		})
+	}
+	return &pb.ListBundleResult{
+		Bundles: bundleResults,
+	}, nil
 }
 
 func (api *WarehouseAPI) AttachToAPI(service *node.APIService) {

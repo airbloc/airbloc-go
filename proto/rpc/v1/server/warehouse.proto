@@ -23,6 +23,11 @@ service Warehouse {
      * DeleteBundle removes given bundle from the warehouse and the blockchain.
      */
     rpc DeleteBundle(DeleteBundleRequest) returns (DeleteBundleResult);
+
+    /**
+     * ListBundle returns a list of ingested data bundles.
+     */
+    rpc ListBundle(ListBundleRequest) returns (ListBundleResult);
 }
 
 message RawDataRequest {
@@ -81,4 +86,23 @@ message DeleteBundleRequest {
 message DeleteBundleResult {
     // amount of gas (transaction fee) used for interaction to blockchain.
     uint64 gasUsed = 1;
+}
+
+message ListBundleRequest {
+    // Provider (App) ID
+    string providerId = 1;
+
+    // Optional: filter specific collection ID from results
+    string collectionId = 2;
+}
+
+message ListBundleResult {
+    message Bundle {
+        string collectionId = 1;
+        uint32 index = 2;
+        uint64 createdAt = 3;
+        uint64 dataCount = 4;
+        string uri = 5;
+    }
+    repeated Bundle bundles = 1;
 }
