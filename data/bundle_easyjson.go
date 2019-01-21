@@ -4,7 +4,6 @@ package data
 
 import (
 	json "encoding/json"
-
 	common "github.com/airbloc/airbloc-go/common"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
@@ -207,16 +206,13 @@ func easyjson40af25b0DecodeGithubComAirblocAirblocGoCommon(in *jlexer.Lexer, out
 			continue
 		}
 		switch key {
-		case "ownerAnid":
+		case "ownerAnId":
 			if data := in.Raw(); in.Ok() {
-				in.AddError((out.OwnerAnid).UnmarshalJSON(data))
+				in.AddError((out.OwnerAnID).UnmarshalJSON(data))
 			}
-		case "payload":
-			if in.IsNull() {
-				in.Skip()
-				out.Payload = nil
-			} else {
-				out.Payload = in.Bytes()
+		case "rowId":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.RowID).UnmarshalJSON(data))
 			}
 		case "capsule":
 			if in.IsNull() {
@@ -224,6 +220,13 @@ func easyjson40af25b0DecodeGithubComAirblocAirblocGoCommon(in *jlexer.Lexer, out
 				out.Capsule = nil
 			} else {
 				out.Capsule = in.Bytes()
+			}
+		case "payload":
+			if in.IsNull() {
+				in.Skip()
+				out.Payload = nil
+			} else {
+				out.Payload = in.Bytes()
 			}
 		default:
 			in.SkipRecursive()
@@ -240,24 +243,24 @@ func easyjson40af25b0EncodeGithubComAirblocAirblocGoCommon(out *jwriter.Writer, 
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"ownerAnid\":"
+		const prefix string = ",\"ownerAnId\":"
 		if first {
 			first = false
 			out.RawString(prefix[1:])
 		} else {
 			out.RawString(prefix)
 		}
-		out.Raw((in.OwnerAnid).MarshalJSON())
+		out.Raw((in.OwnerAnID).MarshalJSON())
 	}
 	{
-		const prefix string = ",\"payload\":"
+		const prefix string = ",\"rowId\":"
 		if first {
 			first = false
 			out.RawString(prefix[1:])
 		} else {
 			out.RawString(prefix)
 		}
-		out.Base64Bytes(in.Payload)
+		out.Raw((in.RowID).MarshalJSON())
 	}
 	{
 		const prefix string = ",\"capsule\":"
@@ -268,6 +271,16 @@ func easyjson40af25b0EncodeGithubComAirblocAirblocGoCommon(out *jwriter.Writer, 
 			out.RawString(prefix)
 		}
 		out.Base64Bytes(in.Capsule)
+	}
+	{
+		const prefix string = ",\"payload\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Base64Bytes(in.Payload)
 	}
 	out.RawByte('}')
 }
