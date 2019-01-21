@@ -15,7 +15,7 @@ library ExchangeLib {
 
     function exec(
         Escrow storage _escrow,
-        bytes20 _offerId
+        bytes32 _offerId
     ) internal returns (bool) {
         bytes memory data = abi.encode(_offerId);
         if (_escrow.args.length > 0) {
@@ -31,7 +31,7 @@ library ExchangeLib {
     struct Offer {
         address     from;
         address      to;
-        bytes20[]   dataIds;
+        bytes32[]   dataIds;
         Escrow      escrow;
         OfferStatus status;
         bool        reverted;

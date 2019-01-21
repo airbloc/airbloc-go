@@ -13,7 +13,7 @@
     "console": "truffle console --network",
     "migrate": "truffle migrate --reset --network",
     "flatten": "truffle-flattener",
-    "ganache": "ganache-cli"
+    "ganache": "node ganache.js"
   },
   "keywords": [],
   "author": "",
