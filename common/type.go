@@ -12,7 +12,8 @@ import (
 )
 
 const (
-	IDLength = 8
+	IDLength    = 8
+	IDStrLength = 16
 )
 
 type ID [IDLength]byte
