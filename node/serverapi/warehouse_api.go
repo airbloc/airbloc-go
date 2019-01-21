@@ -101,14 +101,14 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 			}
 		}
 
-		ownerAnid, err := common.HexToID(request.GetOwnerId())
+		ownerAnID, err := common.HexToID(request.GetOwnerId())
 		if err != nil {
 			return status.Errorf(codes.InvalidArgument, "Invalid user ANID: %s", request.GetOwnerId())
 		}
 
 		datum := &common.Data{
 			Payload:   request.GetPayload(),
-			OwnerAnid: ownerAnid,
+			OwnerAnID: ownerAnID,
 		}
 		bundleStream.Add(datum)
 	}
@@ -147,14 +147,14 @@ func (api *WarehouseAPI) StoreEncryptedBundle(stream pb.Warehouse_StoreEncrypted
 			}
 		}
 
-		ownerAnid, err := common.HexToID(request.GetOwnerId())
+		ownerAnID, err := common.HexToID(request.GetOwnerId())
 		if err != nil {
 			return errors.Wrapf(err, "failed to parse ANID %s", request.GetOwnerId())
 		}
 
 		datum := &common.EncryptedData{
 			Payload:   request.GetEncryptedPayload(),
-			OwnerAnid: ownerAnid,
+			OwnerAnID: ownerAnID,
 			Capsule:   request.GetCapsule(),
 		}
 		bundleStream.AddEncrypted(datum)

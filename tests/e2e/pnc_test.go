@@ -9,7 +9,6 @@ import (
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"log"
-	"math/big"
 	"testing"
 	"time"
 
@@ -160,6 +159,7 @@ func TestPnc(t *testing.T) {
 		log.Println("Stored URI:", storeResults[n].Uri)
 		log.Println("Stored Data Count:", storeResults[n].DataCount)
 		log.Println("Bundle ID:", storeResults[n].BundleId)
+		log.Println("DataIds :")
 
 		// collectionId		bundleNumber		ownerId
 		// deadbeefdeadbeef	0000000000000001	deadbeefdeadbeef
@@ -169,6 +169,7 @@ func TestPnc(t *testing.T) {
 			dataId, _ := toDataId(storeResults[n].BundleId, userId)
 			bundles[n][index] = hex.EncodeToString(dataId[:])
 		}
+		log.Println(bundles[n])
 	}
 
 	// exchange: Test exchanging uploaded data
@@ -184,7 +185,7 @@ func TestPnc(t *testing.T) {
 	dataID, err := common.NewDataID(bundles[0][0])
 	require.NoError(t, err)
 
-	bundle, err := dr.Bundles(nil, dataID.CollectionID, big.NewInt(0))
+	bundle, err := dr.Bundles(nil, dataID.Empty, dataID.BundleID)
 	require.NoError(t, err)
 
 	data, err := json.MarshalIndent(bundle, "", "    ")

@@ -30,7 +30,7 @@ func (stream *BundleStream) Add(data *common.Data) error {
 	if errors.Cause(err) == errValidationFailed {
 		stream.warehouse.log.Info("warning: %s", err.Error(), logger.Attrs{
 			"collection": stream.collection.Id.Hex(),
-			"dataOwner":  data.OwnerAnid.Hex(),
+			"dataOwner":  data.OwnerAnID.Hex(),
 		})
 		return err
 	}
