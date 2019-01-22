@@ -37,11 +37,8 @@ message RawDataRequest {
     // ID of the user (Data Owner)
     string ownerId = 2;
 
-    // row ID - merkle tree leaf
-    string rowId = 3;
-
     // JSON payload, which follows schema of the given collection.
-    string payload = 4;
+    string payload = 3;
 }
 
 message EncryptedDataRequest {
@@ -51,15 +48,12 @@ message EncryptedDataRequest {
     // ID of the user (Data Owner)
     string ownerId = 2;
 
-    // row ID - merkle tree leaf
-    string rowId = 3;
-
     // pre-encrypted JSON payload, which follows schema of the given collection.
     // the payload must be encrypted through ECIES-SECP256k1 using the key in a capsule.
-    bytes encryptedPayload = 4;
+    bytes encryptedPayload = 3;
 
     // symmetric key of the encryptedPayload, encrypted using the provider's key.
-    bytes capsule = 5;
+    bytes capsule = 4;
 }
 
 message StoreResult {
