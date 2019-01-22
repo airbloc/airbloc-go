@@ -35,7 +35,7 @@ func (api *ExchangeAPI) Prepare(ctx context.Context, req *pb.OrderRequest) (*pb.
 	copy(escrowSign[:], contract.GetEscrowSign())
 
 	rawDataIds := req.GetDataIds()
-	dataIds := make([][20]byte, len(rawDataIds))
+	dataIds := make([][32]byte, len(rawDataIds))
 	for i, idStr := range rawDataIds {
 		idBytes, err := hex.DecodeString(idStr)
 		if err != nil {
@@ -66,7 +66,7 @@ func (api *ExchangeAPI) AddDataIds(ctx context.Context, req *pb.DataIds) (*empty
 	}
 
 	rawDataIds := req.GetDataIds()
-	dataIds := make([][20]byte, len(rawDataIds))
+	dataIds := make([][32]byte, len(rawDataIds))
 	for i, idStr := range rawDataIds {
 		idBytes, err := hexutil.Decode(idStr)
 		if err != nil {

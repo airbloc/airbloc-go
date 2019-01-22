@@ -57,7 +57,7 @@ message EncryptedDataRequest {
 }
 
 message StoreResult {
-    // the ID of the bundle in "<collectionId>/<index>" format.
+    // the ID of the bundle in "{empty}{bundleid}" format.
     string bundleId = 1;
 
     // public-accessible URI of the bundle.

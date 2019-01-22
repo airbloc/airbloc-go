@@ -9,10 +9,10 @@ import (
 	"strings"
 
 	"github.com/airbloc/airbloc-go/blockchain"
+	"github.com/airbloc/airbloc-go/blockchain/bind"
 	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
@@ -25,7 +25,7 @@ var (
 	_ = strings.NewReader
 	_ = ethereum.NotFound
 	_ = abi.U256
-	_ = bind.Bind
+	_ = bind.NewKeyedTransactor
 	_ = ablCommon.HexToID
 	_ = common.Big1
 	_ = types.BloomLookup
@@ -33,7 +33,7 @@ var (
 )
 
 // DataRegistryABI is the input ABI used to generate the binding from.
-const DataRegistryABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_accounts\",\"type\":\"address\"},{\"name\":\"_collections\",\"type\":\"address\"},{\"name\":\"_smt\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"index\",\"type\":\"uint64\"}],\"name\":\"BundleUnregistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"index\",\"type\":\"uint64\"}],\"name\":\"BundleRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"provider\",\"type\":\"address\"}],\"name\":\"Punished\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"usersRoot\",\"type\":\"bytes32\"},{\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"name\":\"uri\",\"type\":\"string\"}],\"name\":\"registerBundle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"bundleIndex\",\"type\":\"uint64\"},{\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"challenge\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"bundleIndex\",\"type\":\"uint64\"},{\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"isMyDataIncluded\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const DataRegistryABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes8\"},{\"name\":\"\",\"type\":\"bytes8\"}],\"name\":\"bundles\",\"outputs\":[{\"name\":\"usersRoot\",\"type\":\"bytes32\"},{\"name\":\"bundleDataHash\",\"type\":\"bytes32\"},{\"name\":\"uri\",\"type\":\"string\"},{\"name\":\"createdAt\",\"type\":\"uint256\"},{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"proofOfPosessionCount\",\"type\":\"uint64\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_accounts\",\"type\":\"address\"},{\"name\":\"_collections\",\"type\":\"address\"},{\"name\":\"_smt\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"bundleId\",\"type\":\"bytes8\"}],\"name\":\"BundleUnregistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"bundleId\",\"type\":\"bytes8\"}],\"name\":\"BundleRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"provider\",\"type\":\"address\"}],\"name\":\"Punished\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"usersRoot\",\"type\":\"bytes32\"},{\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"name\":\"uri\",\"type\":\"string\"}],\"name\":\"registerBundle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"bundleId\",\"type\":\"bytes8\"},{\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"challenge\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"collectionId\",\"type\":\"bytes8\"},{\"name\":\"bundleId\",\"type\":\"bytes8\"},{\"name\":\"proof\",\"type\":\"bytes\"}],\"name\":\"isMyDataIncluded\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // DataRegistry is an auto generated Go binding around an Ethereum contract.
 type DataRegistry struct {
@@ -100,6 +100,7 @@ type DataRegistryTransactorRaw struct {
 //
 //	type Bundle struct {
 //		BundleDataHash	common.Hash
+//		CollectionId	ablCommon.ID
 //		CreatedAt	*big.Int
 //		ProofOfPosessionCount	uint64
 //		Uri	string
@@ -209,54 +210,106 @@ func (_DataRegistry *DataRegistryTransactorRaw) Transact(opts *bind.TransactOpts
 	return _DataRegistry.Contract.contract.Transact(opts, method, params...)
 }
 
-// Challenge is a free data retrieval call binding the contract method 0x1ac30935.
+// Bundles is a free data retrieval call binding the contract method 0xd297a76a.
 //
-// Solidity: function challenge(collectionId bytes8, bundleIndex uint64, proof bytes) constant returns()
-func (_DataRegistry *DataRegistryCaller) Challenge(opts *bind.CallOpts, collectionId [8]byte, bundleIndex uint64, proof []byte) error {
+// Solidity: function bundles( bytes8,  bytes8) constant returns(usersRoot bytes32, bundleDataHash bytes32, uri string, createdAt uint256, collectionId bytes8, proofOfPosessionCount uint64)
+func (_DataRegistry *DataRegistryCaller) Bundles(opts *bind.CallOpts, arg0 [8]byte, arg1 [8]byte) (struct {
+	UsersRoot             [32]byte
+	BundleDataHash        [32]byte
+	Uri                   string
+	CreatedAt             *big.Int
+	CollectionId          [8]byte
+	ProofOfPosessionCount uint64
+}, error) {
+	ret := new(struct {
+		UsersRoot             [32]byte
+		BundleDataHash        [32]byte
+		Uri                   string
+		CreatedAt             *big.Int
+		CollectionId          [8]byte
+		ProofOfPosessionCount uint64
+	})
+	out := ret
+	err := _DataRegistry.contract.Call(opts, out, "bundles", arg0, arg1)
+	return *ret, err
+}
+
+// Bundles is a free data retrieval call binding the contract method 0xd297a76a.
+//
+// Solidity: function bundles( bytes8,  bytes8) constant returns(usersRoot bytes32, bundleDataHash bytes32, uri string, createdAt uint256, collectionId bytes8, proofOfPosessionCount uint64)
+func (_DataRegistry *DataRegistrySession) Bundles(arg0 [8]byte, arg1 [8]byte) (struct {
+	UsersRoot             [32]byte
+	BundleDataHash        [32]byte
+	Uri                   string
+	CreatedAt             *big.Int
+	CollectionId          [8]byte
+	ProofOfPosessionCount uint64
+}, error) {
+	return _DataRegistry.Contract.Bundles(&_DataRegistry.CallOpts, arg0, arg1)
+}
+
+// Bundles is a free data retrieval call binding the contract method 0xd297a76a.
+//
+// Solidity: function bundles( bytes8,  bytes8) constant returns(usersRoot bytes32, bundleDataHash bytes32, uri string, createdAt uint256, collectionId bytes8, proofOfPosessionCount uint64)
+func (_DataRegistry *DataRegistryCallerSession) Bundles(arg0 [8]byte, arg1 [8]byte) (struct {
+	UsersRoot             [32]byte
+	BundleDataHash        [32]byte
+	Uri                   string
+	CreatedAt             *big.Int
+	CollectionId          [8]byte
+	ProofOfPosessionCount uint64
+}, error) {
+	return _DataRegistry.Contract.Bundles(&_DataRegistry.CallOpts, arg0, arg1)
+}
+
+// Challenge is a free data retrieval call binding the contract method 0x01c71e9b.
+//
+// Solidity: function challenge(collectionId bytes8, bundleId bytes8, proof bytes) constant returns()
+func (_DataRegistry *DataRegistryCaller) Challenge(opts *bind.CallOpts, collectionId [8]byte, bundleId [8]byte, proof []byte) error {
 	var ()
 	out := &[]interface{}{}
-	err := _DataRegistry.contract.Call(opts, out, "challenge", collectionId, bundleIndex, proof)
+	err := _DataRegistry.contract.Call(opts, out, "challenge", collectionId, bundleId, proof)
 	return err
 }
 
-// Challenge is a free data retrieval call binding the contract method 0x1ac30935.
+// Challenge is a free data retrieval call binding the contract method 0x01c71e9b.
 //
-// Solidity: function challenge(collectionId bytes8, bundleIndex uint64, proof bytes) constant returns()
-func (_DataRegistry *DataRegistrySession) Challenge(collectionId [8]byte, bundleIndex uint64, proof []byte) error {
-	return _DataRegistry.Contract.Challenge(&_DataRegistry.CallOpts, collectionId, bundleIndex, proof)
+// Solidity: function challenge(collectionId bytes8, bundleId bytes8, proof bytes) constant returns()
+func (_DataRegistry *DataRegistrySession) Challenge(collectionId [8]byte, bundleId [8]byte, proof []byte) error {
+	return _DataRegistry.Contract.Challenge(&_DataRegistry.CallOpts, collectionId, bundleId, proof)
 }
 
-// Challenge is a free data retrieval call binding the contract method 0x1ac30935.
+// Challenge is a free data retrieval call binding the contract method 0x01c71e9b.
 //
-// Solidity: function challenge(collectionId bytes8, bundleIndex uint64, proof bytes) constant returns()
-func (_DataRegistry *DataRegistryCallerSession) Challenge(collectionId [8]byte, bundleIndex uint64, proof []byte) error {
-	return _DataRegistry.Contract.Challenge(&_DataRegistry.CallOpts, collectionId, bundleIndex, proof)
+// Solidity: function challenge(collectionId bytes8, bundleId bytes8, proof bytes) constant returns()
+func (_DataRegistry *DataRegistryCallerSession) Challenge(collectionId [8]byte, bundleId [8]byte, proof []byte) error {
+	return _DataRegistry.Contract.Challenge(&_DataRegistry.CallOpts, collectionId, bundleId, proof)
 }
 
-// IsMyDataIncluded is a free data retrieval call binding the contract method 0x45ab73d1.
+// IsMyDataIncluded is a free data retrieval call binding the contract method 0xef5f0fbd.
 //
-// Solidity: function isMyDataIncluded(collectionId bytes8, bundleIndex uint64, proof bytes) constant returns(bool)
-func (_DataRegistry *DataRegistryCaller) IsMyDataIncluded(opts *bind.CallOpts, collectionId [8]byte, bundleIndex uint64, proof []byte) (bool, error) {
+// Solidity: function isMyDataIncluded(collectionId bytes8, bundleId bytes8, proof bytes) constant returns(bool)
+func (_DataRegistry *DataRegistryCaller) IsMyDataIncluded(opts *bind.CallOpts, collectionId [8]byte, bundleId [8]byte, proof []byte) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
 	out := ret0
-	err := _DataRegistry.contract.Call(opts, out, "isMyDataIncluded", collectionId, bundleIndex, proof)
+	err := _DataRegistry.contract.Call(opts, out, "isMyDataIncluded", collectionId, bundleId, proof)
 	return *ret0, err
 }
 
-// IsMyDataIncluded is a free data retrieval call binding the contract method 0x45ab73d1.
+// IsMyDataIncluded is a free data retrieval call binding the contract method 0xef5f0fbd.
 //
-// Solidity: function isMyDataIncluded(collectionId bytes8, bundleIndex uint64, proof bytes) constant returns(bool)
-func (_DataRegistry *DataRegistrySession) IsMyDataIncluded(collectionId [8]byte, bundleIndex uint64, proof []byte) (bool, error) {
-	return _DataRegistry.Contract.IsMyDataIncluded(&_DataRegistry.CallOpts, collectionId, bundleIndex, proof)
+// Solidity: function isMyDataIncluded(collectionId bytes8, bundleId bytes8, proof bytes) constant returns(bool)
+func (_DataRegistry *DataRegistrySession) IsMyDataIncluded(collectionId [8]byte, bundleId [8]byte, proof []byte) (bool, error) {
+	return _DataRegistry.Contract.IsMyDataIncluded(&_DataRegistry.CallOpts, collectionId, bundleId, proof)
 }
 
-// IsMyDataIncluded is a free data retrieval call binding the contract method 0x45ab73d1.
+// IsMyDataIncluded is a free data retrieval call binding the contract method 0xef5f0fbd.
 //
-// Solidity: function isMyDataIncluded(collectionId bytes8, bundleIndex uint64, proof bytes) constant returns(bool)
-func (_DataRegistry *DataRegistryCallerSession) IsMyDataIncluded(collectionId [8]byte, bundleIndex uint64, proof []byte) (bool, error) {
-	return _DataRegistry.Contract.IsMyDataIncluded(&_DataRegistry.CallOpts, collectionId, bundleIndex, proof)
+// Solidity: function isMyDataIncluded(collectionId bytes8, bundleId bytes8, proof bytes) constant returns(bool)
+func (_DataRegistry *DataRegistryCallerSession) IsMyDataIncluded(collectionId [8]byte, bundleId [8]byte, proof []byte) (bool, error) {
+	return _DataRegistry.Contract.IsMyDataIncluded(&_DataRegistry.CallOpts, collectionId, bundleId, proof)
 }
 
 // IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
@@ -444,21 +497,25 @@ func (it *DataRegistryBundleRegisteredIterator) Close() error {
 // DataRegistryBundleRegistered represents a BundleRegistered event raised by the DataRegistry contract.
 type DataRegistryBundleRegistered struct {
 	CollectionId [8]byte
-	Index        uint64
+	BundleId     [8]byte
 	Raw          types.Log // Blockchain specific contextual infos
 }
 
-// FilterBundleRegistered is a free log retrieval operation binding the contract event 0xab7212f2e313639f22d9f8d95bc067b9289814ce97d8136a08e37d239023b1a3.
+// FilterBundleRegistered is a free log retrieval operation binding the contract event 0x08f89c1d80f3b87c3e2072d4e185c7e89c451ed1894c608e55682fcbc5016a1d.
 //
-// Solidity: e BundleRegistered(collectionId indexed bytes8, index uint64)
-func (_DataRegistry *DataRegistryFilterer) FilterBundleRegistered(opts *bind.FilterOpts, collectionId [][8]byte) (*DataRegistryBundleRegisteredIterator, error) {
+// Solidity: e BundleRegistered(collectionId indexed bytes8, bundleId indexed bytes8)
+func (_DataRegistry *DataRegistryFilterer) FilterBundleRegistered(opts *bind.FilterOpts, collectionId [][8]byte, bundleId [][8]byte) (*DataRegistryBundleRegisteredIterator, error) {
 
 	var collectionIdRule []interface{}
 	for _, collectionIdItem := range collectionId {
 		collectionIdRule = append(collectionIdRule, collectionIdItem)
 	}
+	var bundleIdRule []interface{}
+	for _, bundleIdItem := range bundleId {
+		bundleIdRule = append(bundleIdRule, bundleIdItem)
+	}
 
-	logs, sub, err := _DataRegistry.contract.FilterLogs(opts, "BundleRegistered", collectionIdRule)
+	logs, sub, err := _DataRegistry.contract.FilterLogs(opts, "BundleRegistered", collectionIdRule, bundleIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -467,10 +524,10 @@ func (_DataRegistry *DataRegistryFilterer) FilterBundleRegistered(opts *bind.Fil
 
 // FilterBundleRegistered parses the event from given transaction receipt.
 //
-// Solidity: e BundleRegistered(collectionId indexed bytes8, index uint64)
+// Solidity: e BundleRegistered(collectionId indexed bytes8, bundleId indexed bytes8)
 func (_DataRegistry *DataRegistryFilterer) ParseBundleRegisteredFromReceipt(receipt *types.Receipt) (*DataRegistryBundleRegistered, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xab7212f2e313639f22d9f8d95bc067b9289814ce97d8136a08e37d239023b1a3") {
+		if log.Topics[0] == common.HexToHash("0x08f89c1d80f3b87c3e2072d4e185c7e89c451ed1894c608e55682fcbc5016a1d") {
 			event := new(DataRegistryBundleRegistered)
 			if err := _DataRegistry.contract.UnpackLog(event, "BundleRegistered", *log); err != nil {
 				return nil, err
@@ -481,17 +538,21 @@ func (_DataRegistry *DataRegistryFilterer) ParseBundleRegisteredFromReceipt(rece
 	return nil, errors.New("BundleRegistered event not found")
 }
 
-// WatchBundleRegistered is a free log subscription operation binding the contract event 0xab7212f2e313639f22d9f8d95bc067b9289814ce97d8136a08e37d239023b1a3.
+// WatchBundleRegistered is a free log subscription operation binding the contract event 0x08f89c1d80f3b87c3e2072d4e185c7e89c451ed1894c608e55682fcbc5016a1d.
 //
-// Solidity: e BundleRegistered(collectionId indexed bytes8, index uint64)
-func (_DataRegistry *DataRegistryFilterer) WatchBundleRegistered(opts *bind.WatchOpts, sink chan<- *DataRegistryBundleRegistered, collectionId [][8]byte) (event.Subscription, error) {
+// Solidity: e BundleRegistered(collectionId indexed bytes8, bundleId indexed bytes8)
+func (_DataRegistry *DataRegistryFilterer) WatchBundleRegistered(opts *bind.WatchOpts, sink chan<- *DataRegistryBundleRegistered, collectionId [][8]byte, bundleId [][8]byte) (event.Subscription, error) {
 
 	var collectionIdRule []interface{}
 	for _, collectionIdItem := range collectionId {
 		collectionIdRule = append(collectionIdRule, collectionIdItem)
 	}
+	var bundleIdRule []interface{}
+	for _, bundleIdItem := range bundleId {
+		bundleIdRule = append(bundleIdRule, bundleIdItem)
+	}
 
-	logs, sub, err := _DataRegistry.contract.WatchLogs(opts, "BundleRegistered", collectionIdRule)
+	logs, sub, err := _DataRegistry.contract.WatchLogs(opts, "BundleRegistered", collectionIdRule, bundleIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -593,21 +654,25 @@ func (it *DataRegistryBundleUnregisteredIterator) Close() error {
 // DataRegistryBundleUnregistered represents a BundleUnregistered event raised by the DataRegistry contract.
 type DataRegistryBundleUnregistered struct {
 	CollectionId [8]byte
-	Index        uint64
+	BundleId     [8]byte
 	Raw          types.Log // Blockchain specific contextual infos
 }
 
-// FilterBundleUnregistered is a free log retrieval operation binding the contract event 0xe67b87439720993f9f3fa67a2cfd45a2c98829ad6cc7b9c9ca23a255552a86fa.
+// FilterBundleUnregistered is a free log retrieval operation binding the contract event 0x259f3143de0f6ea1e210d29804908efbc46730cacd3ae119f71d72a65229d544.
 //
-// Solidity: e BundleUnregistered(collectionId indexed bytes8, index uint64)
-func (_DataRegistry *DataRegistryFilterer) FilterBundleUnregistered(opts *bind.FilterOpts, collectionId [][8]byte) (*DataRegistryBundleUnregisteredIterator, error) {
+// Solidity: e BundleUnregistered(collectionId indexed bytes8, bundleId indexed bytes8)
+func (_DataRegistry *DataRegistryFilterer) FilterBundleUnregistered(opts *bind.FilterOpts, collectionId [][8]byte, bundleId [][8]byte) (*DataRegistryBundleUnregisteredIterator, error) {
 
 	var collectionIdRule []interface{}
 	for _, collectionIdItem := range collectionId {
 		collectionIdRule = append(collectionIdRule, collectionIdItem)
 	}
+	var bundleIdRule []interface{}
+	for _, bundleIdItem := range bundleId {
+		bundleIdRule = append(bundleIdRule, bundleIdItem)
+	}
 
-	logs, sub, err := _DataRegistry.contract.FilterLogs(opts, "BundleUnregistered", collectionIdRule)
+	logs, sub, err := _DataRegistry.contract.FilterLogs(opts, "BundleUnregistered", collectionIdRule, bundleIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -616,10 +681,10 @@ func (_DataRegistry *DataRegistryFilterer) FilterBundleUnregistered(opts *bind.F
 
 // FilterBundleUnregistered parses the event from given transaction receipt.
 //
-// Solidity: e BundleUnregistered(collectionId indexed bytes8, index uint64)
+// Solidity: e BundleUnregistered(collectionId indexed bytes8, bundleId indexed bytes8)
 func (_DataRegistry *DataRegistryFilterer) ParseBundleUnregisteredFromReceipt(receipt *types.Receipt) (*DataRegistryBundleUnregistered, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xe67b87439720993f9f3fa67a2cfd45a2c98829ad6cc7b9c9ca23a255552a86fa") {
+		if log.Topics[0] == common.HexToHash("0x259f3143de0f6ea1e210d29804908efbc46730cacd3ae119f71d72a65229d544") {
 			event := new(DataRegistryBundleUnregistered)
 			if err := _DataRegistry.contract.UnpackLog(event, "BundleUnregistered", *log); err != nil {
 				return nil, err
@@ -630,17 +695,21 @@ func (_DataRegistry *DataRegistryFilterer) ParseBundleUnregisteredFromReceipt(re
 	return nil, errors.New("BundleUnregistered event not found")
 }
 
-// WatchBundleUnregistered is a free log subscription operation binding the contract event 0xe67b87439720993f9f3fa67a2cfd45a2c98829ad6cc7b9c9ca23a255552a86fa.
+// WatchBundleUnregistered is a free log subscription operation binding the contract event 0x259f3143de0f6ea1e210d29804908efbc46730cacd3ae119f71d72a65229d544.
 //
-// Solidity: e BundleUnregistered(collectionId indexed bytes8, index uint64)
-func (_DataRegistry *DataRegistryFilterer) WatchBundleUnregistered(opts *bind.WatchOpts, sink chan<- *DataRegistryBundleUnregistered, collectionId [][8]byte) (event.Subscription, error) {
+// Solidity: e BundleUnregistered(collectionId indexed bytes8, bundleId indexed bytes8)
+func (_DataRegistry *DataRegistryFilterer) WatchBundleUnregistered(opts *bind.WatchOpts, sink chan<- *DataRegistryBundleUnregistered, collectionId [][8]byte, bundleId [][8]byte) (event.Subscription, error) {
 
 	var collectionIdRule []interface{}
 	for _, collectionIdItem := range collectionId {
 		collectionIdRule = append(collectionIdRule, collectionIdItem)
 	}
+	var bundleIdRule []interface{}
+	for _, bundleIdItem := range bundleId {
+		bundleIdRule = append(bundleIdRule, bundleIdItem)
+	}
 
-	logs, sub, err := _DataRegistry.contract.WatchLogs(opts, "BundleUnregistered", collectionIdRule)
+	logs, sub, err := _DataRegistry.contract.WatchLogs(opts, "BundleUnregistered", collectionIdRule, bundleIdRule)
 	if err != nil {
 		return nil, err
 	}

@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 
-	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/pkg/errors"
 )
@@ -38,11 +37,7 @@ func (operator *BatchManager) Create() (*Batch, string, error) {
 		return nil, batchId, err
 	}
 
-	batch := &Batch{
-		Id:    batchId,
-		Count: 0,
-		set:   map[common.ID][]int{},
-	}
+	batch := newBatch(batchId)
 	operator.batches[batchId] = batch
 	return batch, batchId, nil
 }

@@ -36,8 +36,8 @@ func (model *Model) Create(immutableData map[string]interface{}, mutableData map
 	if err != nil {
 		return tx, err
 	}
-	truncatedId := fmt.Sprintf("%s…%s", (*tx.ID)[:6], (*tx.ID)[58:])
-	model.log.Info("Metadata created with", logger.Attrs{"id": truncatedId})
+	//truncatedId := fmt.Sprintf("%s…%s", (*tx.ID)[:6], (*tx.ID)[58:])
+	//model.log.Info("Metadata created with", logger.Attrs{"id": truncatedId})
 	return tx, nil
 }
 

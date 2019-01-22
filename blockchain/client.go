@@ -2,19 +2,17 @@ package blockchain
 
 import (
 	"context"
-	"net/url"
-	"reflect"
-	"strings"
-
-	"github.com/pkg/errors"
-
-	"github.com/azer/logger"
-
+	"github.com/airbloc/airbloc-go/blockchain/bind"
 	"github.com/airbloc/airbloc-go/key"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/azer/logger"
+	ethbind "github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/pkg/errors"
+	"net/url"
+	"reflect"
+	"strings"
 )
 
 type Client struct {
@@ -101,7 +99,7 @@ func (c *Client) WaitMined(ctx context.Context, tx *types.Transaction) (*types.R
 	methodName, details := GetTransactionDetails(c.contracts, tx)
 	timer := c.logger.Timer()
 
-	receipt, err := bind.WaitMined(ctx, c, tx)
+	receipt, err := ethbind.WaitMined(ctx, c, tx)
 	if err != nil {
 		return nil, err
 	}

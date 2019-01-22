@@ -3,10 +3,6 @@ package serverapi
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
-
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -17,8 +13,6 @@ import (
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/node"
 	"github.com/airbloc/airbloc-go/warehouse"
-	"github.com/airbloc/airbloc-go/warehouse/protocol"
-	"github.com/airbloc/airbloc-go/warehouse/storage"
 	"github.com/pkg/errors"
 )
 
@@ -26,56 +20,12 @@ type WarehouseAPI struct {
 	warehouse *warehouse.DataWarehouse
 }
 
-func NewWarehouseAPI(airbloc node.Backend) (_ node.API, err error) {
-	config := airbloc.Config().Warehouse
-
-	supportedProtocols := []protocol.Protocol{
-		protocol.NewHttpProtocol(config.Http.Timeout, config.Http.MaxConnsPerHost),
-		protocol.NewHttpsProtocol(config.Http.Timeout, config.Http.MaxConnsPerHost),
+func NewWarehouseAPI(backend node.Backend) (_ node.API, err error) {
+	service, ok := backend.GetService("warehouse").(*warehouse.Service)
+	if !ok {
+		return nil, errors.New("warehouse service is not registered")
 	}
-
-	var defaultStorage storage.Storage
-	switch storage.Type_value[config.DefaultStorage] {
-	case storage.Local:
-		cfg := config.LocalStorage
-		defaultStorage, err = storage.NewLocalStorage(
-			cfg.SavePath,
-			cfg.Endpoint)
-
-		if err != nil {
-			return nil, err
-		}
-	case storage.CloudS3:
-		cfg := config.S3
-
-		sess, err := session.NewSession(&aws.Config{
-			Credentials: credentials.NewStaticCredentials(
-				cfg.AccessKey,
-				cfg.SecretKey,
-				cfg.Token,
-			),
-			Region: aws.String(cfg.Region),
-		})
-		if err != nil {
-			return nil, err
-		}
-
-		defaultStorage = storage.NewS3Storage(cfg.Bucket, cfg.PathPrefix, sess)
-		if err != nil {
-			return nil, err
-		}
-	default:
-		return nil, errors.Errorf("unknown storage type: %s", config.DefaultStorage)
-	}
-
-	dw := warehouse.New(
-		airbloc.Kms(),
-		airbloc.LocalDatabase(),
-		airbloc.MetaDatabase(),
-		airbloc.Client(),
-		defaultStorage,
-		supportedProtocols)
-	return &WarehouseAPI{dw}, nil
+	return &WarehouseAPI{service.GetManager()}, nil
 }
 
 func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) error {
@@ -99,14 +49,14 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 			}
 		}
 
-		ownerAnid, err := common.HexToID(request.GetOwnerId())
+		ownerAnID, err := common.HexToID(request.GetOwnerId())
 		if err != nil {
 			return status.Errorf(codes.InvalidArgument, "Invalid user ANID: %s", request.GetOwnerId())
 		}
 
 		datum := &common.Data{
 			Payload:   request.GetPayload(),
-			OwnerAnid: ownerAnid,
+			OwnerAnID: ownerAnID,
 		}
 		bundleStream.Add(datum)
 	}
@@ -145,14 +95,14 @@ func (api *WarehouseAPI) StoreEncryptedBundle(stream pb.Warehouse_StoreEncrypted
 			}
 		}
 
-		ownerAnid, err := common.HexToID(request.GetOwnerId())
+		ownerAnID, err := common.HexToID(request.GetOwnerId())
 		if err != nil {
 			return errors.Wrapf(err, "failed to parse ANID %s", request.GetOwnerId())
 		}
 
 		datum := &common.EncryptedData{
 			Payload:   request.GetEncryptedPayload(),
-			OwnerAnid: ownerAnid,
+			OwnerAnID: ownerAnID,
 			Capsule:   request.GetCapsule(),
 		}
 		bundleStream.AddEncrypted(datum)

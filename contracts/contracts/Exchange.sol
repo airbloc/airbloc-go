@@ -2,6 +2,7 @@ pragma solidity ^0.4.24;
 
 import "./ExchangeLib.sol";
 import "openzeppelin-solidity/contracts/utils/ReentrancyGuard.sol";
+import "./AppRegistry.sol";
 
 contract Exchange is ReentrancyGuard {
     using ExchangeLib for ExchangeLib.Offer;
@@ -30,9 +31,9 @@ contract Exchange is ReentrancyGuard {
         address _escrow,
         bytes4 _escrowSign,
         bytes memory _escrowArgs,
-        bytes20[] memory _dataIds
+        bytes32[] memory _dataIds
     ) public {
-        require(_to != address(0), "invalid offere address");
+        require(_to != address(0), "invalid app");
         require(_escrow != address(0), "invalid contract address");
 
         bytes8 offerId = orderbook.prepare(
@@ -54,7 +55,7 @@ contract Exchange is ReentrancyGuard {
 
     function addDataIds(
         bytes8 _offerId,
-        bytes20[] memory _dataIds
+        bytes32[] memory _dataIds
     ) public {
         ExchangeLib.Offer storage offer = orderbook.getOffer(_offerId);
         require(offer.status == ExchangeLib.OfferStatus.NEUTRAL, "neutral state only");
@@ -125,7 +126,7 @@ contract Exchange is ReentrancyGuard {
         returns (
             address,         //from
             address,         //to
-            bytes20[] memory, //dataIds
+            bytes32[] memory, //dataIds
             // Escrow
             address,      // addr
             bytes4,       // sign

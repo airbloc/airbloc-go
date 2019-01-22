@@ -2,11 +2,6 @@ package key
 
 import (
 	"crypto/ecdsa"
-	"math/big"
-
-	"golang.org/x/crypto/pbkdf2"
-	"golang.org/x/crypto/sha3"
-
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -14,6 +9,9 @@ import (
 	libp2pCrypto "github.com/libp2p/go-libp2p-crypto"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ed25519"
+	"golang.org/x/crypto/pbkdf2"
+	"golang.org/x/crypto/sha3"
+	"math/big"
 )
 
 var (

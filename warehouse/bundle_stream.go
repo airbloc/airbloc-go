@@ -30,7 +30,7 @@ func (stream *BundleStream) Add(data *common.Data) error {
 	if errors.Cause(err) == errValidationFailed {
 		stream.warehouse.log.Info("warning: %s", err.Error(), logger.Attrs{
 			"collection": stream.collection.Id.Hex(),
-			"dataOwner":  data.OwnerAnid.Hex(),
+			"dataOwner":  data.OwnerAnID.Hex(),
 		})
 		return err
 	}
@@ -38,7 +38,7 @@ func (stream *BundleStream) Add(data *common.Data) error {
 		return err
 	}
 
-	encryptedData, err := stream.warehouse.encrypt(data)
+	encryptedData, err := stream.warehouse.kms.EncryptData(data)
 	if err != nil {
 		return err
 	}

@@ -3,7 +3,11 @@ package e2e
 import (
 	"context"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
+	"github.com/airbloc/airbloc-go/adapter"
+	"github.com/airbloc/airbloc-go/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"log"
 	"testing"
 	"time"
@@ -33,6 +37,10 @@ const testSchema = `{
   },
   "required": [ "name" ]
 }`
+
+func init() {
+	log.SetFlags(log.Lshortfile)
+}
 
 func generateUniqueName() string {
 	return time.Now().Format("20060102-150405")
@@ -151,17 +159,37 @@ func TestPnc(t *testing.T) {
 		log.Println("Stored URI:", storeResults[n].Uri)
 		log.Println("Stored Data Count:", storeResults[n].DataCount)
 		log.Println("Bundle ID:", storeResults[n].BundleId)
+		log.Println("DataIds :")
 
 		// collectionId		bundleNumber		ownerId
 		// deadbeefdeadbeef	0000000000000001	deadbeefdeadbeef
+		// 3ae93dc780127dca 00000000            95ca4dbafed0590f
 		bundles[n] = make([]string, numberOfUsers)
 		for index, userId := range userIds {
 			dataId, _ := toDataId(storeResults[n].BundleId, userId)
 			bundles[n][index] = hex.EncodeToString(dataId[:])
 		}
+		log.Println(bundles[n])
 	}
 
 	// exchange: Test exchanging uploaded data
-	log.Println("Start exchanging", len(bundles[0]), "data")
-	testExchange(t, ctx, conn, config, bundles[0])
+	log.Println("Start exchanging", len(bundles[1]), "data")
+	testExchange(t, ctx, conn, config, bundles[1])
+
+	client, err := ethclient.DialContext(ctx, config.EthereumEndpoint)
+	require.NoError(t, err)
+
+	dr, err := adapter.NewDataRegistry(config.DeployedContracts["DataRegistry"], client)
+	require.NoError(t, err)
+
+	dataID, err := common.NewDataID(bundles[0][0])
+	require.NoError(t, err)
+
+	bundle, err := dr.Bundles(nil, dataID.Empty, dataID.BundleID)
+	require.NoError(t, err)
+
+	data, err := json.MarshalIndent(bundle, "", "    ")
+	require.NoError(t, err)
+
+	log.Println(string(data))
 }

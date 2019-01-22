@@ -2,6 +2,8 @@ package metadb
 
 import (
 	"context"
+	"github.com/mongodb/mongo-go-driver/bson/primitive"
+	"log"
 	"net/http"
 	"time"
 
@@ -56,13 +58,13 @@ func NewBigchainDB(bdbUrl, mdbUrl, proxyUrl string, key *txn.KeyPair, version in
 }
 
 func (db *bigchainDB) dial() error {
-	block, err := db.bdb.GetBlock("0")
-	if err != nil {
-		return err
-	}
-	db.log.Info("Connected to BigchainDB. Received", logger.Attrs{
-		"block": block,
-	})
+	//block, err := db.bdb.GetBlock("0")
+	//if err != nil {
+	//	return err
+	//}
+	//db.log.Info("Connected to BigchainDB. Received", logger.Attrs{
+	//	"block": block,
+	//})
 	return nil
 }
 
@@ -71,22 +73,18 @@ func (db *bigchainDB) Create(
 	metadata txn.Metadata,
 	mode Mode,
 ) (tx *txn.Transaction, err error) {
-	tx, err = db.newCreateTransaction(asset, metadata)
+	metaDB := db.mdb.Collection("airbloc")
+
+	res, err := metaDB.InsertOne(context.Background(), primitive.M{"data": asset.Data})
 	if err != nil {
 		return
 	}
-
-	inTxn, err := db.prepareTx(tx)
-	if err != nil {
-		return
-	}
-
-	results, err := db.sendIntermediateTx(inTxn)
-	if !results.Exists("id") {
-		return nil, errors.New("server returned no transaction ID")
-	}
-	txId := string(results.GetStringBytes("id"))
-	tx.ID = &txId
+	log.Println(res.InsertedID)
+	/*
+		"_id": ObjectId,
+		"id": TxId,
+		"data": here,
+	*/
 	return
 }
 
@@ -94,7 +92,7 @@ func (db *bigchainDB) RetrieveOne(
 	ctx context.Context,
 	query bson.M,
 ) (bson.M, error) {
-	metaDB := db.mdb.Collection(BigchainAssetCollection)
+	metaDB := db.mdb.Collection("airbloc")
 	res := metaDB.FindOne(ctx, query)
 
 	var result bson.M
@@ -111,7 +109,7 @@ func (db *bigchainDB) RetrieveMany(
 	ctx context.Context,
 	query bson.M,
 ) ([]bson.M, error) {
-	metaDB := db.mdb.Collection(BigchainAssetCollection)
+	metaDB := db.mdb.Collection("airbloc")
 
 	cursor, err := metaDB.Find(ctx, query)
 	if err != nil {

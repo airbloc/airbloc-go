@@ -2,44 +2,76 @@ package common
 
 import (
 	"fmt"
-	"strconv"
-
 	"github.com/pkg/errors"
+	"log"
 )
 
 type Data struct {
+	OwnerAnID ID     `json:"ownerAnId"`
+	RowID     ID     `json:"rowId"`
 	Payload   string `json:"payload"`
-	OwnerAnid ID     `json:"ownerAnid"`
 }
 
 type EncryptedData struct {
-	OwnerAnid ID     `json:"ownerAnid"`
-	Payload   []byte `json:"payload"`
+	OwnerAnID ID     `json:"ownerAnId"`
+	RowID     ID     `json:"rowId"`
 	Capsule   []byte `json:"capsule"`
+	Payload   []byte `json:"payload"`
 }
 
 type DataID struct {
-	BundleID ID
-	Index    int
+	Padding  ID `json:"padding"`
+	BundleID ID `json:"bundleId"`
+	OwnerID  ID `json:"ownerId"`
+	RowID    ID `json:"rowId"`
 }
 
-func NewDataID(dataId string) (*DataID, error) {
-	bundleId, err := HexToID(dataId[:IDLength])
+func convert(dataID string, index int) string {
+	var str string
+	if index == 0 {
+		str = dataID[:IDStrLength]
+	} else {
+		str = dataID[IDStrLength*index : IDStrLength*(index+1)]
+	}
+	return str
+}
+
+func NewDataID(dataID string) (*DataID, error) {
+	log.Println(dataID)
+	empty, err := HexToID(convert(dataID, 0))
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse data ID from the given data ID.")
+		return nil, errors.Wrap(err, "failed to parse {empty} from the given data ID.")
 	}
 
-	index, err := strconv.Atoi(dataId[IDLength+1:])
+	bundleID, err := HexToID(convert(dataID, 1))
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse data index from the given data ID.")
+		return nil, errors.Wrap(err, "failed to parse bundle ID from the given data ID.")
+	}
+
+	ownerID, err := HexToID(convert(dataID, 2))
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse owner ID from the given data ID")
+	}
+
+	rowID, err := HexToID(convert(dataID, 3))
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse row ID from the given data ID")
 	}
 
 	return &DataID{
-		BundleID: bundleId,
-		Index:    index,
+		Padding:  empty,
+		BundleID: bundleID,
+		OwnerID:  ownerID,
+		RowID:    rowID,
 	}, nil
 }
 
 func (id *DataID) String() string {
-	return fmt.Sprintf("%s/%d", id.BundleID.Hex(), id.Index)
+	return fmt.Sprintf(
+		"%s%s%s%s",
+		id.Padding.Hex(),
+		id.BundleID.Hex(),
+		id.OwnerID.Hex(),
+		id.RowID.Hex(),
+	)
 }

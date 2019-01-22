@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/airbloc/airbloc-go/warehouse"
 	"os"
 	"strings"
 
@@ -23,10 +24,11 @@ var (
 	// list of CLI commands and flags
 	commands = []cli.Command{
 		{
-			Name:   "userdelegate",
-			Usage:  "Launch a user delegate daemon",
-			Action: start("userdelegate", ""),
-			Flags:  flags,
+			Name:    "userdelegate",
+			Aliases: []string{"ud"},
+			Usage:   "Launch a user delegate daemon",
+			Action:  start("userdelegate,warehouse", ""),
+			Flags:   flags,
 		},
 	}
 	flags = []cli.Flag{
@@ -62,6 +64,7 @@ var (
 	}
 	AvailableServices = map[string]node.ServiceConstructor{
 		"api":          node.NewAPIService,
+		"warehouse":    warehouse.NewService,
 		"userdelegate": userdelegate.NewService,
 	}
 )
@@ -72,7 +75,7 @@ func main() {
 	app.Description = "A node of Airbloc Protocol, which is decentralized data exchange protocol."
 	app.Commands = commands
 	app.Flags = flags
-	app.Action = start("api", "apps,server.accounts,collections,data,dauth,exchange,schemas,warehouse")
+	app.Action = start("api,warehouse", "apps,server.accounts,collections,data,dauth,exchange,schemas,warehouse")
 
 	err := app.Run(os.Args)
 	if err != nil {

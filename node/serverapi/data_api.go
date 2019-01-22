@@ -13,7 +13,7 @@ type DataAPI struct {
 }
 
 func NewDataAPI(backend node.Backend) (node.API, error) {
-	manager := datamanager.NewManager(backend.Kms(), backend.LocalDatabase(), backend.Client())
+	manager := datamanager.NewManager(backend.Kms(), backend.P2P(), backend.LocalDatabase(), backend.Client())
 	return &DataAPI{manager}, nil
 }
 

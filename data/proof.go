@@ -19,7 +19,7 @@ func (bundle *Bundle) generateSMT() (*mamamerkle.SparseMerkleTree, error) {
 	leaves := make(map[uint64][]byte)
 
 	for _, data := range bundle.Data {
-		leafId := binary.LittleEndian.Uint64(data.OwnerAnid[:])
+		leafId := binary.LittleEndian.Uint64(data.OwnerAnID[:])
 		leaves[leafId] = leaveExist
 	}
 	return mamamerkle.NewSparseMerkleTree(64, leaves)
