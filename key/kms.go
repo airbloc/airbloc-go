@@ -2,10 +2,10 @@ package key
 
 import (
 	"crypto/rand"
+	"github.com/airbloc/airbloc-go/common"
 
 	"github.com/azer/logger"
 
-	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/database/localdb"
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -35,10 +35,24 @@ func (kms *manager) NodeKey() *Key {
 	return kms.ownerKey
 }
 
-// DecryptExternalData looks for re-encryption key, then tries to decrypt.
-func (kms *manager) DecryptExternalData(data *common.EncryptedData) (*common.Data, error) {
-	// TODO: Implement key.Manager.DecryptExternalData
-	return nil, nil
+func (kms *manager) EncryptData(data *common.Data) (encryptedData *common.EncryptedData, err error) {
+	encryptedData.Payload, err = kms.Encrypt(data.Payload)
+	if err != nil {
+		return
+	}
+	encryptedData.OwnerAnID = data.OwnerAnID
+	encryptedData.RowID = data.RowID
+	return
+}
+
+func (kms *manager) DecryptData(encryptedData *common.EncryptedData) (data *common.Data, err error) {
+	data.Payload, err = kms.Decrypt(encryptedData.Payload)
+	if err != nil {
+		return
+	}
+	data.OwnerAnID = encryptedData.OwnerAnID
+	data.RowID = encryptedData.RowID
+	return
 }
 
 func (kms *manager) Encrypt(payload string) ([]byte, error) {

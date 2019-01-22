@@ -8,7 +8,8 @@ import (
 
 type Manager interface {
 	NodeKey() *Key
-	DecryptExternalData(*common.EncryptedData) (*common.Data, error)
+	EncryptData(*common.Data) (*common.EncryptedData, error)
+	DecryptData(*common.EncryptedData) (*common.Data, error)
 	Encrypt(string) ([]byte, error)
 	Decrypt([]byte) (string, error)
 	SignEthTx(*types.Transaction) (*types.Transaction, error)
