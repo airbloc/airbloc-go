@@ -44,7 +44,18 @@ func (manager *Manager) Batches() *data.BatchManager {
 	return manager.batches
 }
 
-func (manager *Manager) decryptData(bundle *data.Bundle, dataID *ablCommon.DataID) (*ablCommon.Data, error) {
+func (manager *Manager) encrypt(data *ablCommon.Data) (*ablCommon.EncryptedData, error) {
+	encryptedPayload, err := manager.kms.Encrypt(data.Payload)
+	if err != nil {
+		return nil, err
+	}
+	return &ablCommon.EncryptedData{
+		OwnerAnID: data.OwnerAnID,
+		Payload:   encryptedPayload,
+	}, nil
+}
+
+func (manager *Manager) decrypt(bundle *data.Bundle, dataID *ablCommon.DataID) (*ablCommon.Data, error) {
 	// TODO: Needs paging method
 	var encryptedData *ablCommon.EncryptedData
 	for _, d := range bundle.Data {
@@ -55,7 +66,7 @@ func (manager *Manager) decryptData(bundle *data.Bundle, dataID *ablCommon.DataI
 	if encryptedData == nil {
 		return nil, errors.New("cannot find any data matches given data id")
 	}
-	return manager.kms.DecryptExternalData(encryptedData)
+	return manager.kms.DecryptData(encryptedData)
 }
 
 func (manager *Manager) Get(dataId string) (*ablCommon.Data, error) {
@@ -69,7 +80,7 @@ func (manager *Manager) Get(dataId string) (*ablCommon.Data, error) {
 		return nil, errors.Wrapf(err, "failed to retrieve bundle of data %s", dataId)
 	}
 
-	d, err := manager.decryptData(bundle, id)
+	d, err := manager.decrypt(bundle, id)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to decrypt data %s", id.String())
 	}
@@ -90,7 +101,7 @@ func (manager *Manager) GetBatch(batch *data.Batch) ([]*ablCommon.Data, error) {
 		}
 
 		// try to decrypt data using own private key / re-encryption key
-		d, err := manager.decryptData(bundles[dataId.BundleID], &dataId)
+		d, err := manager.decrypt(bundles[dataId.BundleID], &dataId)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to decrypt data %s", dataId.String())
 		}

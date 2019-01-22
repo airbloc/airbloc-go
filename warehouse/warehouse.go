@@ -115,18 +115,6 @@ func (warehouse *DataWarehouse) validate(collection *collections.Collection, dat
 	return nil
 }
 
-func (warehouse *DataWarehouse) encrypt(d *common.Data) (*common.EncryptedData, error) {
-	encryptedPayload, err := warehouse.kms.Encrypt(d.Payload)
-	if err != nil {
-		return nil, err
-	}
-	return &common.EncryptedData{
-		OwnerAnID: d.OwnerAnID,
-		Payload:   encryptedPayload,
-		Capsule:   nil,
-	}, nil
-}
-
 func generateBundleNameOf(bundle *data.Bundle) string {
 	tokenBytes := make([]byte, 4)
 	rand.Read(tokenBytes)
@@ -223,7 +211,7 @@ func (warehouse *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (comm
 }
 
 func (warehouse *DataWarehouse) Get(id *common.DataID) (*data.Bundle, error) {
-	bundle, err := warehouse.dataRegistry.Bundles(nil, id.Empty, id.BundleID)
+	bundle, err := warehouse.dataRegistry.Bundles(nil, id.Padding, id.BundleID)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get uri")
 	}

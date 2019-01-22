@@ -38,7 +38,7 @@ func (stream *BundleStream) Add(data *common.Data) error {
 		return err
 	}
 
-	encryptedData, err := stream.warehouse.encrypt(data)
+	encryptedData, err := stream.warehouse.kms.EncryptData(data)
 	if err != nil {
 		return err
 	}

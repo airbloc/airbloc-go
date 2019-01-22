@@ -14,25 +14,21 @@ type Bundles map[common.ID]OwnerIDs
 type Batch struct {
 	ID    string
 	Count int
-	set   map[common.ID]Bundles
+	set   Bundles
 }
 
 func newBatch(id string) *Batch {
 	return &Batch{
 		ID:    id,
 		Count: 0,
-		set:   make(map[common.ID]Bundles),
+		set:   make(Bundles),
 	}
 }
 
 // Append adds a data ID to the batch.
 func (batch *Batch) Append(dataID common.DataID) {
-	bundles := batch.set[dataID.Empty]
-	if bundles == nil {
-		bundles = make(Bundles)
-	}
-
-	ownerIDs := bundles[dataID.BundleID]
+	// padding is same in data id now.
+	ownerIDs := batch.set[dataID.BundleID]
 	if ownerIDs == nil {
 		ownerIDs = make(OwnerIDs)
 	}
@@ -43,7 +39,7 @@ func (batch *Batch) Append(dataID common.DataID) {
 	}
 	rowIDs = append(rowIDs, dataID.RowID)
 
-	batch.set[dataID.Empty][dataID.BundleID][dataID.OwnerID] = rowIDs
+	batch.set[dataID.BundleID][dataID.OwnerID] = rowIDs
 	batch.Count += 1
 }
 
@@ -52,16 +48,13 @@ func (batch *Batch) Append(dataID common.DataID) {
 func (batch *Batch) Iterator() chan common.DataID {
 	ch := make(chan common.DataID)
 	go func() {
-		for emptyID, bundles := range batch.set {
-			for bundleID, ownerIDs := range bundles {
-				for ownerID, rowIDs := range ownerIDs {
-					for _, rowID := range rowIDs {
-						ch <- common.DataID{
-							Empty:    emptyID,
-							BundleID: bundleID,
-							OwnerID:  ownerID,
-							RowID:    rowID,
-						}
+		for bundleID, ownerIDs := range batch.set {
+			for ownerID, rowIDs := range ownerIDs {
+				for _, rowID := range rowIDs {
+					ch <- common.DataID{
+						BundleID: bundleID,
+						OwnerID:  ownerID,
+						RowID:    rowID,
 					}
 				}
 			}
