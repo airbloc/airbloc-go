@@ -20,7 +20,7 @@ type EncryptedData struct {
 }
 
 type DataID struct {
-	Empty    ID `json:"empty"`
+	Padding  ID `json:"padding"`
 	BundleID ID `json:"bundleId"`
 	OwnerID  ID `json:"ownerId"`
 	RowID    ID `json:"rowId"`
@@ -59,7 +59,7 @@ func NewDataID(dataID string) (*DataID, error) {
 	}
 
 	return &DataID{
-		Empty:    empty,
+		Padding:  empty,
 		BundleID: bundleID,
 		OwnerID:  ownerID,
 		RowID:    rowID,
@@ -69,7 +69,7 @@ func NewDataID(dataID string) (*DataID, error) {
 func (id *DataID) String() string {
 	return fmt.Sprintf(
 		"%s%s%s%s",
-		id.Empty.Hex(),
+		id.Padding.Hex(),
 		id.BundleID.Hex(),
 		id.OwnerID.Hex(),
 		id.RowID.Hex(),
