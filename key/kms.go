@@ -35,24 +35,28 @@ func (kms *manager) NodeKey() *Key {
 	return kms.ownerKey
 }
 
-func (kms *manager) EncryptData(data *common.Data) (encryptedData *common.EncryptedData, err error) {
-	encryptedData.Payload, err = kms.Encrypt(data.Payload)
+func (kms *manager) EncryptData(data *common.Data) (*common.EncryptedData, error) {
+	encryptedData, err := kms.Encrypt(data.Payload)
 	if err != nil {
-		return
+		return nil, err
 	}
-	encryptedData.OwnerAnID = data.OwnerAnID
-	encryptedData.RowID = data.RowID
-	return
+	return &common.EncryptedData{
+		Payload:   encryptedData,
+		OwnerAnID: data.OwnerAnID,
+		RowID:     data.RowID,
+	}, nil
 }
 
-func (kms *manager) DecryptData(encryptedData *common.EncryptedData) (data *common.Data, err error) {
-	data.Payload, err = kms.Decrypt(encryptedData.Payload)
+func (kms *manager) DecryptData(encryptedData *common.EncryptedData) (*common.Data, error) {
+	data, err := kms.Decrypt(encryptedData.Payload)
 	if err != nil {
-		return
+		return nil, err
 	}
-	data.OwnerAnID = encryptedData.OwnerAnID
-	data.RowID = encryptedData.RowID
-	return
+	return &common.Data{
+		Payload:   data,
+		OwnerAnID: encryptedData.OwnerAnID,
+		RowID:     encryptedData.RowID,
+	}, nil
 }
 
 func (kms *manager) Encrypt(payload string) ([]byte, error) {
