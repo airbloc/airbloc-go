@@ -3,6 +3,7 @@ package node
 import (
 	"os"
 	"os/signal"
+	"runtime"
 
 	"github.com/airbloc/airbloc-go/blockchain"
 	"github.com/airbloc/airbloc-go/database/localdb"
@@ -27,6 +28,8 @@ type AirblocBackend struct {
 }
 
 func NewAirblocBackend(config *Config) (Backend, error) {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	nodeKey, err := key.Load(config.PrivateKeyPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load private key from the given path")
