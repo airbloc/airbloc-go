@@ -5,6 +5,7 @@ import (
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/azer/logger"
 	"github.com/pkg/errors"
+	"sync"
 )
 
 type BundleStream struct {
@@ -13,6 +14,8 @@ type BundleStream struct {
 	warehouse  *DataWarehouse
 	data       []*common.EncryptedData
 	DataCount  int
+
+	mu sync.Mutex
 }
 
 func newBundleStream(warehouse *DataWarehouse, provider common.ID, collection *collections.Collection) *BundleStream {
@@ -46,7 +49,9 @@ func (stream *BundleStream) Add(data *common.Data) error {
 }
 
 func (stream *BundleStream) AddEncrypted(encryptedData *common.EncryptedData) error {
+	stream.mu.Lock()
 	stream.data = append(stream.data, encryptedData)
 	stream.DataCount += 1
+	stream.mu.Unlock()
 	return nil
 }
