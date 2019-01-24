@@ -1,8 +1,6 @@
 package node
 
-import (
-	"time"
-)
+import "github.com/airbloc/airbloc-go/warehouse"
 
 type Config struct {
 	PrivateKeyPath string `default:"private.key" yaml:"privateKeyPath"`
@@ -33,28 +31,7 @@ type Config struct {
 		DeploymentPath string `default:"deployment.local.json" yaml:"deploymentPath"`
 	}
 
-	Warehouse struct {
-		DefaultStorage string `default:"local" yaml:"defaultStorage"`
-
-		Http struct {
-			Timeout         time.Duration `default:"30s"`
-			MaxConnsPerHost int           `default:"5" yaml:"maxConnsPerHost"`
-		}
-
-		LocalStorage struct {
-			SavePath string `default:"local/warehouse"`
-			Endpoint string `default:"http://localhost:80"`
-		}
-
-		S3 struct {
-			Region     string `default:"ap-northeast-1" yaml:"region"`
-			AccessKey  string `yaml:"accessKey"`
-			SecretKey  string `yaml:"secretKey"`
-			Token      string `default:"" yaml:"token"`
-			Bucket     string `yaml:"bucket"`
-			PathPrefix string `yaml:"prefix"`
-		}
-	}
+	Warehouse warehouse.Config
 
 	UserDelegate struct {
 		AccountIds []string `yaml:"accountIds"`

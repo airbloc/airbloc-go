@@ -7,6 +7,7 @@ import (
 	"github.com/airbloc/airbloc-go/collections"
 	"github.com/airbloc/airbloc-go/dauth"
 	"github.com/airbloc/airbloc-go/schemas"
+	"github.com/mongodb/mongo-go-driver/bson"
 	"math/rand"
 	"net/url"
 	"time"
@@ -50,7 +51,8 @@ type DataWarehouse struct {
 	// data validators
 	dauthValidator *dauth.Validator
 
-	log *logger.Logger
+	config Config
+	log    *logger.Logger
 }
 
 func New(
@@ -60,6 +62,7 @@ func New(
 	ethclient blockchain.TxClient,
 	defaultStorage storage.Storage,
 	supportedProtocols []protocol.Protocol,
+	config Config,
 ) *DataWarehouse {
 	protocols := map[string]protocol.Protocol{}
 	for _, protoc := range supportedProtocols {
@@ -144,7 +147,7 @@ func (warehouse *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error
 	}
 	createdBundle.Uri = uri.String()
 
-	// register to on-chainㄴ
+	// register to on-chain
 	bundleId, err := warehouse.registerBundleOnChain(createdBundle)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to register bundle to blockchain")
