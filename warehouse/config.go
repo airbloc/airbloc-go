@@ -23,4 +23,9 @@ type Config struct {
 		Bucket     string `yaml:"bucket"`
 		PathPrefix string `yaml:"prefix"`
 	}
+
+	Debug struct {
+		DisableUserAuthValidation bool `default:"false" yaml:"disableUserAuthValidation"`
+		DisableSchemaValidation   bool `default:"false" yaml:"disableSchemaValidation"`
+	}
 }

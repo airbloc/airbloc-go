@@ -69,6 +69,17 @@ func New(
 		protocols[protoc.Name()] = protoc
 	}
 
+	log := logger.New("warehouse")
+	if config.Debug.DisableSchemaValidation {
+		log.Error("warning: You have disabled schema validation. " +
+			"It is recommended to avoid disabling the validation on production mode.")
+	}
+	if config.Debug.DisableUserAuthValidation {
+		log.Error("warning: You have disabled user auth validation. \n" + "\033[31m" +
+			"DO NOT DISABLE THE USER VALIDATION ON PRODUCTION MODE, " +
+			"BECAUSE IT CAN CAUSE A FINANCIAL LOSS OF YOUR STAKED COLLETRALS. " + "\033[0m")
+	}
+
 	dauthManager := dauth.NewManager(ethclient)
 	dauthValidator := dauth.NewValidator(dauthManager)
 
@@ -87,7 +98,8 @@ func New(
 		DefaultStorage: defaultStorage,
 		dauthValidator: dauthValidator,
 
-		log: logger.New("warehouse"),
+		config: config,
+		log:    log,
 	}
 }
 
@@ -105,15 +117,18 @@ func (dw *DataWarehouse) CreateBundle(collectionId common.ID) (*BundleStream, er
 }
 
 func (dw *DataWarehouse) validate(collection *collections.Collection, data *common.Data) error {
-	if !dw.dauthValidator.IsCollectible(collection.Id, data) {
+	if !dw.dauthValidator.IsCollectible(collection.Id, data) &&
+		!dw.config.Debug.DisableUserAuthValidation {
 		return errors.Wrap(errValidationFailed, "user hasn't been authorized the data collection")
 	}
 
-	isValidFormat, err := collection.Schema.IsValidFormat(data)
-	if err != nil {
-		return err
-	} else if !isValidFormat {
-		return errors.Wrap(errValidationFailed, "wrong format")
+	if !dw.config.Debug.DisableSchemaValidation {
+		isValidFormat, err := collection.Schema.IsValidFormat(data)
+		if err != nil {
+			return err
+		} else if !isValidFormat {
+			return errors.Wrap(errValidationFailed, "wrong format")
+		}
 	}
 	return nil
 }
