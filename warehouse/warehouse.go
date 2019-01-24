@@ -91,21 +91,21 @@ func New(
 	}
 }
 
-func (warehouse *DataWarehouse) CreateBundle(collectionId common.ID) (*BundleStream, error) {
-	collection, err := warehouse.collections.Get(collectionId)
+func (dw *DataWarehouse) CreateBundle(collectionId common.ID) (*BundleStream, error) {
+	collection, err := dw.collections.Get(collectionId)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to retrieve a collection")
 	}
-	schema, err := warehouse.schemas.Get(collection.Schema.Id)
+	schema, err := dw.schemas.Get(collection.Schema.Id)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to retrieve a schema")
 	}
 	collection.Schema = *schema
-	return newBundleStream(warehouse, collection.AppId, collection), nil
+	return newBundleStream(dw, collection.AppId, collection), nil
 }
 
-func (warehouse *DataWarehouse) validate(collection *collections.Collection, data *common.Data) error {
-	if !warehouse.dauthValidator.IsCollectible(collection.Id, data) {
+func (dw *DataWarehouse) validate(collection *collections.Collection, data *common.Data) error {
+	if !dw.dauthValidator.IsCollectible(collection.Id, data) {
 		return errors.Wrap(errValidationFailed, "user hasn't been authorized the data collection")
 	}
 
@@ -127,7 +127,7 @@ func generateBundleNameOf(bundle *data.Bundle) string {
 	return fmt.Sprintf("%s-%s-%s.bundle", currentTime, bundle.Collection.Hex(), token)
 }
 
-func (warehouse *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
+func (dw *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 	if stream == nil {
 		return nil, errors.New("No data in the stream.")
 	}
@@ -141,14 +141,14 @@ func (warehouse *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error
 		Data:       stream.data,
 	}
 	bundleName := generateBundleNameOf(createdBundle)
-	uri, err := warehouse.DefaultStorage.Save(bundleName, createdBundle)
+	uri, err := dw.DefaultStorage.Save(bundleName, createdBundle)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to save bundle to the storage")
 	}
 	createdBundle.Uri = uri.String()
 
 	// register to on-chain
-	bundleId, err := warehouse.registerBundleOnChain(createdBundle)
+	bundleId, err := dw.registerBundleOnChain(createdBundle)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to register bundle to blockchain")
 	}
@@ -164,18 +164,18 @@ func (warehouse *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error
 		"dataCount":  createdBundle.DataCount,
 		"ingestedAt": ingestedAt,
 	}
-	_, err = warehouse.metaDatabase.Create(bundleInfo, nil)
+	_, err = dw.metaDatabase.Create(bundleInfo, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to save metadata")
 	}
-	warehouse.log.Info("Bundle %s registered on", bundleName, logger.Attrs{
+	dw.log.Info("Bundle %s registered on", bundleName, logger.Attrs{
 		"id":    bundleId.Hex(),
 		"count": bundleInfo["dataCount"],
 	})
 	return createdBundle, nil
 }
 
-func (warehouse *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (common.ID, error) {
+func (dw *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (common.ID, error) {
 	bundleDataHash, err := bundle.Hash()
 	if err != nil {
 		return [8]byte{}, errors.Wrap(err, "failed to get hash of the bundle data")
@@ -186,13 +186,13 @@ func (warehouse *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (comm
 		return [8]byte{}, errors.Wrap(err, "failed to setup SMT")
 	}
 
-	warehouse.log.Info("Bundle data", logger.Attrs{
+	dw.log.Info("Bundle data", logger.Attrs{
 		"hash":       bundleDataHash.Hex(),
 		"merkleRoot": userMerkleRoot.Hex(),
 	})
 
-	tx, err := warehouse.dataRegistry.RegisterBundle(
-		warehouse.ethclient.Account(),
+	tx, err := dw.dataRegistry.RegisterBundle(
+		dw.ethclient.Account(),
 		bundle.Collection,
 		userMerkleRoot,
 		bundleDataHash,
@@ -201,20 +201,20 @@ func (warehouse *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (comm
 		return [8]byte{}, errors.Wrap(err, "failed to register a bundle to DataRegistry")
 	}
 
-	receipt, err := warehouse.ethclient.WaitMined(context.Background(), tx)
+	receipt, err := dw.ethclient.WaitMined(context.Background(), tx)
 	if err != nil {
 		return [8]byte{}, errors.Wrap(err, "failed to wait for tx to be mined")
 	}
 
-	registerResult, err := warehouse.dataRegistry.ParseBundleRegisteredFromReceipt(receipt)
+	registerResult, err := dw.dataRegistry.ParseBundleRegisteredFromReceipt(receipt)
 	if err != nil {
 		return [8]byte{}, errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 	return common.ID(registerResult.BundleId), nil
 }
 
-func (warehouse *DataWarehouse) Get(id *common.DataID) (*data.Bundle, error) {
-	bundle, err := warehouse.dataRegistry.Bundles(nil, id.Padding, id.BundleID)
+func (dw *DataWarehouse) Get(id *common.DataID) (*data.Bundle, error) {
+	bundle, err := dw.dataRegistry.Bundles(nil, id.Padding, id.BundleID)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get uri")
 	}
@@ -222,19 +222,19 @@ func (warehouse *DataWarehouse) Get(id *common.DataID) (*data.Bundle, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get bundle data")
 	}
-	return warehouse.Fetch(uri)
+	return dw.Fetch(uri)
 }
 
-func (warehouse *DataWarehouse) Fetch(uri *url.URL) (*data.Bundle, error) {
-	protoc, exists := warehouse.protocols[uri.Scheme]
+func (dw *DataWarehouse) Fetch(uri *url.URL) (*data.Bundle, error) {
+	protoc, exists := dw.protocols[uri.Scheme]
 	if !exists {
 		return nil, errors.Errorf("the protocol %s is not supported", uri.Scheme)
 	}
 	return protoc.Read(uri)
 }
 
-func (warehouse *DataWarehouse) List(providerId common.ID) ([]*data.Bundle, error) {
-	bundleDataList, err := warehouse.metaDatabase.RetrieveMany(context.TODO(), bson.M{"provider": providerId.Hex()})
+func (dw *DataWarehouse) List(providerId common.ID) ([]*data.Bundle, error) {
+	bundleDataList, err := dw.metaDatabase.RetrieveMany(context.TODO(), bson.M{"provider": providerId.Hex()})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to list bundles")
 	}

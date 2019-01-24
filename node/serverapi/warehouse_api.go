@@ -2,6 +2,7 @@ package serverapi
 
 import (
 	"context"
+	"github.com/airbloc/airbloc-go/warehouse/warehouseservice"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -21,7 +22,7 @@ type WarehouseAPI struct {
 }
 
 func NewWarehouseAPI(backend node.Backend) (_ node.API, err error) {
-	service, ok := backend.GetService("warehouse").(*warehouse.Service)
+	service, ok := backend.GetService("warehouse").(*warehouseservice.Service)
 	if !ok {
 		return nil, errors.New("warehouse service is not registered")
 	}

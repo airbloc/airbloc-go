@@ -15,7 +15,7 @@ type Service struct {
 	manager *warehouse.DataWarehouse
 }
 
-func NewService(backend node.Backend) (node.Service, error) {
+func New(backend node.Backend) (node.Service, error) {
 	var err error
 	config := backend.Config().Warehouse
 
@@ -25,32 +25,28 @@ func NewService(backend node.Backend) (node.Service, error) {
 	}
 
 	var defaultStorage storage.Storage
-	switch storage.Type_value[config.DefaultStorage] {
-	case storage.Local:
-		cfg := config.LocalStorage
+	switch config.DefaultStorage {
+	case "local":
 		defaultStorage, err = storage.NewLocalStorage(
-			cfg.SavePath,
-			cfg.Endpoint)
-
+			config.LocalStorage.SavePath,
+			config.LocalStorage.Endpoint,
+		)
 		if err != nil {
 			return nil, err
 		}
-	case storage.CloudS3:
-		cfg := config.S3
-
+	case "s3":
 		sess, err := session.NewSession(&aws.Config{
 			Credentials: credentials.NewStaticCredentials(
-				cfg.AccessKey,
-				cfg.SecretKey,
-				cfg.Token,
+				config.S3.AccessKey,
+				config.S3.SecretKey,
+				config.S3.Token,
 			),
-			Region: aws.String(cfg.Region),
+			Region: aws.String(config.S3.Region),
 		})
 		if err != nil {
 			return nil, err
 		}
-
-		defaultStorage = storage.NewS3Storage(cfg.Bucket, cfg.PathPrefix, sess)
+		defaultStorage = storage.NewS3Storage(config.S3.Bucket, config.S3.PathPrefix, sess)
 		if err != nil {
 			return nil, err
 		}
@@ -67,7 +63,6 @@ func NewService(backend node.Backend) (node.Service, error) {
 		supportedProtocols,
 		config,
 	)
-
 	return &Service{manager: dw}, nil
 }
 
