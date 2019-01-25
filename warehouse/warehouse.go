@@ -117,8 +117,7 @@ func (dw *DataWarehouse) CreateBundle(collectionId common.ID) (*BundleStream, er
 }
 
 func (dw *DataWarehouse) validate(collection *collections.Collection, data *common.Data) error {
-	if !dw.dauthValidator.IsCollectible(collection.Id, data) &&
-		!dw.config.Debug.DisableUserAuthValidation {
+	if !dw.config.Debug.DisableUserAuthValidation && !dw.dauthValidator.IsCollectible(collection.Id, data) {
 		return errors.Wrap(errValidationFailed, "user hasn't been authorized the data collection")
 	}
 

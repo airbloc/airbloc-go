@@ -38,7 +38,7 @@ func (stream *BundleStream) Add(data *common.Data) error {
 		return err
 	}
 	if err != nil {
-		return err
+		return errors.Wrap(err, "error occured whilte validating data")
 	}
 
 	encryptedData, err := stream.warehouse.kms.EncryptData(data)
