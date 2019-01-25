@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/airbloc/airbloc-go/warehouse/warehouseservice"
+	"github.com/airbloc/airbloc-go/warehouse/service"
 	"os"
 	"strings"
 

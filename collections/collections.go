@@ -75,8 +75,6 @@ func (s *Collections) Unregister(ctx context.Context, collectionId common.ID) er
 }
 
 func (s *Collections) Get(id common.ID) (*Collection, error) {
-	println("Collection.Get: ID:", id.Hex())
-	println("Collection.Addr", s.contract.Address.Hex())
 	result, err := s.contract.Get(nil, id)
 	if err != nil {
 		return nil, err

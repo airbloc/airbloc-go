@@ -2,7 +2,7 @@ package serverapi
 
 import (
 	"context"
-	"github.com/airbloc/airbloc-go/warehouse/warehouseservice"
+	"github.com/airbloc/airbloc-go/warehouse/service"
 	"github.com/azer/logger"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
