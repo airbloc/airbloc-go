@@ -2,12 +2,8 @@ package e2e
 
 import (
 	"context"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/airbloc/airbloc-go/adapter"
-	"github.com/airbloc/airbloc-go/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"log"
 	"testing"
 	"time"
@@ -18,7 +14,7 @@ import (
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 )
 
-const numberOfUsers = 10
+const numberOfUsers = 3
 const numberOfBundles = 2
 const testSchema = `{
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -38,6 +34,13 @@ const testSchema = `{
   "required": [ "name" ]
 }`
 
+type T struct {
+	*testing.T
+	ctx    context.Context
+	conn   *grpc.ClientConn
+	config *testConfig
+}
+
 func init() {
 	log.SetFlags(log.Lshortfile)
 }
@@ -46,18 +49,18 @@ func generateUniqueName() string {
 	return time.Now().Format("20060102-150405")
 }
 
-func testCreateApp(t *testing.T, ctx context.Context, conn *grpc.ClientConn) string {
-	apps := pb.NewAppsClient(conn)
-	result, err := apps.Register(ctx, &pb.RegisterRequest{
+func (t *T) testCreateApp() string {
+	apps := pb.NewAppsClient(t.conn)
+	result, err := apps.Register(t.ctx, &pb.RegisterRequest{
 		Name: fmt.Sprintf("app-test-%s", generateUniqueName()),
 	})
 	require.NoError(t, err)
 	return result.GetAppId()
 }
 
-func testCreateSchema(t *testing.T, ctx context.Context, conn *grpc.ClientConn) string {
-	schemas := pb.NewSchemaClient(conn)
-	result, err := schemas.Create(ctx, &pb.CreateSchemaRequest{
+func (t *T) testCreateSchema() string {
+	schemas := pb.NewSchemaClient(t.conn)
+	result, err := schemas.Create(t.ctx, &pb.CreateSchemaRequest{
 		Name:   fmt.Sprintf("data-test-%s", generateUniqueName()),
 		Schema: testSchema,
 	})
@@ -65,9 +68,9 @@ func testCreateSchema(t *testing.T, ctx context.Context, conn *grpc.ClientConn) 
 	return result.GetId()
 }
 
-func testCreateCollection(t *testing.T, ctx context.Context, appId string, schemaId string, conn *grpc.ClientConn) string {
-	collections := pb.NewCollectionClient(conn)
-	result, err := collections.Create(ctx, &pb.CreateCollectionRequest{
+func (t *T) testCreateCollection(appId string, schemaId string) string {
+	collections := pb.NewCollectionClient(t.conn)
+	result, err := collections.Create(t.ctx, &pb.CreateCollectionRequest{
 		AppId:    appId,
 		SchemaId: schemaId,
 		Policy: &pb.Policy{
@@ -79,76 +82,38 @@ func testCreateCollection(t *testing.T, ctx context.Context, appId string, schem
 	return result.GetCollectionId()
 }
 
-func testCreateUserAccount(t *testing.T, ctx context.Context, conn *grpc.ClientConn, config *testConfig, index int) string {
-	dauth := pb.NewDAuthClient(conn)
-	response, err := dauth.SignIn(ctx, &pb.SignInRequest{
+func (t *T) testCreateUserAccount(index int) string {
+	dauth := pb.NewDAuthClient(t.conn)
+	response, err := dauth.SignIn(t.ctx, &pb.SignInRequest{
 		Identity:     fmt.Sprintf("test-user-%s-%d@airbloc.org", generateUniqueName(), index),
-		UserDelegate: config.UserDelegateAddress.Hex(),
+		UserDelegate: t.config.UserDelegateAddress.Hex(),
 	})
 	require.NoError(t, err)
 	return response.GetAccountId()
 }
 
-// func testCreateUserAccountParallel(t *testing.T, ctx context.Context, conn *grpc.ClientConn) (userIds [numberOfUsers]string) {
-// 	var accCreationWait sync.WaitGroup
-// 	accCreationWait.Add(numberOfUsers)
-// 	for i := 0; i < numberOfUsers; i++ {
-// 		go func(index int) {
-// 			defer accCreationWait.Done()
-// 			userIds[index] = testCreateUserAccount(t, ctx, conn, index)
-// 			log.Printf("Created user %d : %s\n", i, userIds[index])
-// 		}(i)
-// 	}
-// 	accCreationWait.Wait()
-// 	return
-// }
-
-func TestPnc(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	config := loadConfig(t)
-
-	conn, err := grpc.Dial("localhost:9124", grpc.WithInsecure())
-	require.NoError(t, err)
-	defer func() { _ = conn.Close() }()
-
-	appId := testCreateApp(t, ctx, conn)
-	log.Println("Created App ID:", appId)
-
-	schemaId := testCreateSchema(t, ctx, conn)
-	log.Printf("Created Schema ID: %s\n", schemaId)
-
-	collectionId := testCreateCollection(t, ctx, appId, schemaId, conn)
-	log.Printf("Created Collection: %s\n", collectionId)
-
-	// create 10 accounts
-	var userIds [numberOfUsers]string
-	for i := 0; i < numberOfUsers; i++ {
-		userIds[i] = testCreateUserAccount(t, ctx, conn, config, i)
-		log.Printf("Created user %d : %s\n", i, userIds[i])
-	}
-
-	// DAuth: allow data collection of these users
-	for _, userId := range userIds {
-		testDAuth(conn, collectionId, userId, true)
-		log.Printf("Allowed collection of user %s's data\n", userId)
-	}
-
-	// warehouse: store bundle data
-	warehouse := pb.NewWarehouseClient(conn)
+func (t *T) testStoreBundleData(userIds [numberOfUsers]string, collectionId string) []*pb.StoreResult {
+	warehouse := pb.NewWarehouseClient(t.conn)
 	storeResults := make([]*pb.StoreResult, numberOfBundles)
-	bundles := make([][]string, numberOfBundles)
 	for n := 0; n < numberOfBundles; n++ {
 		log.Println("Creating Bundle #", n+1)
-		stream, err := warehouse.StoreBundle(ctx)
+		stream, err := warehouse.StoreBundle(t.ctx)
 		require.NoError(t, err)
 
 		for index, userId := range userIds {
 			rawData := &pb.RawDataRequest{
 				CollectionId: collectionId,
-				OwnerId:      userId,
+				UserId:       userId,
 				Payload:      fmt.Sprintf("{\"name\":\"%s\",\"age\":%d}", userId, index),
+			}
+			require.NoError(t, stream.Send(rawData), "datum", rawData.String())
+		}
+
+		for index, userId := range userIds {
+			rawData := &pb.RawDataRequest{
+				CollectionId: collectionId,
+				UserId:       userId,
+				Payload:      fmt.Sprintf("{\"name\":\"%s\",\"age\":%d}", userId, index+1),
 			}
 			require.NoError(t, stream.Send(rawData), "datum", rawData.String())
 		}
@@ -159,37 +124,70 @@ func TestPnc(t *testing.T) {
 		log.Println("Stored URI:", storeResults[n].Uri)
 		log.Println("Stored Data Count:", storeResults[n].DataCount)
 		log.Println("Bundle ID:", storeResults[n].BundleId)
-		log.Println("DataIds :")
+	}
+	return storeResults
+}
 
-		// collectionId		bundleNumber		ownerId
-		// deadbeefdeadbeef	0000000000000001	deadbeefdeadbeef
-		// 3ae93dc780127dca 00000000            95ca4dbafed0590f
-		bundles[n] = make([]string, numberOfUsers)
-		for index, userId := range userIds {
-			dataId, _ := toDataId(storeResults[n].BundleId, userId)
-			bundles[n][index] = hex.EncodeToString(dataId[:])
-		}
-		log.Println(bundles[n])
+func TestPnc(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	conn, err := grpc.Dial("localhost:9124", grpc.WithInsecure())
+	require.NoError(t, err)
+	defer conn.Close()
+
+	c := &T{
+		T:    t,
+		ctx:  ctx,
+		conn: conn,
+	}
+	c.loadConfig()
+
+	appId := c.testCreateApp()
+	log.Println("Created App ID:", appId)
+
+	schemaId := c.testCreateSchema()
+	log.Printf("Created Schema ID: %s\n", schemaId)
+
+	collectionId1 := c.testCreateCollection(appId, schemaId)
+	log.Printf("Created Collection: %s\n", collectionId1)
+
+	collectionId2 := c.testCreateCollection(appId, schemaId)
+	log.Printf("Created Collection: %s\n", collectionId2)
+
+	// create 10 accounts
+	var userIds [numberOfUsers]string
+	for i := 0; i < numberOfUsers; i++ {
+		userIds[i] = c.testCreateUserAccount(i)
+		log.Printf("Created user %d : %s\n", i, userIds[i])
 	}
 
+	// DAuth: allow data collection of these users
+	for _, userId := range userIds {
+		testDAuth(conn, collectionId1, userId, true)
+		testDAuth(conn, collectionId2, userId, true)
+		log.Printf("Allowed collection of user %s's data\n", userId)
+	}
+
+	res1 := c.testStoreBundleData(userIds, collectionId1)
+	c.testStoreBundleData(userIds, collectionId2)
+
 	// exchange: Test exchanging uploaded data
-	log.Println("Start exchanging", len(bundles[1]), "data")
-	testExchange(t, ctx, conn, config, bundles[1])
+	log.Println("Start exchanging", res1[0].DataCount, "data")
+	bundleInfo := c.testExchange(res1[0].BundleId)
 
-	client, err := ethclient.DialContext(ctx, config.EthereumEndpoint)
+	warehouse := pb.NewWarehouseClient(c.conn)
+	_, err = warehouse.GetUserDataIds(c.ctx, &pb.UserDataIdsRequest{UserId: userIds[0]})
 	require.NoError(t, err)
 
-	dr, err := adapter.NewDataRegistry(config.DeployedContracts["DataRegistry"], client)
-	require.NoError(t, err)
+	data := pb.NewDataClient(conn)
+	for _, dataId := range bundleInfo.DataIds {
+		res, err := data.Get(ctx, &pb.DataId{DataId: dataId})
+		require.NoError(t, err)
 
-	dataID, err := common.NewDataID(bundles[0][0])
-	require.NoError(t, err)
+		d, err := json.MarshalIndent(res, "", "    ")
+		require.NoError(t, err)
 
-	bundle, err := dr.Bundles(nil, dataID.Empty, dataID.BundleID)
-	require.NoError(t, err)
-
-	data, err := json.MarshalIndent(bundle, "", "    ")
-	require.NoError(t, err)
-
-	log.Println(string(data))
+		log.Println(string(d))
+	}
 }
