@@ -6,7 +6,7 @@ import (
 	"github.com/airbloc/airbloc-go/data/datamanager"
 	"github.com/airbloc/airbloc-go/node"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/airbloc/airbloc-go/warehouse"
+	"github.com/airbloc/airbloc-go/warehouse/service"
 	"github.com/golang/protobuf/ptypes/empty"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
@@ -25,7 +25,7 @@ func NewDataAPI(backend node.Backend) (node.API, error) {
 		backend.P2P(),
 		backend.LocalDatabase(),
 		backend.Client(),
-		backend.GetService("warehouse").(*warehouse.Service).GetManager())
+		backend.GetService("warehouse").(*warehouseservice.Service).GetManager())
 	return &DataAPI{manager}, nil
 }
 
