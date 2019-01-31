@@ -20,6 +20,18 @@ service Warehouse {
     rpc StoreEncryptedBundle(stream EncryptedDataRequest) returns (StoreResult);
 
     /**
+     * GetBundleInfo receives a bundleId.
+     * and returns full information of bundle.
+     */
+    rpc GetBundleInfo(BundleInfoRequest) returns (BundleInfoResponse);
+
+    /**
+     * GetUserDataIds receives a userId.
+     * and returns full information of user.
+     */
+    rpc GetUserDataIds(UserDataIdsRequest) returns (UserDataIdsResponse);
+
+    /**
      * DeleteBundle removes given bundle from the warehouse and the blockchain.
      */
     rpc DeleteBundle(DeleteBundleRequest) returns (DeleteBundleResult);
@@ -35,7 +47,7 @@ message RawDataRequest {
     string collectionId = 1;
 
     // ID of the user (Data Owner)
-    string ownerId = 2;
+    string userId = 2;
 
     // JSON payload, which follows schema of the given collection.
     string payload = 3;
@@ -46,7 +58,7 @@ message EncryptedDataRequest {
     string collectionId = 1;
 
     // ID of the user (Data Owner)
-    string ownerId = 2;
+    string userId = 2;
 
     // pre-encrypted JSON payload, which follows schema of the given collection.
     // the payload must be encrypted through ECIES-SECP256k1 using the key in a capsule.
@@ -57,7 +69,6 @@ message EncryptedDataRequest {
 }
 
 message StoreResult {
-    // the ID of the bundle in "{empty}{bundleid}" format.
     string bundleId = 1;
 
     // public-accessible URI of the bundle.
@@ -70,6 +81,41 @@ message StoreResult {
 
     // amount of gas (transaction fee) used for registration to blockchain.
     uint64 gasUsed = 4;
+}
+
+// TODO : pagination
+message BundleInfoRequest{
+    string bundleId = 1;
+}
+
+message BundleInfoResponse {
+    string bundleId = 1;
+    string uri = 2;
+    string provider = 3;
+    string collection = 4;
+    uint64 dataCount = 5;
+    int64 ingestedAt = 6;
+    repeated string dataIds = 7;
+}
+
+// TODO : pagination
+message UserDataIdsRequest{
+    string userId = 1;
+}
+
+message UserDataIdsResponse{
+    message DataInfo {
+        string id = 1;
+        int64 ingestedAt = 2;
+    }
+
+    message Collection {
+        string appId = 1;
+        string schemaId = 2;
+        string collectionId = 3;
+        repeated DataInfo dataIds = 4;
+    }
+    repeated Collection collections = 1;
 }
 
 message DeleteBundleRequest {
