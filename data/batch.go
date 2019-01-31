@@ -6,8 +6,8 @@ import (
 	"github.com/airbloc/airbloc-go/common"
 )
 
-type OwnerIDs map[common.ID][]common.ID
-type Bundles map[common.ID]OwnerIDs
+type UserIds map[common.ID][][4]byte
+type Bundles map[common.ID]UserIds
 
 // Batch contains and points multiple data ID.
 // it manages data IDs using trie-like structure.
@@ -26,35 +26,35 @@ func newBatch(id string) *Batch {
 }
 
 // Append adds a data ID to the batch.
-func (batch *Batch) Append(dataID common.DataID) {
+func (batch *Batch) Append(dataID common.DataId) {
 	// padding is same in data id now.
-	ownerIDs := batch.set[dataID.BundleID]
-	if ownerIDs == nil {
-		ownerIDs = make(OwnerIDs)
+	userIds := batch.set[dataID.BundleId]
+	if userIds == nil {
+		userIds = make(UserIds)
 	}
 
-	rowIDs := ownerIDs[dataID.OwnerID]
+	rowIDs := userIds[dataID.UserId]
 	if rowIDs == nil {
-		rowIDs = []common.ID{}
+		rowIDs = [][4]byte{}
 	}
-	rowIDs = append(rowIDs, dataID.RowID)
+	rowIDs = append(rowIDs, dataID.RawId)
 
-	batch.set[dataID.BundleID][dataID.OwnerID] = rowIDs
+	batch.set[dataID.BundleId][dataID.UserId] = rowIDs
 	batch.Count += 1
 }
 
 // Iterator returns an iterator channel that can be used to
 // traverse data IDs in for-range loop.
-func (batch *Batch) Iterator() chan common.DataID {
-	ch := make(chan common.DataID)
+func (batch *Batch) Iterator() chan common.DataId {
+	ch := make(chan common.DataId)
 	go func() {
-		for bundleID, ownerIDs := range batch.set {
-			for ownerID, rowIDs := range ownerIDs {
-				for _, rowID := range rowIDs {
-					ch <- common.DataID{
-						BundleID: bundleID,
-						OwnerID:  ownerID,
-						RowID:    rowID,
+		for bundleID, userIds := range batch.set {
+			for userId, rawIDs := range userIds {
+				for _, rawID := range rawIDs {
+					ch <- common.DataId{
+						BundleId: bundleID,
+						UserId:   userId,
+						RawId:    rawID,
 					}
 				}
 			}
@@ -84,8 +84,8 @@ func (batch *Batch) Marshal() []byte {
 func UnmarshalBatch(batchID string, rawBatch []byte) (*Batch, error) {
 	dataIDs := strings.Split(string(rawBatch), ",")
 	batch := newBatch(batchID)
-	for _, rawDataID := range dataIDs {
-		dataID, err := common.NewDataID(rawDataID)
+	for _, rawDataId := range dataIDs {
+		dataID, err := common.NewDataId(rawDataId)
 		if err != nil {
 			return nil, err
 		}

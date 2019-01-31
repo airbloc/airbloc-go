@@ -206,13 +206,13 @@ func easyjson40af25b0DecodeGithubComAirblocAirblocGoCommon(in *jlexer.Lexer, out
 			continue
 		}
 		switch key {
-		case "ownerAnId":
+		case "userId":
 			if data := in.Raw(); in.Ok() {
-				in.AddError((out.OwnerAnID).UnmarshalJSON(data))
+				in.AddError((out.UserId).UnmarshalJSON(data))
 			}
-		case "rowId":
+		case "rawId":
 			if data := in.Raw(); in.Ok() {
-				in.AddError((out.RowID).UnmarshalJSON(data))
+				in.AddError((out.RawId).UnmarshalJSON(data))
 			}
 		case "capsule":
 			if in.IsNull() {
@@ -243,24 +243,24 @@ func easyjson40af25b0EncodeGithubComAirblocAirblocGoCommon(out *jwriter.Writer, 
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"ownerAnId\":"
+		const prefix string = ",\"userId\":"
 		if first {
 			first = false
 			out.RawString(prefix[1:])
 		} else {
 			out.RawString(prefix)
 		}
-		out.Raw((in.OwnerAnID).MarshalJSON())
+		out.Raw((in.UserId).MarshalJSON())
 	}
 	{
-		const prefix string = ",\"rowId\":"
+		const prefix string = ",\"rawId\":"
 		if first {
 			first = false
 			out.RawString(prefix[1:])
 		} else {
 			out.RawString(prefix)
 		}
-		out.Raw((in.RowID).MarshalJSON())
+		out.Raw((in.RawId).MarshalJSON())
 	}
 	{
 		const prefix string = ",\"capsule\":"

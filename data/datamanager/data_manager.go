@@ -28,15 +28,17 @@ func NewManager(
 	p2p p2p.Server,
 	localDB localdb.Database,
 	client blockchain.TxClient,
+	warehouse *warehouse.DataWarehouse,
 ) *Manager {
 	batches := data.NewBatchManager(localDB)
 	contract := client.GetContract(&adapter.DataRegistry{})
 	return &Manager{
-		kms:      kms,
-		client:   client,
-		p2p:      p2p,
-		registry: contract.(*adapter.DataRegistry),
-		batches:  batches,
+		kms:       kms,
+		client:    client,
+		p2p:       p2p,
+		warehouse: warehouse,
+		registry:  contract.(*adapter.DataRegistry),
+		batches:   batches,
 	}
 }
 
@@ -50,16 +52,16 @@ func (manager *Manager) encrypt(data *ablCommon.Data) (*ablCommon.EncryptedData,
 		return nil, err
 	}
 	return &ablCommon.EncryptedData{
-		OwnerAnID: data.OwnerAnID,
-		Payload:   encryptedPayload,
+		UserId:  data.UserId,
+		Payload: encryptedPayload,
 	}, nil
 }
 
-func (manager *Manager) decrypt(bundle *data.Bundle, dataID *ablCommon.DataID) (*ablCommon.Data, error) {
+func (manager *Manager) decrypt(bundle *data.Bundle, dataID *ablCommon.DataId) (*ablCommon.Data, error) {
 	// TODO: Needs paging method
 	var encryptedData *ablCommon.EncryptedData
 	for _, d := range bundle.Data {
-		if d.OwnerAnID == dataID.OwnerID && d.RowID == dataID.RowID {
+		if d.UserId == dataID.UserId && d.RawId == dataID.RawId {
 			encryptedData = d
 		}
 	}
@@ -69,43 +71,43 @@ func (manager *Manager) decrypt(bundle *data.Bundle, dataID *ablCommon.DataID) (
 	return manager.kms.DecryptData(encryptedData)
 }
 
-func (manager *Manager) Get(dataId string) (*ablCommon.Data, error) {
-	id, err := ablCommon.NewDataID(dataId)
+func (manager *Manager) Get(dataId string) (*data.Bundle, *ablCommon.Data, error) {
+	id, err := ablCommon.NewDataId(dataId)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to parse data ID %s", dataId)
+		return nil, nil, errors.Wrapf(err, "failed to parse data ID %s", dataId)
 	}
 
 	bundle, err := manager.warehouse.Get(id)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to retrieve bundle of data %s", dataId)
+		return nil, nil, errors.Wrapf(err, "failed to retrieve bundle of data %s", dataId)
 	}
 
 	d, err := manager.decrypt(bundle, id)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to decrypt data %s", id.String())
+		return nil, nil, errors.Wrapf(err, "failed to decrypt data %s", id.String())
 	}
-	return d, nil
+	return bundle, d, nil
 }
 
-func (manager *Manager) GetBatch(batch *data.Batch) ([]*ablCommon.Data, error) {
+func (manager *Manager) GetBatch(batch *data.Batch) (map[*data.Bundle][]*ablCommon.Data, error) {
+	result := make(map[*data.Bundle][]*ablCommon.Data)
 	bundles := make(map[ablCommon.ID]*data.Bundle)
-	dataList := make([]*ablCommon.Data, batch.Count)
 
 	for dataId := range batch.Iterator() {
-		if _, alreadyFetched := bundles[dataId.BundleID]; !alreadyFetched {
+		if _, alreadyFetched := bundles[dataId.BundleId]; !alreadyFetched {
 			b, err := manager.warehouse.Get(&dataId)
 			if err != nil {
 				return nil, errors.Wrapf(err, "failed to retrieve bundle of data %s", dataId.String())
 			}
-			bundles[dataId.BundleID] = b
+			bundles[dataId.BundleId] = b
 		}
 
 		// try to decrypt data using own private key / re-encryption key
-		d, err := manager.decrypt(bundles[dataId.BundleID], &dataId)
+		d, err := manager.decrypt(bundles[dataId.BundleId], &dataId)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to decrypt data %s", dataId.String())
 		}
-		dataList = append(dataList, d)
+		result[bundles[dataId.BundleId]] = append(result[bundles[dataId.BundleId]], d)
 	}
-	return dataList, nil
+	return result, nil
 }
