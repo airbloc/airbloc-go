@@ -14,6 +14,9 @@ import (
 const (
 	IDLength    = 8
 	IDStrLength = 16
+
+	RawIdLength    = 4
+	RawIdStrLength = 8
 )
 
 type ID [IDLength]byte
@@ -94,4 +97,50 @@ func IDFilter(ids ...ID) [][32]byte {
 		copy(byteIds[i][:8], id[:])
 	}
 	return byteIds
+}
+
+type RawId [RawIdLength]byte
+
+func HexToRawId(idStr string) (RawId, error) {
+	var id RawId
+	byteId, err := hex.DecodeString(idStr)
+	if err != nil {
+		return id, err
+	}
+	if len(byteId) != RawIdLength {
+		return id, errors.Errorf("invalid ID: %s", idStr)
+	}
+	copy(id[:], byteId[:RawIdLength])
+	return BytesToRawId(byteId), nil
+}
+
+func BytesToRawId(idBytes []byte) RawId {
+	var id RawId
+	copy(id[:], idBytes[:RawIdLength])
+	return id
+}
+
+func (id *RawId) Hex() string {
+	return hex.EncodeToString(id[:])
+}
+
+func (id *RawId) UnmarshalJSON(b []byte) error {
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+
+	tempId, err := hex.DecodeString(s)
+	if err != nil {
+		return err
+	}
+	if len(tempId) != RawIdLength {
+		return errors.Errorf("invalid ID format: %s", string(b))
+	}
+	copy(id[:], tempId)
+	return nil
+}
+
+func (id *RawId) MarshalJSON() ([]byte, error) {
+	return json.Marshal(id.Hex())
 }

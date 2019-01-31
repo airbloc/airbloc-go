@@ -1,29 +1,29 @@
 package common
 
 import (
+	"encoding/hex"
 	"fmt"
+	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/pkg/errors"
-	"log"
 )
 
 type Data struct {
-	OwnerAnID ID     `json:"ownerAnId"`
-	RowID     ID     `json:"rowId"`
-	Payload   string `json:"payload"`
+	UserId  ID     `json:"userId"`
+	RawId   RawId  `json:"rawId"`
+	Payload string `json:"payload"`
 }
 
 type EncryptedData struct {
-	OwnerAnID ID     `json:"ownerAnId"`
-	RowID     ID     `json:"rowId"`
-	Capsule   []byte `json:"capsule"`
-	Payload   []byte `json:"payload"`
+	UserId  ID     `json:"userId"`
+	RawId   RawId  `json:"rawId"`
+	Capsule []byte `json:"capsule"`
+	Payload []byte `json:"payload"`
 }
 
-type DataID struct {
-	Padding  ID `json:"padding"`
-	BundleID ID `json:"bundleId"`
-	OwnerID  ID `json:"ownerId"`
-	RowID    ID `json:"rowId"`
+type DataId struct {
+	BundleId ID    `json:"bundleId"`
+	UserId   ID    `json:"userId"`
+	RawId    RawId `json:"rawId"`
 }
 
 func convert(dataID string, index int) string {
@@ -36,42 +36,48 @@ func convert(dataID string, index int) string {
 	return str
 }
 
-func NewDataID(dataID string) (*DataID, error) {
-	log.Println(dataID)
-	empty, err := HexToID(convert(dataID, 0))
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse {empty} from the given data ID.")
-	}
+func NewDataId(dataID string) (id *DataId, err error) {
+	id = new(DataId)
 
-	bundleID, err := HexToID(convert(dataID, 1))
+	id.BundleId, err = HexToID(convert(dataID, 0))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse bundle ID from the given data ID.")
 	}
 
-	ownerID, err := HexToID(convert(dataID, 2))
+	id.UserId, err = HexToID(convert(dataID, 1))
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse owner ID from the given data ID")
 	}
 
-	rowID, err := HexToID(convert(dataID, 3))
+	tmp, err := hex.DecodeString(dataID[IDStrLength*2:])
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse row ID from the given data ID")
 	}
+	copy(id.RawId[:], tmp)
 
-	return &DataID{
-		Padding:  empty,
-		BundleID: bundleID,
-		OwnerID:  ownerID,
-		RowID:    rowID,
-	}, nil
+	return
 }
 
-func (id *DataID) String() string {
+func (id *DataId) Hex() string {
+	return id.String()
+}
+
+func (id *DataId) String() string {
 	return fmt.Sprintf(
-		"%s%s%s%s",
-		id.Padding.Hex(),
-		id.BundleID.Hex(),
-		id.OwnerID.Hex(),
-		id.RowID.Hex(),
+		"%s%s%s",
+		id.BundleId.Hex(),
+		id.UserId.Hex(),
+		hex.EncodeToString(id.RawId[:]),
 	)
+}
+
+type RawDataId struct {
+	BundleId   string             `json:"bundleId" mapstructure:"bundleId"`
+	UserId     string             `json:"userId" mapstructure:"userId"`
+	RawId      string             `json:"rawId" mapstructure:"rawId"`
+	IngestedAt primitive.DateTime `json:"ingestedAt" mapstructure:"ingestedAt"`
+}
+
+func (id *RawDataId) Convert() (*DataId, error) {
+	return NewDataId(id.BundleId + id.UserId + id.RawId)
 }
