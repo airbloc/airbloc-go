@@ -3,7 +3,6 @@ package data
 import (
 	"bytes"
 	"encoding/binary"
-
 	ablCommon "github.com/airbloc/airbloc-go/common"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/loomnetwork/mamamerkle"
@@ -15,12 +14,38 @@ var (
 	leaveExist = append(bytes.Repeat([]byte{0}, 31), 0x1)
 )
 
+func (bundle *Bundle) generateRawSMT(index int) (ethCommon.Hash, error) {
+	leafID := bundle.Data[index].UserId
+	leaves, rawIndex := make(map[uint64][]byte), uint32(0)
+	for _, data := range bundle.Data {
+		if bytes.Equal(leafID[:], data.UserId[:]) {
+			binary.LittleEndian.PutUint32(data.RawId[:], rawIndex)
+			leaves[uint64(rawIndex)] = leaveExist
+			rawIndex++
+		}
+	}
+
+	root := ethCommon.Hash{}
+	smt, err := mamamerkle.NewSparseMerkleTree(32, leaves)
+	if err != nil {
+		return root, errors.Wrap(err, "smt generation error")
+	}
+	copy(root[:], smt.Root())
+	return root, nil
+}
+
 func (bundle *Bundle) generateSMT() (*mamamerkle.SparseMerkleTree, error) {
 	leaves := make(map[uint64][]byte)
 
-	for _, data := range bundle.Data {
-		leafId := binary.LittleEndian.Uint64(data.OwnerAnID[:])
-		leaves[leafId] = leaveExist
+	for index, data := range bundle.Data {
+		leafID := binary.LittleEndian.Uint64(data.UserId[:])
+		if _, exists := leaves[leafID]; !exists {
+			leaf, err := bundle.generateRawSMT(index)
+			if err != nil {
+				return nil, err
+			}
+			leaves[leafID] = leaf[:]
+		}
 	}
 	return mamamerkle.NewSparseMerkleTree(64, leaves)
 }
