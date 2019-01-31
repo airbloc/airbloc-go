@@ -9,8 +9,8 @@ import (
 )
 
 type TopicRegistry interface {
-	SubscribeTopic(string, proto.Message, TopicHandler) error
-	UnsubscribeTopic(string) error
+	SubscribeTopic(string, proto.Message, TopicHandler)
+	UnsubscribeTopic(string)
 }
 
 type PeerManager interface {

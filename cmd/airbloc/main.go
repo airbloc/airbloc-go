@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/airbloc/airbloc-go/warehouse"
+	"github.com/airbloc/airbloc-go/warehouse/service"
 	"os"
 	"strings"
 
@@ -64,7 +64,7 @@ var (
 	}
 	AvailableServices = map[string]node.ServiceConstructor{
 		"api":          node.NewAPIService,
-		"warehouse":    warehouse.NewService,
+		"warehouse":    warehouseservice.New,
 		"userdelegate": userdelegate.NewService,
 	}
 )

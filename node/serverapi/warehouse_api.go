@@ -2,9 +2,11 @@ package serverapi
 
 import (
 	"context"
-
+	"github.com/airbloc/airbloc-go/warehouse/service"
+	"github.com/azer/logger"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"sync"
 
 	"io"
 
@@ -18,18 +20,30 @@ import (
 
 type WarehouseAPI struct {
 	warehouse *warehouse.DataWarehouse
+	log       *logger.Logger
 }
 
 func NewWarehouseAPI(backend node.Backend) (_ node.API, err error) {
-	service, ok := backend.GetService("warehouse").(*warehouse.Service)
+	service, ok := backend.GetService("warehouse").(*warehouseservice.Service)
 	if !ok {
 		return nil, errors.New("warehouse service is not registered")
 	}
-	return &WarehouseAPI{service.GetManager()}, nil
+	return &WarehouseAPI{
+		warehouse: service.GetManager(),
+		log:       logger.New("warehouse"),
+	}, nil
 }
 
 func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) error {
+	total := 0
+	successful := 0
+	timer := api.log.Timer()
+	defer func() {
+		timer.End("Successfully Ingested %d of %d data.", successful, total)
+	}()
+
 	var bundleStream *warehouse.BundleStream
+	var wg sync.WaitGroup
 	for {
 		request, err := stream.Recv()
 		if err == io.EOF {
@@ -53,13 +67,23 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 		if err != nil {
 			return status.Errorf(codes.InvalidArgument, "Invalid user ANID: %s", request.GetOwnerId())
 		}
+		total += 1
+		wg.Add(1)
 
 		datum := &common.Data{
 			Payload:   request.GetPayload(),
 			OwnerAnID: ownerAnID,
 		}
-		bundleStream.Add(datum)
+		go func() {
+			if err := bundleStream.Add(datum); err != nil {
+				api.log.Error("failed to add a data: %s", err.Error())
+			} else {
+				successful += 1
+			}
+			wg.Done()
+		}()
 	}
+	wg.Wait()
 
 	bundle, err := api.warehouse.Store(bundleStream)
 	if err != nil {
