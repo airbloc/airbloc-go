@@ -2,12 +2,13 @@ package p2p
 
 import (
 	"context"
+	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
+	"github.com/golang/protobuf/ptypes/empty"
 	"time"
 
 	p2pcommon "github.com/airbloc/airbloc-go/p2p/common"
 	"github.com/azer/logger"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/libp2p/go-libp2p-peer"
 	"github.com/pkg/errors"
 )
@@ -17,19 +18,16 @@ func Lookup(ctx context.Context, server Server, addr common.Address, ackTimeout 
 	ctx, cancel := context.WithTimeout(ctx, ackTimeout)
 	defer cancel()
 
-	topicName := "/lookup/" + addr.String()
-
 	// 1. prepare for listening lookup ACKs
 	waitForAck := make(chan peer.ID)
 	ackHandler := func(_ Server, ctx context.Context, msg p2pcommon.Message) {
 		waitForAck <- msg.SenderInfo.ID
 	}
-	if err := server.SubscribeTopic(topicName+"/ack", &empty.Empty{}, ackHandler); err != nil {
-		return "", errors.Wrap(err, "failed to listen to lookup ACKs")
-	}
+	server.SubscribeTopic("/lookup/ack", &empty.Empty{}, ackHandler)
+	defer server.UnsubscribeTopic("/lookup/ack")
 
 	// 2. publish the lookup message
-	if err := server.Publish(ctx, &empty.Empty{}, topicName); err != nil {
+	if err := server.Publish(ctx, &empty.Empty{}, "/lookup"); err != nil {
 		return "", errors.Wrap(err, "failed to publish lookup message")
 	}
 
@@ -57,12 +55,16 @@ func StartNameServer(server Server) error {
 	if err != nil {
 		return errors.Wrap(err, "invalid peer ID")
 	}
-	topicName := "/lookup/" + addr.String()
+	nodeAddr := addr.Hex()
 
-	return server.SubscribeTopic(topicName, &empty.Empty{}, func(_ Server, ctx context.Context, msg p2pcommon.Message) {
-		// send ACK (empty message)
-		if err := server.Send(ctx, &empty.Empty{}, topicName+"/ack", msg.SenderInfo.ID); err != nil {
-			log.Error("error: unable to send handshake reply: %s", err.Error(), msg.SenderInfo.ID.Loggable())
+	server.SubscribeTopic("/lookup", &pb.Lookup{}, func(_ Server, ctx context.Context, msg p2pcommon.Message) {
+		req, _ := msg.Data.(*pb.Lookup)
+		if req.Address == nodeAddr {
+			// send ACK (empty message)
+			if err := server.Send(ctx, &pb.LookupAck{}, "/lookup/ack", msg.SenderInfo.ID); err != nil {
+				log.Error("error: unable to send handshake reply: %s", err.Error(), msg.SenderInfo.ID.Loggable())
+			}
 		}
 	})
+	return nil
 }

@@ -214,24 +214,20 @@ func (s *AirblocServer) Stop() {
 	s.cancel()
 }
 
-func (s *AirblocServer) SubscribeTopic(topic string, msg proto.Message, handler TopicHandler) error {
+func (s *AirblocServer) SubscribeTopic(topic string, msg proto.Message, handler TopicHandler) {
 	typ := common.MessageType(msg)
 
 	s.mutex.Lock()
 	s.types[topic] = typ
 	s.handlers[topic] = handler
 	s.mutex.Unlock()
-
-	return nil
 }
 
-func (s *AirblocServer) UnsubscribeTopic(topic string) error {
+func (s *AirblocServer) UnsubscribeTopic(topic string) {
 	s.mutex.Lock()
 	delete(s.types, topic)
 	delete(s.handlers, topic)
 	s.mutex.Unlock()
-
-	return nil
 }
 
 func (s *AirblocServer) Send(ctx context.Context, msg proto.Message, topic string, p peer.ID) error {

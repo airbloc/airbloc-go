@@ -23,8 +23,8 @@ bootnode:
 clean:
 	@rm -rf build/
 
-install: airbloc
-	@cp -f $(DEST)/airbloc $GOPATH/bin/
+install: all
+	@cp -f $(DEST)/* $$GOPATH/bin/
 
 contracts:
 	@cd contracts; npm run compile

@@ -29,7 +29,7 @@ const (
 // which supports calling RPC directly to peer identified by public key (peer.ID)
 type RPC interface {
 	Invoke(ctx context.Context, to common.Address, method string, args, reply proto.Message) (proto.Message, error)
-	Handle(method string, argsType, replyType proto.Message, handler RPCHandler) error
+	Handle(method string, argsType, replyType proto.Message, handler RPCHandler)
 }
 
 // RPCHandler is RPC call handler for server-side (receiver).
@@ -81,9 +81,7 @@ func (r *rpc) Invoke(ctx context.Context, to common.Address, method string, args
 	responseCallback := func(_ Server, _ context.Context, msg p2pcommon.Message) {
 		waitForResponse <- msg
 	}
-	if err := r.server.SubscribeTopic(replyTopic, &pb.RPCResponse{}, responseCallback); err != nil {
-		return nil, errors.Wrapf(err, "failed to register reply callback of %s", method)
-	}
+	r.server.SubscribeTopic(replyTopic, &pb.RPCResponse{}, responseCallback)
 
 	// send request message
 	if err := r.server.Send(ctx, args, requestTopic, targetId); err != nil {
@@ -91,13 +89,13 @@ func (r *rpc) Invoke(ctx context.Context, to common.Address, method string, args
 	}
 
 	var replyMsg p2pcommon.Message
-WaitForReply:
+WaitingForReply:
 	for {
 		select {
 		case replyMsg = <-waitForResponse:
 			// messages from other senders except the original recipient are ignored.
 			if replyMsg.SenderInfo.ID == targetId {
-				break WaitForReply
+				break WaitingForReply
 			}
 		case <-ctx.Done():
 			return nil, ErrRPCTimeout
@@ -119,7 +117,7 @@ WaitForReply:
 	return reply, nil
 }
 
-func (r *rpc) Handle(method string, argsType, replyType proto.Message, handler RPCHandler) error {
+func (r *rpc) Handle(method string, argsType, replyType proto.Message, handler RPCHandler) {
 	requestTopic, replyTopic := topicFromMethod(method)
 
 	callback := func(_ Server, ctx context.Context, msg p2pcommon.Message) {
@@ -152,7 +150,7 @@ func (r *rpc) Handle(method string, argsType, replyType proto.Message, handler R
 			})
 		}
 	}
-	return r.server.SubscribeTopic(requestTopic, argsType, callback)
+	r.server.SubscribeTopic(requestTopic, argsType, callback)
 }
 
 func topicFromMethod(method string) (requestTopic, replyTopic string) {
