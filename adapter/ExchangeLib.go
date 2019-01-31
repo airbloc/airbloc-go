@@ -132,7 +132,7 @@ type ExchangeLibTransactorRaw struct {
 //	}
 //
 //	type Offer struct {
-//		DataIds	[]common.Hash
+//		DataIds
 //		Escrow	Escrow
 //		From	common.Address
 //		Reverted	bool
