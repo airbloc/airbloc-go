@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/airbloc/airbloc-go/warehouse"
+	"log"
 	"os"
 	"strings"
 
@@ -19,7 +20,7 @@ import (
 )
 
 var (
-	log = logger.New("airbloc")
+	mainLogger = logger.New("airbloc")
 
 	// list of CLI commands and flags
 	commands = []cli.Command{
@@ -69,6 +70,10 @@ var (
 	}
 )
 
+func init() {
+	log.SetFlags(log.Lshortfile)
+}
+
 func main() {
 	app := cli.NewApp()
 	app.Name = "airbloc"
@@ -79,7 +84,7 @@ func main() {
 
 	err := app.Run(os.Args)
 	if err != nil {
-		log.Error("Error: %+v", err)
+		mainLogger.Error("Error: %+v", err)
 		os.Exit(1)
 	}
 }
@@ -116,13 +121,13 @@ func registerServices(backend node.Backend, serviceNames []string) {
 	for _, name := range serviceNames {
 		serviceConstructor, exists := AvailableServices[name]
 		if !exists {
-			log.Error("Error: service %s does not exist.", name)
+			mainLogger.Error("Error: service %s does not exist.", name)
 			os.Exit(1)
 		}
 
 		service, err := serviceConstructor(backend)
 		if err != nil {
-			log.Error("Error: failed to create service %s: %+v", name, err)
+			mainLogger.Error("Error: failed to create service %s: %+v", name, err)
 			os.Exit(1)
 		}
 		backend.AttachService(name, service)
@@ -132,20 +137,20 @@ func registerServices(backend node.Backend, serviceNames []string) {
 func registerApis(backend node.Backend, apiNames []string) {
 	apiService, ok := backend.GetService("api").(*node.APIService)
 	if !ok {
-		log.Error("Error: API service is not registered.")
+		mainLogger.Error("Error: API service is not registered.")
 		os.Exit(1)
 	}
 
 	for _, name := range apiNames {
 		apiConstructor, exists := AvailableAPIs[name]
 		if !exists {
-			log.Error("Error: API %s does not exist.", name)
+			mainLogger.Error("Error: API %s does not exist.", name)
 			os.Exit(1)
 		}
 
 		api, err := apiConstructor(backend)
 		if err != nil {
-			log.Error("Error: failed to create API %s: %+v", name, err)
+			mainLogger.Error("Error: failed to create API %s: %+v", name, err)
 			os.Exit(1)
 		}
 		api.AttachToAPI(apiService)
