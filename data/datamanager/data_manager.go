@@ -61,7 +61,7 @@ func (manager *Manager) decrypt(bundle *data.Bundle, dataID *ablCommon.DataId) (
 	// TODO: Needs paging method
 	var encryptedData *ablCommon.EncryptedData
 	for _, d := range bundle.Data {
-		if d.UserId == dataID.UserId && d.RawId == dataID.RawId {
+		if d.UserId == dataID.UserId && d.RowId == dataID.RowId {
 			encryptedData = d
 		}
 	}

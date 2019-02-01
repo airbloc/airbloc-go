@@ -212,7 +212,7 @@ func easyjson40af25b0DecodeGithubComAirblocAirblocGoCommon(in *jlexer.Lexer, out
 			}
 		case "rawId":
 			if data := in.Raw(); in.Ok() {
-				in.AddError((out.RawId).UnmarshalJSON(data))
+				in.AddError((out.RowId).UnmarshalJSON(data))
 			}
 		case "capsule":
 			if in.IsNull() {
@@ -260,7 +260,7 @@ func easyjson40af25b0EncodeGithubComAirblocAirblocGoCommon(out *jwriter.Writer, 
 		} else {
 			out.RawString(prefix)
 		}
-		out.Raw((in.RawId).MarshalJSON())
+		out.Raw((in.RowId).MarshalJSON())
 	}
 	{
 		const prefix string = ",\"capsule\":"

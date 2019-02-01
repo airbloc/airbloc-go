@@ -9,13 +9,13 @@ import (
 
 type Data struct {
 	UserId  ID     `json:"userId"`
-	RawId   RawId  `json:"rawId"`
+	RowId   RowId  `json:"rawId"`
 	Payload string `json:"payload"`
 }
 
 type EncryptedData struct {
 	UserId  ID     `json:"userId"`
-	RawId   RawId  `json:"rawId"`
+	RowId   RowId  `json:"rawId"`
 	Capsule []byte `json:"capsule"`
 	Payload []byte `json:"payload"`
 }
@@ -23,7 +23,7 @@ type EncryptedData struct {
 type DataId struct {
 	BundleId ID    `json:"bundleId"`
 	UserId   ID    `json:"userId"`
-	RawId    RawId `json:"rawId"`
+	RowId    RowId `json:"rawId"`
 }
 
 func convert(dataID string, index int) string {
@@ -53,7 +53,7 @@ func NewDataId(dataID string) (id *DataId, err error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse row ID from the given data ID")
 	}
-	copy(id.RawId[:], tmp)
+	copy(id.RowId[:], tmp)
 
 	return
 }
@@ -67,17 +67,17 @@ func (id *DataId) String() string {
 		"%s%s%s",
 		id.BundleId.Hex(),
 		id.UserId.Hex(),
-		hex.EncodeToString(id.RawId[:]),
+		hex.EncodeToString(id.RowId[:]),
 	)
 }
 
 type RawDataId struct {
 	BundleId   string             `json:"bundleId" mapstructure:"bundleId"`
 	UserId     string             `json:"userId" mapstructure:"userId"`
-	RawId      string             `json:"rawId" mapstructure:"rawId"`
+	RowId      string             `json:"rawId" mapstructure:"rawId"`
 	IngestedAt primitive.DateTime `json:"ingestedAt" mapstructure:"ingestedAt"`
 }
 
 func (id *RawDataId) Convert() (*DataId, error) {
-	return NewDataId(id.BundleId + id.UserId + id.RawId)
+	return NewDataId(id.BundleId + id.UserId + id.RowId)
 }

@@ -19,7 +19,7 @@ func (bundle *Bundle) generateRawSMT(index int) (ethCommon.Hash, error) {
 	leaves, rawIndex := make(map[uint64][]byte), uint32(0)
 	for _, data := range bundle.Data {
 		if bytes.Equal(leafID[:], data.UserId[:]) {
-			binary.LittleEndian.PutUint32(data.RawId[:], rawIndex)
+			binary.LittleEndian.PutUint32(data.RowId[:], rawIndex)
 			leaves[uint64(rawIndex)] = leaveExist
 			rawIndex++
 		}

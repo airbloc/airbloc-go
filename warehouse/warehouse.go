@@ -184,7 +184,7 @@ func (dw *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 		dataIds[i] = make(map[string]interface{}, 3)
 		dataIds[i]["bundleId"] = bundleId.Hex()
 		dataIds[i]["userId"] = d.UserId.Hex()
-		dataIds[i]["rawId"] = d.RawId.Hex()
+		dataIds[i]["rawId"] = d.RowId.Hex()
 	}
 
 	// save metadata to make the bundle searchable

@@ -37,7 +37,7 @@ func (batch *Batch) Append(dataID common.DataId) {
 	if rowIDs == nil {
 		rowIDs = [][4]byte{}
 	}
-	rowIDs = append(rowIDs, dataID.RawId)
+	rowIDs = append(rowIDs, dataID.RowId)
 
 	batch.set[dataID.BundleId][dataID.UserId] = rowIDs
 	batch.Count += 1
@@ -49,12 +49,12 @@ func (batch *Batch) Iterator() chan common.DataId {
 	ch := make(chan common.DataId)
 	go func() {
 		for bundleID, userIds := range batch.set {
-			for userId, rawIDs := range userIds {
-				for _, rawID := range rawIDs {
+			for userId, rowIds := range userIds {
+				for _, rowId := range rowIds {
 					ch <- common.DataId{
 						BundleId: bundleID,
 						UserId:   userId,
-						RawId:    rawID,
+						RowId:    rowId,
 					}
 				}
 			}

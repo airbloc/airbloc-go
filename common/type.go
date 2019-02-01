@@ -15,8 +15,8 @@ const (
 	IDLength    = 8
 	IDStrLength = 16
 
-	RawIdLength    = 4
-	RawIdStrLength = 8
+	RowIdLength    = 4
+	RowIdStrLength = 8
 )
 
 type ID [IDLength]byte
@@ -99,32 +99,32 @@ func IDFilter(ids ...ID) [][32]byte {
 	return byteIds
 }
 
-type RawId [RawIdLength]byte
+type RowId [RowIdLength]byte
 
-func HexToRawId(idStr string) (RawId, error) {
-	var id RawId
+func HexToRowId(idStr string) (RowId, error) {
+	var id RowId
 	byteId, err := hex.DecodeString(idStr)
 	if err != nil {
 		return id, err
 	}
-	if len(byteId) != RawIdLength {
+	if len(byteId) != RowIdLength {
 		return id, errors.Errorf("invalid ID: %s", idStr)
 	}
-	copy(id[:], byteId[:RawIdLength])
-	return BytesToRawId(byteId), nil
+	copy(id[:], byteId[:RowIdLength])
+	return BytesToRowId(byteId), nil
 }
 
-func BytesToRawId(idBytes []byte) RawId {
-	var id RawId
-	copy(id[:], idBytes[:RawIdLength])
+func BytesToRowId(idBytes []byte) RowId {
+	var id RowId
+	copy(id[:], idBytes[:RowIdLength])
 	return id
 }
 
-func (id *RawId) Hex() string {
+func (id *RowId) Hex() string {
 	return hex.EncodeToString(id[:])
 }
 
-func (id *RawId) UnmarshalJSON(b []byte) error {
+func (id *RowId) UnmarshalJSON(b []byte) error {
 	var s string
 	if err := json.Unmarshal(b, &s); err != nil {
 		return err
@@ -134,13 +134,13 @@ func (id *RawId) UnmarshalJSON(b []byte) error {
 	if err != nil {
 		return err
 	}
-	if len(tempId) != RawIdLength {
+	if len(tempId) != RowIdLength {
 		return errors.Errorf("invalid ID format: %s", string(b))
 	}
 	copy(id[:], tempId)
 	return nil
 }
 
-func (id *RawId) MarshalJSON() ([]byte, error) {
+func (id *RowId) MarshalJSON() ([]byte, error) {
 	return json.Marshal(id.Hex())
 }

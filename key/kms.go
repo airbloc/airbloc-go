@@ -43,7 +43,7 @@ func (kms *manager) EncryptData(data *common.Data) (*common.EncryptedData, error
 	return &common.EncryptedData{
 		Payload: encryptedData,
 		UserId:  data.UserId,
-		RawId:   data.RawId,
+		RowId:   data.RowId,
 	}, nil
 }
 
@@ -55,7 +55,7 @@ func (kms *manager) DecryptData(encryptedData *common.EncryptedData) (*common.Da
 	return &common.Data{
 		Payload: data,
 		UserId:  encryptedData.UserId,
-		RawId:   encryptedData.RawId,
+		RowId:   encryptedData.RowId,
 	}, nil
 }
 
