@@ -120,6 +120,10 @@ func BytesToRowId(idBytes []byte) RowId {
 	return id
 }
 
+func (id *RowId) Uint32() uint32 {
+	return binary.LittleEndian.Uint32(id[:])
+}
+
 func (id *RowId) Hex() string {
 	return hex.EncodeToString(id[:])
 }
