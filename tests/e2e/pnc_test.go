@@ -176,12 +176,11 @@ func TestPnc(t *testing.T) {
 	log.Println("Start exchanging", res1[0].DataCount, "data")
 	bundleInfo := c.testExchange(res1[0].BundleId)
 
-	warehouse := pb.NewWarehouseClient(c.conn)
-	_, err = warehouse.GetUserDataIds(c.ctx, &pb.UserDataIdsRequest{UserId: userIds[0]})
+	data := pb.NewDataClient(c.conn)
+	_, err = data.GetUserDataIds(c.ctx, &pb.UserDataIdsRequest{UserId: userIds[0]})
 	require.NoError(t, err)
 
-	data := pb.NewDataClient(conn)
-	for _, dataId := range bundleInfo.DataIds {
+	for _, dataId := range bundleInfo.DataInfoes {
 		res, err := data.Get(ctx, &pb.DataId{DataId: dataId})
 		require.NoError(t, err)
 

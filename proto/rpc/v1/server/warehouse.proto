@@ -20,18 +20,6 @@ service Warehouse {
     rpc StoreEncryptedBundle(stream EncryptedDataRequest) returns (StoreResult);
 
     /**
-     * GetBundleInfo receives a bundleId.
-     * and returns full information of bundle.
-     */
-    rpc GetBundleInfo(BundleInfoRequest) returns (BundleInfoResponse);
-
-    /**
-     * GetUserDataIds receives a userId.
-     * and returns full information of user.
-     */
-    rpc GetUserDataIds(UserDataIdsRequest) returns (UserDataIdsResponse);
-
-    /**
      * DeleteBundle removes given bundle from the warehouse and the blockchain.
      */
     rpc DeleteBundle(DeleteBundleRequest) returns (DeleteBundleResult);
@@ -81,41 +69,6 @@ message StoreResult {
 
     // amount of gas (transaction fee) used for registration to blockchain.
     uint64 gasUsed = 4;
-}
-
-// TODO : pagination
-message BundleInfoRequest{
-    string bundleId = 1;
-}
-
-message BundleInfoResponse {
-    string bundleId = 1;
-    string uri = 2;
-    string provider = 3;
-    string collection = 4;
-    uint64 dataCount = 5;
-    int64 ingestedAt = 6;
-    repeated string dataIds = 7;
-}
-
-// TODO : pagination
-message UserDataIdsRequest{
-    string userId = 1;
-}
-
-message UserDataIdsResponse{
-    message DataInfo {
-        string id = 1;
-        int64 ingestedAt = 2;
-    }
-
-    message Collection {
-        string appId = 1;
-        string schemaId = 2;
-        string collectionId = 3;
-        repeated DataInfo dataIds = 4;
-    }
-    repeated Collection collections = 1;
 }
 
 message DeleteBundleRequest {

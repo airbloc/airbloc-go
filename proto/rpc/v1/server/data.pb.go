@@ -103,7 +103,7 @@ func (m *DataId) GetDataId() string {
 
 type DataResult struct {
 	CollectionId         string   `protobuf:"bytes,1,opt,name=collectionId,proto3" json:"collectionId,omitempty"`
-	OwnerUserAid         string   `protobuf:"bytes,2,opt,name=ownerUserAid,proto3" json:"ownerUserAid,omitempty"`
+	UserId               string   `protobuf:"bytes,2,opt,name=userId,proto3" json:"userId,omitempty"`
 	IngestedAt           int64    `protobuf:"varint,3,opt,name=ingestedAt,proto3" json:"ingestedAt,omitempty"`
 	Payload              string   `protobuf:"bytes,4,opt,name=payload,proto3" json:"payload,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -143,9 +143,9 @@ func (m *DataResult) GetCollectionId() string {
 	return ""
 }
 
-func (m *DataResult) GetOwnerUserAid() string {
+func (m *DataResult) GetUserId() string {
 	if m != nil {
-		return m.OwnerUserAid
+		return m.UserId
 	}
 	return ""
 }
@@ -203,6 +203,322 @@ func (m *GetBatchResult) GetData() []*DataResult {
 	return nil
 }
 
+// TODO : pagination
+type BundleInfoRequest struct {
+	BundleId             string   `protobuf:"bytes,1,opt,name=bundleId,proto3" json:"bundleId,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *BundleInfoRequest) Reset()         { *m = BundleInfoRequest{} }
+func (m *BundleInfoRequest) String() string { return proto.CompactTextString(m) }
+func (*BundleInfoRequest) ProtoMessage()    {}
+func (*BundleInfoRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2002f69fb9f05dba, []int{4}
+}
+
+func (m *BundleInfoRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_BundleInfoRequest.Unmarshal(m, b)
+}
+func (m *BundleInfoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_BundleInfoRequest.Marshal(b, m, deterministic)
+}
+func (m *BundleInfoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BundleInfoRequest.Merge(m, src)
+}
+func (m *BundleInfoRequest) XXX_Size() int {
+	return xxx_messageInfo_BundleInfoRequest.Size(m)
+}
+func (m *BundleInfoRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_BundleInfoRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_BundleInfoRequest proto.InternalMessageInfo
+
+func (m *BundleInfoRequest) GetBundleId() string {
+	if m != nil {
+		return m.BundleId
+	}
+	return ""
+}
+
+type BundleInfoResponse struct {
+	BundleId             string   `protobuf:"bytes,1,opt,name=bundleId,proto3" json:"bundleId,omitempty"`
+	Uri                  string   `protobuf:"bytes,2,opt,name=uri,proto3" json:"uri,omitempty"`
+	Provider             string   `protobuf:"bytes,3,opt,name=provider,proto3" json:"provider,omitempty"`
+	Collection           string   `protobuf:"bytes,4,opt,name=collection,proto3" json:"collection,omitempty"`
+	DataCount            uint64   `protobuf:"varint,5,opt,name=dataCount,proto3" json:"dataCount,omitempty"`
+	IngestedAt           int64    `protobuf:"varint,6,opt,name=ingestedAt,proto3" json:"ingestedAt,omitempty"`
+	DataInfoes           []string `protobuf:"bytes,7,rep,name=dataInfoes,proto3" json:"dataInfoes,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *BundleInfoResponse) Reset()         { *m = BundleInfoResponse{} }
+func (m *BundleInfoResponse) String() string { return proto.CompactTextString(m) }
+func (*BundleInfoResponse) ProtoMessage()    {}
+func (*BundleInfoResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2002f69fb9f05dba, []int{5}
+}
+
+func (m *BundleInfoResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_BundleInfoResponse.Unmarshal(m, b)
+}
+func (m *BundleInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_BundleInfoResponse.Marshal(b, m, deterministic)
+}
+func (m *BundleInfoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BundleInfoResponse.Merge(m, src)
+}
+func (m *BundleInfoResponse) XXX_Size() int {
+	return xxx_messageInfo_BundleInfoResponse.Size(m)
+}
+func (m *BundleInfoResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_BundleInfoResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_BundleInfoResponse proto.InternalMessageInfo
+
+func (m *BundleInfoResponse) GetBundleId() string {
+	if m != nil {
+		return m.BundleId
+	}
+	return ""
+}
+
+func (m *BundleInfoResponse) GetUri() string {
+	if m != nil {
+		return m.Uri
+	}
+	return ""
+}
+
+func (m *BundleInfoResponse) GetProvider() string {
+	if m != nil {
+		return m.Provider
+	}
+	return ""
+}
+
+func (m *BundleInfoResponse) GetCollection() string {
+	if m != nil {
+		return m.Collection
+	}
+	return ""
+}
+
+func (m *BundleInfoResponse) GetDataCount() uint64 {
+	if m != nil {
+		return m.DataCount
+	}
+	return 0
+}
+
+func (m *BundleInfoResponse) GetIngestedAt() int64 {
+	if m != nil {
+		return m.IngestedAt
+	}
+	return 0
+}
+
+func (m *BundleInfoResponse) GetDataInfoes() []string {
+	if m != nil {
+		return m.DataInfoes
+	}
+	return nil
+}
+
+// TODO : pagination
+type UserDataIdsRequest struct {
+	UserId               string   `protobuf:"bytes,1,opt,name=userId,proto3" json:"userId,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *UserDataIdsRequest) Reset()         { *m = UserDataIdsRequest{} }
+func (m *UserDataIdsRequest) String() string { return proto.CompactTextString(m) }
+func (*UserDataIdsRequest) ProtoMessage()    {}
+func (*UserDataIdsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2002f69fb9f05dba, []int{6}
+}
+
+func (m *UserDataIdsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UserDataIdsRequest.Unmarshal(m, b)
+}
+func (m *UserDataIdsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UserDataIdsRequest.Marshal(b, m, deterministic)
+}
+func (m *UserDataIdsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UserDataIdsRequest.Merge(m, src)
+}
+func (m *UserDataIdsRequest) XXX_Size() int {
+	return xxx_messageInfo_UserDataIdsRequest.Size(m)
+}
+func (m *UserDataIdsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_UserDataIdsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UserDataIdsRequest proto.InternalMessageInfo
+
+func (m *UserDataIdsRequest) GetUserId() string {
+	if m != nil {
+		return m.UserId
+	}
+	return ""
+}
+
+type UserDataIdsResponse struct {
+	Collections          []*UserDataIdsResponse_Collection `protobuf:"bytes,1,rep,name=collections,proto3" json:"collections,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                          `json:"-"`
+	XXX_unrecognized     []byte                            `json:"-"`
+	XXX_sizecache        int32                             `json:"-"`
+}
+
+func (m *UserDataIdsResponse) Reset()         { *m = UserDataIdsResponse{} }
+func (m *UserDataIdsResponse) String() string { return proto.CompactTextString(m) }
+func (*UserDataIdsResponse) ProtoMessage()    {}
+func (*UserDataIdsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2002f69fb9f05dba, []int{7}
+}
+
+func (m *UserDataIdsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UserDataIdsResponse.Unmarshal(m, b)
+}
+func (m *UserDataIdsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UserDataIdsResponse.Marshal(b, m, deterministic)
+}
+func (m *UserDataIdsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UserDataIdsResponse.Merge(m, src)
+}
+func (m *UserDataIdsResponse) XXX_Size() int {
+	return xxx_messageInfo_UserDataIdsResponse.Size(m)
+}
+func (m *UserDataIdsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_UserDataIdsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UserDataIdsResponse proto.InternalMessageInfo
+
+func (m *UserDataIdsResponse) GetCollections() []*UserDataIdsResponse_Collection {
+	if m != nil {
+		return m.Collections
+	}
+	return nil
+}
+
+type UserDataIdsResponse_DataInfo struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	IngestedAt           int64    `protobuf:"varint,2,opt,name=ingestedAt,proto3" json:"ingestedAt,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *UserDataIdsResponse_DataInfo) Reset()         { *m = UserDataIdsResponse_DataInfo{} }
+func (m *UserDataIdsResponse_DataInfo) String() string { return proto.CompactTextString(m) }
+func (*UserDataIdsResponse_DataInfo) ProtoMessage()    {}
+func (*UserDataIdsResponse_DataInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2002f69fb9f05dba, []int{7, 0}
+}
+
+func (m *UserDataIdsResponse_DataInfo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UserDataIdsResponse_DataInfo.Unmarshal(m, b)
+}
+func (m *UserDataIdsResponse_DataInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UserDataIdsResponse_DataInfo.Marshal(b, m, deterministic)
+}
+func (m *UserDataIdsResponse_DataInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UserDataIdsResponse_DataInfo.Merge(m, src)
+}
+func (m *UserDataIdsResponse_DataInfo) XXX_Size() int {
+	return xxx_messageInfo_UserDataIdsResponse_DataInfo.Size(m)
+}
+func (m *UserDataIdsResponse_DataInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_UserDataIdsResponse_DataInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UserDataIdsResponse_DataInfo proto.InternalMessageInfo
+
+func (m *UserDataIdsResponse_DataInfo) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *UserDataIdsResponse_DataInfo) GetIngestedAt() int64 {
+	if m != nil {
+		return m.IngestedAt
+	}
+	return 0
+}
+
+type UserDataIdsResponse_Collection struct {
+	AppId                string                          `protobuf:"bytes,1,opt,name=appId,proto3" json:"appId,omitempty"`
+	SchemaId             string                          `protobuf:"bytes,2,opt,name=schemaId,proto3" json:"schemaId,omitempty"`
+	CollectionId         string                          `protobuf:"bytes,3,opt,name=collectionId,proto3" json:"collectionId,omitempty"`
+	DataInfoes           []*UserDataIdsResponse_DataInfo `protobuf:"bytes,4,rep,name=dataInfoes,proto3" json:"dataInfoes,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
+	XXX_unrecognized     []byte                          `json:"-"`
+	XXX_sizecache        int32                           `json:"-"`
+}
+
+func (m *UserDataIdsResponse_Collection) Reset()         { *m = UserDataIdsResponse_Collection{} }
+func (m *UserDataIdsResponse_Collection) String() string { return proto.CompactTextString(m) }
+func (*UserDataIdsResponse_Collection) ProtoMessage()    {}
+func (*UserDataIdsResponse_Collection) Descriptor() ([]byte, []int) {
+	return fileDescriptor_2002f69fb9f05dba, []int{7, 1}
+}
+
+func (m *UserDataIdsResponse_Collection) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UserDataIdsResponse_Collection.Unmarshal(m, b)
+}
+func (m *UserDataIdsResponse_Collection) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UserDataIdsResponse_Collection.Marshal(b, m, deterministic)
+}
+func (m *UserDataIdsResponse_Collection) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UserDataIdsResponse_Collection.Merge(m, src)
+}
+func (m *UserDataIdsResponse_Collection) XXX_Size() int {
+	return xxx_messageInfo_UserDataIdsResponse_Collection.Size(m)
+}
+func (m *UserDataIdsResponse_Collection) XXX_DiscardUnknown() {
+	xxx_messageInfo_UserDataIdsResponse_Collection.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UserDataIdsResponse_Collection proto.InternalMessageInfo
+
+func (m *UserDataIdsResponse_Collection) GetAppId() string {
+	if m != nil {
+		return m.AppId
+	}
+	return ""
+}
+
+func (m *UserDataIdsResponse_Collection) GetSchemaId() string {
+	if m != nil {
+		return m.SchemaId
+	}
+	return ""
+}
+
+func (m *UserDataIdsResponse_Collection) GetCollectionId() string {
+	if m != nil {
+		return m.CollectionId
+	}
+	return ""
+}
+
+func (m *UserDataIdsResponse_Collection) GetDataInfoes() []*UserDataIdsResponse_DataInfo {
+	if m != nil {
+		return m.DataInfoes
+	}
+	return nil
+}
+
 type SetDataPermissionRequest struct {
 	DataId               string   `protobuf:"bytes,1,opt,name=dataId,proto3" json:"dataId,omitempty"`
 	ConsumerId           string   `protobuf:"bytes,2,opt,name=consumerId,proto3" json:"consumerId,omitempty"`
@@ -216,7 +532,7 @@ func (m *SetDataPermissionRequest) Reset()         { *m = SetDataPermissionReque
 func (m *SetDataPermissionRequest) String() string { return proto.CompactTextString(m) }
 func (*SetDataPermissionRequest) ProtoMessage()    {}
 func (*SetDataPermissionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_2002f69fb9f05dba, []int{4}
+	return fileDescriptor_2002f69fb9f05dba, []int{8}
 }
 
 func (m *SetDataPermissionRequest) XXX_Unmarshal(b []byte) error {
@@ -271,7 +587,7 @@ func (m *SetBatchDataPermissionRequest) Reset()         { *m = SetBatchDataPermi
 func (m *SetBatchDataPermissionRequest) String() string { return proto.CompactTextString(m) }
 func (*SetBatchDataPermissionRequest) ProtoMessage()    {}
 func (*SetBatchDataPermissionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_2002f69fb9f05dba, []int{5}
+	return fileDescriptor_2002f69fb9f05dba, []int{9}
 }
 
 func (m *SetBatchDataPermissionRequest) XXX_Unmarshal(b []byte) error {
@@ -318,6 +634,12 @@ func init() {
 	proto.RegisterType((*DataId)(nil), "airbloc.rpc.v1.DataId")
 	proto.RegisterType((*DataResult)(nil), "airbloc.rpc.v1.DataResult")
 	proto.RegisterType((*GetBatchResult)(nil), "airbloc.rpc.v1.GetBatchResult")
+	proto.RegisterType((*BundleInfoRequest)(nil), "airbloc.rpc.v1.BundleInfoRequest")
+	proto.RegisterType((*BundleInfoResponse)(nil), "airbloc.rpc.v1.BundleInfoResponse")
+	proto.RegisterType((*UserDataIdsRequest)(nil), "airbloc.rpc.v1.UserDataIdsRequest")
+	proto.RegisterType((*UserDataIdsResponse)(nil), "airbloc.rpc.v1.UserDataIdsResponse")
+	proto.RegisterType((*UserDataIdsResponse_DataInfo)(nil), "airbloc.rpc.v1.UserDataIdsResponse.DataInfo")
+	proto.RegisterType((*UserDataIdsResponse_Collection)(nil), "airbloc.rpc.v1.UserDataIdsResponse.Collection")
 	proto.RegisterType((*SetDataPermissionRequest)(nil), "airbloc.rpc.v1.SetDataPermissionRequest")
 	proto.RegisterType((*SetBatchDataPermissionRequest)(nil), "airbloc.rpc.v1.SetBatchDataPermissionRequest")
 }
@@ -325,37 +647,53 @@ func init() {
 func init() { proto.RegisterFile("proto/rpc/v1/server/data.proto", fileDescriptor_2002f69fb9f05dba) }
 
 var fileDescriptor_2002f69fb9f05dba = []byte{
-	// 476 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x54, 0x4d, 0x6f, 0xd3, 0x40,
-	0x10, 0x95, 0x49, 0x94, 0x96, 0x49, 0xe9, 0x61, 0x0f, 0x91, 0x65, 0x20, 0xb2, 0x7c, 0xf2, 0xa5,
-	0x6b, 0xa5, 0xbd, 0xc0, 0x89, 0xa6, 0x14, 0x95, 0xdc, 0xc0, 0x11, 0x17, 0x38, 0xad, 0xd7, 0x83,
-	0x6b, 0x69, 0xe3, 0x35, 0xbb, 0xeb, 0x54, 0x15, 0xff, 0x81, 0x7f, 0xc4, 0x7f, 0x43, 0xeb, 0x0f,
-	0xea, 0x44, 0x71, 0x85, 0xe8, 0xc9, 0x9e, 0xb7, 0x6f, 0x67, 0xde, 0xbc, 0x19, 0x1b, 0xe6, 0xa5,
-	0x92, 0x46, 0x46, 0xaa, 0xe4, 0xd1, 0x76, 0x11, 0x69, 0x54, 0x5b, 0x54, 0x51, 0xca, 0x0c, 0xa3,
-	0xf5, 0x01, 0x39, 0x65, 0xb9, 0x4a, 0x84, 0xe4, 0x54, 0x95, 0x9c, 0x6e, 0x17, 0xde, 0xcb, 0x4c,
-	0xca, 0x4c, 0x60, 0x54, 0x9f, 0x26, 0xd5, 0xf7, 0x08, 0x37, 0xa5, 0xb9, 0x6f, 0xc8, 0x41, 0x08,
-	0x27, 0x57, 0xcc, 0xf0, 0xdb, 0x18, 0x7f, 0x54, 0xa8, 0x0d, 0x71, 0xe1, 0x28, 0xb1, 0xf1, 0x2a,
-	0x75, 0x1d, 0xdf, 0x09, 0x9f, 0xc7, 0x5d, 0x18, 0xf8, 0x30, 0xb9, 0x66, 0x86, 0xad, 0x52, 0x32,
-	0x83, 0x49, 0x5a, 0xbf, 0xb5, 0x94, 0x36, 0x0a, 0x7e, 0x39, 0x00, 0x96, 0x12, 0xa3, 0xae, 0x84,
-	0x21, 0x01, 0x9c, 0x70, 0x29, 0x04, 0x72, 0x93, 0xcb, 0xe2, 0x2f, 0x79, 0x07, 0xb3, 0x1c, 0x79,
-	0x57, 0xa0, 0xfa, 0xa2, 0x51, 0x2d, 0xf3, 0xd4, 0x7d, 0xd6, 0x70, 0xfa, 0x18, 0x99, 0x03, 0xe4,
-	0x45, 0x86, 0xda, 0x60, 0xba, 0x34, 0xee, 0xc8, 0x77, 0xc2, 0x51, 0xdc, 0x43, 0xac, 0xe4, 0x92,
-	0xdd, 0x0b, 0xc9, 0x52, 0x77, 0xdc, 0x48, 0x6e, 0xc3, 0xe0, 0x12, 0x4e, 0x6f, 0xd0, 0xb4, 0xfd,
-	0xd5, 0x9a, 0x28, 0x8c, 0xad, 0x58, 0xd7, 0xf1, 0x47, 0xe1, 0xf4, 0xdc, 0xa3, 0xbb, 0x56, 0xd1,
-	0x07, 0xf5, 0x71, 0xcd, 0x0b, 0x0c, 0xb8, 0x6b, 0x34, 0x16, 0xfe, 0x84, 0x6a, 0x93, 0x6b, 0x9d,
-	0xcb, 0xa2, 0xb3, 0x6a, 0xc0, 0x06, 0xab, 0x97, 0xcb, 0x42, 0x57, 0x1b, 0x54, 0xab, 0xae, 0xa3,
-	0x1e, 0x42, 0x7c, 0x98, 0x32, 0x21, 0xe4, 0xdd, 0x92, 0x73, 0xd4, 0xba, 0x6e, 0xe8, 0x38, 0xee,
-	0x43, 0xc1, 0x4f, 0x78, 0xbd, 0x6e, 0x75, 0x1f, 0x2e, 0x3d, 0x38, 0xa5, 0xa7, 0x17, 0x3f, 0xff,
-	0x3d, 0x86, 0xb1, 0xad, 0x4a, 0xde, 0xc2, 0xe8, 0x06, 0x0d, 0x99, 0x1d, 0x32, 0x69, 0x95, 0x7a,
-	0x8f, 0x98, 0x47, 0x3e, 0xc2, 0x71, 0x67, 0x3c, 0x79, 0xb5, 0xcf, 0xeb, 0xef, 0x9b, 0x37, 0xdf,
-	0x3f, 0xdd, 0x1b, 0xd8, 0x67, 0x78, 0xb1, 0x46, 0xf3, 0xe0, 0x00, 0x09, 0xf7, 0x2f, 0x0c, 0xcd,
-	0xc7, 0x9b, 0xd1, 0x66, 0xf1, 0x69, 0xb7, 0xf8, 0xf4, 0x83, 0x5d, 0x7c, 0xf2, 0x0d, 0xc8, 0x4e,
-	0xca, 0x46, 0xe6, 0xd9, 0x81, 0xbc, 0xc3, 0x13, 0x18, 0x4c, 0xfe, 0x06, 0x26, 0xd7, 0x28, 0xd0,
-	0xe0, 0xa0, 0x6f, 0x43, 0x37, 0xdf, 0xc3, 0xb4, 0xb9, 0xf9, 0x2f, 0xb6, 0x0d, 0x25, 0xb9, 0x84,
-	0xc9, 0x1a, 0xed, 0xe7, 0x35, 0x58, 0xfe, 0xd1, 0xbc, 0xa1, 0x43, 0xde, 0xc1, 0x51, 0x8c, 0x02,
-	0x99, 0xc6, 0xff, 0x93, 0x70, 0x75, 0xf1, 0x75, 0x91, 0xe5, 0xe6, 0xb6, 0x4a, 0x28, 0x97, 0x9b,
-	0xa8, 0xcd, 0xd0, 0x3d, 0xcf, 0x32, 0x19, 0x1d, 0xf8, 0x7d, 0x25, 0x93, 0x1a, 0xbc, 0xf8, 0x13,
-	0x00, 0x00, 0xff, 0xff, 0xd4, 0x47, 0x8c, 0xd0, 0xdc, 0x04, 0x00, 0x00,
+	// 724 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x55, 0xcf, 0x6e, 0xd3, 0x4c,
+	0x10, 0x97, 0xe3, 0x34, 0x4d, 0x27, 0x6d, 0xf5, 0x7d, 0xfb, 0x7d, 0xaa, 0x2c, 0x53, 0x22, 0x63,
+	0x2e, 0x3e, 0xb4, 0xb6, 0xda, 0x5e, 0x80, 0x0b, 0xfd, 0x87, 0x4a, 0x24, 0x0e, 0xc5, 0x11, 0x48,
+	0xc0, 0xc9, 0xb1, 0xa7, 0xa9, 0x25, 0xc7, 0x6b, 0xbc, 0xeb, 0xa0, 0x8a, 0x1b, 0x4f, 0xc4, 0xd3,
+	0x70, 0xe2, 0x21, 0x78, 0x04, 0xb4, 0xfe, 0x1f, 0xd7, 0x8e, 0x2a, 0x38, 0xd9, 0x33, 0x3b, 0xf3,
+	0xdb, 0x99, 0xf9, 0xcd, 0xcc, 0xc2, 0x38, 0x8a, 0x29, 0xa7, 0x56, 0x1c, 0xb9, 0xd6, 0xf2, 0xc8,
+	0x62, 0x18, 0x2f, 0x31, 0xb6, 0x3c, 0x87, 0x3b, 0x66, 0x7a, 0x40, 0x76, 0x1d, 0x3f, 0x9e, 0x05,
+	0xd4, 0x35, 0xe3, 0xc8, 0x35, 0x97, 0x47, 0xea, 0xa3, 0x39, 0xa5, 0xf3, 0x00, 0xad, 0xf4, 0x74,
+	0x96, 0xdc, 0x58, 0xb8, 0x88, 0xf8, 0x5d, 0x66, 0xac, 0x1b, 0xb0, 0x7d, 0xee, 0x70, 0xf7, 0xd6,
+	0xc6, 0xcf, 0x09, 0x32, 0x4e, 0x14, 0xd8, 0x9c, 0x09, 0x79, 0xe2, 0x29, 0x92, 0x26, 0x19, 0x5b,
+	0x76, 0x21, 0xea, 0x1a, 0x0c, 0x2e, 0x1d, 0xee, 0x4c, 0x3c, 0xb2, 0x07, 0x03, 0x2f, 0xfd, 0xcb,
+	0x4d, 0x72, 0x49, 0xff, 0x26, 0x01, 0x08, 0x13, 0x1b, 0x59, 0x12, 0x70, 0xa2, 0xc3, 0xb6, 0x4b,
+	0x83, 0x00, 0x5d, 0xee, 0xd3, 0xb0, 0x34, 0x5e, 0xd1, 0x09, 0xa8, 0x84, 0x61, 0x3c, 0xf1, 0x94,
+	0x5e, 0x06, 0x95, 0x49, 0x64, 0x0c, 0xe0, 0x87, 0x73, 0x64, 0x1c, 0xbd, 0x33, 0xae, 0xc8, 0x9a,
+	0x64, 0xc8, 0x76, 0x4d, 0x23, 0xc2, 0x8c, 0x9c, 0xbb, 0x80, 0x3a, 0x9e, 0xd2, 0xcf, 0xc2, 0xcc,
+	0x45, 0xfd, 0x14, 0x76, 0xaf, 0x90, 0xe7, 0x39, 0xa5, 0x71, 0x98, 0xd0, 0x17, 0x01, 0x2a, 0x92,
+	0x26, 0x1b, 0xa3, 0x63, 0xd5, 0x5c, 0x2d, 0x8f, 0x59, 0x45, 0x6c, 0xa7, 0x76, 0xba, 0x05, 0xff,
+	0x9e, 0x27, 0xa1, 0x17, 0xe0, 0x24, 0xbc, 0xa1, 0x45, 0x5d, 0x54, 0x18, 0xce, 0x32, 0x65, 0x91,
+	0x48, 0x29, 0xeb, 0x3f, 0x25, 0x20, 0x75, 0x0f, 0x16, 0xd1, 0x90, 0xe1, 0x3a, 0x17, 0xf2, 0x0f,
+	0xc8, 0x49, 0xec, 0xe7, 0x49, 0x8b, 0x5f, 0x61, 0x1d, 0xc5, 0x74, 0xe9, 0x7b, 0x18, 0xa7, 0xf9,
+	0x6e, 0xd9, 0xa5, 0x2c, 0xaa, 0x51, 0x55, 0x2d, 0x4f, 0xb8, 0xa6, 0x21, 0xfb, 0xb0, 0x25, 0x22,
+	0xbf, 0xa0, 0x49, 0xc8, 0x95, 0x0d, 0x4d, 0x32, 0xfa, 0x76, 0xa5, 0x68, 0xd4, 0x72, 0x70, 0xaf,
+	0x96, 0x63, 0x80, 0x94, 0xc0, 0xf0, 0x86, 0x22, 0x53, 0x36, 0x35, 0x59, 0xa0, 0x57, 0x1a, 0xfd,
+	0x00, 0xc8, 0x3b, 0x86, 0x71, 0x46, 0x3e, 0x2b, 0x0a, 0x52, 0x31, 0x27, 0xd5, 0x99, 0xd3, 0x7f,
+	0xf4, 0xe0, 0xbf, 0x15, 0xf3, 0xbc, 0x1a, 0xd7, 0x30, 0xaa, 0x22, 0x66, 0x39, 0x19, 0x66, 0x93,
+	0x8c, 0x16, 0x4f, 0xf3, 0xa2, 0x74, 0xb3, 0xeb, 0x10, 0xea, 0x0b, 0x18, 0x5e, 0xe6, 0x51, 0x92,
+	0x5d, 0xe8, 0xf9, 0x45, 0x24, 0x3d, 0xbf, 0xd9, 0x3f, 0xbd, 0x66, 0xce, 0xea, 0x77, 0x09, 0xa0,
+	0xc2, 0x25, 0xff, 0xc3, 0x86, 0x13, 0x45, 0x65, 0x2e, 0x99, 0x20, 0x28, 0x61, 0xee, 0x2d, 0x2e,
+	0x9c, 0xb2, 0x3d, 0x4b, 0xf9, 0x5e, 0x73, 0xcb, 0x2d, 0xcd, 0xfd, 0x66, 0xa5, 0xb0, 0xfd, 0x34,
+	0xe3, 0x83, 0x87, 0x64, 0x5c, 0xa4, 0xb5, 0x42, 0x03, 0x07, 0x65, 0x8a, 0x5c, 0x1c, 0x5d, 0x63,
+	0xbc, 0xf0, 0x19, 0x13, 0x05, 0xa9, 0xc8, 0x68, 0x9b, 0xc8, 0xac, 0x71, 0x42, 0x96, 0x2c, 0x6a,
+	0x23, 0x56, 0xd3, 0x10, 0x0d, 0x46, 0x4e, 0x10, 0xd0, 0x2f, 0x67, 0xae, 0x8b, 0x8c, 0xa5, 0x49,
+	0x0c, 0xed, 0xba, 0x4a, 0xff, 0x0a, 0x8f, 0xa7, 0xf9, 0x38, 0xb5, 0x5f, 0xdd, 0xb9, 0x30, 0xfe,
+	0xfe, 0xf2, 0xe3, 0x5f, 0x1b, 0xd0, 0x17, 0xb7, 0x92, 0xe7, 0x20, 0x5f, 0x21, 0x27, 0x7b, 0x6d,
+	0xb3, 0x3b, 0xf1, 0xd4, 0x35, 0x33, 0x4d, 0x5e, 0xc3, 0xb0, 0xd8, 0x07, 0x64, 0xbf, 0x69, 0x57,
+	0x5f, 0x7d, 0xea, 0xb8, 0x79, 0xda, 0xd8, 0x23, 0xef, 0x61, 0x47, 0x68, 0xca, 0x41, 0x27, 0x4f,
+	0xee, 0xc1, 0x35, 0xd7, 0x86, 0xaa, 0xaf, 0x33, 0xc9, 0x27, 0xe3, 0x43, 0xba, 0xb1, 0x6a, 0x7d,
+	0x40, 0xf4, 0xb5, 0x4d, 0x92, 0x21, 0x3f, 0x7d, 0x40, 0x23, 0x91, 0xb7, 0xb0, 0x33, 0x45, 0x5e,
+	0x91, 0x46, 0x8c, 0xa6, 0x57, 0x57, 0x4b, 0xa9, 0x7b, 0x66, 0xf6, 0x6c, 0x98, 0xc5, 0xb3, 0x61,
+	0xbe, 0x12, 0xcf, 0x06, 0xf9, 0x04, 0x64, 0x05, 0x32, 0xab, 0xec, 0x61, 0x0b, 0x6e, 0x77, 0xd3,
+	0x74, 0x82, 0x3f, 0x83, 0xc1, 0x25, 0x06, 0xc8, 0xb1, 0x93, 0xea, 0x2e, 0xcf, 0x0b, 0x18, 0x65,
+	0x9e, 0x0f, 0x61, 0xba, 0x0b, 0xe4, 0x14, 0x06, 0x53, 0x14, 0xf3, 0xdb, 0x79, 0xfd, 0x5a, 0x5c,
+	0x43, 0x22, 0x2f, 0x61, 0xd3, 0xc6, 0x00, 0x1d, 0x86, 0x7f, 0x16, 0xc2, 0xf9, 0xc9, 0xc7, 0xa3,
+	0xb9, 0xcf, 0x6f, 0x93, 0x99, 0xe9, 0xd2, 0x85, 0x95, 0x23, 0x14, 0xdf, 0xc3, 0x39, 0xb5, 0x5a,
+	0x1e, 0xff, 0xd9, 0x20, 0x55, 0x9e, 0xfc, 0x0e, 0x00, 0x00, 0xff, 0xff, 0x45, 0xfa, 0x81, 0x65,
+	0x1a, 0x08, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -373,6 +711,10 @@ type DataClient interface {
 	// Get returns information of the data from your warehouse or purchased data.
 	Get(ctx context.Context, in *DataId, opts ...grpc.CallOption) (*DataResult, error)
 	GetBatch(ctx context.Context, in *BatchRequest, opts ...grpc.CallOption) (*GetBatchResult, error)
+	//*
+	// These are getter methods for users that wants to get bundle/userId information.
+	GetBundleInfo(ctx context.Context, in *BundleInfoRequest, opts ...grpc.CallOption) (*BundleInfoResponse, error)
+	GetUserDataIds(ctx context.Context, in *UserDataIdsRequest, opts ...grpc.CallOption) (*UserDataIdsResponse, error)
 	// SetPermission allows a consumer to access the given data.
 	SetPermission(ctx context.Context, in *SetDataPermissionRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	SetPermissionBatch(ctx context.Context, in *SetBatchDataPermissionRequest, opts ...grpc.CallOption) (*empty.Empty, error)
@@ -406,6 +748,24 @@ func (c *dataClient) Get(ctx context.Context, in *DataId, opts ...grpc.CallOptio
 func (c *dataClient) GetBatch(ctx context.Context, in *BatchRequest, opts ...grpc.CallOption) (*GetBatchResult, error) {
 	out := new(GetBatchResult)
 	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Data/GetBatch", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *dataClient) GetBundleInfo(ctx context.Context, in *BundleInfoRequest, opts ...grpc.CallOption) (*BundleInfoResponse, error) {
+	out := new(BundleInfoResponse)
+	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Data/GetBundleInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *dataClient) GetUserDataIds(ctx context.Context, in *UserDataIdsRequest, opts ...grpc.CallOption) (*UserDataIdsResponse, error) {
+	out := new(UserDataIdsResponse)
+	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Data/GetUserDataIds", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -496,6 +856,10 @@ type DataServer interface {
 	// Get returns information of the data from your warehouse or purchased data.
 	Get(context.Context, *DataId) (*DataResult, error)
 	GetBatch(context.Context, *BatchRequest) (*GetBatchResult, error)
+	//*
+	// These are getter methods for users that wants to get bundle/userId information.
+	GetBundleInfo(context.Context, *BundleInfoRequest) (*BundleInfoResponse, error)
+	GetUserDataIds(context.Context, *UserDataIdsRequest) (*UserDataIdsResponse, error)
 	// SetPermission allows a consumer to access the given data.
 	SetPermission(context.Context, *SetDataPermissionRequest) (*empty.Empty, error)
 	SetPermissionBatch(context.Context, *SetBatchDataPermissionRequest) (*empty.Empty, error)
@@ -545,6 +909,42 @@ func _Data_GetBatch_Handler(srv interface{}, ctx context.Context, dec func(inter
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DataServer).GetBatch(ctx, req.(*BatchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Data_GetBundleInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BundleInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DataServer).GetBundleInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/airbloc.rpc.v1.Data/GetBundleInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DataServer).GetBundleInfo(ctx, req.(*BundleInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Data_GetUserDataIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserDataIdsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DataServer).GetUserDataIds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/airbloc.rpc.v1.Data/GetUserDataIds",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DataServer).GetUserDataIds(ctx, req.(*UserDataIdsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -676,6 +1076,14 @@ var _Data_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBatch",
 			Handler:    _Data_GetBatch_Handler,
+		},
+		{
+			MethodName: "GetBundleInfo",
+			Handler:    _Data_GetBundleInfo_Handler,
+		},
+		{
+			MethodName: "GetUserDataIds",
+			Handler:    _Data_GetUserDataIds_Handler,
 		},
 		{
 			MethodName: "SetPermission",

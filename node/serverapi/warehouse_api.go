@@ -143,57 +143,6 @@ func (api *WarehouseAPI) StoreEncryptedBundle(stream pb.Warehouse_StoreEncrypted
 	})
 }
 
-func (api *WarehouseAPI) GetBundleInfo(ctx context.Context, request *pb.BundleInfoRequest) (*pb.BundleInfoResponse, error) {
-	bundleId, err := common.HexToID(request.GetBundleId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "failed to convert bundleId to common.ID format : %v", err)
-	}
-
-	bundleInfo, err := api.warehouse.GetBundleInfo(ctx, bundleId)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to get bundle info : %v", err)
-	}
-
-	return &pb.BundleInfoResponse{
-		BundleId:   bundleInfo.Id,
-		Uri:        bundleInfo.Uri,
-		Provider:   bundleInfo.Provider,
-		Collection: bundleInfo.Collection,
-		IngestedAt: bundleInfo.IngestedAt,
-		DataIds:    bundleInfo.DataIds,
-	}, nil
-}
-
-func (api *WarehouseAPI) GetUserDataIds(ctx context.Context, request *pb.UserDataIdsRequest) (*pb.UserDataIdsResponse, error) {
-	userId, err := common.HexToID(request.GetUserId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "failed to convert userId to common.ID format : %v", err)
-	}
-
-	userInfoes, err := api.warehouse.GetUserInfo(ctx, userId)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to get user info : %v", err)
-	}
-
-	collections := make([]*pb.UserDataIdsResponse_Collection, len(userInfoes))
-	for i, collection := range userInfoes {
-		collections[i] = &pb.UserDataIdsResponse_Collection{
-			AppId:        collection.AppId,
-			SchemaId:     collection.SchemaId,
-			CollectionId: collection.CollectionId,
-			DataIds:      make([]*pb.UserDataIdsResponse_DataInfo, len(collection.DataIds)),
-		}
-
-		for j, dataId := range collection.DataIds {
-			collections[i].DataIds[j] = &pb.UserDataIdsResponse_DataInfo{
-				Id:         dataId.Id,
-				IngestedAt: dataId.IngestedAt,
-			}
-		}
-	}
-	return &pb.UserDataIdsResponse{Collections: collections}, nil
-}
-
 func (api *WarehouseAPI) DeleteBundle(ctx context.Context, request *pb.DeleteBundleRequest) (*pb.DeleteBundleResult, error) {
 	return nil, status.Error(codes.Unimplemented, "unimplemented")
 }

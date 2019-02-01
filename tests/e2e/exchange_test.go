@@ -79,17 +79,17 @@ func (t *T) testExchange(bundleId string) *pb.BundleInfoResponse {
 		- etc...
 	- sign/args generation (or just make input of func to abi)
 	*/
-	warehouse := pb.NewWarehouseClient(t.conn)
-	bundleInfo, err := warehouse.GetBundleInfo(t.ctx, &pb.BundleInfoRequest{BundleId: bundleId})
+	data := pb.NewDataClient(t.conn)
+	bundleInfo, err := data.GetBundleInfo(t.ctx, &pb.BundleInfoRequest{BundleId: bundleId})
 	require.NoError(t, err)
 
 	exchange := pb.NewExchangeClient(t.conn)
 	req := &pb.OrderRequest{
 		To:       crypto.PubkeyToAddress(t.config.TransactorPrivateKey.PublicKey).Hex(),
 		Contract: t.prepareEscrow(),
-		DataIds:  bundleInfo.DataIds,
+		DataIds:  bundleInfo.DataInfoes,
 	}
-	log.Println(bundleInfo.DataIds)
+	log.Println(bundleInfo.DataInfoes)
 
 	offerId, err := exchange.Prepare(t.ctx, req)
 	require.NoError(t, err)

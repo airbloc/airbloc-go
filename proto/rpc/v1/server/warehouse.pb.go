@@ -216,322 +216,6 @@ func (m *StoreResult) GetGasUsed() uint64 {
 	return 0
 }
 
-// TODO : pagination
-type BundleInfoRequest struct {
-	BundleId             string   `protobuf:"bytes,1,opt,name=bundleId,proto3" json:"bundleId,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *BundleInfoRequest) Reset()         { *m = BundleInfoRequest{} }
-func (m *BundleInfoRequest) String() string { return proto.CompactTextString(m) }
-func (*BundleInfoRequest) ProtoMessage()    {}
-func (*BundleInfoRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e7ee220902bb5d25, []int{3}
-}
-
-func (m *BundleInfoRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_BundleInfoRequest.Unmarshal(m, b)
-}
-func (m *BundleInfoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_BundleInfoRequest.Marshal(b, m, deterministic)
-}
-func (m *BundleInfoRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_BundleInfoRequest.Merge(m, src)
-}
-func (m *BundleInfoRequest) XXX_Size() int {
-	return xxx_messageInfo_BundleInfoRequest.Size(m)
-}
-func (m *BundleInfoRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_BundleInfoRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_BundleInfoRequest proto.InternalMessageInfo
-
-func (m *BundleInfoRequest) GetBundleId() string {
-	if m != nil {
-		return m.BundleId
-	}
-	return ""
-}
-
-type BundleInfoResponse struct {
-	BundleId             string   `protobuf:"bytes,1,opt,name=bundleId,proto3" json:"bundleId,omitempty"`
-	Uri                  string   `protobuf:"bytes,2,opt,name=uri,proto3" json:"uri,omitempty"`
-	Provider             string   `protobuf:"bytes,3,opt,name=provider,proto3" json:"provider,omitempty"`
-	Collection           string   `protobuf:"bytes,4,opt,name=collection,proto3" json:"collection,omitempty"`
-	DataCount            uint64   `protobuf:"varint,5,opt,name=dataCount,proto3" json:"dataCount,omitempty"`
-	IngestedAt           int64    `protobuf:"varint,6,opt,name=ingestedAt,proto3" json:"ingestedAt,omitempty"`
-	DataIds              []string `protobuf:"bytes,7,rep,name=dataIds,proto3" json:"dataIds,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *BundleInfoResponse) Reset()         { *m = BundleInfoResponse{} }
-func (m *BundleInfoResponse) String() string { return proto.CompactTextString(m) }
-func (*BundleInfoResponse) ProtoMessage()    {}
-func (*BundleInfoResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e7ee220902bb5d25, []int{4}
-}
-
-func (m *BundleInfoResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_BundleInfoResponse.Unmarshal(m, b)
-}
-func (m *BundleInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_BundleInfoResponse.Marshal(b, m, deterministic)
-}
-func (m *BundleInfoResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_BundleInfoResponse.Merge(m, src)
-}
-func (m *BundleInfoResponse) XXX_Size() int {
-	return xxx_messageInfo_BundleInfoResponse.Size(m)
-}
-func (m *BundleInfoResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_BundleInfoResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_BundleInfoResponse proto.InternalMessageInfo
-
-func (m *BundleInfoResponse) GetBundleId() string {
-	if m != nil {
-		return m.BundleId
-	}
-	return ""
-}
-
-func (m *BundleInfoResponse) GetUri() string {
-	if m != nil {
-		return m.Uri
-	}
-	return ""
-}
-
-func (m *BundleInfoResponse) GetProvider() string {
-	if m != nil {
-		return m.Provider
-	}
-	return ""
-}
-
-func (m *BundleInfoResponse) GetCollection() string {
-	if m != nil {
-		return m.Collection
-	}
-	return ""
-}
-
-func (m *BundleInfoResponse) GetDataCount() uint64 {
-	if m != nil {
-		return m.DataCount
-	}
-	return 0
-}
-
-func (m *BundleInfoResponse) GetIngestedAt() int64 {
-	if m != nil {
-		return m.IngestedAt
-	}
-	return 0
-}
-
-func (m *BundleInfoResponse) GetDataIds() []string {
-	if m != nil {
-		return m.DataIds
-	}
-	return nil
-}
-
-// TODO : pagination
-type UserDataIdsRequest struct {
-	UserId               string   `protobuf:"bytes,1,opt,name=userId,proto3" json:"userId,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *UserDataIdsRequest) Reset()         { *m = UserDataIdsRequest{} }
-func (m *UserDataIdsRequest) String() string { return proto.CompactTextString(m) }
-func (*UserDataIdsRequest) ProtoMessage()    {}
-func (*UserDataIdsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e7ee220902bb5d25, []int{5}
-}
-
-func (m *UserDataIdsRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UserDataIdsRequest.Unmarshal(m, b)
-}
-func (m *UserDataIdsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UserDataIdsRequest.Marshal(b, m, deterministic)
-}
-func (m *UserDataIdsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UserDataIdsRequest.Merge(m, src)
-}
-func (m *UserDataIdsRequest) XXX_Size() int {
-	return xxx_messageInfo_UserDataIdsRequest.Size(m)
-}
-func (m *UserDataIdsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_UserDataIdsRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_UserDataIdsRequest proto.InternalMessageInfo
-
-func (m *UserDataIdsRequest) GetUserId() string {
-	if m != nil {
-		return m.UserId
-	}
-	return ""
-}
-
-type UserDataIdsResponse struct {
-	Collections          []*UserDataIdsResponse_Collection `protobuf:"bytes,1,rep,name=collections,proto3" json:"collections,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                          `json:"-"`
-	XXX_unrecognized     []byte                            `json:"-"`
-	XXX_sizecache        int32                             `json:"-"`
-}
-
-func (m *UserDataIdsResponse) Reset()         { *m = UserDataIdsResponse{} }
-func (m *UserDataIdsResponse) String() string { return proto.CompactTextString(m) }
-func (*UserDataIdsResponse) ProtoMessage()    {}
-func (*UserDataIdsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e7ee220902bb5d25, []int{6}
-}
-
-func (m *UserDataIdsResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UserDataIdsResponse.Unmarshal(m, b)
-}
-func (m *UserDataIdsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UserDataIdsResponse.Marshal(b, m, deterministic)
-}
-func (m *UserDataIdsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UserDataIdsResponse.Merge(m, src)
-}
-func (m *UserDataIdsResponse) XXX_Size() int {
-	return xxx_messageInfo_UserDataIdsResponse.Size(m)
-}
-func (m *UserDataIdsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_UserDataIdsResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_UserDataIdsResponse proto.InternalMessageInfo
-
-func (m *UserDataIdsResponse) GetCollections() []*UserDataIdsResponse_Collection {
-	if m != nil {
-		return m.Collections
-	}
-	return nil
-}
-
-type UserDataIdsResponse_DataInfo struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	IngestedAt           int64    `protobuf:"varint,2,opt,name=ingestedAt,proto3" json:"ingestedAt,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *UserDataIdsResponse_DataInfo) Reset()         { *m = UserDataIdsResponse_DataInfo{} }
-func (m *UserDataIdsResponse_DataInfo) String() string { return proto.CompactTextString(m) }
-func (*UserDataIdsResponse_DataInfo) ProtoMessage()    {}
-func (*UserDataIdsResponse_DataInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e7ee220902bb5d25, []int{6, 0}
-}
-
-func (m *UserDataIdsResponse_DataInfo) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UserDataIdsResponse_DataInfo.Unmarshal(m, b)
-}
-func (m *UserDataIdsResponse_DataInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UserDataIdsResponse_DataInfo.Marshal(b, m, deterministic)
-}
-func (m *UserDataIdsResponse_DataInfo) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UserDataIdsResponse_DataInfo.Merge(m, src)
-}
-func (m *UserDataIdsResponse_DataInfo) XXX_Size() int {
-	return xxx_messageInfo_UserDataIdsResponse_DataInfo.Size(m)
-}
-func (m *UserDataIdsResponse_DataInfo) XXX_DiscardUnknown() {
-	xxx_messageInfo_UserDataIdsResponse_DataInfo.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_UserDataIdsResponse_DataInfo proto.InternalMessageInfo
-
-func (m *UserDataIdsResponse_DataInfo) GetId() string {
-	if m != nil {
-		return m.Id
-	}
-	return ""
-}
-
-func (m *UserDataIdsResponse_DataInfo) GetIngestedAt() int64 {
-	if m != nil {
-		return m.IngestedAt
-	}
-	return 0
-}
-
-type UserDataIdsResponse_Collection struct {
-	AppId                string                          `protobuf:"bytes,1,opt,name=appId,proto3" json:"appId,omitempty"`
-	SchemaId             string                          `protobuf:"bytes,2,opt,name=schemaId,proto3" json:"schemaId,omitempty"`
-	CollectionId         string                          `protobuf:"bytes,3,opt,name=collectionId,proto3" json:"collectionId,omitempty"`
-	DataIds              []*UserDataIdsResponse_DataInfo `protobuf:"bytes,4,rep,name=dataIds,proto3" json:"dataIds,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                        `json:"-"`
-	XXX_unrecognized     []byte                          `json:"-"`
-	XXX_sizecache        int32                           `json:"-"`
-}
-
-func (m *UserDataIdsResponse_Collection) Reset()         { *m = UserDataIdsResponse_Collection{} }
-func (m *UserDataIdsResponse_Collection) String() string { return proto.CompactTextString(m) }
-func (*UserDataIdsResponse_Collection) ProtoMessage()    {}
-func (*UserDataIdsResponse_Collection) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e7ee220902bb5d25, []int{6, 1}
-}
-
-func (m *UserDataIdsResponse_Collection) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UserDataIdsResponse_Collection.Unmarshal(m, b)
-}
-func (m *UserDataIdsResponse_Collection) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UserDataIdsResponse_Collection.Marshal(b, m, deterministic)
-}
-func (m *UserDataIdsResponse_Collection) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UserDataIdsResponse_Collection.Merge(m, src)
-}
-func (m *UserDataIdsResponse_Collection) XXX_Size() int {
-	return xxx_messageInfo_UserDataIdsResponse_Collection.Size(m)
-}
-func (m *UserDataIdsResponse_Collection) XXX_DiscardUnknown() {
-	xxx_messageInfo_UserDataIdsResponse_Collection.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_UserDataIdsResponse_Collection proto.InternalMessageInfo
-
-func (m *UserDataIdsResponse_Collection) GetAppId() string {
-	if m != nil {
-		return m.AppId
-	}
-	return ""
-}
-
-func (m *UserDataIdsResponse_Collection) GetSchemaId() string {
-	if m != nil {
-		return m.SchemaId
-	}
-	return ""
-}
-
-func (m *UserDataIdsResponse_Collection) GetCollectionId() string {
-	if m != nil {
-		return m.CollectionId
-	}
-	return ""
-}
-
-func (m *UserDataIdsResponse_Collection) GetDataIds() []*UserDataIdsResponse_DataInfo {
-	if m != nil {
-		return m.DataIds
-	}
-	return nil
-}
-
 type DeleteBundleRequest struct {
 	// public-accessible URI of the bundle.
 	Uri                  string   `protobuf:"bytes,1,opt,name=uri,proto3" json:"uri,omitempty"`
@@ -544,7 +228,7 @@ func (m *DeleteBundleRequest) Reset()         { *m = DeleteBundleRequest{} }
 func (m *DeleteBundleRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteBundleRequest) ProtoMessage()    {}
 func (*DeleteBundleRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e7ee220902bb5d25, []int{7}
+	return fileDescriptor_e7ee220902bb5d25, []int{3}
 }
 
 func (m *DeleteBundleRequest) XXX_Unmarshal(b []byte) error {
@@ -584,7 +268,7 @@ func (m *DeleteBundleResult) Reset()         { *m = DeleteBundleResult{} }
 func (m *DeleteBundleResult) String() string { return proto.CompactTextString(m) }
 func (*DeleteBundleResult) ProtoMessage()    {}
 func (*DeleteBundleResult) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e7ee220902bb5d25, []int{8}
+	return fileDescriptor_e7ee220902bb5d25, []int{4}
 }
 
 func (m *DeleteBundleResult) XXX_Unmarshal(b []byte) error {
@@ -626,7 +310,7 @@ func (m *ListBundleRequest) Reset()         { *m = ListBundleRequest{} }
 func (m *ListBundleRequest) String() string { return proto.CompactTextString(m) }
 func (*ListBundleRequest) ProtoMessage()    {}
 func (*ListBundleRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e7ee220902bb5d25, []int{9}
+	return fileDescriptor_e7ee220902bb5d25, []int{5}
 }
 
 func (m *ListBundleRequest) XXX_Unmarshal(b []byte) error {
@@ -672,7 +356,7 @@ func (m *ListBundleResult) Reset()         { *m = ListBundleResult{} }
 func (m *ListBundleResult) String() string { return proto.CompactTextString(m) }
 func (*ListBundleResult) ProtoMessage()    {}
 func (*ListBundleResult) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e7ee220902bb5d25, []int{10}
+	return fileDescriptor_e7ee220902bb5d25, []int{6}
 }
 
 func (m *ListBundleResult) XXX_Unmarshal(b []byte) error {
@@ -715,7 +399,7 @@ func (m *ListBundleResult_Bundle) Reset()         { *m = ListBundleResult_Bundle
 func (m *ListBundleResult_Bundle) String() string { return proto.CompactTextString(m) }
 func (*ListBundleResult_Bundle) ProtoMessage()    {}
 func (*ListBundleResult_Bundle) Descriptor() ([]byte, []int) {
-	return fileDescriptor_e7ee220902bb5d25, []int{10, 0}
+	return fileDescriptor_e7ee220902bb5d25, []int{6, 0}
 }
 
 func (m *ListBundleResult_Bundle) XXX_Unmarshal(b []byte) error {
@@ -775,12 +459,6 @@ func init() {
 	proto.RegisterType((*RawDataRequest)(nil), "airbloc.rpc.v1.RawDataRequest")
 	proto.RegisterType((*EncryptedDataRequest)(nil), "airbloc.rpc.v1.EncryptedDataRequest")
 	proto.RegisterType((*StoreResult)(nil), "airbloc.rpc.v1.StoreResult")
-	proto.RegisterType((*BundleInfoRequest)(nil), "airbloc.rpc.v1.BundleInfoRequest")
-	proto.RegisterType((*BundleInfoResponse)(nil), "airbloc.rpc.v1.BundleInfoResponse")
-	proto.RegisterType((*UserDataIdsRequest)(nil), "airbloc.rpc.v1.UserDataIdsRequest")
-	proto.RegisterType((*UserDataIdsResponse)(nil), "airbloc.rpc.v1.UserDataIdsResponse")
-	proto.RegisterType((*UserDataIdsResponse_DataInfo)(nil), "airbloc.rpc.v1.UserDataIdsResponse.DataInfo")
-	proto.RegisterType((*UserDataIdsResponse_Collection)(nil), "airbloc.rpc.v1.UserDataIdsResponse.Collection")
 	proto.RegisterType((*DeleteBundleRequest)(nil), "airbloc.rpc.v1.DeleteBundleRequest")
 	proto.RegisterType((*DeleteBundleResult)(nil), "airbloc.rpc.v1.DeleteBundleResult")
 	proto.RegisterType((*ListBundleRequest)(nil), "airbloc.rpc.v1.ListBundleRequest")
@@ -793,53 +471,39 @@ func init() {
 }
 
 var fileDescriptor_e7ee220902bb5d25 = []byte{
-	// 726 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x56, 0xcd, 0x4e, 0xd4, 0x50,
-	0x14, 0x4e, 0xe7, 0x0f, 0xe6, 0x00, 0x13, 0xb8, 0x4c, 0x4c, 0x53, 0xcd, 0x64, 0x2c, 0x26, 0x4c,
-	0x0c, 0xb6, 0x01, 0x76, 0xee, 0xf8, 0x51, 0x42, 0xc2, 0x02, 0x6b, 0x90, 0xa8, 0xab, 0x4e, 0x7b,
-	0x18, 0x9a, 0x94, 0xde, 0x7a, 0xef, 0xed, 0x20, 0x6f, 0xe1, 0xc6, 0xc4, 0x67, 0xf0, 0x69, 0x5c,
-	0xf9, 0x0c, 0x3e, 0x86, 0xe9, 0xcf, 0xed, 0xef, 0x04, 0x30, 0x71, 0x35, 0xf3, 0x9d, 0x7b, 0xfe,
-	0xcf, 0x77, 0x4e, 0x0a, 0x5b, 0x21, 0xa3, 0x82, 0x9a, 0x2c, 0x74, 0xcc, 0xf9, 0xae, 0xc9, 0x91,
-	0xcd, 0x91, 0x99, 0xb7, 0x36, 0xc3, 0x6b, 0x1a, 0x71, 0x34, 0x92, 0x57, 0x32, 0xb0, 0x3d, 0x36,
-	0xf5, 0xa9, 0x63, 0xb0, 0xd0, 0x31, 0xe6, 0xbb, 0xfa, 0x15, 0x0c, 0x2c, 0xfb, 0xf6, 0xd8, 0x16,
-	0xb6, 0x85, 0x5f, 0x22, 0xe4, 0x82, 0xe8, 0xb0, 0xea, 0x50, 0xdf, 0x47, 0x47, 0x78, 0x34, 0x38,
-	0x75, 0x55, 0x65, 0xac, 0x4c, 0xfa, 0x56, 0x45, 0x46, 0x9e, 0x40, 0x2f, 0xe2, 0xc8, 0x4e, 0x5d,
-	0xb5, 0x95, 0xbc, 0x66, 0x88, 0xa8, 0xb0, 0x14, 0xda, 0x77, 0x3e, 0xb5, 0x5d, 0xb5, 0x9d, 0x3c,
-	0x48, 0xa8, 0xff, 0x50, 0x60, 0xf8, 0x26, 0x70, 0xd8, 0x5d, 0x28, 0xd0, 0xfd, 0x5f, 0xe1, 0x5e,
-	0xc2, 0x3a, 0x4a, 0x9f, 0xe7, 0xa5, 0xb8, 0xab, 0x56, 0x43, 0x1e, 0xa7, 0xe6, 0xd8, 0x21, 0x8f,
-	0x7c, 0x54, 0x3b, 0x89, 0x8a, 0x84, 0x3a, 0x87, 0x95, 0xf7, 0x82, 0x32, 0xb4, 0x90, 0x47, 0xbe,
-	0x20, 0x1a, 0x2c, 0x4f, 0xa3, 0xc0, 0xf5, 0x31, 0x4f, 0x26, 0xc7, 0x64, 0x1d, 0xda, 0x11, 0xf3,
-	0xb2, 0x2c, 0xe2, 0xbf, 0xe4, 0x19, 0xf4, 0x5d, 0x5b, 0xd8, 0x47, 0x34, 0x0a, 0x44, 0x12, 0xbb,
-	0x63, 0x15, 0x82, 0x38, 0xe8, 0xcc, 0xe6, 0x17, 0x1c, 0xdd, 0x24, 0x68, 0xc7, 0x92, 0x50, 0x37,
-	0x61, 0xe3, 0x30, 0xf5, 0x1a, 0x5c, 0x51, 0xd9, 0x8b, 0x7b, 0x42, 0xeb, 0xbf, 0x15, 0x20, 0x65,
-	0x0b, 0x1e, 0xd2, 0x80, 0xe3, 0x3f, 0x66, 0xab, 0xc1, 0x72, 0xc8, 0xe8, 0xdc, 0x73, 0x91, 0x65,
-	0x03, 0xca, 0x31, 0x19, 0x01, 0x14, 0x4d, 0x4f, 0xd2, 0xed, 0x5b, 0x25, 0x49, 0xb5, 0xd2, 0x6e,
-	0xbd, 0xd2, 0x11, 0x80, 0x17, 0xcc, 0x90, 0x0b, 0x74, 0x0f, 0x84, 0xda, 0x1b, 0x2b, 0x93, 0xb6,
-	0x55, 0x92, 0xc4, 0x9d, 0x88, 0x95, 0x4f, 0x5d, 0xae, 0x2e, 0x8d, 0xdb, 0x31, 0x33, 0x32, 0xa8,
-	0xef, 0x00, 0xb9, 0xe0, 0xc8, 0x8e, 0x53, 0x28, 0x5b, 0x51, 0x8c, 0x5c, 0x29, 0x8f, 0x5c, 0xff,
-	0xd5, 0x82, 0xcd, 0x8a, 0x7a, 0xd6, 0x87, 0x73, 0x58, 0x29, 0x72, 0xe5, 0xaa, 0x32, 0x6e, 0x4f,
-	0x56, 0xf6, 0x0c, 0xa3, 0xca, 0x76, 0x63, 0x81, 0xa5, 0x71, 0x94, 0x9b, 0x59, 0x65, 0x17, 0xda,
-	0x6b, 0x58, 0x4e, 0x54, 0x83, 0x2b, 0x4a, 0x06, 0xd0, 0xf2, 0x64, 0x26, 0x2d, 0xcf, 0xad, 0x55,
-	0xdb, 0xaa, 0x57, 0xab, 0xfd, 0x54, 0x00, 0x0a, 0xbf, 0x64, 0x08, 0x5d, 0x3b, 0x0c, 0xf3, 0x5a,
-	0x52, 0x10, 0x0f, 0x83, 0x3b, 0xd7, 0x78, 0x63, 0xe7, 0xbc, 0xce, 0x71, 0x63, 0x2b, 0xda, 0x0b,
-	0xb6, 0xe2, 0x6d, 0xd1, 0xd2, 0x4e, 0x52, 0xee, 0xce, 0x63, 0xca, 0x95, 0x35, 0x15, 0x03, 0xd8,
-	0x86, 0xcd, 0x63, 0xf4, 0x51, 0x60, 0x4a, 0x2f, 0x39, 0x81, 0x8c, 0x3d, 0x4a, 0xce, 0x1e, 0xdd,
-	0x00, 0x52, 0x55, 0x4c, 0xf6, 0xa5, 0xc4, 0x71, 0xa5, 0xca, 0xf1, 0x4b, 0xd8, 0x38, 0xf3, 0xb8,
-	0xa8, 0xba, 0x1d, 0x01, 0x48, 0xca, 0xe5, 0x0d, 0x29, 0x49, 0x1a, 0x95, 0xb7, 0x9a, 0x95, 0xeb,
-	0x7f, 0x14, 0x58, 0x2f, 0x7b, 0x4e, 0xf2, 0x38, 0x80, 0xa5, 0x94, 0xf9, 0x72, 0xfa, 0xdb, 0xf5,
-	0x76, 0xd4, 0x4d, 0x8c, 0x0c, 0x48, 0x3b, 0xed, 0x9b, 0x02, 0xbd, 0x54, 0xf6, 0xa8, 0xb3, 0x34,
-	0x84, 0xae, 0x17, 0xb8, 0xf8, 0x35, 0xc9, 0x71, 0xcd, 0x4a, 0x41, 0xbc, 0x27, 0x0e, 0x43, 0x3b,
-	0xa5, 0x46, 0x76, 0x11, 0x72, 0x41, 0x75, 0x8b, 0x3a, 0xf5, 0x2d, 0xca, 0x7a, 0xde, 0xcd, 0x7b,
-	0xbe, 0xf7, 0xbd, 0x03, 0xfd, 0x4b, 0x79, 0xc3, 0xc9, 0x59, 0x76, 0xaa, 0xb2, 0x24, 0x47, 0xf5,
-	0x0a, 0xab, 0xa7, 0x5c, 0x7b, 0x5a, 0x7f, 0x2f, 0xdd, 0xb9, 0x89, 0x42, 0x3e, 0xc3, 0x30, 0x11,
-	0xe4, 0x77, 0x39, 0x73, 0xfb, 0xa2, 0x6e, 0xb6, 0xe8, 0x70, 0x3f, 0xe4, 0xfc, 0x03, 0xac, 0x9d,
-	0xa0, 0x28, 0x2e, 0x16, 0x79, 0x5e, 0xd7, 0x6f, 0xdc, 0x3f, 0x4d, 0xbf, 0x4f, 0x25, 0x5b, 0xf4,
-	0x8f, 0x30, 0x38, 0x41, 0x51, 0x62, 0x36, 0xd1, 0xef, 0xa5, 0x7d, 0xea, 0x79, 0xeb, 0x11, 0xab,
-	0x41, 0x2e, 0x61, 0xb5, 0xcc, 0x6f, 0xd2, 0x30, 0x5a, 0xb0, 0x26, 0xcd, 0x9c, 0x17, 0xac, 0xc8,
-	0x3b, 0x80, 0x82, 0x7b, 0xcd, 0x46, 0x34, 0x96, 0x44, 0x1b, 0x3f, 0x44, 0xdd, 0xc3, 0xfd, 0x4f,
-	0xbb, 0x33, 0x4f, 0x5c, 0x47, 0x53, 0xc3, 0xa1, 0x37, 0x66, 0xa6, 0x2d, 0x7f, 0x5f, 0xcd, 0xa8,
-	0xb9, 0xe0, 0x63, 0x60, 0xda, 0x4b, 0x84, 0xfb, 0x7f, 0x03, 0x00, 0x00, 0xff, 0xff, 0xa1, 0xde,
-	0x7b, 0x31, 0x2a, 0x08, 0x00, 0x00,
+	// 500 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0xcd, 0x6e, 0xd3, 0x40,
+	0x10, 0x96, 0x9b, 0x34, 0x25, 0xd3, 0x50, 0x85, 0x25, 0x42, 0x56, 0x40, 0x55, 0x70, 0x91, 0x1a,
+	0x21, 0x61, 0x2b, 0xed, 0x13, 0xb4, 0x94, 0x43, 0xa5, 0x1e, 0xc0, 0x08, 0x45, 0x82, 0xd3, 0x66,
+	0x77, 0x48, 0x2d, 0x19, 0xaf, 0xd9, 0x9f, 0x94, 0xbe, 0x05, 0x47, 0x9e, 0x8f, 0x13, 0x8f, 0x81,
+	0xb2, 0x5e, 0xbb, 0xb6, 0x13, 0xb5, 0x1c, 0x38, 0x25, 0xf3, 0xcd, 0xec, 0x37, 0x93, 0xf9, 0xbe,
+	0x09, 0x1c, 0xe5, 0x52, 0x68, 0x11, 0xc9, 0x9c, 0x45, 0xab, 0x59, 0xa4, 0x50, 0xae, 0x50, 0x46,
+	0x37, 0x54, 0xe2, 0xb5, 0x30, 0x0a, 0x43, 0x9b, 0x25, 0x07, 0x34, 0x91, 0x8b, 0x54, 0xb0, 0x50,
+	0xe6, 0x2c, 0x5c, 0xcd, 0x82, 0xaf, 0x70, 0x10, 0xd3, 0x9b, 0x0b, 0xaa, 0x69, 0x8c, 0xdf, 0x0d,
+	0x2a, 0x4d, 0x02, 0x18, 0x30, 0x91, 0xa6, 0xc8, 0x74, 0x22, 0xb2, 0x4b, 0xee, 0x7b, 0x13, 0x6f,
+	0xda, 0x8f, 0x1b, 0x18, 0x79, 0x06, 0x3d, 0xa3, 0x50, 0x5e, 0x72, 0x7f, 0xc7, 0x66, 0x5d, 0x44,
+	0x7c, 0xd8, 0xcb, 0xe9, 0x6d, 0x2a, 0x28, 0xf7, 0x3b, 0x36, 0x51, 0x86, 0xc1, 0x2f, 0x0f, 0x46,
+	0xef, 0x32, 0x26, 0x6f, 0x73, 0x8d, 0xfc, 0x7f, 0xb5, 0x7b, 0x0d, 0x43, 0x2c, 0x39, 0xdf, 0xd7,
+	0xfa, 0x0e, 0xe2, 0x0d, 0x7c, 0x3d, 0x1a, 0xa3, 0xb9, 0x32, 0x29, 0xfa, 0x5d, 0x5b, 0x52, 0x86,
+	0x81, 0x82, 0xfd, 0x8f, 0x5a, 0x48, 0x8c, 0x51, 0x99, 0x54, 0x93, 0x31, 0x3c, 0x5a, 0x98, 0x8c,
+	0xa7, 0x58, 0x0d, 0x53, 0xc5, 0x64, 0x08, 0x1d, 0x23, 0x13, 0x37, 0xc5, 0xfa, 0x2b, 0x79, 0x01,
+	0x7d, 0x4e, 0x35, 0x7d, 0x2b, 0x4c, 0xa6, 0x6d, 0xef, 0x6e, 0x7c, 0x07, 0xac, 0x9b, 0x2e, 0xa9,
+	0xfa, 0xa4, 0x90, 0xdb, 0xa6, 0xdd, 0xb8, 0x0c, 0x83, 0x63, 0x78, 0x7a, 0x81, 0x29, 0x6a, 0x3c,
+	0xb7, 0xdc, 0xe5, 0x36, 0x5c, 0x03, 0xaf, 0x6a, 0x10, 0x84, 0x40, 0x9a, 0x85, 0x76, 0xc8, 0x1a,
+	0xb1, 0xd7, 0x24, 0x9e, 0xc3, 0x93, 0xab, 0x44, 0xe9, 0x26, 0xed, 0x21, 0x40, 0x2e, 0xc5, 0x2a,
+	0xe1, 0x76, 0x89, 0x05, 0x7b, 0x0d, 0xd9, 0x10, 0x61, 0x67, 0x53, 0x84, 0xe0, 0x8f, 0x07, 0xc3,
+	0x3a, 0xb3, 0x9d, 0xe3, 0x0c, 0xf6, 0x8a, 0xe5, 0x28, 0xdf, 0x9b, 0x74, 0xa6, 0xfb, 0x27, 0xc7,
+	0x61, 0xd3, 0x60, 0x61, 0xfb, 0x49, 0xe8, 0x82, 0xf2, 0xdd, 0xf8, 0xa7, 0x07, 0xbd, 0x02, 0xfb,
+	0x27, 0x2f, 0x8c, 0x60, 0x37, 0xc9, 0x38, 0xfe, 0xb0, 0x33, 0x3e, 0x8e, 0x8b, 0x60, 0x2d, 0x03,
+	0x93, 0x48, 0x35, 0xf2, 0xb3, 0x4a, 0x86, 0x0a, 0x68, 0x8a, 0xd4, 0x6d, 0x8b, 0xe4, 0x76, 0xbe,
+	0x5b, 0xed, 0xfc, 0xe4, 0xf7, 0x0e, 0xf4, 0xe7, 0xe5, 0xe1, 0x90, 0x2b, 0xe7, 0x0f, 0x37, 0xe4,
+	0x61, 0xfb, 0x17, 0x36, 0xef, 0x67, 0xfc, 0xbc, 0x9d, 0xaf, 0x99, 0x6b, 0xea, 0x91, 0x2f, 0x30,
+	0xb2, 0x40, 0x75, 0x0c, 0x8e, 0xf6, 0x55, 0xfb, 0xd9, 0xb6, 0x6b, 0x79, 0x88, 0x7c, 0x0e, 0x83,
+	0xba, 0x59, 0xc8, 0x51, 0xbb, 0x7c, 0x8b, 0xe7, 0xc6, 0xc1, 0xfd, 0x45, 0x56, 0xe7, 0x0f, 0x00,
+	0x77, 0x42, 0x92, 0x97, 0xf7, 0x89, 0x5c, 0x90, 0x4e, 0x1e, 0xf2, 0xc1, 0xf9, 0xe9, 0xe7, 0xd9,
+	0x32, 0xd1, 0xd7, 0x66, 0x11, 0x32, 0xf1, 0x2d, 0x72, 0xd5, 0xe5, 0xe7, 0x9b, 0xa5, 0x88, 0xb6,
+	0xfc, 0x9d, 0x2d, 0x7a, 0x16, 0x3c, 0xfd, 0x1b, 0x00, 0x00, 0xff, 0xff, 0x9c, 0xf4, 0x75, 0x3f,
+	0xec, 0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -862,14 +526,6 @@ type WarehouseClient interface {
 	// StoreBundle receives a stream of the data already encrypted, stores them as a bundle,
 	// and registers the data bundle onto the blockchain.
 	StoreEncryptedBundle(ctx context.Context, opts ...grpc.CallOption) (Warehouse_StoreEncryptedBundleClient, error)
-	//*
-	// GetBundleInfo receives a bundleId.
-	// and returns full information of bundle.
-	GetBundleInfo(ctx context.Context, in *BundleInfoRequest, opts ...grpc.CallOption) (*BundleInfoResponse, error)
-	//*
-	// GetUserDataIds receives a userId.
-	// and returns full information of user.
-	GetUserDataIds(ctx context.Context, in *UserDataIdsRequest, opts ...grpc.CallOption) (*UserDataIdsResponse, error)
 	//*
 	// DeleteBundle removes given bundle from the warehouse and the blockchain.
 	DeleteBundle(ctx context.Context, in *DeleteBundleRequest, opts ...grpc.CallOption) (*DeleteBundleResult, error)
@@ -954,24 +610,6 @@ func (x *warehouseStoreEncryptedBundleClient) CloseAndRecv() (*StoreResult, erro
 	return m, nil
 }
 
-func (c *warehouseClient) GetBundleInfo(ctx context.Context, in *BundleInfoRequest, opts ...grpc.CallOption) (*BundleInfoResponse, error) {
-	out := new(BundleInfoResponse)
-	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Warehouse/GetBundleInfo", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *warehouseClient) GetUserDataIds(ctx context.Context, in *UserDataIdsRequest, opts ...grpc.CallOption) (*UserDataIdsResponse, error) {
-	out := new(UserDataIdsResponse)
-	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Warehouse/GetUserDataIds", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *warehouseClient) DeleteBundle(ctx context.Context, in *DeleteBundleRequest, opts ...grpc.CallOption) (*DeleteBundleResult, error) {
 	out := new(DeleteBundleResult)
 	err := c.cc.Invoke(ctx, "/airbloc.rpc.v1.Warehouse/DeleteBundle", in, out, opts...)
@@ -1000,14 +638,6 @@ type WarehouseServer interface {
 	// StoreBundle receives a stream of the data already encrypted, stores them as a bundle,
 	// and registers the data bundle onto the blockchain.
 	StoreEncryptedBundle(Warehouse_StoreEncryptedBundleServer) error
-	//*
-	// GetBundleInfo receives a bundleId.
-	// and returns full information of bundle.
-	GetBundleInfo(context.Context, *BundleInfoRequest) (*BundleInfoResponse, error)
-	//*
-	// GetUserDataIds receives a userId.
-	// and returns full information of user.
-	GetUserDataIds(context.Context, *UserDataIdsRequest) (*UserDataIdsResponse, error)
 	//*
 	// DeleteBundle removes given bundle from the warehouse and the blockchain.
 	DeleteBundle(context.Context, *DeleteBundleRequest) (*DeleteBundleResult, error)
@@ -1072,42 +702,6 @@ func (x *warehouseStoreEncryptedBundleServer) Recv() (*EncryptedDataRequest, err
 	return m, nil
 }
 
-func _Warehouse_GetBundleInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BundleInfoRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WarehouseServer).GetBundleInfo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/airbloc.rpc.v1.Warehouse/GetBundleInfo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WarehouseServer).GetBundleInfo(ctx, req.(*BundleInfoRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Warehouse_GetUserDataIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserDataIdsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WarehouseServer).GetUserDataIds(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/airbloc.rpc.v1.Warehouse/GetUserDataIds",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WarehouseServer).GetUserDataIds(ctx, req.(*UserDataIdsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Warehouse_DeleteBundle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteBundleRequest)
 	if err := dec(in); err != nil {
@@ -1148,14 +742,6 @@ var _Warehouse_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "airbloc.rpc.v1.Warehouse",
 	HandlerType: (*WarehouseServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "GetBundleInfo",
-			Handler:    _Warehouse_GetBundleInfo_Handler,
-		},
-		{
-			MethodName: "GetUserDataIds",
-			Handler:    _Warehouse_GetUserDataIds_Handler,
-		},
 		{
 			MethodName: "DeleteBundle",
 			Handler:    _Warehouse_DeleteBundle_Handler,
