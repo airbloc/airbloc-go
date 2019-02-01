@@ -14,15 +14,11 @@ var (
 	leaveExist = append(bytes.Repeat([]byte{0}, 31), 0x1)
 )
 
-func (bundle *Bundle) generateRawSMT(index int) (ethCommon.Hash, error) {
-	leafID := bundle.Data[index].UserId
-	leaves, rawIndex := make(map[uint64][]byte), uint32(0)
-	for _, data := range bundle.Data {
-		if bytes.Equal(leafID[:], data.UserId[:]) {
-			binary.LittleEndian.PutUint32(data.RowId[:], rawIndex)
-			leaves[uint64(rawIndex)] = leaveExist
-			rawIndex++
-		}
+func (bundle *Bundle) generateSubSMT(rowData []*ablCommon.EncryptedData) (ethCommon.Hash, error) {
+	leaves := make(map[uint64][]byte, len(rowData))
+	for i, data := range rowData {
+		binary.LittleEndian.PutUint32(data.RowId[:], uint32(i))
+		leaves[uint64(i)] = leaveExist
 	}
 
 	root := ethCommon.Hash{}
@@ -35,16 +31,16 @@ func (bundle *Bundle) generateRawSMT(index int) (ethCommon.Hash, error) {
 }
 
 func (bundle *Bundle) generateSMT() (*mamamerkle.SparseMerkleTree, error) {
-	leaves := make(map[uint64][]byte)
+	leaves := make(map[uint64][]byte, len(bundle.Data))
 
-	for index, data := range bundle.Data {
-		leafID := binary.LittleEndian.Uint64(data.UserId[:])
-		if _, exists := leaves[leafID]; !exists {
-			leaf, err := bundle.generateRawSMT(index)
+	for userId, rowData := range bundle.Data {
+		leafId := binary.LittleEndian.Uint64(userId[:])
+		if _, exists := leaves[leafId]; !exists {
+			leaf, err := bundle.generateSubSMT(rowData)
 			if err != nil {
 				return nil, err
 			}
-			leaves[leafID] = leaf[:]
+			leaves[leafId] = leaf[:]
 		}
 	}
 	return mamamerkle.NewSparseMerkleTree(64, leaves)

@@ -12,7 +12,7 @@ type BundleStream struct {
 	provider   common.ID
 	collection *collections.Collection
 	warehouse  *DataWarehouse
-	data       []*common.EncryptedData
+	data       map[common.ID][]*common.EncryptedData
 	DataCount  int
 
 	mu sync.Mutex
@@ -23,7 +23,7 @@ func newBundleStream(warehouse *DataWarehouse, provider common.ID, collection *c
 		provider:   provider,
 		collection: collection,
 		warehouse:  warehouse,
-		data:       []*common.EncryptedData{},
+		data:       map[common.ID][]*common.EncryptedData{},
 		DataCount:  0,
 	}
 }
@@ -50,7 +50,7 @@ func (stream *BundleStream) Add(data *common.Data) error {
 
 func (stream *BundleStream) AddEncrypted(encryptedData *common.EncryptedData) error {
 	stream.mu.Lock()
-	stream.data = append(stream.data, encryptedData)
+	stream.data[encryptedData.UserId] = append(stream.data[encryptedData.UserId], encryptedData)
 	stream.DataCount += 1
 	stream.mu.Unlock()
 	return nil
