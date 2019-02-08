@@ -1,52 +1,31 @@
 package merkle
 
 import (
-	"crypto/rand"
-	"sort"
-	"testing"
-
+	"github.com/airbloc/airbloc-go/common"
+	"github.com/stretchr/testify/require"
 	"log"
-
-	"math/big"
-
-	"github.com/dgraph-io/badger"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/stretchr/testify/assert"
+	"math/rand"
+	"runtime"
+	"testing"
+	"time"
 )
 
-func TestNewSMT(t *testing.T) {
-	log.SetFlags(log.Lshortfile)
+func TestNewMainTree(t *testing.T) {
+	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	length := int64(1111)
-
-	dbOpt := badger.DefaultOptions
-	dbOpt.Dir = "testdata"
-	dbOpt.ValueDir = "testdata"
-	db, err := badger.Open(dbOpt)
-	assert.NoError(t, err)
-
-	// make test data
-	var k Key
-	for i := int64(0); i < length; i++ {
-		tmp := make([]byte, common.HashLength)
-		rand.Read(tmp)
-		k = append(k, crypto.Keccak256Hash(tmp))
+	// prepare
+	sInput := make(map[common.ID][]common.RowId)
+	for i := uint64(0); i < 10000000; i++ {
+		userId := common.UintToID(i)
+		for j := uint32(0); j < rand.Uint32()%20; j++ {
+			sInput[userId] = append(sInput[userId], common.UintToRowId(j))
+		}
 	}
-	sort.Sort(k)
 
-	smt := NewSMT(db, crypto.Keccak256Hash)
-	defer smt.Close()
+	s := time.Now()
+	sTree, err := NewMainTree(sInput)
+	require.NoError(t, err)
+	log.Println(time.Since(s).String())
 
-	root := smt.Make(k)
-	smt.Flush(big.NewInt(1), []byte("frostornge"))
-
-	tmp := make([]byte, common.HashLength)
-	rand.Read(tmp)
-	index := new(big.Int).SetBytes(tmp)
-	index.Mod(index, big.NewInt(length))
-
-	proof, err := smt.Proof(k[index.Int64()])
-	assert.NoError(t, err)
-	assert.True(t, smt.Verify(k[index.Int64()], root, proof))
+	log.Println(sTree.root.Hex())
 }

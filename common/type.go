@@ -41,6 +41,12 @@ func BytesToID(idBytes []byte) ID {
 	return id
 }
 
+func UintToID(i uint64) ID {
+	id := ID{}
+	binary.LittleEndian.PutUint64(id[:], i)
+	return id
+}
+
 func GenerateID(issuer common.Address, time time.Time, seed []byte) (id ID) {
 	// use ABI-compatible 32-byte padding,
 	// to be compatible with keccak256 on Ethereum
@@ -55,6 +61,10 @@ func GenerateID(issuer common.Address, time time.Time, seed []byte) (id ID) {
 	// use only first 8 byte in 32-byte hash
 	copy(id[:], hash[:8])
 	return
+}
+
+func (id *ID) Uint64() uint64 {
+	return binary.LittleEndian.Uint64(id[:])
 }
 
 func (id *ID) Hex() string {
@@ -117,6 +127,12 @@ func HexToRowId(idStr string) (RowId, error) {
 func BytesToRowId(idBytes []byte) RowId {
 	var id RowId
 	copy(id[:], idBytes[:RowIdLength])
+	return id
+}
+
+func UintToRowId(i uint32) RowId {
+	id := RowId{}
+	binary.LittleEndian.PutUint32(id[:], i)
 	return id
 }
 
