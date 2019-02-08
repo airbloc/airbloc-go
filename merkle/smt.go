@@ -36,7 +36,7 @@ type MainTree struct {
 func (mt *MainTree) Leaves() map[common.ID][]common.RowId {
 	leaves := make(map[common.ID][]common.RowId, len(mt.leaves))
 	for _, subTree := range mt.leaves {
-		leaves[subTree.userId] = subTree.leaves
+		leaves[subTree.userId] = subTree.Leaves()
 	}
 	return leaves
 }
@@ -45,8 +45,16 @@ func (mt *MainTree) Root() ethCommon.Hash {
 	return mt.root
 }
 
-func (mt *MainTree) hash(b []byte) ethCommon.Hash {
-	return crypto.Keccak256Hash(b)
+func (mt *MainTree) GenerateProof() ([]byte, error) {
+	return nil, nil
+}
+
+func (mt *MainTree) Verify(rowId common.RowId, userId common.ID, proof []byte) (bool, error) {
+	return false, nil
+}
+
+func (mt *MainTree) hash(b ...[]byte) ethCommon.Hash {
+	return crypto.Keccak256Hash(b...)
 }
 
 func (mt *MainTree) createEmptyHash() {
@@ -55,14 +63,14 @@ func (mt *MainTree) createEmptyHash() {
 
 	for lvl := 1; lvl < depth+1; lvl++ {
 		prev := mt.empty[lvl-1]
-		next := mt.hash(append(prev.Bytes(), prev.Bytes()...))
+		next := mt.hash(prev.Bytes(), prev.Bytes())
 		mt.empty[lvl] = next
 	}
 }
 
 func (mt *MainTree) createTree() {
 	for _, leaf := range mt.leaves {
-		mt.tree[0] = append(mt.tree[0], &n{leaf.userId.Uint64(), leaf.root})
+		mt.tree[0] = append(mt.tree[0], &n{leaf.userId.Uint64(), leaf.Root()})
 	}
 
 	for lvl := 0; lvl < depth; lvl++ {
@@ -70,7 +78,14 @@ func (mt *MainTree) createTree() {
 		nextLvl := make(map[uint64]ethCommon.Hash)
 
 		for i, v := range treeLvl {
-			if v.k%2 == 0 {
+			if v.k%2 != 0 {
+				coKey := v.k - 1
+				coIndex := i - 1
+
+				if i == 0 && treeLvl[coIndex].k != coKey {
+					nextLvl[v.k/2] = mt.hash(mt.empty[lvl].Bytes(), v.v.Bytes())
+				}
+			} else {
 				coKey := v.k + 1
 				coIndex := i + 1
 
@@ -78,19 +93,9 @@ func (mt *MainTree) createTree() {
 				case len(treeLvl) == coIndex:
 					fallthrough
 				case treeLvl[coIndex].k != coKey:
-					nextLvl[v.k/2] = crypto.Keccak256Hash(v.v.Bytes(), mt.empty[lvl].Bytes())
+					nextLvl[v.k/2] = mt.hash(v.v.Bytes(), mt.empty[lvl].Bytes())
 				case treeLvl[coIndex].k == coKey:
-					nextLvl[v.k/2] = crypto.Keccak256Hash(v.v.Bytes(), treeLvl[coIndex].v.Bytes())
-				}
-			} else {
-				coKey := v.k - 1
-				coIndex := i - 1
-
-				switch {
-				case i == 0:
-					fallthrough
-				case treeLvl[coIndex].k != coKey:
-					nextLvl[v.k/2] = crypto.Keccak256Hash(mt.empty[lvl].Bytes(), v.v.Bytes())
+					nextLvl[v.k/2] = mt.hash(v.v.Bytes(), treeLvl[coIndex].v.Bytes())
 				}
 			}
 		}

@@ -13,7 +13,7 @@ import (
 func TestNewSubTree(t *testing.T) {
 	for i := 0; i < 5; i++ {
 		var sInput []common.RowId
-		for j := uint32(0); j < uint32(rand.Int()); j++ {
+		for j := uint32(0); j < rand.Uint32()%500; j++ {
 			sInput = append(sInput, common.UintToRowId(j))
 		}
 
@@ -47,4 +47,21 @@ func TestNewSubTree(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, lvl[0], st.root)
 	}
+}
+
+func TestSubTree_GenerateProof(t *testing.T) {
+	var sInput []common.RowId
+	for i := uint32(0); i < 500; i++ {
+		sInput = append(sInput, common.UintToRowId(i))
+	}
+	st, err := NewSubTree(sInput)
+	require.NoError(t, err)
+
+	proof, err := st.GenerateProof(sInput[250])
+	require.NoError(t, err)
+
+	res, err := st.Verify(sInput[250], proof)
+	require.NoError(t, err)
+
+	assert.True(t, res)
 }

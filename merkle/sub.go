@@ -1,12 +1,19 @@
 package merkle
 
 import (
+	"bytes"
 	"errors"
 	"github.com/airbloc/airbloc-go/common"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"math/big"
 	"sort"
+)
+
+const (
+	Left        = 0x00
+	Right       = 0x01
+	ProofLength = ethCommon.HashLength + 1
 )
 
 type SubTree struct {
@@ -17,6 +24,65 @@ type SubTree struct {
 
 func (st *SubTree) Leaves() []common.RowId {
 	return st.leaves
+}
+
+func (st *SubTree) Root() ethCommon.Hash {
+	return st.root
+}
+
+func (st *SubTree) GenerateProof(rowId common.RowId) ([]byte, error) {
+	// get index of given rowId
+	index := -1
+	for i, leaf := range st.leaves {
+		if bytes.Equal(leaf[:], rowId[:]) {
+			index = i
+		}
+	}
+	if index == -1 {
+		return nil, errors.New("cannot find given rowId in leaves")
+	}
+
+	buf := new(bytes.Buffer)
+	for _, lvl := range st.tree[:len(st.tree)-1] {
+		if index%2 != 0 { // left
+			buf.Write(append([]byte{Left}, lvl[index-1].Bytes()...))
+		} else { // right
+			if len(lvl) == (index + 1) {
+				buf.Write(append([]byte{Right}, lvl[index].Bytes()...))
+			} else {
+				buf.Write(append([]byte{Right}, lvl[index+1].Bytes()...))
+			}
+		}
+
+		index /= 2
+	}
+	return buf.Bytes(), nil
+}
+
+func (st *SubTree) Verify(rowId common.RowId, proof []byte) (bool, error) {
+	if len(proof)%ProofLength != 0 {
+		return false, errors.New("invalid proof length")
+	}
+
+	base := crypto.Keccak256Hash(rowId[:])
+
+	for {
+		if len(proof) == 0 {
+			break
+		}
+
+		leaf := proof[:ProofLength]
+		leaf, direction := leaf[1:], leaf[0]
+		proof = proof[ProofLength:]
+
+		if direction == Left {
+			base = crypto.Keccak256Hash(leaf, base.Bytes())
+		} else {
+			base = crypto.Keccak256Hash(base.Bytes(), leaf)
+		}
+	}
+
+	return bytes.Equal(st.root.Bytes(), base.Bytes()), nil
 }
 
 func NewSubTree(input []common.RowId) (*SubTree, error) {
