@@ -16,12 +16,10 @@ import (
 
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
+	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/data"
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/database/metadb"
-	ethCommon "github.com/ethereum/go-ethereum/common"
-
-	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/airbloc/airbloc-go/warehouse/protocol"
 	"github.com/airbloc/airbloc-go/warehouse/storage"
@@ -156,12 +154,6 @@ func (dw *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 		Data:       stream.data,
 	}
 
-	// for setup rowId
-	userMerkleRoot, err := createdBundle.SetupUserProof()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to setup SMT")
-	}
-
 	bundleName := generateBundleNameOf(createdBundle)
 	uri, err := dw.DefaultStorage.Save(bundleName, createdBundle)
 	if err != nil {
@@ -170,7 +162,7 @@ func (dw *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 	createdBundle.Uri = uri.String()
 
 	// register to on-chain
-	bundleId, err := dw.registerBundleOnChain(createdBundle, userMerkleRoot)
+	bundleId, err := dw.registerBundleOnChain(createdBundle)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to register bundle to blockchain")
 	}
@@ -213,10 +205,16 @@ InsertDataIds:
 	return createdBundle, nil
 }
 
-func (dw *DataWarehouse) registerBundleOnChain(bundle *data.Bundle, userMerkleRoot ethCommon.Hash) (common.ID, error) {
+func (dw *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (bundleId common.ID, _ error) {
 	bundleDataHash, err := bundle.Hash()
 	if err != nil {
-		return [8]byte{}, errors.Wrap(err, "failed to get hash of the bundle data")
+		return bundleId, errors.Wrap(err, "failed to get hash of the bundle data")
+	}
+
+	// for setup rowId
+	userMerkleRoot, err := bundle.SetupUserProof()
+	if err != nil {
+		return bundleId, errors.Wrap(err, "failed to setup SMT")
 	}
 
 	dw.log.Info("Bundle data", logger.Attrs{
@@ -231,19 +229,21 @@ func (dw *DataWarehouse) registerBundleOnChain(bundle *data.Bundle, userMerkleRo
 		bundleDataHash,
 		bundle.Uri)
 	if err != nil {
-		return [8]byte{}, errors.Wrap(err, "failed to register a bundle to DataRegistry")
+		return bundleId, errors.Wrap(err, "failed to register a bundle to DataRegistry")
 	}
 
 	receipt, err := dw.ethclient.WaitMined(context.Background(), tx)
 	if err != nil {
-		return [8]byte{}, errors.Wrap(err, "failed to wait for tx to be mined")
+		return bundleId, errors.Wrap(err, "failed to wait for tx to be mined")
 	}
 
 	registerResult, err := dw.dataRegistry.ParseBundleRegisteredFromReceipt(receipt)
 	if err != nil {
-		return [8]byte{}, errors.Wrap(err, "failed to parse a event from the receipt")
+		return bundleId, errors.Wrap(err, "failed to parse a event from the receipt")
 	}
-	return common.ID(registerResult.BundleId), nil
+
+	bundleId = common.ID(registerResult.BundleId)
+	return
 }
 
 func (dw *DataWarehouse) Get(id *common.DataId) (*data.Bundle, error) {
