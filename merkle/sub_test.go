@@ -60,7 +60,7 @@ func TestSubTree_GenerateProof(t *testing.T) {
 	proof, err := st.GenerateProof(sInput[250])
 	require.NoError(t, err)
 
-	res, err := st.Verify(sInput[250], proof)
+	res, err := VerifySubProof(sInput[250], proof)
 	require.NoError(t, err)
 
 	assert.True(t, res)

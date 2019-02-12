@@ -11,9 +11,8 @@ import (
 )
 
 const (
-	Left        = 0x00
-	Right       = 0x01
-	ProofLength = ethCommon.HashLength + 1
+	Left  = 0x00
+	Right = 0x01
 )
 
 type SubTree struct {
@@ -32,14 +31,12 @@ func (st *SubTree) Root() ethCommon.Hash {
 
 func (st *SubTree) GenerateProof(rowId common.RowId) ([]byte, error) {
 	// get index of given rowId
-	index := -1
-	for i, leaf := range st.leaves {
-		if bytes.Equal(leaf[:], rowId[:]) {
-			index = i
-		}
-	}
-	if index == -1 {
-		return nil, errors.New("cannot find given rowId in leaves")
+	index := sort.Search(len(st.leaves), func(i int) bool {
+		return st.leaves[i].Uint32() >= rowId.Uint32()
+	})
+
+	if index == len(st.leaves) {
+		return nil, errors.New("cannot find leaf in sub tree")
 	}
 
 	buf := new(bytes.Buffer)
@@ -59,11 +56,8 @@ func (st *SubTree) GenerateProof(rowId common.RowId) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (st *SubTree) Verify(rowId common.RowId, proof []byte) (bool, error) {
-	if len(proof)%ProofLength != 0 {
-		return false, errors.New("invalid proof length")
-	}
-
+func verifySubProof(rowId common.RowId, subRoot, proof []byte) bool {
+	root := ethCommon.BytesToHash(subRoot)
 	base := crypto.Keccak256Hash(rowId[:])
 
 	for {
@@ -71,9 +65,9 @@ func (st *SubTree) Verify(rowId common.RowId, proof []byte) (bool, error) {
 			break
 		}
 
-		leaf := proof[:ProofLength]
+		leaf := proof[:SubProofLength]
 		leaf, direction := leaf[1:], leaf[0]
-		proof = proof[ProofLength:]
+		proof = proof[SubProofLength:]
 
 		if direction == Left {
 			base = crypto.Keccak256Hash(leaf, base.Bytes())
@@ -82,7 +76,22 @@ func (st *SubTree) Verify(rowId common.RowId, proof []byte) (bool, error) {
 		}
 	}
 
-	return bytes.Equal(st.root.Bytes(), base.Bytes()), nil
+	return bytes.Equal(root.Bytes(), base.Bytes())
+}
+
+func VerifySubProof(rowId common.RowId, proof []byte) (bool, error) {
+	if len(proof) < HashLength+SubProofLength {
+		return false, errors.New("invalid proof length")
+	}
+
+	root := proof[:HashLength]
+	proof = proof[HashLength:]
+
+	if len(proof)%SubProofLength != 0 {
+		return false, errors.New("invalid proof length")
+	}
+
+	return verifySubProof(rowId, root, proof), nil
 }
 
 func NewSubTree(input []common.RowId) (*SubTree, error) {
