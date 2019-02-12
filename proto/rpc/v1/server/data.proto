@@ -13,9 +13,17 @@ service Data {
     rpc Get(DataId) returns (DataResult);
     rpc GetBatch(BatchRequest) returns (GetBatchResult);
 
+    /**
+     * These are getter methods for users that wants to get bundle/userId information.
+     */
+    rpc GetBundleInfo(BundleInfoRequest) returns (BundleInfoResponse);
+    rpc GetUserDataIds(UserDataIdsRequest) returns (UserDataIdsResponse);
+
     // SetPermission allows a consumer to access the given data.
     rpc SetPermission(SetDataPermissionRequest) returns (google.protobuf.Empty);
     rpc SetPermissionBatch(SetBatchDataPermissionRequest) returns (google.protobuf.Empty);
+
+
 
     // Delete removes specific data from your warehouse or purchased data.
     rpc Delete(DataId) returns (google.protobuf.Empty);
@@ -38,21 +46,49 @@ message DataId {
 }
 
 message DataResult {
-    message Permission {
-        string consumerId = 1; // ID
-        bool allowAccess = 2;
-    }
-
-    string dataId = 1; // ID
-    string collectionId = 2; // ID
-    string ownerUserAid = 3; // ID
-    string uri = 4;
-    uint64 registeredAt = 5;
-    repeated Permission permissions = 6;
+    string collectionId = 1; // ID
+    string userId = 2; // ID
+    int64 ingestedAt = 3;
+    string payload = 4;
 }
 
 message GetBatchResult {
     repeated DataResult data = 1;
+}
+
+// TODO : pagination
+message BundleInfoRequest{
+    string bundleId = 1;
+}
+
+message BundleInfoResponse {
+    string bundleId = 1;
+    string uri = 2;
+    string provider = 3;
+    string collection = 4;
+    uint64 dataCount = 5;
+    int64 ingestedAt = 6;
+    repeated string dataInfoes = 7;
+}
+
+// TODO : pagination
+message UserDataIdsRequest{
+    string userId = 1;
+}
+
+message UserDataIdsResponse{
+    message DataInfo {
+        string id = 1;
+        int64 ingestedAt = 2;
+    }
+
+    message Collection {
+        string appId = 1;
+        string schemaId = 2;
+        string collectionId = 3;
+        repeated DataInfo dataInfoes = 4;
+    }
+    repeated Collection collections = 1;
 }
 
 message SetDataPermissionRequest {

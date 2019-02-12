@@ -74,13 +74,19 @@ func TestUserDelegate(t *testing.T) {
 	}
 	defer conn.Close()
 
-	appId := testCreateApp(t, ctx, conn)
+	c := &T{
+		T:    t,
+		ctx:  ctx,
+		conn: conn,
+	}
+
+	appId := c.testCreateApp()
 	log.Println("Created App ID:", appId)
 
-	schemaId := testCreateSchema(t, ctx, conn)
+	schemaId := c.testCreateSchema()
 	log.Printf("Created Schema ID: %s\n", schemaId)
 
-	collectionId := testCreateCollection(t, ctx, appId, schemaId, conn)
+	collectionId := c.testCreateCollection(appId, schemaId)
 	log.Printf("Created Collection: %s\n", collectionId)
 
 	// create 10 accounts through DAuth signup

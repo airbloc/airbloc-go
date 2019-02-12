@@ -19,6 +19,7 @@ import (
 	"github.com/airbloc/airbloc-go/data"
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/database/metadb"
+	ethCommon "github.com/ethereum/go-ethereum/common"
 
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/key"
@@ -154,6 +155,13 @@ func (dw *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 		IngestedAt: ingestedAt,
 		Data:       stream.data,
 	}
+
+	// for setup rowId
+	userMerkleRoot, err := createdBundle.SetupUserProof()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to setup SMT")
+	}
+
 	bundleName := generateBundleNameOf(createdBundle)
 	uri, err := dw.DefaultStorage.Save(bundleName, createdBundle)
 	if err != nil {
@@ -162,12 +170,27 @@ func (dw *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 	createdBundle.Uri = uri.String()
 
 	// register to on-chain
-	bundleId, err := dw.registerBundleOnChain(createdBundle)
+	bundleId, err := dw.registerBundleOnChain(createdBundle, userMerkleRoot)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to register bundle to blockchain")
 	}
-	empty := common.ID{}
-	createdBundle.Id = fmt.Sprintf("%s%s", empty.Hex(), bundleId.Hex())
+	createdBundle.Id = bundleId.Hex()
+
+	dataIds, i := make([]map[string]interface{}, len(createdBundle.Data)), 0
+InsertDataIds:
+	for _, rowData := range createdBundle.Data {
+		for _, d := range rowData {
+			dataIds[i] = make(map[string]interface{}, 3)
+			dataIds[i]["bundleId"] = bundleId.Hex()
+			dataIds[i]["userId"] = d.UserId.Hex()
+			dataIds[i]["rowId"] = d.RowId.Hex()
+
+			if len(createdBundle.Data) == i {
+				break InsertDataIds
+			}
+			i++
+		}
+	}
 
 	// save metadata to make the bundle searchable
 	bundleInfo := map[string]interface{}{
@@ -177,6 +200,7 @@ func (dw *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 		"collection": createdBundle.Collection.Hex(),
 		"dataCount":  createdBundle.DataCount,
 		"ingestedAt": ingestedAt,
+		"dataIds":    dataIds,
 	}
 	_, err = dw.metaDatabase.Create(bundleInfo, nil)
 	if err != nil {
@@ -189,15 +213,10 @@ func (dw *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 	return createdBundle, nil
 }
 
-func (dw *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (common.ID, error) {
+func (dw *DataWarehouse) registerBundleOnChain(bundle *data.Bundle, userMerkleRoot ethCommon.Hash) (common.ID, error) {
 	bundleDataHash, err := bundle.Hash()
 	if err != nil {
 		return [8]byte{}, errors.Wrap(err, "failed to get hash of the bundle data")
-	}
-
-	userMerkleRoot, err := bundle.SetupUserProof()
-	if err != nil {
-		return [8]byte{}, errors.Wrap(err, "failed to setup SMT")
 	}
 
 	dw.log.Info("Bundle data", logger.Attrs{
@@ -227,8 +246,8 @@ func (dw *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (common.ID, 
 	return common.ID(registerResult.BundleId), nil
 }
 
-func (dw *DataWarehouse) Get(id *common.DataID) (*data.Bundle, error) {
-	bundle, err := dw.dataRegistry.Bundles(nil, id.Padding, id.BundleID)
+func (dw *DataWarehouse) Get(id *common.DataId) (*data.Bundle, error) {
+	bundle, err := dw.dataRegistry.Bundles(nil, id.BundleId)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get uri")
 	}

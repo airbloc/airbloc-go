@@ -3,6 +3,7 @@ package metadb
 import (
 	"context"
 	"fmt"
+	"github.com/mongodb/mongo-go-driver/mongo"
 	"strings"
 
 	"github.com/azer/logger"
@@ -92,6 +93,10 @@ func (model *Model) RetrieveMany(ctx context.Context, query bson.M) ([]bson.M, e
 
 func (model *Model) Append(string, ed25519.PublicKey, transaction.Metadata, Mode) error {
 	panic("implement me")
+}
+
+func (model *Model) Aggregate(ctx context.Context, pipeline interface{}) (mongo.Cursor, error) {
+	return model.database.Aggregate(ctx, pipeline)
 }
 
 func (model *Model) Burn(assetId string) error {

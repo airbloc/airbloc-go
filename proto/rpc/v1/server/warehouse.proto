@@ -35,7 +35,7 @@ message RawDataRequest {
     string collectionId = 1;
 
     // ID of the user (Data Owner)
-    string ownerId = 2;
+    string userId = 2;
 
     // JSON payload, which follows schema of the given collection.
     string payload = 3;
@@ -46,7 +46,7 @@ message EncryptedDataRequest {
     string collectionId = 1;
 
     // ID of the user (Data Owner)
-    string ownerId = 2;
+    string userId = 2;
 
     // pre-encrypted JSON payload, which follows schema of the given collection.
     // the payload must be encrypted through ECIES-SECP256k1 using the key in a capsule.
@@ -57,7 +57,6 @@ message EncryptedDataRequest {
 }
 
 message StoreResult {
-    // the ID of the bundle in "{empty}{bundleid}" format.
     string bundleId = 1;
 
     // public-accessible URI of the bundle.

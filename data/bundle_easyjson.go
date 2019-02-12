@@ -54,33 +54,54 @@ func easyjson40af25b0DecodeGithubComAirblocAirblocGoData(in *jlexer.Lexer, out *
 		case "data":
 			if in.IsNull() {
 				in.Skip()
-				out.Data = nil
 			} else {
-				in.Delim('[')
-				if out.Data == nil {
-					if !in.IsDelim(']') {
-						out.Data = make([]*common.EncryptedData, 0, 8)
-					} else {
-						out.Data = []*common.EncryptedData{}
-					}
+				in.Delim('{')
+				if !in.IsDelim('}') {
+					out.Data = make(map[common.ID][]*common.EncryptedData)
 				} else {
-					out.Data = (out.Data)[:0]
+					out.Data = nil
 				}
-				for !in.IsDelim(']') {
-					var v1 *common.EncryptedData
+				for !in.IsDelim('}') {
+					var key common.ID
+					if data := in.Raw(); in.Ok() {
+						in.AddError((key).UnmarshalJSON(data))
+					}
+					in.WantColon()
+					var v1 []*common.EncryptedData
 					if in.IsNull() {
 						in.Skip()
 						v1 = nil
 					} else {
+						in.Delim('[')
 						if v1 == nil {
-							v1 = new(common.EncryptedData)
+							if !in.IsDelim(']') {
+								v1 = make([]*common.EncryptedData, 0, 8)
+							} else {
+								v1 = []*common.EncryptedData{}
+							}
+						} else {
+							v1 = (v1)[:0]
 						}
-						easyjson40af25b0DecodeGithubComAirblocAirblocGoCommon(in, &*v1)
+						for !in.IsDelim(']') {
+							var v2 *common.EncryptedData
+							if in.IsNull() {
+								in.Skip()
+								v2 = nil
+							} else {
+								if v2 == nil {
+									v2 = new(common.EncryptedData)
+								}
+								easyjson40af25b0DecodeGithubComAirblocAirblocGoCommon(in, &*v2)
+							}
+							v1 = append(v1, v2)
+							in.WantComma()
+						}
+						in.Delim(']')
 					}
-					out.Data = append(out.Data, v1)
+					(out.Data)[key] = v1
 					in.WantComma()
 				}
-				in.Delim(']')
+				in.Delim('}')
 			}
 		default:
 			in.SkipRecursive()
@@ -144,21 +165,37 @@ func easyjson40af25b0EncodeGithubComAirblocAirblocGoData(out *jwriter.Writer, in
 		} else {
 			out.RawString(prefix)
 		}
-		if in.Data == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
+		if in.Data == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
+			out.RawString(`null`)
 		} else {
-			out.RawByte('[')
-			for v2, v3 := range in.Data {
-				if v2 > 0 {
+			out.RawByte('{')
+			v3First := true
+			for v3Name, v3Value := range in.Data {
+				if v3First {
+					v3First = false
+				} else {
 					out.RawByte(',')
 				}
-				if v3 == nil {
+				out.Raw((v3Name).MarshalJSON())
+				out.RawByte(':')
+				if v3Value == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 					out.RawString("null")
 				} else {
-					easyjson40af25b0EncodeGithubComAirblocAirblocGoCommon(out, *v3)
+					out.RawByte('[')
+					for v4, v5 := range v3Value {
+						if v4 > 0 {
+							out.RawByte(',')
+						}
+						if v5 == nil {
+							out.RawString("null")
+						} else {
+							easyjson40af25b0EncodeGithubComAirblocAirblocGoCommon(out, *v5)
+						}
+					}
+					out.RawByte(']')
 				}
 			}
-			out.RawByte(']')
+			out.RawByte('}')
 		}
 	}
 	out.RawByte('}')
@@ -206,13 +243,13 @@ func easyjson40af25b0DecodeGithubComAirblocAirblocGoCommon(in *jlexer.Lexer, out
 			continue
 		}
 		switch key {
-		case "ownerAnId":
+		case "userId":
 			if data := in.Raw(); in.Ok() {
-				in.AddError((out.OwnerAnID).UnmarshalJSON(data))
+				in.AddError((out.UserId).UnmarshalJSON(data))
 			}
 		case "rowId":
 			if data := in.Raw(); in.Ok() {
-				in.AddError((out.RowID).UnmarshalJSON(data))
+				in.AddError((out.RowId).UnmarshalJSON(data))
 			}
 		case "capsule":
 			if in.IsNull() {
@@ -243,14 +280,14 @@ func easyjson40af25b0EncodeGithubComAirblocAirblocGoCommon(out *jwriter.Writer, 
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"ownerAnId\":"
+		const prefix string = ",\"userId\":"
 		if first {
 			first = false
 			out.RawString(prefix[1:])
 		} else {
 			out.RawString(prefix)
 		}
-		out.Raw((in.OwnerAnID).MarshalJSON())
+		out.Raw((in.UserId).MarshalJSON())
 	}
 	{
 		const prefix string = ",\"rowId\":"
@@ -260,7 +297,7 @@ func easyjson40af25b0EncodeGithubComAirblocAirblocGoCommon(out *jwriter.Writer, 
 		} else {
 			out.RawString(prefix)
 		}
-		out.Raw((in.RowID).MarshalJSON())
+		out.Raw((in.RowId).MarshalJSON())
 	}
 	{
 		const prefix string = ",\"capsule\":"

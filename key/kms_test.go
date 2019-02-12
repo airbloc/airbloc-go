@@ -29,11 +29,7 @@ func TestManager_Decrypt(t *testing.T) {
 }
 
 func TestManager_DecryptData(t *testing.T) {
-	srcData := &common.Data{
-		Payload:   "Hello",
-		OwnerAnID: common.ID{},
-		RowID:     common.ID{},
-	}
+	srcData := &common.Data{Payload: "Hello"}
 	edata, err := TestManager.EncryptData(srcData)
 	require.NoError(t, err)
 

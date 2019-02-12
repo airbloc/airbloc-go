@@ -10,7 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"log"
 	"os"
-	"testing"
 )
 
 const ConfigFilePath = "../../config.yml"
@@ -23,7 +22,7 @@ type testConfig struct {
 	DeployedContracts    map[string]common.Address
 }
 
-func loadConfig(t *testing.T) *testConfig {
+func (t *T) loadConfig() {
 	serverConfig := new(node.Config)
 	if err := configor.Load(serverConfig, ConfigFilePath); err != nil {
 		log.Fatalln("Unable to load node config from", ConfigFilePath)
@@ -46,7 +45,7 @@ func loadConfig(t *testing.T) *testConfig {
 	udKey, err := crypto.LoadECDSA("../../" + userDelegateConfig.PrivateKeyPath)
 	require.NoError(t, err)
 
-	return &testConfig{
+	t.config = &testConfig{
 		TransactorPrivateKey: privateKey,
 		UserDelegateAddress:  crypto.PubkeyToAddress(udKey.PublicKey),
 		DeployedContracts:    deployments,

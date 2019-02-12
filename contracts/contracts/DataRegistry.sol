@@ -22,7 +22,7 @@ contract DataRegistry is Ownable {
         // will be further used in Data Availability Challenge
         uint64 proofOfPosessionCount;
     }
-    mapping (bytes8 => mapping (bytes8 => Bundle)) public bundles;
+    mapping (bytes8 => Bundle) public bundles;
 
     Accounts accounts;
     CollectionRegistry collections;
@@ -43,9 +43,8 @@ contract DataRegistry is Ownable {
         bundle.collectionId = collectionId;
         bundle.uri = uri;
 
-        bytes8 empty = "";
         bytes8 bundleId = bytes8(keccak256(abi.encodePacked(block.number, msg.sender, collectionId, dataHash)));
-        bundles[empty][bundleId] = bundle;
+        bundles[bundleId] = bundle;
 
         emit BundleRegistered(collectionId, bundleId);
     }
@@ -54,8 +53,7 @@ contract DataRegistry is Ownable {
         require(collections.exists(collectionId), "Collection does not exist.");
         bytes8 userId = accounts.getAccountId(msg.sender);
 
-        bytes8 empty = "";
-        Bundle storage bundle = bundles[empty][bundleId];
+        Bundle storage bundle = bundles[bundleId];
         require(
             collections.isCollectionAllowedAt(collectionId, userId, bundle.createdAt),
             "You have been allowed to collect the data at that time. Why is it a problem?"
@@ -70,11 +68,9 @@ contract DataRegistry is Ownable {
     function isMyDataIncluded(bytes8 collectionId, bytes8 bundleId, bytes proof) public view returns (bool) {
         require(collections.exists(collectionId), "Collection does not exist.");
 
-        bytes8 empty = "";
         uint64 userId = uint64(accounts.getAccountId(msg.sender));
-        bytes32 root = bundles[empty][bundleId].usersRoot;
+        bytes32 root = bundles[bundleId].usersRoot;
 
         return sparseMerkleTree.checkMembership(root, userId, proof);
     }
-
 }

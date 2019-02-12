@@ -35,14 +35,14 @@ func (api *ExchangeAPI) Prepare(ctx context.Context, req *pb.OrderRequest) (*pb.
 	copy(escrowSign[:], contract.GetEscrowSign())
 
 	rawDataIds := req.GetDataIds()
-	dataIds := make([][32]byte, len(rawDataIds))
+	dataIds := make([][20]byte, len(rawDataIds))
 	for i, idStr := range rawDataIds {
 		idBytes, err := hex.DecodeString(idStr)
 		if err != nil {
 			return nil, status.Errorf(codes.InvalidArgument, "Failed to decode dataId")
 		}
 		if len(idBytes) != 20 {
-			return nil, status.Errorf(codes.InvalidArgument, "Wrong ID length (expected 16)")
+			return nil, status.Errorf(codes.InvalidArgument, "Wrong ID length (expected 20)")
 		}
 		copy(dataIds[i][:], idBytes)
 	}
@@ -66,14 +66,14 @@ func (api *ExchangeAPI) AddDataIds(ctx context.Context, req *pb.DataIds) (*empty
 	}
 
 	rawDataIds := req.GetDataIds()
-	dataIds := make([][32]byte, len(rawDataIds))
+	dataIds := make([][20]byte, len(rawDataIds))
 	for i, idStr := range rawDataIds {
 		idBytes, err := hexutil.Decode(idStr)
 		if err != nil {
 			return nil, status.Errorf(codes.InvalidArgument, "Failed to decode dataId")
 		}
-		if len(idBytes) != 16 {
-			return nil, status.Errorf(codes.InvalidArgument, "Wrong id length (expected 16)")
+		if len(idBytes) != 20 {
+			return nil, status.Errorf(codes.InvalidArgument, "Wrong ID length (expected 20)")
 		}
 		copy(dataIds[i][:], idBytes)
 	}

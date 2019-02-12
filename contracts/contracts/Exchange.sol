@@ -31,7 +31,7 @@ contract Exchange is ReentrancyGuard {
         address _escrow,
         bytes4 _escrowSign,
         bytes memory _escrowArgs,
-        bytes32[] memory _dataIds
+        bytes20[] memory _dataIds
     ) public {
         require(_to != address(0), "invalid app");
         require(_escrow != address(0), "invalid contract address");
@@ -55,7 +55,7 @@ contract Exchange is ReentrancyGuard {
 
     function addDataIds(
         bytes8 _offerId,
-        bytes32[] memory _dataIds
+        bytes20[] memory _dataIds
     ) public {
         ExchangeLib.Offer storage offer = orderbook.getOffer(_offerId);
         require(offer.status == ExchangeLib.OfferStatus.NEUTRAL, "neutral state only");
@@ -126,7 +126,7 @@ contract Exchange is ReentrancyGuard {
         returns (
             address,         //from
             address,         //to
-            bytes32[] memory, //dataIds
+            bytes20[] memory, //dataIds
             // Escrow
             address,      // addr
             bytes4,       // sign

@@ -4,18 +4,16 @@ import (
 	"context"
 	"github.com/airbloc/airbloc-go/warehouse/service"
 	"github.com/azer/logger"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"sync"
-
-	"io"
-
-	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/node"
+	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/airbloc/airbloc-go/warehouse"
 	"github.com/pkg/errors"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"io"
 )
 
 type WarehouseAPI struct {
@@ -63,16 +61,16 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 			}
 		}
 
-		ownerAnID, err := common.HexToID(request.GetOwnerId())
+		userId, err := common.HexToID(request.GetUserId())
 		if err != nil {
-			return status.Errorf(codes.InvalidArgument, "Invalid user ANID: %s", request.GetOwnerId())
+			return status.Errorf(codes.InvalidArgument, "Invalid user ANID: %s", request.GetUserId())
 		}
 		total += 1
 		wg.Add(1)
 
 		datum := &common.Data{
-			Payload:   request.GetPayload(),
-			OwnerAnID: ownerAnID,
+			Payload: request.GetPayload(),
+			UserId:  userId,
 		}
 		go func() {
 			if err := bundleStream.Add(datum); err != nil {
@@ -119,15 +117,15 @@ func (api *WarehouseAPI) StoreEncryptedBundle(stream pb.Warehouse_StoreEncrypted
 			}
 		}
 
-		ownerAnID, err := common.HexToID(request.GetOwnerId())
+		userId, err := common.HexToID(request.GetUserId())
 		if err != nil {
-			return errors.Wrapf(err, "failed to parse ANID %s", request.GetOwnerId())
+			return errors.Wrapf(err, "failed to parse ANID %s", request.GetUserId())
 		}
 
 		datum := &common.EncryptedData{
-			Payload:   request.GetEncryptedPayload(),
-			OwnerAnID: ownerAnID,
-			Capsule:   request.GetCapsule(),
+			Payload: request.GetEncryptedPayload(),
+			UserId:  userId,
+			Capsule: request.GetCapsule(),
 		}
 		bundleStream.AddEncrypted(datum)
 	}
@@ -146,7 +144,7 @@ func (api *WarehouseAPI) StoreEncryptedBundle(stream pb.Warehouse_StoreEncrypted
 }
 
 func (api *WarehouseAPI) DeleteBundle(ctx context.Context, request *pb.DeleteBundleRequest) (*pb.DeleteBundleResult, error) {
-	return nil, nil
+	return nil, status.Error(codes.Unimplemented, "unimplemented")
 }
 
 func (api *WarehouseAPI) ListBundle(ctx context.Context, req *pb.ListBundleRequest) (*pb.ListBundleResult, error) {
@@ -159,15 +157,15 @@ func (api *WarehouseAPI) ListBundle(ctx context.Context, req *pb.ListBundleReque
 		return nil, err
 	}
 
-	var bundleResults []*pb.ListBundleResult_Bundle
-	for _, bundle := range bundles {
-		bundleResults = append(bundleResults, &pb.ListBundleResult_Bundle{
+	bundleResults := make([]*pb.ListBundleResult_Bundle, len(bundles))
+	for i, bundle := range bundles {
+		bundleResults[i] = &pb.ListBundleResult_Bundle{
 			CollectionId: bundle.Collection.Hex(),
 			Index:        1010,
 			CreatedAt:    uint64(bundle.IngestedAt.Unix()),
 			DataCount:    uint64(bundle.DataCount),
 			Uri:          bundle.Uri,
-		})
+		}
 	}
 	return &pb.ListBundleResult{
 		Bundles: bundleResults,

@@ -2,179 +2,243 @@ package merkle
 
 import (
 	"bytes"
-	"math/big"
-
-	"github.com/dgraph-io/badger"
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/airbloc/airbloc-go/common"
+	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
+	"math/big"
+	"sort"
 )
 
-type Key []common.Hash
+const depth = 64
 
-func (k Key) Len() int           { return len(k) }
-func (k Key) Swap(i, j int)      { k[i], k[j] = k[j], k[i] }
-func (k Key) Less(i, j int) bool { return bytes.Compare(k[i].Bytes(), k[j].Bytes()) == -1 }
-
-type SMT struct {
-	db     *badger.DB
-	tree   tree          // height/index/hash
-	empty  []common.Hash // height/hash
-	height int
-	hash   func(...[]byte) common.Hash
+// n is smallest element type of sparse merkle tree
+type n struct {
+	k uint64
+	v ethCommon.Hash
+	n uint64 // points to leaf that placed in next level
 }
+type ns []*n
 
-func NewSMT(db *badger.DB, hash func(...[]byte) common.Hash) *SMT {
-	smt := new(SMT)
-	smt.db = db
-	smt.hash = hash
-	smt.height = common.HashLength * 8
-	smt.empty = append(smt.empty, smt.hash([]byte{}))
-	for i := 0; i < smt.height-1; i++ {
-		smt.empty = append(smt.empty, smt.hash(
-			smt.empty[i].Bytes(),
-			smt.empty[i].Bytes(),
-		))
+func (ns ns) Len() int           { return len(ns) }
+func (ns ns) Less(i, j int) bool { return ns[i].k < ns[j].k }
+func (ns ns) Swap(i, j int)      { ns[i], ns[j] = ns[j], ns[i] }
+
+type MainTree struct {
+	leaves []struct {
+		userId common.ID
+		*SubTree
 	}
-	return smt
+	tree  []ns
+	root  ethCommon.Hash
+	empty []ethCommon.Hash // length of this array is depth of this tree
+	cache map[uint64]*SubTree
 }
 
-func (s *SMT) Close() error {
-	return s.db.Close()
-}
-
-func (s *SMT) Make(keys Key) common.Hash {
-	var base level
-	for _, key := range keys {
-		base = append(base, &node{cIdx: key.Big(), hash: key})
+func (mt *MainTree) Leaves() map[common.ID][]common.RowId {
+	leaves := make(map[common.ID][]common.RowId, len(mt.leaves))
+	for _, subTree := range mt.leaves {
+		leaves[subTree.userId] = subTree.Leaves()
 	}
-	s.tree = append(s.tree, &base)
-	return s.make(keys)
+	return leaves
 }
 
-func (s *SMT) make(keys Key) common.Hash {
-	for i := 0; i < s.height; i++ {
-		nLv := level{}
-		pLv := s.tree[i]
-		pIdx := big.NewInt(-1)
-		for j, n := range *pLv {
-			direction := n.Direction()
-
-			if !direction && n.CmpBool(bigAddInt(pIdx, 1)) {
-				//log.Println(i, direction, node.hash.Hex(), nLv[len(nLv)-1].hash.Hex(), "*")
-				// get last node and override it
-				nLv[len(nLv)-1].hash = s.makeHash(
-					direction,
-					n.hash,
-					(*pLv)[j-1].hash,
-				)
-			} else {
-				//if idx == 0 {
-				//	log.Println(i, direction, node.hash.Hex(), s.empty[i].Hex())
-				//}
-				nLv = append(nLv, &node{
-					cIdx: bigDivInt(n.cIdx, 2),
-					hash: s.makeHash(
-						direction,
-						n.hash,
-						s.empty[i],
-					),
-				})
-			}
-
-			n.nIdx = len(nLv) - 1
-			pIdx = n.cIdx
-		}
-		s.tree = append(s.tree, &nLv)
-	}
-	return (*s.tree[len(s.tree)-1])[0].hash
+func (mt *MainTree) Root() ethCommon.Hash {
+	return mt.root
 }
 
-func (s *SMT) Flush(blockNum *big.Int, data []byte) error {
-	return s.tree.flush(s.db, s.height, blockNum, data)
-}
+func (mt *MainTree) GenerateProof(rowId common.RowId, userId common.ID) ([]byte, error) {
+	leafIndex := sort.Search(len(mt.tree[0]), func(i int) bool {
+		return mt.tree[0][i].k == userId.Uint64()
+	})
 
-// TODO: generate proof without any node data - only transaction set
-// func (s *SMT) Proof(base Key, key common.Hash) ([]byte, error) {
-func (s *SMT) Proof(key common.Hash) ([]byte, error) {
-	if s.tree == nil {
-		return nil, errors.New("tree is empty")
-	}
-
-	n, err := (*s.tree[0]).Search(key)
+	leaf := mt.leaves[leafIndex]
+	subProof, err := leaf.GenerateProof(rowId)
 	if err != nil {
 		return nil, err
 	}
+	subProof = append(leaf.Root().Bytes(), subProof...)
 
-	var p = proof{
-		bits: make([]byte, common.HashLength),
-		hash: []common.Hash{},
-	}
-	for i := 0; i < s.height; i++ {
-		cLv := *s.tree[i] // max(s.height) = 255
-		node := cLv[n]    // node
+	var proofBits = make([]byte, depth/8)
+	var proofBytes []byte
 
-		sbkIdx := new(big.Int) // sibling key index
-		sbnIdx := n            // sibling node index
-		if node.Direction() {
-			sbnIdx++
-			sbkIdx = bigAddInt(node.cIdx, 1)
-		} else {
-			sbnIdx--
-			sbkIdx = bigSubInt(node.cIdx, 1)
+	for pos, lvl := range mt.tree[:len(mt.tree)-1] { // remove root
+		leaf := lvl[leafIndex]
+
+		if leafIndex%2 == 0 {
+			// right
+			coKey := leaf.k + 1
+			coIndex := leafIndex + 1
+
+			switch {
+			case len(lvl) != coIndex: // avoid panic
+				fallthrough
+			case lvl[coIndex].k == coKey:
+				setBit(proofBits, uint64(depth-pos))
+				proofBytes = append(proofBytes, leaf.v.Bytes()...)
+			}
 		}
-
-		if sbnIdx <= len(cLv)-1 && sbnIdx >= 0 &&
-			cLv[sbnIdx].CmpBool(sbkIdx) {
-			p.hash = append(p.hash, cLv[sbnIdx].hash)
-		} else {
-			bitSet(p.bits, uint64(i))
-		}
-		n = node.nIdx
 	}
 
-	return encodeProof(p), nil
+	mainProof := append(proofBits, proofBytes...)
+
+	return append(mainProof, subProof...), nil
 }
 
-func (s *SMT) Verify(key, root common.Hash, p []byte) bool {
-	pr, err := decodeProof(p)
-	if err != nil {
+func (mt *MainTree) verify(userId common.ID, proofBits, proofBytes []byte) bool {
+
+}
+
+func (mt *MainTree) Verify(rowId common.RowId, userId common.ID, proof []byte) bool {
+	// split proofs
+	// main
+	proofBits, proof := proof[:common.IDLength], proof[common.IDLength:]
+	count := 0
+	for i := 0; i < len(proofBits)*8; i++ {
+		if hasBit(proofBits, uint64(i)) {
+			count++
+		}
+	}
+	proofBytes, proof := proof[:ethCommon.HashLength*count], proof[ethCommon.HashLength*count:]
+
+	// sub
+	subRoot := proof[:ethCommon.HashLength]
+	subProof := proof[ethCommon.HashLength:]
+
+	// verify main proof
+	if !mt.verify(proofBits, proofBytes) {
 		return false
 	}
 
-	proofBits := pr.bits
-	proofHash := pr.hash
+	// verify sub proof
 
-	node := node{cIdx: key.Big()}
-	for i, j := 0, 0; i < s.height; i++ {
-		direction := node.Direction()
-		node.cIdx = bigDivInt(node.cIdx, 2)
-
-		if bitIsSet(proofBits, uint64(i)) {
-			//log.Println(i, direction, key.Hex(), s.empty[i].Hex())
-			key = s.makeHash(
-				direction,
-				key, s.empty[i],
-			)
-		} else {
-			//log.Println(i, direction, key.Hex(), proofHash[j].Hex(), "*")
-			key = s.makeHash(
-				direction,
-				key, proofHash[j],
-			)
-			j++
-		}
-	}
-
-	return bytes.Equal(key.Bytes(), root.Bytes())
+	return false, nil
 }
 
-func (s *SMT) makeHash(
-	direction bool,
-	x, y common.Hash,
-) common.Hash {
-	if direction {
-		return s.hash(x.Bytes(), y.Bytes())
-	} else {
-		return s.hash(y.Bytes(), x.Bytes())
+func (mt *MainTree) hash(b ...[]byte) ethCommon.Hash {
+	return crypto.Keccak256Hash(b...)
+}
+
+func (mt *MainTree) createEmptyHash() {
+	base := mt.hash(bytes.Repeat([]byte{0x00}, 32))
+	mt.empty[0] = base
+
+	for lvl := 1; lvl < depth+1; lvl++ {
+		prev := mt.empty[lvl-1]
+		next := mt.hash(prev.Bytes(), prev.Bytes())
+		mt.empty[lvl] = next
 	}
+}
+
+func (mt *MainTree) createTree() {
+	for _, leaf := range mt.leaves {
+		mt.tree[0] = append(mt.tree[0], &n{k: leaf.userId.Uint64(), v: leaf.Root()})
+	}
+
+	for lvl := 0; lvl < depth; lvl++ {
+		treeLvl := mt.tree[lvl]
+		nextLvl := ns{}
+
+		for i, v := range treeLvl {
+			if v.k%2 != 0 {
+				// left
+				coKey := v.k - 1
+				coIndex := i - 1
+
+				if i == 0 && treeLvl[coIndex].k != coKey {
+					nextLvl = append(nextLvl, &n{
+						k: v.k / 2,
+						v: mt.hash(mt.empty[lvl].Bytes(), v.v.Bytes()),
+						n: uint64(len(nextLvl)),
+					})
+				}
+			} else {
+				// right
+				coKey := v.k + 1
+				coIndex := i + 1
+
+				switch {
+				case len(treeLvl) == coIndex: // avoid panic
+					fallthrough
+				case treeLvl[coIndex].k != coKey:
+					nextLvl = append(nextLvl, &n{
+						k: v.k / 2,
+						v: mt.hash(v.v.Bytes(), mt.empty[lvl].Bytes()),
+						n: uint64(len(nextLvl)),
+					})
+				case treeLvl[coIndex].k == coKey:
+					nextLvl = append(nextLvl, &n{
+						k: v.k / 2,
+						v: mt.hash(v.v.Bytes(), treeLvl[coIndex].v.Bytes()),
+						n: uint64(len(nextLvl)),
+					})
+				}
+			}
+		}
+
+		mt.tree[lvl+1] = nextLvl
+	}
+}
+
+func NewMainTree(input map[common.ID][]common.RowId) (*MainTree, error) {
+	// check input
+	pow := new(big.Int).Lsh(big.NewInt(1), uint(64))
+	if big.NewInt(int64(len(input))).Cmp(pow) > 0 {
+		return nil, errors.New("too long input")
+	}
+
+	// create SubTrees
+	leaves := make([]struct {
+		userId common.ID
+		*SubTree
+	}, len(input))
+	i := 0
+
+	cache := make(map[uint64]*SubTree)
+	for k, v := range input {
+		leaf := struct {
+			userId common.ID
+			*SubTree
+		}{}
+		leaf.userId = k
+
+		if subTree, exists := cache[uint64(len(v))]; exists {
+			leaf.SubTree = subTree
+		} else {
+			subTree, err := NewSubTree(v)
+			if err != nil {
+				return nil, err
+			}
+			leaf.SubTree = subTree
+			cache[uint64(len(v))] = subTree
+		}
+		leaves[i] = leaf
+		i++
+	}
+
+	// sort by userId (key)
+	sort.Slice(leaves, func(i, j int) bool {
+		return leaves[i].userId.Uint64() < leaves[j].userId.Uint64()
+	})
+
+	// initialize struct & create empty hash
+	mt := &MainTree{
+		leaves: leaves,
+		tree:   make([]ns, depth+1),
+		empty:  make([]ethCommon.Hash, depth+1),
+		cache:  cache,
+	}
+	mt.createEmptyHash()
+
+	if len(mt.leaves) == 0 {
+		mt.root = mt.empty[depth]
+	} else {
+		mt.createTree()
+		root := mt.tree[len(mt.tree)-1]
+		if len(root) > 1 {
+			return nil, errors.Errorf("root array should have one element : %v", root)
+		}
+		mt.root = root[0].v
+	}
+	return mt, nil
 }

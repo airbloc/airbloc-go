@@ -23,11 +23,11 @@ func NewValidator(manager *Manager) *Validator {
 // IsCollectible returns true if the owner of the given data
 // has authorized data collection of the given collection (data type).
 func (validator *Validator) IsCollectible(collectionId common.ID, data *common.Data) bool {
-	allowed, err := validator.dauth.IsCollectionAllowed(collectionId, data.OwnerAnID)
+	allowed, err := validator.dauth.IsCollectionAllowed(collectionId, data.UserId)
 	if err != nil {
 		validator.log.Error("error: %s", err.Error(), logger.Attrs{
 			"collectionId": collectionId.Hex(),
-			"user":         data.OwnerAnID.Hex(),
+			"user":         data.UserId.Hex(),
 		})
 	}
 	return allowed

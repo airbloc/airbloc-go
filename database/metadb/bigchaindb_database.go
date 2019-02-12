@@ -3,7 +3,6 @@ package metadb
 import (
 	"context"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"log"
 	"net/http"
 	"time"
 
@@ -75,17 +74,23 @@ func (db *bigchainDB) Create(
 ) (tx *txn.Transaction, err error) {
 	metaDB := db.mdb.Collection("airbloc")
 
-	res, err := metaDB.InsertOne(context.Background(), primitive.M{"data": asset.Data})
+	_, err = metaDB.InsertOne(context.Background(), primitive.M{"data": asset.Data})
 	if err != nil {
 		return
 	}
-	log.Println(res.InsertedID)
 	/*
 		"_id": ObjectId,
 		"id": TxId,
 		"data": here,
 	*/
 	return
+}
+
+func (db *bigchainDB) Aggregate(
+	ctx context.Context,
+	pipeline interface{},
+) (mongo.Cursor, error) {
+	return db.mdb.Collection("airbloc").Aggregate(ctx, pipeline)
 }
 
 func (db *bigchainDB) RetrieveOne(

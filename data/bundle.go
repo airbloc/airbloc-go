@@ -18,7 +18,8 @@ type Bundle struct {
 	DataCount  int       `json:"dataCount"`
 	IngestedAt time.Time `json:"ingestedAt"`
 
-	Data []*common.EncryptedData `json:"data"`
+	// mapping(userId => []data)
+	Data map[common.ID][]*common.EncryptedData `json:"data"`
 }
 
 func UnmarshalBundle(bundleData []byte) (*Bundle, error) {

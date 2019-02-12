@@ -14,6 +14,9 @@ import (
 const (
 	IDLength    = 8
 	IDStrLength = 16
+
+	RowIdLength    = 4
+	RowIdStrLength = 8
 )
 
 type ID [IDLength]byte
@@ -38,6 +41,12 @@ func BytesToID(idBytes []byte) ID {
 	return id
 }
 
+func UintToID(i uint64) ID {
+	id := ID{}
+	binary.LittleEndian.PutUint64(id[:], i)
+	return id
+}
+
 func GenerateID(issuer common.Address, time time.Time, seed []byte) (id ID) {
 	// use ABI-compatible 32-byte padding,
 	// to be compatible with keccak256 on Ethereum
@@ -52,6 +61,10 @@ func GenerateID(issuer common.Address, time time.Time, seed []byte) (id ID) {
 	// use only first 8 byte in 32-byte hash
 	copy(id[:], hash[:8])
 	return
+}
+
+func (id *ID) Uint64() uint64 {
+	return binary.LittleEndian.Uint64(id[:])
 }
 
 func (id *ID) Hex() string {
@@ -94,4 +107,60 @@ func IDFilter(ids ...ID) [][32]byte {
 		copy(byteIds[i][:8], id[:])
 	}
 	return byteIds
+}
+
+type RowId [RowIdLength]byte
+
+func HexToRowId(idStr string) (RowId, error) {
+	var id RowId
+	byteId, err := hex.DecodeString(idStr)
+	if err != nil {
+		return id, err
+	}
+	if len(byteId) != RowIdLength {
+		return id, errors.Errorf("invalid ID: %s", idStr)
+	}
+	copy(id[:], byteId[:RowIdLength])
+	return BytesToRowId(byteId), nil
+}
+
+func BytesToRowId(idBytes []byte) RowId {
+	var id RowId
+	copy(id[:], idBytes[:RowIdLength])
+	return id
+}
+
+func UintToRowId(i uint32) RowId {
+	id := RowId{}
+	binary.LittleEndian.PutUint32(id[:], i)
+	return id
+}
+
+func (id *RowId) Uint32() uint32 {
+	return binary.LittleEndian.Uint32(id[:])
+}
+
+func (id *RowId) Hex() string {
+	return hex.EncodeToString(id[:])
+}
+
+func (id *RowId) UnmarshalJSON(b []byte) error {
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+
+	tempId, err := hex.DecodeString(s)
+	if err != nil {
+		return err
+	}
+	if len(tempId) != RowIdLength {
+		return errors.Errorf("invalid ID format: %s", string(b))
+	}
+	copy(id[:], tempId)
+	return nil
+}
+
+func (id *RowId) MarshalJSON() ([]byte, error) {
+	return json.Marshal(id.Hex())
 }
