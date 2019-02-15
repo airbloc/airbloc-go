@@ -12,6 +12,23 @@ import (
 
 const depth = 64
 
+var (
+	empty []ethCommon.Hash
+	hash  = func(b ...[]byte) ethCommon.Hash { return crypto.Keccak256Hash(b...) }
+)
+
+func init() {
+	empty = make([]ethCommon.Hash, depth+1)
+	base := crypto.Keccak256Hash(bytes.Repeat([]byte{0x00}, 32))
+	empty[0] = base
+
+	for lvl := 1; lvl < depth+1; lvl++ {
+		prev := empty[lvl-1]
+		next := crypto.Keccak256Hash(prev.Bytes(), prev.Bytes())
+		empty[lvl] = next
+	}
+}
+
 // n is smallest element type of sparse merkle tree
 type n struct {
 	k uint64
@@ -31,7 +48,6 @@ type MainTree struct {
 	}
 	tree  []ns
 	root  ethCommon.Hash
-	empty []ethCommon.Hash // length of this array is depth of this tree
 	cache map[uint64]*SubTree
 }
 
@@ -49,8 +65,12 @@ func (mt *MainTree) Root() ethCommon.Hash {
 
 func (mt *MainTree) GenerateProof(rowId common.RowId, userId common.ID) ([]byte, error) {
 	leafIndex := sort.Search(len(mt.tree[0]), func(i int) bool {
-		return mt.tree[0][i].k == userId.Uint64()
+		return mt.tree[0][i].k >= userId.Uint64()
 	})
+
+	if leafIndex == len(mt.tree[0]) {
+		return nil, errors.New("cannot find leaf in main tree")
+	}
 
 	leaf := mt.leaves[leafIndex]
 	subProof, err := leaf.GenerateProof(rowId)
@@ -71,13 +91,14 @@ func (mt *MainTree) GenerateProof(rowId common.RowId, userId common.ID) ([]byte,
 			coIndex := leafIndex + 1
 
 			switch {
-			case len(lvl) != coIndex: // avoid panic
-				fallthrough
+			case len(lvl) == coIndex: // avoid panic
 			case lvl[coIndex].k == coKey:
 				setBit(proofBits, uint64(depth-pos))
 				proofBytes = append(proofBytes, leaf.v.Bytes()...)
 			}
 		}
+
+		leafIndex /= 2
 	}
 
 	mainProof := append(proofBits, proofBytes...)
@@ -85,11 +106,28 @@ func (mt *MainTree) GenerateProof(rowId common.RowId, userId common.ID) ([]byte,
 	return append(mainProof, subProof...), nil
 }
 
-func (mt *MainTree) verify(userId common.ID, proofBits, proofBytes []byte) bool {
+func verifyMainProof(userId common.ID, subRoot, mainRoot, proofBits, proofBytes []byte) bool {
+	k := userId.Uint64()
+	v := ethCommon.BytesToHash(subRoot)
 
+	for i := 0; i < len(proofBits)*8; i++ {
+		h := empty[i].Bytes()
+		if hasBit(proofBits, uint64(i)) {
+			h, proofBytes = proofBytes[:HashLength], proofBytes[HashLength:]
+		}
+
+		if k%2 != 0 {
+			v = hash(h, v.Bytes())
+		} else {
+			v = hash(v.Bytes(), h)
+		}
+		k /= 2
+	}
+
+	return bytes.Equal(mainRoot, v.Bytes())
 }
 
-func (mt *MainTree) Verify(rowId common.RowId, userId common.ID, proof []byte) bool {
+func VerifyMainProof(rowId common.RowId, userId common.ID, mainRoot, proof []byte) bool {
 	// split proofs
 	// main
 	proofBits, proof := proof[:common.IDLength], proof[common.IDLength:]
@@ -99,35 +137,27 @@ func (mt *MainTree) Verify(rowId common.RowId, userId common.ID, proof []byte) b
 			count++
 		}
 	}
-	proofBytes, proof := proof[:ethCommon.HashLength*count], proof[ethCommon.HashLength*count:]
+	proofBytes, proof := proof[:HashLength*count], proof[HashLength*count:]
 
 	// sub
-	subRoot := proof[:ethCommon.HashLength]
-	subProof := proof[ethCommon.HashLength:]
+	subRoot := proof[:HashLength]
+	subProof := proof[HashLength:]
 
 	// verify main proof
-	if !mt.verify(proofBits, proofBytes) {
+	if !verifyMainProof(userId, subRoot, mainRoot, proofBits, proofBytes) {
 		return false
 	}
 
 	// verify sub proof
+	if !verifySubProof(rowId, subRoot, subProof) {
+		return false
+	}
 
-	return false, nil
-}
-
-func (mt *MainTree) hash(b ...[]byte) ethCommon.Hash {
-	return crypto.Keccak256Hash(b...)
+	return true
 }
 
 func (mt *MainTree) createEmptyHash() {
-	base := mt.hash(bytes.Repeat([]byte{0x00}, 32))
-	mt.empty[0] = base
 
-	for lvl := 1; lvl < depth+1; lvl++ {
-		prev := mt.empty[lvl-1]
-		next := mt.hash(prev.Bytes(), prev.Bytes())
-		mt.empty[lvl] = next
-	}
 }
 
 func (mt *MainTree) createTree() {
@@ -145,10 +175,13 @@ func (mt *MainTree) createTree() {
 				coKey := v.k - 1
 				coIndex := i - 1
 
-				if i == 0 && treeLvl[coIndex].k != coKey {
+				switch {
+				case i == 0: // avoid panic
+					fallthrough
+				case treeLvl[coIndex].k != coKey:
 					nextLvl = append(nextLvl, &n{
 						k: v.k / 2,
-						v: mt.hash(mt.empty[lvl].Bytes(), v.v.Bytes()),
+						v: hash(empty[lvl].Bytes(), v.v.Bytes()),
 						n: uint64(len(nextLvl)),
 					})
 				}
@@ -163,13 +196,13 @@ func (mt *MainTree) createTree() {
 				case treeLvl[coIndex].k != coKey:
 					nextLvl = append(nextLvl, &n{
 						k: v.k / 2,
-						v: mt.hash(v.v.Bytes(), mt.empty[lvl].Bytes()),
+						v: hash(v.v.Bytes(), empty[lvl].Bytes()),
 						n: uint64(len(nextLvl)),
 					})
 				case treeLvl[coIndex].k == coKey:
 					nextLvl = append(nextLvl, &n{
 						k: v.k / 2,
-						v: mt.hash(v.v.Bytes(), treeLvl[coIndex].v.Bytes()),
+						v: hash(v.v.Bytes(), treeLvl[coIndex].v.Bytes()),
 						n: uint64(len(nextLvl)),
 					})
 				}
@@ -225,13 +258,12 @@ func NewMainTree(input map[common.ID][]common.RowId) (*MainTree, error) {
 	mt := &MainTree{
 		leaves: leaves,
 		tree:   make([]ns, depth+1),
-		empty:  make([]ethCommon.Hash, depth+1),
 		cache:  cache,
 	}
 	mt.createEmptyHash()
 
 	if len(mt.leaves) == 0 {
-		mt.root = mt.empty[depth]
+		mt.root = empty[depth]
 	} else {
 		mt.createTree()
 		root := mt.tree[len(mt.tree)-1]

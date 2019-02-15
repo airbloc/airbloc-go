@@ -1,6 +1,7 @@
 package data
 
 import (
+	"github.com/airbloc/airbloc-go/merkle"
 	"time"
 
 	"golang.org/x/crypto/sha3"
@@ -20,6 +21,7 @@ type Bundle struct {
 
 	// mapping(userId => []data)
 	Data map[common.ID][]*common.EncryptedData `json:"data"`
+	tree *merkle.MainTree                      `json:"-"`
 }
 
 func UnmarshalBundle(bundleData []byte) (*Bundle, error) {
