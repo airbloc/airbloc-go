@@ -77,4 +77,7 @@ run: airbloc
 test: test-all
 
 test-all:
-	@go test -v ./...
+	@go test -v `go list ./... | grep -v test/e2e`
+
+test-e2e:
+	@go test -v `go list ./test/e2e` $(FLAGS)
