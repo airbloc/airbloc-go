@@ -3,6 +3,7 @@ package p2p
 import (
 	"context"
 	"fmt"
+	"github.com/libp2p/go-libp2p-kbucket"
 	"reflect"
 	"sync"
 	"time"
@@ -152,12 +153,9 @@ func (s *AirblocServer) clearPeer() {
 
 func (s *AirblocServer) updatePeer() int {
 	idch, err := s.dht.GetClosestPeers(s.ctx, s.id.KeyString())
-	if s.ctx.Err() != nil {
-		s.log.Error("Failed to discovery peers: context error", s.ctx.Err())
-		return 0
-	}
-
-	if err != nil {
+	if err == kbucket.ErrLookupFailure {
+		s.log.Info("Warning: no peer available")
+	} else if err != nil {
 		s.log.Error("Failed to discovery peers", err)
 	}
 
