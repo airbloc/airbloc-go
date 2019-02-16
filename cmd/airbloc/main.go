@@ -12,6 +12,7 @@ import (
 	"github.com/airbloc/airbloc-go/node/userdelegateapi"
 	"github.com/airbloc/airbloc-go/userdelegate"
 	"github.com/airbloc/logger"
+	log2 "log"
 
 	"github.com/airbloc/airbloc-go/node"
 	"github.com/airbloc/airbloc-go/node/serverapi"
@@ -19,9 +20,8 @@ import (
 )
 
 var (
-	log = logger.New(name)
-
-	config = new(node.Config)
+	log    = logger.New(name)
+	config = node.NewConfig()
 
 	rootCmd = &cobra.Command{
 		Use:     name,
@@ -94,9 +94,9 @@ func init() {
 
 	rflags.StringVarP(&rootFlags.dataDir, "datadir", "d", "~/.airbloc", "Data directory")
 	rflags.StringVarP(&rootFlags.configPath, "config", "c", "$DATADIR/config.yml", "Config file")
-	rflags.StringVarP(&rootFlags.keyPath, "keystore", "k", "$DATADIR/private.key", "Keystore file for node")
+	rflags.StringVarP(&rootFlags.keyPath, "keystore", "k", "", "Keystore file for node (default is $DATADIR/private.key)")
 
-	rflags.StringVar(&rootFlags.keyPath, "ethereum", config.Blockchain.Endpoint, "Ethereum RPC endpoint")
+	rflags.StringVar(&config.Blockchain.Endpoint, "ethereum", config.Blockchain.Endpoint, "Ethereum RPC endpoint")
 	rflags.StringVar(&config.MetaDB.MongoDBEndpoint, "metadb", config.MetaDB.MongoDBEndpoint, "Metadatabase endpoint")
 	rflags.StringSliceVar(&config.P2P.BootNodes, "bootnodes", config.P2P.BootNodes, "Bootstrap Node multiaddr for P2P")
 
@@ -118,6 +118,11 @@ func init() {
 }
 
 func loadConfig() {
+	args := strings.Join(os.Args, " ")
+	if strings.HasSuffix(args, "help") || strings.HasSuffix(args, "version") {
+		return
+	}
+
 	// get data directory
 	dataDir, err := homedir.Expand(rootFlags.dataDir)
 	if err != nil {
@@ -134,9 +139,21 @@ func loadConfig() {
 		os.Exit(1)
 	}
 
+	// override key path
+	if rootFlags.keyPath != "" {
+		config.PrivateKeyPath = rootFlags.keyPath
+	} else {
+		keyPath := strings.Replace(rootFlags.keyPath, "$DATADIR", dataDir, 1)
+		config.PrivateKeyPath = keyPath
+	}
+
 	// setup loggers
+	if rootFlags.verbose {
+		rootFlags.logLevel = "*"
+	}
 	logger2.Setup(os.Stdout, rootFlags.logLevel, rootFlags.logFilter)
 	logger.SetLogger(logger.NewStandardOutput(os.Stdout, rootFlags.logLevel, rootFlags.logFilter))
+	log2.SetOutput(os.Stderr)
 }
 
 func main() {
@@ -150,7 +167,7 @@ func start(serviceNames string, apiNames string) func(cmd *cobra.Command, args [
 	return func(cmd *cobra.Command, args []string) {
 		backend, err := node.NewAirblocBackend(config)
 		if err != nil {
-			log.Error("Error: failed to initialize the backend", err)
+			log.Error("Error: init", err)
 			os.Exit(1)
 		}
 		defer backend.Stop()
