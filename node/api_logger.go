@@ -6,7 +6,7 @@ import (
 	"github.com/json-iterator/go"
 	"time"
 
-	"github.com/azer/logger"
+	"github.com/airbloc/logger"
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
 	"google.golang.org/grpc"

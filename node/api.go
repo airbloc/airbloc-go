@@ -2,7 +2,7 @@ package node
 
 import (
 	"fmt"
-	"github.com/azer/logger"
+	"github.com/airbloc/logger"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/pkg/errors"
