@@ -7,17 +7,23 @@ PROTO_DIR := proto
 PROTO_SRCS := $(shell find $(PROTO_DIR) -name *.proto)
 RPC_PROTO_SRCS := $(shell find $(PROTO_DIR)/rpc -name *.proto)
 
+# build tags
+LDFLAGS += -X "main.Version=$(shell git rev-list --tags --max-count=1)"
+LDFLAGS += -X "main.BuildDate=$(shell date)"
+LDFLAGS += -X "main.GitCommit=$(shell git rev-parse --short HEAD)"
+LDFLAGS += -X "main.GitBranch=$(shell git symbolic-ref -q --short HEAD)"
+
 all: airbloc bootnode
 
 deps:
 	@go build -v ./...
 
 airbloc:
-	@go build -o "$(DEST)/airbloc" ./cmd/airbloc
+	@go build -o "$(DEST)/airbloc" -ldflags '${LDFLAGS}' ./cmd/airbloc
 	@echo "$(DEST)/airbloc"
 
 bootnode:
-	@go build -o "$(DEST)/bootnode" ./cmd/bootnode
+	@go build -o "$(DEST)/bootnode" -ldflags '${LDFLAGS}' ./cmd/bootnode
 	@echo "$(DEST)/bootnode"
 
 clean:
