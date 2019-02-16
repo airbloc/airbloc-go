@@ -2,6 +2,8 @@ package p2p
 
 import (
 	"context"
+	"github.com/libp2p/go-libp2p-protocol"
+	"github.com/multiformats/go-multiaddr"
 
 	"github.com/airbloc/airbloc-go/p2p/common"
 	"github.com/libp2p/go-libp2p-interface-connmgr"
@@ -36,4 +38,12 @@ type Host interface {
 	// host interfaces
 	Connect(context.Context, peerstore.PeerInfo) error
 	ProtocolRegistry
+
+	Addrs() []multiaddr.Multiaddr
+	SetStreamHandler(pid protocol.ID, handler net.StreamHandler)
+	SetStreamHandlerMatch(protocol.ID, func(string) bool, net.StreamHandler)
+	RemoveStreamHandler(pid protocol.ID)
+	NewStream(ctx context.Context, p peer.ID, pids ...protocol.ID) (net.Stream, error)
+
+	Close() error
 }
