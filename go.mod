@@ -40,7 +40,7 @@ require (
 	github.com/hashicorp/golang-lru v0.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/ipfs/go-cid v0.9.0
-	github.com/ipfs/go-datastore v3.2.0+incompatible // indirect
+	github.com/ipfs/go-datastore v3.2.0+incompatible
 	github.com/ipfs/go-detect-race v1.0.1 // indirect
 	github.com/ipfs/go-ipfs-util v1.2.8 // indirect
 	github.com/ipfs/go-log v1.5.7 // indirect
@@ -97,6 +97,8 @@ require (
 	github.com/libp2p/go-ws-transport v2.0.15+incompatible // indirect
 	github.com/loomnetwork/mamamerkle v0.0.0-20180929134451-bd379c19d963
 	github.com/mattn/go-colorable v0.0.9 // indirect
+	github.com/mcuadros/go-defaults v1.1.0
+	github.com/miekg/dns v1.1.4 // indirect
 	github.com/minio/blake2b-simd v0.0.0-20160723061019-3f5f724cb5b1 // indirect
 	github.com/minio/sha256-simd v0.0.0-20181005183134-51976451ce19 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
@@ -139,6 +141,7 @@ require (
 	github.com/whyrusleeping/go-smux-multistream v2.0.2+incompatible // indirect
 	github.com/whyrusleeping/go-smux-yamux v2.0.8+incompatible // indirect
 	github.com/whyrusleeping/mafmt v1.2.8 // indirect
+	github.com/whyrusleeping/mdns v0.0.0-20180901202407-ef14215e6b30 // indirect
 	github.com/whyrusleeping/multiaddr-filter v0.0.0-20160516205228-e903e4adabd7 // indirect
 	github.com/whyrusleeping/yamux v1.1.2 // indirect
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
