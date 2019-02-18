@@ -11,7 +11,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"log"
-	"time"
 )
 
 type DataAPI struct {
@@ -42,7 +41,7 @@ func (api *DataAPI) Get(ctx context.Context, dataId *pb.DataId) (*pb.DataResult,
 	return &pb.DataResult{
 		CollectionId: res.CollectionId.Hex(),
 		UserId:       res.UserId.Hex(),
-		IngestedAt:   res.IngestedAt.UnixNano() / (int64(time.Millisecond) / int64(time.Nanosecond)),
+		IngestedAt:   res.IngestedAt.Timestamp(),
 		Payload:      res.Payload,
 	}, nil
 }
@@ -64,7 +63,7 @@ func (api *DataAPI) GetBatch(ctx context.Context, batchId *pb.BatchRequest) (*pb
 		batchResult[i] = &pb.DataResult{
 			CollectionId: data.CollectionId.Hex(),
 			UserId:       data.UserId.Hex(),
-			IngestedAt:   data.IngestedAt.UnixNano() / (int64(time.Millisecond) / int64(time.Nanosecond)),
+			IngestedAt:   data.IngestedAt.Timestamp(),
 			Payload:      data.Payload,
 		}
 	}

@@ -5,7 +5,7 @@ import (
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain"
 	"github.com/airbloc/airbloc-go/collections"
-	ablCommon "github.com/airbloc/airbloc-go/common"
+	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/data"
 	"github.com/airbloc/airbloc-go/database/localdb"
 	"github.com/airbloc/airbloc-go/database/metadb"
@@ -17,7 +17,6 @@ import (
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/pkg/errors"
-	"time"
 )
 
 type Manager struct {
@@ -55,26 +54,26 @@ func (manager *Manager) Batches() *data.BatchManager {
 	return manager.batches
 }
 
-func (manager *Manager) encrypt(data *ablCommon.Data) (*ablCommon.EncryptedData, error) {
+func (manager *Manager) encrypt(data *common.Data) (*common.EncryptedData, error) {
 	encryptedPayload, err := manager.kms.Encrypt(data.Payload)
 	if err != nil {
 		return nil, err
 	}
-	return &ablCommon.EncryptedData{
+	return &common.EncryptedData{
 		UserId:  data.UserId,
 		Payload: encryptedPayload,
 	}, nil
 }
 
 type getDataResult struct {
-	CollectionId ablCommon.ID
-	UserId       ablCommon.ID
-	IngestedAt   time.Time
+	CollectionId common.ID
+	UserId       common.ID
+	IngestedAt   common.Time
 	Payload      string
 }
 
 func (manager *Manager) Get(rawDataId string) (*getDataResult, error) {
-	dataId, err := ablCommon.NewDataId(rawDataId)
+	dataId, err := common.NewDataId(rawDataId)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to parse data ID %s", rawDataId)
 	}
@@ -105,7 +104,7 @@ func (manager *Manager) Get(rawDataId string) (*getDataResult, error) {
 
 func (manager *Manager) GetBatch(batch *data.Batch) ([]*getDataResult, error) {
 	result := make([]*getDataResult, batch.Count)
-	bundles := make(map[ablCommon.ID]*data.Bundle, batch.Count)
+	bundles := make(map[common.ID]*data.Bundle, batch.Count)
 
 	index := 0
 	for dataId := range batch.Iterator() {
@@ -146,7 +145,7 @@ func (manager *Manager) GetBatch(batch *data.Batch) ([]*getDataResult, error) {
 	return result, nil
 }
 
-type BundleInfo struct {
+type bundleInfo struct {
 	Id         string        `json:"bundleId" mapstructure:"bundleId"`
 	Uri        string        `json:"uri" mapstructure:"uri"`
 	Provider   string        `json:"provider" mapstructure:"provider"`
@@ -156,7 +155,7 @@ type BundleInfo struct {
 	RawDataIds []primitive.D `json:"dataIds" mapstructure:"dataIds"`
 }
 
-func (manager *Manager) GetBundleInfo(ctx context.Context, id ablCommon.ID) (*BundleInfo, error) {
+func (manager *Manager) GetBundleInfo(ctx context.Context, id common.ID) (*bundleInfo, error) {
 	rawBundle, err := manager.metadb.RetrieveOne(ctx, bson.M{"bundleId": id.Hex()})
 	if err != nil {
 		return nil, errors.Wrap(err, "retrieving bundle data")
@@ -166,7 +165,7 @@ func (manager *Manager) GetBundleInfo(ctx context.Context, id ablCommon.ID) (*Bu
 	//d, _ := json.MarshalIndent(rawBundle, "", "    ")
 	//log.Println(string(d))
 
-	bundleInfo := new(BundleInfo)
+	bundleInfo := new(bundleInfo)
 	bundleInfo.Id = id.Hex()
 	if err := mapstructure.Decode(rawBundle, bundleInfo); err != nil {
 		return nil, errors.Wrap(err, "decoding document")
@@ -174,7 +173,7 @@ func (manager *Manager) GetBundleInfo(ctx context.Context, id ablCommon.ID) (*Bu
 
 	bundleInfo.DataIds = make([]string, len(bundleInfo.RawDataIds))
 	for index, id := range bundleInfo.RawDataIds {
-		rawDataId := new(ablCommon.RawDataId)
+		rawDataId := new(common.RawDataId)
 		if err := mapstructure.Decode(id.Map(), rawDataId); err != nil {
 			return nil, errors.Wrap(err, "decoding rawDataId")
 		}
@@ -190,7 +189,7 @@ func (manager *Manager) GetBundleInfo(ctx context.Context, id ablCommon.ID) (*Bu
 	return bundleInfo, nil
 }
 
-type UserInfo struct {
+type userInfo struct {
 	AppId        string `json:"appId" mapstructure:"-"`
 	SchemaId     string `json:"schemaId" mapstructure:"-"`
 	CollectionId string `json:"_id" mapstructure:"_id"`
@@ -201,7 +200,7 @@ type UserInfo struct {
 	RawDataIds [][]primitive.D `json:"-" mapstructure:"dataIds"`
 }
 
-func (manager *Manager) GetUserInfo(ctx context.Context, id ablCommon.ID) ([]*UserInfo, error) {
+func (manager *Manager) GetUserInfo(ctx context.Context, id common.ID) ([]*userInfo, error) {
 	pipeline := mongo.Pipeline{
 		bson.D{{"$match", bson.D{{"data.data.dataIds.userId", id.Hex()}}}},
 		bson.D{{"$project", bson.D{
@@ -236,7 +235,7 @@ func (manager *Manager) GetUserInfo(ctx context.Context, id ablCommon.ID) ([]*Us
 	}
 	defer cur.Close(ctx)
 
-	var infoes []*UserInfo
+	var infoes []*userInfo
 	for cur.Next(ctx) {
 		elem := &bson.D{}
 		if err := cur.Decode(elem); err != nil {
@@ -247,13 +246,13 @@ func (manager *Manager) GetUserInfo(ctx context.Context, id ablCommon.ID) ([]*Us
 		//d, _ := json.MarshalIndent(elem.Map(), "", "    ")
 		//log.Println(string(d))
 
-		collection := new(UserInfo)
+		collection := new(userInfo)
 		if err := mapstructure.Decode(elem.Map(), &collection); err != nil {
 			return nil, errors.Wrap(err, "decoding document")
 		}
 
 		// appId, schemaId, etc...
-		collectionId, err := ablCommon.HexToID(collection.CollectionId)
+		collectionId, err := common.HexToID(collection.CollectionId)
 		if err != nil {
 			return nil, errors.Wrap(err, "converting collectionId")
 		}
@@ -270,7 +269,7 @@ func (manager *Manager) GetUserInfo(ctx context.Context, id ablCommon.ID) ([]*Us
 				IngestedAt int64  `json:"ingestedAt"`
 			}, len(idPack))...)
 			for _, id := range idPack {
-				rawDataId := new(ablCommon.RawDataId)
+				rawDataId := new(common.RawDataId)
 				if err := mapstructure.Decode(id.Map(), rawDataId); err != nil {
 					return nil, errors.Wrap(err, "decoding rawDataId")
 				}

@@ -1,8 +1,6 @@
 package collections
 
 import (
-	"time"
-
 	"github.com/airbloc/airbloc-go/common"
 	"github.com/airbloc/airbloc-go/schemas"
 )
@@ -16,10 +14,10 @@ type Collection struct {
 
 	// format of the data the app want to collect
 	Schema    schemas.Schema
-	CreatedAt time.Time
+	CreatedAt common.Time
 }
 
-// IncentivePolicy is a policy about sharing revenue of the data
+// IcentivePolicy is a policy about sharing revenue of the data
 // between each stakeholders at the data delivery pipeline.
 type IncentivePolicy struct {
 	DataProvider  float64

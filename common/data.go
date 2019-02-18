@@ -8,16 +8,18 @@ import (
 )
 
 type Data struct {
-	UserId  ID     `json:"userId"`
-	RowId   RowId  `json:"rowId"`
-	Payload string `json:"payload"`
+	UserId      ID     `json:"userId"`
+	RowId       RowId  `json:"rowId"`
+	CollectedAt Time   `json:"collecedAt"`
+	Payload     string `json:"payload"`
 }
 
 type EncryptedData struct {
-	UserId  ID     `json:"userId"`
-	RowId   RowId  `json:"rowId"`
-	Capsule []byte `json:"capsule"`
-	Payload []byte `json:"payload"`
+	UserId      ID     `json:"userId"`
+	RowId       RowId  `json:"rowId"`
+	Capsule     []byte `json:"capsule"`
+	CollectedAt Time   `json:"collectedAt"`
+	Payload     []byte `json:"payload"`
 }
 
 type DataId struct {
@@ -72,10 +74,11 @@ func (id *DataId) String() string {
 }
 
 type RawDataId struct {
-	BundleId   string             `json:"bundleId" mapstructure:"bundleId"`
-	UserId     string             `json:"userId" mapstructure:"userId"`
-	RowId      string             `json:"rowId" mapstructure:"rowId"`
-	IngestedAt primitive.DateTime `json:"ingestedAt" mapstructure:"ingestedAt"`
+	BundleId    string             `json:"bundleId" mapstructure:"bundleId"`
+	UserId      string             `json:"userId" mapstructure:"userId"`
+	RowId       string             `json:"rowId" mapstructure:"rowId"`
+	CollectedAt primitive.DateTime `json:"collectedAt" mapstructure:"collectedAt"`
+	IngestedAt  primitive.DateTime `json:"ingestedAt" mapstructure:"ingestedAt"`
 }
 
 func (id *RawDataId) Convert() (*DataId, error) {
