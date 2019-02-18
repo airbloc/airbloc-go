@@ -42,6 +42,7 @@ require (
 	github.com/jbenet/go-temp-err-catcher v0.0.0-20150120210811-aac704a3f4f2 // indirect
 	github.com/jbenet/goprocess v0.0.0-20160826012719-b497e2f366b8 // indirect
 	github.com/jinzhu/configor v0.0.0-20180614024415-4edaf76fe188
+	github.com/json-iterator/go v1.1.5
 	github.com/kalaspuffar/base64url v0.0.0-20171121144659-483af17b794c
 	github.com/klauspost/compress v1.4.0
 	github.com/klauspost/cpuid v0.0.0-20170728055534-ae7887de9fa5
@@ -87,6 +88,8 @@ require (
 	github.com/minio/blake2b-simd v0.0.0-20160723061019-3f5f724cb5b1 // indirect
 	github.com/minio/sha256-simd v0.0.0-20181005183134-51976451ce19 // indirect
 	github.com/mitchellh/mapstructure v1.1.2
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/mongodb/mongo-go-driver v0.1.0
 	github.com/mr-tron/base58 v1.1.0
 	github.com/multiformats/go-multiaddr v1.3.0

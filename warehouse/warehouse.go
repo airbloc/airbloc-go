@@ -144,7 +144,7 @@ func (dw *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 	if stream == nil {
 		return nil, errors.New("No data in the stream.")
 	}
-	ingestedAt := time.Now()
+	ingestedAt := common.Time{Time: time.Now()}
 
 	createdBundle := &data.Bundle{
 		Provider:   stream.provider,
@@ -176,6 +176,7 @@ InsertDataIds:
 			dataIds[i]["bundleId"] = bundleId.Hex()
 			dataIds[i]["userId"] = d.UserId.Hex()
 			dataIds[i]["rowId"] = d.RowId.Hex()
+			dataIds[i]["collectedAt"] = d.CollectedAt.Timestamp()
 
 			if len(createdBundle.Data) == i {
 				break InsertDataIds
@@ -191,13 +192,14 @@ InsertDataIds:
 		"provider":   createdBundle.Provider.Hex(),
 		"collection": createdBundle.Collection.Hex(),
 		"dataCount":  createdBundle.DataCount,
-		"ingestedAt": ingestedAt,
+		"ingestedAt": ingestedAt.Timestamp(),
 		"dataIds":    dataIds,
 	}
 	_, err = dw.metaDatabase.Create(bundleInfo, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to save metadata")
 	}
+
 	dw.log.Info("Bundle %s registered on", bundleName, logger.Attrs{
 		"id":    bundleId.Hex(),
 		"count": bundleInfo["dataCount"],
@@ -280,7 +282,7 @@ func (dw *DataWarehouse) List(providerId common.ID) ([]*data.Bundle, error) {
 			Id:         bundleData["bundleId"].(string),
 			Uri:        bundleData["uri"].(string),
 			DataCount:  bundleData["dataCount"].(int),
-			IngestedAt: ingestedAt,
+			IngestedAt: common.Time{Time: ingestedAt},
 			Provider:   providerId,
 			Collection: collectionId,
 		})

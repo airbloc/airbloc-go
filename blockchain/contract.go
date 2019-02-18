@@ -1,15 +1,16 @@
 package blockchain
 
 import (
+	"github.com/json-iterator/go"
 	"io"
 	"os"
 	"reflect"
 
-	"encoding/json"
-
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var (
 	// ContractList is filled by automatically generated contract binds in package `adapter`.

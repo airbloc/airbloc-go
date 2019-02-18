@@ -2,41 +2,30 @@ package data
 
 import (
 	"github.com/airbloc/airbloc-go/merkle"
-	"time"
-
+	"github.com/json-iterator/go"
 	"golang.org/x/crypto/sha3"
 
 	"github.com/airbloc/airbloc-go/common"
 	ethCommon "github.com/ethereum/go-ethereum/common"
-	"github.com/mailru/easyjson"
 )
 
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
+
 type Bundle struct {
-	Id         string    `json:"-"`
-	Uri        string    `json:"-"`
-	Provider   common.ID `json:"provider"`
-	Collection common.ID `json:"collection"`
-	DataCount  int       `json:"dataCount"`
-	IngestedAt time.Time `json:"ingestedAt"`
+	Id         string      `json:"-"`
+	Uri        string      `json:"-"`
+	Provider   common.ID   `json:"provider"`
+	Collection common.ID   `json:"collection"`
+	DataCount  int         `json:"dataCount"`
+	IngestedAt common.Time `json:"ingestedAt"`
 
 	// mapping(userId => []data)
 	Data map[common.ID][]*common.EncryptedData `json:"data"`
 	tree *merkle.MainTree                      `json:"-"`
 }
 
-func UnmarshalBundle(bundleData []byte) (*Bundle, error) {
-	var bundle Bundle
-	err := easyjson.Unmarshal(bundleData, &bundle)
-	return &bundle, err
-}
-
-func (bundle *Bundle) Marshal() (bundleData []byte, err error) {
-	bundleData, err = easyjson.Marshal(bundle)
-	return
-}
-
 func (bundle *Bundle) Hash() (ethCommon.Hash, error) {
-	bundleData, err := bundle.Marshal()
+	bundleData, err := json.Marshal(bundle)
 	if err != nil {
 		return ethCommon.Hash{}, err
 	}

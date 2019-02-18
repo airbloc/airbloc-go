@@ -3,13 +3,15 @@ package common
 import (
 	"encoding/binary"
 	"encoding/hex"
-	"encoding/json"
+	"github.com/json-iterator/go"
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 const (
 	IDLength    = 8

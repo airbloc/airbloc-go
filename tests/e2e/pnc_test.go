@@ -2,8 +2,8 @@ package e2e
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
+	"github.com/json-iterator/go"
 	"log"
 	"testing"
 	"time"
@@ -13,6 +13,8 @@ import (
 
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 const numberOfUsers = 3
 const numberOfBundles = 2

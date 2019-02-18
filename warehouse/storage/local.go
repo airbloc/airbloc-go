@@ -37,7 +37,7 @@ func (localStorage *LocalStorage) Save(bundleId string, bundle *data.Bundle) (*u
 	fileName := fmt.Sprintf("%s.json", bundleId)
 	savePath := path.Join(localStorage.SavePath, fileName)
 
-	bundleData, err := bundle.Marshal()
+	bundleData, err := json.Marshal(bundle)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to parse bundle")
 	}
@@ -57,7 +57,7 @@ func (localStorage *LocalStorage) Update(url *url.URL, bundle *data.Bundle) erro
 		return errors.Errorf("the given URI %s does not exist", url.String())
 	}
 
-	bundleData, err := bundle.Marshal()
+	bundleData, err := json.Marshal(bundle)
 	if err != nil {
 		return errors.Wrap(err, "failed to parse bundle")
 	}

@@ -3,7 +3,7 @@ package node
 import (
 	"bytes"
 	"context"
-	"encoding/json"
+	"github.com/json-iterator/go"
 	"time"
 
 	"github.com/azer/logger"
@@ -14,6 +14,8 @@ import (
 	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/status"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var (
 	// JsonPbMarshaller is the marshaller used for serializing protobuf messages.

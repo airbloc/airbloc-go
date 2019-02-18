@@ -45,13 +45,14 @@ func (stream *BundleStream) Add(data *common.Data) error {
 	if err != nil {
 		return err
 	}
-	return stream.AddEncrypted(encryptedData)
+
+	stream.AddEncrypted(encryptedData)
+	return nil
 }
 
-func (stream *BundleStream) AddEncrypted(encryptedData *common.EncryptedData) error {
+func (stream *BundleStream) AddEncrypted(encryptedData *common.EncryptedData) {
 	stream.mu.Lock()
 	stream.data[encryptedData.UserId] = append(stream.data[encryptedData.UserId], encryptedData)
 	stream.DataCount += 1
 	stream.mu.Unlock()
-	return nil
 }
