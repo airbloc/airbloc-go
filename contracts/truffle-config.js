@@ -33,8 +33,9 @@ const config = {
             gas: 3000000
         },
         local: {
-            provider: getProviderOf('local'),
-            network_id: 5777,
+            host: '127.0.0.1',
+            port: 8545,
+            network_id: 1337,
         },
         klaytn: {
             host: '127.0.0.1',

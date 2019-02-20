@@ -12,7 +12,7 @@ const DataRegistry = artifacts.require("DataRegistry");
 // test
 const ERC20Mintable = artifacts.require("ERC20Mintable");
 
-const DEPLOYMENT_OUTPUT_PATH = '../deployment.local.json';
+const DEPLOYMENT_OUTPUT_PATH = 'deployment.local.json';
 
 
 module.exports = function (deployer, network) {
