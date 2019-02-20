@@ -179,7 +179,8 @@ func TestPnc(t *testing.T) {
 	bundleInfo := c.testExchange(res1[0].BundleId)
 
 	data := pb.NewDataClient(c.conn)
-	_, err = data.GetUserDataIds(c.ctx, &pb.UserDataIdsRequest{UserId: userIds[0]})
+	user := pb.NewUserClient(c.conn)
+	_, err = user.GetDataIds(c.ctx, &pb.UserId{UserId: userIds[0]})
 	require.NoError(t, err)
 
 	for _, dataId := range bundleInfo.DataInfoes {

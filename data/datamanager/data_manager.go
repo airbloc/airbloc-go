@@ -15,7 +15,6 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/bson/primitive"
-	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/pkg/errors"
 )
 
@@ -33,6 +32,7 @@ type Manager struct {
 func NewManager(
 	kms key.Manager,
 	p2p p2p.Server,
+	metaDB metadb.Database,
 	localDB localdb.Database,
 	client blockchain.TxClient,
 	warehouse *warehouse.DataWarehouse,
@@ -47,6 +47,7 @@ func NewManager(
 		registry:    contract.(*adapter.DataRegistry),
 		collections: collections.New(client),
 		batches:     batches,
+		metadb:      metaDB,
 	}
 }
 
@@ -187,104 +188,4 @@ func (manager *Manager) GetBundleInfo(ctx context.Context, id common.ID) (*bundl
 	bundleInfo.RawDataIds = nil
 
 	return bundleInfo, nil
-}
-
-type userInfo struct {
-	AppId        string `json:"appId" mapstructure:"-"`
-	SchemaId     string `json:"schemaId" mapstructure:"-"`
-	CollectionId string `json:"_id" mapstructure:"_id"`
-	DataIds      []struct {
-		Id         string `json:"id"`
-		IngestedAt int64  `json:"ingestedAt"`
-	} `json:"dataIds" mapstructure:"-"`
-	RawDataIds [][]primitive.D `json:"-" mapstructure:"dataIds"`
-}
-
-func (manager *Manager) GetUserInfo(ctx context.Context, id common.ID) ([]*userInfo, error) {
-	pipeline := mongo.Pipeline{
-		bson.D{{"$match", bson.D{{"data.data.dataIds.userId", id.Hex()}}}},
-		bson.D{{"$project", bson.D{
-			{"data.data.ingestedAt", 1},
-			{"data.data.collection", 1},
-			{"data.data.dataIds", bson.D{{
-				"$filter", bson.D{
-					{"input", "$data.data.dataIds"},
-					{"as", "dataId"},
-					{"cond", bson.D{{
-						"$eq", bson.A{"$$dataId.userId", id.Hex()},
-					}}},
-				},
-			}}},
-		}}},
-		bson.D{{"$addFields", bson.D{{
-			"data.data.dataIds", bson.D{{
-				"ingestedAt", "$data.data.ingestedAt",
-			}},
-		}}}},
-		bson.D{{"$group", bson.D{
-			{"_id", "$data.data.collection"},
-			{"dataIds", bson.D{{
-				"$addToSet", "$data.data.dataIds",
-			}}},
-		}}},
-	}
-
-	cur, err := manager.metadb.Aggregate(ctx, pipeline)
-	if err != nil {
-		return nil, errors.Wrap(err, "aggregating data pipeline")
-	}
-	defer cur.Close(ctx)
-
-	var infoes []*userInfo
-	for cur.Next(ctx) {
-		elem := &bson.D{}
-		if err := cur.Decode(elem); err != nil {
-			return nil, errors.Wrap(err, "retrieving document")
-		}
-
-		// debug
-		//d, _ := json.MarshalIndent(elem.Map(), "", "    ")
-		//log.Println(string(d))
-
-		collection := new(userInfo)
-		if err := mapstructure.Decode(elem.Map(), &collection); err != nil {
-			return nil, errors.Wrap(err, "decoding document")
-		}
-
-		// appId, schemaId, etc...
-		collectionId, err := common.HexToID(collection.CollectionId)
-		if err != nil {
-			return nil, errors.Wrap(err, "converting collectionId")
-		}
-
-		collectionInfo, err := manager.collections.Get(collectionId)
-		collection.AppId = collectionInfo.AppId.Hex()
-		collection.SchemaId = collectionInfo.Schema.Id.Hex()
-
-		// dataIds
-		index := 0
-		for _, idPack := range collection.RawDataIds {
-			collection.DataIds = append(collection.DataIds, make([]struct {
-				Id         string `json:"id"`
-				IngestedAt int64  `json:"ingestedAt"`
-			}, len(idPack))...)
-			for _, id := range idPack {
-				rawDataId := new(common.RawDataId)
-				if err := mapstructure.Decode(id.Map(), rawDataId); err != nil {
-					return nil, errors.Wrap(err, "decoding rawDataId")
-				}
-
-				dataId, err := rawDataId.Convert()
-				if err != nil {
-					return nil, errors.Wrap(err, "converting dataId")
-				}
-				collection.DataIds[index].Id = dataId.Hex()
-				collection.DataIds[index].IngestedAt = int64(rawDataId.IngestedAt)
-				index++
-			}
-		}
-		collection.RawDataIds = nil
-		infoes = append(infoes, collection)
-	}
-	return infoes, nil
 }
