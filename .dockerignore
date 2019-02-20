@@ -1,4 +1,9 @@
 build/
+.git
+.circleci
+vendor/
+contracts/
+tests/testdata/
 
 abi
 contracts/truffle-config.local.js
@@ -39,9 +44,6 @@ tests/playground
 # CMake
 cmake-build-*/
 
-# Mongo Explorer plugin
-.idea/**/mongoSettings.xml
-
 # File-based project format
 *.iws
 
@@ -62,18 +64,3 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
-
-# Editor-based Rest Client
-.idea/httpRequests
-
-### Intellij Patch ###
-# Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
-
-# *.iml
-# modules.xml
-# .idea/misc.xml
-# *.ipr
-
-# Sonarlint plugin
-.idea/sonarlint
-
