@@ -3,8 +3,10 @@ package blockchain
 import (
 	"github.com/json-iterator/go"
 	"io"
+	"net/http"
 	"os"
 	"reflect"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
@@ -32,9 +34,16 @@ func NewContractManager(client TxClient) *ContractManager {
 }
 
 func (cm *ContractManager) Load(path string) error {
+	if strings.HasPrefix(path, "http://") || strings.HasPrefix(path, "https://") {
+		resp, err := http.Get(path)
+		if err != nil {
+			return errors.Wrap(err, "failed to load deployment from url")
+		}
+		return cm.load(resp.Body)
+	}
 	f, err := os.OpenFile(path, os.O_RDONLY, os.ModePerm)
 	if err != nil {
-		return errors.Wrap(err, "contract manager : failed to open file")
+		return errors.Wrap(err, "failed to load deployment from file")
 	}
 	defer f.Close()
 	return cm.load(f)
