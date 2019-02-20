@@ -81,6 +81,7 @@ require (
 	github.com/libp2p/go-stream-muxer v3.0.1+incompatible // indirect
 	github.com/libp2p/go-tcp-transport v2.0.16+incompatible // indirect
 	github.com/libp2p/go-ws-transport v2.0.15+incompatible // indirect
+	github.com/loomnetwork/mamamerkle v0.0.0-20180929134451-bd379c19d963
 	github.com/magiconair/properties v1.8.0
 	github.com/mailru/easyjson v0.0.0-20180823135443-60711f1a8329
 	github.com/mattn/go-colorable v0.0.9 // indirect

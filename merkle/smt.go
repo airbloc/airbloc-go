@@ -6,6 +6,7 @@ import (
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
+	"log"
 	"math/big"
 	"sort"
 )
@@ -77,7 +78,6 @@ func (mt *MainTree) GenerateProof(rowId common.RowId, userId common.ID) ([]byte,
 	if err != nil {
 		return nil, err
 	}
-	subProof = append(leaf.Root().Bytes(), subProof...)
 
 	var proofBits = make([]byte, depth/8)
 	var proofBytes []byte
@@ -85,20 +85,31 @@ func (mt *MainTree) GenerateProof(rowId common.RowId, userId common.ID) ([]byte,
 	for pos, lvl := range mt.tree[:len(mt.tree)-1] { // remove root
 		leaf := lvl[leafIndex]
 
-		if leafIndex%2 == 0 {
+		if leaf.k%2 != 0 {
+			// left
+			coKey := leaf.k - 1
+			coIndex := leafIndex - 1
+
+			if leafIndex != 0 {
+				if lvl[coIndex].k == coKey {
+					setBit(proofBits, uint64(pos))
+					proofBytes = append(proofBytes, lvl[coIndex].v.Bytes()...)
+				}
+			}
+		} else {
 			// right
 			coKey := leaf.k + 1
 			coIndex := leafIndex + 1
 
-			switch {
-			case len(lvl) == coIndex: // avoid panic
-			case lvl[coIndex].k == coKey:
-				setBit(proofBits, uint64(depth-pos))
-				proofBytes = append(proofBytes, leaf.v.Bytes()...)
+			if coIndex != len(lvl) {
+				if lvl[coIndex].k == coKey {
+					setBit(proofBits, uint64(pos))
+					proofBytes = append(proofBytes, lvl[coIndex].v.Bytes()...)
+				}
 			}
 		}
 
-		leafIndex /= 2
+		leafIndex = int(leaf.n)
 	}
 
 	mainProof := append(proofBits, proofBytes...)
@@ -175,6 +186,7 @@ func (mt *MainTree) createTree() {
 				coKey := v.k - 1
 				coIndex := i - 1
 
+				// check if left sibling is empty
 				switch {
 				case i == 0: // avoid panic
 					fallthrough
@@ -182,7 +194,6 @@ func (mt *MainTree) createTree() {
 					nextLvl = append(nextLvl, &n{
 						k: v.k / 2,
 						v: hash(empty[lvl].Bytes(), v.v.Bytes()),
-						n: uint64(len(nextLvl)),
 					})
 				}
 			} else {
@@ -191,22 +202,26 @@ func (mt *MainTree) createTree() {
 				coIndex := i + 1
 
 				switch {
+				// check if right sibling is empty
 				case len(treeLvl) == coIndex: // avoid panic
 					fallthrough
 				case treeLvl[coIndex].k != coKey:
 					nextLvl = append(nextLvl, &n{
 						k: v.k / 2,
 						v: hash(v.v.Bytes(), empty[lvl].Bytes()),
-						n: uint64(len(nextLvl)),
 					})
+				// if exists, hashing it. not with empty
 				case treeLvl[coIndex].k == coKey:
 					nextLvl = append(nextLvl, &n{
 						k: v.k / 2,
 						v: hash(v.v.Bytes(), treeLvl[coIndex].v.Bytes()),
-						n: uint64(len(nextLvl)),
 					})
+				default:
+					log.Println(*v, "exceptional!")
 				}
 			}
+
+			v.n = uint64(len(nextLvl)) - 1
 		}
 
 		mt.tree[lvl+1] = nextLvl
