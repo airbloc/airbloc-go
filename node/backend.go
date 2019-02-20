@@ -27,13 +27,8 @@ type AirblocBackend struct {
 	services      map[string]Service
 }
 
-func NewAirblocBackend(config *Config) (Backend, error) {
+func NewAirblocBackend(nodeKey *key.Key, config *Config) (Backend, error) {
 	runtime.GOMAXPROCS(runtime.NumCPU())
-
-	nodeKey, err := key.Load(config.PrivateKeyPath)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to load private key from the given path")
-	}
 
 	metaDatabase, err := metadb.NewBigchainDB(
 		config.MetaDB.BigchainDBEndpoint,

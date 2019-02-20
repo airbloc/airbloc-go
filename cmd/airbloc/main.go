@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/airbloc/airbloc-go/key"
 	"github.com/airbloc/airbloc-go/warehouse/service"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -98,7 +99,7 @@ func init() {
 	rflags.StringVarP(&rootFlags.dataDir, "datadir", "d", "~/.airbloc", "Data directory")
 	rflags.StringVarP(&rootFlags.configPath, "config", "c", "$DATADIR/config.yml", "Config file")
 	rflags.StringVarP(&rootFlags.keyPath, "keystore", "k", "", "Keystore file for node (default is $DATADIR/private.key)")
-	rflags.StringVar(&rootFlags.private, "private", "", "Raw 64-byte private key with 0x prefix (Not Recommended)")
+	rflags.StringVar(&rootFlags.private, "private", "", "Raw 32-byte private key with 0x prefix (Not Recommended)")
 
 	rflags.StringVar(&config.Blockchain.Endpoint, "ethereum", config.Blockchain.Endpoint, "Ethereum RPC endpoint")
 	rflags.StringVar(&config.MetaDB.MongoDBEndpoint, "metadb", config.MetaDB.MongoDBEndpoint, "Metadatabase endpoint")
@@ -151,22 +152,6 @@ func loadConfig() {
 		config.PrivateKeyPath = keyPath
 	}
 
-	// override private if it's given
-	if rootFlags.private != "" {
-		if len(rootFlags.private) != 130 || !strings.HasPrefix(rootFlags.private, "0x") {
-			log.Error("Error: Invalid private key.")
-			os.Exit(1)
-		}
-		key := []byte(strings.TrimPrefix(rootFlags.private, "0x"))
-
-		// TODO: unsecure and temporary solution. change node to accept raw key
-		config.PrivateKeyPath = "/tmp/.nodekey"
-		if err := ioutil.WriteFile(config.PrivateKeyPath, key, 0644); err != nil {
-			log.Error("Error: ", err)
-			os.Exit(1)
-		}
-	}
-
 	// setup loggers
 	if rootFlags.verbose {
 		rootFlags.logLevel = "*"
@@ -185,7 +170,8 @@ func main() {
 
 func start(serviceNames string, apiNames string) func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
-		backend, err := node.NewAirblocBackend(config)
+		nodeKey := loadNodeKey()
+		backend, err := node.NewAirblocBackend(nodeKey, config)
 		if err != nil {
 			log.Error("Error: init", err)
 			os.Exit(1)
@@ -206,6 +192,30 @@ func start(serviceNames string, apiNames string) func(cmd *cobra.Command, args [
 			log.Error("Error: failed to start airbloc", err)
 			os.Exit(1)
 		}
+	}
+}
+
+func loadNodeKey() *key.Key {
+	if rootFlags.private != "" {
+		// load from command-line argument
+		if len(rootFlags.private) != 66 || !strings.HasPrefix(rootFlags.private, "0x") {
+			log.Error("Error: Invalid private key.")
+			os.Exit(1)
+		}
+		rawKey := []byte(strings.TrimPrefix(rootFlags.private, "0x"))
+		k, err := crypto.ToECDSA(rawKey)
+		if err != nil {
+			log.Error("Error: Invalid ECDSA key", err)
+			os.Exit(1)
+		}
+		return key.FromECDSA(k)
+	} else {
+		k, err := key.Load(config.PrivateKeyPath)
+		if err != nil {
+			log.Error("Error: failed to load private key from the given path", err)
+			os.Exit(1)
+		}
+		return k
 	}
 }
 
