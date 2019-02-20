@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"fmt"
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/airbloc/airbloc-go/warehouse/service"
@@ -102,6 +103,7 @@ func init() {
 	rflags.StringVar(&rootFlags.private, "private", "", "Raw 32-byte private key with 0x prefix (Not Recommended)")
 
 	rflags.StringVar(&config.Blockchain.Endpoint, "ethereum", config.Blockchain.Endpoint, "Ethereum RPC endpoint")
+	rflags.StringVar(&config.Blockchain.DeploymentPath, "deployment", config.Blockchain.DeploymentPath, "Path or URL of deployment.json")
 	rflags.StringVar(&config.MetaDB.MongoDBEndpoint, "metadb", config.MetaDB.MongoDBEndpoint, "Metadatabase endpoint")
 	rflags.StringSliceVar(&config.P2P.BootNodes, "bootnodes", config.P2P.BootNodes, "Bootstrap Node multiaddr for P2P")
 
@@ -163,7 +165,7 @@ func loadConfig() {
 
 func main() {
 	if err := rootCmd.Execute(); err != nil {
-		log.Error("Error: %v", err)
+		log.Error("Error", err)
 		os.Exit(1)
 	}
 }
@@ -173,7 +175,7 @@ func start(serviceNames string, apiNames string) func(cmd *cobra.Command, args [
 		nodeKey := loadNodeKey()
 		backend, err := node.NewAirblocBackend(nodeKey, config)
 		if err != nil {
-			log.Error("Error: init", err)
+			log.Error("Error: init error", err)
 			os.Exit(1)
 		}
 		defer backend.Stop()
@@ -202,7 +204,11 @@ func loadNodeKey() *key.Key {
 			log.Error("Error: Invalid private key.")
 			os.Exit(1)
 		}
-		rawKey := []byte(strings.TrimPrefix(rootFlags.private, "0x"))
+		rawKey, err := hex.DecodeString(strings.TrimPrefix(rootFlags.private, "0x"))
+		if err != nil {
+			log.Error("Error: Failed to decode hex", err)
+			os.Exit(1)
+		}
 		k, err := crypto.ToECDSA(rawKey)
 		if err != nil {
 			log.Error("Error: Invalid ECDSA key", err)
