@@ -154,6 +154,10 @@ func (dw *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 		Data:       stream.data,
 	}
 
+	if err := createdBundle.SetupRowId(); err != nil {
+		return nil, errors.Wrap(err, "failed to setup row id")
+	}
+
 	bundleName := generateBundleNameOf(createdBundle)
 	uri, err := dw.DefaultStorage.Save(bundleName, createdBundle)
 	if err != nil {
@@ -168,20 +172,15 @@ func (dw *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 	}
 	createdBundle.Id = bundleId.Hex()
 
-	dataIds, i := make([]map[string]interface{}, len(createdBundle.Data)), 0
-InsertDataIds:
+	var dataIds []map[string]interface{}
 	for _, rowData := range createdBundle.Data {
 		for _, d := range rowData {
-			dataIds[i] = make(map[string]interface{}, 3)
-			dataIds[i]["bundleId"] = bundleId.Hex()
-			dataIds[i]["userId"] = d.UserId.Hex()
-			dataIds[i]["rowId"] = d.RowId.Hex()
-			dataIds[i]["collectedAt"] = d.CollectedAt.Timestamp()
-
-			if len(createdBundle.Data) == i {
-				break InsertDataIds
-			}
-			i++
+			dataId := make(map[string]interface{}, 4)
+			dataId["bundleId"] = bundleId.Hex()
+			dataId["userId"] = d.UserId.Hex()
+			dataId["rowId"] = d.RowId.Hex()
+			dataId["collectedAt"] = d.CollectedAt.Timestamp()
+			dataIds = append(dataIds, dataId)
 		}
 	}
 
@@ -195,6 +194,7 @@ InsertDataIds:
 		"ingestedAt": ingestedAt.Timestamp(),
 		"dataIds":    dataIds,
 	}
+
 	_, err = dw.metaDatabase.Create(bundleInfo, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to save metadata")

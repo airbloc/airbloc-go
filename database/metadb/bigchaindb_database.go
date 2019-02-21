@@ -2,7 +2,6 @@ package metadb
 
 import (
 	"context"
-	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"net/http"
 	"time"
 
@@ -74,7 +73,7 @@ func (db *bigchainDB) Create(
 ) (tx *txn.Transaction, err error) {
 	metaDB := db.mdb.Collection("airbloc")
 
-	_, err = metaDB.InsertOne(context.Background(), primitive.M{"data": asset.Data})
+	_, err = metaDB.InsertOne(context.Background(), bson.M{"id": "xxx", "data": asset.Data})
 	if err != nil {
 		return
 	}

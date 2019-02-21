@@ -18,7 +18,7 @@ const (
 	BigchainDBAmount = "1"
 
 	// attach bigchainDB use mongoDB
-	BigchainDBName          = "bigchain"
+	BigchainDBName          = "airbloc-core"
 	BigchainTxCollection    = "transactions"
 	BigchainMetaCollection  = "metadata"
 	BigchainAssetCollection = "assets"

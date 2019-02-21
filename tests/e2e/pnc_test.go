@@ -2,9 +2,12 @@ package e2e
 
 import (
 	"context"
+	"encoding/hex"
 	"fmt"
+	"github.com/airbloc/airbloc-go/common"
 	"github.com/json-iterator/go"
 	"log"
+	"math/rand"
 	"testing"
 	"time"
 
@@ -17,6 +20,7 @@ import (
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 const numberOfUsers = 3
+const numberOfCollections = 5
 const numberOfBundles = 2
 const testSchema = `{
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -54,7 +58,7 @@ func generateUniqueName() string {
 func (t *T) testCreateApp() string {
 	apps := pb.NewAppsClient(t.conn)
 	result, err := apps.Register(t.ctx, &pb.RegisterRequest{
-		Name: fmt.Sprintf("app-test-%s", generateUniqueName()),
+		Name: fmt.Sprintf("app-test-%s-%d", generateUniqueName(), rand.Int()),
 	})
 	require.NoError(t, err)
 	return result.GetAppId()
@@ -63,7 +67,7 @@ func (t *T) testCreateApp() string {
 func (t *T) testCreateSchema() string {
 	schemas := pb.NewSchemaClient(t.conn)
 	result, err := schemas.Create(t.ctx, &pb.CreateSchemaRequest{
-		Name:   fmt.Sprintf("data-test-%s", generateUniqueName()),
+		Name:   fmt.Sprintf("data-test-%s-%d", generateUniqueName(), rand.Int()),
 		Schema: testSchema,
 	})
 	require.NoError(t, err)
@@ -107,6 +111,7 @@ func (t *T) testStoreBundleData(userIds [numberOfUsers]string, collectionId stri
 				CollectionId: collectionId,
 				UserId:       userId,
 				Payload:      fmt.Sprintf("{\"name\":\"%s\",\"age\":%d}", userId, index),
+				CollectedAt:  common.Time{Time: time.Now()}.Timestamp(),
 			}
 			require.NoError(t, stream.Send(rawData), "datum", rawData.String())
 		}
@@ -116,6 +121,7 @@ func (t *T) testStoreBundleData(userIds [numberOfUsers]string, collectionId stri
 				CollectionId: collectionId,
 				UserId:       userId,
 				Payload:      fmt.Sprintf("{\"name\":\"%s\",\"age\":%d}", userId, index+1),
+				CollectedAt:  common.Time{Time: time.Now()}.Timestamp(),
 			}
 			require.NoError(t, stream.Send(rawData), "datum", rawData.String())
 		}
@@ -151,45 +157,50 @@ func TestPnc(t *testing.T) {
 	schemaId := c.testCreateSchema()
 	log.Printf("Created Schema ID: %s\n", schemaId)
 
-	collectionId1 := c.testCreateCollection(appId, schemaId)
-	log.Printf("Created Collection: %s\n", collectionId1)
-
-	collectionId2 := c.testCreateCollection(appId, schemaId)
-	log.Printf("Created Collection: %s\n", collectionId2)
+	var collectionIds [numberOfCollections]string
+	for i := 0; i < numberOfCollections; i++ {
+		collectionIds[i] = c.testCreateCollection(appId, schemaId)
+		log.Printf("Created Collection: %s\n", collectionIds[i])
+	}
 
 	// create 10 accounts
 	var userIds [numberOfUsers]string
 	for i := 0; i < numberOfUsers; i++ {
-		userIds[i] = c.testCreateUserAccount(i)
+		//userIds[i] = c.testCreateUserAccount(i)
+		b := make([]byte, 8)
+		rand.Read(b)
+		userIds[i] = hex.EncodeToString(b)
 		log.Printf("Created user %d : %s\n", i, userIds[i])
 	}
 
 	// DAuth: allow data collection of these users
-	for _, userId := range userIds {
-		testDAuth(conn, collectionId1, userId, true)
-		testDAuth(conn, collectionId2, userId, true)
-		log.Printf("Allowed collection of user %s's data\n", userId)
-	}
+	//for _, userId := range userIds {
+	//	testDAuth(conn, collectionId1, userId, true)
+	//	testDAuth(conn, collectionId2, userId, true)
+	//	log.Printf("Allowed collection of user %s's data\n", userId)
+	//}
 
-	res1 := c.testStoreBundleData(userIds, collectionId1)
-	c.testStoreBundleData(userIds, collectionId2)
+	var storeResults [len(collectionIds)][]*pb.StoreResult
+	for i, collectionId := range collectionIds {
+		storeResults[i] = c.testStoreBundleData(userIds, collectionId)
+	}
 
 	// exchange: Test exchanging uploaded data
-	log.Println("Start exchanging", res1[0].DataCount, "data")
-	bundleInfo := c.testExchange(res1[0].BundleId)
-
-	data := pb.NewDataClient(c.conn)
-	user := pb.NewUserClient(c.conn)
-	_, err = user.GetDataIds(c.ctx, &pb.UserId{UserId: userIds[0]})
-	require.NoError(t, err)
-
-	for _, dataId := range bundleInfo.DataInfoes {
-		res, err := data.Get(ctx, &pb.DataId{DataId: dataId})
-		require.NoError(t, err)
-
-		d, err := json.MarshalIndent(res, "", "    ")
-		require.NoError(t, err)
-
-		log.Println(string(d))
-	}
+	//log.Println("Start exchanging", res1[0].DataCount, "data")
+	//bundleInfo := c.testExchange(res1[0].BundleId)
+	//
+	//data := pb.NewDataClient(c.conn)
+	//user := pb.NewUserClient(c.conn)
+	//_, err = user.GetDataIds(c.ctx, &pb.UserId{UserId: userIds[0]})
+	//require.NoError(t, err)
+	//
+	//for _, dataId := range bundleInfo.DataInfoes {
+	//	res, err := data.Get(ctx, &pb.DataId{DataId: dataId})
+	//	require.NoError(t, err)
+	//
+	//	d, err := json.MarshalIndent(res, "", "    ")
+	//	require.NoError(t, err)
+	//
+	//	log.Println(string(d))
+	//}
 }

@@ -73,6 +73,7 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 			UserId:      userId,
 			CollectedAt: common.ParseTimestamp(request.GetCollectedAt()),
 		}
+
 		go func() {
 			if err := bundleStream.Add(datum); err != nil {
 				api.log.Error("failed to add a data: %s", err.Error())
@@ -81,6 +82,7 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 			}
 			wg.Done()
 		}()
+
 	}
 	wg.Wait()
 
