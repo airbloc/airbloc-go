@@ -78,7 +78,6 @@ type RawDataId struct {
 	UserId      string             `json:"userId" mapstructure:"userId"`
 	RowId       string             `json:"rowId" mapstructure:"rowId"`
 	CollectedAt primitive.DateTime `json:"collectedAt" mapstructure:"collectedAt"`
-	IngestedAt  primitive.DateTime `json:"ingestedAt" mapstructure:"ingestedAt"`
 }
 
 func (id *RawDataId) Convert() (*DataId, error) {

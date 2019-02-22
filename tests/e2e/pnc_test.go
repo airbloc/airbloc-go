@@ -186,21 +186,21 @@ func TestPnc(t *testing.T) {
 	}
 
 	// exchange: Test exchanging uploaded data
-	//log.Println("Start exchanging", res1[0].DataCount, "data")
-	//bundleInfo := c.testExchange(res1[0].BundleId)
-	//
-	//data := pb.NewDataClient(c.conn)
-	//user := pb.NewUserClient(c.conn)
-	//_, err = user.GetDataIds(c.ctx, &pb.UserId{UserId: userIds[0]})
-	//require.NoError(t, err)
-	//
-	//for _, dataId := range bundleInfo.DataInfoes {
-	//	res, err := data.Get(ctx, &pb.DataId{DataId: dataId})
-	//	require.NoError(t, err)
-	//
-	//	d, err := json.MarshalIndent(res, "", "    ")
-	//	require.NoError(t, err)
-	//
-	//	log.Println(string(d))
-	//}
+	log.Println("Start exchanging", storeResults[0][0].DataCount, "data")
+	bundleInfo := c.testExchange(storeResults[0][0].BundleId)
+
+	data := pb.NewDataClient(c.conn)
+	user := pb.NewUserClient(c.conn)
+	_, err = user.GetDataIds(c.ctx, &pb.DataIdRequest{UserId: userIds[0]})
+	require.NoError(t, err)
+
+	for _, dataId := range bundleInfo.DataInfoes {
+		res, err := data.Get(ctx, &pb.DataId{DataId: dataId})
+		require.NoError(t, err)
+
+		d, err := json.MarshalIndent(res, "", "    ")
+		require.NoError(t, err)
+
+		log.Println(string(d))
+	}
 }

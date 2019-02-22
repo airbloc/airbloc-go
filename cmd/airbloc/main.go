@@ -59,6 +59,7 @@ var (
 		"exchange":    serverapi.NewExchangeAPI,
 		"schemas":     serverapi.NewSchemaAPI,
 		"warehouse":   serverapi.NewWarehouseAPI,
+		"users":       serverapi.NewUserAPI,
 
 		"server.accounts":       serverapi.NewAccountsAPI,
 		"userdelegate.accounts": userdelegateapi.NewAccountAPI,
@@ -80,7 +81,7 @@ func main() {
 	app.Description = "A node of Airbloc Protocol, which is decentralized data exchange protocol."
 	app.Commands = commands
 	app.Flags = flags
-	app.Action = start("api,warehouse", "apps,server.accounts,collections,data,dauth,exchange,schemas,warehouse")
+	app.Action = start("api,warehouse", "apps,server.accounts,collections,data,dauth,exchange,schemas,warehouse,users")
 
 	err := app.Run(os.Args)
 	if err != nil {

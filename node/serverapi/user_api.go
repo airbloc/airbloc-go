@@ -29,13 +29,13 @@ func (api *UserAPI) AttachToAPI(service *node.APIService) {
 	pb.RegisterUserServer(service.GrpcServer, api)
 }
 
-func (api *UserAPI) GetData(ctx context.Context, req *pb.UserId) (*pb.GetDataReponse, error) {
+func (api *UserAPI) GetData(ctx context.Context, req *pb.DataRequest) (*pb.GetDataReponse, error) {
 	userId, err := common.HexToID(req.GetUserId())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "failed to convert userId to common.Id format : *v", err)
 	}
 
-	userData, err := api.manager.GetData(ctx, userId)
+	userData, err := api.manager.GetData(ctx, userId, req.GetFrom())
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get user info : %v", err)
 	}
@@ -45,7 +45,7 @@ func (api *UserAPI) GetData(ctx context.Context, req *pb.UserId) (*pb.GetDataRep
 	return nil, nil
 }
 
-func (api *UserAPI) GetDataIds(ctx context.Context, req *pb.UserId) (*pb.GetDataIdsResponse, error) {
+func (api *UserAPI) GetDataIds(ctx context.Context, req *pb.DataIdRequest) (*pb.GetDataIdsResponse, error) {
 	userId, err := common.HexToID(req.GetUserId())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "failed to convert userId to common.ID format : %v", err)
@@ -65,8 +65,9 @@ func (api *UserAPI) GetDataIds(ctx context.Context, req *pb.UserId) (*pb.GetData
 
 		for j, dataId := range collection.DataIds {
 			collections[i].DataInfoes[j] = &pb.GetDataIdsResponse_DataInfo{
-				Id:         dataId.Id,
-				IngestedAt: dataId.IngestedAt,
+				Id:          dataId.String(),
+				CollectedAt: dataId.CollectedAt,
+				IngestedAt:  collection.IngestedAt,
 			}
 		}
 	}
