@@ -21,7 +21,7 @@ import (
 type Manager struct {
 	kms         key.Manager
 	client      blockchain.TxClient
-	metadb      metadb.Database
+	metadb      *metadb.Model
 	p2p         p2p.Server
 	warehouse   *warehouse.DataWarehouse
 	registry    *adapter.DataRegistry
@@ -47,7 +47,7 @@ func NewManager(
 		registry:    contract.(*adapter.DataRegistry),
 		collections: collections.New(client),
 		batches:     batches,
-		metadb:      metaDB,
+		metadb:      metadb.NewModel(metaDB, "bundles"),
 	}
 }
 
@@ -85,7 +85,7 @@ func (manager *Manager) Get(rawDataId string) (*getDataResult, error) {
 	}
 
 	// prevent runtime error
-	if uint32(len(bundle.Data[dataId.UserId])) < dataId.RowId.Uint32() {
+	if uint32(len(bundle.Data[dataId.UserId])) <= dataId.RowId.Uint32() {
 		return nil, errors.New("data does not exists")
 	}
 
@@ -157,7 +157,7 @@ type bundleInfo struct {
 }
 
 func (manager *Manager) GetBundleInfo(ctx context.Context, id common.ID) (*bundleInfo, error) {
-	rawBundle, err := manager.metadb.RetrieveOne(ctx, bson.M{"bundleId": id.Hex()})
+	rawBundle, err := manager.metadb.RetrieveAsset(bson.M{"bundleId": id.Hex()})
 	if err != nil {
 		return nil, errors.Wrap(err, "retrieving bundle data")
 	}
