@@ -35,14 +35,28 @@ func (api *UserAPI) GetData(ctx context.Context, req *pb.DataRequest) (*pb.GetDa
 		return nil, status.Errorf(codes.InvalidArgument, "failed to convert userId to common.Id format : *v", err)
 	}
 
-	userData, err := api.manager.GetData(ctx, userId, req.GetFrom())
+	usersData, err := api.manager.GetData(ctx, userId, req.GetFrom())
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to get user info : %v", err)
 	}
 
-	_ = userData
+	collections := make([]*pb.GetDataReponse_Collection, len(usersData))
+	for i, collection := range usersData {
+		collections[i] = new(pb.GetDataReponse_Collection)
+		collections[i].Id = collection.CollectionId
+		collections[i].Data = make([]*pb.GetDataReponse_Data, len(collection.Data))
 
-	return nil, nil
+		for j, userData := range collection.Data {
+			collections[i].Data[j] = new(pb.GetDataReponse_Data)
+			collections[i].Data[j] = &pb.GetDataReponse_Data{
+				CollectedAt: userData.CollectedAt,
+				IngestedAt:  userData.IngestedAt,
+				Payload:     userData.Payload,
+			}
+		}
+	}
+
+	return &pb.GetDataReponse{Collections: collections}, nil
 }
 
 func (api *UserAPI) GetDataIds(ctx context.Context, req *pb.DataIdRequest) (*pb.GetDataIdsResponse, error) {

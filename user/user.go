@@ -2,7 +2,7 @@ package user
 
 import (
 	"context"
-	"encoding/json"
+	"fmt"
 	"github.com/airbloc/airbloc-go/blockchain"
 	"github.com/airbloc/airbloc-go/collections"
 	"github.com/airbloc/airbloc-go/common"
@@ -13,7 +13,6 @@ import (
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/pkg/errors"
-	"log"
 )
 
 type Manager struct {
@@ -38,15 +37,18 @@ func NewManager(
 }
 
 type userData struct {
-	CollectionId string `json:"_id" mapstructure:"-"`
-	Data         []struct {
-		CollectedAt int64  `json:"collectedAt"`
-		IngestedAt  int64  `json:"ingestedAt"`
-		Payload     string `json:"payload"`
-	} `json:"data" mapstructure:"-"`
+	CollectionId string            `json:"collectionId"`
+	Data         []userDataPayload `json:"data" mapstructure:"-"`
 }
 
-func (manager *Manager) GetData(ctx context.Context, id common.ID, from int64) ([]*userData, error) {
+type userDataPayload struct {
+	common.DataId
+	CollectedAt int64  `json:"collectedAt"`
+	IngestedAt  int64  `json:"ingestedAt"`
+	Payload     string `json:"payload"`
+}
+
+func (manager *Manager) GetData(ctx context.Context, id common.ID, from int64) ([]userData, error) {
 	var cond bson.D
 	if from == 0 {
 		cond = bson.D{{
@@ -61,30 +63,8 @@ func (manager *Manager) GetData(ctx context.Context, id common.ID, from int64) (
 		}}
 	}
 
-	pipeline := mongo.Pipeline{
-		{{"$match", bson.D{{"data.data.dataIds.userId", id.Hex()}}}},
-		{{"$replaceRoot", bson.D{{"newRoot", "$data.data"}}}},
-		{{"$project", bson.D{
-			{"ingestedAt", 1},
-			{"collection", 1},
-			{"dataIds", bson.D{{
-				"$filter", bson.D{
-					{"input", "$dataIds"},
-					{"as", "dataId"},
-					{"cond", bson.D{{
-						"$eq", bson.A{"$$dataId.userId", id.Hex()},
-					}}},
-				},
-			}}},
-		}}},
-		{{"$sort", bson.D{{"ingestedAt", -1}}}},
-		{{"$group", bson.D{
-			{"_id", "$collection"},
-			{"collections", bson.D{{
-				"$push", "$$ROOT",
-			}}},
-		}}},
-		{{"$project", bson.D{{
+	cond = bson.D{{
+		"$project", bson.D{{
 			"collections", bson.D{{
 				"$filter", bson.D{
 					{"input", "$collections"},
@@ -92,26 +72,58 @@ func (manager *Manager) GetData(ctx context.Context, id common.ID, from int64) (
 					{"cond", cond},
 				},
 			}},
-		}}}},
-	}
+		}},
+	}}
 
-	cur, err := manager.metadb.Aggregate(ctx, pipeline)
+	infoes, err := manager.getDataIds(ctx, id, cond)
 	if err != nil {
-		return nil, errors.Wrap(err, "aggregating data pipeline")
+		return nil, errors.Wrap(err, "get data ids")
 	}
-	defer cur.Close(ctx)
 
-	for cur.Next(ctx) {
-		elem := &bson.D{}
-		if err := cur.Decode(elem); err != nil {
-			return nil, errors.Wrap(err, "retrieving document")
+	usersData := make([]userData, len(infoes))
+	for i, info := range infoes {
+		usersData[i] = userData{
+			CollectionId: info.CollectionId,
+			Data:         make([]userDataPayload, len(info.DataIds)),
 		}
 
-		d, _ := json.MarshalIndent(elem, "", "    ")
-		log.Println(string(d))
+		for j, dataId := range info.DataIds {
+			bundle, err := manager.warehouse.Get(&dataId.DataId)
+			if err != nil {
+				return nil, errors.Wrap(err, "fetching bundle")
+			}
+
+			if _, ok := bundle.Data[dataId.UserId]; !ok {
+				return nil, fmt.Errorf("cannot find user data at given userId")
+			}
+
+			if uint32(len(bundle.Data[dataId.UserId])) <= dataId.RowId.Uint32() {
+				return nil, fmt.Errorf("cannot find row data at given userId")
+			}
+
+			encryptedData := bundle.Data[dataId.UserId][dataId.RowId.Uint32()]
+			if encryptedData.RowId.Uint32() != dataId.RowId.Uint32() {
+				return nil, fmt.Errorf(
+					"rowId mismatching : expected %s, actual %s",
+					dataId.RowId.Hex(), encryptedData.RowId.Hex(),
+				)
+			}
+
+			payload, err := manager.kms.DecryptData(encryptedData)
+			if err != nil {
+				return nil, errors.Wrap(err, "decrypting data")
+			}
+
+			usersData[i].Data[j] = userDataPayload{
+				DataId:      dataId.DataId,
+				CollectedAt: dataId.CollectedAt,
+				IngestedAt:  info.IngestedAt,
+				Payload:     payload.Payload,
+			}
+		}
 	}
 
-	return nil, nil
+	return usersData, nil
 }
 
 type userDataInfo struct {
@@ -124,7 +136,12 @@ type userDataInfo struct {
 	RawDataIds []bson.D `json:"rawDataIds" mapstructure:"dataIds"`
 }
 
-func (manager *Manager) GetDataIds(ctx context.Context, id common.ID) ([]userDataInfo, error) {
+type userDataInfoQueryResponse struct {
+	CollectionId string   `json:"collectionId" mapstructure:"_id"`
+	Collections  []bson.D `json:"collections" mapstructure:"collections"`
+}
+
+func (manager *Manager) getDataIds(ctx context.Context, id common.ID, cond ...bson.D) ([]userDataInfo, error) {
 	pipeline := mongo.Pipeline{
 		{{"$match", bson.D{{"data.data.dataIds.userId", id.Hex()}}}},
 		{{"$replaceRoot", bson.D{{"newRoot", "$data.data"}}}},
@@ -141,7 +158,14 @@ func (manager *Manager) GetDataIds(ctx context.Context, id common.ID) ([]userDat
 				},
 			}}},
 		}}},
+		{{"$group", bson.D{
+			{"_id", "$collection"},
+			{"collections", bson.D{{
+				"$push", "$$ROOT",
+			}}},
+		}}},
 	}
+	pipeline = append(pipeline, cond...)
 
 	cur, err := manager.metadb.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -151,38 +175,50 @@ func (manager *Manager) GetDataIds(ctx context.Context, id common.ID) ([]userDat
 
 	var infoes []userDataInfo
 	for cur.Next(ctx) {
-		elem := &bson.D{}
-		if err := cur.Decode(elem); err != nil {
+		var doc bson.D
+		if err := cur.Decode(&doc); err != nil {
 			return nil, errors.Wrap(err, "retrieving document")
 		}
 
-		var collection userDataInfo
-		if err := mapstructure.Decode(elem.Map(), &collection); err != nil {
+		var resp userDataInfoQueryResponse
+		if err := mapstructure.Decode(doc.Map(), &resp); err != nil {
 			return nil, errors.Wrap(err, "decoding document")
 		}
 
-		// dataIds
-		collection.DataIds = make([]struct {
-			common.DataId
-			CollectedAt int64 `json:"collectedAt"`
-		}, len(collection.RawDataIds))
-
-		for i, idPack := range collection.RawDataIds {
-			var rawDataId common.RawDataId
-			if err := mapstructure.Decode(idPack.Map(), &rawDataId); err != nil {
-				return nil, errors.Wrap(err, "decoding dataId")
+		for _, rawCollection := range resp.Collections {
+			var collection userDataInfo
+			if err := mapstructure.Decode(rawCollection.Map(), &collection); err != nil {
+				return nil, errors.Wrap(err, "decoding document")
 			}
 
-			dataId, err := rawDataId.Convert()
-			if err != nil {
-				return nil, errors.Wrap(err, "converting dataId")
+			// dataIds
+			collection.DataIds = make([]struct {
+				common.DataId
+				CollectedAt int64 `json:"collectedAt"`
+			}, len(collection.RawDataIds))
+
+			for i, idPack := range collection.RawDataIds {
+				var rawDataId common.RawDataId
+				if err := mapstructure.Decode(idPack.Map(), &rawDataId); err != nil {
+					return nil, errors.Wrap(err, "decoding dataId")
+				}
+
+				dataId, err := rawDataId.Convert()
+				if err != nil {
+					return nil, errors.Wrap(err, "converting dataId")
+				}
+				collection.DataIds[i].DataId = *dataId
+				collection.DataIds[i].CollectedAt = int64(rawDataId.CollectedAt)
 			}
-			collection.DataIds[i].DataId = *dataId
-			collection.DataIds[i].CollectedAt = int64(rawDataId.CollectedAt)
+			collection.RawDataIds = nil
+			infoes = append(infoes, collection)
 		}
-		collection.RawDataIds = nil
-		infoes = append(infoes, collection)
 	}
 
 	return infoes, nil
+}
+
+// returns all of user's dataIds
+func (manager *Manager) GetDataIds(ctx context.Context, id common.ID) ([]userDataInfo, error) {
+	return manager.getDataIds(ctx, id)
 }
