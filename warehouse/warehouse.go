@@ -253,6 +253,11 @@ func (dw *DataWarehouse) Get(id *common.DataId) (*data.Bundle, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get uri")
 	}
+
+	if bundle.Uri == "" {
+		return nil, errors.Wrap(err, "failed to get bundle info")
+	}
+
 	uri, err := url.Parse(bundle.Uri)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get bundle data")
