@@ -52,7 +52,7 @@ func (ss *S3Storage) Save(bundleId string, bundle *data.Bundle) (*url.URL, error
 }
 
 func (ss *S3Storage) Update(bundlePath *url.URL, bundle *data.Bundle) error {
-	bundleData, err := bundle.Marshal()
+	bundleData, err := json.Marshal(bundle)
 	if err != nil {
 		return errors.Wrap(err, "s3 update: marshal error")
 	}

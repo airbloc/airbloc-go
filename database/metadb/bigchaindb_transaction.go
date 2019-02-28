@@ -6,8 +6,8 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
+	"github.com/json-iterator/go"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -23,6 +23,8 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ed25519"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var (
 	Ed25519Magic = []byte{0x30, 0x22, 0x80, 0x20}

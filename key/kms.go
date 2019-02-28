@@ -41,9 +41,10 @@ func (kms *manager) EncryptData(data *common.Data) (*common.EncryptedData, error
 		return nil, err
 	}
 	return &common.EncryptedData{
-		Payload: encryptedData,
-		UserId:  data.UserId,
-		RowId:   data.RowId,
+		Payload:     encryptedData,
+		UserId:      data.UserId,
+		RowId:       data.RowId,
+		CollectedAt: data.CollectedAt,
 	}, nil
 }
 

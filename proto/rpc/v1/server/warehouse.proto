@@ -37,8 +37,11 @@ message RawDataRequest {
     // ID of the user (Data Owner)
     string userId = 2;
 
+    // Timestamp of collected date
+    int64 collectedAt = 3;
+
     // JSON payload, which follows schema of the given collection.
-    string payload = 3;
+    string payload = 4;
 }
 
 message EncryptedDataRequest {
@@ -48,12 +51,15 @@ message EncryptedDataRequest {
     // ID of the user (Data Owner)
     string userId = 2;
 
+    // Timestamp of collected date
+    int64 collectedAt = 3;
+
     // pre-encrypted JSON payload, which follows schema of the given collection.
     // the payload must be encrypted through ECIES-SECP256k1 using the key in a capsule.
-    bytes encryptedPayload = 3;
+    bytes encryptedPayload = 4;
 
     // symmetric key of the encryptedPayload, encrypted using the provider's key.
-    bytes capsule = 4;
+    bytes capsule = 5;
 }
 
 message StoreResult {

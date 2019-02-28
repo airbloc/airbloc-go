@@ -66,6 +66,7 @@ func (s *Schemas) Register(schema *Schema) (common.ID, error) {
 		"id":     schemaId.Hex(),
 		"schema": schema.Schema,
 	}
+
 	if _, err := s.db.Create(metadata, nil); err != nil {
 		return schemaId, errors.Wrap(err, "failed to save metadata")
 	}

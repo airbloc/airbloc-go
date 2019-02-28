@@ -53,7 +53,7 @@ func (st *SubTree) GenerateProof(rowId common.RowId) ([]byte, error) {
 
 		index /= 2
 	}
-	return buf.Bytes(), nil
+	return append(st.root.Bytes(), buf.Bytes()...), nil
 }
 
 func verifySubProof(rowId common.RowId, subRoot, proof []byte) bool {

@@ -144,7 +144,7 @@ func (dw *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 	if stream == nil {
 		return nil, errors.New("No data in the stream.")
 	}
-	ingestedAt := time.Now()
+	ingestedAt := common.Time{Time: time.Now()}
 
 	createdBundle := &data.Bundle{
 		Provider:   stream.provider,
@@ -152,6 +152,10 @@ func (dw *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 		DataCount:  stream.DataCount,
 		IngestedAt: ingestedAt,
 		Data:       stream.data,
+	}
+
+	if err := createdBundle.SetupRowId(); err != nil {
+		return nil, errors.Wrap(err, "failed to setup row id")
 	}
 
 	bundleName := generateBundleNameOf(createdBundle)
@@ -168,19 +172,15 @@ func (dw *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 	}
 	createdBundle.Id = bundleId.Hex()
 
-	dataIds, i := make([]map[string]interface{}, len(createdBundle.Data)), 0
-InsertDataIds:
+	var dataIds []map[string]interface{}
 	for _, rowData := range createdBundle.Data {
 		for _, d := range rowData {
-			dataIds[i] = make(map[string]interface{}, 3)
-			dataIds[i]["bundleId"] = bundleId.Hex()
-			dataIds[i]["userId"] = d.UserId.Hex()
-			dataIds[i]["rowId"] = d.RowId.Hex()
-
-			if len(createdBundle.Data) == i {
-				break InsertDataIds
-			}
-			i++
+			dataId := make(map[string]interface{}, 4)
+			dataId["bundleId"] = bundleId.Hex()
+			dataId["userId"] = d.UserId.Hex()
+			dataId["rowId"] = d.RowId.Hex()
+			dataId["collectedAt"] = d.CollectedAt.Timestamp()
+			dataIds = append(dataIds, dataId)
 		}
 	}
 
@@ -191,13 +191,15 @@ InsertDataIds:
 		"provider":   createdBundle.Provider.Hex(),
 		"collection": createdBundle.Collection.Hex(),
 		"dataCount":  createdBundle.DataCount,
-		"ingestedAt": ingestedAt,
+		"ingestedAt": ingestedAt.Timestamp(),
 		"dataIds":    dataIds,
 	}
+
 	_, err = dw.metaDatabase.Create(bundleInfo, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to save metadata")
 	}
+
 	dw.log.Info("Bundle %s registered on", bundleName, logger.Attrs{
 		"id":    bundleId.Hex(),
 		"count": bundleInfo["dataCount"],
@@ -251,6 +253,11 @@ func (dw *DataWarehouse) Get(id *common.DataId) (*data.Bundle, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get uri")
 	}
+
+	if bundle.Uri == "" {
+		return nil, errors.Wrap(err, "failed to get bundle info")
+	}
+
 	uri, err := url.Parse(bundle.Uri)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get bundle data")
@@ -280,7 +287,7 @@ func (dw *DataWarehouse) List(providerId common.ID) ([]*data.Bundle, error) {
 			Id:         bundleData["bundleId"].(string),
 			Uri:        bundleData["uri"].(string),
 			DataCount:  bundleData["dataCount"].(int),
-			IngestedAt: ingestedAt,
+			IngestedAt: common.Time{Time: ingestedAt},
 			Provider:   providerId,
 			Collection: collectionId,
 		})

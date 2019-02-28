@@ -69,9 +69,11 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 		wg.Add(1)
 
 		datum := &common.Data{
-			Payload: request.GetPayload(),
-			UserId:  userId,
+			Payload:     request.GetPayload(),
+			UserId:      userId,
+			CollectedAt: common.ParseTimestamp(request.GetCollectedAt()),
 		}
+
 		go func() {
 			if err := bundleStream.Add(datum); err != nil {
 				api.log.Error("failed to add a data: %s", err.Error())
@@ -80,6 +82,7 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 			}
 			wg.Done()
 		}()
+
 	}
 	wg.Wait()
 
@@ -123,9 +126,10 @@ func (api *WarehouseAPI) StoreEncryptedBundle(stream pb.Warehouse_StoreEncrypted
 		}
 
 		datum := &common.EncryptedData{
-			Payload: request.GetEncryptedPayload(),
-			UserId:  userId,
-			Capsule: request.GetCapsule(),
+			Payload:     request.GetEncryptedPayload(),
+			UserId:      userId,
+			Capsule:     request.GetCapsule(),
+			CollectedAt: common.ParseTimestamp(request.GetCollectedAt()),
 		}
 		bundleStream.AddEncrypted(datum)
 	}

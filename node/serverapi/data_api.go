@@ -11,7 +11,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"log"
-	"time"
 )
 
 type DataAPI struct {
@@ -22,6 +21,7 @@ func NewDataAPI(backend node.Backend) (node.API, error) {
 	manager := datamanager.NewManager(
 		backend.Kms(),
 		backend.P2P(),
+		backend.MetaDatabase(),
 		backend.LocalDatabase(),
 		backend.Client(),
 		backend.GetService("warehouse").(*warehouseservice.Service).GetManager())
@@ -42,7 +42,7 @@ func (api *DataAPI) Get(ctx context.Context, dataId *pb.DataId) (*pb.DataResult,
 	return &pb.DataResult{
 		CollectionId: res.CollectionId.Hex(),
 		UserId:       res.UserId.Hex(),
-		IngestedAt:   res.IngestedAt.UnixNano() / (int64(time.Millisecond) / int64(time.Nanosecond)),
+		IngestedAt:   res.IngestedAt.Timestamp(),
 		Payload:      res.Payload,
 	}, nil
 }
@@ -64,7 +64,7 @@ func (api *DataAPI) GetBatch(ctx context.Context, batchId *pb.BatchRequest) (*pb
 		batchResult[i] = &pb.DataResult{
 			CollectionId: data.CollectionId.Hex(),
 			UserId:       data.UserId.Hex(),
-			IngestedAt:   data.IngestedAt.UnixNano() / (int64(time.Millisecond) / int64(time.Nanosecond)),
+			IngestedAt:   data.IngestedAt.Timestamp(),
 			Payload:      data.Payload,
 		}
 	}
@@ -92,36 +92,6 @@ func (api *DataAPI) GetBundleInfo(ctx context.Context, request *pb.BundleInfoReq
 	}, nil
 }
 
-func (api *DataAPI) GetUserDataIds(ctx context.Context, request *pb.UserDataIdsRequest) (*pb.UserDataIdsResponse, error) {
-	userId, err := common.HexToID(request.GetUserId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "failed to convert userId to common.ID format : %v", err)
-	}
-
-	userInfoes, err := api.manager.GetUserInfo(ctx, userId)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to get user info : %v", err)
-	}
-
-	collections := make([]*pb.UserDataIdsResponse_Collection, len(userInfoes))
-	for i, collection := range userInfoes {
-		collections[i] = &pb.UserDataIdsResponse_Collection{
-			AppId:        collection.AppId,
-			SchemaId:     collection.SchemaId,
-			CollectionId: collection.CollectionId,
-			DataInfoes:   make([]*pb.UserDataIdsResponse_DataInfo, len(collection.DataIds)),
-		}
-
-		for j, dataId := range collection.DataIds {
-			collections[i].DataInfoes[j] = &pb.UserDataIdsResponse_DataInfo{
-				Id:         dataId.Id,
-				IngestedAt: dataId.IngestedAt,
-			}
-		}
-	}
-	return &pb.UserDataIdsResponse{Collections: collections}, nil
-}
-
 func (api *DataAPI) SetPermission(ctx context.Context, req *pb.SetDataPermissionRequest) (*empty.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "unimplemented method")
 }
@@ -139,9 +109,9 @@ func (api *DataAPI) DeleteBatch(ctx context.Context, batchId *pb.BatchRequest) (
 }
 
 func (api *DataAPI) Select(stream pb.Data_SelectServer) error {
-	return nil
+	return status.Error(codes.Unimplemented, "unimplemented method")
 }
 
 func (api *DataAPI) Release(ctx context.Context, batchId *pb.BatchRequest) (*empty.Empty, error) {
-	return nil, nil
+	return nil, status.Error(codes.Unimplemented, "unimplemented method")
 }

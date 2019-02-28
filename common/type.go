@@ -3,13 +3,15 @@ package common
 import (
 	"encoding/binary"
 	"encoding/hex"
-	"encoding/json"
+	"github.com/json-iterator/go"
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 const (
 	IDLength    = 8
@@ -63,11 +65,11 @@ func GenerateID(issuer common.Address, time time.Time, seed []byte) (id ID) {
 	return
 }
 
-func (id *ID) Uint64() uint64 {
+func (id ID) Uint64() uint64 {
 	return binary.LittleEndian.Uint64(id[:])
 }
 
-func (id *ID) Hex() string {
+func (id ID) Hex() string {
 	return hex.EncodeToString(id[:])
 }
 
@@ -88,7 +90,7 @@ func (id *ID) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (id *ID) MarshalJSON() ([]byte, error) {
+func (id ID) MarshalJSON() ([]byte, error) {
 	return json.Marshal(id.Hex())
 }
 

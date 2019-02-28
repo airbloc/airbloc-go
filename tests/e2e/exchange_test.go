@@ -1,7 +1,6 @@
 package e2e
 
 import (
-	"encoding/json"
 	"github.com/airbloc/airbloc-go/adapter"
 	"github.com/airbloc/airbloc-go/blockchain/bind"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"

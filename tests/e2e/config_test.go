@@ -2,7 +2,6 @@ package e2e
 
 import (
 	"crypto/ecdsa"
-	"encoding/json"
 	"github.com/airbloc/airbloc-go/node"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"

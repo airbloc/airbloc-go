@@ -62,7 +62,7 @@ func (gs *GoogleCloudStorage) Save(bundleId string, bundle *data.Bundle) (*url.U
 }
 
 func (gs *GoogleCloudStorage) Update(bundlePath *url.URL, bundle *data.Bundle) error {
-	bundleData, err := bundle.Marshal()
+	bundleData, err := json.Marshal(bundle)
 	if err != nil {
 		return errors.Wrap(err, "gs update: marshal error")
 	}

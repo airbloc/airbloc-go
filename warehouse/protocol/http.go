@@ -1,6 +1,7 @@
 package protocol
 
 import (
+	"github.com/json-iterator/go"
 	"net/url"
 	"time"
 
@@ -9,6 +10,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/valyala/fasthttp"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type HttpProtocol struct {
 	timeout time.Duration
@@ -27,7 +30,7 @@ func (http *HttpProtocol) Name() string {
 	return "http"
 }
 
-func (http *HttpProtocol) Read(uri *url.URL) (*data.Bundle, error) {
+func (http *HttpProtocol) Read(uri *url.URL) (bundle *data.Bundle, _ error) {
 	request := fasthttp.AcquireRequest()
 	request.SetRequestURI(uri.String())
 
@@ -40,10 +43,10 @@ func (http *HttpProtocol) Read(uri *url.URL) (*data.Bundle, error) {
 		return nil, ErrNotFound
 	}
 
-	bundle, err := data.UnmarshalBundle(response.Body())
-	if err != nil {
+	if err := json.Unmarshal(response.Body(), &bundle); err != nil {
 		return nil, errors.Wrapf(err, "failed to parse bundle from the URL %s", uri.String())
 	}
+
 	return bundle, nil
 }
 

@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"github.com/json-iterator/go"
 	"net/url"
 
 	"github.com/airbloc/airbloc-go/data"
@@ -11,3 +12,5 @@ type Storage interface {
 	Update(*url.URL, *data.Bundle) error
 	Delete(*url.URL) error
 }
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
