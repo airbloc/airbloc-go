@@ -205,7 +205,7 @@ func (manager *Manager) getDataIds(ctx context.Context, id common.ID, cond ...bs
 
 				dataId, err := rawDataId.Convert()
 				if err != nil {
-					return nil, errors.Wrap(err, "converting dataId")
+					return nil, errors.Wrap(err, "failed to unmarshal data ID")
 				}
 				collection.DataIds[i].DataId = *dataId
 				collection.DataIds[i].CollectedAt = int64(rawDataId.CollectedAt)
