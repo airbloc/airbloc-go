@@ -17,7 +17,7 @@ type Collection struct {
 	CreatedAt common.Time
 }
 
-// IcentivePolicy is a policy about sharing revenue of the data
+// IncentivePolicy is a policy about sharing revenue of the data
 // between each stakeholders at the data delivery pipeline.
 type IncentivePolicy struct {
 	DataProvider  float64
