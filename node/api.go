@@ -2,7 +2,7 @@ package node
 
 import (
 	"fmt"
-	"github.com/azer/logger"
+	"github.com/airbloc/logger"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/pkg/errors"
@@ -67,7 +67,7 @@ func (service *APIService) Start() error {
 	go service.withErrorHandler(service.GrpcServer.Serve, grpcLis)
 	go service.withErrorHandler(service.HttpServer.Serve, restLis)
 
-	service.logger.Info("Server started at %s", service.Address)
+	service.logger.Info("Server started at {}", service.Address)
 	return m.Serve()
 }
 

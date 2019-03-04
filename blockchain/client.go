@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/airbloc/airbloc-go/blockchain/bind"
 	"github.com/airbloc/airbloc-go/key"
-	"github.com/azer/logger"
+	"github.com/airbloc/logger"
 	ethbind "github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"reflect"
 	"strings"
+	"time"
 )
 
 type Client struct {
@@ -25,6 +26,9 @@ type Client struct {
 }
 
 func NewClient(key *key.Key, rawurl string, cfg ClientOpt) (*Client, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	log := logger.New("ethereum")
 
 	// URL validation
@@ -33,19 +37,24 @@ func NewClient(key *key.Key, rawurl string, cfg ClientOpt) (*Client, error) {
 		return nil, errors.Wrapf(err, "invalid URL: %s", rawurl)
 	}
 	if l.Scheme != "ws" {
-		log.Error("Warning: You're using %s endpoint for Ethereum. Using WebSocket is recommended.",
+		log.Error("Warning: You're using {} endpoint for Ethereum. Using WebSocket is recommended.",
 			strings.ToUpper(l.Scheme))
 	}
 
 	// try to connect to Ethereum
-	ethClient, err := ethclient.Dial(rawurl)
+	ethClient, err := ethclient.DialContext(ctx, rawurl)
 	if err != nil {
 		return nil, err
 	}
+	cid, err := ethClient.NetworkID(ctx)
+	if err != nil {
+		return nil, err
+	}
+	log.Info("Using {} network", getChainName(cid))
 
 	client := &Client{
 		Client: ethClient,
-		ctx:    context.Background(),
+		ctx:    context.TODO(),
 		cfg:    cfg,
 		logger: log,
 	}
@@ -104,11 +113,10 @@ func (c *Client) WaitMined(ctx context.Context, tx *types.Transaction) (*types.R
 		return nil, err
 	}
 	if receipt.Status == types.ReceiptStatusFailed {
-		// TODO: let me get error reason @frostornge 😎
-		timer.End("Transaction to %s failed", methodName, details)
+		timer.End("Transaction to {} failed", methodName, details)
 		return nil, ErrTxFailed
 	}
-	timer.End("Transacted %s", methodName, details)
+	timer.End("Transacted {}", methodName, details)
 	// err = c.waitConfirmation(ctx)
 	return receipt, err
 }

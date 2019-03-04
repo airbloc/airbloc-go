@@ -2,6 +2,8 @@ package p2p
 
 import (
 	"context"
+	"github.com/libp2p/go-libp2p-protocol"
+	"github.com/multiformats/go-multiaddr"
 	"log"
 
 	"github.com/airbloc/airbloc-go/p2p/common"
@@ -22,41 +24,6 @@ func NewBasicHost(host host.Host) Host {
 	return &BasicHost{
 		host: host,
 	}
-}
-
-// ID returns the (local) peer.ID associated with this Host.
-func (h *BasicHost) ID() peer.ID {
-	return h.host.ID()
-}
-
-// Mux returns host's multistreamMuxer
-func (h *BasicHost) Mux() *multistream.MultistreamMuxer {
-	return h.host.Mux()
-}
-
-// Network returns host's network interface
-func (h *BasicHost) Network() net.Network {
-	return h.host.Network()
-}
-
-// ConnManager returns host's connection manager interface
-func (h *BasicHost) ConnManager() ifconnmgr.ConnManager {
-	return h.host.ConnManager()
-}
-
-// PeerInfo generates peerstore.PeerInfo object and returns it
-func (h *BasicHost) PeerInfo() peerstore.PeerInfo {
-	return peerstore.PeerInfo{ID: h.host.ID(), Addrs: h.host.Addrs()}
-}
-
-// Peerstore returns host's peerstore
-func (h *BasicHost) Peerstore() peerstore.Peerstore {
-	return h.host.Peerstore()
-}
-
-// Connect makes connect with other peer by peerstore.PeerInfo
-func (h *BasicHost) Connect(ctx context.Context, pi peerstore.PeerInfo) error {
-	return h.host.Connect(ctx, pi)
 }
 
 // Protocol Registry
@@ -114,4 +81,63 @@ func (h *BasicHost) Publish(ctx context.Context, msg common.ProtoMessage, pids .
 		}
 	}
 	return nil
+}
+
+// ID returns the (local) peer.ID associated with this Host.
+func (h *BasicHost) ID() peer.ID {
+	return h.host.ID()
+}
+
+// Mux returns host's multistreamMuxer
+func (h *BasicHost) Mux() *multistream.MultistreamMuxer {
+	return h.host.Mux()
+}
+
+// Network returns host's network interface
+func (h *BasicHost) Network() net.Network {
+	return h.host.Network()
+}
+
+// ConnManager returns host's connection manager interface
+func (h *BasicHost) ConnManager() ifconnmgr.ConnManager {
+	return h.host.ConnManager()
+}
+
+// PeerInfo generates peerstore.PeerInfo object and returns it
+func (h *BasicHost) PeerInfo() peerstore.PeerInfo {
+	return peerstore.PeerInfo{ID: h.host.ID(), Addrs: h.host.Addrs()}
+}
+
+// Peerstore returns host's peerstore
+func (h *BasicHost) Peerstore() peerstore.Peerstore {
+	return h.host.Peerstore()
+}
+
+// Connect makes connect with other peer by peerstore.PeerInfo
+func (h *BasicHost) Connect(ctx context.Context, pi peerstore.PeerInfo) error {
+	return h.host.Connect(ctx, pi)
+}
+
+func (h *BasicHost) Addrs() []multiaddr.Multiaddr {
+	return h.host.Addrs()
+}
+
+func (h *BasicHost) SetStreamHandler(pid protocol.ID, handler net.StreamHandler) {
+	h.host.SetStreamHandler(pid, handler)
+}
+
+func (h *BasicHost) SetStreamHandlerMatch(pid protocol.ID, matcher func(string) bool, handler net.StreamHandler) {
+	h.host.SetStreamHandlerMatch(pid, matcher, handler)
+}
+
+func (h *BasicHost) RemoveStreamHandler(pid protocol.ID) {
+	h.host.RemoveStreamHandler(pid)
+}
+
+func (h *BasicHost) NewStream(ctx context.Context, p peer.ID, pids ...protocol.ID) (net.Stream, error) {
+	return h.host.NewStream(ctx, p, pids...)
+}
+
+func (h *BasicHost) Close() error {
+	return h.host.Close()
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/azer/logger"
+	"github.com/airbloc/logger"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/params"
@@ -65,4 +65,19 @@ func WeiToEth(wei *big.Int) *big.Float {
 		new(big.Float).SetInt(wei),
 		new(big.Float).SetInt64(params.Ether),
 	)
+}
+
+// getChainName returns chain name by chain ID (network ID), according to EIP-155.
+func getChainName(cid *big.Int) string {
+	switch cid.String() {
+	case "1":
+		return "Ethereum Main"
+	case "3":
+		return "Ethereum Ropsten Test"
+	case "4":
+		return "Ethereum Rinkeby Test"
+	case "1000":
+		return "Klaytn Aspen Test"
+	}
+	return "Ethereum Private Test"
 }

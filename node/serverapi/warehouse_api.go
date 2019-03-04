@@ -3,7 +3,7 @@ package serverapi
 import (
 	"context"
 	"github.com/airbloc/airbloc-go/warehouse/service"
-	"github.com/azer/logger"
+	"github.com/airbloc/logger"
 	"sync"
 
 	"github.com/airbloc/airbloc-go/common"

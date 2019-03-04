@@ -1,18 +1,21 @@
 package main
 
 import (
+	"encoding/hex"
+	"fmt"
+	"github.com/airbloc/airbloc-go/key"
 	"github.com/airbloc/airbloc-go/warehouse/service"
-	"log"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/mitchellh/go-homedir"
+	"github.com/spf13/cobra"
 	"os"
 	"strings"
 
 	logger2 "github.com/airbloc/airbloc-go/logger"
-	"github.com/airbloc/airbloc-go/userdelegate"
-	"github.com/azer/logger"
-	"github.com/pkg/errors"
-	"gopkg.in/urfave/cli.v1"
-
 	"github.com/airbloc/airbloc-go/node/userdelegateapi"
+	"github.com/airbloc/airbloc-go/userdelegate"
+	"github.com/airbloc/logger"
+	log2 "log"
 
 	"github.com/airbloc/airbloc-go/node"
 	"github.com/airbloc/airbloc-go/node/serverapi"
@@ -20,33 +23,53 @@ import (
 )
 
 var (
-	mainLogger = logger.New("airbloc")
+	log    = logger.New(name)
+	config = node.NewConfig()
+
+	rootCmd = &cobra.Command{
+		Use:     name,
+		Short:   descShort,
+		Long:    descLong,
+		Version: Version,
+	}
+
+	// top-level flags, independent from node.Config
+	rootFlags struct {
+		configPath string
+		dataDir    string
+
+		keyPath string
+		private string
+
+		verbose   bool
+		logLevel  string
+		logFilter string
+	}
 
 	// list of CLI commands and flags
-	commands = []cli.Command{
-		{
-			Name:    "userdelegate",
-			Aliases: []string{"ud"},
-			Usage:   "Launch a user delegate daemon",
-			Action:  start("userdelegate,warehouse", ""),
-			Flags:   flags,
-		},
+	serverCmd = &cobra.Command{
+		Use:   "server",
+		Short: "Start Airbloc API server.",
+		Long:  "Start Airbloc REST/gRPC API server.",
+		Run:   start("api,warehouse", "apps,server.accounts,collections,data,dauth,exchange,schemas,warehouse"),
 	}
-	flags = []cli.Flag{
-		cli.StringFlag{
-			Name:  "config, c",
-			Usage: "Load configuration from `FILE`",
-			Value: "config.yml",
-		},
-		cli.StringFlag{
-			Name:  "loglevel",
-			Usage: "Log output verbosity [MUTE|INFO|TIMER|*]",
-			Value: "*",
-		},
-		cli.StringFlag{
-			Name:  "logfilter",
-			Usage: "Filter logs from specific packages (e.g. warehouse,users)",
-			Value: "*",
+
+	userDelegateCmd = &cobra.Command{
+		Use:   "userdelegate",
+		Short: "Start Airbloc user delegate daemon.",
+		Long:  "Start user delegate daemon, watching and supervising user's data event.",
+		Run:   start("userdelegate,warehouse", ""),
+	}
+
+	versionCmd = &cobra.Command{
+		Use:   "version",
+		Short: "Display a version.",
+		Run: func(*cobra.Command, []string) {
+			fmt.Println("Client:")
+			fmt.Println("  Version:", Version)
+			fmt.Println("  Git Commit:", GitCommit)
+			fmt.Println("  Git Branch:", GitBranch)
+			fmt.Println("  Build Date:", BuildDate)
 		},
 	}
 
@@ -59,7 +82,6 @@ var (
 		"exchange":    serverapi.NewExchangeAPI,
 		"schemas":     serverapi.NewSchemaAPI,
 		"warehouse":   serverapi.NewWarehouseAPI,
-		"users":       serverapi.NewUserAPI,
 
 		"server.accounts":       serverapi.NewAccountsAPI,
 		"userdelegate.accounts": userdelegateapi.NewAccountAPI,
@@ -72,36 +94,89 @@ var (
 )
 
 func init() {
-	log.SetFlags(log.Lshortfile)
+	cobra.OnInitialize(loadConfig)
+	rflags := rootCmd.PersistentFlags()
+
+	rflags.StringVarP(&rootFlags.dataDir, "datadir", "d", "~/.airbloc", "Data directory")
+	rflags.StringVarP(&rootFlags.configPath, "config", "c", "$DATADIR/config.yml", "Config file")
+	rflags.StringVarP(&rootFlags.keyPath, "keystore", "k", "", "Keystore file for node (default is $DATADIR/private.key)")
+	rflags.StringVar(&rootFlags.private, "private", "", "Raw 32-byte private key with 0x prefix (Not Recommended)")
+
+	rflags.StringVar(&config.Blockchain.Endpoint, "ethereum", config.Blockchain.Endpoint, "Ethereum RPC endpoint")
+	rflags.StringVar(&config.Blockchain.DeploymentPath, "deployment", config.Blockchain.DeploymentPath, "Path or URL of deployment.json")
+	rflags.StringVar(&config.MetaDB.MongoDBEndpoint, "metadb", config.MetaDB.MongoDBEndpoint, "Metadatabase endpoint")
+	rflags.StringSliceVar(&config.P2P.BootNodes, "bootnodes", config.P2P.BootNodes, "Bootstrap Node multiaddr for P2P")
+
+	rflags.BoolVarP(&rootFlags.verbose, "verbose", "v", true, "Verbose output")
+	rflags.StringVar(&rootFlags.logFilter, "logfilter", "*", "Log only from specific packages (e.g. warehouse,users)")
+
+	// server options
+	f := serverCmd.Flags()
+	f.IntVarP(&config.Port, "port", "p", config.Port, "Port of gRPC Server API endpoint.")
+	f.StringVar(&config.Warehouse.DefaultStorage, "warehouse.storage", config.Warehouse.DefaultStorage,
+		"Type of warehouse storage. [local|s3|gcs|azure]")
+
+	rootCmd.AddCommand(
+		initCmd,
+		serverCmd,
+		userDelegateCmd,
+		versionCmd,
+	)
+}
+
+func loadConfig() {
+	args := strings.Join(os.Args, " ")
+	if strings.HasSuffix(args, "help") || strings.HasSuffix(args, "version") {
+		return
+	}
+
+	// get data directory
+	dataDir, err := homedir.Expand(rootFlags.dataDir)
+	if err != nil {
+		log.Error("Error: failed to resolve data directory {}", err, rootFlags.dataDir)
+	}
+	if err := os.MkdirAll(dataDir, os.ModePerm); err != nil {
+		log.Error("Error: failed to create data directory {}", err, rootFlags.dataDir)
+	}
+
+	configPath := rootFlags.configPath
+	configPath = strings.Replace(configPath, "$DATADIR", dataDir, 1)
+	if err := configor.Load(config, configPath); err != nil {
+		log.Error("Error: failed to load config from {}", err, configPath)
+		os.Exit(1)
+	}
+
+	// override key path
+	if rootFlags.keyPath != "" {
+		config.PrivateKeyPath = rootFlags.keyPath
+	} else {
+		keyPath := strings.Replace(rootFlags.keyPath, "$DATADIR", dataDir, 1)
+		config.PrivateKeyPath = keyPath
+	}
+
+	// setup loggers
+	if rootFlags.verbose {
+		rootFlags.logLevel = "*"
+	}
+	logger2.Setup(os.Stdout, rootFlags.logLevel, rootFlags.logFilter)
+	logger.SetLogger(logger.NewStandardOutput(os.Stdout, rootFlags.logLevel, rootFlags.logFilter))
+	log2.SetOutput(os.Stderr)
 }
 
 func main() {
-	app := cli.NewApp()
-	app.Name = "airbloc"
-	app.Description = "A node of Airbloc Protocol, which is decentralized data exchange protocol."
-	app.Commands = commands
-	app.Flags = flags
-	app.Action = start("api,warehouse", "apps,server.accounts,collections,data,dauth,exchange,schemas,warehouse,users")
-
-	err := app.Run(os.Args)
-	if err != nil {
-		mainLogger.Error("Error: %+v", err)
+	if err := rootCmd.Execute(); err != nil {
+		log.Error("Error", err)
 		os.Exit(1)
 	}
 }
 
-func start(serviceNames string, apiNames string) cli.ActionFunc {
-	return func(ctx *cli.Context) error {
-		logger2.Setup(os.Stdout, ctx.String("loglevel"), ctx.String("logfilter"))
-
-		config := new(node.Config)
-		if err := configor.Load(config, ctx.String("config")); err != nil {
-			return errors.Wrapf(err, "failed to load config from %s", ctx.String("config"))
-		}
-
-		backend, err := node.NewAirblocBackend(config)
+func start(serviceNames string, apiNames string) func(cmd *cobra.Command, args []string) {
+	return func(cmd *cobra.Command, args []string) {
+		nodeKey := loadNodeKey()
+		backend, err := node.NewAirblocBackend(nodeKey, config)
 		if err != nil {
-			return errors.Wrap(err, "failed to initialize backend")
+			log.Error("Error: init error", err)
+			os.Exit(1)
 		}
 		defer backend.Stop()
 
@@ -114,7 +189,39 @@ func start(serviceNames string, apiNames string) cli.ActionFunc {
 			apiNames := strings.Split(apiNames, ",")
 			registerApis(backend, apiNames)
 		}
-		return backend.Start()
+
+		if err := backend.Start(); err != nil {
+			log.Error("Error: failed to start airbloc", err)
+			os.Exit(1)
+		}
+	}
+}
+
+func loadNodeKey() *key.Key {
+	if rootFlags.private != "" {
+		// load from command-line argument
+		if len(rootFlags.private) != 66 || !strings.HasPrefix(rootFlags.private, "0x") {
+			log.Error("Error: Invalid private key.")
+			os.Exit(1)
+		}
+		rawKey, err := hex.DecodeString(strings.TrimPrefix(rootFlags.private, "0x"))
+		if err != nil {
+			log.Error("Error: Failed to decode hex", err)
+			os.Exit(1)
+		}
+		k, err := crypto.ToECDSA(rawKey)
+		if err != nil {
+			log.Error("Error: Invalid ECDSA key", err)
+			os.Exit(1)
+		}
+		return key.FromECDSA(k)
+	} else {
+		k, err := key.Load(config.PrivateKeyPath)
+		if err != nil {
+			log.Error("Error: failed to load private key from the given path", err)
+			os.Exit(1)
+		}
+		return k
 	}
 }
 
@@ -122,13 +229,13 @@ func registerServices(backend node.Backend, serviceNames []string) {
 	for _, name := range serviceNames {
 		serviceConstructor, exists := AvailableServices[name]
 		if !exists {
-			mainLogger.Error("Error: service %s does not exist.", name)
+			log.Error("Error: service {} does not exist.", name)
 			os.Exit(1)
 		}
 
 		service, err := serviceConstructor(backend)
 		if err != nil {
-			mainLogger.Error("Error: failed to create service %s: %+v", name, err)
+			log.Error("Error: failed to create service {}", err, name)
 			os.Exit(1)
 		}
 		backend.AttachService(name, service)
@@ -138,20 +245,20 @@ func registerServices(backend node.Backend, serviceNames []string) {
 func registerApis(backend node.Backend, apiNames []string) {
 	apiService, ok := backend.GetService("api").(*node.APIService)
 	if !ok {
-		mainLogger.Error("Error: API service is not registered.")
+		log.Error("Error: API service is not registered.")
 		os.Exit(1)
 	}
 
 	for _, name := range apiNames {
 		apiConstructor, exists := AvailableAPIs[name]
 		if !exists {
-			mainLogger.Error("Error: API %s does not exist.", name)
+			log.Error("Error: API %s does not exist.", name)
 			os.Exit(1)
 		}
 
 		api, err := apiConstructor(backend)
 		if err != nil {
-			mainLogger.Error("Error: failed to create API %s: %+v", name, err)
+			log.Error("Error: failed to create API {}", err, name)
 			os.Exit(1)
 		}
 		api.AttachToAPI(apiService)

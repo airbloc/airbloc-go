@@ -1,0 +1,36 @@
+version: '3'
+services:
+  airbloc:
+    build: .
+    image: airbloc/airbloc
+    ports:
+      - 9124:9124
+    entrypoint: >
+      airbloc
+        server
+        --verbose
+        --ethereum "ws://ganache:8545"
+        --deployment "http://ganache:8500/"
+        --metadb "mongodb://mongo:27017/airbloc"
+        --private "0x3d690ff25a05e195d4ef8f65ac34ee2d5e71e41c414a25c48164499299fece40"
+    depends_on:
+      - ganache
+      - mongo
+
+  ganache:
+    build: ./contracts/
+    image: airbloc/contracts
+    ports:
+      - 8545:8545
+
+  mongo:
+    image: mongo:3.6
+    ports:
+      - 27017:27017
+
+  start_dependencies:
+    image: dadarek/wait-for-dependencies
+    depends_on:
+      - ganache
+      - mongo
+    command: ganache:8545 mongo:27017

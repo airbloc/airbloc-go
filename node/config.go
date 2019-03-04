@@ -1,6 +1,9 @@
 package node
 
-import "github.com/airbloc/airbloc-go/warehouse"
+import (
+	"github.com/airbloc/airbloc-go/warehouse"
+	"github.com/mcuadros/go-defaults"
+)
 
 type Config struct {
 	PrivateKeyPath string `default:"private.key" yaml:"privateKeyPath"`
@@ -36,4 +39,11 @@ type Config struct {
 	UserDelegate struct {
 		AccountIds []string `yaml:"accountIds"`
 	} `yaml:"userDelegate"`
+}
+
+// NewConfig returns node configurations with default value.
+func NewConfig() *Config {
+	config := new(Config)
+	defaults.SetDefaults(config)
+	return config
 }

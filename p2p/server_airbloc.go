@@ -3,11 +3,15 @@ package p2p
 import (
 	"context"
 	"fmt"
+	"github.com/libp2p/go-libp2p-kbucket"
 	"reflect"
 	"sync"
 	"time"
 
-	"github.com/azer/logger"
+	"github.com/airbloc/logger"
+
+	"github.com/ipfs/go-datastore"
+	dsync "github.com/ipfs/go-datastore/sync"
 
 	"github.com/airbloc/airbloc-go/key"
 	"github.com/airbloc/airbloc-go/p2p/common"
@@ -16,6 +20,7 @@ import (
 	"github.com/ipfs/go-cid"
 	"github.com/libp2p/go-libp2p"
 	kaddht "github.com/libp2p/go-libp2p-kad-dht"
+	kadopts "github.com/libp2p/go-libp2p-kad-dht/opts"
 	"github.com/libp2p/go-libp2p-peer"
 	"github.com/libp2p/go-libp2p-peerstore"
 	"github.com/libp2p/go-libp2p/p2p/host/routed"
@@ -36,11 +41,12 @@ type AirblocServer struct {
 	cancel context.CancelFunc
 
 	// network
-	id      cid.Cid
-	pid     common.Pid
-	host    Host
-	dht     *kaddht.IpfsDHT
-	nodekey *key.Key
+	id        cid.Cid
+	pid       common.Pid
+	host      Host
+	dht       *kaddht.IpfsDHT
+	nodekey   *key.Key
+	bootinfos []peerstore.PeerInfo
 
 	// topic - handlers
 	types    map[string]reflect.Type
@@ -55,10 +61,6 @@ func NewAirblocServer(
 	addr multiaddr.Multiaddr,
 	bootinfos []peerstore.PeerInfo,
 ) (Server, error) {
-	if len(bootinfos) < 1 {
-		return nil, errors.New("bootnode informations should be give at least one.")
-	}
-
 	privKey, err := nodekey.DeriveLibp2pKeyPair()
 	if err != nil {
 		return nil, err
@@ -70,12 +72,15 @@ func NewAirblocServer(
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	server := &AirblocServer{
-		ctx:     ctx,
-		cancel:  cancel,
-		mutex:   new(sync.Mutex),
-		pid:     pid,
-		nodekey: nodekey,
+		ctx:       ctx,
+		cancel:    cancel,
+		mutex:     new(sync.Mutex),
+		pid:       pid,
+		nodekey:   nodekey,
+		bootinfos: bootinfos,
 
 		types:    make(map[string]reflect.Type),
 		handlers: make(map[string]TopicHandler),
@@ -88,34 +93,23 @@ func NewAirblocServer(
 		libp2p.ListenAddrs(addr),
 	)
 	if err != nil {
-		cancel()
 		return nil, err
 	}
 
-	server.dht, err = kaddht.New(ctx, h)
+	ds := dsync.MutexWrap(datastore.NewMapDatastore())
+	server.dht, err = kaddht.New(ctx, h, kadopts.Datastore(ds))
 	if err != nil {
-		cancel()
 		return nil, err
 	}
 
 	h = routedhost.Wrap(h, server.dht)
 	server.host = NewAirblocHost(NewBasicHost(h), 20)
 
-	// connect to bootstrap nodes for initializing DHT
-	for _, bootinfo := range bootinfos {
-		if err := h.Connect(ctx, bootinfo); err != nil {
-			cancel()
-			return nil, errors.Wrap(err, "failed to connect to bootstrap node")
-		}
-	}
-
 	idVal := int32(pb.CID_AIRBLOC)
-
 	v1b := cid.V1Builder{
 		Codec:  uint64(idVal),
 		MhType: multihash.KECCAK_256,
 	}
-
 	server.id, err = v1b.Sum([]byte(pb.CID_name[idVal]))
 	if err != nil {
 		cancel()
@@ -159,20 +153,17 @@ func (s *AirblocServer) clearPeer() {
 
 func (s *AirblocServer) updatePeer() int {
 	idch, err := s.dht.GetClosestPeers(s.ctx, s.id.KeyString())
-	if s.ctx.Err() != nil {
-		s.log.Error("Failed to discovery peers: context error: %v", s.ctx.Err())
-		return 0
-	}
-
-	if err != nil {
-		s.log.Error("Failed to discovery peers: %v", err)
+	if err == kbucket.ErrLookupFailure {
+		s.log.Info("Warning: no peer available")
+	} else if err != nil {
+		s.log.Error("Failed to discovery peers", err)
 	}
 
 	found := 0
 	for id := range idch {
 		info, err := s.dht.FindPeer(s.ctx, id)
 		if err != nil {
-			s.log.Error("Warning: Peer found, but cannot connect", logger.Attrs{"to": id.Pretty()})
+			s.log.Error("Warning: Peer {id} found but failed to connect", err, logger.Attrs{"to": id.Pretty()})
 			continue
 		}
 		s.host.Peerstore().AddAddrs(info.ID, info.Addrs, peerstore.TempAddrTTL)
@@ -183,6 +174,23 @@ func (s *AirblocServer) updatePeer() int {
 
 // api backend interfaces
 func (s *AirblocServer) Start() error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// connect to bootstrap nodes for initializing DHT
+	if len(s.bootinfos) > 0 {
+		for _, bootinfo := range s.bootinfos {
+			if err := s.host.Connect(ctx, bootinfo); err != nil {
+				return errors.Wrap(err, "failed to connect to bootstrap node")
+			}
+		}
+	} else {
+		s.log.Info("Warning: no bootstrap nodes are given. only local peers will be available.")
+	}
+
+	if err := startmDNSDiscovery(ctx, s.host); err != nil {
+		return errors.Wrap(err, "could not start peer discovery via mDNS")
+	}
 	s.host.RegisterProtocol(s.pid, s.handleMessage)
 	go s.Discovery()
 	return nil
@@ -192,12 +200,12 @@ func (s *AirblocServer) handleMessage(message common.ProtoMessage) {
 	topic := message.GetTopic()
 	typ, ok := s.types[topic]
 	if !ok {
-		s.log.Error("Unknown topic: %s", message.GetTopic())
+		s.log.Error("Unknown topic: {}", message.GetTopic())
 		return
 	}
 	msg, err := message.MakeMessage(s.ctx, typ)
 	if err != nil {
-		s.log.Error("Failed to make message: %v", err.Error())
+		s.log.Error("Failed to make message", err)
 		return
 	}
 
