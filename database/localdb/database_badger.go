@@ -31,7 +31,6 @@ func NewBadgerDatabase(path string, version int) (Database, error) {
 	opts.NumMemtables = 5
 	opts.SyncWrites = false
 	opts.NumCompactors = 3
-	opts.DoNotCompact = true
 	opts.ReadOnly = false
 
 	db, err := badger.Open(opts)
@@ -62,7 +61,7 @@ func (db *badgerDB) Put(key []byte, value []byte) error {
 	if err != nil {
 		return err
 	}
-	return txn.Commit(nil)
+	return txn.Commit()
 }
 
 func (db *badgerDB) Has(key []byte) (bool, error) {
@@ -77,7 +76,7 @@ func (db *badgerDB) Has(key []byte) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	value, err := item.Value()
+	value, err := item.ValueCopy(nil)
 	return value != nil, err
 }
 
@@ -89,7 +88,7 @@ func (db *badgerDB) Get(key []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return item.Value()
+	return item.ValueCopy(nil)
 }
 
 func (db *badgerDB) Delete(key []byte) error {
@@ -100,7 +99,7 @@ func (db *badgerDB) Delete(key []byte) error {
 	if err != nil {
 		return err
 	}
-	return txn.Commit(nil)
+	return txn.Commit()
 }
 
 func (db *badgerDB) NewIterator() *badger.Iterator {
@@ -142,7 +141,7 @@ func (b *badgerBatch) Put(key, value []byte) error {
 }
 
 func (b *badgerBatch) Write() error {
-	return b.txn.Commit(nil)
+	return b.txn.Commit()
 }
 
 func (b *badgerBatch) ValueSize() int {

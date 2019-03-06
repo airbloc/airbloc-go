@@ -22,6 +22,7 @@ services:
     image: airbloc/contracts
     ports:
       - 8545:8545
+      - 8500:8500
 
   mongo:
     image: mongo:3.6

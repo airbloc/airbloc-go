@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/json-iterator/go"
+	"golang.org/x/crypto/sha3"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -16,7 +17,6 @@ import (
 	"github.com/valyala/fastjson"
 
 	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
-	"github.com/ethereum/go-ethereum/crypto/sha3"
 	"github.com/go-interledger/cryptoconditions"
 	"github.com/kalaspuffar/base64url"
 	"github.com/mr-tron/base58/base58"

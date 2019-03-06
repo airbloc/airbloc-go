@@ -88,7 +88,7 @@ func (db *bigchainDB) Create(
 func (db *bigchainDB) Aggregate(
 	ctx context.Context,
 	pipeline interface{},
-) (mongo.Cursor, error) {
+) (*mongo.Cursor, error) {
 	return db.mdb.Collection("airbloc").Aggregate(ctx, pipeline)
 }
 

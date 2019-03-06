@@ -30,7 +30,7 @@ var (
 
 type Database interface {
 	Create(txn.Asset, txn.Metadata, Mode) (*txn.Transaction, error)
-	Aggregate(context.Context, interface{}) (mongo.Cursor, error)
+	Aggregate(context.Context, interface{}) (*mongo.Cursor, error)
 	RetrieveOne(context.Context, bson.M) (bson.M, error)
 	RetrieveMany(context.Context, bson.M) ([]bson.M, error)
 	Append(string, ed25519.PublicKey, txn.Metadata, Mode) error

@@ -3,8 +3,6 @@ package airbloc.rpc.v1;
 
 option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
 
-import "google/protobuf/empty.proto";
-
 service User {
     rpc GetData(DataRequest) returns (GetDataReponse);
     rpc GetDataIds(DataIdRequest) returns (GetDataIdsResponse);
