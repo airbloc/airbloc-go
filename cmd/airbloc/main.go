@@ -3,23 +3,20 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/airbloc/airbloc-go/key"
-	"github.com/airbloc/airbloc-go/warehouse/service"
+	"github.com/airbloc/airbloc-go/controller"
+	controllerAPI "github.com/airbloc/airbloc-go/controller/api"
+	providerAPI "github.com/airbloc/airbloc-go/provider/api"
+	"github.com/airbloc/airbloc-go/shared/key"
+	"github.com/airbloc/airbloc-go/shared/node"
+	"github.com/airbloc/airbloc-go/shared/warehouse/service"
+	"github.com/airbloc/logger"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/jinzhu/configor"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+	log2 "log"
 	"os"
 	"strings"
-
-	logger2 "github.com/airbloc/airbloc-go/logger"
-	"github.com/airbloc/airbloc-go/node/userdelegateapi"
-	"github.com/airbloc/airbloc-go/userdelegate"
-	"github.com/airbloc/logger"
-	log2 "log"
-
-	"github.com/airbloc/airbloc-go/node"
-	"github.com/airbloc/airbloc-go/node/serverapi"
-	"github.com/jinzhu/configor"
 )
 
 var (
@@ -58,7 +55,7 @@ var (
 		Use:   "userdelegate",
 		Short: "Start Airbloc user delegate daemon.",
 		Long:  "Start user delegate daemon, watching and supervising user's data event.",
-		Run:   start("userdelegate,warehouse", ""),
+		Run:   start("controller,warehouse", ""),
 	}
 
 	versionCmd = &cobra.Command{
@@ -75,21 +72,21 @@ var (
 
 	// list of available APIs and services
 	AvailableAPIs = map[string]node.Constructor{
-		"apps":        serverapi.NewAppsAPI,
-		"collections": serverapi.NewCollectionsAPI,
-		"data":        serverapi.NewDataAPI,
-		"dauth":       serverapi.NewDAuthAPI,
-		"exchange":    serverapi.NewExchangeAPI,
-		"schemas":     serverapi.NewSchemaAPI,
-		"warehouse":   serverapi.NewWarehouseAPI,
+		"apps":        providerAPI.NewAppsAPI,
+		"collections": providerAPI.NewCollectionsAPI,
+		"data":        providerAPI.NewDataAPI,
+		"dauth":       providerAPI.NewDAuthAPI,
+		"exchange":    providerAPI.NewExchangeAPI,
+		"schemas":     providerAPI.NewSchemaAPI,
+		"warehouse":   providerAPI.NewWarehouseAPI,
 
-		"server.accounts":       serverapi.NewAccountsAPI,
-		"userdelegate.accounts": userdelegateapi.NewAccountAPI,
+		"server.accounts":     providerAPI.NewAccountsAPI,
+		"controller.accounts": controllerAPI.NewAccountAPI,
 	}
 	AvailableServices = map[string]node.ServiceConstructor{
-		"api":          node.NewAPIService,
-		"warehouse":    warehouseservice.New,
-		"userdelegate": userdelegate.NewService,
+		"api":        node.NewAPIService,
+		"warehouse":  warehouseservice.New,
+		"controller": controller.NewService,
 	}
 )
 

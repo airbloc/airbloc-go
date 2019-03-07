@@ -12,7 +12,7 @@ import (
 	"github.com/valyala/fastjson"
 )
 
-const BuildOutput = "adapter"
+const BuildOutput = "shared/adapter"
 const ContractDir = "contracts/build/contracts"
 
 func main() {

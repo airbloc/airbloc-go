@@ -3,10 +3,10 @@ package ablclient
 import (
 	"context"
 
-	"github.com/airbloc/airbloc-go/account"
-	ablCommon "github.com/airbloc/airbloc-go/common"
-	"github.com/airbloc/airbloc-go/key"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/userdelegate"
+	"github.com/airbloc/airbloc-go/shared/account"
+	"github.com/airbloc/airbloc-go/shared/key"
+	"github.com/airbloc/airbloc-go/shared/types"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
@@ -45,7 +45,7 @@ func (client *Client) Create(walletAddress ethCommon.Address, password string) (
 	if err != nil {
 		return nil, errors.Wrap(err, "RPC call failed")
 	}
-	accountId, err := ablCommon.HexToID(response.GetAccountId())
+	accountId, err := types.HexToID(response.GetAccountId())
 	if err != nil {
 		return nil, errors.Wrapf(err, "invalid ID returned from the server: %s", response.GetAccountId())
 	}
@@ -64,7 +64,7 @@ func (client *Client) LogIn(identity string, password string) (*account.Session,
 	if err != nil {
 		return nil, errors.Wrapf(err, "unable to log in: %s", identity)
 	}
-	accountId, err := ablCommon.HexToID(response.GetAccountId())
+	accountId, err := types.HexToID(response.GetAccountId())
 	if err != nil {
 		return nil, errors.Wrapf(err, "invalid ID returned from the server: %s", response.GetAccountId())
 	}

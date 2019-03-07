@@ -2,7 +2,7 @@ package e2e
 
 import (
 	"crypto/ecdsa"
-	"github.com/airbloc/airbloc-go/node"
+	"github.com/airbloc/airbloc-go/shared/node"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/jinzhu/configor"
