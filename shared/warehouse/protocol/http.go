@@ -1,14 +1,12 @@
 package protocol
 
 import (
+	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/json-iterator/go"
-	"net/url"
-	"time"
-
-	"github.com/airbloc/airbloc-go/shared/data"
-
 	"github.com/pkg/errors"
 	"github.com/valyala/fasthttp"
+	"net/url"
+	"time"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -30,7 +28,7 @@ func (http *HttpProtocol) Name() string {
 	return "http"
 }
 
-func (http *HttpProtocol) Read(uri *url.URL) (bundle *data.Bundle, _ error) {
+func (http *HttpProtocol) Read(uri *url.URL) (bundle *types.Bundle, _ error) {
 	request := fasthttp.AcquireRequest()
 	request.SetRequestURI(uri.String())
 

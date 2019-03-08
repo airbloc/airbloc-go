@@ -2,9 +2,8 @@ package protocol
 
 import (
 	"errors"
+	"github.com/airbloc/airbloc-go/shared/types"
 	"net/url"
-
-	"github.com/airbloc/airbloc-go/shared/data"
 )
 
 var (
@@ -13,5 +12,5 @@ var (
 
 type Protocol interface {
 	Name() string
-	Read(uri *url.URL) (*data.Bundle, error)
+	Read(uri *url.URL) (*types.Bundle, error)
 }

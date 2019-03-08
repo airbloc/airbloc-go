@@ -6,7 +6,8 @@ import (
 
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/airbloc/airbloc-go/shared/exchange"
-	"github.com/airbloc/airbloc-go/shared/node"
+	"github.com/airbloc/airbloc-go/shared/service"
+	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -20,7 +21,7 @@ type ExchangeAPI struct {
 	manager *exchange.Manager
 }
 
-func NewExchangeAPI(backend node.Backend) (node.API, error) {
+func NewExchangeAPI(backend service.Backend) (api.API, error) {
 	ex := exchange.NewManager(backend.Client())
 	return &ExchangeAPI{ex}, nil
 }
@@ -230,6 +231,6 @@ func (api *ExchangeAPI) GetReceiptsByEscrow(ctx context.Context, req *pb.Receipt
 	return &pb.Offers{OfferIds: rawOffers}, nil
 }
 
-func (api *ExchangeAPI) AttachToAPI(service *node.APIService) {
+func (api *ExchangeAPI) AttachToAPI(service *api.Service) {
 	pb.RegisterExchangeServer(service.GrpcServer, api)
 }

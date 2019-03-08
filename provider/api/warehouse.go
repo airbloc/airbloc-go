@@ -2,18 +2,18 @@ package api
 
 import (
 	"context"
-	"github.com/airbloc/airbloc-go/shared/warehouse/service"
-	"github.com/airbloc/logger"
-	"sync"
-
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/airbloc/airbloc-go/shared/node"
+	"github.com/airbloc/airbloc-go/shared/service"
+	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/airbloc-go/shared/warehouse"
+	warehouseService "github.com/airbloc/airbloc-go/warehouse"
+	"github.com/airbloc/logger"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"io"
+	"sync"
 )
 
 type WarehouseAPI struct {
@@ -21,8 +21,8 @@ type WarehouseAPI struct {
 	log       *logger.Logger
 }
 
-func NewWarehouseAPI(backend node.Backend) (_ node.API, err error) {
-	service, ok := backend.GetService("warehouse").(*warehouseservice.Service)
+func NewWarehouseAPI(backend service.Backend) (_ api.API, err error) {
+	service, ok := backend.GetService("warehouse").(*warehouseService.Service)
 	if !ok {
 		return nil, errors.New("warehouse service is not registered")
 	}
@@ -176,6 +176,6 @@ func (api *WarehouseAPI) ListBundle(ctx context.Context, req *pb.ListBundleReque
 	}, nil
 }
 
-func (api *WarehouseAPI) AttachToAPI(service *node.APIService) {
+func (api *WarehouseAPI) AttachToAPI(service *api.Service) {
 	pb.RegisterWarehouseServer(service.GrpcServer, api)
 }

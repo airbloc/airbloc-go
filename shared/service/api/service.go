@@ -1,7 +1,8 @@
-package node
+package api
 
 import (
 	"fmt"
+	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/logger"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -13,7 +14,7 @@ import (
 	"os"
 )
 
-type APIService struct {
+type Service struct {
 	GrpcServer *grpc.Server
 	HttpServer *http.Server
 	RestAPIMux *runtime.ServeMux
@@ -25,7 +26,7 @@ type APIService struct {
 	logger *logger.Logger
 }
 
-func NewAPIService(backend Backend) (Service, error) {
+func NewService(backend service.Backend) (service.Service, error) {
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			UnaryServerLogger(),
@@ -34,7 +35,7 @@ func NewAPIService(backend Backend) (Service, error) {
 	restAPImux := runtime.NewServeMux()
 	config := backend.Config()
 	address := fmt.Sprintf("localhost:%d", config.Port)
-	service := &APIService{
+	service := &Service{
 		GrpcServer: grpcServer,
 		RestAPIMux: restAPImux,
 		HttpServer: &http.Server{
@@ -48,12 +49,12 @@ func NewAPIService(backend Backend) (Service, error) {
 	return service, nil
 }
 
-func (service *APIService) Attach(name string, api API) {
+func (service *Service) Attach(name string, api API) {
 
 }
 
 // Start serves gRPC server and HTTP REST API Server on given TCP port.
-func (service *APIService) Start() error {
+func (service *Service) Start() error {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", service.port))
 	if err != nil {
 		return errors.Wrapf(err, "failed to listen to TCP port %d for RPC", service.port)
@@ -71,7 +72,7 @@ func (service *APIService) Start() error {
 	return m.Serve()
 }
 
-func (service *APIService) withErrorHandler(serveMethod func(net.Listener) error, lis net.Listener) {
+func (service *Service) withErrorHandler(serveMethod func(net.Listener) error, lis net.Listener) {
 	if err := serveMethod(lis); err != http.ErrServerClosed {
 		service.logger.Error("failed to run rpc server: %+v", err)
 		os.Exit(1)
@@ -79,7 +80,7 @@ func (service *APIService) withErrorHandler(serveMethod func(net.Listener) error
 }
 
 // Stop stops gRPC server.
-func (service *APIService) Stop() {
+func (service *Service) Stop() {
 	service.GrpcServer.GracefulStop()
 	service.HttpServer.Close()
 }

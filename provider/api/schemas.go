@@ -5,8 +5,9 @@ import (
 	"google.golang.org/grpc/status"
 
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/airbloc/airbloc-go/shared/node"
 	"github.com/airbloc/airbloc-go/shared/schemas"
+	"github.com/airbloc/airbloc-go/shared/service"
+	"github.com/airbloc/airbloc-go/shared/service/api"
 	"golang.org/x/net/context"
 )
 
@@ -14,12 +15,12 @@ type SchemaAPI struct {
 	schemas *schemas.Schemas
 }
 
-func NewSchemaAPI(backend node.Backend) (node.API, error) {
+func NewSchemaAPI(backend service.Backend) (api.API, error) {
 	schemaManager := schemas.New(backend.MetaDatabase(), backend.Client())
 	return &SchemaAPI{schemaManager}, nil
 }
 
-func (api *SchemaAPI) AttachToAPI(service *node.APIService) {
+func (api *SchemaAPI) AttachToAPI(service *api.Service) {
 	pb.RegisterSchemaServer(service.GrpcServer, api)
 }
 

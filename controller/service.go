@@ -11,8 +11,8 @@ import (
 	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/collections"
 	"github.com/airbloc/airbloc-go/shared/dauth"
-	"github.com/airbloc/airbloc-go/shared/node"
 	"github.com/airbloc/airbloc-go/shared/p2p"
+	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/logger"
 	ethCommon "github.com/ethereum/go-ethereum/common"
@@ -38,12 +38,12 @@ type Service struct {
 	apps        *apps.Manager
 	dauth       *dauth.Manager
 	accounts    *account.Manager
-	collections *collections.Collections
+	collections *collections.Manager
 
 	log *logger.Logger
 }
 
-func NewService(backend node.Backend) (node.Service, error) {
+func NewService(backend service.Backend) (service.Service, error) {
 	var accountIds []types.ID
 	for _, accIdStr := range backend.Config().UserDelegate.AccountIds {
 		accountId, err := types.HexToID(accIdStr)
@@ -62,7 +62,7 @@ func NewService(backend node.Backend) (node.Service, error) {
 		apps:        apps.NewManager(backend.Client()),
 		dauth:       dauth.NewManager(backend.Client()),
 		accounts:    account.NewManager(backend.Client()),
-		collections: collections.New(backend.Client()),
+		collections: collections.NewManager(backend.Client()),
 		log:         logger.New("userdelegate"),
 	}, nil
 }

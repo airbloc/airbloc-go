@@ -6,7 +6,8 @@ import (
 	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/collections"
 	"github.com/airbloc/airbloc-go/shared/dauth"
-	"github.com/airbloc/airbloc-go/shared/node"
+	"github.com/airbloc/airbloc-go/shared/service"
+	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/golang/protobuf/ptypes/empty"
@@ -18,14 +19,14 @@ import (
 
 type DAuthAPI struct {
 	dauthClient *dauth.ProviderClient
-	collections *collections.Collections
+	collections *collections.Manager
 }
 
-func NewDAuthAPI(backend node.Backend) (node.API, error) {
+func NewDAuthAPI(backend service.Backend) (api.API, error) {
 	dauthClient := dauth.NewProviderClient(backend.Kms(), backend.Client(), backend.P2P())
 	return &DAuthAPI{
 		dauthClient: dauthClient,
-		collections: collections.New(backend.Client()),
+		collections: collections.NewManager(backend.Client()),
 	}, nil
 }
 
@@ -104,7 +105,7 @@ func (api *DAuthAPI) Deny(ctx context.Context, req *pb.DAuthRequest) (*empty.Emp
 	return &empty.Empty{}, err
 }
 
-func (api *DAuthAPI) AttachToAPI(service *node.APIService) {
+func (api *DAuthAPI) AttachToAPI(service *api.Service) {
 	pb.RegisterDAuthServer(service.GrpcServer, api)
 	pb.RegisterDAuthHandlerFromEndpoint(context.Background(), service.RestAPIMux, service.Address, []grpc.DialOption{grpc.WithInsecure()})
 }

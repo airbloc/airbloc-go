@@ -4,26 +4,23 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"github.com/airbloc/airbloc-go/shared/adapter"
+	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/collections"
+	"github.com/airbloc/airbloc-go/shared/database/localdb"
+	"github.com/airbloc/airbloc-go/shared/database/metadb"
 	"github.com/airbloc/airbloc-go/shared/dauth"
+	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/airbloc-go/shared/schemas"
+	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/airbloc-go/shared/warehouse/protocol"
 	"github.com/airbloc/airbloc-go/shared/warehouse/storage"
+	"github.com/airbloc/logger"
 	"github.com/mongodb/mongo-go-driver/bson"
+	"github.com/pkg/errors"
 	"math/rand"
 	"net/url"
 	"time"
-
-	"github.com/airbloc/logger"
-
-	"github.com/airbloc/airbloc-go/shared/adapter"
-	"github.com/airbloc/airbloc-go/shared/blockchain"
-	"github.com/airbloc/airbloc-go/shared/data"
-	"github.com/airbloc/airbloc-go/shared/database/localdb"
-	"github.com/airbloc/airbloc-go/shared/database/metadb"
-	"github.com/airbloc/airbloc-go/shared/key"
-	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/pkg/errors"
 )
 
 var (
@@ -41,7 +38,7 @@ type DataWarehouse struct {
 	ethclient    blockchain.TxClient
 	dataRegistry *adapter.DataRegistry
 	schemas      *schemas.Schemas
-	collections  *collections.Collections
+	collections  *collections.Manager
 
 	// data storage layer
 	protocols      map[string]protocol.Protocol
@@ -90,7 +87,7 @@ func New(
 		metaDatabase: metadb.NewModel(metaDatabase, "bundles"),
 		ethclient:    ethclient,
 		dataRegistry: contract.(*adapter.DataRegistry),
-		collections:  collections.New(ethclient),
+		collections:  collections.NewManager(ethclient),
 		schemas:      schemas.New(metaDatabase, ethclient),
 
 		protocols:      protocols,
@@ -131,7 +128,7 @@ func (dw *DataWarehouse) validate(collection *collections.Collection, data *type
 	return nil
 }
 
-func generateBundleNameOf(bundle *data.Bundle) string {
+func generateBundleNameOf(bundle *types.Bundle) string {
 	tokenBytes := make([]byte, 4)
 	rand.Read(tokenBytes)
 	token := hex.EncodeToString(tokenBytes)
@@ -140,13 +137,13 @@ func generateBundleNameOf(bundle *data.Bundle) string {
 	return fmt.Sprintf("%s-%s-%s.bundle", currentTime, bundle.Collection.Hex(), token)
 }
 
-func (dw *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
+func (dw *DataWarehouse) Store(stream *BundleStream) (*types.Bundle, error) {
 	if stream == nil {
 		return nil, errors.New("No data in the stream.")
 	}
 	ingestedAt := types.Time{Time: time.Now()}
 
-	createdBundle := &data.Bundle{
+	createdBundle := &types.Bundle{
 		Provider:   stream.provider,
 		Collection: stream.collection.Id,
 		DataCount:  stream.DataCount,
@@ -207,7 +204,7 @@ func (dw *DataWarehouse) Store(stream *BundleStream) (*data.Bundle, error) {
 	return createdBundle, nil
 }
 
-func (dw *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (bundleId types.ID, _ error) {
+func (dw *DataWarehouse) registerBundleOnChain(bundle *types.Bundle) (bundleId types.ID, _ error) {
 	bundleDataHash, err := bundle.Hash()
 	if err != nil {
 		return bundleId, errors.Wrap(err, "failed to get hash of the bundle data")
@@ -248,7 +245,7 @@ func (dw *DataWarehouse) registerBundleOnChain(bundle *data.Bundle) (bundleId ty
 	return
 }
 
-func (dw *DataWarehouse) Get(id *types.DataId) (*data.Bundle, error) {
+func (dw *DataWarehouse) Get(id *types.DataId) (*types.Bundle, error) {
 	bundle, err := dw.dataRegistry.Bundles(nil, id.BundleId)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get uri")
@@ -265,7 +262,7 @@ func (dw *DataWarehouse) Get(id *types.DataId) (*data.Bundle, error) {
 	return dw.Fetch(uri)
 }
 
-func (dw *DataWarehouse) Fetch(uri *url.URL) (*data.Bundle, error) {
+func (dw *DataWarehouse) Fetch(uri *url.URL) (*types.Bundle, error) {
 	protoc, exists := dw.protocols[uri.Scheme]
 	if !exists {
 		return nil, errors.Errorf("the protocol %s is not supported", uri.Scheme)
@@ -273,17 +270,17 @@ func (dw *DataWarehouse) Fetch(uri *url.URL) (*data.Bundle, error) {
 	return protoc.Read(uri)
 }
 
-func (dw *DataWarehouse) List(providerId types.ID) ([]*data.Bundle, error) {
+func (dw *DataWarehouse) List(providerId types.ID) ([]*types.Bundle, error) {
 	bundleDataList, err := dw.metaDatabase.RetrieveMany(context.TODO(), bson.M{"provider": providerId.Hex()})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to list bundles")
 	}
 
-	var bundles []*data.Bundle
+	var bundles []*types.Bundle
 	for _, bundleData := range bundleDataList {
 		collectionId, _ := types.HexToID(bundleData["collection"].(string))
 		ingestedAt, _ := time.Parse(time.RFC3339Nano, bundleData["ingestedAt"].(string))
-		bundles = append(bundles, &data.Bundle{
+		bundles = append(bundles, &types.Bundle{
 			Id:         bundleData["bundleId"].(string),
 			Uri:        bundleData["uri"].(string),
 			DataCount:  bundleData["dataCount"].(int),

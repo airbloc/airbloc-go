@@ -1,4 +1,4 @@
-package node
+package service
 
 import (
 	"github.com/airbloc/airbloc-go/shared/warehouse"
@@ -32,7 +32,7 @@ type Config struct {
 			MinConfirmations int `default:"1" yaml:"minConfirmations"`
 		}
 		DeploymentPath string `default:"deployment.local.json" yaml:"deploymentPath"`
-	}
+	} `yaml:"blockchain"`
 
 	Warehouse warehouse.Config
 

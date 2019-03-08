@@ -3,15 +3,14 @@ package storage
 import (
 	"bytes"
 	"fmt"
-	"net/url"
-	"path/filepath"
-	"regexp"
-
-	"github.com/airbloc/airbloc-go/shared/data"
+	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/pkg/errors"
+	"net/url"
+	"path/filepath"
+	"regexp"
 )
 
 var S3ProtocolFmt = "%s.s3.%s.amazonaws.com"
@@ -38,7 +37,7 @@ func ExtractS3ObjectInfo(rawUrl string) (region, bucket, key string) {
 	return s[0], s[1], s[2]
 }
 
-func (ss *S3Storage) Save(bundleId string, bundle *data.Bundle) (*url.URL, error) {
+func (ss *S3Storage) Save(bundleId string, bundle *types.Bundle) (*url.URL, error) {
 	bundleUri := &url.URL{
 		Scheme: "https",
 		Host:   fmt.Sprintf(S3ProtocolFmt, ss.bucket, ss.region),
@@ -51,7 +50,7 @@ func (ss *S3Storage) Save(bundleId string, bundle *data.Bundle) (*url.URL, error
 	return bundleUri, nil
 }
 
-func (ss *S3Storage) Update(bundlePath *url.URL, bundle *data.Bundle) error {
+func (ss *S3Storage) Update(bundlePath *url.URL, bundle *types.Bundle) error {
 	bundleData, err := json.Marshal(bundle)
 	if err != nil {
 		return errors.Wrap(err, "s3 update: marshal error")

@@ -2,7 +2,7 @@ package e2e
 
 import (
 	"crypto/ecdsa"
-	"github.com/airbloc/airbloc-go/shared/node"
+	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/jinzhu/configor"
@@ -22,9 +22,9 @@ type testConfig struct {
 }
 
 func (t *T) loadConfig() {
-	serverConfig := new(node.Config)
+	serverConfig := new(service.Config)
 	if err := configor.Load(serverConfig, ConfigFilePath); err != nil {
-		log.Fatalln("Unable to load node config from", ConfigFilePath)
+		log.Fatalln("Unable to load service config from", ConfigFilePath)
 	}
 
 	privateKey, err := crypto.LoadECDSA("../../" + serverConfig.PrivateKeyPath)
@@ -36,7 +36,7 @@ func (t *T) loadConfig() {
 	require.NoError(t, err)
 	require.NoError(t, json.NewDecoder(file).Decode(&deployments))
 
-	userDelegateConfig := new(node.Config)
+	userDelegateConfig := new(service.Config)
 	if err := configor.Load(userDelegateConfig, UserDelegateConfigPath); err != nil {
 		log.Fatalln("Unable to load user delegate config from", UserDelegateConfigPath)
 	}

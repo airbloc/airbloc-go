@@ -3,10 +3,11 @@ package api
 import (
 	"context"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/airbloc/airbloc-go/shared/node"
+	"github.com/airbloc/airbloc-go/shared/service"
+	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/airbloc-go/shared/user"
-	"github.com/airbloc/airbloc-go/shared/warehouse/service"
+	"github.com/airbloc/airbloc-go/warehouse"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -15,17 +16,17 @@ type UserAPI struct {
 	manager *user.Manager
 }
 
-func NewUserAPI(backend node.Backend) (node.API, error) {
+func NewUserAPI(backend service.Backend) (api.API, error) {
 	manager := user.NewManager(
 		backend.Kms(),
 		backend.MetaDatabase(),
 		backend.Client(),
-		backend.GetService("warehouse").(*warehouseservice.Service).GetManager(),
+		backend.GetService("warehouse").(*warehouse.Service).GetManager(),
 	)
 	return &UserAPI{manager}, nil
 }
 
-func (api *UserAPI) AttachToAPI(service *node.APIService) {
+func (api *UserAPI) AttachToAPI(service *api.Service) {
 	pb.RegisterUserServer(service.GrpcServer, api)
 }
 

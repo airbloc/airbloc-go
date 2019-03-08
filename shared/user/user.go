@@ -19,7 +19,7 @@ type Manager struct {
 	kms         key.Manager
 	metadb      metadb.Database
 	warehouse   *warehouse.DataWarehouse
-	collections *collections.Collections
+	collections *collections.Manager
 }
 
 func NewManager(
@@ -32,7 +32,7 @@ func NewManager(
 		kms:         kms,
 		warehouse:   warehouse,
 		metadb:      metaDB,
-		collections: collections.New(client),
+		collections: collections.NewManager(client),
 	}
 }
 

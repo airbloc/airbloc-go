@@ -6,10 +6,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/airbloc/airbloc-go/shared/node"
-
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/airbloc/airbloc-go/shared/apps"
+	"github.com/airbloc/airbloc-go/shared/service"
+	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/golang/protobuf/ptypes/empty"
@@ -20,7 +20,7 @@ type AppsAPI struct {
 	apps *apps.Manager
 }
 
-func NewAppsAPI(backend node.Backend) (node.API, error) {
+func NewAppsAPI(backend service.Backend) (api.API, error) {
 	appsManager := apps.NewManager(backend.Client())
 	return &AppsAPI{appsManager}, nil
 }
@@ -75,6 +75,6 @@ func (api *AppsAPI) Unregister(ctx context.Context, req *pb.UnregisterRequest) (
 	return &empty.Empty{}, nil
 }
 
-func (api *AppsAPI) AttachToAPI(service *node.APIService) {
+func (api *AppsAPI) AttachToAPI(service *api.Service) {
 	pb.RegisterAppsServer(service.GrpcServer, api)
 }

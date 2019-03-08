@@ -1,11 +1,10 @@
-package datamanager
+package data
 
 import (
 	"context"
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/collections"
-	"github.com/airbloc/airbloc-go/shared/data"
 	"github.com/airbloc/airbloc-go/shared/database/localdb"
 	"github.com/airbloc/airbloc-go/shared/database/metadb"
 	"github.com/airbloc/airbloc-go/shared/key"
@@ -25,8 +24,8 @@ type Manager struct {
 	p2p         p2p.Server
 	warehouse   *warehouse.DataWarehouse
 	registry    *adapter.DataRegistry
-	collections *collections.Collections
-	batches     *data.BatchManager
+	collections *collections.Manager
+	batches     *BatchManager
 }
 
 func NewManager(
@@ -37,7 +36,7 @@ func NewManager(
 	client blockchain.TxClient,
 	warehouse *warehouse.DataWarehouse,
 ) *Manager {
-	batches := data.NewBatchManager(localDB)
+	batches := NewBatchManager(localDB)
 	contract := client.GetContract(&adapter.DataRegistry{})
 	return &Manager{
 		kms:         kms,
@@ -45,23 +44,23 @@ func NewManager(
 		p2p:         p2p,
 		warehouse:   warehouse,
 		registry:    contract.(*adapter.DataRegistry),
-		collections: collections.New(client),
+		collections: collections.NewManager(client),
 		batches:     batches,
 		metadb:      metadb.NewModel(metaDB, "bundles"),
 	}
 }
 
-func (manager *Manager) Batches() *data.BatchManager {
+func (manager *Manager) Batches() *BatchManager {
 	return manager.batches
 }
 
 func (manager *Manager) encrypt(data *types.Data) (*types.EncryptedData, error) {
-	encryptedPayload, err := manager.kms.Encrypt(data.Payload)
+	encryptedPayload, err := manager.kms.Encrypt(Payload)
 	if err != nil {
 		return nil, err
 	}
 	return &types.EncryptedData{
-		UserId:  data.UserId,
+		UserId:  UserId,
 		Payload: encryptedPayload,
 	}, nil
 }
@@ -103,9 +102,9 @@ func (manager *Manager) Get(rawDataId string) (*getDataResult, error) {
 	}, nil
 }
 
-func (manager *Manager) GetBatch(batch *data.Batch) ([]*getDataResult, error) {
+func (manager *Manager) GetBatch(batch *Batch) ([]*getDataResult, error) {
 	result := make([]*getDataResult, batch.Count)
-	bundles := make(map[types.ID]*data.Bundle, batch.Count)
+	bundles := make(map[types.ID]*Bundle, batch.Count)
 
 	index := 0
 	for dataId := range batch.Iterator() {

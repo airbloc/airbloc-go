@@ -4,14 +4,15 @@ import (
 	"context"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/airbloc/airbloc-go/shared/account"
-	"github.com/airbloc/airbloc-go/shared/node"
+	"github.com/airbloc/airbloc-go/shared/service"
+	"github.com/airbloc/airbloc-go/shared/service/api"
 )
 
 type AccountsAPI struct {
 	accounts *account.Manager
 }
 
-func NewAccountsAPI(backend node.Backend) (node.API, error) {
+func NewAccountsAPI(backend service.Backend) (api.API, error) {
 	return &AccountsAPI{
 		accounts: account.NewManager(backend.Client()),
 	}, nil
@@ -30,6 +31,6 @@ func (api *AccountsAPI) Exists(ctx context.Context, req *pb.AccountExistsRequest
 	}, nil
 }
 
-func (api *AccountsAPI) AttachToAPI(service *node.APIService) {
+func (api *AccountsAPI) AttachToAPI(service *api.Service) {
 	pb.RegisterAccountsServer(service.GrpcServer, api)
 }

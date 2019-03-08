@@ -1,4 +1,4 @@
-package node
+package service
 
 import (
 	"github.com/airbloc/airbloc-go/shared/blockchain"
@@ -21,16 +21,3 @@ type Backend interface {
 	AttachService(string, Service)
 	DetachService(string)
 }
-
-type API interface {
-	AttachToAPI(api *APIService)
-}
-
-type Constructor func(airbloc Backend) (API, error)
-
-type Service interface {
-	Start() error
-	Stop()
-}
-
-type ServiceConstructor func(airbloc Backend) (Service, error)

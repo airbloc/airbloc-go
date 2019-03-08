@@ -2,14 +2,13 @@ package storage
 
 import (
 	"fmt"
+	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/url"
 	"os"
 	"path"
 	"sync"
-
-	"github.com/airbloc/airbloc-go/shared/data"
-	"github.com/pkg/errors"
 )
 
 type LocalStorage struct {
@@ -33,7 +32,7 @@ func NewLocalStorage(savePath string, endpoint string) (Storage, error) {
 	}, nil
 }
 
-func (localStorage *LocalStorage) Save(bundleId string, bundle *data.Bundle) (*url.URL, error) {
+func (localStorage *LocalStorage) Save(bundleId string, bundle *types.Bundle) (*url.URL, error) {
 	fileName := fmt.Sprintf("%s.json", bundleId)
 	savePath := path.Join(localStorage.SavePath, fileName)
 
@@ -49,7 +48,7 @@ func (localStorage *LocalStorage) Save(bundleId string, bundle *data.Bundle) (*u
 	return url.Parse(path.Join(localStorage.Endpoint, fileName))
 }
 
-func (localStorage *LocalStorage) Update(url *url.URL, bundle *data.Bundle) error {
+func (localStorage *LocalStorage) Update(url *url.URL, bundle *types.Bundle) error {
 	_, fileName := path.Split(url.Path)
 	savedPath := path.Join(localStorage.SavePath, fileName)
 

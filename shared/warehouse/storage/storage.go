@@ -1,15 +1,14 @@
 package storage
 
 import (
+	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/json-iterator/go"
 	"net/url"
-
-	"github.com/airbloc/airbloc-go/shared/data"
 )
 
 type Storage interface {
-	Save(string, *data.Bundle) (*url.URL, error)
-	Update(*url.URL, *data.Bundle) error
+	Save(string, *types.Bundle) (*url.URL, error)
+	Update(*url.URL, *types.Bundle) error
 	Delete(*url.URL) error
 }
 

@@ -2,10 +2,11 @@ package api
 
 import (
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/airbloc/airbloc-go/shared/data/datamanager"
-	"github.com/airbloc/airbloc-go/shared/node"
+	"github.com/airbloc/airbloc-go/shared/data"
+	"github.com/airbloc/airbloc-go/shared/service"
+	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/airbloc/airbloc-go/shared/warehouse/service"
+	"github.com/airbloc/airbloc-go/warehouse"
 	"github.com/golang/protobuf/ptypes/empty"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
@@ -14,21 +15,21 @@ import (
 )
 
 type DataAPI struct {
-	manager *datamanager.Manager
+	manager *data.Manager
 }
 
-func NewDataAPI(backend node.Backend) (node.API, error) {
-	manager := datamanager.NewManager(
+func NewDataAPI(backend service.Backend) (api.API, error) {
+	manager := data.NewManager(
 		backend.Kms(),
 		backend.P2P(),
 		backend.MetaDatabase(),
 		backend.LocalDatabase(),
 		backend.Client(),
-		backend.GetService("warehouse").(*warehouseservice.Service).GetManager())
+		backend.GetService("warehouse").(*warehouse.Service).GetManager())
 	return &DataAPI{manager}, nil
 }
 
-func (api *DataAPI) AttachToAPI(service *node.APIService) {
+func (api *DataAPI) AttachToAPI(service *api.Service) {
 	pb.RegisterDataServer(service.GrpcServer, api)
 }
 

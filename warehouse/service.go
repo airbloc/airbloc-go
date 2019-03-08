@@ -1,7 +1,7 @@
-package warehouseservice
+package warehouse
 
 import (
-	"github.com/airbloc/airbloc-go/shared/node"
+	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/warehouse"
 	"github.com/airbloc/airbloc-go/shared/warehouse/protocol"
 	"github.com/airbloc/airbloc-go/shared/warehouse/storage"
@@ -15,7 +15,7 @@ type Service struct {
 	manager *warehouse.DataWarehouse
 }
 
-func New(backend node.Backend) (node.Service, error) {
+func NewService(backend service.Backend) (service.Service, error) {
 	var err error
 	config := backend.Config().Warehouse
 

@@ -3,12 +3,11 @@ package types
 import (
 	"encoding/binary"
 	"encoding/hex"
-	"github.com/json-iterator/go"
-	"time"
-
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/json-iterator/go"
 	"github.com/pkg/errors"
+	"time"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary

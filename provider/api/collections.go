@@ -3,8 +3,9 @@ package api
 import (
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/airbloc/airbloc-go/shared/collections"
-	"github.com/airbloc/airbloc-go/shared/node"
 	"github.com/airbloc/airbloc-go/shared/schemas"
+	"github.com/airbloc/airbloc-go/shared/service"
+	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
@@ -13,13 +14,13 @@ import (
 )
 
 type CollectionsAPI struct {
-	collections *collections.Collections
+	collections *collections.Manager
 	schemas     *schemas.Schemas
 }
 
-func NewCollectionsAPI(backend node.Backend) (node.API, error) {
+func NewCollectionsAPI(backend service.Backend) (api.API, error) {
 	return &CollectionsAPI{
-		collections: collections.New(backend.Client()),
+		collections: collections.NewManager(backend.Client()),
 		schemas:     schemas.New(backend.MetaDatabase(), backend.Client()),
 	}, nil
 }
@@ -105,6 +106,6 @@ func (api *CollectionsAPI) List(ctx context.Context, req *pb.ListCollectionReque
 	return response, nil
 }
 
-func (api *CollectionsAPI) AttachToAPI(service *node.APIService) {
+func (api *CollectionsAPI) AttachToAPI(service *api.Service) {
 	pb.RegisterCollectionServer(service.GrpcServer, api)
 }

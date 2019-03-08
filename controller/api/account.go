@@ -2,10 +2,11 @@ package api
 
 import (
 	"context"
+	"github.com/airbloc/airbloc-go/shared/service"
+	"github.com/airbloc/airbloc-go/shared/service/api"
 
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/userdelegate"
 	"github.com/airbloc/airbloc-go/shared/account"
-	"github.com/airbloc/airbloc-go/shared/node"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
@@ -15,12 +16,12 @@ type AccountAPI struct {
 	manager *account.Manager
 }
 
-func NewAccountAPI(backend node.Backend) (node.API, error) {
+func NewAccountAPI(backend service.Backend) (api.API, error) {
 	manager := account.NewManager(backend.Client())
 	return &AccountAPI{manager}, nil
 }
 
-func (api *AccountAPI) AttachToAPI(service *node.APIService) {
+func (api *AccountAPI) AttachToAPI(service *api.Service) {
 	pb.RegisterAccountServer(service.GrpcServer, api)
 }
 

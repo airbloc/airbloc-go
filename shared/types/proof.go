@@ -1,16 +1,15 @@
-package data
+package types
 
 import (
 	"github.com/airbloc/airbloc-go/shared/merkle"
-	"github.com/airbloc/airbloc-go/shared/types"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
 )
 
 func (bundle *Bundle) generateSMT() (err error) {
-	leaves := make(map[types.ID][]types.RowId, len(bundle.Data))
+	leaves := make(map[ID][]RowId, len(bundle.Data))
 	for userId, rowData := range bundle.Data {
-		leaves[userId] = make([]types.RowId, len(rowData))
+		leaves[userId] = make([]RowId, len(rowData))
 		for i, data := range rowData {
 			leaves[userId][i] = data.RowId
 		}
@@ -32,7 +31,7 @@ func (bundle *Bundle) SetupUserProof() (root ethCommon.Hash, _ error) {
 	return
 }
 
-func (bundle *Bundle) GenerateProof(rowId types.RowId, userId types.ID) ([]byte, error) {
+func (bundle *Bundle) GenerateProof(rowId RowId, userId ID) ([]byte, error) {
 	if bundle.tree == nil {
 		if err := bundle.generateSMT(); err != nil {
 			return nil, errors.Wrap(err, "setup user proof")
