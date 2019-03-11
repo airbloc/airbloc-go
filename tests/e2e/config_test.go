@@ -8,7 +8,7 @@ import (
 	"github.com/jinzhu/configor"
 	"github.com/stretchr/testify/require"
 	"log"
-	"os"
+	"net/http"
 )
 
 const ConfigFilePath = "../../config.yml"
@@ -32,9 +32,10 @@ func (t *T) loadConfig() {
 
 	// load contract deployments
 	deployments := make(map[string]common.Address)
-	file, err := os.OpenFile("../../"+serverConfig.Blockchain.DeploymentPath, os.O_RDONLY, os.ModePerm)
+	res, err := http.Get(serverConfig.Blockchain.DeploymentPath)
 	require.NoError(t, err)
-	require.NoError(t, json.NewDecoder(file).Decode(&deployments))
+	defer res.Body.Close()
+	require.NoError(t, json.NewDecoder(res.Body).Decode(&deployments))
 
 	userDelegateConfig := new(service.Config)
 	if err := configor.Load(userDelegateConfig, UserDelegateConfigPath); err != nil {

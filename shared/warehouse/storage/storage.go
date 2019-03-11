@@ -1,9 +1,10 @@
 package storage
 
 import (
-	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/json-iterator/go"
 	"net/url"
+
+	"github.com/airbloc/airbloc-go/shared/types"
 )
 
 type Storage interface {

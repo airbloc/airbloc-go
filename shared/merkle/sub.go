@@ -2,12 +2,13 @@ package merkle
 
 import (
 	"bytes"
-	"errors"
-	"github.com/airbloc/airbloc-go/shared/types"
-	ethCommon "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	"encoding/binary"
+	"github.com/pkg/errors"
 	"math/big"
 	"sort"
+
+	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 const (
@@ -16,12 +17,12 @@ const (
 )
 
 type SubTree struct {
-	leaves []types.RowId
+	leaves [][4]byte
 	tree   [][]ethCommon.Hash
 	root   ethCommon.Hash
 }
 
-func (st *SubTree) Leaves() []types.RowId {
+func (st *SubTree) Leaves() [][4]byte {
 	return st.leaves
 }
 
@@ -29,10 +30,10 @@ func (st *SubTree) Root() ethCommon.Hash {
 	return st.root
 }
 
-func (st *SubTree) GenerateProof(rowId types.RowId) ([]byte, error) {
+func (st *SubTree) GenerateProof(rowId [4]byte) ([]byte, error) {
 	// get index of given rowId
 	index := sort.Search(len(st.leaves), func(i int) bool {
-		return st.leaves[i].Uint32() >= rowId.Uint32()
+		return binary.LittleEndian.Uint32(st.leaves[i][:]) >= binary.LittleEndian.Uint32(rowId[:])
 	})
 
 	if index == len(st.leaves) {
@@ -56,7 +57,7 @@ func (st *SubTree) GenerateProof(rowId types.RowId) ([]byte, error) {
 	return append(st.root.Bytes(), buf.Bytes()...), nil
 }
 
-func verifySubProof(rowId types.RowId, subRoot, proof []byte) bool {
+func verifySubProof(rowId [4]byte, subRoot, proof []byte) bool {
 	root := ethCommon.BytesToHash(subRoot)
 	base := crypto.Keccak256Hash(rowId[:])
 
@@ -79,7 +80,7 @@ func verifySubProof(rowId types.RowId, subRoot, proof []byte) bool {
 	return bytes.Equal(root.Bytes(), base.Bytes())
 }
 
-func VerifySubProof(rowId types.RowId, proof []byte) (bool, error) {
+func VerifySubProof(rowId [4]byte, proof []byte) (bool, error) {
 	if len(proof) < HashLength+SubProofLength {
 		return false, errors.New("invalid proof length")
 	}
@@ -94,7 +95,7 @@ func VerifySubProof(rowId types.RowId, proof []byte) (bool, error) {
 	return verifySubProof(rowId, root, proof), nil
 }
 
-func NewSubTree(input []types.RowId) (*SubTree, error) {
+func NewSubTree(input [][4]byte) (*SubTree, error) {
 	// check input
 	pow := new(big.Int).Lsh(big.NewInt(1), uint(32))
 	if big.NewInt(int64(len(input))).Cmp(pow) > 0 {
@@ -103,7 +104,7 @@ func NewSubTree(input []types.RowId) (*SubTree, error) {
 
 	// sort
 	sort.Slice(input, func(i, j int) bool {
-		return input[i].Uint32() < input[j].Uint32()
+		return binary.LittleEndian.Uint32(input[i][:]) < binary.LittleEndian.Uint32(input[j][:])
 	})
 
 	// hashing

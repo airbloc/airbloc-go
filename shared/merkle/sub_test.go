@@ -1,18 +1,19 @@
 package merkle
 
 import (
+	"math/rand"
+	"testing"
+
 	"github.com/airbloc/airbloc-go/shared/types"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"math/rand"
-	"testing"
 )
 
 func TestNewSubTree(t *testing.T) {
 	for i := 0; i < 5; i++ {
-		var sInput []types.RowId
+		var sInput [][4]byte
 		for j := uint32(0); j < rand.Uint32()%500; j++ {
 			sInput = append(sInput, types.UintToRowId(j))
 		}
@@ -50,7 +51,7 @@ func TestNewSubTree(t *testing.T) {
 }
 
 func TestSubTree_GenerateProof(t *testing.T) {
-	var sInput []types.RowId
+	var sInput [][4]byte
 	for i := uint32(0); i < 500; i++ {
 		sInput = append(sInput, types.UintToRowId(i))
 	}

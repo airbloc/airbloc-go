@@ -1,9 +1,10 @@
 package protocol
 
 import (
-	"errors"
-	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/pkg/errors"
 	"net/url"
+
+	"github.com/airbloc/airbloc-go/shared/types"
 )
 
 var (

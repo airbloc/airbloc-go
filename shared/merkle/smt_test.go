@@ -1,18 +1,19 @@
 package merkle
 
 import (
+	"runtime"
+	"testing"
+
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/loomnetwork/mamamerkle"
 	"github.com/stretchr/testify/require"
-	"runtime"
-	"testing"
 )
 
 func TestNewMainTree(t *testing.T) {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	// prepare
-	sInput := make(map[types.ID][]types.RowId)
+	sInput := make(map[[8]byte][][4]byte)
 	for i := uint64(0); i < 100000; i++ {
 		userId := types.UintToID(i)
 		for j := uint32(0); j < 10; j++ {

@@ -2,13 +2,14 @@ package storage
 
 import (
 	"fmt"
-	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/url"
 	"os"
 	"path"
 	"sync"
+
+	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/pkg/errors"
 )
 
 type LocalStorage struct {

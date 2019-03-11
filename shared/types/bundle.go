@@ -1,8 +1,9 @@
 package types
 
 import (
-	"errors"
+	"github.com/airbloc/airbloc-go/shared/merkle"
 	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/pkg/errors"
 	"golang.org/x/crypto/sha3"
 )
 
@@ -16,6 +17,7 @@ type Bundle struct {
 
 	// mapping(userId => []data)
 	Data map[ID][]*EncryptedData `json:"data"`
+	tree *merkle.MainTree        `json:"-"`
 }
 
 func (bundle *Bundle) Hash() (ethCommon.Hash, error) {
@@ -90,4 +92,38 @@ func (bundle *Bundle) MarshalJSON() ([]byte, error) {
 		IngestedAt: bundle.IngestedAt,
 		Data:       data,
 	})
+}
+
+func (bundle *Bundle) generateSMT() (err error) {
+	leaves := make(map[[8]byte][][4]byte, len(bundle.Data))
+	for userId, rowData := range bundle.Data {
+		leaves[userId] = make([][4]byte, len(rowData))
+		for i, data := range rowData {
+			leaves[userId][i] = data.RowId
+		}
+	}
+
+	bundle.tree, err = merkle.NewMainTree(leaves)
+	return
+}
+
+// SetupUserProof creates a root of 64-depth SMT (Sparse Merkle Tree),
+// which can be used as an accumulator of User IDs for the bundle.
+func (bundle *Bundle) SetupUserProof() (root ethCommon.Hash, _ error) {
+	if bundle.tree == nil {
+		if err := bundle.generateSMT(); err != nil {
+			return root, errors.Wrap(err, "setup user proof")
+		}
+	}
+	root = bundle.tree.Root()
+	return
+}
+
+func (bundle *Bundle) GenerateProof(rowId RowId, userId ID) ([]byte, error) {
+	if bundle.tree == nil {
+		if err := bundle.generateSMT(); err != nil {
+			return nil, errors.Wrap(err, "setup user proof")
+		}
+	}
+	return bundle.tree.GenerateProof(rowId, userId)
 }

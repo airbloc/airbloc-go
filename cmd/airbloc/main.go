@@ -48,7 +48,7 @@ var (
 		Use:   "server",
 		Short: "Start Airbloc API server.",
 		Long:  "Start Airbloc REST/gRPC API server.",
-		Run:   start("provider,warehouse"),
+		Run:   start("warehouse,provider"),
 		//Run:   start("provider,consumer,warehouse"),
 	}
 
@@ -56,7 +56,7 @@ var (
 		Use:   "userdelegate",
 		Short: "Start Airbloc user delegate daemon.",
 		Long:  "Start user delegate daemon, watching and supervising user's data event.",
-		Run:   start("controller,warehouse"),
+		Run:   start("warehouse,controller"),
 	}
 
 	versionCmd = &cobra.Command{
@@ -81,6 +81,7 @@ var (
 )
 
 func init() {
+	log2.SetFlags(log2.Lshortfile)
 	cobra.OnInitialize(loadConfig)
 	rflags := rootCmd.PersistentFlags()
 
@@ -137,8 +138,7 @@ func loadConfig() {
 	if rootFlags.keyPath != "" {
 		config.PrivateKeyPath = rootFlags.keyPath
 	} else {
-		keyPath := strings.Replace(rootFlags.keyPath, "$DATADIR", dataDir, 1)
-		config.PrivateKeyPath = keyPath
+		config.PrivateKeyPath = strings.Replace(config.PrivateKeyPath, "$DATADIR", dataDir, 1)
 	}
 
 	// setup loggers

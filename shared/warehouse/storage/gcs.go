@@ -2,14 +2,15 @@ package storage
 
 import (
 	"bytes"
-	"cloud.google.com/go/storage"
 	"context"
-	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/pkg/errors"
-	"google.golang.org/api/option"
 	"io"
 	"net/url"
 	"path/filepath"
+
+	"cloud.google.com/go/storage"
+	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/pkg/errors"
+	"google.golang.org/api/option"
 )
 
 type GoogleCloudStorage struct {

@@ -3,8 +3,8 @@
 package bind
 
 import (
-	"errors"
 	"fmt"
+	"github.com/pkg/errors"
 	"math/big"
 	"reflect"
 	"strings"

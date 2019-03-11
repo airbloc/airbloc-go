@@ -55,12 +55,12 @@ func (manager *Manager) Batches() *BatchManager {
 }
 
 func (manager *Manager) encrypt(data *types.Data) (*types.EncryptedData, error) {
-	encryptedPayload, err := manager.kms.Encrypt(Payload)
+	encryptedPayload, err := manager.kms.Encrypt(data.Payload)
 	if err != nil {
 		return nil, err
 	}
 	return &types.EncryptedData{
-		UserId:  UserId,
+		UserId:  data.UserId,
 		Payload: encryptedPayload,
 	}, nil
 }
@@ -104,7 +104,7 @@ func (manager *Manager) Get(rawDataId string) (*getDataResult, error) {
 
 func (manager *Manager) GetBatch(batch *Batch) ([]*getDataResult, error) {
 	result := make([]*getDataResult, batch.Count)
-	bundles := make(map[types.ID]*Bundle, batch.Count)
+	bundles := make(map[types.ID]*types.Bundle, batch.Count)
 
 	index := 0
 	for dataId := range batch.Iterator() {

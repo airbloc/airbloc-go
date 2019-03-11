@@ -3,14 +3,15 @@ package storage
 import (
 	"bytes"
 	"fmt"
+	"net/url"
+	"path/filepath"
+	"regexp"
+
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/pkg/errors"
-	"net/url"
-	"path/filepath"
-	"regexp"
 )
 
 var S3ProtocolFmt = "%s.s3.%s.amazonaws.com"

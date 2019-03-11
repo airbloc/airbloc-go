@@ -4,7 +4,7 @@ package bind
 
 import (
 	"crypto/ecdsa"
-	"errors"
+	"github.com/pkg/errors"
 	"io"
 	"io/ioutil"
 
