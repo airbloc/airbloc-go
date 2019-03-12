@@ -35,7 +35,7 @@ func NewService(backend service.Backend) (service.Service, error) {
 	restAPImux := runtime.NewServeMux()
 	config := backend.Config()
 	address := fmt.Sprintf("localhost:%d", config.Port)
-	service := &Service{
+	svc := &Service{
 		GrpcServer: grpcServer,
 		RestAPIMux: restAPImux,
 		HttpServer: &http.Server{
@@ -46,7 +46,7 @@ func NewService(backend service.Backend) (service.Service, error) {
 		port:    config.Port,
 		logger:  logger.New("apiservice"),
 	}
-	return service, nil
+	return svc, nil
 }
 
 func (service *Service) Attach(name string, api API) {

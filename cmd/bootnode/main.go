@@ -51,8 +51,6 @@ func newApp() *cli.App {
 }
 
 func run(options *cli.Context) (err error) {
-	logger2.Setup(os.Stdout, "*", "*")
-
 	var nodekey *key.Key
 	if options.IsSet("nodekeyhex") {
 		priv, err := crypto.HexToECDSA(options.String("nodekeyhex"))

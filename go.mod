@@ -10,7 +10,6 @@ require (
 	github.com/azer/logger v1.0.0
 	github.com/bigchaindb/go-bigchaindb-driver v0.0.0-20180817112319-4e8033be7f5b
 	github.com/cespare/cp v1.1.1 // indirect
-	github.com/cevaris/ordered_map v0.0.0-20180310183325-0efaee1733e3 // indirect
 	github.com/deckarep/golang-set v1.7.1 // indirect
 	github.com/dgraph-io/badger v1.5.5-0.20190226225317-8115aed38f8f
 	github.com/edsrzf/mmap-go v1.0.0 // indirect
@@ -19,6 +18,7 @@ require (
 	github.com/go-interledger/cryptoconditions v0.0.0-20180612102545-aba58e59cef1
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/gogo/protobuf v1.2.1
+	github.com/golang/mock v1.2.0
 	github.com/golang/protobuf v1.3.0
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
@@ -45,7 +45,6 @@ require (
 	github.com/libp2p/go-libp2p-peer v0.0.1
 	github.com/libp2p/go-libp2p-peerstore v0.0.1
 	github.com/libp2p/go-libp2p-protocol v0.0.1
-	github.com/loomnetwork/mamamerkle v0.0.0-20180929134451-bd379c19d963
 	github.com/mattn/go-isatty v0.0.6 // indirect
 	github.com/mcuadros/go-defaults v1.1.0
 	github.com/mitchellh/go-homedir v1.1.0
@@ -55,9 +54,8 @@ require (
 	github.com/mongodb/mongo-go-driver v0.3.0
 	github.com/mr-tron/base58 v1.1.0
 	github.com/multiformats/go-multiaddr v0.0.1
-	github.com/multiformats/go-multibase v0.3.0 // indirect
-	github.com/multiformats/go-multihash v1.0.8
-	github.com/multiformats/go-multistream v0.3.9
+	github.com/multiformats/go-multihash v0.0.1
+	github.com/multiformats/go-multistream v0.0.1
 	github.com/onsi/ginkgo v1.7.0
 	github.com/onsi/gomega v1.4.3
 	github.com/pborman/uuid v1.2.0 // indirect
@@ -65,7 +63,6 @@ require (
 	github.com/rjeczalik/notify v0.9.2 // indirect
 	github.com/rs/cors v1.6.0 // indirect
 	github.com/soheilhy/cmux v0.1.4
-	github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72 // indirect
 	github.com/spf13/afero v1.2.1 // indirect
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect

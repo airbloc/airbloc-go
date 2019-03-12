@@ -17,7 +17,7 @@ func ConnectGRPC() *grpc.ClientConn {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	conn, err := grpc.DialContext(ctx, endpoint)
+	conn, err := grpc.DialContext(ctx, endpoint, grpc.WithInsecure())
 	Ω(err).ShouldNot(HaveOccurred())
 
 	return conn
