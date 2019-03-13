@@ -4,10 +4,12 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"github.com/airbloc/logger"
+	"github.com/stretchr/testify/require"
 	"log"
+	"os"
 	"testing"
 
-	"github.com/airbloc/airbloc-go/shared/p2p/common"
 	"github.com/ethereum/go-ethereum/crypto"
 
 	"time"
@@ -19,7 +21,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const Size = 50
+const Size = 5
 
 var (
 	pongMsg *pb.TestPing
@@ -29,6 +31,10 @@ var (
 )
 
 func init() {
+	logOutput := logger.NewStandardOutput(os.Stdout, "*", "*")
+	logOutput.ColorsEnabled = true
+	logger.SetLogger(logOutput)
+
 	pongMsg = &pb.TestPing{Message: "World!"}
 	pingMsg = &pb.TestPing{Message: "Hello"}
 
@@ -67,15 +73,16 @@ func TestNewServer(t *testing.T) {
 	defer cancel()
 
 	bootinfo, err := StartBootstrapServer(ctx, keys[0], addrs[0])
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	time.Sleep(1 * time.Second)
 
 	servers := make([]Server, Size)
 	for i := 1; i < Size; i++ {
 		server, err := makeBasicServer(ctx, i, bootinfo)
-		assert.NoError(t, err)
-		server.Start()
+		require.NoError(t, err)
+		err = server.Start()
+		require.NoError(t, err)
 
 		server.SubscribeTopic("ping", &pb.TestPing{}, handlePing)
 		server.SubscribeTopic("pong", &pb.TestPong{}, handlePong)
@@ -84,7 +91,7 @@ func TestNewServer(t *testing.T) {
 	}
 
 	err = servers[Size/2].Publish(ctx, pingMsg, "ping")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	time.Sleep(1 * time.Second)
 }
@@ -96,22 +103,24 @@ func TestAirblocHost_Publish(t *testing.T) {
 	defer cancel()
 
 	bootinfo, err := StartBootstrapServer(ctx, keys[0], addrs[0])
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	time.Sleep(1 * time.Second)
 
 	// make alice and bob
 	alice, err := makeBasicServer(ctx, 1, bootinfo)
-	assert.NoError(t, err)
-	alice.Start()
+	require.NoError(t, err)
+	err = alice.Start()
+	require.NoError(t, err)
 
 	aliceAddress := keys[1].EthereumAddress.Hex()
 	log.Printf("Alice address : %s\n", aliceAddress)
 	log.Printf("Alice pubkey : %s\n", hex.EncodeToString(crypto.CompressPubkey(&keys[1].PublicKey)))
 
 	bob, err := makeBasicServer(ctx, 2, bootinfo)
-	assert.NoError(t, err)
-	bob.Start()
+	require.NoError(t, err)
+	err = bob.Start()
+	require.NoError(t, err)
 
 	time.Sleep(2 * time.Second)
 
@@ -122,7 +131,7 @@ func TestAirblocHost_Publish(t *testing.T) {
 	})
 
 	err = alice.Publish(ctx, pingMsg, "ping")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	timeout := time.After(5 * time.Second)
 
