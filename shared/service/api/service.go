@@ -62,7 +62,7 @@ func (service *Service) Start() error {
 
 	// Route gRPC (HTTP2), REST (HTTP) connection accordingly.
 	m := cmux.New(lis)
-	grpcLis := m.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
+	grpcLis := m.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
 	restLis := m.Match(cmux.HTTP1Fast())
 
 	go service.withErrorHandler(service.GrpcServer.Serve, grpcLis)
