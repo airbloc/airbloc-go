@@ -14,7 +14,6 @@ import (
 	"github.com/ipfs/go-datastore"
 	dsync "github.com/ipfs/go-datastore/sync"
 
-	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/gogo/protobuf/proto"
 	"github.com/ipfs/go-cid"
@@ -25,7 +24,6 @@ import (
 	"github.com/libp2p/go-libp2p-peerstore"
 	"github.com/libp2p/go-libp2p/p2p/host/routed"
 	"github.com/multiformats/go-multiaddr"
-	"github.com/multiformats/go-multihash"
 	"github.com/pkg/errors"
 )
 
@@ -54,6 +52,7 @@ type Server interface {
 
 	// for test
 	getHost() host.Host
+	Host() host.Host
 	setContext(context.Context)
 }
 
@@ -95,7 +94,6 @@ func NewAirblocServer(
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	server := &AirblocServer{
 		ctx:       ctx,
@@ -128,22 +126,63 @@ func NewAirblocServer(
 	h = routedhost.Wrap(h, server.dht)
 	server.host = WrapPubSubHost(h, pid, server.handleMessage)
 
-	idVal := int32(pb.CID_AIRBLOC)
-	v1b := cid.V1Builder{
-		Codec:  uint64(idVal),
-		MhType: multihash.KECCAK_256,
-	}
-	server.id, err = v1b.Sum([]byte(pb.CID_name[idVal]))
-	if err != nil {
-		cancel()
-		return nil, errors.Wrap(err, "server error : failed to generate cid")
-	}
-
 	server.log.Info("Initialized", logger.Attrs{
 		"protocol":   fmt.Sprintf("%s %s", ProtocolName, ProtocolVersion),
 		"on address": addr.String(),
 	})
 	return server, nil
+}
+
+// handleMessage receives all messages to server.
+func (s *AirblocServer) handleMessage(message RawMessage) {
+	topic := message.GetTopic()
+	typ, ok := s.types[topic]
+	if !ok {
+		s.log.Error("Unknown topic: {}", message.GetTopic())
+		return
+	}
+	handler := s.handlers[topic]
+
+	msg, err := NewIncomingMessage(message, typ)
+	if err != nil {
+		s.log.Error("Failed to make message", err)
+		return
+	}
+
+	timer := s.log.Timer()
+	handler(s, s.ctx, msg)
+	timer.End("Received message", logger.Attrs{
+		"from":  msg.SenderAddr.String(),
+		"topic": topic,
+	})
+}
+
+// api backend interfaces
+func (s *AirblocServer) Start() error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// connect to bootstrap nodes for initializing DHT
+	if len(s.bootinfos) > 0 {
+		if err := bootstrapConnect(ctx, s.host, s.bootinfos); err != nil {
+			return err
+		}
+		if err := s.dht.Bootstrap(ctx); err != nil {
+			return errors.Wrap(err, "failed to bootstrap")
+		}
+	} else {
+		s.log.Info("Warning: no bootstrap nodes are given. only local peers will be available.")
+	}
+
+	if err := startmDNSDiscovery(ctx, s.host); err != nil {
+		return errors.Wrap(err, "could not start peer discovery via mDNS")
+	}
+	go s.Discovery()
+	return nil
+}
+
+func (s *AirblocServer) Stop() {
+	s.cancel()
 }
 
 // Discovery finds and updates new peer connection every minute.
@@ -181,68 +220,19 @@ func (s *AirblocServer) updatePeer() int {
 	} else if err != nil {
 		s.log.Error("Failed to discovery peers", err)
 	}
+	s.log.Info("Found {} peers", len(idch))
 
 	found := 0
 	for id := range idch {
 		info, err := s.dht.FindPeer(s.ctx, id)
 		if err != nil {
-			s.log.Error("Warning: Peer {id} found but failed to connect", err, logger.Attrs{"to": id.Pretty()})
+			s.log.Error("Warning: Peer {id} found but failed to connect", err, logger.Attrs{"id": id.Pretty()})
 			continue
 		}
 		s.host.Peerstore().AddAddrs(info.ID, info.Addrs, peerstore.TempAddrTTL)
 		found++
 	}
 	return found
-}
-
-// api backend interfaces
-func (s *AirblocServer) Start() error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	// connect to bootstrap nodes for initializing DHT
-	if len(s.bootinfos) > 0 {
-		for _, bootinfo := range s.bootinfos {
-			if err := s.host.Connect(ctx, bootinfo); err != nil {
-				return errors.Wrap(err, "failed to connect to bootstrap node")
-			}
-		}
-	} else {
-		s.log.Info("Warning: no bootstrap nodes are given. only local peers will be available.")
-	}
-
-	if err := startmDNSDiscovery(ctx, s.host); err != nil {
-		return errors.Wrap(err, "could not start peer discovery via mDNS")
-	}
-	go s.Discovery()
-	return nil
-}
-
-func (s *AirblocServer) handleMessage(message RawMessage) {
-	topic := message.GetTopic()
-	typ, ok := s.types[topic]
-	if !ok {
-		s.log.Error("Unknown topic: {}", message.GetTopic())
-		return
-	}
-	handler := s.handlers[topic]
-
-	msg, err := NewIncomingMessage(message, typ)
-	if err != nil {
-		s.log.Error("Failed to make message", err)
-		return
-	}
-
-	timer := s.log.Timer()
-	handler(s, s.ctx, msg)
-	timer.End("Received message", logger.Attrs{
-		"from":  msg.SenderAddr.String(),
-		"topic": topic,
-	})
-}
-
-func (s *AirblocServer) Stop() {
-	s.cancel()
 }
 
 func (s *AirblocServer) SubscribeTopic(topic string, typeSample proto.Message, handler TopicHandler) {
@@ -289,5 +279,9 @@ func (s *AirblocServer) setContext(ctx context.Context) {
 }
 
 func (s *AirblocServer) getHost() host.Host {
+	return s.host
+}
+
+func (s *AirblocServer) Host() host.Host {
 	return s.host
 }
