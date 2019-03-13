@@ -6,8 +6,8 @@ import (
 	"log"
 	"testing"
 
-	"github.com/airbloc/airbloc-go/key"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
+	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"

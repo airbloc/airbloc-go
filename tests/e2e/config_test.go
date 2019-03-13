@@ -2,13 +2,13 @@ package e2e
 
 import (
 	"crypto/ecdsa"
-	"github.com/airbloc/airbloc-go/node"
+	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/jinzhu/configor"
 	"github.com/stretchr/testify/require"
 	"log"
-	"os"
+	"net/http"
 )
 
 const ConfigFilePath = "../../config.yml"
@@ -22,9 +22,9 @@ type testConfig struct {
 }
 
 func (t *T) loadConfig() {
-	serverConfig := new(node.Config)
+	serverConfig := new(service.Config)
 	if err := configor.Load(serverConfig, ConfigFilePath); err != nil {
-		log.Fatalln("Unable to load node config from", ConfigFilePath)
+		log.Fatalln("Unable to load service config from", ConfigFilePath)
 	}
 
 	privateKey, err := crypto.LoadECDSA("../../" + serverConfig.PrivateKeyPath)
@@ -32,11 +32,12 @@ func (t *T) loadConfig() {
 
 	// load contract deployments
 	deployments := make(map[string]common.Address)
-	file, err := os.OpenFile("../../"+serverConfig.Blockchain.DeploymentPath, os.O_RDONLY, os.ModePerm)
+	res, err := http.Get(serverConfig.Blockchain.DeploymentPath)
 	require.NoError(t, err)
-	require.NoError(t, json.NewDecoder(file).Decode(&deployments))
+	defer res.Body.Close()
+	require.NoError(t, json.NewDecoder(res.Body).Decode(&deployments))
 
-	userDelegateConfig := new(node.Config)
+	userDelegateConfig := new(service.Config)
 	if err := configor.Load(userDelegateConfig, UserDelegateConfigPath); err != nil {
 		log.Fatalln("Unable to load user delegate config from", UserDelegateConfigPath)
 	}

@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"github.com/airbloc/airbloc-go/common"
+	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/json-iterator/go"
 	"log"
 	"math/rand"
@@ -111,7 +111,7 @@ func (t *T) testStoreBundleData(userIds [numberOfUsers]string, collectionId stri
 				CollectionId: collectionId,
 				UserId:       userId,
 				Payload:      fmt.Sprintf("{\"name\":\"%s\",\"age\":%d}", userId, index),
-				CollectedAt:  common.Time{Time: time.Now()}.Timestamp(),
+				CollectedAt:  types.Time{Time: time.Now()}.Timestamp(),
 			}
 			require.NoError(t, stream.Send(rawData), "datum", rawData.String())
 		}
@@ -121,7 +121,7 @@ func (t *T) testStoreBundleData(userIds [numberOfUsers]string, collectionId stri
 				CollectionId: collectionId,
 				UserId:       userId,
 				Payload:      fmt.Sprintf("{\"name\":\"%s\",\"age\":%d}", userId, index+1),
-				CollectedAt:  common.Time{Time: time.Now()}.Timestamp(),
+				CollectedAt:  types.Time{Time: time.Now()}.Timestamp(),
 			}
 			require.NoError(t, stream.Send(rawData), "datum", rawData.String())
 		}

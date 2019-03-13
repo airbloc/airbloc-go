@@ -3,28 +3,25 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/airbloc/airbloc-go/key"
-	"github.com/airbloc/airbloc-go/warehouse/service"
+	"github.com/airbloc/airbloc-go/consumer"
+	"github.com/airbloc/airbloc-go/controller"
+	"github.com/airbloc/airbloc-go/provider"
+	"github.com/airbloc/airbloc-go/shared/key"
+	"github.com/airbloc/airbloc-go/shared/service"
+	"github.com/airbloc/airbloc-go/warehouse"
+	"github.com/airbloc/logger"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/jinzhu/configor"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+	log2 "log"
 	"os"
 	"strings"
-
-	logger2 "github.com/airbloc/airbloc-go/logger"
-	"github.com/airbloc/airbloc-go/node/userdelegateapi"
-	"github.com/airbloc/airbloc-go/userdelegate"
-	"github.com/airbloc/logger"
-	log2 "log"
-
-	"github.com/airbloc/airbloc-go/node"
-	"github.com/airbloc/airbloc-go/node/serverapi"
-	"github.com/jinzhu/configor"
 )
 
 var (
 	log    = logger.New(name)
-	config = node.NewConfig()
+	config = service.NewConfig()
 
 	rootCmd = &cobra.Command{
 		Use:     name,
@@ -51,14 +48,15 @@ var (
 		Use:   "server",
 		Short: "Start Airbloc API server.",
 		Long:  "Start Airbloc REST/gRPC API server.",
-		Run:   start("api,warehouse", "apps,server.accounts,collections,data,dauth,exchange,schemas,warehouse"),
+		Run:   start("warehouse,provider"),
+		//Run:   start("provider,consumer,warehouse"),
 	}
 
 	userDelegateCmd = &cobra.Command{
 		Use:   "userdelegate",
 		Short: "Start Airbloc user delegate daemon.",
 		Long:  "Start user delegate daemon, watching and supervising user's data event.",
-		Run:   start("userdelegate,warehouse", ""),
+		Run:   start("warehouse,controller"),
 	}
 
 	versionCmd = &cobra.Command{
@@ -73,27 +71,17 @@ var (
 		},
 	}
 
-	// list of available APIs and services
-	AvailableAPIs = map[string]node.Constructor{
-		"apps":        serverapi.NewAppsAPI,
-		"collections": serverapi.NewCollectionsAPI,
-		"data":        serverapi.NewDataAPI,
-		"dauth":       serverapi.NewDAuthAPI,
-		"exchange":    serverapi.NewExchangeAPI,
-		"schemas":     serverapi.NewSchemaAPI,
-		"warehouse":   serverapi.NewWarehouseAPI,
-
-		"server.accounts":       serverapi.NewAccountsAPI,
-		"userdelegate.accounts": userdelegateapi.NewAccountAPI,
-	}
-	AvailableServices = map[string]node.ServiceConstructor{
-		"api":          node.NewAPIService,
-		"warehouse":    warehouseservice.New,
-		"userdelegate": userdelegate.NewService,
+	// list of available Services
+	AvailableServices = map[string]service.Constructor{
+		"provider":   provider.NewService,
+		"consumer":   consumer.NewService,
+		"controller": controller.NewService,
+		"warehouse":  warehouse.NewService,
 	}
 )
 
 func init() {
+	log2.SetFlags(log2.Lshortfile)
 	cobra.OnInitialize(loadConfig)
 	rflags := rootCmd.PersistentFlags()
 
@@ -150,15 +138,13 @@ func loadConfig() {
 	if rootFlags.keyPath != "" {
 		config.PrivateKeyPath = rootFlags.keyPath
 	} else {
-		keyPath := strings.Replace(rootFlags.keyPath, "$DATADIR", dataDir, 1)
-		config.PrivateKeyPath = keyPath
+		config.PrivateKeyPath = strings.Replace(config.PrivateKeyPath, "$DATADIR", dataDir, 1)
 	}
 
 	// setup loggers
 	if rootFlags.verbose {
 		rootFlags.logLevel = "*"
 	}
-	logger2.Setup(os.Stdout, rootFlags.logLevel, rootFlags.logFilter)
 	logger.SetLogger(logger.NewStandardOutput(os.Stdout, rootFlags.logLevel, rootFlags.logFilter))
 	log2.SetOutput(os.Stderr)
 }
@@ -170,10 +156,10 @@ func main() {
 	}
 }
 
-func start(serviceNames string, apiNames string) func(cmd *cobra.Command, args []string) {
+func start(serviceNames string) func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
 		nodeKey := loadNodeKey()
-		backend, err := node.NewAirblocBackend(nodeKey, config)
+		backend, err := service.NewAirblocBackend(nodeKey, config)
 		if err != nil {
 			log.Error("Error: init error", err)
 			os.Exit(1)
@@ -183,12 +169,6 @@ func start(serviceNames string, apiNames string) func(cmd *cobra.Command, args [
 		// attach services using config
 		serviceNames := strings.Split(serviceNames, ",")
 		registerServices(backend, serviceNames)
-
-		if len(apiNames) != 0 {
-			// attach APIs using config
-			apiNames := strings.Split(apiNames, ",")
-			registerApis(backend, apiNames)
-		}
 
 		if err := backend.Start(); err != nil {
 			log.Error("Error: failed to start airbloc", err)
@@ -225,7 +205,7 @@ func loadNodeKey() *key.Key {
 	}
 }
 
-func registerServices(backend node.Backend, serviceNames []string) {
+func registerServices(backend service.Backend, serviceNames []string) {
 	for _, name := range serviceNames {
 		serviceConstructor, exists := AvailableServices[name]
 		if !exists {
@@ -233,34 +213,11 @@ func registerServices(backend node.Backend, serviceNames []string) {
 			os.Exit(1)
 		}
 
-		service, err := serviceConstructor(backend)
+		svc, err := serviceConstructor(backend)
 		if err != nil {
 			log.Error("Error: failed to create service {}", err, name)
 			os.Exit(1)
 		}
-		backend.AttachService(name, service)
-	}
-}
-
-func registerApis(backend node.Backend, apiNames []string) {
-	apiService, ok := backend.GetService("api").(*node.APIService)
-	if !ok {
-		log.Error("Error: API service is not registered.")
-		os.Exit(1)
-	}
-
-	for _, name := range apiNames {
-		apiConstructor, exists := AvailableAPIs[name]
-		if !exists {
-			log.Error("Error: API %s does not exist.", name)
-			os.Exit(1)
-		}
-
-		api, err := apiConstructor(backend)
-		if err != nil {
-			log.Error("Error: failed to create API {}", err, name)
-			os.Exit(1)
-		}
-		api.AttachToAPI(apiService)
+		backend.AttachService(name, svc)
 	}
 }

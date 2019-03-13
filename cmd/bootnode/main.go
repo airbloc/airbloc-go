@@ -7,12 +7,11 @@ import (
 	"os"
 	"os/signal"
 
-	logger2 "github.com/airbloc/airbloc-go/logger"
-	"github.com/azer/logger"
+	"github.com/airbloc/logger"
 	"github.com/pkg/errors"
 
-	"github.com/airbloc/airbloc-go/key"
-	"github.com/airbloc/airbloc-go/p2p"
+	"github.com/airbloc/airbloc-go/shared/key"
+	"github.com/airbloc/airbloc-go/shared/p2p"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/multiformats/go-multiaddr"
 	"gopkg.in/urfave/cli.v1"
@@ -52,8 +51,6 @@ func newApp() *cli.App {
 }
 
 func run(options *cli.Context) (err error) {
-	logger2.Setup(os.Stdout, "*", "*")
-
 	var nodekey *key.Key
 	if options.IsSet("nodekeyhex") {
 		priv, err := crypto.HexToECDSA(options.String("nodekeyhex"))

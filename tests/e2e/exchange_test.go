@@ -1,9 +1,9 @@
 package e2e
 
 import (
-	"github.com/airbloc/airbloc-go/adapter"
-	"github.com/airbloc/airbloc-go/blockchain/bind"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
+	"github.com/airbloc/airbloc-go/shared/adapter"
+	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	ethbind "github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/crypto"

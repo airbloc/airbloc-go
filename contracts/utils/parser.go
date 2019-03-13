@@ -81,9 +81,9 @@ func parseElementaryType(typeName *fastjson.Value) string {
 	case TypeBytes4Arr:
 		str = "[][4]byte"
 	case TypeBytes8:
-		str = "ablCommon.ID"
+		str = "types.ID"
 	case TypeBytes8Arr:
-		str = "[]ablCommon.ID"
+		str = "[]types.ID"
 	case TypeBytes16:
 		str = "[16]byte"
 	case TypeBytes16Arr:
