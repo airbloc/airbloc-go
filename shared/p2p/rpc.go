@@ -5,7 +5,6 @@ import (
 	"time"
 
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
-	p2pCommon "github.com/airbloc/airbloc-go/shared/p2p/common"
 	"github.com/airbloc/logger"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/golang/protobuf/proto"

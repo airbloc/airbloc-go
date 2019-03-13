@@ -6,7 +6,6 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"time"
 
-	p2pCommon "github.com/airbloc/airbloc-go/shared/p2p/common"
 	"github.com/airbloc/logger"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/libp2p/go-libp2p-peer"

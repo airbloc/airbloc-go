@@ -44,7 +44,7 @@ func (h *PubSubHost) handleIncoming(stream net.Stream) {
 func (h *PubSubHost) Send(ctx context.Context, msg RawMessage, id peer.ID) error {
 	err := h.Connect(ctx, peerstore.PeerInfo{ID: id})
 	if err != nil {
-		return errors.Wrap(err, "send error")
+		return errors.Wrapf(err, "unable to connect to %s", id.String())
 	}
 
 	stream, err := h.NewStream(ctx, id, h.pid)
