@@ -3,6 +3,7 @@ package p2p
 import (
 	"bufio"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/libp2p/go-libp2p-protocol"
 	"io"
 	"reflect"
 
@@ -56,7 +57,7 @@ func ReadRawMessage(stream net.Stream) (RawMessage, error) {
 	return msg, err
 }
 
-func MarshalOutgoingMessage(payload proto.Message, topic string) (*RawMessage, error) {
+func MarshalOutgoingMessage(payload proto.Message, topic string, id peer.ID, pid protocol.ID) (*RawMessage, error) {
 	data, err := proto.Marshal(payload)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal payload")
@@ -66,6 +67,9 @@ func MarshalOutgoingMessage(payload proto.Message, topic string) (*RawMessage, e
 		Message: pb.Message{
 			Topic: topic,
 			Data:  data,
+
+			From:     []byte(id),
+			Protocol: []byte(pid),
 		},
 	}, nil
 }

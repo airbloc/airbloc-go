@@ -50,7 +50,7 @@ func Lookup(ctx context.Context, server Server, addr common.Address, ackTimeout 
 func StartNameServer(server Server) error {
 	log := logger.New("nameserver")
 
-	addr, err := AddrFromID(server.getHost().ID())
+	addr, err := AddrFromID(server.Host().ID())
 	if err != nil {
 		return errors.Wrap(err, "invalid peer ID")
 	}

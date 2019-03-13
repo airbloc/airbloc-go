@@ -22,6 +22,7 @@ import (
 	kadopts "github.com/libp2p/go-libp2p-kad-dht/opts"
 	"github.com/libp2p/go-libp2p-peer"
 	"github.com/libp2p/go-libp2p-peerstore"
+	"github.com/libp2p/go-libp2p-pubsub"
 	"github.com/libp2p/go-libp2p/p2p/host/routed"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pkg/errors"
@@ -43,15 +44,12 @@ type Server interface {
 	UnsubscribeTopic(string)
 
 	Discovery()
-	clearPeer()
-	updatePeer() int
 
 	// sender interfaces
 	Send(context.Context, proto.Message, string, peer.ID) error
 	Publish(context.Context, proto.Message, string) error
 
 	// for test
-	getHost() host.Host
 	Host() host.Host
 	setContext(context.Context)
 }
@@ -70,7 +68,8 @@ type AirblocServer struct {
 	nodekey   *key.Key
 	bootinfos []peerstore.PeerInfo
 
-	// topic - handlers
+	// for pubsub
+	pubsub   *pubsub.PubSub
 	types    map[string]reflect.Type
 	handlers map[string]TopicHandler
 
@@ -126,6 +125,11 @@ func NewAirblocServer(
 	h = routedhost.Wrap(h, server.dht)
 	server.host = WrapPubSubHost(h, pid, server.handleMessage)
 
+	server.pubsub, err = pubsub.NewGossipSub(ctx, h)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to initialize pubsub")
+	}
+
 	server.log.Info("Initialized", logger.Attrs{
 		"protocol":   fmt.Sprintf("%s %s", ProtocolName, ProtocolVersion),
 		"on address": addr.String(),
@@ -167,14 +171,14 @@ func (s *AirblocServer) Start() error {
 		if err := bootstrapConnect(ctx, s.host, s.bootinfos); err != nil {
 			return err
 		}
-		if err := s.dht.Bootstrap(ctx); err != nil {
+		if err := s.dht.Bootstrap(s.ctx); err != nil {
 			return errors.Wrap(err, "failed to bootstrap")
 		}
 	} else {
 		s.log.Info("Warning: no bootstrap nodes are given. only local peers will be available.")
 	}
 
-	if err := startmDNSDiscovery(ctx, s.host); err != nil {
+	if err := startmDNSDiscovery(s.ctx, s.host); err != nil {
 		return errors.Wrap(err, "could not start peer discovery via mDNS")
 	}
 	go s.Discovery()
@@ -243,6 +247,33 @@ func (s *AirblocServer) SubscribeTopic(topic string, typeSample proto.Message, h
 	s.types[topic] = typ
 	s.handlers[topic] = handler
 	s.mutex.Unlock()
+
+	sub, err := s.pubsub.Subscribe(topic)
+	if err != nil {
+		s.log.Wtf("error: failed to subscribe to topic {}", err, topic)
+		return
+	}
+	go func() {
+		defer sub.Cancel()
+		defer s.log.Recover(logger.Attrs{"topic": topic})
+
+		for {
+			pubsubMsg, err := sub.Next(s.ctx)
+			if err == context.Canceled {
+				return
+			}
+			if err != nil {
+				s.log.Error("failed to get message from {topic}", err, logger.Attrs{"topic": topic})
+				continue
+			}
+			msg := RawMessage{}
+			if err := proto.Unmarshal(pubsubMsg.GetData(), &msg); err != nil {
+				s.log.Error("unmarshal error", err, logger.Attrs{"topic": topic})
+				continue
+			}
+			s.handleMessage(msg)
+		}
+	}()
 }
 
 func (s *AirblocServer) UnsubscribeTopic(topic string) {
@@ -257,7 +288,7 @@ func (s *AirblocServer) Send(ctx context.Context, payload proto.Message, topic s
 		"topic": topic,
 		"id":    p.Pretty(),
 	})
-	msg, err := MarshalOutgoingMessage(payload, topic)
+	msg, err := MarshalOutgoingMessage(payload, topic, s.host.ID(), s.pid.ProtocolID())
 	if err != nil {
 		return errors.Wrap(err, "send error")
 	}
@@ -266,11 +297,15 @@ func (s *AirblocServer) Send(ctx context.Context, payload proto.Message, topic s
 
 func (s *AirblocServer) Publish(ctx context.Context, payload proto.Message, topic string) error {
 	s.log.Info("Broadcasting P2P message", logger.Attrs{"topic": topic})
-	msg, err := MarshalOutgoingMessage(payload, topic)
+	msg, err := MarshalOutgoingMessage(payload, topic, s.host.ID(), s.pid.ProtocolID())
 	if err != nil {
-		return errors.Wrap(err, "publish error")
+		return errors.Wrap(err, "failed to encapsulate outgoing message")
 	}
-	return s.host.Publish(ctx, *msg)
+	data, err := proto.Marshal(msg)
+	if err != nil {
+		return errors.Wrap(err, "marshal error")
+	}
+	return s.pubsub.Publish(topic, data)
 }
 
 // for test

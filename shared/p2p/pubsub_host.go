@@ -9,7 +9,6 @@ import (
 	"github.com/libp2p/go-libp2p-net"
 	"github.com/libp2p/go-libp2p-peer"
 	"github.com/libp2p/go-libp2p-peerstore"
-	"github.com/multiformats/go-multistream"
 	"github.com/pkg/errors"
 )
 
@@ -53,24 +52,8 @@ func (h *PubSubHost) Send(ctx context.Context, msg RawMessage, id peer.ID) error
 	}
 	defer stream.Close()
 
-	msg.From = []byte(h.ID())
-	msg.Protocol = []byte(stream.Protocol())
 	if err := msg.WriteTo(stream); err != nil {
 		return errors.Wrap(err, "failed to send message to stream")
-	}
-	return nil
-}
-
-func (h *PubSubHost) Publish(ctx context.Context, msg RawMessage) error {
-	for _, peerID := range h.Peerstore().PeersWithAddrs() {
-		err := h.Send(ctx, msg, peerID)
-		if errors.Cause(err) == multistream.ErrNotSupported {
-			continue
-		}
-
-		if err != nil {
-			return errors.Wrap(err, "publish error : failed to publish message")
-		}
 	}
 	return nil
 }
