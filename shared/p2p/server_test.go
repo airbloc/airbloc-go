@@ -47,12 +47,11 @@ func init() {
 	}
 }
 
-func makeBasicServer(ctx context.Context, index int, bootinfos ...peerstore.PeerInfo) (Server, error) {
+func makeBasicServer(index int, bootinfos ...peerstore.PeerInfo) (Server, error) {
 	server, err := NewAirblocServer(keys[index], addrs[index], bootinfos)
 	if err != nil {
 		return nil, err
 	}
-	server.setContext(ctx)
 	return server, nil
 }
 
@@ -79,10 +78,11 @@ func TestNewServer(t *testing.T) {
 
 	servers := make([]Server, Size)
 	for i := 1; i < Size; i++ {
-		server, err := makeBasicServer(ctx, i, bootinfo)
+		server, err := makeBasicServer(i, bootinfo)
 		require.NoError(t, err)
 		err = server.Start()
 		require.NoError(t, err)
+		defer server.Stop()
 
 		server.SubscribeTopic("ping", &pb.TestPing{}, handlePing)
 		server.SubscribeTopic("pong", &pb.TestPong{}, handlePong)
@@ -108,19 +108,21 @@ func TestAirblocHost_Publish(t *testing.T) {
 	time.Sleep(1 * time.Second)
 
 	// make alice and bob
-	alice, err := makeBasicServer(ctx, 1, bootinfo)
+	alice, err := makeBasicServer(1, bootinfo)
 	require.NoError(t, err)
 	err = alice.Start()
 	require.NoError(t, err)
+	defer alice.Stop()
 
 	aliceAddress := keys[1].EthereumAddress.Hex()
 	log.Printf("Alice address : %s\n", aliceAddress)
 	log.Printf("Alice pubkey : %s\n", hex.EncodeToString(crypto.CompressPubkey(&keys[1].PublicKey)))
 
-	bob, err := makeBasicServer(ctx, 2, bootinfo)
+	bob, err := makeBasicServer(2, bootinfo)
 	require.NoError(t, err)
 	err = bob.Start()
 	require.NoError(t, err)
+	defer bob.Stop()
 
 	time.Sleep(2 * time.Second)
 
