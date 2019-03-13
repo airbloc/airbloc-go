@@ -50,23 +50,21 @@ func makeBasicServer(ctx context.Context, index int, bootinfos ...peerstore.Peer
 	return server, nil
 }
 
-func handlePing(s Server, ctx context.Context, message common.Message) {
-	log.Println("Ping", message.SenderInfo.ID.Pretty(), message.Data.String())
+func handlePing(s Server, ctx context.Context, message *IncomingMessage) {
+	log.Println("Ping", message.SenderInfo.ID.Pretty(), message.Payload.String())
 
 	s.Send(ctx, &pb.TestPing{Message: "World!"}, "ping", message.SenderInfo.ID)
 }
 
-func handlePong(s Server, ctx context.Context, message common.Message) {
-	log.Println("Pong", message.SenderInfo.ID.Pretty(), message.Data.String())
+func handlePong(s Server, ctx context.Context, message *IncomingMessage) {
+	log.Println("Pong", message.SenderInfo.ID.Pretty(), message.Payload.String())
 }
 
 func TestNewServer(t *testing.T) {
 	log.SetFlags(log.Lshortfile | log.Ltime)
 
 	ctx, cancel := context.WithCancel(context.Background())
-	defer func() {
-		cancel()
-	}()
+	defer cancel()
 
 	bootinfo, err := StartBootstrapServer(ctx, keys[0], addrs[0])
 	assert.NoError(t, err)
@@ -119,13 +117,20 @@ func TestAirblocHost_Publish(t *testing.T) {
 
 	// bob listens to alice, try to recover alice's address
 	waitForBob := make(chan string, 1)
-	bob.SubscribeTopic("ping", &pb.TestPing{}, func(s Server, ctx context.Context, message common.Message) {
+	bob.SubscribeTopic("ping", &pb.TestPing{}, func(s Server, ctx context.Context, message *IncomingMessage) {
 		waitForBob <- message.SenderAddr.Hex()
 	})
 
 	err = alice.Publish(ctx, pingMsg, "ping")
 	assert.NoError(t, err)
 
-	bobReceivedAddress := <-waitForBob
-	assert.Equal(t, aliceAddress, bobReceivedAddress)
+	timeout := time.After(5 * time.Second)
+
+	select {
+	case bobReceivedAddress := <-waitForBob:
+		assert.Equal(t, aliceAddress, bobReceivedAddress)
+
+	case <-timeout:
+		assert.Fail(t, "Timeout")
+	}
 }

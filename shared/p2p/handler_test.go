@@ -8,12 +8,12 @@ import (
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 )
 
-func testPingHandler(s Server, ctx context.Context, message common.Message) {
-	log.Println("Ping", message.SenderInfo.ID.Pretty(), message.Data.String())
+func testPingHandler(s Server, ctx context.Context, message *IncomingMessage) {
+	log.Println("Ping", message.SenderInfo.ID.Pretty(), message.Payload.String())
 
 	s.Send(ctx, &pb.TestPing{Message: "World!"}, "ping", message.SenderInfo.ID)
 }
 
-func testPongHandler(s Server, ctx context.Context, message common.Message) {
-	log.Println("Pong", message.SenderInfo.ID.Pretty(), message.Data.String())
+func testPongHandler(s Server, ctx context.Context, message *IncomingMessage) {
+	log.Println("Pong", message.SenderInfo.ID.Pretty(), message.Payload.String())
 }

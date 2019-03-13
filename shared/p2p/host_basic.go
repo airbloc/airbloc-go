@@ -2,13 +2,10 @@ package p2p
 
 import (
 	"context"
-	"github.com/airbloc/airbloc-go/shared/p2p/common"
 	"github.com/libp2p/go-libp2p-protocol"
-	"github.com/multiformats/go-multiaddr"
 	"log"
 
 	"github.com/libp2p/go-libp2p-host"
-	"github.com/libp2p/go-libp2p-interface-connmgr"
 	"github.com/libp2p/go-libp2p-net"
 	"github.com/libp2p/go-libp2p-peer"
 	"github.com/libp2p/go-libp2p-peerstore"
@@ -16,62 +13,57 @@ import (
 	"github.com/pkg/errors"
 )
 
-type BasicHost struct {
-	host host.Host
+type MessageHandler func(RawMessage)
+
+type PubSubHost struct {
+	host.Host
+	pid     protocol.ID
+	handler MessageHandler
 }
 
-func NewBasicHost(host host.Host) Host {
-	return &BasicHost{
-		host: host,
+func WrapPubSubHost(host host.Host, pid Pid, handler MessageHandler) *PubSubHost {
+	h := &PubSubHost{
+		Host:    host,
+		pid:     pid.ProtocolID(),
+		handler: handler,
 	}
+	host.SetStreamHandler(h.pid, h.handleIncoming)
+	return h
 }
 
-// Protocol Registry
-// Register register p2p.Message handler
-func (h *BasicHost) RegisterProtocol(
-	pid common.Pid,
-	handler ProtocolHandler,
-	adapters ...ProtocolAdapter,
-) {
-	h.host.SetStreamHandler(pid.ProtocolID(), func(stream net.Stream) {
-		defer stream.Reset()
-		msg, err := common.ReadMessage(stream)
-		if err != nil {
-			log.Println("failed to read message from stream :", err)
-			return
-		}
-		go handler.Handle(adapters...)(msg)
-	})
+func (h *PubSubHost) handleIncoming(stream net.Stream) {
+	defer stream.Reset()
+	msg, err := ReadRawMessage(stream)
+	if err != nil {
+		log.Println("failed to read message from stream :", err)
+		return
+	}
+	h.handler(msg)
 }
 
-// Unregister unregister handler
-func (h *BasicHost) UnregisterProtocol(pid common.Pid) {
-	h.host.RemoveStreamHandler(pid.ProtocolID())
-}
-
-func (h *BasicHost) Send(ctx context.Context, msg common.ProtoMessage, id peer.ID, pids ...common.Pid) error {
-	err := h.host.Connect(ctx, peerstore.PeerInfo{ID: id})
+func (h *PubSubHost) Send(ctx context.Context, msg RawMessage, id peer.ID) error {
+	err := h.Connect(ctx, peerstore.PeerInfo{ID: id})
 	if err != nil {
 		return errors.Wrap(err, "send error")
 	}
 
-	stream, err := h.host.NewStream(ctx, id, common.Pids(pids).ProtocolID()...)
+	stream, err := h.NewStream(ctx, id, h.pid)
 	if err != nil {
-		return errors.Wrap(err, "stream error : failed to create stream")
+		return errors.Wrap(err, "failed to open stream")
 	}
 	defer stream.Close()
 
-	msg.From = []byte(h.host.ID())
+	msg.From = []byte(h.ID())
 	msg.Protocol = []byte(stream.Protocol())
-	if err := msg.WriteMessage(stream); err != nil {
-		return errors.Wrap(err, "stream error : failed to send message to stream")
+	if err := msg.WriteTo(stream); err != nil {
+		return errors.Wrap(err, "failed to send message to stream")
 	}
 	return nil
 }
 
-func (h *BasicHost) Publish(ctx context.Context, msg common.ProtoMessage, pids ...common.Pid) error {
+func (h *PubSubHost) Publish(ctx context.Context, msg RawMessage) error {
 	for _, peerID := range h.Peerstore().PeersWithAddrs() {
-		err := h.Send(ctx, msg, peerID, pids...)
+		err := h.Send(ctx, msg, peerID)
 		if errors.Cause(err) == multistream.ErrNotSupported {
 			continue
 		}
@@ -81,63 +73,4 @@ func (h *BasicHost) Publish(ctx context.Context, msg common.ProtoMessage, pids .
 		}
 	}
 	return nil
-}
-
-// ID returns the (local) peer.ID associated with this Host.
-func (h *BasicHost) ID() peer.ID {
-	return h.host.ID()
-}
-
-// Mux returns host's multistreamMuxer
-func (h *BasicHost) Mux() *multistream.MultistreamMuxer {
-	return h.host.Mux()
-}
-
-// Network returns host's network interface
-func (h *BasicHost) Network() net.Network {
-	return h.host.Network()
-}
-
-// ConnManager returns host's connection manager interface
-func (h *BasicHost) ConnManager() ifconnmgr.ConnManager {
-	return h.host.ConnManager()
-}
-
-// PeerInfo generates peerstore.PeerInfo object and returns it
-func (h *BasicHost) PeerInfo() peerstore.PeerInfo {
-	return peerstore.PeerInfo{ID: h.host.ID(), Addrs: h.host.Addrs()}
-}
-
-// Peerstore returns host's peerstore
-func (h *BasicHost) Peerstore() peerstore.Peerstore {
-	return h.host.Peerstore()
-}
-
-// Connect makes connect with other peer by peerstore.PeerInfo
-func (h *BasicHost) Connect(ctx context.Context, pi peerstore.PeerInfo) error {
-	return h.host.Connect(ctx, pi)
-}
-
-func (h *BasicHost) Addrs() []multiaddr.Multiaddr {
-	return h.host.Addrs()
-}
-
-func (h *BasicHost) SetStreamHandler(pid protocol.ID, handler net.StreamHandler) {
-	h.host.SetStreamHandler(pid, handler)
-}
-
-func (h *BasicHost) SetStreamHandlerMatch(pid protocol.ID, matcher func(string) bool, handler net.StreamHandler) {
-	h.host.SetStreamHandlerMatch(pid, matcher, handler)
-}
-
-func (h *BasicHost) RemoveStreamHandler(pid protocol.ID) {
-	h.host.RemoveStreamHandler(pid)
-}
-
-func (h *BasicHost) NewStream(ctx context.Context, p peer.ID, pids ...protocol.ID) (net.Stream, error) {
-	return h.host.NewStream(ctx, p, pids...)
-}
-
-func (h *BasicHost) Close() error {
-	return h.host.Close()
 }

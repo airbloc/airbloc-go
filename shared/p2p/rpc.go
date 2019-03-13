@@ -77,8 +77,8 @@ func (r *rpc) Invoke(ctx context.Context, to common.Address, method string, args
 	}
 
 	// prepare to receive reply
-	waitForResponse := make(chan p2pCommon.Message)
-	responseCallback := func(_ Server, _ context.Context, msg p2pCommon.Message) {
+	waitForResponse := make(chan *IncomingMessage)
+	responseCallback := func(_ Server, _ context.Context, msg *IncomingMessage) {
 		waitForResponse <- msg
 	}
 	r.server.SubscribeTopic(replyTopic, &pb.RPCResponse{}, responseCallback)
@@ -88,7 +88,7 @@ func (r *rpc) Invoke(ctx context.Context, to common.Address, method string, args
 		return nil, errors.Wrapf(err, "failed to invoke %s", method)
 	}
 
-	var replyMsg p2pCommon.Message
+	var replyMsg *IncomingMessage
 WaitingForReply:
 	for {
 		select {
@@ -102,7 +102,7 @@ WaitingForReply:
 		}
 	}
 
-	response, ok := replyMsg.Data.(*pb.RPCResponse)
+	response, ok := replyMsg.Payload.(*pb.RPCResponse)
 	if !ok {
 		// response type must be pb.RPCResponse
 		return nil, ErrInvalidRPCResponse
@@ -120,12 +120,12 @@ WaitingForReply:
 func (r *rpc) Handle(method string, argsType, replyType proto.Message, handler RPCHandler) {
 	requestTopic, replyTopic := topicFromMethod(method)
 
-	callback := func(_ Server, ctx context.Context, msg p2pCommon.Message) {
+	callback := func(_ Server, ctx context.Context, msg *IncomingMessage) {
 		from := SenderInfo{
 			Id:   msg.SenderInfo.ID,
 			Addr: msg.SenderAddr,
 		}
-		reply, err := handler(ctx, from, msg.Data)
+		reply, err := handler(ctx, from, msg.Payload)
 
 		// make response
 		response := new(pb.RPCResponse)

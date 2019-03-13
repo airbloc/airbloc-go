@@ -3,6 +3,7 @@ package p2p
 import (
 	"context"
 	"fmt"
+	"github.com/libp2p/go-libp2p-host"
 	"github.com/libp2p/go-libp2p-kbucket"
 	"reflect"
 	"sync"
@@ -15,7 +16,6 @@ import (
 
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/airbloc/airbloc-go/shared/key"
-	"github.com/airbloc/airbloc-go/shared/p2p/common"
 	"github.com/gogo/protobuf/proto"
 	"github.com/ipfs/go-cid"
 	"github.com/libp2p/go-libp2p"
@@ -34,6 +34,29 @@ const (
 	ProtocolVersion = "1.0.0"
 )
 
+type TopicHandler func(Server, context.Context, *IncomingMessage)
+
+type Server interface {
+	Start() error
+	Stop()
+
+	// server interfaces
+	SubscribeTopic(string, proto.Message, TopicHandler)
+	UnsubscribeTopic(string)
+
+	Discovery()
+	clearPeer()
+	updatePeer() int
+
+	// sender interfaces
+	Send(context.Context, proto.Message, string, peer.ID) error
+	Publish(context.Context, proto.Message, string) error
+
+	// for test
+	getHost() host.Host
+	setContext(context.Context)
+}
+
 type AirblocServer struct {
 	// controller
 	mutex  *sync.Mutex
@@ -42,8 +65,8 @@ type AirblocServer struct {
 
 	// network
 	id        cid.Cid
-	pid       common.Pid
-	host      Host
+	pid       Pid
+	host      *PubSubHost
 	dht       *kaddht.IpfsDHT
 	nodekey   *key.Key
 	bootinfos []peerstore.PeerInfo
@@ -66,7 +89,7 @@ func NewAirblocServer(
 		return nil, err
 	}
 
-	pid, err := common.NewPid(ProtocolName, ProtocolVersion)
+	pid, err := NewPid(ProtocolName, ProtocolVersion)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to generate pid")
 	}
@@ -103,7 +126,7 @@ func NewAirblocServer(
 	}
 
 	h = routedhost.Wrap(h, server.dht)
-	server.host = NewAirblocHost(NewBasicHost(h), 20)
+	server.host = WrapPubSubHost(h, pid, server.handleMessage)
 
 	idVal := int32(pb.CID_AIRBLOC)
 	v1b := cid.V1Builder{
@@ -191,26 +214,26 @@ func (s *AirblocServer) Start() error {
 	if err := startmDNSDiscovery(ctx, s.host); err != nil {
 		return errors.Wrap(err, "could not start peer discovery via mDNS")
 	}
-	s.host.RegisterProtocol(s.pid, s.handleMessage)
 	go s.Discovery()
 	return nil
 }
 
-func (s *AirblocServer) handleMessage(message common.ProtoMessage) {
+func (s *AirblocServer) handleMessage(message RawMessage) {
 	topic := message.GetTopic()
 	typ, ok := s.types[topic]
 	if !ok {
 		s.log.Error("Unknown topic: {}", message.GetTopic())
 		return
 	}
-	msg, err := message.MakeMessage(s.ctx, typ)
+	handler := s.handlers[topic]
+
+	msg, err := NewIncomingMessage(message, typ)
 	if err != nil {
 		s.log.Error("Failed to make message", err)
 		return
 	}
 
 	timer := s.log.Timer()
-	handler := s.handlers[topic]
 	handler(s, s.ctx, msg)
 	timer.End("Received message", logger.Attrs{
 		"from":  msg.SenderAddr.String(),
@@ -222,8 +245,9 @@ func (s *AirblocServer) Stop() {
 	s.cancel()
 }
 
-func (s *AirblocServer) SubscribeTopic(topic string, msg proto.Message, handler TopicHandler) {
-	typ := common.MessageType(msg)
+func (s *AirblocServer) SubscribeTopic(topic string, typeSample proto.Message, handler TopicHandler) {
+	// infer type from given sample
+	typ := reflect.ValueOf(typeSample).Elem().Type()
 
 	s.mutex.Lock()
 	s.types[topic] = typ
@@ -238,25 +262,25 @@ func (s *AirblocServer) UnsubscribeTopic(topic string) {
 	s.mutex.Unlock()
 }
 
-func (s *AirblocServer) Send(ctx context.Context, msg proto.Message, topic string, p peer.ID) error {
+func (s *AirblocServer) Send(ctx context.Context, payload proto.Message, topic string, p peer.ID) error {
 	s.log.Info("Sending P2P message", logger.Attrs{
 		"topic": topic,
 		"id":    p.Pretty(),
 	})
-	payload, err := common.NewProtoMessage(msg, topic)
+	msg, err := MarshalOutgoingMessage(payload, topic)
 	if err != nil {
 		return errors.Wrap(err, "send error")
 	}
-	return s.host.Send(ctx, *payload, p, s.pid)
+	return s.host.Send(ctx, *msg, p)
 }
 
-func (s *AirblocServer) Publish(ctx context.Context, msg proto.Message, topic string) error {
+func (s *AirblocServer) Publish(ctx context.Context, payload proto.Message, topic string) error {
 	s.log.Info("Broadcasting P2P message", logger.Attrs{"topic": topic})
-	payload, err := common.NewProtoMessage(msg, topic)
+	msg, err := MarshalOutgoingMessage(payload, topic)
 	if err != nil {
 		return errors.Wrap(err, "publish error")
 	}
-	return s.host.Publish(ctx, *payload, s.pid)
+	return s.host.Publish(ctx, *msg)
 }
 
 // for test
@@ -264,6 +288,6 @@ func (s *AirblocServer) setContext(ctx context.Context) {
 	s.ctx = ctx
 }
 
-func (s *AirblocServer) getHost() Host {
+func (s *AirblocServer) getHost() host.Host {
 	return s.host
 }
