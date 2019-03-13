@@ -3,7 +3,7 @@ package e2e
 import (
 	"context"
 	"fmt"
-	"github.com/airbloc/airbloc-go/tests/e2e/utils"
+	"github.com/airbloc/airbloc-go/test/e2e/utils"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"google.golang.org/grpc"
