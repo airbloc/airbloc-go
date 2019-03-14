@@ -1,0 +1,63 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: circleci/golang:1.11
+    environment:
+      TEST_RESULTS: "/tmp/test-results"
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - go-mod-v1-{{ checksum "go.sum" }}
+            - go-mod-v1-
+      - run:
+          name: Setup test tools
+          command: |
+            cp go.sum go.sum.original
+            go get github.com/jstemmer/go-junit-report
+            mkdir $TEST_RESULTS
+      - run:
+          name: Run unit tests
+          command: |
+            echo 'export GO111MODULE=on' >> $BASH_ENV
+            make test | tee ${TEST_RESULTS}/go-test.out
+            cat ${TEST_RESULTS}/go-test.out | go-junit-report > ${TEST_RESULTS}/go-test-report.xml
+      - save_cache:
+          key: go-mod-v1-{{ checksum "go.sum.original" }}
+          paths:
+            - "/go/pkg/mod"
+      - store_test_results:
+          path: /tmp/test-results
+
+  build-docker:
+    docker:
+      - image: circleci/golang:1.11
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - go-mod-v1-{{ checksum "go.sum" }}
+            - go-mod-v1-
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Set Up Environment Variables for Docker
+          command: |
+            echo 'export IMAGE_NAME="airbloc/airbloc:${CIRCLE_SHA1}"' >> $BASH_ENV
+      - run:
+          name: Build Image
+          command: docker build -t $IMAGE_NAME .
+      - run:
+          name: Log In to Docker Hub
+          command: docker login -e $DOCKER_HUB_EMAIL -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
+      - run:
+          name: Push
+          command: |
+            docker push $IMAGE_NAME
+
+workflows:
+  build-deploy:
+    jobs:
+      - test
+#      - build-docker
