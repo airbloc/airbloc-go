@@ -4,21 +4,22 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"github.com/airbloc/airbloc-go/shared/service"
 	"math/rand"
 	"net/url"
 	"time"
 
+	"github.com/airbloc/airbloc-go/provider/collections"
+	"github.com/airbloc/airbloc-go/provider/schemas"
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
-	"github.com/airbloc/airbloc-go/shared/collections"
 	"github.com/airbloc/airbloc-go/shared/database/localdb"
 	"github.com/airbloc/airbloc-go/shared/database/metadb"
 	"github.com/airbloc/airbloc-go/shared/dauth"
 	"github.com/airbloc/airbloc-go/shared/key"
-	"github.com/airbloc/airbloc-go/shared/schemas"
 	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/airbloc/airbloc-go/shared/warehouse/protocol"
-	"github.com/airbloc/airbloc-go/shared/warehouse/storage"
+	"github.com/airbloc/airbloc-go/warehouse/protocol"
+	"github.com/airbloc/airbloc-go/warehouse/storage"
 	"github.com/airbloc/logger"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/pkg/errors"
@@ -30,7 +31,7 @@ var (
 	errValidationFailed = errors.New("data validation failed.")
 )
 
-type DataWarehouse struct {
+type Manager struct {
 	kms        key.Manager
 	localCache *localdb.Model
 
@@ -48,30 +49,30 @@ type DataWarehouse struct {
 	// data validators
 	dauthValidator *dauth.Validator
 
-	config Config
+	config service.Config
 	log    *logger.Logger
 }
 
-func New(
+func NewManager(
 	kms key.Manager,
 	localDatabase localdb.Database,
 	metaDatabase metadb.Database,
 	ethclient blockchain.TxClient,
 	defaultStorage storage.Storage,
 	supportedProtocols []protocol.Protocol,
-	config Config,
-) *DataWarehouse {
+	config service.Config,
+) *Manager {
 	protocols := map[string]protocol.Protocol{}
 	for _, protoc := range supportedProtocols {
 		protocols[protoc.Name()] = protoc
 	}
 
 	log := logger.New("warehouse")
-	if config.Debug.DisableSchemaValidation {
+	if config.Warehouse.Debug.DisableSchemaValidation {
 		log.Error("warning: You have disabled schema validation. " +
 			"It is recommended to avoid disabling the validation on production mode.")
 	}
-	if config.Debug.DisableUserAuthValidation {
+	if config.Warehouse.Debug.DisableUserAuthValidation {
 		log.Error("warning: You have disabled user auth validation. \n" + "\033[31m" +
 			"DO NOT DISABLE THE USER VALIDATION ON PRODUCTION MODE, " +
 			"BECAUSE IT CAN CAUSE A FINANCIAL LOSS OF YOUR STAKED COLLETRALS. " + "\033[0m")
@@ -81,7 +82,7 @@ func New(
 	dauthValidator := dauth.NewValidator(dauthManager)
 
 	contract := ethclient.GetContract(&adapter.DataRegistry{})
-	return &DataWarehouse{
+	return &Manager{
 		kms:        kms,
 		localCache: localdb.NewModel(localDatabase, "bundle"),
 
@@ -100,7 +101,7 @@ func New(
 	}
 }
 
-func (dw *DataWarehouse) CreateBundle(collectionId types.ID) (*BundleStream, error) {
+func (dw *Manager) CreateBundle(collectionId types.ID) (*BundleStream, error) {
 	collection, err := dw.collections.Get(collectionId)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to retrieve a collection")
@@ -113,12 +114,12 @@ func (dw *DataWarehouse) CreateBundle(collectionId types.ID) (*BundleStream, err
 	return newBundleStream(dw, collection.AppId, collection), nil
 }
 
-func (dw *DataWarehouse) validate(collection *collections.Collection, data *types.Data) error {
-	if !dw.config.Debug.DisableUserAuthValidation && !dw.dauthValidator.IsCollectible(collection.Id, data) {
+func (dw *Manager) validate(collection *collections.Collection, data *types.Data) error {
+	if !dw.config.Warehouse.Debug.DisableUserAuthValidation && !dw.dauthValidator.IsCollectible(collection.Id, data) {
 		return errors.Wrap(errValidationFailed, "user hasn't been authorized the data collection")
 	}
 
-	if !dw.config.Debug.DisableSchemaValidation {
+	if !dw.config.Warehouse.Debug.DisableSchemaValidation {
 		isValidFormat, err := collection.Schema.IsValidFormat(data)
 		if err != nil {
 			return err
@@ -129,7 +130,7 @@ func (dw *DataWarehouse) validate(collection *collections.Collection, data *type
 	return nil
 }
 
-func generateBundleNameOf(bundle *types.Bundle) string {
+func generateBundleNameOf(bundle *Bundle) string {
 	tokenBytes := make([]byte, 4)
 	rand.Read(tokenBytes)
 	token := hex.EncodeToString(tokenBytes)
@@ -138,13 +139,13 @@ func generateBundleNameOf(bundle *types.Bundle) string {
 	return fmt.Sprintf("%s-%s-%s.bundle", currentTime, bundle.Collection.Hex(), token)
 }
 
-func (dw *DataWarehouse) Store(stream *BundleStream) (*types.Bundle, error) {
+func (dw *Manager) Store(stream *BundleStream) (*Bundle, error) {
 	if stream == nil {
 		return nil, errors.New("No data in the stream.")
 	}
 	ingestedAt := types.Time{Time: time.Now()}
 
-	createdBundle := &types.Bundle{
+	createdBundle := &Bundle{
 		Provider:   stream.provider,
 		Collection: stream.collection.Id,
 		DataCount:  stream.DataCount,
@@ -157,7 +158,12 @@ func (dw *DataWarehouse) Store(stream *BundleStream) (*types.Bundle, error) {
 	}
 
 	bundleName := generateBundleNameOf(createdBundle)
-	uri, err := dw.DefaultStorage.Save(bundleName, createdBundle)
+	bundleData, err := createdBundle.MarshalJSON()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to marshal bundle")
+	}
+
+	uri, err := dw.DefaultStorage.Save(bundleName, bundleData)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to save bundle to the storage")
 	}
@@ -205,7 +211,7 @@ func (dw *DataWarehouse) Store(stream *BundleStream) (*types.Bundle, error) {
 	return createdBundle, nil
 }
 
-func (dw *DataWarehouse) registerBundleOnChain(bundle *types.Bundle) (bundleId types.ID, _ error) {
+func (dw *Manager) registerBundleOnChain(bundle *Bundle) (bundleId types.ID, _ error) {
 	bundleDataHash, err := bundle.Hash()
 	if err != nil {
 		return bundleId, errors.Wrap(err, "failed to get hash of the bundle data")
@@ -246,7 +252,7 @@ func (dw *DataWarehouse) registerBundleOnChain(bundle *types.Bundle) (bundleId t
 	return
 }
 
-func (dw *DataWarehouse) Get(id *types.DataId) (*types.Bundle, error) {
+func (dw *Manager) Get(id *types.DataId) (*Bundle, error) {
 	bundle, err := dw.dataRegistry.Bundles(nil, id.BundleId)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get uri")
@@ -263,25 +269,35 @@ func (dw *DataWarehouse) Get(id *types.DataId) (*types.Bundle, error) {
 	return dw.Fetch(uri)
 }
 
-func (dw *DataWarehouse) Fetch(uri *url.URL) (*types.Bundle, error) {
+func (dw *Manager) Fetch(uri *url.URL) (bundle *Bundle, _ error) {
 	protoc, exists := dw.protocols[uri.Scheme]
 	if !exists {
 		return nil, errors.Errorf("the protocol %s is not supported", uri.Scheme)
 	}
-	return protoc.Read(uri)
+
+	bundleData, err := protoc.Read(uri)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to read bundle data")
+	}
+
+	bundle = new(Bundle)
+	if err := bundle.UnmarshalJSON(bundleData); err != nil {
+		return nil, errors.Wrap(err, "failed to unmarshal bundle")
+	}
+	return
 }
 
-func (dw *DataWarehouse) List(providerId types.ID) ([]*types.Bundle, error) {
+func (dw *Manager) List(providerId types.ID) ([]*Bundle, error) {
 	bundleDataList, err := dw.metaDatabase.RetrieveMany(context.TODO(), bson.M{"provider": providerId.Hex()})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to list bundles")
 	}
 
-	var bundles []*types.Bundle
+	var bundles []*Bundle
 	for _, bundleData := range bundleDataList {
 		collectionId, _ := types.HexToID(bundleData["collection"].(string))
 		ingestedAt, _ := time.Parse(time.RFC3339Nano, bundleData["ingestedAt"].(string))
-		bundles = append(bundles, &types.Bundle{
+		bundles = append(bundles, &Bundle{
 			Id:         bundleData["bundleId"].(string),
 			Uri:        bundleData["uri"].(string),
 			DataCount:  bundleData["dataCount"].(int),

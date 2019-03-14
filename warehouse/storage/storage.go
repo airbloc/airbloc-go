@@ -3,13 +3,11 @@ package storage
 import (
 	"github.com/json-iterator/go"
 	"net/url"
-
-	"github.com/airbloc/airbloc-go/shared/types"
 )
 
 type Storage interface {
-	Save(string, *types.Bundle) (*url.URL, error)
-	Update(*url.URL, *types.Bundle) error
+	Save(string, []byte) (*url.URL, error)
+	Update(*url.URL, []byte) error
 	Delete(*url.URL) error
 }
 

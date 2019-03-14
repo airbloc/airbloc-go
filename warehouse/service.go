@@ -2,9 +2,8 @@ package warehouse
 
 import (
 	"github.com/airbloc/airbloc-go/shared/service"
-	"github.com/airbloc/airbloc-go/shared/warehouse"
-	"github.com/airbloc/airbloc-go/shared/warehouse/protocol"
-	"github.com/airbloc/airbloc-go/shared/warehouse/storage"
+	"github.com/airbloc/airbloc-go/warehouse/protocol"
+	"github.com/airbloc/airbloc-go/warehouse/storage"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -12,7 +11,7 @@ import (
 )
 
 type Service struct {
-	manager *warehouse.DataWarehouse
+	manager *Manager
 }
 
 func NewService(backend service.Backend) (service.Service, error) {
@@ -54,18 +53,18 @@ func NewService(backend service.Backend) (service.Service, error) {
 		return nil, errors.Errorf("unknown storage type: %s", config.DefaultStorage)
 	}
 
-	dw := warehouse.New(
+	dw := NewManager(
 		backend.Kms(),
 		backend.LocalDatabase(),
 		backend.MetaDatabase(),
 		backend.Client(),
 		defaultStorage,
 		supportedProtocols,
-		config,
+		*backend.Config(),
 	)
 	return &Service{manager: dw}, nil
 }
 
-func (service *Service) GetManager() *warehouse.DataWarehouse { return service.manager }
-func (service *Service) Start() error                         { return nil }
-func (service *Service) Stop()                                {}
+func (service *Service) GetManager() *Manager { return service.manager }
+func (service *Service) Start() error         { return nil }
+func (service *Service) Stop()                {}

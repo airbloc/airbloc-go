@@ -1,7 +1,7 @@
 package warehouse
 
 import (
-	"github.com/airbloc/airbloc-go/shared/collections"
+	"github.com/airbloc/airbloc-go/provider/collections"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/logger"
 	"github.com/pkg/errors"
@@ -11,14 +11,14 @@ import (
 type BundleStream struct {
 	provider   types.ID
 	collection *collections.Collection
-	warehouse  *DataWarehouse
+	warehouse  *Manager
 	data       map[types.ID][]*types.EncryptedData
 	DataCount  int
 
 	mu sync.Mutex
 }
 
-func newBundleStream(warehouse *DataWarehouse, provider types.ID, collection *collections.Collection) *BundleStream {
+func newBundleStream(warehouse *Manager, provider types.ID, collection *collections.Collection) *BundleStream {
 	return &BundleStream{
 		provider:   provider,
 		collection: collection,
