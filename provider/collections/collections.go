@@ -1,7 +1,7 @@
 package collections
 
 import (
-	"github.com/airbloc/airbloc-go/shared/schemas"
+	"github.com/airbloc/airbloc-go/provider/schemas"
 	"github.com/airbloc/airbloc-go/shared/types"
 )
 
