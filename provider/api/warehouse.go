@@ -6,8 +6,7 @@ import (
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/airbloc/airbloc-go/shared/warehouse"
-	warehouseService "github.com/airbloc/airbloc-go/warehouse"
+	"github.com/airbloc/airbloc-go/warehouse"
 	"github.com/airbloc/logger"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
@@ -17,17 +16,17 @@ import (
 )
 
 type WarehouseAPI struct {
-	warehouse *warehouse.DataWarehouse
+	warehouse *warehouse.Manager
 	log       *logger.Logger
 }
 
 func NewWarehouseAPI(backend service.Backend) (_ api.API, err error) {
-	service, ok := backend.GetService("warehouse").(*warehouseService.Service)
+	svc, ok := backend.GetService("warehouse").(*warehouse.Service)
 	if !ok {
 		return nil, errors.New("warehouse service is not registered")
 	}
 	return &WarehouseAPI{
-		warehouse: service.GetManager(),
+		warehouse: svc.GetManager(),
 		log:       logger.New("warehouse"),
 	}, nil
 }

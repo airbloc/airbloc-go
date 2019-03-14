@@ -2,18 +2,17 @@ package data
 
 import (
 	"context"
+	"github.com/airbloc/airbloc-go/provider/collections"
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
-	"github.com/airbloc/airbloc-go/shared/collections"
 	"github.com/airbloc/airbloc-go/shared/database/localdb"
 	"github.com/airbloc/airbloc-go/shared/database/metadb"
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/airbloc-go/shared/p2p"
 	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/airbloc/airbloc-go/shared/warehouse"
+	"github.com/airbloc/airbloc-go/warehouse"
 	"github.com/mitchellh/mapstructure"
 	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/pkg/errors"
 )
 
@@ -22,7 +21,7 @@ type Manager struct {
 	client      blockchain.TxClient
 	metadb      *metadb.Model
 	p2p         p2p.Server
-	warehouse   *warehouse.DataWarehouse
+	warehouse   *warehouse.Manager
 	registry    *adapter.DataRegistry
 	collections *collections.Manager
 	batches     *BatchManager
@@ -34,7 +33,7 @@ func NewManager(
 	metaDB metadb.Database,
 	localDB localdb.Database,
 	client blockchain.TxClient,
-	warehouse *warehouse.DataWarehouse,
+	warehouse *warehouse.Manager,
 ) *Manager {
 	batches := NewBatchManager(localDB)
 	contract := client.GetContract(&adapter.DataRegistry{})
@@ -104,7 +103,7 @@ func (manager *Manager) Get(rawDataId string) (*getDataResult, error) {
 
 func (manager *Manager) GetBatch(batch *Batch) ([]*getDataResult, error) {
 	result := make([]*getDataResult, batch.Count)
-	bundles := make(map[types.ID]*types.Bundle, batch.Count)
+	bundles := make(map[types.ID]*warehouse.Bundle, batch.Count)
 
 	index := 0
 	for dataId := range batch.Iterator() {
@@ -146,13 +145,13 @@ func (manager *Manager) GetBatch(batch *Batch) ([]*getDataResult, error) {
 }
 
 type bundleInfo struct {
-	Id         string        `json:"bundleId" mapstructure:"bundleId"`
-	Uri        string        `json:"uri" mapstructure:"uri"`
-	Provider   string        `json:"provider" mapstructure:"provider"`
-	Collection string        `json:"collection" mapstructure:"collection"`
-	IngestedAt int64         `json:"ingestedAt" mapstructure:"ingestedAt"`
-	DataIds    []string      `json:"-" mapstructure:"-"`
-	RawDataIds []primitive.D `json:"dataIds" mapstructure:"dataIds"`
+	Id         string   `json:"bundleId" mapstructure:"bundleId"`
+	Uri        string   `json:"uri" mapstructure:"uri"`
+	Provider   string   `json:"provider" mapstructure:"provider"`
+	Collection string   `json:"collection" mapstructure:"collection"`
+	IngestedAt int64    `json:"ingestedAt" mapstructure:"ingestedAt"`
+	DataIds    []string `json:"-" mapstructure:"-"`
+	RawDataIds []bson.D `json:"dataIds" mapstructure:"dataIds"`
 }
 
 func (manager *Manager) GetBundleInfo(ctx context.Context, id types.ID) (*bundleInfo, error) {

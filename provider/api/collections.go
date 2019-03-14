@@ -2,8 +2,8 @@ package api
 
 import (
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/airbloc/airbloc-go/shared/collections"
-	"github.com/airbloc/airbloc-go/shared/schemas"
+	"github.com/airbloc/airbloc-go/provider/collections"
+	"github.com/airbloc/airbloc-go/provider/schemas"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"

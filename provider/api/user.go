@@ -3,10 +3,10 @@ package api
 import (
 	"context"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
+	"github.com/airbloc/airbloc-go/provider/user"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/airbloc/airbloc-go/shared/user"
 	"github.com/airbloc/airbloc-go/warehouse"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -33,7 +33,7 @@ func (api *UserAPI) AttachToAPI(service *api.Service) {
 func (api *UserAPI) GetData(ctx context.Context, req *pb.DataRequest) (*pb.GetDataReponse, error) {
 	userId, err := types.HexToID(req.GetUserId())
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "failed to convert userId to common.Id format : *v", err)
+		return nil, status.Errorf(codes.InvalidArgument, "failed to convert userId to common.Id format : %v", err)
 	}
 
 	usersData, err := api.manager.GetData(ctx, userId, req.GetFrom())

@@ -5,7 +5,7 @@ import (
 	"log"
 
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/airbloc/airbloc-go/shared/exchange"
+	"github.com/airbloc/airbloc-go/provider/exchange"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"

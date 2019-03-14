@@ -3,6 +3,7 @@ package key
 import (
 	"encoding/hex"
 	"fmt"
+	"github.com/stretchr/testify/require"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/crypto"
@@ -33,7 +34,6 @@ func TestDeriveFromPassword(t *testing.T) {
 
 func TestGenerate(t *testing.T) {
 	key, err := Generate()
-	assert.NoError(t, err)
-
-	key.Save("../private.key")
+	require.NoError(t, err)
+	require.NoError(t, key.Save("../../private.key"))
 }

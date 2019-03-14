@@ -15,6 +15,20 @@ import (
 	"github.com/pkg/errors"
 )
 
+type Backend interface {
+	Kms() key.Manager
+	Client() *blockchain.Client
+	MetaDatabase() metadb.Database
+	LocalDatabase() localdb.Database
+	Config() *Config
+	P2P() p2p.Server
+
+	Service
+	GetService(string) Service
+	AttachService(string, Service)
+	DetachService(string)
+}
+
 // Airbloc implements Airbloc node service.
 // it composes all service used by Airbloc.
 type AirblocBackend struct {

@@ -3,12 +3,12 @@ package user
 import (
 	"context"
 	"fmt"
+	"github.com/airbloc/airbloc-go/provider/collections"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
-	"github.com/airbloc/airbloc-go/shared/collections"
 	"github.com/airbloc/airbloc-go/shared/database/metadb"
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/airbloc/airbloc-go/shared/warehouse"
+	"github.com/airbloc/airbloc-go/warehouse"
 	"github.com/mitchellh/mapstructure"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
@@ -18,7 +18,7 @@ import (
 type Manager struct {
 	kms         key.Manager
 	metadb      metadb.Database
-	warehouse   *warehouse.DataWarehouse
+	warehouse   *warehouse.Manager
 	collections *collections.Manager
 }
 
@@ -26,7 +26,7 @@ func NewManager(
 	kms key.Manager,
 	metaDB metadb.Database,
 	client blockchain.TxClient,
-	warehouse *warehouse.DataWarehouse,
+	warehouse *warehouse.Manager,
 ) *Manager {
 	return &Manager{
 		kms:         kms,

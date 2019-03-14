@@ -3,9 +3,9 @@ package api
 import (
 	"context"
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
+	"github.com/airbloc/airbloc-go/provider/collections"
+	"github.com/airbloc/airbloc-go/provider/dauth"
 	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
-	"github.com/airbloc/airbloc-go/shared/collections"
-	"github.com/airbloc/airbloc-go/shared/dauth"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
@@ -18,7 +18,7 @@ import (
 )
 
 type DAuthAPI struct {
-	dauthClient *dauth.ProviderClient
+	dauthClient *dauth.Provider
 	collections *collections.Manager
 }
 

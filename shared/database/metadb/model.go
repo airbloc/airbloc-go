@@ -52,9 +52,10 @@ func unwrap(rawAsset interface{}) bson.M {
 	//   }
 	// }
 	// into {"_id": BigchainDBTxID, ...ModelData}
+
 	asset := rawAsset.(bson.M)
-	assetData := asset["data"].(bson.D).Map()
-	data := assetData["data"].(bson.D).Map()
+	assetData := asset["data"].(bson.M)
+	data := assetData["data"].(bson.M)
 
 	data["_id"] = asset["_id"]
 	return data

@@ -1,15 +1,11 @@
 package protocol
 
 import (
-	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/json-iterator/go"
 	"github.com/pkg/errors"
 	"github.com/valyala/fasthttp"
 	"net/url"
 	"time"
 )
-
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type HttpProtocol struct {
 	timeout time.Duration
@@ -28,7 +24,7 @@ func (http *HttpProtocol) Name() string {
 	return "http"
 }
 
-func (http *HttpProtocol) Read(uri *url.URL) (bundle *types.Bundle, _ error) {
+func (http *HttpProtocol) Read(uri *url.URL) ([]byte, error) {
 	request := fasthttp.AcquireRequest()
 	request.SetRequestURI(uri.String())
 
@@ -40,12 +36,7 @@ func (http *HttpProtocol) Read(uri *url.URL) (bundle *types.Bundle, _ error) {
 	if response.Header.StatusCode() == 404 {
 		return nil, ErrNotFound
 	}
-
-	if err := json.Unmarshal(response.Body(), &bundle); err != nil {
-		return nil, errors.Wrapf(err, "failed to parse bundle from the URL %s", uri.String())
-	}
-
-	return bundle, nil
+	return response.Body(), nil
 }
 
 type HttpsProtocol struct {

@@ -1,23 +1,27 @@
-package types
+package warehouse
 
 import (
 	"github.com/airbloc/airbloc-go/shared/merkle"
+	"github.com/airbloc/airbloc-go/shared/types"
 	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/json-iterator/go"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/sha3"
 )
 
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
+
 type Bundle struct {
-	Id         string `json:"-"`
-	Uri        string `json:"-"`
-	Provider   ID     `json:"provider"`
-	Collection ID     `json:"collection"`
-	DataCount  int    `json:"dataCount"`
-	IngestedAt Time   `json:"ingestedAt"`
+	Id         string     `json:"-"`
+	Uri        string     `json:"-"`
+	Provider   types.ID   `json:"provider"`
+	Collection types.ID   `json:"collection"`
+	DataCount  int        `json:"dataCount"`
+	IngestedAt types.Time `json:"ingestedAt"`
 
 	// mapping(userId => []data)
-	Data map[ID][]*EncryptedData `json:"data"`
-	tree *merkle.MainTree        `json:"-"`
+	Data map[types.ID][]*types.EncryptedData `json:"data"`
+	tree *merkle.MainTree                    `json:"-"`
 }
 
 func (bundle *Bundle) Hash() (ethCommon.Hash, error) {
@@ -35,23 +39,23 @@ func (bundle *Bundle) SetupRowId() error {
 
 	for userId, rowData := range bundle.Data {
 		for i := range rowData {
-			bundle.Data[userId][i].RowId = UintToRowId(uint32(i))
+			bundle.Data[userId][i].RowId = types.UintToRowId(uint32(i))
 		}
 	}
 	return nil
 }
 
 type marshalBundle struct {
-	Provider   ID            `json:"provider"`
-	Collection ID            `json:"collection"`
+	Provider   types.ID      `json:"provider"`
+	Collection types.ID      `json:"collection"`
 	DataCount  int           `json:"dataCount"`
-	IngestedAt Time          `json:"ingestedAt"`
+	IngestedAt types.Time    `json:"ingestedAt"`
 	Data       []marshalData `json:"data"`
 }
 
 type marshalData struct {
-	UserId ID               `json:"userId"`
-	Data   []*EncryptedData `json:"data"`
+	UserId types.ID               `json:"userId"`
+	Data   []*types.EncryptedData `json:"data"`
 }
 
 func (bundle *Bundle) UnmarshalJSON(d []byte) error {
@@ -66,7 +70,7 @@ func (bundle *Bundle) UnmarshalJSON(d []byte) error {
 	bundle.DataCount = data.DataCount
 	bundle.IngestedAt = data.IngestedAt
 
-	bundle.Data = make(map[ID][]*EncryptedData, len(data.Data))
+	bundle.Data = make(map[types.ID][]*types.EncryptedData, len(data.Data))
 	for _, encryptedData := range data.Data {
 		bundle.Data[encryptedData.UserId] = encryptedData.Data
 	}
@@ -119,7 +123,7 @@ func (bundle *Bundle) SetupUserProof() (root ethCommon.Hash, _ error) {
 	return
 }
 
-func (bundle *Bundle) GenerateProof(rowId RowId, userId ID) ([]byte, error) {
+func (bundle *Bundle) GenerateProof(rowId types.RowId, userId types.ID) ([]byte, error) {
 	if bundle.tree == nil {
 		if err := bundle.generateSMT(); err != nil {
 			return nil, errors.Wrap(err, "setup user proof")

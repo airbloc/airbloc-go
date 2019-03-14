@@ -8,7 +8,6 @@ import (
 	"path"
 	"sync"
 
-	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/pkg/errors"
 )
 
@@ -33,14 +32,9 @@ func NewLocalStorage(savePath string, endpoint string) (Storage, error) {
 	}, nil
 }
 
-func (localStorage *LocalStorage) Save(bundleId string, bundle *types.Bundle) (*url.URL, error) {
+func (localStorage *LocalStorage) Save(bundleId string, bundleData []byte) (*url.URL, error) {
 	fileName := fmt.Sprintf("%s.json", bundleId)
 	savePath := path.Join(localStorage.SavePath, fileName)
-
-	bundleData, err := json.Marshal(bundle)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to parse bundle")
-	}
 
 	if err := ioutil.WriteFile(savePath, bundleData, 0644); err != nil {
 		return nil, errors.Wrap(err, "failed to write bundle to the path")
@@ -49,7 +43,7 @@ func (localStorage *LocalStorage) Save(bundleId string, bundle *types.Bundle) (*
 	return url.Parse(path.Join(localStorage.Endpoint, fileName))
 }
 
-func (localStorage *LocalStorage) Update(url *url.URL, bundle *types.Bundle) error {
+func (localStorage *LocalStorage) Update(url *url.URL, bundleData []byte) error {
 	_, fileName := path.Split(url.Path)
 	savedPath := path.Join(localStorage.SavePath, fileName)
 
@@ -57,10 +51,6 @@ func (localStorage *LocalStorage) Update(url *url.URL, bundle *types.Bundle) err
 		return errors.Errorf("the given URI %s does not exist", url.String())
 	}
 
-	bundleData, err := json.Marshal(bundle)
-	if err != nil {
-		return errors.Wrap(err, "failed to parse bundle")
-	}
 	if err := ioutil.WriteFile(savedPath, bundleData, 0644); err != nil {
 		return errors.Wrap(err, "failed to write bundle to the path")
 	}

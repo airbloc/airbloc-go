@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -38,25 +37,20 @@ func ExtractS3ObjectInfo(rawUrl string) (region, bucket, key string) {
 	return s[0], s[1], s[2]
 }
 
-func (ss *S3Storage) Save(bundleId string, bundle *types.Bundle) (*url.URL, error) {
+func (ss *S3Storage) Save(bundleId string, bundleData []byte) (*url.URL, error) {
 	bundleUri := &url.URL{
 		Scheme: "https",
 		Host:   fmt.Sprintf(S3ProtocolFmt, ss.bucket, ss.region),
 		Path:   filepath.Join(ss.prefix, bundleId),
 	}
-	err := ss.Update(bundleUri, bundle)
+	err := ss.Update(bundleUri, bundleData)
 	if err != nil {
 		return nil, err
 	}
 	return bundleUri, nil
 }
 
-func (ss *S3Storage) Update(bundlePath *url.URL, bundle *types.Bundle) error {
-	bundleData, err := json.Marshal(bundle)
-	if err != nil {
-		return errors.Wrap(err, "s3 update: marshal error")
-	}
-
+func (ss *S3Storage) Update(bundlePath *url.URL, bundleData []byte) error {
 	reqObj := &s3.PutObjectInput{
 		Key:             aws.String(bundlePath.Path),
 		Body:            bytes.NewReader(bundleData),
@@ -66,7 +60,7 @@ func (ss *S3Storage) Update(bundlePath *url.URL, bundle *types.Bundle) error {
 		ContentEncoding: aws.String("utf-8"),
 	}
 
-	_, err = ss.client.PutObject(reqObj)
+	_, err := ss.client.PutObject(reqObj)
 	if err != nil {
 		return errors.Wrap(err, "s3 update: request error")
 	}

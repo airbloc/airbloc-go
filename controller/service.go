@@ -6,10 +6,10 @@ import (
 	"time"
 
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
+	"github.com/airbloc/airbloc-go/provider/apps"
+	"github.com/airbloc/airbloc-go/provider/collections"
 	"github.com/airbloc/airbloc-go/shared/account"
-	"github.com/airbloc/airbloc-go/shared/apps"
 	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
-	"github.com/airbloc/airbloc-go/shared/collections"
 	"github.com/airbloc/airbloc-go/shared/dauth"
 	"github.com/airbloc/airbloc-go/shared/p2p"
 	"github.com/airbloc/airbloc-go/shared/service"

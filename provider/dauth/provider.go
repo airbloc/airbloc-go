@@ -15,9 +15,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-// ProviderClient is a P2P client for data provider (server) nodes to do DAuth.
+// Provider is a P2P client for data provider (server) nodes to do DAuth.
 // it does not interact with blockchain directly; it just requests to designated user delegate nodes.
-type ProviderClient struct {
+type Provider struct {
 	providerId *ecdsa.PublicKey
 	accounts   *account.Manager
 	p2pRpc     p2p.RPC
@@ -25,9 +25,9 @@ type ProviderClient struct {
 }
 
 // NewProviderClient creates DAuth client for data provider (server) nodes.
-func NewProviderClient(kms key.Manager, client blockchain.TxClient, p2pServer p2p.Server) *ProviderClient {
+func NewProviderClient(kms key.Manager, client blockchain.TxClient, p2pServer p2p.Server) *Provider {
 	accounts := account.NewManager(client)
-	return &ProviderClient{
+	return &Provider{
 		providerId: &kms.NodeKey().PublicKey,
 		accounts:   accounts,
 		p2pRpc:     p2p.NewRPC(p2pServer),
@@ -37,7 +37,7 @@ func NewProviderClient(kms key.Manager, client blockchain.TxClient, p2pServer p2
 
 // SignIn creates a new account if there is no account corresponding to the identity (e.g. email),
 // otherwise it returns the ID of the existing account.
-func (client *ProviderClient) SignIn(ctx context.Context, identity string, userDelegate common.Address) (types.ID, error) {
+func (client *Provider) SignIn(ctx context.Context, identity string, userDelegate common.Address) (types.ID, error) {
 	acc, err := client.accounts.GetByIdentity(identity)
 	if err != nil {
 		if err == account.ErrNoAccount {
@@ -55,7 +55,7 @@ func (client *ProviderClient) SignIn(ctx context.Context, identity string, userD
 }
 
 // SignUp requests user delegate to create new temporary account using given identity data.
-func (client *ProviderClient) SignUp(ctx context.Context, identity string, userDelegate common.Address) (types.ID, error) {
+func (client *Provider) SignUp(ctx context.Context, identity string, userDelegate common.Address) (types.ID, error) {
 	identityHash := client.accounts.HashIdentity(identity)
 	req := &pb.DAuthSignUpRequest{
 		IdentityHash: identityHash.Hex(),
@@ -69,15 +69,15 @@ func (client *ProviderClient) SignUp(ctx context.Context, identity string, userD
 	return types.HexToID(reply.GetAccountId())
 }
 
-func (client *ProviderClient) Allow(ctx context.Context, collectionId types.ID, accountId types.ID) error {
+func (client *Provider) Allow(ctx context.Context, collectionId types.ID, accountId types.ID) error {
 	return client.sendDauthRequest(ctx, collectionId, accountId, "allow")
 }
 
-func (client *ProviderClient) Deny(ctx context.Context, collectionId types.ID, accountId types.ID) error {
+func (client *Provider) Deny(ctx context.Context, collectionId types.ID, accountId types.ID) error {
 	return client.sendDauthRequest(ctx, collectionId, accountId, "deny")
 }
 
-func (client *ProviderClient) sendDauthRequest(ctx context.Context, collectionId types.ID, accountId types.ID, typ string) error {
+func (client *Provider) sendDauthRequest(ctx context.Context, collectionId types.ID, accountId types.ID, typ string) error {
 	acc, err := client.accounts.Get(accountId)
 	if err != nil {
 		return err

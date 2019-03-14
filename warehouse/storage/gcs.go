@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 
 	"cloud.google.com/go/storage"
-	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/pkg/errors"
 	"google.golang.org/api/option"
 )
@@ -52,26 +51,22 @@ func (gs *GoogleCloudStorage) getBucket() *storage.BucketHandle {
 }
 
 //gs://[prefix]/[bundleId].bundle
-func (gs *GoogleCloudStorage) Save(bundleId string, bundle *types.Bundle) (*url.URL, error) {
+func (gs *GoogleCloudStorage) Save(bundleId string, bundleData []byte) (*url.URL, error) {
 	bundlePath := filepath.Join(gs.prefix, bundleId+".bundle")
 	bundleUrl := &url.URL{
 		Scheme: "gs",
 		Path:   bundlePath,
 	}
-	return bundleUrl, gs.Update(bundleUrl, bundle)
+	return bundleUrl, gs.Update(bundleUrl, bundleData)
 }
 
-func (gs *GoogleCloudStorage) Update(bundlePath *url.URL, bundle *types.Bundle) error {
-	bundleData, err := json.Marshal(bundle)
-	if err != nil {
-		return errors.Wrap(err, "gs update: marshal error")
-	}
+func (gs *GoogleCloudStorage) Update(bundlePath *url.URL, bundleData []byte) error {
 	bucket := gs.getBucket()
 	writer := bucket.Object(bundlePath.Path).NewWriter(gs.ctx)
-	if _, err = io.Copy(writer, bytes.NewReader(bundleData)); err != nil {
+	if _, err := io.Copy(writer, bytes.NewReader(bundleData)); err != nil {
 		return errors.Wrap(err, "gs update: write error")
 	}
-	if err = writer.Close(); err != nil {
+	if err := writer.Close(); err != nil {
 		return errors.Wrap(err, "gs update: cannot close writer")
 	}
 	return nil
