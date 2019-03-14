@@ -15,7 +15,7 @@ config.yml
 **/.vscode
 **/node_modules
 **/build
-tests/playground
+test/playground
 
 # Created by https://www.gitignore.io/api/go,intellij
 
