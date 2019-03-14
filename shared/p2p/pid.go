@@ -1,4 +1,4 @@
-package common
+package p2p
 
 import (
 	"path"

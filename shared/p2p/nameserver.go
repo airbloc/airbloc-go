@@ -6,7 +6,6 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"time"
 
-	p2pCommon "github.com/airbloc/airbloc-go/shared/p2p/common"
 	"github.com/airbloc/logger"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/libp2p/go-libp2p-peer"
@@ -20,7 +19,7 @@ func Lookup(ctx context.Context, server Server, addr common.Address, ackTimeout 
 
 	// 1. prepare for listening lookup ACKs
 	waitForAck := make(chan peer.ID)
-	ackHandler := func(_ Server, ctx context.Context, msg p2pCommon.Message) {
+	ackHandler := func(_ Server, ctx context.Context, msg *IncomingMessage) {
 		waitForAck <- msg.SenderInfo.ID
 	}
 	server.SubscribeTopic("/lookup/ack", &empty.Empty{}, ackHandler)
@@ -36,7 +35,7 @@ func Lookup(ctx context.Context, server Server, addr common.Address, ackTimeout 
 		select {
 		case id := <-waitForAck:
 			// 4.1. return peer.ID matching with given address
-			addrOfId, _ := p2pCommon.AddrFromID(id)
+			addrOfId, _ := AddrFromID(id)
 			if addrOfId == addr {
 				return id, nil
 			}
@@ -51,14 +50,14 @@ func Lookup(ctx context.Context, server Server, addr common.Address, ackTimeout 
 func StartNameServer(server Server) error {
 	log := logger.New("nameserver")
 
-	addr, err := p2pCommon.AddrFromID(server.getHost().ID())
+	addr, err := AddrFromID(server.Host().ID())
 	if err != nil {
 		return errors.Wrap(err, "invalid peer ID")
 	}
 	nodeAddr := addr.Hex()
 
-	server.SubscribeTopic("/lookup", &pb.Lookup{}, func(_ Server, ctx context.Context, msg p2pCommon.Message) {
-		req, _ := msg.Data.(*pb.Lookup)
+	server.SubscribeTopic("/lookup", &pb.Lookup{}, func(_ Server, ctx context.Context, msg *IncomingMessage) {
+		req, _ := msg.Payload.(*pb.Lookup)
 		if req.Address == nodeAddr {
 			// send ACK (empty message)
 			if err := server.Send(ctx, &pb.LookupAck{}, "/lookup/ack", msg.SenderInfo.ID); err != nil {

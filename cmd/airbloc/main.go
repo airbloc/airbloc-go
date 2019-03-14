@@ -38,6 +38,11 @@ var (
 		keyPath string
 		private string
 
+		blockchainEndpoint string
+		deploymentPath     string
+		mongoEndpoint      string
+		bootnodes          []string
+
 		verbose   bool
 		logLevel  string
 		logFilter string
@@ -90,10 +95,10 @@ func init() {
 	rflags.StringVarP(&rootFlags.keyPath, "keystore", "k", "", "Keystore file for node (default is $DATADIR/private.key)")
 	rflags.StringVar(&rootFlags.private, "private", "", "Raw 32-byte private key with 0x prefix (Not Recommended)")
 
-	rflags.StringVar(&config.Blockchain.Endpoint, "ethereum", config.Blockchain.Endpoint, "Ethereum RPC endpoint")
-	rflags.StringVar(&config.Blockchain.DeploymentPath, "deployment", config.Blockchain.DeploymentPath, "Path or URL of deployment.json")
-	rflags.StringVar(&config.MetaDB.MongoDBEndpoint, "metadb", config.MetaDB.MongoDBEndpoint, "Metadatabase endpoint")
-	rflags.StringSliceVar(&config.P2P.BootNodes, "bootnodes", config.P2P.BootNodes, "Bootstrap Node multiaddr for P2P")
+	rflags.StringVar(&rootFlags.blockchainEndpoint, "ethereum", config.Blockchain.Endpoint, "Ethereum RPC endpoint")
+	rflags.StringVar(&rootFlags.deploymentPath, "deployment", config.Blockchain.DeploymentPath, "Path or URL of deployment.json")
+	rflags.StringVar(&rootFlags.mongoEndpoint, "metadb", config.MetaDB.MongoDBEndpoint, "Metadatabase endpoint")
+	rflags.StringSliceVar(&rootFlags.bootnodes, "bootnodes", config.P2P.BootNodes, "Bootstrap Node multiaddr for P2P")
 
 	rflags.BoolVarP(&rootFlags.verbose, "verbose", "v", true, "Verbose output")
 	rflags.StringVar(&rootFlags.logFilter, "logfilter", "*", "Log only from specific packages (e.g. warehouse,users)")
@@ -147,6 +152,19 @@ func loadConfig() {
 	}
 	logger.SetLogger(logger.NewStandardOutput(os.Stdout, rootFlags.logLevel, rootFlags.logFilter))
 	log2.SetOutput(os.Stderr)
+
+	if rootFlags.blockchainEndpoint != "" {
+		config.Blockchain.Endpoint = rootFlags.blockchainEndpoint
+	}
+	if rootFlags.deploymentPath != "" {
+		config.Blockchain.DeploymentPath = rootFlags.deploymentPath
+	}
+	if rootFlags.mongoEndpoint != "" {
+		config.MetaDB.MongoDBEndpoint = rootFlags.mongoEndpoint
+	}
+	if rootFlags.bootnodes != nil {
+		config.P2P.BootNodes = rootFlags.bootnodes
+	}
 }
 
 func main() {

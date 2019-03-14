@@ -16,7 +16,10 @@ LDFLAGS += -X "main.GitBranch=$(shell git symbolic-ref -q --short HEAD)"
 all: airbloc bootnode
 
 deps:
-	@go build -v ./...
+ifeq ($(shell which mockgen), )
+	@echo "Installing Dependency: mockgen"
+	@go install github.com/golang/mock/mockgen
+endif
 
 airbloc:
 	@go build -o "$(DEST)/airbloc" -ldflags '${LDFLAGS}' ./cmd/airbloc
