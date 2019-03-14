@@ -101,6 +101,12 @@ func (manager *Manager) DenyByDelegate(collectionId types.ID, accountId types.ID
 	return nil
 }
 
+// IsCollectionAllowed returns true if the given user allowed data collection
+// of the given collection (data type) through DAuth.
+func (manager *Manager) IsCollectionAllowed(collectionId types.ID, accountId types.ID) (bool, error) {
+	return manager.collectionRegistry.IsCollectionAllowed(nil, collectionId, accountId)
+}
+
 // Exists checks that given collection is exists.
 func (manager *Manager) Exists(collectionId types.ID) (exists bool, err error) {
 	return manager.collectionRegistry.Exists(nil, collectionId)
