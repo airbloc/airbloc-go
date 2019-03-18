@@ -20,13 +20,13 @@ func Lookup(ctx context.Context, server Server, addr common.Address, ackTimeout 
 	// 1. prepare for listening lookup ACKs
 	waitForAck := make(chan peer.ID)
 	ackHandler := func(_ Server, ctx context.Context, msg *IncomingMessage) {
-		waitForAck <- msg.SenderInfo.ID
+		waitForAck <- msg.Sender
 	}
-	server.SubscribeTopic("/lookup/ack", &empty.Empty{}, ackHandler)
+	server.SubscribeTopic("/lookup/ack", &pb.LookupAck{}, ackHandler)
 	defer server.UnsubscribeTopic("/lookup/ack")
 
 	// 2. publish the lookup message
-	if err := server.Publish(ctx, &empty.Empty{}, "/lookup"); err != nil {
+	if err := server.Publish(&pb.Lookup{}, "/lookup/"+addr.Hex()); err != nil {
 		return "", errors.Wrap(err, "failed to publish lookup message")
 	}
 
@@ -35,7 +35,7 @@ func Lookup(ctx context.Context, server Server, addr common.Address, ackTimeout 
 		select {
 		case id := <-waitForAck:
 			// 4.1. return peer.ID matching with given address
-			addrOfId, _ := AddrFromID(id)
+			addrOfId, _ := addrFromID(id)
 			if addrOfId == addr {
 				return id, nil
 			}
@@ -50,19 +50,16 @@ func Lookup(ctx context.Context, server Server, addr common.Address, ackTimeout 
 func StartNameServer(server Server) error {
 	log := logger.New("nameserver")
 
-	addr, err := AddrFromID(server.Host().ID())
+	addr, err := addrFromID(server.Host().ID())
 	if err != nil {
-		return errors.Wrap(err, "invalid peer ID")
+		return errors.Wrap(err, "invalid peer ID: is your libp2p.Identity SECP256k1?")
 	}
 	nodeAddr := addr.Hex()
 
-	server.SubscribeTopic("/lookup", &pb.Lookup{}, func(_ Server, ctx context.Context, msg *IncomingMessage) {
-		req, _ := msg.Payload.(*pb.Lookup)
-		if req.Address == nodeAddr {
-			// send ACK (empty message)
-			if err := server.Send(ctx, &pb.LookupAck{}, "/lookup/ack", msg.SenderInfo.ID); err != nil {
-				log.Error("error: unable to send handshake reply: %s", err.Error(), msg.SenderInfo.ID.Loggable())
-			}
+	server.SubscribeTopic("/lookup/"+nodeAddr, &empty.Empty{}, func(_ Server, ctx context.Context, msg *IncomingMessage) {
+		// send ACK (empty message)
+		if err := server.Send(ctx, &pb.LookupAck{}, "/lookup/ack", msg.Sender); err != nil {
+			log.Error("error: unable to send handshake reply: %s", err.Error(), msg.Sender.Loggable())
 		}
 	})
 	return nil
