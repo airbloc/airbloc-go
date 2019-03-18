@@ -41,7 +41,6 @@ func StartBootstrapServer(ctx context.Context, nodekey *key.Key, addr multiaddr.
 
 // getBootInfo generates bootnode's providing address info and returns it
 func getBootNodeInfo(h host.Host) (peerstore.PeerInfo, error) {
-	println(h.Addrs()[1].String() + "/p2p/" + h.ID().Pretty())
 	iaddr, err := multiaddr.NewMultiaddr(h.Addrs()[1].String() + "/p2p/" + h.ID().Pretty())
 	if err != nil {
 		return peerstore.PeerInfo{}, err

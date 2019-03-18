@@ -14,6 +14,6 @@ func ReservePort() int {
 	if err := lis.Close(); err != nil {
 		panic(err)
 	}
-	time.Sleep(500 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 	return lis.Addr().(*net.TCPAddr).Port
 }
