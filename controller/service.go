@@ -63,7 +63,7 @@ func NewService(backend service.Backend) (service.Service, error) {
 		dauth:       dauth.NewManager(backend.Client()),
 		accounts:    account.NewManager(backend.Client()),
 		collections: collections.NewManager(backend.Client()),
-		log:         logger.New("userdelegate"),
+		log:         logger.New("controller"),
 	}, nil
 }
 
@@ -125,7 +125,7 @@ func (service *Service) Start() error {
 	if err := service.Sync(ctx); err != nil {
 		return err
 	}
-	timer.End("%d accounts have been scanned", len(service.accountIds))
+	timer.End("{} accounts have been scanned", len(service.accountIds))
 
 	// register p2p RPC handlers
 	rpc := p2p.NewRPC(service.p2p)
@@ -135,7 +135,7 @@ func (service *Service) Start() error {
 
 	service.isRunning = true
 
-	service.log.Info("User Delegate ID=%s", service.id)
+	service.log.Info("Started Data Controller", logger.Attrs{"id": service.id})
 	return nil
 }
 
@@ -185,7 +185,7 @@ func (service *Service) signUpHandler(ctx context.Context, from p2p.SenderInfo, 
 		return nil, errors.Wrap(err, "failed to create temporary account")
 	}
 
-	service.log.Info("Created account %s by request from the data provider %s", accountId.Hex(), from.Addr.Hex())
+	service.log.Info("Created account {} by request from the data provider {}", accountId.Hex(), from.Addr.Hex())
 	service.AddUser(accountId)
 
 	return &pb.DAuthSignUpResponse{
