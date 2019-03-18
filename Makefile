@@ -7,6 +7,9 @@ PROTO_DIR := proto
 PROTO_SRCS := $(shell find $(PROTO_DIR) -name *.proto)
 RPC_PROTO_SRCS := $(shell find $(PROTO_DIR)/rpc -name *.proto)
 
+# test runner (can be overriden by CI)
+GOTEST ?= go test
+
 # build tags
 LDFLAGS += -X "main.Version=$(shell git rev-list --tags --max-count=1)"
 LDFLAGS += -X "main.BuildDate=$(shell date)"
@@ -80,7 +83,7 @@ run: airbloc
 test: test-all
 
 test-all:
-	@go test -v `go list ./... | grep -v test/e2e`
+	@$(GOTEST) -v `go list ./... | grep -v test/e2e`
 
 test-e2e:
-	@go test -v `go list ./test/e2e` $(FLAGS)
+	@$(GOTEST) -v `go list ./test/e2e` $(FLAGS)

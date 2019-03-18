@@ -15,14 +15,13 @@ jobs:
           name: Setup test tools
           command: |
             cp go.sum go.sum.original
-            go get github.com/jstemmer/go-junit-report
-            mkdir $TEST_RESULTS
+            mkdir -p $TEST_RESULTS/gotest
       - run:
           name: Run unit tests
           command: |
             echo 'export GO111MODULE=on' >> $BASH_ENV
-            make test | tee ${TEST_RESULTS}/go-test.out
-            cat ${TEST_RESULTS}/go-test.out | go-junit-report > ${TEST_RESULTS}/go-test-report.xml
+            echo 'export GOTEST="gotestsum --junitfile ${TEST_RESULTS}/gotest/results.xml --"' >> $BASH_ENV
+            make test
       - save_cache:
           key: go-mod-v1-{{ checksum "go.sum.original" }}
           paths:
