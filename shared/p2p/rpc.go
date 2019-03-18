@@ -93,7 +93,7 @@ WaitingForReply:
 		select {
 		case replyMsg = <-waitForResponse:
 			// messages from other senders except the original recipient are ignored.
-			if replyMsg.SenderInfo.ID == targetId {
+			if replyMsg.Sender == targetId {
 				break WaitingForReply
 			}
 		case <-ctx.Done():
@@ -108,7 +108,7 @@ WaitingForReply:
 	}
 	if !response.Ok {
 		// just return error from the response
-		return nil, errors.Errorf("failed to invoke RPC %s: %s", method, response.GetError())
+		return nil, errors.Wrapf(errors.New(response.GetError()), "failed to invoke RPC %s", method)
 	}
 	if err := proto.Unmarshal(response.GetSuccessfulReply(), reply); err != nil {
 		return nil, errors.Wrap(err, "invalid reply type returned")
@@ -121,7 +121,7 @@ func (r *rpc) Handle(method string, argsType, replyType proto.Message, handler R
 
 	callback := func(_ Server, ctx context.Context, msg *IncomingMessage) {
 		from := SenderInfo{
-			Id:   msg.SenderInfo.ID,
+			Id:   msg.Sender,
 			Addr: msg.SenderAddr,
 		}
 		reply, err := handler(ctx, from, msg.Payload)
