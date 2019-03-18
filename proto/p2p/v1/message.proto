@@ -3,16 +3,10 @@ package airbloc.p2p.v1;
 
 option go_package = "github.com/airbloc/airbloc-go/proto/p2p/v1";
 
-enum CID {
-    AIRBLOC = 0;
-}
-
 message Message {
     string topic = 1;
-    bytes data = 2;
+    bytes payload = 2;
     bytes from = 3;
-    bytes protocol = 4;
-    bytes signature = 5;
 }
 
 message TestPing {
