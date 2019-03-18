@@ -33,7 +33,6 @@ func TestDeriveFromPassword(t *testing.T) {
 }
 
 func TestGenerate(t *testing.T) {
-	key, err := Generate()
+	_, err := Generate()
 	require.NoError(t, err)
-	require.NoError(t, key.Save("../../private.key"))
 }
