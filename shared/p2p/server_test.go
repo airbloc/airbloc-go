@@ -57,6 +57,7 @@ func setupTestPeers(t *testing.T, numPeers int) (keys []*key.Key, peers []Server
 			peer.Stop()
 		}
 		stopBootNode()
+		time.Sleep(bootNodeTimeout / 2)
 	}
 	return
 }

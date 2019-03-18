@@ -26,7 +26,7 @@ func TestLookup(t *testing.T) {
 		err := StartNameServer(server)
 		require.NoError(t, err)
 	}
-	time.Sleep(3 * time.Second)
+	time.Sleep(5 * time.Second)
 
 	// every peer should identify each other
 	for i := 0; i < numOfLookupPeers; i++ {
