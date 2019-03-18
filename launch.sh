@@ -1,15 +1,18 @@
 #!/bin/sh
-make airbloc &> ./build/airbloc.log
-if [[ $? -eq 0 ]]; then
-    rm ./build/airbloc.log
-    echo Build successful.
-    sleep 1
+if [[ $1 = "nobuild" ]]; then
+    echo Skipping Build
 else
-    cat ./build/airbloc.log
-    echo Build failed. See log for details.
-    exit 1
+    make airbloc &> ./build/airbloc.log
+    if [[ $? -eq 0 ]]; then
+        rm ./build/airbloc.log
+        echo Build successful.
+        sleep 1
+    else
+        cat ./build/airbloc.log
+        echo Build failed. See log for details.
+        exit 1
+    fi
 fi
-
 
 # Launch Airbloc tmux
 tmux new -d -s airbloc
