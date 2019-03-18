@@ -3,11 +3,12 @@ package p2p
 import (
 	"context"
 	"encoding/hex"
-	"fmt"
+	"github.com/airbloc/airbloc-go/test/utils"
 	"github.com/airbloc/logger"
 	"github.com/stretchr/testify/require"
 	"log"
 	"os"
+	"strconv"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/crypto"
@@ -21,110 +22,102 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const Size = 5
+const (
+	numOfPingPongServers = 10
+	bootNodeTimeout      = 2 * time.Second
+)
+
+func setupTestPeers(t *testing.T, numPeers int) (keys []*key.Key, peers []Server, teardown func()) {
+	ctx, stopBootNode := context.WithCancel(context.Background())
+
+	// launch bootnode for DHT
+	addr := multiaddr.StringCast("/ip4/127.0.0.1/tcp/" + strconv.Itoa(testutils.ReservePort()))
+	k, _ := key.Generate()
+	bootInfo, err := StartBootstrapServer(ctx, k, addr)
+	require.NoError(t, err)
+
+	// wait for bootnode to be prepared
+	time.Sleep(bootNodeTimeout)
+
+	keys = make([]*key.Key, numPeers)
+	peers = make([]Server, numPeers)
+	for i := 0; i < numPeers; i++ {
+		addr := multiaddr.StringCast("/ip4/127.0.0.1/tcp/" + strconv.Itoa(testutils.ReservePort()))
+
+		keys[i], _ = key.Generate()
+		peers[i], err = NewAirblocServer(keys[i], addr, []peerstore.PeerInfo{bootInfo}, Options{EnableMDNS: false})
+		require.NoError(t, err)
+
+		err = peers[i].Start()
+		require.NoError(t, err)
+	}
+
+	teardown = func() {
+		for _, peer := range peers {
+			peer.Stop()
+		}
+		stopBootNode()
+	}
+	return
+}
 
 var (
-	pongMsg *pb.TestPing
-	pingMsg *pb.TestPing
-	keys    []*key.Key
-	addrs   []multiaddr.Multiaddr
+	pingMsg = &pb.TestPing{Message: "Ping"}
+	pongMsg = &pb.TestPong{Message: "Pong"}
 )
 
 func init() {
 	logOutput := logger.NewStandardOutput(os.Stdout, "*", "*")
 	logOutput.ColorsEnabled = true
 	logger.SetLogger(logOutput)
+}
 
-	pongMsg = &pb.TestPing{Message: "World!"}
-	pingMsg = &pb.TestPing{Message: "Hello"}
+func TestAirblocServer_Publish(t *testing.T) {
+	_, servers, teardown := setupTestPeers(t, numOfPingPongServers)
+	defer teardown()
 
-	for i := 1; i <= Size+1; i++ {
-		privKey, _ := key.Generate()
-		addrStr := fmt.Sprintf("/ip4/127.0.0.1/tcp/24%02d", i)
-		addr, _ := multiaddr.NewMultiaddr(addrStr)
-		keys = append(keys, privKey)
-		addrs = append(addrs, addr)
+	pingWaits := testutils.NewTimeoutWaitGroup(5 * time.Second)
+	for _, s := range servers {
+		s.SubscribeTopic("ping", pingMsg, func(_ Server, _ context.Context, msg *IncomingMessage) {
+			log.Println("Ping", msg.Sender.Pretty(), msg.Payload.String())
+			pingWaits.Done()
+
+			err := s.Send(context.TODO(), pongMsg, "pong", msg.Sender)
+			require.NoError(t, err)
+		})
+		time.Sleep(100 * time.Millisecond)
 	}
+
+	// decrease one, since it skips broadcasted msg from myself
+	pingWaits.Add(numOfPingPongServers - 1)
+
+	// first server will receive all pongs
+	pongWaits := testutils.NewTimeoutWaitGroup(5 * time.Second)
+	servers[0].SubscribeTopic("pong", pongMsg, func(_ Server, _ context.Context, msg *IncomingMessage) {
+		log.Println("Pong", msg.Sender.Pretty(), msg.Payload.String())
+		pongWaits.Done()
+	})
+	pongWaits.Add(numOfPingPongServers - 1)
+	time.Sleep(1000 * time.Millisecond)
+
+	// publish ping
+	err := servers[0].Publish(pingMsg, "ping")
+	require.NoError(t, err)
+	require.NoError(t, pingWaits.Wait(), "ping timeout")
+	require.NoError(t, pongWaits.Wait(), "pong timeout")
 }
 
-func makeBasicServer(index int, bootinfos ...peerstore.PeerInfo) (Server, error) {
-	server, err := NewAirblocServer(keys[index], addrs[index], bootinfos)
-	if err != nil {
-		return nil, err
-	}
-	return server, nil
-}
-
-func handlePing(s Server, ctx context.Context, message *IncomingMessage) {
-	log.Println("Ping", message.SenderInfo.ID.Pretty(), message.Payload.String())
-
-	s.Send(ctx, &pb.TestPing{Message: "World!"}, "ping", message.SenderInfo.ID)
-}
-
-func handlePong(s Server, ctx context.Context, message *IncomingMessage) {
-	log.Println("Pong", message.SenderInfo.ID.Pretty(), message.Payload.String())
-}
-
-func TestNewServer(t *testing.T) {
-	log.SetFlags(log.Lshortfile | log.Ltime)
+func TestAirblocServer_Send(t *testing.T) {
+	keys, servers, teardown := setupTestPeers(t, 2)
+	defer teardown()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	bootinfo, err := StartBootstrapServer(ctx, keys[0], addrs[0])
-	require.NoError(t, err)
-
-	time.Sleep(1 * time.Second)
-
-	servers := make([]Server, Size)
-	for i := 1; i < Size; i++ {
-		server, err := makeBasicServer(i, bootinfo)
-		require.NoError(t, err)
-		err = server.Start()
-		require.NoError(t, err)
-		defer server.Stop()
-
-		server.SubscribeTopic("ping", &pb.TestPing{}, handlePing)
-		server.SubscribeTopic("pong", &pb.TestPong{}, handlePong)
-
-		servers[i] = server
-	}
-
-	err = servers[Size/2].Publish(ctx, pingMsg, "ping")
-	require.NoError(t, err)
-
-	time.Sleep(1 * time.Second)
-}
-
-func TestAirblocHost_Publish(t *testing.T) {
-	log.SetFlags(log.Lshortfile | log.Ltime)
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	bootinfo, err := StartBootstrapServer(ctx, keys[0], addrs[0])
-	require.NoError(t, err)
-
-	time.Sleep(1 * time.Second)
-
-	// make alice and bob
-	alice, err := makeBasicServer(1, bootinfo)
-	require.NoError(t, err)
-	err = alice.Start()
-	require.NoError(t, err)
-	defer alice.Stop()
-
-	aliceAddress := keys[1].EthereumAddress.Hex()
+	alice, bob := servers[0], servers[1]
+	aliceAddress := keys[0].EthereumAddress.Hex()
 	log.Printf("Alice address : %s\n", aliceAddress)
 	log.Printf("Alice pubkey : %s\n", hex.EncodeToString(crypto.CompressPubkey(&keys[1].PublicKey)))
-
-	bob, err := makeBasicServer(2, bootinfo)
-	require.NoError(t, err)
-	err = bob.Start()
-	require.NoError(t, err)
-	defer bob.Stop()
-
-	time.Sleep(2 * time.Second)
 
 	// bob listens to alice, try to recover alice's address
 	waitForBob := make(chan string, 1)
@@ -132,7 +125,7 @@ func TestAirblocHost_Publish(t *testing.T) {
 		waitForBob <- message.SenderAddr.Hex()
 	})
 
-	err = alice.Publish(ctx, pingMsg, "ping")
+	err := alice.Send(ctx, pingMsg, "ping", bob.Host().ID())
 	require.NoError(t, err)
 
 	timeout := time.After(5 * time.Second)
