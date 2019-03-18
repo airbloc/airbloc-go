@@ -20,8 +20,7 @@ jobs:
           name: Run unit tests
           command: |
             echo 'export GO111MODULE=on' >> $BASH_ENV
-            echo 'export GOTEST="gotestsum --junitfile ${TEST_RESULTS}/gotest/results.xml --"' >> $BASH_ENV
-            make test
+            GOTEST="gotestsum --junitfile ${TEST_RESULTS}/gotest/results.xml --" make test
       - save_cache:
           key: go-mod-v1-{{ checksum "go.sum.original" }}
           paths:
