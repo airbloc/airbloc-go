@@ -73,7 +73,7 @@ func setupAirblocPeers(t *testing.T, numPeers int) (keys []*key.Key, peers []Ser
 	ctx, stopBootNode := context.WithCancel(context.Background())
 
 	// wait for bootnode to be prepared
-	time.Sleep(bootNodeTimeout / 2)
+	time.Sleep(bootNodeTimeout)
 
 	// launch bootnode for DHT
 	addr := multiaddr.StringCast("/ip4/127.0.0.1/tcp/" + strconv.Itoa(testutils.ReservePort()))
