@@ -50,7 +50,7 @@ func Lookup(ctx context.Context, server Server, addr common.Address, ackTimeout 
 func StartNameServer(server Server) error {
 	log := logger.New("nameserver")
 
-	addr, err := addrFromID(server.Host().ID())
+	addr, err := addrFromID(server.getHost().ID())
 	if err != nil {
 		return errors.Wrap(err, "invalid peer ID: is your libp2p.Identity SECP256k1?")
 	}

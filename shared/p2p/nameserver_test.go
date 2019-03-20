@@ -2,16 +2,17 @@ package p2p
 
 import (
 	"context"
-	"github.com/stretchr/testify/require"
 	"log"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 const numOfLookupPeers = 5
 
 func TestStartNameServer(t *testing.T) {
-	_, servers, teardown := setupTestPeers(t, 1)
+	_, servers, teardown := setupBasicPeers(t, 1)
 	defer teardown()
 
 	err := StartNameServer(servers[0])
@@ -19,14 +20,13 @@ func TestStartNameServer(t *testing.T) {
 }
 
 func TestLookup(t *testing.T) {
-	keys, servers, teardown := setupTestPeers(t, numOfLookupPeers)
+	keys, servers, teardown := setupBasicPeers(t, numOfLookupPeers)
 	defer teardown()
 
 	for _, server := range servers {
 		err := StartNameServer(server)
 		require.NoError(t, err)
 	}
-	time.Sleep(5 * time.Second)
 
 	// every peer should identify each other
 	for i := 0; i < numOfLookupPeers; i++ {
@@ -36,7 +36,7 @@ func TestLookup(t *testing.T) {
 			}
 			alice := servers[i]
 			bob := keys[j].EthereumAddress
-			bobId := servers[j].Host().ID()
+			bobId := servers[j].getHost().ID()
 
 			log.Printf("Alice: %s, Bob: %s, BobID: %s\n", keys[i].EthereumAddress.Hex(), bob.Hex(), bobId.String())
 

@@ -11,13 +11,12 @@ import (
 )
 
 func setupTestRPC(t *testing.T) (aliceAddr, bobAddr common.Address, alice, bob RPC, teardown func()) {
-	keys, servers, teardown := setupTestPeers(t, 2)
+	keys, servers, teardown := setupBasicPeers(t, 2)
 	aliceAddr, bobAddr = keys[0].EthereumAddress, keys[1].EthereumAddress
 
 	for _, server := range servers {
 		require.NoError(t, StartNameServer(server))
 	}
-	time.Sleep(3 * time.Second)
 	alice, bob = NewRPC(servers[0]), NewRPC(servers[1])
 	return
 }
@@ -30,7 +29,6 @@ func TestRpc_Invoke(t *testing.T) {
 		require.Equal(t, aliceAddr, from.Addr)
 		return pongMsg, nil
 	})
-
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
