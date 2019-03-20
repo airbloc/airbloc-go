@@ -177,7 +177,7 @@ func main() {
 func start(serviceNames string) func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
 		nodeKey := loadNodeKey()
-		backend, err := service.NewAirblocBackend(nodeKey, config)
+		backend, err := NewAirblocBackend(nodeKey, config)
 		if err != nil {
 			log.Error("Error: init error", err)
 			os.Exit(1)
