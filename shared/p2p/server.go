@@ -3,27 +3,25 @@ package p2p
 import (
 	"context"
 	"fmt"
-	"github.com/libp2p/go-libp2p-host"
-	"github.com/libp2p/go-libp2p-net"
-	"github.com/libp2p/go-libp2p-protocol"
 	"path"
 	"reflect"
 	"sync"
 	"time"
 
-	"github.com/airbloc/logger"
-
-	"github.com/ipfs/go-datastore"
-	dsync "github.com/ipfs/go-datastore/sync"
-
 	"github.com/airbloc/airbloc-go/shared/key"
+	"github.com/airbloc/logger"
 	"github.com/golang/protobuf/proto"
 	"github.com/ipfs/go-cid"
+	"github.com/ipfs/go-datastore"
+	dsync "github.com/ipfs/go-datastore/sync"
 	"github.com/libp2p/go-libp2p"
+	"github.com/libp2p/go-libp2p-host"
 	kaddht "github.com/libp2p/go-libp2p-kad-dht"
 	kadopts "github.com/libp2p/go-libp2p-kad-dht/opts"
+	"github.com/libp2p/go-libp2p-net"
 	"github.com/libp2p/go-libp2p-peer"
 	"github.com/libp2p/go-libp2p-peerstore"
+	"github.com/libp2p/go-libp2p-protocol"
 	"github.com/libp2p/go-libp2p-pubsub"
 	"github.com/libp2p/go-libp2p/p2p/host/routed"
 	"github.com/multiformats/go-multiaddr"
@@ -53,8 +51,7 @@ type Server interface {
 	Send(context.Context, proto.Message, string, peer.ID) error
 	Publish(proto.Message, string) error
 
-	// for test
-	Host() host.Host
+	getHost() host.Host
 	setContext(context.Context)
 }
 
@@ -114,6 +111,7 @@ func NewAirblocServer(
 
 		// log: logger.New("p2p"),
 	}
+
 	h, err := libp2p.New(
 		ctx,
 		libp2p.Identity(privKey),
@@ -275,7 +273,7 @@ func (s *AirblocServer) Send(ctx context.Context, payload proto.Message, topic s
 		"topic": topic,
 		"id":    p.Pretty(),
 	})
-	msg, err := s.marshalDirectMessage(payload)
+	msg, err := marshalDirectMessage(s, payload)
 	if err != nil {
 		return errors.Wrap(err, "send error")
 	}
@@ -303,9 +301,5 @@ func (s *AirblocServer) setContext(ctx context.Context) {
 }
 
 func (s *AirblocServer) getHost() host.Host {
-	return s.host
-}
-
-func (s *AirblocServer) Host() host.Host {
 	return s.host
 }

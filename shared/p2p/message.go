@@ -35,7 +35,7 @@ func readDirectMessageFrom(stream net.Stream) (directMessage, error) {
 	return msg, err
 }
 
-func (s *AirblocServer) marshalDirectMessage(payload proto.Message) ([]byte, error) {
+func marshalDirectMessage(server Server, payload proto.Message) ([]byte, error) {
 	payloadData, err := proto.Marshal(payload)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal payload")
@@ -43,7 +43,7 @@ func (s *AirblocServer) marshalDirectMessage(payload proto.Message) ([]byte, err
 	return proto.Marshal(&directMessage{
 		Message: pb.Message{
 			Payload: payloadData,
-			From:    []byte(s.host.ID()),
+			From:    []byte(server.getHost().ID()),
 		},
 	})
 }

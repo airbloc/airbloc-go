@@ -38,7 +38,7 @@ type discovery struct {
 	log  *logger.Logger
 }
 
-// HandlePeerFound registers the peer with the host.
+// HandlePeerFound registers the peer with the getHost.
 func (d *discovery) HandlePeerFound(pi peerstore.PeerInfo) {
 	d.host.Peerstore().AddAddrs(pi.ID, pi.Addrs, peerstore.PermanentAddrTTL)
 	if err := d.host.Connect(d.ctx, pi); err != nil {
