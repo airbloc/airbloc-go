@@ -11,7 +11,7 @@ import (
 )
 
 func setupTestRPC(t *testing.T) (aliceAddr, bobAddr common.Address, alice, bob RPC, teardown func()) {
-	keys, servers, teardown := setupBasicPeers(t, 2)
+	keys, servers, teardown := setupTestPeers(t, 2)
 	aliceAddr, bobAddr = keys[0].EthereumAddress, keys[1].EthereumAddress
 
 	for _, server := range servers {

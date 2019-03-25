@@ -51,7 +51,6 @@ type Server interface {
 	Send(context.Context, proto.Message, string, peer.ID) error
 	Publish(proto.Message, string) error
 
-	// for test
 	getHost() host.Host
 	setContext(context.Context)
 }

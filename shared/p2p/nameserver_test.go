@@ -12,7 +12,7 @@ import (
 const numOfLookupPeers = 5
 
 func TestStartNameServer(t *testing.T) {
-	_, servers, teardown := setupBasicPeers(t, 1)
+	_, servers, teardown := setupTestPeers(t, 1)
 	defer teardown()
 
 	err := StartNameServer(servers[0])
@@ -20,7 +20,7 @@ func TestStartNameServer(t *testing.T) {
 }
 
 func TestLookup(t *testing.T) {
-	keys, servers, teardown := setupBasicPeers(t, numOfLookupPeers)
+	keys, servers, teardown := setupTestPeers(t, numOfLookupPeers)
 	defer teardown()
 
 	for _, server := range servers {
