@@ -12,14 +12,14 @@ import (
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/airbloc-go/warehouse"
 	"github.com/mitchellh/mapstructure"
-	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Manager struct {
 	kms         key.Manager
 	client      blockchain.TxClient
-	metadb      *metadb.Model
+	metadb      metadb.Database
 	p2p         p2p.Server
 	warehouse   *warehouse.Manager
 	registry    *adapter.DataRegistry
@@ -155,7 +155,7 @@ type bundleInfo struct {
 }
 
 func (manager *Manager) GetBundleInfo(ctx context.Context, id types.ID) (*bundleInfo, error) {
-	rawBundle, err := manager.metadb.RetrieveAsset(bson.M{"bundleId": id.Hex()})
+	rawBundle, err := manager.metadb.Find(ctx, bson.M{"bundleId": id.Hex()}, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "retrieving bundle data")
 	}

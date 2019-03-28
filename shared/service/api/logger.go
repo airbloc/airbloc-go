@@ -42,10 +42,10 @@ func UnaryServerLogger() grpc.UnaryServerInterceptor {
 				err = status.Error(codes.Internal, err.Error())
 			}
 			elasped := time.Duration(time.Now().UnixNano() - timer.Time)
-			log.Error("Error %s — %s (%s): %s", info.FullMethod, code, elasped, err.Error(), reqLog)
+			log.Error("Error {} — {} ({}): {}", info.FullMethod, code, elasped, err.Error(), reqLog)
 
 		} else {
-			timer.End("%s from=%s", info.FullMethod, p.Addr.String(), reqLog)
+			timer.End("{} from={}", info.FullMethod, p.Addr.String(), reqLog)
 		}
 		return resp, err
 	}

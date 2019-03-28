@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"github.com/airbloc/airbloc-go/shared/service"
 	"math/rand"
 	"net/url"
 	"time"
@@ -17,12 +16,13 @@ import (
 	"github.com/airbloc/airbloc-go/shared/database/metadb"
 	"github.com/airbloc/airbloc-go/shared/dauth"
 	"github.com/airbloc/airbloc-go/shared/key"
+	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/airbloc-go/warehouse/protocol"
 	"github.com/airbloc/airbloc-go/warehouse/storage"
 	"github.com/airbloc/logger"
-	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var (
@@ -36,7 +36,7 @@ type Manager struct {
 	localCache *localdb.Model
 
 	// for data registration
-	metaDatabase *metadb.Model
+	metaDatabase metadb.Database
 	ethclient    blockchain.TxClient
 	dataRegistry *adapter.DataRegistry
 	schemas      *schemas.Schemas
@@ -101,12 +101,12 @@ func NewManager(
 	}
 }
 
-func (dw *Manager) CreateBundle(collectionId types.ID) (*BundleStream, error) {
+func (dw *Manager) CreateBundle(ctx context.Context, collectionId types.ID) (*BundleStream, error) {
 	collection, err := dw.collections.Get(collectionId)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to retrieve a collection")
 	}
-	schema, err := dw.schemas.Get(collection.Schema.Id)
+	schema, err := dw.schemas.Get(ctx, collection.Schema.Id)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to retrieve a schema")
 	}
@@ -139,7 +139,7 @@ func generateBundleNameOf(bundle *Bundle) string {
 	return fmt.Sprintf("%s-%s-%s.bundle", currentTime, bundle.Collection.Hex(), token)
 }
 
-func (dw *Manager) Store(stream *BundleStream) (*Bundle, error) {
+func (dw *Manager) Store(ctx context.Context, stream *BundleStream) (*Bundle, error) {
 	if stream == nil {
 		return nil, errors.New("No data in the stream.")
 	}
@@ -168,6 +168,7 @@ func (dw *Manager) Store(stream *BundleStream) (*Bundle, error) {
 		return nil, errors.Wrap(err, "failed to save bundle to the storage")
 	}
 	createdBundle.Uri = uri.String()
+	dw.log.Debug(uri.String())
 
 	// register to on-chain
 	bundleId, err := dw.registerBundleOnChain(createdBundle)
@@ -199,12 +200,12 @@ func (dw *Manager) Store(stream *BundleStream) (*Bundle, error) {
 		"dataIds":    dataIds,
 	}
 
-	_, err = dw.metaDatabase.Create(bundleInfo, nil)
+	err = dw.metaDatabase.Insert(ctx, []interface{}{bundleInfo}, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to save metadata")
 	}
 
-	dw.log.Info("Bundle %s registered on", bundleName, logger.Attrs{
+	dw.log.Info("Bundle {} registered on", bundleName, logger.Attrs{
 		"id":    bundleId.Hex(),
 		"count": bundleInfo["dataCount"],
 	})
@@ -275,6 +276,7 @@ func (dw *Manager) Fetch(uri *url.URL) (bundle *Bundle, _ error) {
 		return nil, errors.Errorf("the protocol %s is not supported", uri.Scheme)
 	}
 
+	dw.log.Info("{}", uri.String())
 	bundleData, err := protoc.Read(uri)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to read bundle data")
@@ -288,7 +290,7 @@ func (dw *Manager) Fetch(uri *url.URL) (bundle *Bundle, _ error) {
 }
 
 func (dw *Manager) List(providerId types.ID) ([]*Bundle, error) {
-	bundleDataList, err := dw.metaDatabase.RetrieveMany(context.TODO(), bson.M{"provider": providerId.Hex()})
+	bundleDataList, err := dw.metaDatabase.Find(context.TODO(), bson.M{"provider": providerId.Hex()}, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to list bundles")
 	}

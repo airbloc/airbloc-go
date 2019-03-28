@@ -40,7 +40,11 @@ func (localStorage *LocalStorage) Save(bundleId string, bundleData []byte) (*url
 		return nil, errors.Wrap(err, "failed to write bundle to the path")
 	}
 
-	return url.Parse(path.Join(localStorage.Endpoint, fileName))
+	u, err := url.Parse(localStorage.Endpoint + "/" + fileName)
+	if err != nil {
+		return nil, err
+	}
+	return u, nil
 }
 
 func (localStorage *LocalStorage) Update(url *url.URL, bundleData []byte) error {

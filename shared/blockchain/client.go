@@ -31,6 +31,7 @@ func NewClient(key *key.Key, rawurl string, cfg ClientOpt) (*Client, error) {
 
 	log := logger.New("ethereum")
 
+	log.Debug(rawurl)
 	// URL validation
 	l, err := url.Parse(rawurl)
 	if err != nil {

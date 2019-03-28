@@ -20,14 +20,12 @@ type Config struct {
 	} `yaml:"localDb"`
 
 	MetaDB struct {
-		BigchainDBEndpoint string `default:"http://localhost:9984" yaml:"bigchainDbEndpoint"`
-		ProxyEndpoint      string `default:"http://localhost:9983" yaml:"proxyEndpoint"`
-		MongoDBEndpoint    string `default:"mongodb://localhost:27017" yaml:"mongoDbEndpoint"`
-		Version            int    `default:"1"`
+		MongoDBEndpoint string `default:"mongodb://localhost:27017" yaml:"mongoDbEndpoint"`
+		Version         int    `default:"1"`
 	} `yaml:"metaDb"`
 
 	Blockchain struct {
-		Endpoint string `default:"http://localhost:8545"`
+		Endpoint string `default:"http://localhost:8545" yaml:"endpoint"`
 		Options  struct {
 			MinConfirmations int `default:"1" yaml:"minConfirmations"`
 		}
@@ -43,9 +41,9 @@ type Config struct {
 		}
 
 		LocalStorage struct {
-			SavePath string `default:"local/warehouse"`
-			Endpoint string `default:"http://localhost:80"`
-		}
+			SavePath string `default:"local/warehouse" yaml:"savepath"`
+			Endpoint string `default:"http://localhost:80" yaml:"endpoint"`
+		} `yaml:"localStorage"`
 
 		S3 struct {
 			Region     string `default:"ap-northeast-1" yaml:"region"`

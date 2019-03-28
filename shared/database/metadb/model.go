@@ -3,13 +3,15 @@ package metadb
 import (
 	"context"
 	"fmt"
-	"github.com/mongodb/mongo-go-driver/mongo"
+	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"reflect"
 	"strings"
 
 	"github.com/airbloc/logger"
-	"github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
-	"github.com/mongodb/mongo-go-driver/bson"
-	"golang.org/x/crypto/ed25519"
 )
 
 type Model struct {
@@ -18,8 +20,9 @@ type Model struct {
 	log      *logger.Logger
 }
 
-// NewModel creates a collection for given metadatabase, with the name of the data type.
-func NewModel(database Database, name string) *Model {
+// NewModel creates a collection for given metadatabase
+// with the name of the data type.
+func NewModel(database Database, name string) Database {
 	loggerName := fmt.Sprintf("metadb (%s)", strings.ToLower(name))
 	return &Model{
 		Name:     name,
@@ -28,82 +31,148 @@ func NewModel(database Database, name string) *Model {
 	}
 }
 
-func (model *Model) Create(immutableData map[string]interface{}, mutableData map[string]interface{}) (*transaction.Transaction, error) {
-	asset := transaction.Asset{Data: map[string]interface{}{
-		"type": model.Name,
-		"data": immutableData,
-	}}
-	tx, err := model.database.Create(asset, mutableData, BigchainTxModeDefault)
-	if err != nil {
-		return tx, err
+func checkType(i interface{}) (bson.M, error) {
+	switch v := i.(type) {
+	case bson.M:
+		return v, nil
+	case map[string]interface{}:
+		return primitive.M(v), nil
+	default:
+		return nil, errors.Errorf(
+			"unwrap failed : invalid type (expected: %s, actual: %s)",
+			"bson.M", reflect.TypeOf(i).String())
 	}
-	//truncatedId := fmt.Sprintf("%s…%s", (*tx.ID)[:6], (*tx.ID)[58:])
-	//model.log.Info("Metadata created with", logger.Attrs{"id": truncatedId})
-	return tx, nil
 }
 
-func unwrap(rawAsset interface{}) bson.M {
-	// Unwraps {
-	//   "_id": MongoObjectId,
-	//   "id": BigchainDBTxID,
-	//   "data": {
-	//     "type": ModelType,
-	//     "data": ModelData
-	//   }
-	// }
-	// into {"_id": BigchainDBTxID, ...ModelData}
-
-	asset := rawAsset.(bson.M)
-	assetData := asset["data"].(bson.M)
-	data := assetData["data"].(bson.M)
-
-	data["_id"] = asset["_id"]
-	return data
-}
-
-func wrap(query bson.M) bson.M {
-	// since data is included in "data.data" object, we need to wrap query
-	wrappedQuery := bson.M{}
-	for fieldName, value := range query {
-		wrappedQuery["data.data."+fieldName] = value
-	}
-	return wrappedQuery
-}
-
-func (model *Model) RetrieveAsset(query bson.M) (bson.M, error) {
-	asset, err := model.database.RetrieveOne(context.Background(), wrap(query))
-	if err != nil {
-		return nil, err
-	}
-	return unwrap(asset), err
-}
-
-func (model *Model) RetrieveMany(ctx context.Context, query bson.M) ([]bson.M, error) {
-	assets, err := model.database.RetrieveMany(ctx, wrap(query))
+func (m *Model) unwrap(rawDoc interface{}) (interface{}, error) {
+	doc, err := checkType(rawDoc)
 	if err != nil {
 		return nil, err
 	}
 
-	// unwrap results
-	var results []bson.M
-	for _, asset := range assets {
-		results = append(results, unwrap(asset))
+	typ, ok := doc["type"]
+	if !ok {
+		return nil, errors.Errorf("unwrap failed : type does not exists")
 	}
-	return results, nil
+
+	if typ != m.Name {
+		return nil, errors.Errorf(
+			"unwrap failed : invalid type (expected: %s, actual: %s)",
+			m.Name, typ)
+	}
+
+	data, ok := doc["data"]
+	if !ok {
+		return nil, errors.Errorf("unwrap failed : data does not exists")
+	}
+	return data, nil
 }
 
-func (model *Model) Append(string, ed25519.PublicKey, transaction.Metadata, Mode) error {
-	panic("implement me")
+func (m *Model) wrapDoc(rawDoc interface{}) (interface{}, error) {
+	doc, err := checkType(rawDoc)
+	if err != nil {
+		return nil, err
+	}
+
+	wrappedDoc := bson.M{
+		"type": m.Name,
+		"data": doc,
+	}
+	return wrappedDoc, nil
 }
 
-func (model *Model) Aggregate(ctx context.Context, pipeline interface{}) (*mongo.Cursor, error) {
-	return model.database.Aggregate(ctx, pipeline)
+func (m *Model) wrapQuery(rawQuery interface{}) (interface{}, error) {
+	query, err := checkType(rawQuery)
+	if err != nil {
+		return nil, err
+	}
+
+	wrappedQuery := bson.M{"type": m.Name}
+	for name, payload := range query {
+		wrappedQuery["data."+name] = payload
+	}
+	return wrappedQuery, nil
 }
 
-func (model *Model) Burn(assetId string) error {
-	return model.database.Burn(assetId, BigchainTxModeDefault)
+func (m *Model) Insert(
+	ctx context.Context,
+	docs []interface{},
+	opt *options.InsertManyOptions,
+) (err error) {
+	for i, doc := range docs {
+		docs[i], err = m.wrapDoc(doc)
+		if err != nil {
+			return
+		}
+	}
+	return m.database.Insert(ctx, docs, opt)
 }
 
-func (model *Model) Close() error {
-	return model.database.Close()
+func (m *Model) Find(
+	ctx context.Context,
+	query interface{},
+	opt *options.FindOptions,
+) ([]bson.M, error) {
+	q, err := m.wrapQuery(query)
+	if err != nil {
+		return nil, err
+	}
+
+	wrappedDocs, err := m.database.Find(ctx, q, opt)
+	if err != nil {
+		return nil, err
+	}
+
+	var docs = make([]bson.M, len(wrappedDocs))
+	for i, wrappedDoc := range wrappedDocs {
+		rawDoc, err := m.unwrap(wrappedDoc)
+		if err != nil {
+			return nil, err
+		}
+
+		doc, ok := rawDoc.(primitive.D)
+		if !ok {
+			return nil, errors.Errorf(
+				"find failed : invalid type of data (expected: %s, actual: %s)",
+				"primitive.D", reflect.TypeOf(rawDoc).String())
+		}
+		docs[i] = doc.Map()
+	}
+	return docs, nil
+}
+
+func (m *Model) Aggregate(
+	ctx context.Context,
+	pipeline mongo.Pipeline,
+	opt *options.AggregateOptions,
+) ([]bson.M, error) {
+	return m.database.Aggregate(ctx, pipeline, opt)
+}
+
+func (m *Model) Update(
+	ctx context.Context,
+	filter, update interface{},
+	opt *options.UpdateOptions,
+) error {
+	q, err := m.wrapQuery(filter)
+	if err != nil {
+		return err
+	}
+	return m.database.Update(ctx, q, update, opt)
+}
+
+func (m *Model) Delete(
+	ctx context.Context,
+	filter interface{},
+	opt *options.DeleteOptions,
+) error {
+	q, err := m.wrapQuery(filter)
+	if err != nil {
+		return err
+	}
+	return m.database.Delete(ctx, q, opt)
+}
+
+func (m *Model) Close() error {
+	return m.database.Close()
 }

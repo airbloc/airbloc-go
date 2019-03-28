@@ -64,7 +64,7 @@ func (api *CollectionsAPI) Get(ctx context.Context, req *pb.GetCollectionRequest
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to retrieve collection %s", collectionId.Hex())
 	}
-	schema, err := api.schemas.Get(collection.Schema.Id)
+	schema, err := api.schemas.Get(ctx, collection.Schema.Id)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to retrieve schema %s", collection.Schema.Id.Hex())
 	}

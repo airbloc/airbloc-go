@@ -74,8 +74,8 @@ func run(options *cli.Context) (err error) {
 
 	keypair, err := nodekey.DeriveLibp2pKeyPair()
 	public, err := keypair.GetPublic().Bytes()
-	log.Info("Node public key: %s", base64.StdEncoding.EncodeToString(public))
-	log.Info("Node ID: %s", nodekey.EthereumAddress.Hex())
+	log.Info("Node public key: {}", base64.StdEncoding.EncodeToString(public))
+	log.Info("Node ID: {}", nodekey.EthereumAddress.Hex())
 
 	addrStr := fmt.Sprintf("/ip4/%s/tcp/%d", options.String("bind"), options.Int("port"))
 	addr, err := multiaddr.NewMultiaddr(addrStr)
@@ -90,7 +90,7 @@ func run(options *cli.Context) (err error) {
 	}
 	defer stop()
 
-	log.Info("Address: %s", multiaddr.Join(bootInfo.Addrs...).String()+"/ipfs/"+bootInfo.ID.Pretty())
+	log.Info("Address: {}", multiaddr.Join(bootInfo.Addrs...).String()+"/ipfs/"+bootInfo.ID.Pretty())
 	log.Info("You can put the address to p2p.bootNodes in config.yml.")
 
 	signalCh := make(chan os.Signal, 1)
@@ -104,7 +104,7 @@ func run(options *cli.Context) (err error) {
 func main() {
 	app := newApp()
 	if err := app.Run(os.Args); err != nil {
-		log.Error("Error: %+v", err)
+		log.Error("Error: {}", err)
 		os.Exit(1)
 	}
 }

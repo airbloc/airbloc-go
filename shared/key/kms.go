@@ -7,7 +7,6 @@ import (
 	"github.com/airbloc/logger"
 
 	"github.com/airbloc/airbloc-go/shared/database/localdb"
-	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	ethTypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto/ecies"
 )
@@ -73,8 +72,4 @@ func (kms *manager) Decrypt(encryptedPayload []byte) (string, error) {
 
 func (kms *manager) SignEthTx(tx *ethTypes.Transaction) (*ethTypes.Transaction, error) {
 	return ethTypes.SignTx(tx, ethTypes.EIP155Signer{}, kms.ownerKey.PrivateKey)
-}
-
-func (kms *manager) SignBDBTx(tx *txn.Transaction) error {
-	return tx.Sign([]*txn.KeyPair{kms.ownerKey.DeriveBigchainDBKeyPair()})
 }

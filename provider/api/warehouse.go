@@ -35,9 +35,6 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 	total := 0
 	successful := 0
 	timer := api.log.Timer()
-	defer func() {
-		timer.End("Successfully Ingested %d of %d data.", successful, total)
-	}()
 
 	var bundleStream *warehouse.BundleStream
 	var wg sync.WaitGroup
@@ -54,7 +51,7 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 			if err != nil {
 				return status.Errorf(codes.InvalidArgument, "Invalid collection ID: %s", request.GetCollectionId())
 			}
-			bundleStream, err = api.warehouse.CreateBundle(collectionId)
+			bundleStream, err = api.warehouse.CreateBundle(stream.Context(), collectionId)
 			if err != nil {
 				return err
 			}
@@ -75,7 +72,7 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 
 		go func() {
 			if err := bundleStream.Add(datum); err != nil {
-				api.log.Error("failed to add a data: %s", err.Error())
+				api.log.Error("failed to add data: {}", err.Error())
 			} else {
 				successful += 1
 			}
@@ -85,10 +82,12 @@ func (api *WarehouseAPI) StoreBundle(stream pb.Warehouse_StoreBundleServer) erro
 	}
 	wg.Wait()
 
-	bundle, err := api.warehouse.Store(bundleStream)
+	bundle, err := api.warehouse.Store(stream.Context(), bundleStream)
 	if err != nil {
 		return errors.Wrap(err, "failed to store a bundle")
 	}
+
+	timer.End("Successfully Ingested {} of {} data.", successful, total)
 
 	return stream.SendAndClose(&pb.StoreResult{
 		BundleId:  bundle.Id,
@@ -113,7 +112,7 @@ func (api *WarehouseAPI) StoreEncryptedBundle(stream pb.Warehouse_StoreEncrypted
 			if err != nil {
 				return status.Errorf(codes.InvalidArgument, "Invalid collection ID: %s", request.GetCollectionId())
 			}
-			bundleStream, err = api.warehouse.CreateBundle(collectionId)
+			bundleStream, err = api.warehouse.CreateBundle(stream.Context(), collectionId)
 			if err != nil {
 				return err
 			}
@@ -133,7 +132,7 @@ func (api *WarehouseAPI) StoreEncryptedBundle(stream pb.Warehouse_StoreEncrypted
 		bundleStream.AddEncrypted(datum)
 	}
 
-	bundle, err := api.warehouse.Store(bundleStream)
+	bundle, err := api.warehouse.Store(stream.Context(), bundleStream)
 	if err != nil {
 		return errors.Wrap(err, "failed to store a bundle")
 	}
