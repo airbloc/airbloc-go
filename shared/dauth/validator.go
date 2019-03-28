@@ -25,7 +25,7 @@ func NewValidator(manager *Manager) *Validator {
 func (validator *Validator) IsCollectible(collectionId types.ID, data *types.Data) bool {
 	allowed, err := validator.dauth.IsCollectionAllowed(collectionId, data.UserId)
 	if err != nil {
-		validator.log.Error("error: %s", err.Error(), logger.Attrs{
+		validator.log.Error("error: {} {}", err.Error(), logger.Attrs{
 			"collectionId": collectionId.Hex(),
 			"user":         data.UserId.Hex(),
 		})

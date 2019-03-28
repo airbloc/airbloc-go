@@ -9,8 +9,8 @@ import (
 	"github.com/airbloc/airbloc-go/shared/database/metadb"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var (
@@ -18,7 +18,7 @@ var (
 )
 
 type Schemas struct {
-	db       *metadb.Model
+	db       metadb.Database
 	client   blockchain.TxClient
 	contract *adapter.SchemaRegistry
 	log      *logger.Logger
@@ -34,7 +34,7 @@ func New(db metadb.Database, client blockchain.TxClient) *Schemas {
 	}
 }
 
-func (s *Schemas) Register(schema *Schema) (types.ID, error) {
+func (s *Schemas) Register(ctx context.Context, schema *Schema) (types.ID, error) {
 	if nameExists, err := s.NameExists(schema.Name); err != nil {
 		return types.ID{}, err
 	} else if nameExists {
@@ -58,16 +58,16 @@ func (s *Schemas) Register(schema *Schema) (types.ID, error) {
 	}
 
 	schemaId := types.ID(event.Id)
-	s.log.Info("Registered new schema %s with", schema.Name, logger.Attrs{"id": schemaId.Hex()})
+	s.log.Info("Registered new schema {} with", schema.Name, logger.Attrs{"id": schemaId.Hex()})
 
 	// create metadata
-	metadata := map[string]interface{}{
+	metadata := bson.M{
 		"name":   schema.Name,
 		"id":     schemaId.Hex(),
 		"schema": schema.Schema,
 	}
 
-	if _, err := s.db.Create(metadata, nil); err != nil {
+	if err := s.db.Insert(ctx, []interface{}{metadata}, nil); err != nil {
 		return schemaId, errors.Wrap(err, "failed to save metadata")
 	}
 	return schemaId, nil
@@ -79,20 +79,35 @@ func (s *Schemas) NameExists(name string) (bool, error) {
 }
 
 // Get retrieves a schema from metadatabase.
-func (s *Schemas) Get(id types.ID) (*Schema, error) {
-	result, err := s.db.RetrieveAsset(bson.M{"id": id.Hex()})
+func (s *Schemas) Get(ctx context.Context, id types.ID) (*Schema, error) {
+	rawRes, err := s.db.Find(ctx, bson.M{"id": id.Hex()}, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to retrieve schema from MetaDB")
 	}
-	schema, err := NewSchema(result["name"].(string), result["schema"].(string))
+
+	if len(rawRes) == 0 {
+		return nil, errors.New("empty result")
+	}
+
+	name, exists := rawRes[0]["name"]
+	if !exists {
+		return nil, errors.New("name field does not exists")
+	}
+
+	schema, exists := rawRes[0]["schema"]
+	if !exists {
+		return nil, errors.New("schema field does not exists")
+	}
+
+	scheme, err := NewSchema(name.(string), schema.(string))
 	if err != nil {
 		return nil, err
 	}
-	schema.Id = id
-	return schema, nil
+	scheme.Id = id
+	return scheme, nil
 }
 
-func (s *Schemas) Unregister(id types.ID) error {
+func (s *Schemas) Unregister(ctx context.Context, id types.ID) error {
 	tx, err := s.contract.Unregister(s.client.Account(), id)
 	if err != nil {
 		return err
@@ -100,9 +115,9 @@ func (s *Schemas) Unregister(id types.ID) error {
 	if _, err := s.client.WaitMined(context.Background(), tx); err != nil {
 		return err
 	}
-	result, err := s.db.RetrieveAsset(bson.M{"id": id.Hex()})
+	result, err := s.db.Find(ctx, bson.M{"id": id.Hex()}, nil)
 	if err != nil {
 		return errors.Wrap(err, "failed to find the asset on metadb")
 	}
-	return s.db.Burn(result["_id"].(string))
+	return s.db.Delete(ctx, bson.M{"_id": result[0]["_id"]}, nil)
 }

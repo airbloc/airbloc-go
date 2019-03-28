@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/database/localdb"
 	"github.com/airbloc/airbloc-go/shared/database/metadb"
@@ -12,6 +13,7 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
+	"time"
 )
 
 type Backend interface {
@@ -43,12 +45,9 @@ type AirblocBackend struct {
 func NewAirblocBackend(nodeKey *key.Key, config *Config) (Backend, error) {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	metaDatabase, err := metadb.NewBigchainDB(
-		config.MetaDB.BigchainDBEndpoint,
-		config.MetaDB.MongoDBEndpoint,
-		config.MetaDB.ProxyEndpoint,
-		nodeKey.DeriveBigchainDBKeyPair(),
-		config.MetaDB.Version)
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	metaDatabase, err := metadb.NewMongoDB(
+		ctx, config.MetaDB.MongoDBEndpoint, "airbloc")
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to initialize metadatabase")
 	}

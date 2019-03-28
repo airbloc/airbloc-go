@@ -31,7 +31,7 @@ func (api *SchemaAPI) Create(ctx context.Context, req *pb.CreateSchemaRequest) (
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid JSON schema: %s", err.Error())
 	}
 
-	id, err := api.schemas.Register(schema)
+	id, err := api.schemas.Register(ctx, schema)
 	if err == schemas.ErrNameExists {
 		return &pb.CreateSchemaResult{Exists: true}, nil
 	}

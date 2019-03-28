@@ -8,6 +8,7 @@ import (
 	"github.com/json-iterator/go"
 	"log"
 	"math/rand"
+	"net/http"
 	"testing"
 	"time"
 
@@ -140,6 +141,14 @@ func TestPnc(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	http.Handle("/", http.FileServer(http.Dir("../../local/warehouse")))
+	testServer := &http.Server{Addr: ":9126"}
+	defer testServer.Shutdown(ctx)
+
+	go func() {
+		require.NoError(t, testServer.ListenAndServe())
+	}()
+
 	conn, err := grpc.Dial("localhost:9124", grpc.WithInsecure())
 	require.NoError(t, err)
 	defer conn.Close()
@@ -175,8 +184,9 @@ func TestPnc(t *testing.T) {
 
 	// DAuth: allow data collection of these users
 	//for _, userId := range userIds {
-	//	testDAuth(conn, collectionId1, userId, true)
-	//	testDAuth(conn, collectionId2, userId, true)
+	//	for _, collectionId := range collectionIds {
+	//		testDAuth(conn, collectionId, userId, true)
+	//	}
 	//	log.Printf("Allowed collection of user %s's data\n", userId)
 	//}
 

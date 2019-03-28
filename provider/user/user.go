@@ -10,9 +10,9 @@ import (
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/airbloc-go/warehouse"
 	"github.com/mitchellh/mapstructure"
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Manager struct {
@@ -143,8 +143,8 @@ type userDataInfoQueryResponse struct {
 
 func (manager *Manager) getDataIds(ctx context.Context, id types.ID, cond ...bson.D) ([]userDataInfo, error) {
 	pipeline := mongo.Pipeline{
-		{{"$match", bson.D{{"data.data.dataIds.userId", id.Hex()}}}},
-		{{"$replaceRoot", bson.D{{"newRoot", "$data.data"}}}},
+		{{"$match", bson.D{{"data.dataIds.userId", id.Hex()}}}},
+		{{"$replaceRoot", bson.D{{"newRoot", "$data"}}}},
 		{{"$project", bson.D{
 			{"ingestedAt", 1},
 			{"collection", 1},
@@ -167,21 +167,15 @@ func (manager *Manager) getDataIds(ctx context.Context, id types.ID, cond ...bso
 	}
 	pipeline = append(pipeline, cond...)
 
-	cur, err := manager.metadb.Aggregate(ctx, pipeline)
+	rawRes, err := manager.metadb.Aggregate(ctx, pipeline, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "aggregating data pipeline")
 	}
-	defer cur.Close(ctx)
 
 	var infoes []userDataInfo
-	for cur.Next(ctx) {
-		var doc bson.D
-		if err := cur.Decode(&doc); err != nil {
-			return nil, errors.Wrap(err, "retrieving document")
-		}
-
+	for _, doc := range rawRes {
 		var resp userDataInfoQueryResponse
-		if err := mapstructure.Decode(doc.Map(), &resp); err != nil {
+		if err := mapstructure.Decode(doc, &resp); err != nil {
 			return nil, errors.Wrap(err, "decoding document")
 		}
 

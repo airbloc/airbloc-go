@@ -3,8 +3,8 @@ package types
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/mongodb/mongo-go-driver/bson/primitive"
 	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Data struct {

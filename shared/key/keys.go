@@ -2,7 +2,6 @@ package key
 
 import (
 	"crypto/ecdsa"
-	txn "github.com/bigchaindb/go-bigchaindb-driver/pkg/transaction"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/crypto/ecies"
@@ -102,15 +101,6 @@ func (key *Key) rawEd25519Public() (publicKey []byte) {
 	publicKey = make([]byte, ed25519.PublicKeySize)
 	copy(publicKey, key.Ed25519Private[32:])
 	return
-}
-
-// DeriveBigchainDBKeyPair returns an Ed25519 keypair
-// that can be used for signing BigchainDB transactions on Airbloc.
-func (key *Key) DeriveBigchainDBKeyPair() *txn.KeyPair {
-	return &txn.KeyPair{
-		PrivateKey: key.Ed25519Private,
-		PublicKey:  key.rawEd25519Public(),
-	}
 }
 
 // DeriveLibp2pKeyPair returns an Ed25519 keypair for Libp2p identity
