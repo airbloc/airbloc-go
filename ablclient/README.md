@@ -17,8 +17,8 @@ Currently, only the account functionality has been developed. API client support
 package main
 
 import (
-    "fmt"
-    "log"
+	"fmt"
+	"log"
 
 	"github.com/airbloc/airbloc-go/ablclient"
 	"google.golang.org/grpc"
@@ -33,7 +33,7 @@ func main() {
 
 	abl := ablclient.NewClient(conn)
 
-    // generate Ethereum wallet address
+	// generate Ethereum wallet address
 	priv, err := crypto.GenerateKey()
 	if err != nil {
 		log.Fatalln("failed to generate a private key", err.Error())
