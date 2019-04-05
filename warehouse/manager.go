@@ -89,7 +89,7 @@ func NewManager(
 
 	resdbClient, err := afclient.Dial(config.ResourceDB.Endpoint, kms.NodeKey().PrivateKey)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to create new manager")
+		return nil, errors.Wrap(err, "failed to dial airframe")
 	}
 
 	return &Manager{
