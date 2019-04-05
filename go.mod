@@ -5,10 +5,11 @@ go 1.12
 require (
 	cloud.google.com/go v0.37.1
 	github.com/AndreasBriese/bbloom v0.0.0-20190306092124-e2d15f34fcf9 // indirect
+	github.com/airbloc/airframe v0.0.0-20190404074616-f11a21f025cf
 	github.com/airbloc/logger v1.1.3
 	github.com/allegro/bigcache v1.2.0 // indirect
 	github.com/aristanetworks/goarista v0.0.0-20190319235110-489128639c40 // indirect
-	github.com/aws/aws-sdk-go v1.18.6
+	github.com/aws/aws-sdk-go v1.19.7
 	github.com/cespare/cp v1.1.1 // indirect
 	github.com/deckarep/golang-set v1.7.1 // indirect
 	github.com/dgraph-io/badger v1.5.5-0.20190226225317-8115aed38f8f
@@ -43,8 +44,6 @@ require (
 	github.com/mcuadros/go-defaults v1.1.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/mapstructure v1.1.2
-	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/multiformats/go-multiaddr v0.0.2
 	github.com/onsi/ginkgo v1.8.0
 	github.com/onsi/gomega v1.5.0
@@ -54,7 +53,6 @@ require (
 	github.com/rs/cors v1.6.0 // indirect
 	github.com/soheilhy/cmux v0.1.4
 	github.com/spf13/cobra v0.0.3
-	github.com/spf13/pflag v1.0.3 // indirect
 	github.com/stretchr/testify v1.3.0
 	github.com/syndtr/goleveldb v1.0.0
 	github.com/tidwall/pretty v0.0.0-20180105212114-65a9db5fad51 // indirect

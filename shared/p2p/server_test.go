@@ -35,7 +35,7 @@ import (
 
 const (
 	numOfPingPongServers = 10
-	bootNodeTimeout      = 2 * time.Second
+	bootNodeTimeout      = 3 * time.Second
 )
 
 type testServer struct {
@@ -299,7 +299,7 @@ func setupAirblocPeers(t *testing.T, numPeers int) (keys []*key.Key, peers []Ser
 			p.Stop()
 		}
 		stopBootNode()
-		time.Sleep(bootNodeTimeout / 2)
+		time.Sleep(bootNodeTimeout)
 	}
 	return
 }

@@ -195,16 +195,21 @@ func TestPnc(t *testing.T) {
 		storeResults[i] = c.testStoreBundleData(userIds, collectionId)
 	}
 
-	// exchange: Test exchanging uploaded data
-	log.Println("Start exchanging", storeResults[0][0].DataCount, "data")
-
-	user := pb.NewUserClient(c.conn)
-	userData, err := user.GetData(c.ctx, &pb.DataRequest{
-		UserId: userIds[0],
-		From:   0,
-	})
+	warehouse := pb.NewWarehouseClient(c.conn)
+	listRes, err := warehouse.ListBundle(c.ctx, &pb.ListBundleRequest{ProviderId: appId})
 	require.NoError(t, err)
 
-	d, _ := json.MarshalIndent(userData, "", "    ")
-	log.Println(string(d))
+	log.Println(listRes.Bundles[0])
+	// exchange: Test exchanging uploaded data
+	//log.Println("Start exchanging", storeResults[0][0].DataCount, "data")
+	//
+	//user := pb.NewUserClient(c.conn)
+	//userData, err := user.GetData(c.ctx, &pb.DataRequest{
+	//	UserId: userIds[0],
+	//	From:   0,
+	//})
+	//require.NoError(t, err)
+	//
+	//d, _ := json.MarshalIndent(userData, "", "    ")
+	//log.Println(string(d))
 }
