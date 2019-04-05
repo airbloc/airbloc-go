@@ -4,6 +4,10 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"github.com/airbloc/airbloc-go/shared/database/resdb"
+	"github.com/airbloc/airframe/afclient"
+	"github.com/mitchellh/mapstructure"
+	"math/big"
 	"math/rand"
 	"net/url"
 	"time"
@@ -22,7 +26,6 @@ import (
 	"github.com/airbloc/airbloc-go/warehouse/storage"
 	"github.com/airbloc/logger"
 	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 var (
@@ -44,7 +47,8 @@ type Manager struct {
 
 	// data storage layer
 	protocols      map[string]protocol.Protocol
-	DefaultStorage storage.Storage
+	defaultStorage storage.Storage
+	resourceDB     resdb.Model
 
 	// data validators
 	dauthValidator *dauth.Validator
@@ -61,7 +65,7 @@ func NewManager(
 	defaultStorage storage.Storage,
 	supportedProtocols []protocol.Protocol,
 	config service.Config,
-) *Manager {
+) (*Manager, error) {
 	protocols := map[string]protocol.Protocol{}
 	for _, protoc := range supportedProtocols {
 		protocols[protoc.Name()] = protoc
@@ -82,6 +86,12 @@ func NewManager(
 	dauthValidator := dauth.NewValidator(dauthManager)
 
 	contract := ethclient.GetContract(&adapter.DataRegistry{})
+
+	resdbClient, err := afclient.Dial(config.ResourceDB.Endpoint, kms.NodeKey().PrivateKey)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to create new manager")
+	}
+
 	return &Manager{
 		kms:        kms,
 		localCache: localdb.NewModel(localDatabase, "bundle"),
@@ -93,12 +103,13 @@ func NewManager(
 		schemas:      schemas.New(metaDatabase, ethclient),
 
 		protocols:      protocols,
-		DefaultStorage: defaultStorage,
+		defaultStorage: defaultStorage,
+		resourceDB:     resdb.NewModel(resdbClient, "bundle"),
 		dauthValidator: dauthValidator,
 
 		config: config,
 		log:    log,
-	}
+	}, nil
 }
 
 func (dw *Manager) CreateBundle(ctx context.Context, collectionId types.ID) (*BundleStream, error) {
@@ -163,7 +174,7 @@ func (dw *Manager) Store(ctx context.Context, stream *BundleStream) (*Bundle, er
 		return nil, errors.Wrap(err, "failed to marshal bundle")
 	}
 
-	uri, err := dw.DefaultStorage.Save(bundleName, bundleData)
+	uri, err := dw.defaultStorage.Save(bundleName, bundleData)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to save bundle to the storage")
 	}
@@ -200,11 +211,15 @@ func (dw *Manager) Store(ctx context.Context, stream *BundleStream) (*Bundle, er
 		"dataIds":    dataIds,
 	}
 
-	err = dw.metaDatabase.Insert(ctx, []interface{}{bundleInfo}, nil)
+	dw.log.Debug("Putting bundleInfo to resourceDB")
+	res, err := dw.resourceDB.Put(ctx, createdBundle.Id, bundleInfo)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to save metadata")
+		return nil, errors.Wrap(err, "failed to save bundleInfo to resourceDB")
 	}
-
+	if !res.Created {
+		return nil, errors.Errorf("")
+	}
+	dw.log.Debug("Bundle successfully created. Fee used : {}", res.FeeUsed)
 	dw.log.Info("Bundle {} registered on", bundleName, logger.Attrs{
 		"id":    bundleId.Hex(),
 		"count": bundleInfo["dataCount"],
@@ -289,23 +304,46 @@ func (dw *Manager) Fetch(uri *url.URL) (bundle *Bundle, _ error) {
 	return
 }
 
-func (dw *Manager) List(providerId types.ID) ([]*Bundle, error) {
-	bundleDataList, err := dw.metaDatabase.Find(context.TODO(), bson.M{"provider": providerId.Hex()}, nil)
+type rawBundleData struct {
+	BundleId   string  `mapstructure:"bundleId"`
+	Uri        string  `mapstructure:"uri"`
+	Provider   string  `mapstructure:"provider"`
+	Collection string  `mapstructure:"collection"`
+	DataCount  int     `mapstructure:"dataCount"`
+	IngestedAt float64 `mapstructure:"ingestedAt"`
+}
+
+func (dw *Manager) List(ctx context.Context, providerId types.ID) ([]*Bundle, error) {
+	bundleDataList, err := dw.resourceDB.Query(ctx, afclient.M{"provider": providerId.Hex()})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to list bundles")
 	}
 
 	var bundles []*Bundle
 	for _, bundleData := range bundleDataList {
-		collectionId, _ := types.HexToID(bundleData["collection"].(string))
-		ingestedAt, _ := time.Parse(time.RFC3339Nano, bundleData["ingestedAt"].(string))
+		rawBundle := new(rawBundleData)
+		if err := mapstructure.Decode(bundleData.Data, &rawBundle); err != nil {
+			return nil, errors.Wrap(err, "failed to decode bundle")
+		}
+
+		providerId, err := types.HexToID(rawBundle.Provider)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to convert provider id")
+		}
+
+		collectionId, err := types.HexToID(rawBundle.Collection)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to convert collection id")
+		}
+
+		rawTime, _ := new(big.Float).SetFloat64(rawBundle.IngestedAt).Int64()
 		bundles = append(bundles, &Bundle{
-			Id:         bundleData["bundleId"].(string),
-			Uri:        bundleData["uri"].(string),
-			DataCount:  bundleData["dataCount"].(int),
-			IngestedAt: types.Time{Time: ingestedAt},
+			Id:         rawBundle.BundleId,
+			Uri:        rawBundle.Uri,
 			Provider:   providerId,
 			Collection: collectionId,
+			DataCount:  rawBundle.DataCount,
+			IngestedAt: types.ParseTimestamp(rawTime),
 		})
 	}
 	return bundles, nil

@@ -154,7 +154,7 @@ func (api *WarehouseAPI) ListBundle(ctx context.Context, req *pb.ListBundleReque
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid provider ID: %s", req.GetProviderId())
 	}
-	bundles, err := api.warehouse.List(providerId)
+	bundles, err := api.warehouse.List(ctx, providerId)
 	if err != nil {
 		return nil, err
 	}

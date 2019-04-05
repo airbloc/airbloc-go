@@ -24,6 +24,10 @@ type Config struct {
 		Version         int    `default:"1"`
 	} `yaml:"metaDb"`
 
+	ResourceDB struct {
+		Endpoint string `default:"localhost:9090"`
+	}
+
 	Blockchain struct {
 		Endpoint string `default:"http://localhost:8545" yaml:"endpoint"`
 		Options  struct {

@@ -53,7 +53,7 @@ func NewService(backend service.Backend) (service.Service, error) {
 		return nil, errors.Errorf("unknown storage type: %s", config.DefaultStorage)
 	}
 
-	dw := NewManager(
+	dw, err := NewManager(
 		backend.Kms(),
 		backend.LocalDatabase(),
 		backend.MetaDatabase(),
@@ -62,7 +62,7 @@ func NewService(backend service.Backend) (service.Service, error) {
 		supportedProtocols,
 		*backend.Config(),
 	)
-	return &Service{manager: dw}, nil
+	return &Service{manager: dw}, err
 }
 
 func (service *Service) GetManager() *Manager { return service.manager }
