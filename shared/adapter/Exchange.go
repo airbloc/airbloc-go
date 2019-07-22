@@ -4,9 +4,10 @@
 package adapter
 
 import (
-	"github.com/pkg/errors"
 	"math/big"
 	"strings"
+
+	"github.com/pkg/errors"
 
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
@@ -33,7 +34,7 @@ var (
 )
 
 // ExchangeABI is the input ABI used to generate the binding from.
-const ExchangeABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"escrowIndex\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"toIndex\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"fromIndex\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferPrepared\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferPresented\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferSettled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"OfferRejected\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"_offerId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"_from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"_to\",\"type\":\"address\"}],\"name\":\"Receipt\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"res\",\"type\":\"bool\"}],\"name\":\"SettleResult\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_escrow\",\"type\":\"address\"},{\"name\":\"_escrowSign\",\"type\":\"bytes4\"},{\"name\":\"_escrowArgs\",\"type\":\"bytes\"},{\"name\":\"_dataIds\",\"type\":\"bytes20[]\"}],\"name\":\"prepare\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"},{\"name\":\"_dataIds\",\"type\":\"bytes20[]\"}],\"name\":\"addDataIds\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"order\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"settle\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"reject\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"}],\"name\":\"getReceiptsByOfferor\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_to\",\"type\":\"address\"}],\"name\":\"getReceiptsByOfferee\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_escrow\",\"type\":\"address\"}],\"name\":\"getReceiptsByEscrow\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8[]\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"getOfferCompact\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_offerId\",\"type\":\"bytes8\"}],\"name\":\"getOffer\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"bytes20[]\"},{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"bytes4\"},{\"name\":\"\",\"type\":\"bytes\"},{\"name\":\"\",\"type\":\"uint8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const ExchangeABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":[{\"Name\":\"appReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":null},\"Methods\":{\"addDataIds\":{\"Name\":\"addDataIds\",\"Const\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataIds\",\"Type\":{\"Elem\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":4,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"cancel\":{\"Name\":\"cancel\",\"Const\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"getOffer\":{\"Name\":\"getOffer\",\"Const\":true,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":4,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":22,\"Type\":{},\"Size\":256,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":22,\"Type\":{},\"Size\":256,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":4,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"addr\",\"sign\",\"args\"]},{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"provider\",\"consumer\",\"dataIds\",\"at\",\"until\",\"escrow\",\"status\"]},\"Indexed\":false}]},\"getOfferMembers\":{\"Name\":\"getOfferMembers\",\"Const\":true,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"offerExists\":{\"Name\":\"offerExists\",\"Const\":true,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"order\":{\"Name\":\"order\",\"Const\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"prepare\":{\"Name\":\"prepare\",\"Const\":false,\"Inputs\":[{\"Name\":\"provider\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"consumer\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"escrow\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"escrowSign\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":4,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"escrowArgs\",\"Type\":{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataIds\",\"Type\":{\"Elem\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":4,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"reject\":{\"Name\":\"reject\",\"Const\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"settle\":{\"Name\":\"settle\",\"Const\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]}},\"Events\":{\"EscrowExecutionFailed\":{\"Name\":\"EscrowExecutionFailed\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"reason\",\"Type\":{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"OfferCanceled\":{\"Name\":\"OfferCanceled\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"providerAppName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"OfferPrepared\":{\"Name\":\"OfferPrepared\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"providerAppName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"OfferPresented\":{\"Name\":\"OfferPresented\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"providerAppName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"OfferReceipt\":{\"Name\":\"OfferReceipt\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"providerAppName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"consumer\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"result\",\"Type\":{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"OfferRejected\":{\"Name\":\"OfferRejected\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"consumer\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true}]},\"OfferSettled\":{\"Name\":\"OfferSettled\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"consumer\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true}]}}}"
 
 // Exchange is an auto generated Go binding around an Ethereum contract.
 type Exchange struct {
@@ -41,21 +42,6 @@ type Exchange struct {
 	ExchangeCaller     // Read-only binding to the contract
 	ExchangeTransactor // Write-only binding to the contract
 	ExchangeFilterer   // Log filterer for contract events
-}
-
-// ExchangeCaller is an auto generated read-only Go binding around an Ethereum contract.
-type ExchangeCaller struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// ExchangeTransactor is an auto generated write-only Go binding around an Ethereum contract.
-type ExchangeTransactor struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// ExchangeFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type ExchangeFilterer struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // ExchangeSession is an auto generated Go binding around an Ethereum contract,
@@ -66,48 +52,9 @@ type ExchangeSession struct {
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// ExchangeCallerSession is an auto generated read-only Go binding around an Ethereum contract,
-// with pre-set call options.
-type ExchangeCallerSession struct {
-	Contract *ExchangeCaller // Generic contract caller binding to set the session for
-	CallOpts bind.CallOpts   // Call options to use throughout this session
-}
-
-// ExchangeTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
-// with pre-set transact options.
-type ExchangeTransactorSession struct {
-	Contract     *ExchangeTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
-}
-
 // ExchangeRaw is an auto generated low-level Go binding around an Ethereum contract.
 type ExchangeRaw struct {
 	Contract *Exchange // Generic contract binding to access the raw methods on
-}
-
-// ExchangeCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
-type ExchangeCallerRaw struct {
-	Contract *ExchangeCaller // Generic read-only contract binding to access the raw methods on
-}
-
-// ExchangeTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
-type ExchangeTransactorRaw struct {
-	Contract *ExchangeTransactor // Generic write-only contract binding to access the raw methods on
-}
-
-//
-//
-//
-
-func init() {
-	// convenient hacks for blockchain.Client
-	blockchain.ContractList["Exchange"] = (&Exchange{}).new
-	blockchain.RegisterSelector("0x367a9005", "addDataIds(bytes8,bytes20[])")
-	blockchain.RegisterSelector("0x0cf833fb", "order(bytes8)")
-	blockchain.RegisterSelector("0xae086726", "prepare(address,address,bytes4,bytes,bytes20[])")
-	blockchain.RegisterSelector("0x6622e153", "reject(bytes8)")
-	blockchain.RegisterSelector("0xa60d9b5f", "settle(bytes8)")
-
 }
 
 // NewExchange creates a new instance of Exchange, bound to a specific deployed contract.
@@ -122,46 +69,6 @@ func NewExchange(address common.Address, backend bind.ContractBackend) (*Exchang
 		ExchangeTransactor: ExchangeTransactor{contract: contract},
 		ExchangeFilterer:   ExchangeFilterer{contract: contract},
 	}, nil
-}
-
-// NewExchangeCaller creates a new read-only instance of Exchange, bound to a specific deployed contract.
-func NewExchangeCaller(address common.Address, caller bind.ContractCaller) (*ExchangeCaller, error) {
-	contract, err := bindExchange(address, caller, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &ExchangeCaller{contract: contract}, nil
-}
-
-// NewExchangeTransactor creates a new write-only instance of Exchange, bound to a specific deployed contract.
-func NewExchangeTransactor(address common.Address, transactor bind.ContractTransactor) (*ExchangeTransactor, error) {
-	contract, err := bindExchange(address, nil, transactor, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &ExchangeTransactor{contract: contract}, nil
-}
-
-// NewExchangeFilterer creates a new log filterer instance of Exchange, bound to a specific deployed contract.
-func NewExchangeFilterer(address common.Address, filterer bind.ContractFilterer) (*ExchangeFilterer, error) {
-	contract, err := bindExchange(address, nil, nil, filterer)
-	if err != nil {
-		return nil, err
-	}
-	return &ExchangeFilterer{contract: contract}, nil
-}
-
-// bindExchange binds a generic wrapper to an already deployed contract.
-func bindExchange(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(ExchangeABI))
-	if err != nil {
-		return nil, err
-	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
-}
-
-func (_Exchange *Exchange) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
-	return NewExchange(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and
@@ -183,12 +90,64 @@ func (_Exchange *ExchangeRaw) Transact(opts *bind.TransactOpts, method string, p
 	return _Exchange.Contract.ExchangeTransactor.contract.Transact(opts, method, params...)
 }
 
+// ExchangeCaller is an auto generated read-only Go binding around an Ethereum contract.
+type ExchangeCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// ExchangeCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// with pre-set call options.
+type ExchangeCallerSession struct {
+	Contract *ExchangeCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts   // Call options to use throughout this session
+}
+
+// ExchangeCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type ExchangeCallerRaw struct {
+	Contract *ExchangeCaller // Generic read-only contract binding to access the raw methods on
+}
+
+// NewExchangeCaller creates a new read-only instance of Exchange, bound to a specific deployed contract.
+func NewExchangeCaller(address common.Address, caller bind.ContractCaller) (*ExchangeCaller, error) {
+	contract, err := bindExchange(address, caller, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &ExchangeCaller{contract: contract}, nil
+}
+
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
 func (_Exchange *ExchangeCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _Exchange.Contract.contract.Call(opts, result, method, params...)
+}
+
+// ExchangeTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type ExchangeTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// ExchangeTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// with pre-set transact options.
+type ExchangeTransactorSession struct {
+	Contract     *ExchangeTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
+}
+
+// ExchangeTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type ExchangeTransactorRaw struct {
+	Contract *ExchangeTransactor // Generic write-only contract binding to access the raw methods on
+}
+
+// NewExchangeTransactor creates a new write-only instance of Exchange, bound to a specific deployed contract.
+func NewExchangeTransactor(address common.Address, transactor bind.ContractTransactor) (*ExchangeTransactor, error) {
+	contract, err := bindExchange(address, nil, transactor, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &ExchangeTransactor{contract: contract}, nil
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
@@ -202,337 +161,585 @@ func (_Exchange *ExchangeTransactorRaw) Transact(opts *bind.TransactOpts, method
 	return _Exchange.Contract.contract.Transact(opts, method, params...)
 }
 
-// EscrowIndex is a free data retrieval call binding the contract method 0x016e1077.
-//
-// Solidity: function escrowIndex(address , uint256 ) constant returns(bytes8)
-func (_Exchange *ExchangeCaller) EscrowIndex(opts *bind.CallOpts, arg0 common.Address, arg1 *big.Int) ([8]byte, error) {
-	var (
-		ret0 = new([8]byte)
-	)
-	out := ret0
-	err := _Exchange.contract.Call(opts, out, "escrowIndex", arg0, arg1)
-	return *ret0, err
+// ExchangeFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type ExchangeFilterer struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// EscrowIndex is a free data retrieval call binding the contract method 0x016e1077.
-//
-// Solidity: function escrowIndex(address , uint256 ) constant returns(bytes8)
-func (_Exchange *ExchangeSession) EscrowIndex(arg0 common.Address, arg1 *big.Int) ([8]byte, error) {
-	return _Exchange.Contract.EscrowIndex(&_Exchange.CallOpts, arg0, arg1)
-}
-
-// EscrowIndex is a free data retrieval call binding the contract method 0x016e1077.
-//
-// Solidity: function escrowIndex(address , uint256 ) constant returns(bytes8)
-func (_Exchange *ExchangeCallerSession) EscrowIndex(arg0 common.Address, arg1 *big.Int) ([8]byte, error) {
-	return _Exchange.Contract.EscrowIndex(&_Exchange.CallOpts, arg0, arg1)
-}
-
-// FromIndex is a free data retrieval call binding the contract method 0xd32029fa.
-//
-// Solidity: function fromIndex(address , uint256 ) constant returns(bytes8)
-func (_Exchange *ExchangeCaller) FromIndex(opts *bind.CallOpts, arg0 common.Address, arg1 *big.Int) ([8]byte, error) {
-	var (
-		ret0 = new([8]byte)
-	)
-	out := ret0
-	err := _Exchange.contract.Call(opts, out, "fromIndex", arg0, arg1)
-	return *ret0, err
-}
-
-// FromIndex is a free data retrieval call binding the contract method 0xd32029fa.
-//
-// Solidity: function fromIndex(address , uint256 ) constant returns(bytes8)
-func (_Exchange *ExchangeSession) FromIndex(arg0 common.Address, arg1 *big.Int) ([8]byte, error) {
-	return _Exchange.Contract.FromIndex(&_Exchange.CallOpts, arg0, arg1)
-}
-
-// FromIndex is a free data retrieval call binding the contract method 0xd32029fa.
-//
-// Solidity: function fromIndex(address , uint256 ) constant returns(bytes8)
-func (_Exchange *ExchangeCallerSession) FromIndex(arg0 common.Address, arg1 *big.Int) ([8]byte, error) {
-	return _Exchange.Contract.FromIndex(&_Exchange.CallOpts, arg0, arg1)
-}
-
-// GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
-//
-// Solidity: function getOffer(bytes8 _offerId) constant returns(address, address, bytes20[], address, bytes4, bytes, uint8)
-func (_Exchange *ExchangeCaller) GetOffer(opts *bind.CallOpts, _offerId [8]byte) (common.Address, common.Address, [][20]byte, common.Address, [4]byte, []byte, uint8, error) {
-	var (
-		ret0 = new(common.Address)
-		ret1 = new(common.Address)
-		ret2 = new([][20]byte)
-		ret3 = new(common.Address)
-		ret4 = new([4]byte)
-		ret5 = new([]byte)
-		ret6 = new(uint8)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
-		ret2,
-		ret3,
-		ret4,
-		ret5,
-		ret6,
+// NewExchangeFilterer creates a new log filterer instance of Exchange, bound to a specific deployed contract.
+func NewExchangeFilterer(address common.Address, filterer bind.ContractFilterer) (*ExchangeFilterer, error) {
+	contract, err := bindExchange(address, nil, nil, filterer)
+	if err != nil {
+		return nil, err
 	}
-	err := _Exchange.contract.Call(opts, out, "getOffer", _offerId)
-	return *ret0, *ret1, *ret2, *ret3, *ret4, *ret5, *ret6, err
+	return &ExchangeFilterer{contract: contract}, nil
 }
 
-// GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
-//
-// Solidity: function getOffer(bytes8 _offerId) constant returns(address, address, bytes20[], address, bytes4, bytes, uint8)
-func (_Exchange *ExchangeSession) GetOffer(_offerId [8]byte) (common.Address, common.Address, [][20]byte, common.Address, [4]byte, []byte, uint8, error) {
-	return _Exchange.Contract.GetOffer(&_Exchange.CallOpts, _offerId)
+// convenient hacks for blockchain.Client
+func init() {
+	blockchain.ContractList["Exchange"] = (&Exchange{}).new
+	blockchain.RegisterSelector("0x367a9005", "addDataIds(bytes8,bytes20[])")
+	blockchain.RegisterSelector("0xb2d9ba39", "cancel(bytes8)")
+	blockchain.RegisterSelector("0x0cf833fb", "order(bytes8)")
+	blockchain.RegisterSelector("0x77e61c33", "prepare(string,address,address,bytes4,bytes,bytes20[])")
+	blockchain.RegisterSelector("0x6622e153", "reject(bytes8)")
+	blockchain.RegisterSelector("0xa60d9b5f", "settle(bytes8)")
+
 }
 
-// GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
-//
-// Solidity: function getOffer(bytes8 _offerId) constant returns(address, address, bytes20[], address, bytes4, bytes, uint8)
-func (_Exchange *ExchangeCallerSession) GetOffer(_offerId [8]byte) (common.Address, common.Address, [][20]byte, common.Address, [4]byte, []byte, uint8, error) {
-	return _Exchange.Contract.GetOffer(&_Exchange.CallOpts, _offerId)
-}
-
-// GetOfferCompact is a free data retrieval call binding the contract method 0x5bcb452a.
-//
-// Solidity: function getOfferCompact(bytes8 _offerId) constant returns(address, address, address)
-func (_Exchange *ExchangeCaller) GetOfferCompact(opts *bind.CallOpts, _offerId [8]byte) (common.Address, common.Address, common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-		ret1 = new(common.Address)
-		ret2 = new(common.Address)
-	)
-	out := &[]interface{}{
-		ret0,
-		ret1,
-		ret2,
+// bindExchange binds a generic wrapper to an already deployed contract.
+func bindExchange(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(ExchangeABI))
+	if err != nil {
+		return nil, err
 	}
-	err := _Exchange.contract.Call(opts, out, "getOfferCompact", _offerId)
-	return *ret0, *ret1, *ret2, err
+	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
-// GetOfferCompact is a free data retrieval call binding the contract method 0x5bcb452a.
-//
-// Solidity: function getOfferCompact(bytes8 _offerId) constant returns(address, address, address)
-func (_Exchange *ExchangeSession) GetOfferCompact(_offerId [8]byte) (common.Address, common.Address, common.Address, error) {
-	return _Exchange.Contract.GetOfferCompact(&_Exchange.CallOpts, _offerId)
+func (_Exchange *Exchange) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewExchange(address, backend)
 }
 
-// GetOfferCompact is a free data retrieval call binding the contract method 0x5bcb452a.
+// GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
 //
-// Solidity: function getOfferCompact(bytes8 _offerId) constant returns(address, address, address)
-func (_Exchange *ExchangeCallerSession) GetOfferCompact(_offerId [8]byte) (common.Address, common.Address, common.Address, error) {
-	return _Exchange.Contract.GetOfferCompact(&_Exchange.CallOpts, _offerId)
+// Solidity: function getOffer(bytes8 offerId) constant returns((string,address,bytes20[],uint256,uint256,(address,bytes4,bytes),uint8))
+func (_Exchange *ExchangeCaller) GetOffer(opts *bind.CallOpts, offerId [8]byte) (struct {
+	Provider string
+	Consumer common.Address
+	DataIds  [][20]byte
+	At       *big.Int
+	Until    *big.Int
+	Escrow   struct {
+		Addr common.Address
+		Sign [4]byte
+		Args []byte
+	}
+	Status uint8
+}, error) {
+	ret := new(struct {
+		Provider string
+		Consumer common.Address
+		DataIds  [][20]byte
+		At       *big.Int
+		Until    *big.Int
+		Escrow   struct {
+			Addr common.Address
+			Sign [4]byte
+			Args []byte
+		}
+		Status uint8
+	})
+
+	out := ret
+	err := _Exchange.contract.Call(opts, out, "getOffer", offerId)
+	return *ret, err
 }
 
-// GetReceiptsByEscrow is a free data retrieval call binding the contract method 0xd7e1989e.
+// GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
 //
-// Solidity: function getReceiptsByEscrow(address _escrow) constant returns(bytes8[])
-func (_Exchange *ExchangeCaller) GetReceiptsByEscrow(opts *bind.CallOpts, _escrow common.Address) ([][8]byte, error) {
+// Solidity: function getOffer(bytes8 offerId) constant returns((string,address,bytes20[],uint256,uint256,(address,bytes4,bytes),uint8))
+func (_Exchange *ExchangeSession) GetOffer(offerId [8]byte) (struct {
+	Provider string
+	Consumer common.Address
+	DataIds  [][20]byte
+	At       *big.Int
+	Until    *big.Int
+	Escrow   struct {
+		Addr common.Address
+		Sign [4]byte
+		Args []byte
+	}
+	Status uint8
+}, error) {
+	return _Exchange.Contract.GetOffer(&_Exchange.CallOpts, offerId)
+}
+
+// GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
+//
+// Solidity: function getOffer(bytes8 offerId) constant returns((string,address,bytes20[],uint256,uint256,(address,bytes4,bytes),uint8))
+func (_Exchange *ExchangeCallerSession) GetOffer(offerId [8]byte) (struct {
+	Provider string
+	Consumer common.Address
+	DataIds  [][20]byte
+	At       *big.Int
+	Until    *big.Int
+	Escrow   struct {
+		Addr common.Address
+		Sign [4]byte
+		Args []byte
+	}
+	Status uint8
+}, error) {
+	return _Exchange.Contract.GetOffer(&_Exchange.CallOpts, offerId)
+}
+
+// GetOfferMembers is a free data retrieval call binding the contract method 0x72dfa465.
+//
+// Solidity: function getOfferMembers(bytes8 offerId) constant returns(address, address)
+func (_Exchange *ExchangeCaller) GetOfferMembers(opts *bind.CallOpts, offerId [8]byte) (struct {
+}, error) {
 	var (
-		ret0 = new([][8]byte)
+		ret0 = new(struct {
+		})
 	)
-	out := ret0
-	err := _Exchange.contract.Call(opts, out, "getReceiptsByEscrow", _escrow)
+	out := &[]interface{}{ret0}
+	err := _Exchange.contract.Call(opts, out, "getOfferMembers", offerId)
 	return *ret0, err
 }
 
-// GetReceiptsByEscrow is a free data retrieval call binding the contract method 0xd7e1989e.
+// GetOfferMembers is a free data retrieval call binding the contract method 0x72dfa465.
 //
-// Solidity: function getReceiptsByEscrow(address _escrow) constant returns(bytes8[])
-func (_Exchange *ExchangeSession) GetReceiptsByEscrow(_escrow common.Address) ([][8]byte, error) {
-	return _Exchange.Contract.GetReceiptsByEscrow(&_Exchange.CallOpts, _escrow)
+// Solidity: function getOfferMembers(bytes8 offerId) constant returns(address, address)
+func (_Exchange *ExchangeSession) GetOfferMembers(offerId [8]byte) (struct {
+}, error) {
+	return _Exchange.Contract.GetOfferMembers(&_Exchange.CallOpts, offerId)
 }
 
-// GetReceiptsByEscrow is a free data retrieval call binding the contract method 0xd7e1989e.
+// GetOfferMembers is a free data retrieval call binding the contract method 0x72dfa465.
 //
-// Solidity: function getReceiptsByEscrow(address _escrow) constant returns(bytes8[])
-func (_Exchange *ExchangeCallerSession) GetReceiptsByEscrow(_escrow common.Address) ([][8]byte, error) {
-	return _Exchange.Contract.GetReceiptsByEscrow(&_Exchange.CallOpts, _escrow)
+// Solidity: function getOfferMembers(bytes8 offerId) constant returns(address, address)
+func (_Exchange *ExchangeCallerSession) GetOfferMembers(offerId [8]byte) (struct {
+}, error) {
+	return _Exchange.Contract.GetOfferMembers(&_Exchange.CallOpts, offerId)
 }
 
-// GetReceiptsByOfferee is a free data retrieval call binding the contract method 0x17329f19.
+// OfferExists is a free data retrieval call binding the contract method 0xc4a03da9.
 //
-// Solidity: function getReceiptsByOfferee(address _to) constant returns(bytes8[])
-func (_Exchange *ExchangeCaller) GetReceiptsByOfferee(opts *bind.CallOpts, _to common.Address) ([][8]byte, error) {
+// Solidity: function offerExists(bytes8 offerId) constant returns(bool)
+func (_Exchange *ExchangeCaller) OfferExists(opts *bind.CallOpts, offerId [8]byte) (bool, error) {
 	var (
-		ret0 = new([][8]byte)
+		ret0 = new(bool)
 	)
-	out := ret0
-	err := _Exchange.contract.Call(opts, out, "getReceiptsByOfferee", _to)
+	out := &[]interface{}{ret0}
+	err := _Exchange.contract.Call(opts, out, "offerExists", offerId)
 	return *ret0, err
 }
 
-// GetReceiptsByOfferee is a free data retrieval call binding the contract method 0x17329f19.
+// OfferExists is a free data retrieval call binding the contract method 0xc4a03da9.
 //
-// Solidity: function getReceiptsByOfferee(address _to) constant returns(bytes8[])
-func (_Exchange *ExchangeSession) GetReceiptsByOfferee(_to common.Address) ([][8]byte, error) {
-	return _Exchange.Contract.GetReceiptsByOfferee(&_Exchange.CallOpts, _to)
+// Solidity: function offerExists(bytes8 offerId) constant returns(bool)
+func (_Exchange *ExchangeSession) OfferExists(offerId [8]byte) (bool, error) {
+	return _Exchange.Contract.OfferExists(&_Exchange.CallOpts, offerId)
 }
 
-// GetReceiptsByOfferee is a free data retrieval call binding the contract method 0x17329f19.
+// OfferExists is a free data retrieval call binding the contract method 0xc4a03da9.
 //
-// Solidity: function getReceiptsByOfferee(address _to) constant returns(bytes8[])
-func (_Exchange *ExchangeCallerSession) GetReceiptsByOfferee(_to common.Address) ([][8]byte, error) {
-	return _Exchange.Contract.GetReceiptsByOfferee(&_Exchange.CallOpts, _to)
-}
-
-// GetReceiptsByOfferor is a free data retrieval call binding the contract method 0xfaaf7393.
-//
-// Solidity: function getReceiptsByOfferor(address _from) constant returns(bytes8[])
-func (_Exchange *ExchangeCaller) GetReceiptsByOfferor(opts *bind.CallOpts, _from common.Address) ([][8]byte, error) {
-	var (
-		ret0 = new([][8]byte)
-	)
-	out := ret0
-	err := _Exchange.contract.Call(opts, out, "getReceiptsByOfferor", _from)
-	return *ret0, err
-}
-
-// GetReceiptsByOfferor is a free data retrieval call binding the contract method 0xfaaf7393.
-//
-// Solidity: function getReceiptsByOfferor(address _from) constant returns(bytes8[])
-func (_Exchange *ExchangeSession) GetReceiptsByOfferor(_from common.Address) ([][8]byte, error) {
-	return _Exchange.Contract.GetReceiptsByOfferor(&_Exchange.CallOpts, _from)
-}
-
-// GetReceiptsByOfferor is a free data retrieval call binding the contract method 0xfaaf7393.
-//
-// Solidity: function getReceiptsByOfferor(address _from) constant returns(bytes8[])
-func (_Exchange *ExchangeCallerSession) GetReceiptsByOfferor(_from common.Address) ([][8]byte, error) {
-	return _Exchange.Contract.GetReceiptsByOfferor(&_Exchange.CallOpts, _from)
-}
-
-// ToIndex is a free data retrieval call binding the contract method 0x4dae267e.
-//
-// Solidity: function toIndex(address , uint256 ) constant returns(bytes8)
-func (_Exchange *ExchangeCaller) ToIndex(opts *bind.CallOpts, arg0 common.Address, arg1 *big.Int) ([8]byte, error) {
-	var (
-		ret0 = new([8]byte)
-	)
-	out := ret0
-	err := _Exchange.contract.Call(opts, out, "toIndex", arg0, arg1)
-	return *ret0, err
-}
-
-// ToIndex is a free data retrieval call binding the contract method 0x4dae267e.
-//
-// Solidity: function toIndex(address , uint256 ) constant returns(bytes8)
-func (_Exchange *ExchangeSession) ToIndex(arg0 common.Address, arg1 *big.Int) ([8]byte, error) {
-	return _Exchange.Contract.ToIndex(&_Exchange.CallOpts, arg0, arg1)
-}
-
-// ToIndex is a free data retrieval call binding the contract method 0x4dae267e.
-//
-// Solidity: function toIndex(address , uint256 ) constant returns(bytes8)
-func (_Exchange *ExchangeCallerSession) ToIndex(arg0 common.Address, arg1 *big.Int) ([8]byte, error) {
-	return _Exchange.Contract.ToIndex(&_Exchange.CallOpts, arg0, arg1)
+// Solidity: function offerExists(bytes8 offerId) constant returns(bool)
+func (_Exchange *ExchangeCallerSession) OfferExists(offerId [8]byte) (bool, error) {
+	return _Exchange.Contract.OfferExists(&_Exchange.CallOpts, offerId)
 }
 
 // AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
 //
-// Solidity: function addDataIds(bytes8 _offerId, bytes20[] _dataIds) returns()
-func (_Exchange *ExchangeTransactor) AddDataIds(opts *bind.TransactOpts, _offerId [8]byte, _dataIds [][20]byte) (*ethTypes.Transaction, error) {
-	return _Exchange.contract.Transact(opts, "addDataIds", _offerId, _dataIds)
+// Solidity: function addDataIds(bytes8 offerId, bytes20[] dataIds) returns()
+func (_Exchange *ExchangeTransactor) AddDataIds(opts *bind.TransactOpts, offerId [8]byte, dataIds [][20]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.contract.Transact(opts, "addDataIds", offerId, dataIds)
 }
 
 // AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
 //
-// Solidity: function addDataIds(bytes8 _offerId, bytes20[] _dataIds) returns()
-func (_Exchange *ExchangeSession) AddDataIds(_offerId [8]byte, _dataIds [][20]byte) (*ethTypes.Transaction, error) {
-	return _Exchange.Contract.AddDataIds(&_Exchange.TransactOpts, _offerId, _dataIds)
+// Solidity: function addDataIds(bytes8 offerId, bytes20[] dataIds) returns()
+func (_Exchange *ExchangeSession) AddDataIds(offerId [8]byte, dataIds [][20]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.Contract.AddDataIds(&_Exchange.TransactOpts, offerId, dataIds)
 }
 
 // AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
 //
-// Solidity: function addDataIds(bytes8 _offerId, bytes20[] _dataIds) returns()
-func (_Exchange *ExchangeTransactorSession) AddDataIds(_offerId [8]byte, _dataIds [][20]byte) (*ethTypes.Transaction, error) {
-	return _Exchange.Contract.AddDataIds(&_Exchange.TransactOpts, _offerId, _dataIds)
+// Solidity: function addDataIds(bytes8 offerId, bytes20[] dataIds) returns()
+func (_Exchange *ExchangeTransactorSession) AddDataIds(offerId [8]byte, dataIds [][20]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.Contract.AddDataIds(&_Exchange.TransactOpts, offerId, dataIds)
+}
+
+// Cancel is a paid mutator transaction binding the contract method 0xb2d9ba39.
+//
+// Solidity: function cancel(bytes8 offerId) returns()
+func (_Exchange *ExchangeTransactor) Cancel(opts *bind.TransactOpts, offerId [8]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.contract.Transact(opts, "cancel", offerId)
+}
+
+// Cancel is a paid mutator transaction binding the contract method 0xb2d9ba39.
+//
+// Solidity: function cancel(bytes8 offerId) returns()
+func (_Exchange *ExchangeSession) Cancel(offerId [8]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.Contract.Cancel(&_Exchange.TransactOpts, offerId)
+}
+
+// Cancel is a paid mutator transaction binding the contract method 0xb2d9ba39.
+//
+// Solidity: function cancel(bytes8 offerId) returns()
+func (_Exchange *ExchangeTransactorSession) Cancel(offerId [8]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.Contract.Cancel(&_Exchange.TransactOpts, offerId)
 }
 
 // Order is a paid mutator transaction binding the contract method 0x0cf833fb.
 //
-// Solidity: function order(bytes8 _offerId) returns()
-func (_Exchange *ExchangeTransactor) Order(opts *bind.TransactOpts, _offerId [8]byte) (*ethTypes.Transaction, error) {
-	return _Exchange.contract.Transact(opts, "order", _offerId)
+// Solidity: function order(bytes8 offerId) returns()
+func (_Exchange *ExchangeTransactor) Order(opts *bind.TransactOpts, offerId [8]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.contract.Transact(opts, "order", offerId)
 }
 
 // Order is a paid mutator transaction binding the contract method 0x0cf833fb.
 //
-// Solidity: function order(bytes8 _offerId) returns()
-func (_Exchange *ExchangeSession) Order(_offerId [8]byte) (*ethTypes.Transaction, error) {
-	return _Exchange.Contract.Order(&_Exchange.TransactOpts, _offerId)
+// Solidity: function order(bytes8 offerId) returns()
+func (_Exchange *ExchangeSession) Order(offerId [8]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.Contract.Order(&_Exchange.TransactOpts, offerId)
 }
 
 // Order is a paid mutator transaction binding the contract method 0x0cf833fb.
 //
-// Solidity: function order(bytes8 _offerId) returns()
-func (_Exchange *ExchangeTransactorSession) Order(_offerId [8]byte) (*ethTypes.Transaction, error) {
-	return _Exchange.Contract.Order(&_Exchange.TransactOpts, _offerId)
+// Solidity: function order(bytes8 offerId) returns()
+func (_Exchange *ExchangeTransactorSession) Order(offerId [8]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.Contract.Order(&_Exchange.TransactOpts, offerId)
 }
 
-// Prepare is a paid mutator transaction binding the contract method 0xae086726.
+// Prepare is a paid mutator transaction binding the contract method 0x77e61c33.
 //
-// Solidity: function prepare(address _to, address _escrow, bytes4 _escrowSign, bytes _escrowArgs, bytes20[] _dataIds) returns()
-func (_Exchange *ExchangeTransactor) Prepare(opts *bind.TransactOpts, _to common.Address, _escrow common.Address, _escrowSign [4]byte, _escrowArgs []byte, _dataIds [][20]byte) (*ethTypes.Transaction, error) {
-	return _Exchange.contract.Transact(opts, "prepare", _to, _escrow, _escrowSign, _escrowArgs, _dataIds)
+// Solidity: function prepare(string provider, address consumer, address escrow, bytes4 escrowSign, bytes escrowArgs, bytes20[] dataIds) returns(bytes8)
+func (_Exchange *ExchangeTransactor) Prepare(opts *bind.TransactOpts, provider string, consumer common.Address, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds [][20]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.contract.Transact(opts, "prepare", provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
 }
 
-// Prepare is a paid mutator transaction binding the contract method 0xae086726.
+// Prepare is a paid mutator transaction binding the contract method 0x77e61c33.
 //
-// Solidity: function prepare(address _to, address _escrow, bytes4 _escrowSign, bytes _escrowArgs, bytes20[] _dataIds) returns()
-func (_Exchange *ExchangeSession) Prepare(_to common.Address, _escrow common.Address, _escrowSign [4]byte, _escrowArgs []byte, _dataIds [][20]byte) (*ethTypes.Transaction, error) {
-	return _Exchange.Contract.Prepare(&_Exchange.TransactOpts, _to, _escrow, _escrowSign, _escrowArgs, _dataIds)
+// Solidity: function prepare(string provider, address consumer, address escrow, bytes4 escrowSign, bytes escrowArgs, bytes20[] dataIds) returns(bytes8)
+func (_Exchange *ExchangeSession) Prepare(provider string, consumer common.Address, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds [][20]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.Contract.Prepare(&_Exchange.TransactOpts, provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
 }
 
-// Prepare is a paid mutator transaction binding the contract method 0xae086726.
+// Prepare is a paid mutator transaction binding the contract method 0x77e61c33.
 //
-// Solidity: function prepare(address _to, address _escrow, bytes4 _escrowSign, bytes _escrowArgs, bytes20[] _dataIds) returns()
-func (_Exchange *ExchangeTransactorSession) Prepare(_to common.Address, _escrow common.Address, _escrowSign [4]byte, _escrowArgs []byte, _dataIds [][20]byte) (*ethTypes.Transaction, error) {
-	return _Exchange.Contract.Prepare(&_Exchange.TransactOpts, _to, _escrow, _escrowSign, _escrowArgs, _dataIds)
-}
-
-// Reject is a paid mutator transaction binding the contract method 0x6622e153.
-//
-// Solidity: function reject(bytes8 _offerId) returns()
-func (_Exchange *ExchangeTransactor) Reject(opts *bind.TransactOpts, _offerId [8]byte) (*ethTypes.Transaction, error) {
-	return _Exchange.contract.Transact(opts, "reject", _offerId)
+// Solidity: function prepare(string provider, address consumer, address escrow, bytes4 escrowSign, bytes escrowArgs, bytes20[] dataIds) returns(bytes8)
+func (_Exchange *ExchangeTransactorSession) Prepare(provider string, consumer common.Address, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds [][20]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.Contract.Prepare(&_Exchange.TransactOpts, provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
 }
 
 // Reject is a paid mutator transaction binding the contract method 0x6622e153.
 //
-// Solidity: function reject(bytes8 _offerId) returns()
-func (_Exchange *ExchangeSession) Reject(_offerId [8]byte) (*ethTypes.Transaction, error) {
-	return _Exchange.Contract.Reject(&_Exchange.TransactOpts, _offerId)
+// Solidity: function reject(bytes8 offerId) returns()
+func (_Exchange *ExchangeTransactor) Reject(opts *bind.TransactOpts, offerId [8]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.contract.Transact(opts, "reject", offerId)
 }
 
 // Reject is a paid mutator transaction binding the contract method 0x6622e153.
 //
-// Solidity: function reject(bytes8 _offerId) returns()
-func (_Exchange *ExchangeTransactorSession) Reject(_offerId [8]byte) (*ethTypes.Transaction, error) {
-	return _Exchange.Contract.Reject(&_Exchange.TransactOpts, _offerId)
+// Solidity: function reject(bytes8 offerId) returns()
+func (_Exchange *ExchangeSession) Reject(offerId [8]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.Contract.Reject(&_Exchange.TransactOpts, offerId)
+}
+
+// Reject is a paid mutator transaction binding the contract method 0x6622e153.
+//
+// Solidity: function reject(bytes8 offerId) returns()
+func (_Exchange *ExchangeTransactorSession) Reject(offerId [8]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.Contract.Reject(&_Exchange.TransactOpts, offerId)
 }
 
 // Settle is a paid mutator transaction binding the contract method 0xa60d9b5f.
 //
-// Solidity: function settle(bytes8 _offerId) returns()
-func (_Exchange *ExchangeTransactor) Settle(opts *bind.TransactOpts, _offerId [8]byte) (*ethTypes.Transaction, error) {
-	return _Exchange.contract.Transact(opts, "settle", _offerId)
+// Solidity: function settle(bytes8 offerId) returns()
+func (_Exchange *ExchangeTransactor) Settle(opts *bind.TransactOpts, offerId [8]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.contract.Transact(opts, "settle", offerId)
 }
 
 // Settle is a paid mutator transaction binding the contract method 0xa60d9b5f.
 //
-// Solidity: function settle(bytes8 _offerId) returns()
-func (_Exchange *ExchangeSession) Settle(_offerId [8]byte) (*ethTypes.Transaction, error) {
-	return _Exchange.Contract.Settle(&_Exchange.TransactOpts, _offerId)
+// Solidity: function settle(bytes8 offerId) returns()
+func (_Exchange *ExchangeSession) Settle(offerId [8]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.Contract.Settle(&_Exchange.TransactOpts, offerId)
 }
 
 // Settle is a paid mutator transaction binding the contract method 0xa60d9b5f.
 //
-// Solidity: function settle(bytes8 _offerId) returns()
-func (_Exchange *ExchangeTransactorSession) Settle(_offerId [8]byte) (*ethTypes.Transaction, error) {
-	return _Exchange.Contract.Settle(&_Exchange.TransactOpts, _offerId)
+// Solidity: function settle(bytes8 offerId) returns()
+func (_Exchange *ExchangeTransactorSession) Settle(offerId [8]byte) (*ethTypes.Transaction, error) {
+	return _Exchange.Contract.Settle(&_Exchange.TransactOpts, offerId)
+}
+
+// ExchangeEscrowExecutionFailedIterator is returned from FilterEscrowExecutionFailed and is used to iterate over the raw logs and unpacked data for EscrowExecutionFailed events raised by the Exchange contract.
+type ExchangeEscrowExecutionFailedIterator struct {
+	Event *ExchangeEscrowExecutionFailed // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan ethTypes.Log     // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ExchangeEscrowExecutionFailedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ExchangeEscrowExecutionFailed)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ExchangeEscrowExecutionFailed)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ExchangeEscrowExecutionFailedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ExchangeEscrowExecutionFailedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ExchangeEscrowExecutionFailed represents a EscrowExecutionFailed event raised by the Exchange contract.
+type ExchangeEscrowExecutionFailed struct {
+	Reason []byte
+	Raw    ethTypes.Log // Blockchain specific contextual infos
+}
+
+// FilterEscrowExecutionFailed is a free log retrieval operation binding the contract event 0x40e7fa7728ad0189a69a1f7d9b3b202f751810b2be48db0b9224d7f81cd232f7.
+//
+// Solidity: event EscrowExecutionFailed(bytes reason)
+func (_Exchange *ExchangeFilterer) FilterEscrowExecutionFailed(opts *bind.FilterOpts) (*ExchangeEscrowExecutionFailedIterator, error) {
+
+	logs, sub, err := _Exchange.contract.FilterLogs(opts, "EscrowExecutionFailed")
+	if err != nil {
+		return nil, err
+	}
+	return &ExchangeEscrowExecutionFailedIterator{contract: _Exchange.contract, event: "EscrowExecutionFailed", logs: logs, sub: sub}, nil
+}
+
+// FilterEscrowExecutionFailed parses the event from given transaction receipt.
+//
+// Solidity: event EscrowExecutionFailed(bytes reason)
+func (_Exchange *ExchangeFilterer) ParseEscrowExecutionFailedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeEscrowExecutionFailed, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0x40e7fa7728ad0189a69a1f7d9b3b202f751810b2be48db0b9224d7f81cd232f7") {
+			event := new(ExchangeEscrowExecutionFailed)
+			if err := _Exchange.contract.UnpackLog(event, "EscrowExecutionFailed", *log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("EscrowExecutionFailed event not found")
+}
+
+// WatchEscrowExecutionFailed is a free log subscription operation binding the contract event 0x40e7fa7728ad0189a69a1f7d9b3b202f751810b2be48db0b9224d7f81cd232f7.
+//
+// Solidity: event EscrowExecutionFailed(bytes reason)
+func (_Exchange *ExchangeFilterer) WatchEscrowExecutionFailed(opts *bind.WatchOpts, sink chan<- *ExchangeEscrowExecutionFailed) (event.Subscription, error) {
+
+	logs, sub, err := _Exchange.contract.WatchLogs(opts, "EscrowExecutionFailed")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ExchangeEscrowExecutionFailed)
+				if err := _Exchange.contract.UnpackLog(event, "EscrowExecutionFailed", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ExchangeOfferCanceledIterator is returned from FilterOfferCanceled and is used to iterate over the raw logs and unpacked data for OfferCanceled events raised by the Exchange contract.
+type ExchangeOfferCanceledIterator struct {
+	Event *ExchangeOfferCanceled // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan ethTypes.Log     // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ExchangeOfferCanceledIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ExchangeOfferCanceled)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ExchangeOfferCanceled)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ExchangeOfferCanceledIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ExchangeOfferCanceledIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ExchangeOfferCanceled represents a OfferCanceled event raised by the Exchange contract.
+type ExchangeOfferCanceled struct {
+	OfferId         [8]byte
+	ProviderAppName string
+	Raw             ethTypes.Log // Blockchain specific contextual infos
+}
+
+// FilterOfferCanceled is a free log retrieval operation binding the contract event 0x05b47b0f8bd37a836f7a5c080cb883841c1282c69dd1874a46d4fafc7e8aa27a.
+//
+// Solidity: event OfferCanceled(bytes8 indexed offerId, string providerAppName)
+func (_Exchange *ExchangeFilterer) FilterOfferCanceled(opts *bind.FilterOpts, offerId [][8]byte) (*ExchangeOfferCanceledIterator, error) {
+
+	var offerIdRule []interface{}
+	for _, offerIdItem := range offerId {
+		offerIdRule = append(offerIdRule, offerIdItem)
+	}
+
+	logs, sub, err := _Exchange.contract.FilterLogs(opts, "OfferCanceled", offerIdRule)
+	if err != nil {
+		return nil, err
+	}
+	return &ExchangeOfferCanceledIterator{contract: _Exchange.contract, event: "OfferCanceled", logs: logs, sub: sub}, nil
+}
+
+// FilterOfferCanceled parses the event from given transaction receipt.
+//
+// Solidity: event OfferCanceled(bytes8 indexed offerId, string providerAppName)
+func (_Exchange *ExchangeFilterer) ParseOfferCanceledFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferCanceled, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0x05b47b0f8bd37a836f7a5c080cb883841c1282c69dd1874a46d4fafc7e8aa27a") {
+			event := new(ExchangeOfferCanceled)
+			if err := _Exchange.contract.UnpackLog(event, "OfferCanceled", *log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("OfferCanceled event not found")
+}
+
+// WatchOfferCanceled is a free log subscription operation binding the contract event 0x05b47b0f8bd37a836f7a5c080cb883841c1282c69dd1874a46d4fafc7e8aa27a.
+//
+// Solidity: event OfferCanceled(bytes8 indexed offerId, string providerAppName)
+func (_Exchange *ExchangeFilterer) WatchOfferCanceled(opts *bind.WatchOpts, sink chan<- *ExchangeOfferCanceled, offerId [][8]byte) (event.Subscription, error) {
+
+	var offerIdRule []interface{}
+	for _, offerIdItem := range offerId {
+		offerIdRule = append(offerIdRule, offerIdItem)
+	}
+
+	logs, sub, err := _Exchange.contract.WatchLogs(opts, "OfferCanceled", offerIdRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ExchangeOfferCanceled)
+				if err := _Exchange.contract.UnpackLog(event, "OfferCanceled", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
 }
 
 // ExchangeOfferPreparedIterator is returned from FilterOfferPrepared and is used to iterate over the raw logs and unpacked data for OfferPrepared events raised by the Exchange contract.
@@ -604,21 +811,22 @@ func (it *ExchangeOfferPreparedIterator) Close() error {
 
 // ExchangeOfferPrepared represents a OfferPrepared event raised by the Exchange contract.
 type ExchangeOfferPrepared struct {
-	OfferId [8]byte
-	Raw     ethTypes.Log // Blockchain specific contextual infos
+	OfferId         [8]byte
+	ProviderAppName string
+	Raw             ethTypes.Log // Blockchain specific contextual infos
 }
 
-// FilterOfferPrepared is a free log retrieval operation binding the contract event 0x03094c3ac453fecfef914ccb2bc5edb724821280c11d2555ff7a8a5147c16350.
+// FilterOfferPrepared is a free log retrieval operation binding the contract event 0x821d45f3b8db50a4777ad807928db085f0c986433cf51c2afdc8c6af90d1aef5.
 //
-// Solidity: event OfferPrepared(bytes8 indexed _offerId)
-func (_Exchange *ExchangeFilterer) FilterOfferPrepared(opts *bind.FilterOpts, _offerId [][8]byte) (*ExchangeOfferPreparedIterator, error) {
+// Solidity: event OfferPrepared(bytes8 indexed offerId, string providerAppName)
+func (_Exchange *ExchangeFilterer) FilterOfferPrepared(opts *bind.FilterOpts, offerId [][8]byte) (*ExchangeOfferPreparedIterator, error) {
 
-	var _offerIdRule []interface{}
-	for _, _offerIdItem := range _offerId {
-		_offerIdRule = append(_offerIdRule, _offerIdItem)
+	var offerIdRule []interface{}
+	for _, offerIdItem := range offerId {
+		offerIdRule = append(offerIdRule, offerIdItem)
 	}
 
-	logs, sub, err := _Exchange.contract.FilterLogs(opts, "OfferPrepared", _offerIdRule)
+	logs, sub, err := _Exchange.contract.FilterLogs(opts, "OfferPrepared", offerIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -627,10 +835,10 @@ func (_Exchange *ExchangeFilterer) FilterOfferPrepared(opts *bind.FilterOpts, _o
 
 // FilterOfferPrepared parses the event from given transaction receipt.
 //
-// Solidity: event OfferPrepared(bytes8 indexed _offerId)
+// Solidity: event OfferPrepared(bytes8 indexed offerId, string providerAppName)
 func (_Exchange *ExchangeFilterer) ParseOfferPreparedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferPrepared, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0x03094c3ac453fecfef914ccb2bc5edb724821280c11d2555ff7a8a5147c16350") {
+		if log.Topics[0] == common.HexToHash("0x821d45f3b8db50a4777ad807928db085f0c986433cf51c2afdc8c6af90d1aef5") {
 			event := new(ExchangeOfferPrepared)
 			if err := _Exchange.contract.UnpackLog(event, "OfferPrepared", *log); err != nil {
 				return nil, err
@@ -641,17 +849,17 @@ func (_Exchange *ExchangeFilterer) ParseOfferPreparedFromReceipt(receipt *ethTyp
 	return nil, errors.New("OfferPrepared event not found")
 }
 
-// WatchOfferPrepared is a free log subscription operation binding the contract event 0x03094c3ac453fecfef914ccb2bc5edb724821280c11d2555ff7a8a5147c16350.
+// WatchOfferPrepared is a free log subscription operation binding the contract event 0x821d45f3b8db50a4777ad807928db085f0c986433cf51c2afdc8c6af90d1aef5.
 //
-// Solidity: event OfferPrepared(bytes8 indexed _offerId)
-func (_Exchange *ExchangeFilterer) WatchOfferPrepared(opts *bind.WatchOpts, sink chan<- *ExchangeOfferPrepared, _offerId [][8]byte) (event.Subscription, error) {
+// Solidity: event OfferPrepared(bytes8 indexed offerId, string providerAppName)
+func (_Exchange *ExchangeFilterer) WatchOfferPrepared(opts *bind.WatchOpts, sink chan<- *ExchangeOfferPrepared, offerId [][8]byte) (event.Subscription, error) {
 
-	var _offerIdRule []interface{}
-	for _, _offerIdItem := range _offerId {
-		_offerIdRule = append(_offerIdRule, _offerIdItem)
+	var offerIdRule []interface{}
+	for _, offerIdItem := range offerId {
+		offerIdRule = append(offerIdRule, offerIdItem)
 	}
 
-	logs, sub, err := _Exchange.contract.WatchLogs(opts, "OfferPrepared", _offerIdRule)
+	logs, sub, err := _Exchange.contract.WatchLogs(opts, "OfferPrepared", offerIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -752,21 +960,22 @@ func (it *ExchangeOfferPresentedIterator) Close() error {
 
 // ExchangeOfferPresented represents a OfferPresented event raised by the Exchange contract.
 type ExchangeOfferPresented struct {
-	OfferId [8]byte
-	Raw     ethTypes.Log // Blockchain specific contextual infos
+	OfferId         [8]byte
+	ProviderAppName string
+	Raw             ethTypes.Log // Blockchain specific contextual infos
 }
 
-// FilterOfferPresented is a free log retrieval operation binding the contract event 0xa4f335e96e13d24e916185e1047d7819b9e10ef587fa3be9e29a023e5ad2d62a.
+// FilterOfferPresented is a free log retrieval operation binding the contract event 0x198eb5e3b4b2cd8cca381c07c5696b7caffe2c775d93f75d0053073e36a865fa.
 //
-// Solidity: event OfferPresented(bytes8 indexed _offerId)
-func (_Exchange *ExchangeFilterer) FilterOfferPresented(opts *bind.FilterOpts, _offerId [][8]byte) (*ExchangeOfferPresentedIterator, error) {
+// Solidity: event OfferPresented(bytes8 indexed offerId, string providerAppName)
+func (_Exchange *ExchangeFilterer) FilterOfferPresented(opts *bind.FilterOpts, offerId [][8]byte) (*ExchangeOfferPresentedIterator, error) {
 
-	var _offerIdRule []interface{}
-	for _, _offerIdItem := range _offerId {
-		_offerIdRule = append(_offerIdRule, _offerIdItem)
+	var offerIdRule []interface{}
+	for _, offerIdItem := range offerId {
+		offerIdRule = append(offerIdRule, offerIdItem)
 	}
 
-	logs, sub, err := _Exchange.contract.FilterLogs(opts, "OfferPresented", _offerIdRule)
+	logs, sub, err := _Exchange.contract.FilterLogs(opts, "OfferPresented", offerIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -775,10 +984,10 @@ func (_Exchange *ExchangeFilterer) FilterOfferPresented(opts *bind.FilterOpts, _
 
 // FilterOfferPresented parses the event from given transaction receipt.
 //
-// Solidity: event OfferPresented(bytes8 indexed _offerId)
+// Solidity: event OfferPresented(bytes8 indexed offerId, string providerAppName)
 func (_Exchange *ExchangeFilterer) ParseOfferPresentedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferPresented, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xa4f335e96e13d24e916185e1047d7819b9e10ef587fa3be9e29a023e5ad2d62a") {
+		if log.Topics[0] == common.HexToHash("0x198eb5e3b4b2cd8cca381c07c5696b7caffe2c775d93f75d0053073e36a865fa") {
 			event := new(ExchangeOfferPresented)
 			if err := _Exchange.contract.UnpackLog(event, "OfferPresented", *log); err != nil {
 				return nil, err
@@ -789,17 +998,17 @@ func (_Exchange *ExchangeFilterer) ParseOfferPresentedFromReceipt(receipt *ethTy
 	return nil, errors.New("OfferPresented event not found")
 }
 
-// WatchOfferPresented is a free log subscription operation binding the contract event 0xa4f335e96e13d24e916185e1047d7819b9e10ef587fa3be9e29a023e5ad2d62a.
+// WatchOfferPresented is a free log subscription operation binding the contract event 0x198eb5e3b4b2cd8cca381c07c5696b7caffe2c775d93f75d0053073e36a865fa.
 //
-// Solidity: event OfferPresented(bytes8 indexed _offerId)
-func (_Exchange *ExchangeFilterer) WatchOfferPresented(opts *bind.WatchOpts, sink chan<- *ExchangeOfferPresented, _offerId [][8]byte) (event.Subscription, error) {
+// Solidity: event OfferPresented(bytes8 indexed offerId, string providerAppName)
+func (_Exchange *ExchangeFilterer) WatchOfferPresented(opts *bind.WatchOpts, sink chan<- *ExchangeOfferPresented, offerId [][8]byte) (event.Subscription, error) {
 
-	var _offerIdRule []interface{}
-	for _, _offerIdItem := range _offerId {
-		_offerIdRule = append(_offerIdRule, _offerIdItem)
+	var offerIdRule []interface{}
+	for _, offerIdItem := range offerId {
+		offerIdRule = append(offerIdRule, offerIdItem)
 	}
 
-	logs, sub, err := _Exchange.contract.WatchLogs(opts, "OfferPresented", _offerIdRule)
+	logs, sub, err := _Exchange.contract.WatchLogs(opts, "OfferPresented", offerIdRule)
 	if err != nil {
 		return nil, err
 	}
@@ -811,6 +1020,167 @@ func (_Exchange *ExchangeFilterer) WatchOfferPresented(opts *bind.WatchOpts, sin
 				// New log arrived, parse the event and forward to the user
 				event := new(ExchangeOfferPresented)
 				if err := _Exchange.contract.UnpackLog(event, "OfferPresented", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ExchangeOfferReceiptIterator is returned from FilterOfferReceipt and is used to iterate over the raw logs and unpacked data for OfferReceipt events raised by the Exchange contract.
+type ExchangeOfferReceiptIterator struct {
+	Event *ExchangeOfferReceipt // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan ethTypes.Log     // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ExchangeOfferReceiptIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ExchangeOfferReceipt)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ExchangeOfferReceipt)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ExchangeOfferReceiptIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ExchangeOfferReceiptIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ExchangeOfferReceipt represents a OfferReceipt event raised by the Exchange contract.
+type ExchangeOfferReceipt struct {
+	OfferId         [8]byte
+	ProviderAppName string
+	Consumer        common.Address
+	Result          []byte
+	Raw             ethTypes.Log // Blockchain specific contextual infos
+}
+
+// FilterOfferReceipt is a free log retrieval operation binding the contract event 0x7a2b40d55d10a35fd97231e1d36fc9df7c48361f16299086103e0712135c59fa.
+//
+// Solidity: event OfferReceipt(bytes8 indexed offerId, string providerAppName, address indexed consumer, bytes result)
+func (_Exchange *ExchangeFilterer) FilterOfferReceipt(opts *bind.FilterOpts, offerId [][8]byte, consumer []common.Address) (*ExchangeOfferReceiptIterator, error) {
+
+	var offerIdRule []interface{}
+	for _, offerIdItem := range offerId {
+		offerIdRule = append(offerIdRule, offerIdItem)
+	}
+
+	var consumerRule []interface{}
+	for _, consumerItem := range consumer {
+		consumerRule = append(consumerRule, consumerItem)
+	}
+
+	logs, sub, err := _Exchange.contract.FilterLogs(opts, "OfferReceipt", offerIdRule, consumerRule)
+	if err != nil {
+		return nil, err
+	}
+	return &ExchangeOfferReceiptIterator{contract: _Exchange.contract, event: "OfferReceipt", logs: logs, sub: sub}, nil
+}
+
+// FilterOfferReceipt parses the event from given transaction receipt.
+//
+// Solidity: event OfferReceipt(bytes8 indexed offerId, string providerAppName, address indexed consumer, bytes result)
+func (_Exchange *ExchangeFilterer) ParseOfferReceiptFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferReceipt, error) {
+	for _, log := range receipt.Logs {
+		if log.Topics[0] == common.HexToHash("0x7a2b40d55d10a35fd97231e1d36fc9df7c48361f16299086103e0712135c59fa") {
+			event := new(ExchangeOfferReceipt)
+			if err := _Exchange.contract.UnpackLog(event, "OfferReceipt", *log); err != nil {
+				return nil, err
+			}
+			return event, nil
+		}
+	}
+	return nil, errors.New("OfferReceipt event not found")
+}
+
+// WatchOfferReceipt is a free log subscription operation binding the contract event 0x7a2b40d55d10a35fd97231e1d36fc9df7c48361f16299086103e0712135c59fa.
+//
+// Solidity: event OfferReceipt(bytes8 indexed offerId, string providerAppName, address indexed consumer, bytes result)
+func (_Exchange *ExchangeFilterer) WatchOfferReceipt(opts *bind.WatchOpts, sink chan<- *ExchangeOfferReceipt, offerId [][8]byte, consumer []common.Address) (event.Subscription, error) {
+
+	var offerIdRule []interface{}
+	for _, offerIdItem := range offerId {
+		offerIdRule = append(offerIdRule, offerIdItem)
+	}
+
+	var consumerRule []interface{}
+	for _, consumerItem := range consumer {
+		consumerRule = append(consumerRule, consumerItem)
+	}
+
+	logs, sub, err := _Exchange.contract.WatchLogs(opts, "OfferReceipt", offerIdRule, consumerRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ExchangeOfferReceipt)
+				if err := _Exchange.contract.UnpackLog(event, "OfferReceipt", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -900,21 +1270,26 @@ func (it *ExchangeOfferRejectedIterator) Close() error {
 
 // ExchangeOfferRejected represents a OfferRejected event raised by the Exchange contract.
 type ExchangeOfferRejected struct {
-	OfferId [8]byte
-	Raw     ethTypes.Log // Blockchain specific contextual infos
+	OfferId  [8]byte
+	Consumer common.Address
+	Raw      ethTypes.Log // Blockchain specific contextual infos
 }
 
-// FilterOfferRejected is a free log retrieval operation binding the contract event 0x780cea1692b166ae033a8fe67c3e7dd9f1d520e3c999d1c59b9fda6f6ed372e5.
+// FilterOfferRejected is a free log retrieval operation binding the contract event 0x94c89cb0104a1fa8726bf8a9e9151423d67ff6f8eb09ed7392386649655c6843.
 //
-// Solidity: event OfferRejected(bytes8 indexed _offerId)
-func (_Exchange *ExchangeFilterer) FilterOfferRejected(opts *bind.FilterOpts, _offerId [][8]byte) (*ExchangeOfferRejectedIterator, error) {
+// Solidity: event OfferRejected(bytes8 indexed offerId, address indexed consumer)
+func (_Exchange *ExchangeFilterer) FilterOfferRejected(opts *bind.FilterOpts, offerId [][8]byte, consumer []common.Address) (*ExchangeOfferRejectedIterator, error) {
 
-	var _offerIdRule []interface{}
-	for _, _offerIdItem := range _offerId {
-		_offerIdRule = append(_offerIdRule, _offerIdItem)
+	var offerIdRule []interface{}
+	for _, offerIdItem := range offerId {
+		offerIdRule = append(offerIdRule, offerIdItem)
+	}
+	var consumerRule []interface{}
+	for _, consumerItem := range consumer {
+		consumerRule = append(consumerRule, consumerItem)
 	}
 
-	logs, sub, err := _Exchange.contract.FilterLogs(opts, "OfferRejected", _offerIdRule)
+	logs, sub, err := _Exchange.contract.FilterLogs(opts, "OfferRejected", offerIdRule, consumerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -923,10 +1298,10 @@ func (_Exchange *ExchangeFilterer) FilterOfferRejected(opts *bind.FilterOpts, _o
 
 // FilterOfferRejected parses the event from given transaction receipt.
 //
-// Solidity: event OfferRejected(bytes8 indexed _offerId)
+// Solidity: event OfferRejected(bytes8 indexed offerId, address indexed consumer)
 func (_Exchange *ExchangeFilterer) ParseOfferRejectedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferRejected, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0x780cea1692b166ae033a8fe67c3e7dd9f1d520e3c999d1c59b9fda6f6ed372e5") {
+		if log.Topics[0] == common.HexToHash("0x94c89cb0104a1fa8726bf8a9e9151423d67ff6f8eb09ed7392386649655c6843") {
 			event := new(ExchangeOfferRejected)
 			if err := _Exchange.contract.UnpackLog(event, "OfferRejected", *log); err != nil {
 				return nil, err
@@ -937,17 +1312,21 @@ func (_Exchange *ExchangeFilterer) ParseOfferRejectedFromReceipt(receipt *ethTyp
 	return nil, errors.New("OfferRejected event not found")
 }
 
-// WatchOfferRejected is a free log subscription operation binding the contract event 0x780cea1692b166ae033a8fe67c3e7dd9f1d520e3c999d1c59b9fda6f6ed372e5.
+// WatchOfferRejected is a free log subscription operation binding the contract event 0x94c89cb0104a1fa8726bf8a9e9151423d67ff6f8eb09ed7392386649655c6843.
 //
-// Solidity: event OfferRejected(bytes8 indexed _offerId)
-func (_Exchange *ExchangeFilterer) WatchOfferRejected(opts *bind.WatchOpts, sink chan<- *ExchangeOfferRejected, _offerId [][8]byte) (event.Subscription, error) {
+// Solidity: event OfferRejected(bytes8 indexed offerId, address indexed consumer)
+func (_Exchange *ExchangeFilterer) WatchOfferRejected(opts *bind.WatchOpts, sink chan<- *ExchangeOfferRejected, offerId [][8]byte, consumer []common.Address) (event.Subscription, error) {
 
-	var _offerIdRule []interface{}
-	for _, _offerIdItem := range _offerId {
-		_offerIdRule = append(_offerIdRule, _offerIdItem)
+	var offerIdRule []interface{}
+	for _, offerIdItem := range offerId {
+		offerIdRule = append(offerIdRule, offerIdItem)
+	}
+	var consumerRule []interface{}
+	for _, consumerItem := range consumer {
+		consumerRule = append(consumerRule, consumerItem)
 	}
 
-	logs, sub, err := _Exchange.contract.WatchLogs(opts, "OfferRejected", _offerIdRule)
+	logs, sub, err := _Exchange.contract.WatchLogs(opts, "OfferRejected", offerIdRule, consumerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1048,21 +1427,26 @@ func (it *ExchangeOfferSettledIterator) Close() error {
 
 // ExchangeOfferSettled represents a OfferSettled event raised by the Exchange contract.
 type ExchangeOfferSettled struct {
-	OfferId [8]byte
-	Raw     ethTypes.Log // Blockchain specific contextual infos
+	OfferId  [8]byte
+	Consumer common.Address
+	Raw      ethTypes.Log // Blockchain specific contextual infos
 }
 
-// FilterOfferSettled is a free log retrieval operation binding the contract event 0x8563cd74c7f85b9decc8d88aa698ad179ef37e8224ee11e8ce270d9e3fe3ce28.
+// FilterOfferSettled is a free log retrieval operation binding the contract event 0xb37cb3a83f4f40ee469256bdfc4a2881c9ce188960c87bf11359151a461b723e.
 //
-// Solidity: event OfferSettled(bytes8 indexed _offerId)
-func (_Exchange *ExchangeFilterer) FilterOfferSettled(opts *bind.FilterOpts, _offerId [][8]byte) (*ExchangeOfferSettledIterator, error) {
+// Solidity: event OfferSettled(bytes8 indexed offerId, address indexed consumer)
+func (_Exchange *ExchangeFilterer) FilterOfferSettled(opts *bind.FilterOpts, offerId [][8]byte, consumer []common.Address) (*ExchangeOfferSettledIterator, error) {
 
-	var _offerIdRule []interface{}
-	for _, _offerIdItem := range _offerId {
-		_offerIdRule = append(_offerIdRule, _offerIdItem)
+	var offerIdRule []interface{}
+	for _, offerIdItem := range offerId {
+		offerIdRule = append(offerIdRule, offerIdItem)
+	}
+	var consumerRule []interface{}
+	for _, consumerItem := range consumer {
+		consumerRule = append(consumerRule, consumerItem)
 	}
 
-	logs, sub, err := _Exchange.contract.FilterLogs(opts, "OfferSettled", _offerIdRule)
+	logs, sub, err := _Exchange.contract.FilterLogs(opts, "OfferSettled", offerIdRule, consumerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1071,10 +1455,10 @@ func (_Exchange *ExchangeFilterer) FilterOfferSettled(opts *bind.FilterOpts, _of
 
 // FilterOfferSettled parses the event from given transaction receipt.
 //
-// Solidity: event OfferSettled(bytes8 indexed _offerId)
+// Solidity: event OfferSettled(bytes8 indexed offerId, address indexed consumer)
 func (_Exchange *ExchangeFilterer) ParseOfferSettledFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferSettled, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0x8563cd74c7f85b9decc8d88aa698ad179ef37e8224ee11e8ce270d9e3fe3ce28") {
+		if log.Topics[0] == common.HexToHash("0xb37cb3a83f4f40ee469256bdfc4a2881c9ce188960c87bf11359151a461b723e") {
 			event := new(ExchangeOfferSettled)
 			if err := _Exchange.contract.UnpackLog(event, "OfferSettled", *log); err != nil {
 				return nil, err
@@ -1085,17 +1469,21 @@ func (_Exchange *ExchangeFilterer) ParseOfferSettledFromReceipt(receipt *ethType
 	return nil, errors.New("OfferSettled event not found")
 }
 
-// WatchOfferSettled is a free log subscription operation binding the contract event 0x8563cd74c7f85b9decc8d88aa698ad179ef37e8224ee11e8ce270d9e3fe3ce28.
+// WatchOfferSettled is a free log subscription operation binding the contract event 0xb37cb3a83f4f40ee469256bdfc4a2881c9ce188960c87bf11359151a461b723e.
 //
-// Solidity: event OfferSettled(bytes8 indexed _offerId)
-func (_Exchange *ExchangeFilterer) WatchOfferSettled(opts *bind.WatchOpts, sink chan<- *ExchangeOfferSettled, _offerId [][8]byte) (event.Subscription, error) {
+// Solidity: event OfferSettled(bytes8 indexed offerId, address indexed consumer)
+func (_Exchange *ExchangeFilterer) WatchOfferSettled(opts *bind.WatchOpts, sink chan<- *ExchangeOfferSettled, offerId [][8]byte, consumer []common.Address) (event.Subscription, error) {
 
-	var _offerIdRule []interface{}
-	for _, _offerIdItem := range _offerId {
-		_offerIdRule = append(_offerIdRule, _offerIdItem)
+	var offerIdRule []interface{}
+	for _, offerIdItem := range offerId {
+		offerIdRule = append(offerIdRule, offerIdItem)
+	}
+	var consumerRule []interface{}
+	for _, consumerItem := range consumer {
+		consumerRule = append(consumerRule, consumerItem)
 	}
 
-	logs, sub, err := _Exchange.contract.WatchLogs(opts, "OfferSettled", _offerIdRule)
+	logs, sub, err := _Exchange.contract.WatchLogs(opts, "OfferSettled", offerIdRule, consumerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1107,310 +1495,6 @@ func (_Exchange *ExchangeFilterer) WatchOfferSettled(opts *bind.WatchOpts, sink 
 				// New log arrived, parse the event and forward to the user
 				event := new(ExchangeOfferSettled)
 				if err := _Exchange.contract.UnpackLog(event, "OfferSettled", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ExchangeReceiptIterator is returned from FilterReceipt and is used to iterate over the raw logs and unpacked data for Receipt events raised by the Exchange contract.
-type ExchangeReceiptIterator struct {
-	Event *ExchangeReceipt // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan ethTypes.Log     // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *ExchangeReceiptIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(ExchangeReceipt)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(ExchangeReceipt)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *ExchangeReceiptIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *ExchangeReceiptIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// ExchangeReceipt represents a Receipt event raised by the Exchange contract.
-type ExchangeReceipt struct {
-	OfferId [8]byte
-	From    common.Address
-	To      common.Address
-	Raw     ethTypes.Log // Blockchain specific contextual infos
-}
-
-// FilterReceipt is a free log retrieval operation binding the contract event 0xc5289be5f34d9c261429f87950e84b7904ca18a5804dc86a8a3cfc119b5aeff9.
-//
-// Solidity: event Receipt(bytes8 indexed _offerId, address indexed _from, address indexed _to)
-func (_Exchange *ExchangeFilterer) FilterReceipt(opts *bind.FilterOpts, _offerId [][8]byte, _from []common.Address, _to []common.Address) (*ExchangeReceiptIterator, error) {
-
-	var _offerIdRule []interface{}
-	for _, _offerIdItem := range _offerId {
-		_offerIdRule = append(_offerIdRule, _offerIdItem)
-	}
-	var _fromRule []interface{}
-	for _, _fromItem := range _from {
-		_fromRule = append(_fromRule, _fromItem)
-	}
-	var _toRule []interface{}
-	for _, _toItem := range _to {
-		_toRule = append(_toRule, _toItem)
-	}
-
-	logs, sub, err := _Exchange.contract.FilterLogs(opts, "Receipt", _offerIdRule, _fromRule, _toRule)
-	if err != nil {
-		return nil, err
-	}
-	return &ExchangeReceiptIterator{contract: _Exchange.contract, event: "Receipt", logs: logs, sub: sub}, nil
-}
-
-// FilterReceipt parses the event from given transaction receipt.
-//
-// Solidity: event Receipt(bytes8 indexed _offerId, address indexed _from, address indexed _to)
-func (_Exchange *ExchangeFilterer) ParseReceiptFromReceipt(receipt *ethTypes.Receipt) (*ExchangeReceipt, error) {
-	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xc5289be5f34d9c261429f87950e84b7904ca18a5804dc86a8a3cfc119b5aeff9") {
-			event := new(ExchangeReceipt)
-			if err := _Exchange.contract.UnpackLog(event, "Receipt", *log); err != nil {
-				return nil, err
-			}
-			return event, nil
-		}
-	}
-	return nil, errors.New("Receipt event not found")
-}
-
-// WatchReceipt is a free log subscription operation binding the contract event 0xc5289be5f34d9c261429f87950e84b7904ca18a5804dc86a8a3cfc119b5aeff9.
-//
-// Solidity: event Receipt(bytes8 indexed _offerId, address indexed _from, address indexed _to)
-func (_Exchange *ExchangeFilterer) WatchReceipt(opts *bind.WatchOpts, sink chan<- *ExchangeReceipt, _offerId [][8]byte, _from []common.Address, _to []common.Address) (event.Subscription, error) {
-
-	var _offerIdRule []interface{}
-	for _, _offerIdItem := range _offerId {
-		_offerIdRule = append(_offerIdRule, _offerIdItem)
-	}
-	var _fromRule []interface{}
-	for _, _fromItem := range _from {
-		_fromRule = append(_fromRule, _fromItem)
-	}
-	var _toRule []interface{}
-	for _, _toItem := range _to {
-		_toRule = append(_toRule, _toItem)
-	}
-
-	logs, sub, err := _Exchange.contract.WatchLogs(opts, "Receipt", _offerIdRule, _fromRule, _toRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(ExchangeReceipt)
-				if err := _Exchange.contract.UnpackLog(event, "Receipt", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
-}
-
-// ExchangeSettleResultIterator is returned from FilterSettleResult and is used to iterate over the raw logs and unpacked data for SettleResult events raised by the Exchange contract.
-type ExchangeSettleResultIterator struct {
-	Event *ExchangeSettleResult // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan ethTypes.Log     // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *ExchangeSettleResultIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(ExchangeSettleResult)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(ExchangeSettleResult)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *ExchangeSettleResultIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *ExchangeSettleResultIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// ExchangeSettleResult represents a SettleResult event raised by the Exchange contract.
-type ExchangeSettleResult struct {
-	Res bool
-	Raw ethTypes.Log // Blockchain specific contextual infos
-}
-
-// FilterSettleResult is a free log retrieval operation binding the contract event 0xe105a91e26066f33aa9ac593d291c5c96ba0ba54c69b307a011bf29eb8e2a6ae.
-//
-// Solidity: event SettleResult(bool res)
-func (_Exchange *ExchangeFilterer) FilterSettleResult(opts *bind.FilterOpts) (*ExchangeSettleResultIterator, error) {
-
-	logs, sub, err := _Exchange.contract.FilterLogs(opts, "SettleResult")
-	if err != nil {
-		return nil, err
-	}
-	return &ExchangeSettleResultIterator{contract: _Exchange.contract, event: "SettleResult", logs: logs, sub: sub}, nil
-}
-
-// FilterSettleResult parses the event from given transaction receipt.
-//
-// Solidity: event SettleResult(bool res)
-func (_Exchange *ExchangeFilterer) ParseSettleResultFromReceipt(receipt *ethTypes.Receipt) (*ExchangeSettleResult, error) {
-	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xe105a91e26066f33aa9ac593d291c5c96ba0ba54c69b307a011bf29eb8e2a6ae") {
-			event := new(ExchangeSettleResult)
-			if err := _Exchange.contract.UnpackLog(event, "SettleResult", *log); err != nil {
-				return nil, err
-			}
-			return event, nil
-		}
-	}
-	return nil, errors.New("SettleResult event not found")
-}
-
-// WatchSettleResult is a free log subscription operation binding the contract event 0xe105a91e26066f33aa9ac593d291c5c96ba0ba54c69b307a011bf29eb8e2a6ae.
-//
-// Solidity: event SettleResult(bool res)
-func (_Exchange *ExchangeFilterer) WatchSettleResult(opts *bind.WatchOpts, sink chan<- *ExchangeSettleResult) (event.Subscription, error) {
-
-	logs, sub, err := _Exchange.contract.WatchLogs(opts, "SettleResult")
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(ExchangeSettleResult)
-				if err := _Exchange.contract.UnpackLog(event, "SettleResult", log); err != nil {
 					return err
 				}
 				event.Raw = log

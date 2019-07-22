@@ -24,8 +24,6 @@ github.com/anmitsu/go-shlex v0.0.0-20161002113705-648efa622239/go.mod h1:2FmKhYU
 github.com/aristanetworks/goarista v0.0.0-20190319235110-489128639c40 h1:ZjM7TlMAys4oFlQFv+hAbJ75fimtEDoSh+CnrSLJcH0=
 github.com/aristanetworks/goarista v0.0.0-20190319235110-489128639c40/go.mod h1:D/tb0zPVXnP7fmsLZjtdUhSsumbK/ij54UXjjVgMGxQ=
 github.com/aws/aws-sdk-go v1.18.5/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
-github.com/aws/aws-sdk-go v1.18.6 h1:NuUz/+bi6C5v3BpIXW/VfovfMpvlhl1WUnD0EiDkOwQ=
-github.com/aws/aws-sdk-go v1.18.6/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/aws/aws-sdk-go v1.19.7 h1:BEKPfM8DPsXIsz1zL98nSbYqsOUjUM2lm93XLZL0qY8=
 github.com/aws/aws-sdk-go v1.19.7/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/azer/is-terminal v1.0.0 h1:COvj8jmg2xMz0CqHn4Uu8X1m7Dmzmu0CpciBaLtJQBg=

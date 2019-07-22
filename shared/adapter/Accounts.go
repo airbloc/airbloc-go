@@ -4,9 +4,10 @@
 package adapter
 
 import (
-	"github.com/pkg/errors"
 	"math/big"
 	"strings"
+
+	"github.com/pkg/errors"
 
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
@@ -33,7 +34,7 @@ var (
 )
 
 // AccountsABI is the input ABI used to generate the binding from.
-const AccountsABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"numberOfAccounts\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"identityHashToAccount\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"name\":\"accounts\",\"outputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"status\",\"type\":\"uint8\"},{\"name\":\"delegate\",\"type\":\"address\"},{\"name\":\"proxy\",\"type\":\"address\"},{\"name\":\"passwordProof\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"SignUp\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"proxy\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"identityHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"TemporaryCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"identityHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"accountId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"Unlocked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[],\"name\":\"create\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"identityHash\",\"type\":\"bytes32\"}],\"name\":\"createTemporary\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"identityPreimage\",\"type\":\"bytes32\"},{\"name\":\"newOwner\",\"type\":\"address\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"unlockTemporary\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"createUsingProxy\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"delegate\",\"type\":\"address\"}],\"name\":\"setDelegate\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"getAccountId\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"messageHash\",\"type\":\"bytes32\"},{\"name\":\"signature\",\"type\":\"bytes\"}],\"name\":\"getAccountIdFromSignature\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"isTemporary\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"sender\",\"type\":\"address\"},{\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"isDelegateOf\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const AccountsABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":[{\"Name\":\"controllerReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":null},\"Methods\":{\"accounts\":{\"Name\":\"accounts\",\"Const\":true,\"Inputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"owner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"status\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"controller\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"passwordProof\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"create\":{\"Name\":\"create\",\"Const\":false,\"Inputs\":[],\"Outputs\":[]},\"createTemporary\":{\"Name\":\"createTemporary\",\"Const\":false,\"Inputs\":[{\"Name\":\"identityHash\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"exists\":{\"Name\":\"exists\",\"Const\":true,\"Inputs\":[{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"getAccount\":{\"Name\":\"getAccount\",\"Const\":true,\"Inputs\":[{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"owner\",\"status\",\"controller\",\"passwordProof\"]},\"Indexed\":false}]},\"getAccountId\":{\"Name\":\"getAccountId\",\"Const\":true,\"Inputs\":[{\"Name\":\"sender\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"getAccountIdFromSignature\":{\"Name\":\"getAccountIdFromSignature\",\"Const\":true,\"Inputs\":[{\"Name\":\"messageHash\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"signature\",\"Type\":{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"identityHashToAccount\":{\"Name\":\"identityHashToAccount\",\"Const\":true,\"Inputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"isControllerOf\":{\"Name\":\"isControllerOf\",\"Const\":true,\"Inputs\":[{\"Name\":\"sender\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"isTemporary\":{\"Name\":\"isTemporary\",\"Const\":true,\"Inputs\":[{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"numberOfAccounts\":{\"Name\":\"numberOfAccounts\",\"Const\":true,\"Inputs\":[],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":22,\"Type\":{},\"Size\":256,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"setController\":{\"Name\":\"setController\",\"Const\":false,\"Inputs\":[{\"Name\":\"controller\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"unlockTemporary\":{\"Name\":\"unlockTemporary\",\"Const\":false,\"Inputs\":[{\"Name\":\"identityPreimage\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"newOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"passwordSignature\",\"Type\":{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]}},\"Events\":{\"SignUp\":{\"Name\":\"SignUp\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"owner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"TemporaryCreated\":{\"Name\":\"TemporaryCreated\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"proxy\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"identityHash\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"Unlocked\":{\"Name\":\"Unlocked\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"identityHash\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"newOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]}}}"
 
 // Accounts is an auto generated Go binding around an Ethereum contract.
 type Accounts struct {
@@ -41,21 +42,6 @@ type Accounts struct {
 	AccountsCaller     // Read-only binding to the contract
 	AccountsTransactor // Write-only binding to the contract
 	AccountsFilterer   // Log filterer for contract events
-}
-
-// AccountsCaller is an auto generated read-only Go binding around an Ethereum contract.
-type AccountsCaller struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// AccountsTransactor is an auto generated write-only Go binding around an Ethereum contract.
-type AccountsTransactor struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// AccountsFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type AccountsFilterer struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // AccountsSession is an auto generated Go binding around an Ethereum contract,
@@ -66,82 +52,9 @@ type AccountsSession struct {
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// AccountsCallerSession is an auto generated read-only Go binding around an Ethereum contract,
-// with pre-set call options.
-type AccountsCallerSession struct {
-	Contract *AccountsCaller // Generic contract caller binding to set the session for
-	CallOpts bind.CallOpts   // Call options to use throughout this session
-}
-
-// AccountsTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
-// with pre-set transact options.
-type AccountsTransactorSession struct {
-	Contract     *AccountsTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
-}
-
 // AccountsRaw is an auto generated low-level Go binding around an Ethereum contract.
 type AccountsRaw struct {
 	Contract *Accounts // Generic contract binding to access the raw methods on
-}
-
-// AccountsCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
-type AccountsCallerRaw struct {
-	Contract *AccountsCaller // Generic read-only contract binding to access the raw methods on
-}
-
-// AccountsTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
-type AccountsTransactorRaw struct {
-	Contract *AccountsTransactor // Generic write-only contract binding to access the raw methods on
-}
-
-//
-//	type AccountsAccountStatus int8
-//
-//	const (
-//		AccountsAccountStatus_CREATED AccountsAccountStatus = 2
-//		AccountsAccountStatus_NONE AccountsAccountStatus = 0
-//		AccountsAccountStatus_TEMPORARY AccountsAccountStatus = 1
-//
-//	)
-//
-//	var AccountsAccountStatus_name = map[int8]string{
-//		2: "CREATED",
-//		0: "NONE",
-//		1: "TEMPORARY",
-//
-//	}
-//
-//	var AccountsAccountStatus_value = map[string]int8{
-//		"CREATED": 2,
-//		"NONE": 0,
-//		"TEMPORARY": 1,
-//
-//	}
-//
-//
-//
-//	type Account struct {
-//		Delegate	common.Address
-//		Owner	common.Address
-//		PasswordProof	common.Address
-//		Proxy	common.Address
-//		Status	AccountsAccountStatus
-//
-//	}
-//
-
-func init() {
-	// convenient hacks for blockchain.Client
-	blockchain.ContractList["Accounts"] = (&Accounts{}).new
-	blockchain.RegisterSelector("0xefc81a8c", "create()")
-	blockchain.RegisterSelector("0x56003f0f", "createTemporary(bytes32)")
-	blockchain.RegisterSelector("0xdb82967c", "createUsingProxy(address,bytes)")
-	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
-	blockchain.RegisterSelector("0xca5eb5e1", "setDelegate(address)")
-	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
-	blockchain.RegisterSelector("0x2299219d", "unlockTemporary(bytes32,address,bytes)")
-
 }
 
 // NewAccounts creates a new instance of Accounts, bound to a specific deployed contract.
@@ -156,46 +69,6 @@ func NewAccounts(address common.Address, backend bind.ContractBackend) (*Account
 		AccountsTransactor: AccountsTransactor{contract: contract},
 		AccountsFilterer:   AccountsFilterer{contract: contract},
 	}, nil
-}
-
-// NewAccountsCaller creates a new read-only instance of Accounts, bound to a specific deployed contract.
-func NewAccountsCaller(address common.Address, caller bind.ContractCaller) (*AccountsCaller, error) {
-	contract, err := bindAccounts(address, caller, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &AccountsCaller{contract: contract}, nil
-}
-
-// NewAccountsTransactor creates a new write-only instance of Accounts, bound to a specific deployed contract.
-func NewAccountsTransactor(address common.Address, transactor bind.ContractTransactor) (*AccountsTransactor, error) {
-	contract, err := bindAccounts(address, nil, transactor, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &AccountsTransactor{contract: contract}, nil
-}
-
-// NewAccountsFilterer creates a new log filterer instance of Accounts, bound to a specific deployed contract.
-func NewAccountsFilterer(address common.Address, filterer bind.ContractFilterer) (*AccountsFilterer, error) {
-	contract, err := bindAccounts(address, nil, nil, filterer)
-	if err != nil {
-		return nil, err
-	}
-	return &AccountsFilterer{contract: contract}, nil
-}
-
-// bindAccounts binds a generic wrapper to an already deployed contract.
-func bindAccounts(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(AccountsABI))
-	if err != nil {
-		return nil, err
-	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
-}
-
-func (_Accounts *Accounts) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
-	return NewAccounts(address, backend)
 }
 
 // Call invokes the (constant) contract method with params as input values and
@@ -217,12 +90,64 @@ func (_Accounts *AccountsRaw) Transact(opts *bind.TransactOpts, method string, p
 	return _Accounts.Contract.AccountsTransactor.contract.Transact(opts, method, params...)
 }
 
+// AccountsCaller is an auto generated read-only Go binding around an Ethereum contract.
+type AccountsCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// AccountsCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// with pre-set call options.
+type AccountsCallerSession struct {
+	Contract *AccountsCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts   // Call options to use throughout this session
+}
+
+// AccountsCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type AccountsCallerRaw struct {
+	Contract *AccountsCaller // Generic read-only contract binding to access the raw methods on
+}
+
+// NewAccountsCaller creates a new read-only instance of Accounts, bound to a specific deployed contract.
+func NewAccountsCaller(address common.Address, caller bind.ContractCaller) (*AccountsCaller, error) {
+	contract, err := bindAccounts(address, caller, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &AccountsCaller{contract: contract}, nil
+}
+
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
 func (_Accounts *AccountsCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	return _Accounts.Contract.contract.Call(opts, result, method, params...)
+}
+
+// AccountsTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type AccountsTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// AccountsTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// with pre-set transact options.
+type AccountsTransactorSession struct {
+	Contract     *AccountsTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
+}
+
+// AccountsTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type AccountsTransactorRaw struct {
+	Contract *AccountsTransactor // Generic write-only contract binding to access the raw methods on
+}
+
+// NewAccountsTransactor creates a new write-only instance of Accounts, bound to a specific deployed contract.
+func NewAccountsTransactor(address common.Address, transactor bind.ContractTransactor) (*AccountsTransactor, error) {
+	contract, err := bindAccounts(address, nil, transactor, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &AccountsTransactor{contract: contract}, nil
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
@@ -236,23 +161,59 @@ func (_Accounts *AccountsTransactorRaw) Transact(opts *bind.TransactOpts, method
 	return _Accounts.Contract.contract.Transact(opts, method, params...)
 }
 
+// AccountsFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type AccountsFilterer struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// NewAccountsFilterer creates a new log filterer instance of Accounts, bound to a specific deployed contract.
+func NewAccountsFilterer(address common.Address, filterer bind.ContractFilterer) (*AccountsFilterer, error) {
+	contract, err := bindAccounts(address, nil, nil, filterer)
+	if err != nil {
+		return nil, err
+	}
+	return &AccountsFilterer{contract: contract}, nil
+}
+
+// convenient hacks for blockchain.Client
+func init() {
+	blockchain.ContractList["Accounts"] = (&Accounts{}).new
+	blockchain.RegisterSelector("0xefc81a8c", "create()")
+	blockchain.RegisterSelector("0x56003f0f", "createTemporary(bytes32)")
+	blockchain.RegisterSelector("0x92eefe9b", "setController(address)")
+	blockchain.RegisterSelector("0x2299219d", "unlockTemporary(bytes32,address,bytes)")
+
+}
+
+// bindAccounts binds a generic wrapper to an already deployed contract.
+func bindAccounts(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(AccountsABI))
+	if err != nil {
+		return nil, err
+	}
+	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+func (_Accounts *Accounts) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
+	return NewAccounts(address, backend)
+}
+
 // Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
 //
-// Solidity: function accounts(bytes8 ) constant returns(address owner, uint8 status, address delegate, address proxy, address passwordProof)
+// Solidity: function accounts(bytes8 ) constant returns(address owner, uint8 status, address controller, address passwordProof)
 func (_Accounts *AccountsCaller) Accounts(opts *bind.CallOpts, arg0 [8]byte) (struct {
 	Owner         common.Address
 	Status        uint8
-	Delegate      common.Address
-	Proxy         common.Address
+	Controller    common.Address
 	PasswordProof common.Address
 }, error) {
 	ret := new(struct {
 		Owner         common.Address
 		Status        uint8
-		Delegate      common.Address
-		Proxy         common.Address
+		Controller    common.Address
 		PasswordProof common.Address
 	})
+
 	out := ret
 	err := _Accounts.contract.Call(opts, out, "accounts", arg0)
 	return *ret, err
@@ -260,12 +221,11 @@ func (_Accounts *AccountsCaller) Accounts(opts *bind.CallOpts, arg0 [8]byte) (st
 
 // Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
 //
-// Solidity: function accounts(bytes8 ) constant returns(address owner, uint8 status, address delegate, address proxy, address passwordProof)
+// Solidity: function accounts(bytes8 ) constant returns(address owner, uint8 status, address controller, address passwordProof)
 func (_Accounts *AccountsSession) Accounts(arg0 [8]byte) (struct {
 	Owner         common.Address
 	Status        uint8
-	Delegate      common.Address
-	Proxy         common.Address
+	Controller    common.Address
 	PasswordProof common.Address
 }, error) {
 	return _Accounts.Contract.Accounts(&_Accounts.CallOpts, arg0)
@@ -273,15 +233,85 @@ func (_Accounts *AccountsSession) Accounts(arg0 [8]byte) (struct {
 
 // Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
 //
-// Solidity: function accounts(bytes8 ) constant returns(address owner, uint8 status, address delegate, address proxy, address passwordProof)
+// Solidity: function accounts(bytes8 ) constant returns(address owner, uint8 status, address controller, address passwordProof)
 func (_Accounts *AccountsCallerSession) Accounts(arg0 [8]byte) (struct {
 	Owner         common.Address
 	Status        uint8
-	Delegate      common.Address
-	Proxy         common.Address
+	Controller    common.Address
 	PasswordProof common.Address
 }, error) {
 	return _Accounts.Contract.Accounts(&_Accounts.CallOpts, arg0)
+}
+
+// Exists is a free data retrieval call binding the contract method 0x97e4fea7.
+//
+// Solidity: function exists(bytes8 accountId) constant returns(bool)
+func (_Accounts *AccountsCaller) Exists(opts *bind.CallOpts, accountId [8]byte) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := &[]interface{}{ret0}
+	err := _Accounts.contract.Call(opts, out, "exists", accountId)
+	return *ret0, err
+}
+
+// Exists is a free data retrieval call binding the contract method 0x97e4fea7.
+//
+// Solidity: function exists(bytes8 accountId) constant returns(bool)
+func (_Accounts *AccountsSession) Exists(accountId [8]byte) (bool, error) {
+	return _Accounts.Contract.Exists(&_Accounts.CallOpts, accountId)
+}
+
+// Exists is a free data retrieval call binding the contract method 0x97e4fea7.
+//
+// Solidity: function exists(bytes8 accountId) constant returns(bool)
+func (_Accounts *AccountsCallerSession) Exists(accountId [8]byte) (bool, error) {
+	return _Accounts.Contract.Exists(&_Accounts.CallOpts, accountId)
+}
+
+// GetAccount is a free data retrieval call binding the contract method 0xf9292ddb.
+//
+// Solidity: function getAccount(bytes8 accountId) constant returns((address,uint8,address,address))
+func (_Accounts *AccountsCaller) GetAccount(opts *bind.CallOpts, accountId [8]byte) (struct {
+	Owner         common.Address
+	Status        uint8
+	Controller    common.Address
+	PasswordProof common.Address
+}, error) {
+	ret := new(struct {
+		Owner         common.Address
+		Status        uint8
+		Controller    common.Address
+		PasswordProof common.Address
+	})
+
+	out := ret
+	err := _Accounts.contract.Call(opts, out, "getAccount", accountId)
+	return *ret, err
+}
+
+// GetAccount is a free data retrieval call binding the contract method 0xf9292ddb.
+//
+// Solidity: function getAccount(bytes8 accountId) constant returns((address,uint8,address,address))
+func (_Accounts *AccountsSession) GetAccount(accountId [8]byte) (struct {
+	Owner         common.Address
+	Status        uint8
+	Controller    common.Address
+	PasswordProof common.Address
+}, error) {
+	return _Accounts.Contract.GetAccount(&_Accounts.CallOpts, accountId)
+}
+
+// GetAccount is a free data retrieval call binding the contract method 0xf9292ddb.
+//
+// Solidity: function getAccount(bytes8 accountId) constant returns((address,uint8,address,address))
+func (_Accounts *AccountsCallerSession) GetAccount(accountId [8]byte) (struct {
+	Owner         common.Address
+	Status        uint8
+	Controller    common.Address
+	PasswordProof common.Address
+}, error) {
+	return _Accounts.Contract.GetAccount(&_Accounts.CallOpts, accountId)
 }
 
 // GetAccountId is a free data retrieval call binding the contract method 0xe0b490f7.
@@ -291,7 +321,7 @@ func (_Accounts *AccountsCaller) GetAccountId(opts *bind.CallOpts, sender common
 	var (
 		ret0 = new([8]byte)
 	)
-	out := ret0
+	out := &[]interface{}{ret0}
 	err := _Accounts.contract.Call(opts, out, "getAccountId", sender)
 	return *ret0, err
 }
@@ -317,7 +347,7 @@ func (_Accounts *AccountsCaller) GetAccountIdFromSignature(opts *bind.CallOpts, 
 	var (
 		ret0 = new([8]byte)
 	)
-	out := ret0
+	out := &[]interface{}{ret0}
 	err := _Accounts.contract.Call(opts, out, "getAccountIdFromSignature", messageHash, signature)
 	return *ret0, err
 }
@@ -343,7 +373,7 @@ func (_Accounts *AccountsCaller) IdentityHashToAccount(opts *bind.CallOpts, arg0
 	var (
 		ret0 = new([8]byte)
 	)
-	out := ret0
+	out := &[]interface{}{ret0}
 	err := _Accounts.contract.Call(opts, out, "identityHashToAccount", arg0)
 	return *ret0, err
 }
@@ -362,56 +392,30 @@ func (_Accounts *AccountsCallerSession) IdentityHashToAccount(arg0 [32]byte) ([8
 	return _Accounts.Contract.IdentityHashToAccount(&_Accounts.CallOpts, arg0)
 }
 
-// IsDelegateOf is a free data retrieval call binding the contract method 0x3e1da046.
+// IsControllerOf is a free data retrieval call binding the contract method 0xa83038e7.
 //
-// Solidity: function isDelegateOf(address sender, bytes8 accountId) constant returns(bool)
-func (_Accounts *AccountsCaller) IsDelegateOf(opts *bind.CallOpts, sender common.Address, accountId [8]byte) (bool, error) {
+// Solidity: function isControllerOf(address sender, bytes8 accountId) constant returns(bool)
+func (_Accounts *AccountsCaller) IsControllerOf(opts *bind.CallOpts, sender common.Address, accountId [8]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
-	out := ret0
-	err := _Accounts.contract.Call(opts, out, "isDelegateOf", sender, accountId)
+	out := &[]interface{}{ret0}
+	err := _Accounts.contract.Call(opts, out, "isControllerOf", sender, accountId)
 	return *ret0, err
 }
 
-// IsDelegateOf is a free data retrieval call binding the contract method 0x3e1da046.
+// IsControllerOf is a free data retrieval call binding the contract method 0xa83038e7.
 //
-// Solidity: function isDelegateOf(address sender, bytes8 accountId) constant returns(bool)
-func (_Accounts *AccountsSession) IsDelegateOf(sender common.Address, accountId [8]byte) (bool, error) {
-	return _Accounts.Contract.IsDelegateOf(&_Accounts.CallOpts, sender, accountId)
+// Solidity: function isControllerOf(address sender, bytes8 accountId) constant returns(bool)
+func (_Accounts *AccountsSession) IsControllerOf(sender common.Address, accountId [8]byte) (bool, error) {
+	return _Accounts.Contract.IsControllerOf(&_Accounts.CallOpts, sender, accountId)
 }
 
-// IsDelegateOf is a free data retrieval call binding the contract method 0x3e1da046.
+// IsControllerOf is a free data retrieval call binding the contract method 0xa83038e7.
 //
-// Solidity: function isDelegateOf(address sender, bytes8 accountId) constant returns(bool)
-func (_Accounts *AccountsCallerSession) IsDelegateOf(sender common.Address, accountId [8]byte) (bool, error) {
-	return _Accounts.Contract.IsDelegateOf(&_Accounts.CallOpts, sender, accountId)
-}
-
-// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
-//
-// Solidity: function isOwner() constant returns(bool)
-func (_Accounts *AccountsCaller) IsOwner(opts *bind.CallOpts) (bool, error) {
-	var (
-		ret0 = new(bool)
-	)
-	out := ret0
-	err := _Accounts.contract.Call(opts, out, "isOwner")
-	return *ret0, err
-}
-
-// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
-//
-// Solidity: function isOwner() constant returns(bool)
-func (_Accounts *AccountsSession) IsOwner() (bool, error) {
-	return _Accounts.Contract.IsOwner(&_Accounts.CallOpts)
-}
-
-// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
-//
-// Solidity: function isOwner() constant returns(bool)
-func (_Accounts *AccountsCallerSession) IsOwner() (bool, error) {
-	return _Accounts.Contract.IsOwner(&_Accounts.CallOpts)
+// Solidity: function isControllerOf(address sender, bytes8 accountId) constant returns(bool)
+func (_Accounts *AccountsCallerSession) IsControllerOf(sender common.Address, accountId [8]byte) (bool, error) {
+	return _Accounts.Contract.IsControllerOf(&_Accounts.CallOpts, sender, accountId)
 }
 
 // IsTemporary is a free data retrieval call binding the contract method 0x6b886888.
@@ -421,7 +425,7 @@ func (_Accounts *AccountsCaller) IsTemporary(opts *bind.CallOpts, accountId [8]b
 	var (
 		ret0 = new(bool)
 	)
-	out := ret0
+	out := &[]interface{}{ret0}
 	err := _Accounts.contract.Call(opts, out, "isTemporary", accountId)
 	return *ret0, err
 }
@@ -447,7 +451,7 @@ func (_Accounts *AccountsCaller) NumberOfAccounts(opts *bind.CallOpts) (*big.Int
 	var (
 		ret0 = new(*big.Int)
 	)
-	out := ret0
+	out := &[]interface{}{ret0}
 	err := _Accounts.contract.Call(opts, out, "numberOfAccounts")
 	return *ret0, err
 }
@@ -464,32 +468,6 @@ func (_Accounts *AccountsSession) NumberOfAccounts() (*big.Int, error) {
 // Solidity: function numberOfAccounts() constant returns(uint256)
 func (_Accounts *AccountsCallerSession) NumberOfAccounts() (*big.Int, error) {
 	return _Accounts.Contract.NumberOfAccounts(&_Accounts.CallOpts)
-}
-
-// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() constant returns(address)
-func (_Accounts *AccountsCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
-	var (
-		ret0 = new(common.Address)
-	)
-	out := ret0
-	err := _Accounts.contract.Call(opts, out, "owner")
-	return *ret0, err
-}
-
-// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() constant returns(address)
-func (_Accounts *AccountsSession) Owner() (common.Address, error) {
-	return _Accounts.Contract.Owner(&_Accounts.CallOpts)
-}
-
-// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() constant returns(address)
-func (_Accounts *AccountsCallerSession) Owner() (common.Address, error) {
-	return _Accounts.Contract.Owner(&_Accounts.CallOpts)
 }
 
 // Create is a paid mutator transaction binding the contract method 0xefc81a8c.
@@ -534,88 +512,25 @@ func (_Accounts *AccountsTransactorSession) CreateTemporary(identityHash [32]byt
 	return _Accounts.Contract.CreateTemporary(&_Accounts.TransactOpts, identityHash)
 }
 
-// CreateUsingProxy is a paid mutator transaction binding the contract method 0xdb82967c.
+// SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
 //
-// Solidity: function createUsingProxy(address owner, bytes passwordSignature) returns()
-func (_Accounts *AccountsTransactor) CreateUsingProxy(opts *bind.TransactOpts, owner common.Address, passwordSignature []byte) (*ethTypes.Transaction, error) {
-	return _Accounts.contract.Transact(opts, "createUsingProxy", owner, passwordSignature)
+// Solidity: function setController(address controller) returns()
+func (_Accounts *AccountsTransactor) SetController(opts *bind.TransactOpts, controller common.Address) (*ethTypes.Transaction, error) {
+	return _Accounts.contract.Transact(opts, "setController", controller)
 }
 
-// CreateUsingProxy is a paid mutator transaction binding the contract method 0xdb82967c.
+// SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
 //
-// Solidity: function createUsingProxy(address owner, bytes passwordSignature) returns()
-func (_Accounts *AccountsSession) CreateUsingProxy(owner common.Address, passwordSignature []byte) (*ethTypes.Transaction, error) {
-	return _Accounts.Contract.CreateUsingProxy(&_Accounts.TransactOpts, owner, passwordSignature)
+// Solidity: function setController(address controller) returns()
+func (_Accounts *AccountsSession) SetController(controller common.Address) (*ethTypes.Transaction, error) {
+	return _Accounts.Contract.SetController(&_Accounts.TransactOpts, controller)
 }
 
-// CreateUsingProxy is a paid mutator transaction binding the contract method 0xdb82967c.
+// SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
 //
-// Solidity: function createUsingProxy(address owner, bytes passwordSignature) returns()
-func (_Accounts *AccountsTransactorSession) CreateUsingProxy(owner common.Address, passwordSignature []byte) (*ethTypes.Transaction, error) {
-	return _Accounts.Contract.CreateUsingProxy(&_Accounts.TransactOpts, owner, passwordSignature)
-}
-
-// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
-//
-// Solidity: function renounceOwnership() returns()
-func (_Accounts *AccountsTransactor) RenounceOwnership(opts *bind.TransactOpts) (*ethTypes.Transaction, error) {
-	return _Accounts.contract.Transact(opts, "renounceOwnership")
-}
-
-// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
-//
-// Solidity: function renounceOwnership() returns()
-func (_Accounts *AccountsSession) RenounceOwnership() (*ethTypes.Transaction, error) {
-	return _Accounts.Contract.RenounceOwnership(&_Accounts.TransactOpts)
-}
-
-// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
-//
-// Solidity: function renounceOwnership() returns()
-func (_Accounts *AccountsTransactorSession) RenounceOwnership() (*ethTypes.Transaction, error) {
-	return _Accounts.Contract.RenounceOwnership(&_Accounts.TransactOpts)
-}
-
-// SetDelegate is a paid mutator transaction binding the contract method 0xca5eb5e1.
-//
-// Solidity: function setDelegate(address delegate) returns()
-func (_Accounts *AccountsTransactor) SetDelegate(opts *bind.TransactOpts, delegate common.Address) (*ethTypes.Transaction, error) {
-	return _Accounts.contract.Transact(opts, "setDelegate", delegate)
-}
-
-// SetDelegate is a paid mutator transaction binding the contract method 0xca5eb5e1.
-//
-// Solidity: function setDelegate(address delegate) returns()
-func (_Accounts *AccountsSession) SetDelegate(delegate common.Address) (*ethTypes.Transaction, error) {
-	return _Accounts.Contract.SetDelegate(&_Accounts.TransactOpts, delegate)
-}
-
-// SetDelegate is a paid mutator transaction binding the contract method 0xca5eb5e1.
-//
-// Solidity: function setDelegate(address delegate) returns()
-func (_Accounts *AccountsTransactorSession) SetDelegate(delegate common.Address) (*ethTypes.Transaction, error) {
-	return _Accounts.Contract.SetDelegate(&_Accounts.TransactOpts, delegate)
-}
-
-// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
-//
-// Solidity: function transferOwnership(address newOwner) returns()
-func (_Accounts *AccountsTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*ethTypes.Transaction, error) {
-	return _Accounts.contract.Transact(opts, "transferOwnership", newOwner)
-}
-
-// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
-//
-// Solidity: function transferOwnership(address newOwner) returns()
-func (_Accounts *AccountsSession) TransferOwnership(newOwner common.Address) (*ethTypes.Transaction, error) {
-	return _Accounts.Contract.TransferOwnership(&_Accounts.TransactOpts, newOwner)
-}
-
-// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
-//
-// Solidity: function transferOwnership(address newOwner) returns()
-func (_Accounts *AccountsTransactorSession) TransferOwnership(newOwner common.Address) (*ethTypes.Transaction, error) {
-	return _Accounts.Contract.TransferOwnership(&_Accounts.TransactOpts, newOwner)
+// Solidity: function setController(address controller) returns()
+func (_Accounts *AccountsTransactorSession) SetController(controller common.Address) (*ethTypes.Transaction, error) {
+	return _Accounts.Contract.SetController(&_Accounts.TransactOpts, controller)
 }
 
 // UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
@@ -637,163 +552,6 @@ func (_Accounts *AccountsSession) UnlockTemporary(identityPreimage [32]byte, new
 // Solidity: function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) returns()
 func (_Accounts *AccountsTransactorSession) UnlockTemporary(identityPreimage [32]byte, newOwner common.Address, passwordSignature []byte) (*ethTypes.Transaction, error) {
 	return _Accounts.Contract.UnlockTemporary(&_Accounts.TransactOpts, identityPreimage, newOwner, passwordSignature)
-}
-
-// AccountsOwnershipTransferredIterator is returned from FilterOwnershipTransferred and is used to iterate over the raw logs and unpacked data for OwnershipTransferred events raised by the Accounts contract.
-type AccountsOwnershipTransferredIterator struct {
-	Event *AccountsOwnershipTransferred // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan ethTypes.Log     // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
-}
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
-func (it *AccountsOwnershipTransferredIterator) Next() bool {
-	// If the iterator failed, stop iterating
-	if it.fail != nil {
-		return false
-	}
-	// If the iterator completed, deliver directly whatever's available
-	if it.done {
-		select {
-		case log := <-it.logs:
-			it.Event = new(AccountsOwnershipTransferred)
-			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-				it.fail = err
-				return false
-			}
-			it.Event.Raw = log
-			return true
-
-		default:
-			return false
-		}
-	}
-	// Iterator still in progress, wait for either a data or an error event
-	select {
-	case log := <-it.logs:
-		it.Event = new(AccountsOwnershipTransferred)
-		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
-			it.fail = err
-			return false
-		}
-		it.Event.Raw = log
-		return true
-
-	case err := <-it.sub.Err():
-		it.done = true
-		it.fail = err
-		return it.Next()
-	}
-}
-
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *AccountsOwnershipTransferredIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *AccountsOwnershipTransferredIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// AccountsOwnershipTransferred represents a OwnershipTransferred event raised by the Accounts contract.
-type AccountsOwnershipTransferred struct {
-	PreviousOwner common.Address
-	NewOwner      common.Address
-	Raw           ethTypes.Log // Blockchain specific contextual infos
-}
-
-// FilterOwnershipTransferred is a free log retrieval operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
-//
-// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-func (_Accounts *AccountsFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*AccountsOwnershipTransferredIterator, error) {
-
-	var previousOwnerRule []interface{}
-	for _, previousOwnerItem := range previousOwner {
-		previousOwnerRule = append(previousOwnerRule, previousOwnerItem)
-	}
-	var newOwnerRule []interface{}
-	for _, newOwnerItem := range newOwner {
-		newOwnerRule = append(newOwnerRule, newOwnerItem)
-	}
-
-	logs, sub, err := _Accounts.contract.FilterLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
-	if err != nil {
-		return nil, err
-	}
-	return &AccountsOwnershipTransferredIterator{contract: _Accounts.contract, event: "OwnershipTransferred", logs: logs, sub: sub}, nil
-}
-
-// FilterOwnershipTransferred parses the event from given transaction receipt.
-//
-// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-func (_Accounts *AccountsFilterer) ParseOwnershipTransferredFromReceipt(receipt *ethTypes.Receipt) (*AccountsOwnershipTransferred, error) {
-	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
-			event := new(AccountsOwnershipTransferred)
-			if err := _Accounts.contract.UnpackLog(event, "OwnershipTransferred", *log); err != nil {
-				return nil, err
-			}
-			return event, nil
-		}
-	}
-	return nil, errors.New("OwnershipTransferred event not found")
-}
-
-// WatchOwnershipTransferred is a free log subscription operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
-//
-// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-func (_Accounts *AccountsFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *AccountsOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error) {
-
-	var previousOwnerRule []interface{}
-	for _, previousOwnerItem := range previousOwner {
-		previousOwnerRule = append(previousOwnerRule, previousOwnerItem)
-	}
-	var newOwnerRule []interface{}
-	for _, newOwnerItem := range newOwner {
-		newOwnerRule = append(newOwnerRule, newOwnerItem)
-	}
-
-	logs, sub, err := _Accounts.contract.WatchLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
-	if err != nil {
-		return nil, err
-	}
-	return event.NewSubscription(func(quit <-chan struct{}) error {
-		defer sub.Unsubscribe()
-		for {
-			select {
-			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
-				event := new(AccountsOwnershipTransferred)
-				if err := _Accounts.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
-					return err
-				}
-				event.Raw = log
-
-				select {
-				case sink <- event:
-				case err := <-sub.Err():
-					return err
-				case <-quit:
-					return nil
-				}
-			case err := <-sub.Err():
-				return err
-			case <-quit:
-				return nil
-			}
-		}
-	}), nil
 }
 
 // AccountsSignUpIterator is returned from FilterSignUp and is used to iterate over the raw logs and unpacked data for SignUp events raised by the Accounts contract.
