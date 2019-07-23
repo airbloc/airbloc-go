@@ -1,21 +1,13 @@
 package consumer
 
 import (
-	pAPI "github.com/airbloc/airbloc-go/provider/api"
+	cAPI "github.com/airbloc/airbloc-go/consumer/api"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 )
 
-// TODO : update api list
 var apis = []api.Constructor{
-	pAPI.NewAppsAPI,
-	pAPI.NewCollectionsAPI,
-	pAPI.NewDataAPI,
-	pAPI.NewDAuthAPI,
-	pAPI.NewExchangeAPI,
-	pAPI.NewSchemaAPI,
-	pAPI.NewWarehouseAPI,
-	pAPI.NewAccountsAPI,
+	cAPI.NewExchangeAPI,
 }
 
 type Service struct {
