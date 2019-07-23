@@ -96,8 +96,15 @@ func (api *AccountsAPI) SetController(c *gin.Context) {
 }
 
 func (api *AccountsAPI) GetAccount(c *gin.Context) {
-	rawAccountId := c.Param("accountId")
-	accountId, err := types.HexToID(rawAccountId)
+	var req struct {
+		AccountId string
+	}
+
+	if err := c.MustBindWith(&req, binding.Query); err != nil {
+		return
+	}
+
+	accountId, err := types.HexToID(req.AccountId)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
 		return
@@ -112,8 +119,18 @@ func (api *AccountsAPI) GetAccount(c *gin.Context) {
 }
 
 func (api *AccountsAPI) GetAccountId(c *gin.Context) {
-	if rawOwner, ok := c.GetQuery("owner"); ok {
-		owner := common.HexToAddress(rawOwner)
+	var req struct {
+		Owner       string `form:"owner"`
+		MessageHash string `form:"messageHash"`
+		Signature   string `form:"signature"`
+	}
+
+	if err := c.MustBindWith(&req, binding.Query); err != nil {
+		return
+	}
+
+	if req.Owner != "" {
+		owner := common.HexToAddress(req.Owner)
 		accountId, err := api.accounts.GetAccountId(owner)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
@@ -123,15 +140,14 @@ func (api *AccountsAPI) GetAccountId(c *gin.Context) {
 		return
 	}
 
-	rawMessageHash, ok1 := c.GetQuery("messageHash")
-	rawSignature, ok2 := c.GetQuery("signature")
-	if ok1 && ok2 {
-		messageHash := common.HexToHash(rawMessageHash)
-		signature, err := hex.DecodeString(rawSignature)
+	if req.MessageHash != "" && req.Signature != "" {
+		messageHash := common.HexToHash(req.MessageHash)
+		signature, err := hex.DecodeString(req.Signature)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
 			return
 		}
+
 		accountId, err := api.accounts.GetAccountIdFromSignature(messageHash, signature)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
