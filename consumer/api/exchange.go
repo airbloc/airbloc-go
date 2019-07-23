@@ -1,13 +1,13 @@
 package api
 
 import (
-	"context"
+	"net/http"
+
 	"github.com/airbloc/airbloc-go/consumer/exchange"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type ExchangeAPI struct {
@@ -23,32 +23,51 @@ func (api *ExchangeAPI) Settle(c *gin.Context) {
 	rawOfferId := c.Param("offerId")
 	offerId, err := types.HexToID(rawOfferId)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
 		return
 	}
 
 	if err := api.manager.Settle(c, offerId); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err})
 		return
 	}
+	c.JSON(http.StatusOK, gin.H{"offerId": offerId})
 }
 
 func (api *ExchangeAPI) Reject(c *gin.Context) {
 	rawOfferId := c.Param("offerId")
 	offerId, err := types.HexToID(rawOfferId)
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
 		return
 	}
 
 	if err := api.manager.Reject(c, offerId); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err})
 		return
 	}
+	c.JSON(http.StatusOK, gin.H{"offerId": offerId})
+}
+
+func (api *ExchangeAPI) GetOffer(c *gin.Context) {
+	rawOfferId := c.Param("offerId")
+	offerId, err := types.HexToID(rawOfferId)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+		return
+	}
+
+	offer, err := api.manager.GetOffer(offerId)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err})
+		return
+	}
+	c.JSON(http.StatusOK, offer)
 }
 
 func (api *ExchangeAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.RestAPIMux.Group("/exchange")
 	apiMux.GET("/settle/:offerId", api.Settle)
 	apiMux.GET("/reject/:offerId", api.Reject)
+	apiMux.GET("/order/:offerId", api.GetOffer)
 }
