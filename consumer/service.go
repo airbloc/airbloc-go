@@ -43,9 +43,9 @@ func NewService(backend service.Backend) (service.Service, error) {
 }
 
 func (service Service) Start() error {
-	return service.Start()
+	return service.Service.Start()
 }
 
 func (service Service) Stop() {
-	service.Stop()
+	service.Service.Stop()
 }
