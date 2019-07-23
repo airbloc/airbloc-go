@@ -1,6 +1,7 @@
 package types
 
 import (
+	"bytes"
 	"encoding/hex"
 	"fmt"
 	"github.com/pkg/errors"
@@ -57,6 +58,15 @@ func NewDataId(dataID string) (id *DataId, err error) {
 	}
 	copy(id.RowId[:], rowId)
 
+	return
+}
+
+func (id *DataId) Bytes() (b [20]byte) {
+	var buffer bytes.Buffer
+	buffer.Write(id.BundleId[:])
+	buffer.Write(id.UserId[:])
+	buffer.Write(id.RowId[:])
+	copy(b[:], buffer.Bytes())
 	return
 }
 
