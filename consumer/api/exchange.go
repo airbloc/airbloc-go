@@ -28,10 +28,10 @@ func (api *ExchangeAPI) Settle(c *gin.Context) {
 	}
 
 	if err := api.manager.Settle(c, offerId); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"offerId": offerId})
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
 func (api *ExchangeAPI) Reject(c *gin.Context) {
@@ -43,10 +43,10 @@ func (api *ExchangeAPI) Reject(c *gin.Context) {
 	}
 
 	if err := api.manager.Reject(c, offerId); err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"offerId": offerId})
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
 func (api *ExchangeAPI) GetOffer(c *gin.Context) {
@@ -59,7 +59,7 @@ func (api *ExchangeAPI) GetOffer(c *gin.Context) {
 
 	offer, err := api.manager.GetOffer(offerId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": err})
 		return
 	}
 	c.JSON(http.StatusOK, offer)
