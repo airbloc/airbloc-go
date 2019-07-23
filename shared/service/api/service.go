@@ -5,9 +5,9 @@ import (
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/logger"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/pkg/errors"
 	"github.com/soheilhy/cmux"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"net"
 	"net/http"
@@ -17,7 +17,6 @@ import (
 type Service struct {
 	GrpcServer *grpc.Server
 	HttpServer *http.Server
-	RestAPIMux *runtime.ServeMux
 	Address    string
 
 	port int
@@ -32,12 +31,10 @@ func NewService(backend service.Backend) (service.Service, error) {
 			UnaryServerLogger(),
 		)),
 	)
-	restAPImux := runtime.NewServeMux()
 	config := backend.Config()
 	address := fmt.Sprintf("localhost:%d", config.Port)
 	svc := &Service{
 		GrpcServer: grpcServer,
-		RestAPIMux: restAPImux,
 		HttpServer: &http.Server{
 			Addr:    address,
 			Handler: restAPImux,
@@ -65,18 +62,23 @@ func (service *Service) Start() error {
 	grpcLis := m.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
 	restLis := m.Match(cmux.HTTP1Fast())
 
-	go service.withErrorHandler(service.GrpcServer.Serve, grpcLis)
-	go service.withErrorHandler(service.HttpServer.Serve, restLis)
+	var g errgroup.Group
 
-	service.logger.Info("Server started at {}", service.Address)
-	return m.Serve()
-}
+	g.Go(func() error {
+		return service.GrpcServer.Serve(grpcLis)
+	})
 
-func (service *Service) withErrorHandler(serveMethod func(net.Listener) error, lis net.Listener) {
-	if err := serveMethod(lis); err != http.ErrServerClosed {
+	g.Go(func() error {
+		return service.HttpServer.Serve(restLis)
+	})
+
+	if err := g.Wait(); err != nil {
 		service.logger.Error("failed to run rpc server: %+v", err)
 		os.Exit(1)
 	}
+
+	service.logger.Info("Server started at {}", service.Address)
+	return m.Serve()
 }
 
 // Stop stops gRPC server.
