@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/logger"
+	"github.com/gin-gonic/gin"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/pkg/errors"
 	"github.com/soheilhy/cmux"
@@ -16,6 +17,7 @@ import (
 
 type Service struct {
 	GrpcServer *grpc.Server
+	RestAPIMux *gin.Engine
 	HttpServer *http.Server
 	Address    string
 
@@ -26,22 +28,27 @@ type Service struct {
 }
 
 func NewService(backend service.Backend) (service.Service, error) {
+	config := backend.Config()
+	address := fmt.Sprintf("localhost:%d", config.Port)
+
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			UnaryServerLogger(),
 		)),
 	)
-	config := backend.Config()
-	address := fmt.Sprintf("localhost:%d", config.Port)
+	restAPIMux := gin.New()
+	httpServer := &http.Server{
+		Addr:    address,
+		Handler: restAPIMux,
+	}
+
 	svc := &Service{
 		GrpcServer: grpcServer,
-		HttpServer: &http.Server{
-			Addr:    address,
-			Handler: restAPImux,
-		},
-		Address: address,
-		port:    config.Port,
-		logger:  logger.New("apiservice"),
+		RestAPIMux: restAPIMux,
+		HttpServer: httpServer,
+		Address:    address,
+		port:       config.Port,
+		logger:     logger.New("apiservice"),
 	}
 	return svc, nil
 }
