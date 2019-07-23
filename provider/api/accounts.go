@@ -143,76 +143,12 @@ func (api *AccountsAPI) GetAccountId(c *gin.Context) {
 	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Bad Request"})
 }
 
-func (api *AccountsAPI) IsTemporary(c *gin.Context) {
-	if rawAccountId, ok := c.GetQuery("accountId"); ok {
-		accountId, err := types.HexToID(rawAccountId)
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
-			return
-		}
-
-		isTemporary, err := api.accounts.IsTemporary(accountId)
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{"isTemporary": isTemporary})
-	}
-	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Bad Request"})
-}
-
-func (api *AccountsAPI) IsControllerOf(c *gin.Context) {
-	rawController, ok1 := c.GetQuery("controller")
-	rawAccountId, ok2 := c.GetQuery("accountId")
-	if ok1 && ok2 {
-		controller := common.HexToAddress(rawController)
-		accountId, err := types.HexToID(rawAccountId)
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
-			return
-		}
-
-		isControllerOf, err := api.accounts.IsControllerOf(controller, accountId)
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{"isControllerOf": isControllerOf})
-	}
-	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Bad Request"})
-}
-
-func (api *AccountsAPI) Exists(c *gin.Context) {
-	rawAccountId := c.Param("accountId")
-	accountId, err := types.HexToID(rawAccountId)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
-		return
-	}
-
-	exist, err := api.accounts.Exists(accountId)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"exist": exist})
-}
-
 func (api *AccountsAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.RestAPIMux.Group("/accounts")
 	apiMux.POST("/", api.Create)
-
 	apiMux.GET("/:accountId", api.GetAccount)
-	apiMux.GET("/:accountId/check", api.Exists)
-
 	apiMux.GET("/id", api.GetAccountId)
-
 	apiMux.PATCH("/controller", api.SetController)
-	apiMux.GET("/controller/check", api.IsControllerOf)
-
 	apiMux.POST("/temporary", api.CreateTemporary)
-	apiMux.GET("/temporary/check", api.IsTemporary)
 	apiMux.PATCH("/temporary/unlock", api.UnlockTemporary)
 }

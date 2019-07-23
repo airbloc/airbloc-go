@@ -102,15 +102,3 @@ func (manager *Manager) GetAccountId(owner ethCommon.Address) (types.ID, error) 
 func (manager *Manager) GetAccountIdFromSignature(messageHash ethCommon.Hash, signature []byte) (types.ID, error) {
 	return manager.contract.GetAccountIdFromSignature(nil, messageHash, signature)
 }
-
-func (manager *Manager) IsTemporary(accountId types.ID) (bool, error) {
-	return manager.contract.IsTemporary(nil, accountId)
-}
-
-func (manager *Manager) IsControllerOf(controller ethCommon.Address, accountId types.ID) (bool, error) {
-	return manager.contract.IsControllerOf(nil, controller, accountId)
-}
-
-func (manager *Manager) Exists(accountId types.ID) (bool, error) {
-	return manager.contract.Exists(nil, accountId)
-}
