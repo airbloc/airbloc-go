@@ -1,22 +1,10 @@
 package apps
 
 import (
-	"context"
-
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
-	ethCommon "github.com/ethereum/go-ethereum/common"
-	"github.com/pkg/errors"
-)
-
-var (
-	ErrPrefix          = "apps : "
-	ErrCannotCreateTx  = ErrPrefix + "failed to create tx"
-	ErrCannotCall      = ErrPrefix + "call failed"
-	ErrContext         = ErrPrefix + "context error"
-	ErrTxReverted      = ErrPrefix + "tx reverted"
-	ErrEventParseError = ErrPrefix + "failed to parse event from receipt"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 type Manager struct {
@@ -32,66 +20,53 @@ func NewManager(client blockchain.TxClient) *Manager {
 	}
 }
 
-func (apps *Manager) TransferOwnership(ctx context.Context, appId types.ID, newOwner ethCommon.Address) (bool, error) {
-	tx, err := apps.contract.TransferAppOwner(apps.client.Account(), appId, newOwner)
+func (manager *Manager) Register(appName string) error {
+	tx, err := manager.contract.Register(manager.client.Account(), appName)
 	if err != nil {
-		return false, errors.Wrap(err, ErrCannotCreateTx)
+		return err
 	}
 
-	_, err = apps.client.WaitMined(ctx, tx)
-	if ctx.Err() != nil {
-		return false, errors.Wrap(err, ErrContext)
+	receipt, err := manager.client.WaitMined(ctx, tx)
+	if err != nil {
+		return err
 	}
 
-	if err != nil {
-		return false, errors.Wrap(err, ErrTxReverted)
-	}
-	return true, nil
+	_, err = manager.contract.ParseRegistrationFromReceipt(receipt)
+	return err
 }
 
-func (apps *Manager) IsOwner(ctx context.Context, appId types.ID, owner ethCommon.Address) (bool, error) {
-	result, err := apps.contract.IsOwner(nil, appId, owner)
+func (manager *Manager) Unregister(appName string) error {
+	tx, err := manager.contract.Unregister(manager.client.Account(), appName)
 	if err != nil {
-		return false, errors.Wrap(err, ErrCannotCall)
+		return err
 	}
-	return result, nil
+
+	receipt, err := manager.client.WaitMined(ctx, tx)
+	if err != nil {
+		return err
+	}
+
+	_, err = manager.contract.ParseUnregistrationFromReceipt(receipt)
+	return err
+
 }
 
-func (apps *Manager) Register(ctx context.Context, name string) (types.ID, error) {
-	tx, err := apps.contract.Register(apps.client.Account(), name)
-	if err != nil {
-		return types.ID{}, errors.Wrap(err, ErrCannotCreateTx)
-	}
-
-	receipt, err := apps.client.WaitMined(ctx, tx)
-	if ctx.Err() != nil {
-		return types.ID{}, errors.Wrap(err, ErrContext)
-	}
-
-	if err != nil {
-		return types.ID{}, errors.Wrap(err, ErrTxReverted)
-	}
-
-	event, err := apps.contract.ParseRegisteredFromReceipt(receipt)
-	if err != nil {
-		return types.ID{}, errors.Wrap(err, ErrEventParseError)
-	}
-	return event.AppId, nil
+func (manager *Manager) Get(appName string) (types.App, error) {
+	return manager.contract.Get(nil, appName)
 }
 
-func (apps *Manager) Unregister(ctx context.Context, appId types.ID) (bool, error) {
-	tx, err := apps.contract.Unregister(apps.client.Account(), appId)
+func (manager *Manager) TransferAppOwner(appName string, newOwner common.Address) error {
+	tx, err := manager.contract.TransferAppOwner(manager.client.Account(), appName, newOwner)
 	if err != nil {
-		return false, errors.Wrap(err, ErrCannotCreateTx)
+		return err
 	}
 
-	_, err = apps.client.WaitMined(ctx, tx)
-	if ctx.Err() != nil {
-		return false, errors.Wrap(err, ErrContext)
+	receipt, err := manager.client.WaitMined(ctx, tx)
+	if err != nil {
+		return err
 	}
 
-	if err != nil {
-		return false, errors.Wrap(err, ErrTxReverted)
-	}
-	return true, nil
+	_, err = manager.contract.ParseAppOwnerTransferredFromReceipt(receipt)
+	return err
+
 }

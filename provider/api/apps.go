@@ -1,80 +1,76 @@
 package api
 
 import (
-	"context"
+	"net/http"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"github.com/ethereum/go-ethereum/common"
 
-	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
+	"github.com/gin-gonic/gin/binding"
+
 	"github.com/airbloc/airbloc-go/provider/apps"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
-	"github.com/airbloc/airbloc-go/shared/types"
-	ethCommon "github.com/ethereum/go-ethereum/common"
-	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/pkg/errors"
+	"github.com/gin-gonic/gin"
 )
 
-type AppsAPI struct {
+type AppRegistryAPI struct {
 	apps *apps.Manager
 }
 
-func NewAppsAPI(backend service.Backend) (api.API, error) {
-	appsManager := apps.NewManager(backend.Client())
-	return &AppsAPI{appsManager}, nil
+func NewAppRegistryAPI(backend service.Backend) (api.API, error) {
+	ar := apps.NewManager(backend.Client())
+	return &AppRegistryAPI{ar}, nil
 }
 
-func (api *AppsAPI) NewOwner(ctx context.Context, req *pb.NewOwnerRequest) (*empty.Empty, error) {
-	appId, err := types.HexToID(req.GetAppId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Invalid app ID: %s", req.GetAppId())
+func (api *AppRegistryAPI) Register(c *gin.Context) {
+	appName := c.Param(":appName")
+	if err := api.apps.Register(appName); err != nil {
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		return
 	}
-	address := ethCommon.HexToAddress(req.GetOwner())
-
-	_, err = api.apps.TransferOwnership(ctx, appId, address)
-	if err != nil {
-		return nil, err
-	}
-	return &empty.Empty{}, nil
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
-func (api *AppsAPI) CheckOwner(ctx context.Context, req *pb.CheckOwnerRequest) (*pb.CheckOwnerResult, error) {
-	appId, err := types.HexToID(req.GetAppId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Invalid app ID: %s", req.GetAppId())
+func (api *AppRegistryAPI) Unregister(c *gin.Context) {
+	appName := c.Param(":appName")
+	if err := api.apps.Unregister(appName); err != nil {
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		return
 	}
-	address := ethCommon.HexToAddress(req.GetOwner())
-
-	ok, err := api.apps.IsOwner(ctx, appId, address)
-	if err != nil {
-		return nil, err
-	}
-	return &pb.CheckOwnerResult{Ok: ok}, nil
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
-func (api *AppsAPI) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResult, error) {
-	appId, err := api.apps.Register(ctx, req.GetName())
-	if err != nil {
-		return nil, err
-	}
-	return &pb.RegisterResult{
-		AppId: appId.Hex(),
-	}, nil
-}
-func (api *AppsAPI) Unregister(ctx context.Context, req *pb.UnregisterRequest) (*empty.Empty, error) {
-	appId, err := types.HexToID(req.GetAppId())
-	if err != nil {
-		return nil, errors.Wrap(err, "api : invalid app ID")
-	}
+func (api *AppRegistryAPI) Get(c *gin.Context) {
+	appName := c.Param(":appName")
 
-	_, err = api.apps.Unregister(ctx, appId)
+	app, err := api.apps.Get(appName)
 	if err != nil {
-		return nil, err
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		return
 	}
-	return &empty.Empty{}, nil
+	c.JSON(http.StatusOK, app)
 }
 
-func (api *AppsAPI) AttachToAPI(service *api.Service) {
-	pb.RegisterAppsServer(service.GrpcServer, api)
+func (api *AppRegistryAPI) TransferAppOwner(c *gin.Context) {
+	appName := c.Param(":appName")
+
+	var req struct{ NewOwner string }
+	if err := c.MustBindWith(&req, binding.JSON); err != nil {
+		return
+	}
+
+	newOwner := common.HexToAddress(req.NewOwner)
+	if err := api.apps.TransferAppOwner(appName, newOwner); err != nil {
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
+}
+
+func (api *AppRegistryAPI) AttachToAPI(service *api.Service) {
+	apiMux := service.RestAPIMux.Group("/apps")
+	apiMux.GET("/:appName", api.Register)
+	apiMux.POST("/:appName", api.Unregister)
+	apiMux.PATCH("/:appName", api.Get)
+	apiMux.DELETE("/:appName", api.TransferAppOwner)
 }
