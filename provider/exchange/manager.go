@@ -97,41 +97,6 @@ func (manager *Manager) Order(ctx context.Context, offerId types.ID) error {
 	return nil
 }
 
-func (manager *Manager) Settle(ctx context.Context, offerId types.ID) (*adapter.ExchangeReceipt, error) {
-	manager.client.Account().GasLimit = 6000000
-	tx, err := manager.contract.Settle(manager.client.Account(), offerId)
-	if err != nil {
-		return nil, err
-	}
-
-	receipt, err := manager.client.WaitMined(ctx, tx)
-	if err != nil {
-		return nil, err
-	}
-
-	evt, err := manager.contract.ParseReceiptFromReceipt(receipt)
-	if err != nil {
-		return nil, err
-	}
-	// FIXME: right zero padding
-	evt.OfferId = offerId
-
-	return evt, nil
-}
-
-func (manager *Manager) Reject(ctx context.Context, offerId types.ID) error {
-	tx, err := manager.contract.Reject(manager.client.Account(), offerId)
-	if err != nil {
-		return err
-	}
-
-	_, err = manager.client.WaitMined(ctx, tx)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func (manager *Manager) GetOfferCompact(offerId types.ID) (*OfferCompact, error) {
 	from, to, escrow, err := manager.contract.GetOfferCompact(nil, offerId)
 	if err != nil {

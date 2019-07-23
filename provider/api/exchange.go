@@ -99,38 +99,6 @@ func (api *ExchangeAPI) Order(ctx context.Context, req *pb.OfferId) (*empty.Empt
 	return &empty.Empty{}, nil
 }
 
-func (api *ExchangeAPI) Settle(ctx context.Context, req *pb.OfferId) (*pb.Receipt, error) {
-	offerId, err := types.HexToID(req.GetOfferId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
-	}
-
-	receipt, err := api.manager.Settle(ctx, offerId)
-	if err != nil {
-		log.Println(err)
-		return nil, status.Errorf(codes.Internal, "Failed to settle")
-	}
-
-	return &pb.Receipt{
-		OfferId: hex.EncodeToString(receipt.OfferId[:]),
-		From:    receipt.From.Hex(),
-		To:      receipt.To.Hex(),
-	}, nil
-}
-
-func (api *ExchangeAPI) Reject(ctx context.Context, req *pb.OfferId) (*empty.Empty, error) {
-	offerId, err := types.HexToID(req.GetOfferId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
-	}
-
-	err = api.manager.Reject(ctx, offerId)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to reject")
-	}
-	return &empty.Empty{}, nil
-}
-
 func (api *ExchangeAPI) GetOffer(ctx context.Context, req *pb.OfferId) (*pb.Offer, error) {
 	offerId, err := types.HexToID(req.GetOfferId())
 	if err != nil {
