@@ -97,7 +97,11 @@ func (manager *Manager) Order(ctx context.Context, offerId types.ID) error {
 		return err
 	}
 
-	_, err = manager.client.WaitMined(ctx, tx)
+	receipt, err := manager.client.WaitMined(ctx, tx)
+	if err != nil {
+		return err
+	}
+	_, err = manager.contract.ParseOfferPresentedFromReceipt(receipt)
 	return err
 }
 
@@ -107,7 +111,11 @@ func (manager *Manager) Cancel(ctx context.Context, offerId types.ID) error {
 		return err
 	}
 
-	_, err = manager.client.WaitMined(ctx, tx)
+	receipt, err := manager.client.WaitMined(ctx, tx)
+	if err != nil {
+		return err
+	}
+	_, err = manager.contract.ParseOfferCanceledFromReceipt(receipt)
 	return err
 }
 
