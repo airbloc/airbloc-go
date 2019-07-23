@@ -7,14 +7,14 @@ import (
 )
 
 var apis = []api.Constructor{
-	pAPI.NewAppsAPI,
-	pAPI.NewCollectionsAPI,
+	pAPI.NewAccountsAPI,
+	pAPI.NewAppRegistryAPI,
+	pAPI.NewConsentsAPI,
 	pAPI.NewDataAPI,
 	pAPI.NewDAuthAPI,
+	pAPI.NewDataTypeRegistryAPI,
 	pAPI.NewExchangeAPI,
-	pAPI.NewSchemaAPI,
 	pAPI.NewWarehouseAPI,
-	pAPI.NewAccountsAPI,
 	pAPI.NewUserAPI,
 }
 
