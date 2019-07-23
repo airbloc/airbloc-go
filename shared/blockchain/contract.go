@@ -39,6 +39,7 @@ func (cm *ContractManager) Load(path string) error {
 		if err != nil {
 			return errors.Wrap(err, "failed to load deployment from url")
 		}
+		defer resp.Body.Close()
 		return cm.load(resp.Body)
 	}
 	f, err := os.OpenFile(path, os.O_RDONLY, os.ModePerm)
@@ -54,13 +55,13 @@ func (cm *ContractManager) load(reader io.Reader) error {
 
 	contracts := make(map[string]common.Address)
 	if err := decoder.Decode(&contracts); err != nil {
-		return errors.Wrap(err, "contract maanger : failed to decode json")
+		return errors.Wrap(err, "contract maanger: failed to decode json")
 	}
 
 	for name, addr := range contracts {
 		contract, err := ContractList[name](addr, cm.client)
 		if err != nil {
-			return errors.Wrap(err, "contract manager : failed to get contract")
+			return errors.Wrap(err, "contract manager: failed to get contract")
 		}
 		cm.addrToName[addr] = name
 		cm.SetContract(contract)
