@@ -11,21 +11,21 @@ import (
 	"github.com/gin-gonic/gin/binding"
 )
 
-// DataTypeRegistryAPI is api wrapper of contract DataTypeRegistry.sol
-type DataTypeRegistryAPI struct {
+// dataTypeRegistryAPI is api wrapper of contract DataTypeRegistry.sol
+type dataTypeRegistryAPI struct {
 	dataTypes *dataTypes.Manager
 }
 
-// NewDataTypeRegistryAPI makes new *DataTypeRegistryAPI struct
+// NewDataTypeRegistryAPI makes new *dataTypeRegistryAPI struct
 func NewDataTypeRegistryAPI(backend service.Backend) (api.API, error) {
 	dt := dataTypes.NewManager(backend.Client())
-	return &DataTypeRegistryAPI{dt}, nil
+	return &dataTypeRegistryAPI{dt}, nil
 }
 
 // Register is a paid mutator transaction binding the contract method 0x656afdee.
 //
 // Solidity: function register(string name, bytes32 schemaHash) returns()
-func (api *DataTypeRegistryAPI) Register(c *gin.Context) {
+func (api *dataTypeRegistryAPI) register(c *gin.Context) {
 	var req struct {
 		Name       string
 		SchemaHash string
@@ -49,7 +49,7 @@ func (api *DataTypeRegistryAPI) Register(c *gin.Context) {
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
 //
 // Solidity: function unregister(string name) returns()
-func (api *DataTypeRegistryAPI) Unregister(c *gin.Context) {
+func (api *dataTypeRegistryAPI) unregister(c *gin.Context) {
 	name := c.Param("name")
 	if err := api.dataTypes.Unregister(c, name); err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
@@ -61,7 +61,7 @@ func (api *DataTypeRegistryAPI) Unregister(c *gin.Context) {
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
 // Solidity: function get(string name) constant returns((string,address,bytes32))
-func (api *DataTypeRegistryAPI) Get(c *gin.Context) {
+func (api *dataTypeRegistryAPI) get(c *gin.Context) {
 	name := c.Param("name")
 	dataType, err := api.dataTypes.Get(c, name)
 	if err != nil {
@@ -72,9 +72,9 @@ func (api *DataTypeRegistryAPI) Get(c *gin.Context) {
 }
 
 // AttachToAPI is a registrant of an api.
-func (api *DataTypeRegistryAPI) AttachToAPI(service *api.Service) {
+func (api *dataTypeRegistryAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.RestAPIMux.Group("/data-types")
-	apiMux.GET("/:name", api.Get)
-	apiMux.POST("/", api.Register)
-	apiMux.DELETE("/:name", api.Unregister)
+	apiMux.GET("/:name", api.get)
+	apiMux.POST("/", api.register)
+	apiMux.DELETE("/:name", api.unregister)
 }
