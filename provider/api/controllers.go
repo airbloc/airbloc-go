@@ -10,21 +10,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ControllerRegistryAPI is api wrapper of contract ControllerRegistry.sol
-type ControllerRegistryAPI struct {
+// controllerRegistryAPI is api wrapper of contract ControllerRegistry.sol
+type controllerRegistryAPI struct {
 	controllers *controllers.Manager
 }
 
-// NewControllerRegistryAPI makes new *ControllerRegistryAPI struct
+// NewControllerRegistryAPI makes new *controllerRegistryAPI struct
 func NewControllerRegistryAPI(backend service.Backend) (api.API, error) {
 	cr := controllers.NewManager(backend.Client())
-	return &ControllerRegistryAPI{cr}, nil
+	return &controllerRegistryAPI{cr}, nil
 }
 
 // Register is a paid mutator transaction binding the contract method 0x4420e486.
 //
 // Solidity: function register(address controllerAddr) returns()
-func (api *ControllerRegistryAPI) Register(c *gin.Context) {
+func (api *controllerRegistryAPI) register(c *gin.Context) {
 	rawControllerAddr := c.Param("controllerAddr")
 	controllerAddr := common.HexToAddress(rawControllerAddr)
 
@@ -38,7 +38,7 @@ func (api *ControllerRegistryAPI) Register(c *gin.Context) {
 // Get is a free data retrieval call binding the contract method 0xc2bc2efc.
 //
 // Solidity: function get(address controller) constant returns((address,uint256))
-func (api *ControllerRegistryAPI) Get(c *gin.Context) {
+func (api *controllerRegistryAPI) get(c *gin.Context) {
 	rawControllerAddr := c.Param("controllerAddr")
 	controllerAddr := common.HexToAddress(rawControllerAddr)
 
@@ -51,8 +51,8 @@ func (api *ControllerRegistryAPI) Get(c *gin.Context) {
 }
 
 // AttachToAPI is a registrant of an api.
-func (api *ControllerRegistryAPI) AttachToAPI(service *api.Service) {
+func (api *controllerRegistryAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.RestAPIMux.Group("/controllers")
-	apiMux.GET("/:controllerAddr", api.Get)
-	apiMux.POST("/:controllerAddr", api.Register)
+	apiMux.GET("/:controllerAddr", api.get)
+	apiMux.POST("/:controllerAddr", api.register)
 }
