@@ -13,15 +13,20 @@ import (
 	"github.com/gin-gonic/gin/binding"
 )
 
+// ExchangeAPI is api wrapper of contract Exchange.sol
 type ExchangeAPI struct {
 	manager *exchange.Manager
 }
 
+// NewExchangeAPI makes new *ExchangeAPI struct
 func NewExchangeAPI(backend service.Backend) (api.API, error) {
 	ex := exchange.NewManager(backend.Client())
 	return &ExchangeAPI{ex}, nil
 }
 
+// Prepare is a paid mutator transaction binding the contract method 0x77e61c33.
+//
+// Solidity: function prepare(string provider, address consumer, address escrow, bytes4 escrowSign, bytes escrowArgs, bytes20[] dataIds) returns(bytes8)
 func (api *ExchangeAPI) Prepare(c *gin.Context) {
 	var req struct {
 		Provider   string   // string
@@ -64,7 +69,7 @@ func (api *ExchangeAPI) Prepare(c *gin.Context) {
 	}
 
 	offerId, err := api.manager.Prepare(
-		c, provider, consumer,
+		c, req.Provider, consumer,
 		escrow, escrowSign, escrowArgs,
 		dataIds...,
 	)
@@ -76,6 +81,9 @@ func (api *ExchangeAPI) Prepare(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"offerId": offerId})
 }
 
+// AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
+//
+// Solidity: function addDataIds(bytes8 offerId, bytes20[] dataIds) returns()
 func (api *ExchangeAPI) AddDataIds(c *gin.Context) {
 	var req struct{ DataIds []string }
 	if err := c.MustBindWith(&req, binding.JSON); err != nil {
@@ -107,6 +115,9 @@ func (api *ExchangeAPI) AddDataIds(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
+// Order is a paid mutator transaction binding the contract method 0x0cf833fb.
+//
+// Solidity: function order(bytes8 offerId) returns()
 func (api *ExchangeAPI) Order(c *gin.Context) {
 	rawOfferId := c.Param("offerId")
 	offerId, err := types.HexToID(rawOfferId)
@@ -122,6 +133,9 @@ func (api *ExchangeAPI) Order(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
+// Cancel is a paid mutator transaction binding the contract method 0xb2d9ba39.
+//
+// Solidity: function cancel(bytes8 offerId) returns()
 func (api *ExchangeAPI) Cancel(c *gin.Context) {
 	rawOfferId := c.Param("offerId")
 	offerId, err := types.HexToID(rawOfferId)
@@ -137,6 +151,9 @@ func (api *ExchangeAPI) Cancel(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
+// GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
+//
+// Solidity: function getOffer(bytes8 offerId) constant returns((string,address,bytes20[],uint256,uint256,(address,bytes4,bytes),uint8))
 func (api *ExchangeAPI) GetOffer(c *gin.Context) {
 	rawOfferId := c.Param("offerId")
 	offerId, err := types.HexToID(rawOfferId)
@@ -153,6 +170,7 @@ func (api *ExchangeAPI) GetOffer(c *gin.Context) {
 	c.JSON(http.StatusOK, offer)
 }
 
+// AttachToAPI is a registrant of an api.
 func (api *ExchangeAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.RestAPIMux.Group("/exchange")
 	apiMux.POST("/prepare", api.Prepare)
