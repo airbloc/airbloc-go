@@ -13,21 +13,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// AppRegistryAPI is api wrapper of contract AppRegistry.sol
-type AppRegistryAPI struct {
+// appRegistryAPI is api wrapper of contract AppRegistry.sol
+type appRegistryAPI struct {
 	apps *apps.Manager
 }
 
-// NewAppRegistryAPI makes new *AppRegistryAPI struct
+// NewAppRegistryAPI makes new *appRegistryAPI struct
 func NewAppRegistryAPI(backend service.Backend) (api.API, error) {
 	ar := apps.NewManager(backend.Client())
-	return &AppRegistryAPI{ar}, nil
+	return &appRegistryAPI{ar}, nil
 }
 
 // Register is a paid mutator transaction binding the contract method 0xf2c298be.
 //
 // Solidity: function register(string appName) returns()
-func (api *AppRegistryAPI) Register(c *gin.Context) {
+func (api *appRegistryAPI) register(c *gin.Context) {
 	appName := c.Param(":appName")
 	if err := api.apps.Register(c, appName); err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
@@ -39,7 +39,7 @@ func (api *AppRegistryAPI) Register(c *gin.Context) {
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
 //
 // Solidity: function unregister(string appName) returns()
-func (api *AppRegistryAPI) Unregister(c *gin.Context) {
+func (api *appRegistryAPI) unregister(c *gin.Context) {
 	appName := c.Param(":appName")
 	if err := api.apps.Unregister(c, appName); err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
@@ -51,7 +51,7 @@ func (api *AppRegistryAPI) Unregister(c *gin.Context) {
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
 // Solidity: function get(string appName) constant returns((string,address,bytes32))
-func (api *AppRegistryAPI) Get(c *gin.Context) {
+func (api *appRegistryAPI) get(c *gin.Context) {
 	appName := c.Param(":appName")
 
 	app, err := api.apps.Get(appName)
@@ -65,7 +65,7 @@ func (api *AppRegistryAPI) Get(c *gin.Context) {
 // TransferAppOwner is a paid mutator transaction binding the contract method 0x1a9dff9f.
 //
 // Solidity: function transferAppOwner(string appName, address newOwner) returns()
-func (api *AppRegistryAPI) TransferAppOwner(c *gin.Context) {
+func (api *appRegistryAPI) transferAppOwner(c *gin.Context) {
 	appName := c.Param(":appName")
 
 	var req struct{ NewOwner string }
@@ -82,10 +82,10 @@ func (api *AppRegistryAPI) TransferAppOwner(c *gin.Context) {
 }
 
 // AttachToAPI is a registrant of an api.
-func (api *AppRegistryAPI) AttachToAPI(service *api.Service) {
+func (api *appRegistryAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.RestAPIMux.Group("/apps")
-	apiMux.GET("/:appName", api.Register)
-	apiMux.POST("/:appName", api.Unregister)
-	apiMux.PATCH("/:appName", api.Get)
-	apiMux.DELETE("/:appName", api.TransferAppOwner)
+	apiMux.GET("/:appName", api.register)
+	apiMux.POST("/:appName", api.unregister)
+	apiMux.PATCH("/:appName", api.get)
+	apiMux.DELETE("/:appName", api.transferAppOwner)
 }
