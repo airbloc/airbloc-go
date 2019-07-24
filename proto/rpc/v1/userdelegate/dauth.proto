@@ -9,8 +9,8 @@ import "google/protobuf/empty.proto";
  * DAuth (Data Collection Authentification) API.
  */
 service DAuth {
-    rpc Allow(DAuthRequest) returns (google.protobuf.Empty);
-    rpc Deny(DAuthRequest) returns (google.protobuf.Empty);
+    rpc Allow (DAuthRequest) returns (google.protobuf.Empty);
+    rpc Deny (DAuthRequest) returns (google.protobuf.Empty);
 }
 
 message DAuthRequest {

@@ -4,8 +4,8 @@ package airbloc.rpc.v1;
 option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
 
 service User {
-    rpc GetData(DataRequest) returns (GetDataReponse);
-    rpc GetDataIds(DataIdRequest) returns (GetDataIdsResponse);
+    rpc GetData (DataRequest) returns (GetDataReponse);
+    rpc GetDataIds (DataIdRequest) returns (GetDataIdsResponse);
 }
 
 // TODO: pagination
@@ -34,7 +34,7 @@ message GetDataReponse {
     repeated Collection collections = 1;
 }
 
-message GetDataIdsResponse{
+message GetDataIdsResponse {
     message DataInfo {
         string id = 1;
         int64 collectedAt = 2;

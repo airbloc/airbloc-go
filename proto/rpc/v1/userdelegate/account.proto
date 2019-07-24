@@ -4,10 +4,10 @@ package airbloc.rpc.v1;
 option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/userdelegate";
 
 service Account {
-    rpc Create(AccountCreateRequest) returns (AccountCreateResponse);
-    rpc Get(AccountGetRequest) returns (AccountGetResponse);
-    rpc GetByIdentity(AccountGetByIdentityRequest) returns (AccountGetResponse);
-    rpc TestPassword(TestPasswordRequest) returns (TestPasswordResponse);
+    rpc Create (AccountCreateRequest) returns (AccountCreateResponse);
+    rpc Get (AccountGetRequest) returns (AccountGetResponse);
+    rpc GetByIdentity (AccountGetByIdentityRequest) returns (AccountGetResponse);
+    rpc TestPassword (TestPasswordRequest) returns (TestPasswordResponse);
 }
 
 message AccountCreateRequest {

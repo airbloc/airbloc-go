@@ -11,23 +11,23 @@ service Warehouse {
      * StoreBundle receives a data stream, encrypts and stores them as a bundle,
      * and registers the data bundle onto the blockchain.
      */
-    rpc StoreBundle(stream RawDataRequest) returns (StoreResult);
+    rpc StoreBundle (stream RawDataRequest) returns (StoreResult);
 
     /**
      * StoreBundle receives a stream of the data already encrypted, stores them as a bundle,
      * and registers the data bundle onto the blockchain.
      */
-    rpc StoreEncryptedBundle(stream EncryptedDataRequest) returns (StoreResult);
+    rpc StoreEncryptedBundle (stream EncryptedDataRequest) returns (StoreResult);
 
     /**
      * DeleteBundle removes given bundle from the warehouse and the blockchain.
      */
-    rpc DeleteBundle(DeleteBundleRequest) returns (DeleteBundleResult);
+    rpc DeleteBundle (DeleteBundleRequest) returns (DeleteBundleResult);
 
     /**
      * ListBundle returns a list of ingested data bundles.
      */
-    rpc ListBundle(ListBundleRequest) returns (ListBundleResult);
+    rpc ListBundle (ListBundleRequest) returns (ListBundleResult);
 }
 
 message RawDataRequest {

@@ -8,7 +8,7 @@ option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
  */
 service Accounts {
     // Exists return true if account exists with given identity information (e.g. Email).
-    rpc Exists(AccountExistsRequest) returns (AccountExistsResponse);
+    rpc Exists (AccountExistsRequest) returns (AccountExistsResponse);
 }
 
 message AccountExistsRequest {

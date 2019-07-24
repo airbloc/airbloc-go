@@ -6,17 +6,17 @@ option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
 import "google/protobuf/empty.proto";
 
 service Exchange {
-    rpc Prepare(OrderRequest) returns (OfferId);
-    rpc AddDataIds(DataIds) returns (google.protobuf.Empty);
-    rpc Order(OfferId) returns (google.protobuf.Empty);
-    rpc Settle(OfferId) returns (Receipt);
-    rpc Reject(OfferId) returns (google.protobuf.Empty);
+    rpc Prepare (OrderRequest) returns (OfferId);
+    rpc AddDataIds (DataIds) returns (google.protobuf.Empty);
+    rpc Order (OfferId) returns (google.protobuf.Empty);
+    rpc Settle (OfferId) returns (Receipt);
+    rpc Reject (OfferId) returns (google.protobuf.Empty);
 
-    rpc GetOffer(OfferId) returns (Offer);
-    rpc GetOfferCompact(OfferId) returns (OfferCompact);
-    rpc GetReceiptsByOfferor(ReceiptRequest) returns (Offers);
-    rpc GetReceiptsByOfferee(ReceiptRequest) returns (Offers);
-    rpc GetReceiptsByEscrow(ReceiptRequest) returns (Offers);
+    rpc GetOffer (OfferId) returns (Offer);
+    rpc GetOfferCompact (OfferId) returns (OfferCompact);
+    rpc GetReceiptsByOfferor (ReceiptRequest) returns (Offers);
+    rpc GetReceiptsByOfferee (ReceiptRequest) returns (Offers);
+    rpc GetReceiptsByEscrow (ReceiptRequest) returns (Offers);
 }
 
 enum Status {
@@ -79,7 +79,9 @@ message OfferCompact {
     string escrow = 3; // Address
     bool reverted = 4;
 }
-message Offers {repeated string offerIds = 1;}
+message Offers {
+    repeated string offerIds = 1;
+}
 
 message OfferId {
     string offerId = 1; // ID

@@ -10,28 +10,28 @@ import "google/protobuf/empty.proto";
  */
 service Data {
     // Get returns information of the data from your warehouse or purchased data.
-    rpc Get(DataId) returns (DataResult);
-    rpc GetBatch(BatchRequest) returns (GetBatchResult);
+    rpc Get (DataId) returns (DataResult);
+    rpc GetBatch (BatchRequest) returns (GetBatchResult);
 
     /**
      * These are getter methods for users that wants to get bundle/userId information.
      */
-    rpc GetBundleInfo(BundleInfoRequest) returns (BundleInfoResponse);
+    rpc GetBundleInfo (BundleInfoRequest) returns (BundleInfoResponse);
 
     // SetPermission allows a consumer to access the given data.
-    rpc SetPermission(SetDataPermissionRequest) returns (google.protobuf.Empty);
-    rpc SetPermissionBatch(SetBatchDataPermissionRequest) returns (google.protobuf.Empty);
+    rpc SetPermission (SetDataPermissionRequest) returns (google.protobuf.Empty);
+    rpc SetPermissionBatch (SetBatchDataPermissionRequest) returns (google.protobuf.Empty);
 
     // Delete removes specific data from your warehouse or purchased data.
-    rpc Delete(DataId) returns (google.protobuf.Empty);
-    rpc DeleteBatch(BatchRequest) returns (google.protobuf.Empty);
+    rpc Delete (DataId) returns (google.protobuf.Empty);
+    rpc DeleteBatch (BatchRequest) returns (google.protobuf.Empty);
 
     // Select receives stream of data ID and creates a batch of data IDs.
     // the batch can be used as a input of batch operations.
-    rpc Select(stream DataId) returns (BatchRequest);
+    rpc Select (stream DataId) returns (BatchRequest);
 
     // Release unselects and removes the batch.
-    rpc Release(BatchRequest) returns (google.protobuf.Empty);
+    rpc Release (BatchRequest) returns (google.protobuf.Empty);
 }
 
 message BatchRequest {
@@ -54,7 +54,7 @@ message GetBatchResult {
 }
 
 // TODO : pagination
-message BundleInfoRequest{
+message BundleInfoRequest {
     string bundleId = 1;
 }
 

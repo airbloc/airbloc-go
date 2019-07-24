@@ -14,7 +14,7 @@ service DAuth {
      * SignIn takes an email of user and returns an user account ID if the account is exists.
      * Otherwise, it creates new account using the email, and returns an ID of the newly created account.
      */
-    rpc SignIn(SignInRequest) returns (SignInResponse) {
+    rpc SignIn (SignInRequest) returns (SignInResponse) {
         option (google.api.http) = {
             post: "/v1/dauth/signin"
             body: "*"
@@ -25,7 +25,7 @@ service DAuth {
      * GetAuthorization returns a list of the data authorization settings
      * which are done to collections of this app by given user.
      */
-    rpc GetAuthorizations(GetAuthorizationsRequest) returns (GetAuthorizationsResponse) {
+    rpc GetAuthorizations (GetAuthorizationsRequest) returns (GetAuthorizationsResponse) {
         option (google.api.http) = {get: "/v1/dauth"};
     }
 
@@ -35,7 +35,7 @@ service DAuth {
      * Note that this is one-time only; Once you set an authorization to the collection,
      * then you cannot change it through this API. Only users can modify the settings.
      */
-    rpc Allow(DAuthRequest) returns (google.protobuf.Empty) {
+    rpc Allow (DAuthRequest) returns (google.protobuf.Empty) {
         option (google.api.http) = {
             post: "/v1/dauth/{collectionId}/allow"
             body: "*"
@@ -48,7 +48,7 @@ service DAuth {
      * Note that this is one-time only; Once you set an authorization to the collection,
      * then you cannot change it through this API. Only users can modify the settings.
      */
-    rpc Deny(DAuthRequest) returns (google.protobuf.Empty) {
+    rpc Deny (DAuthRequest) returns (google.protobuf.Empty) {
         option (google.api.http) = {
             post: "/v1/dauth/{collectionId}/deny"
             body: "*"
