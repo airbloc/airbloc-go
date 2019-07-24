@@ -10,6 +10,7 @@ var apis = []api.Constructor{
 	pAPI.NewAccountsAPI,
 	pAPI.NewAppRegistryAPI,
 	pAPI.NewConsentsAPI,
+	pAPI.NewControllerRegistryAPI,
 	pAPI.NewDataAPI,
 	pAPI.NewDAuthAPI,
 	pAPI.NewDataTypeRegistryAPI,
