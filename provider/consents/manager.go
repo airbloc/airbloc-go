@@ -10,11 +10,13 @@ import (
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 )
 
+// Manager is contract wrapper struct
 type Manager struct {
 	client   blockchain.TxClient
 	contract *adapter.Consents
 }
 
+// NewManager makes new *Manager struct
 func NewManager(client blockchain.TxClient) *Manager {
 	contract := client.GetContract(&adapter.Consents{})
 	return &Manager{
@@ -23,6 +25,9 @@ func NewManager(client blockchain.TxClient) *Manager {
 	}
 }
 
+// Consent is a paid mutator transaction binding the contract method 0xbecae241.
+//
+// Solidity: function consent(uint8 action, string appName, string dataType, bool allowed) returns()
 func (manager *Manager) Consent(ctx context.Context, action uint8, appName, dataType string, allowed bool) error {
 	tx, err := manager.contract.Consent(
 		manager.client.Account(),
@@ -41,6 +46,9 @@ func (manager *Manager) Consent(ctx context.Context, action uint8, appName, data
 	return err
 }
 
+// ConsentByController is a paid mutator transaction binding the contract method 0xf92519d8.
+//
+// Solidity: function consentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed) returns()
 func (manager *Manager) ConsentByController(
 	ctx context.Context,
 	action uint8,
@@ -65,6 +73,9 @@ func (manager *Manager) ConsentByController(
 	return err
 }
 
+// ModifyConsentByController is a paid mutator transaction binding the contract method 0xedf2ef20.
+//
+// Solidity: function modifyConsentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed, bytes passwordSignature) returns()
 func (manager *Manager) ModifyConsentByController(
 	ctx context.Context,
 	action uint8,
@@ -90,6 +101,9 @@ func (manager *Manager) ModifyConsentByController(
 	return err
 }
 
+// IsAllowed is a free data retrieval call binding the contract method 0xa1d2bbf5.
+//
+// Solidity: function isAllowed(uint8 action, bytes8 userId, string appName, string dataType) constant returns(bool)
 func (manager *Manager) IsAllowed(
 	ctx context.Context,
 	action uint8,
@@ -99,6 +113,9 @@ func (manager *Manager) IsAllowed(
 	return manager.contract.IsAllowed(nil, action, userId, appName, dataType)
 }
 
+// IsAllowedAt is a free data retrieval call binding the contract method 0x118642e1.
+//
+// Solidity: function isAllowedAt(uint8 action, bytes8 userId, string appName, string dataType, uint256 blockNumber) constant returns(bool)
 func (manager *Manager) IsAllowedAt(
 	ctx context.Context,
 	action uint8,

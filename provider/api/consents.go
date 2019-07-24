@@ -14,15 +14,20 @@ import (
 	"github.com/gin-gonic/gin/binding"
 )
 
+// ConsentsAPI is api wrapper of contract Consents.sol
 type ConsentsAPI struct {
 	consents *consents.Manager
 }
 
+// NewConsentsAPI makes new *ConsentsAPI struct
 func NewConsentsAPI(backend service.Backend) (api.API, error) {
 	cs := consents.NewManager(backend.Client())
 	return &ConsentsAPI{cs}, nil
 }
 
+// Consent is a paid mutator transaction binding the contract method 0xbecae241.
+//
+// Solidity: function consent(uint8 action, string appName, string dataType, bool allowed) returns()
 func (api *ConsentsAPI) Consent(c *gin.Context) {
 	var req struct {
 		Action   uint8
@@ -35,7 +40,7 @@ func (api *ConsentsAPI) Consent(c *gin.Context) {
 		return
 	}
 
-	err = api.consents.Consent(
+	err := api.consents.Consent(
 		c, req.Action,
 		req.AppName, req.DataType, req.Allowed,
 	)
@@ -46,6 +51,9 @@ func (api *ConsentsAPI) Consent(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
+// ConsentByController is a paid mutator transaction binding the contract method 0xf92519d8.
+//
+// Solidity: function consentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed) returns()
 func (api *ConsentsAPI) ConsentByController(c *gin.Context) {
 	var req struct {
 		Action   uint8
@@ -76,6 +84,9 @@ func (api *ConsentsAPI) ConsentByController(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
+// ModifyConsentByController is a paid mutator transaction binding the contract method 0xedf2ef20.
+//
+// Solidity: function modifyConsentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed, bytes passwordSignature) returns()
 func (api *ConsentsAPI) ModifyConsentByController(c *gin.Context) {
 	var req struct {
 		Action            uint8
@@ -113,6 +124,11 @@ func (api *ConsentsAPI) ModifyConsentByController(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
+// IsAllowed is a free data retrieval call binding the contract method 0xa1d2bbf5.
+// IsAllowedAt is a free data retrieval call binding the contract method 0x118642e1.
+//
+// Solidity: function isAllowed(uint8 action, bytes8 userId, string appName, string dataType) constant returns(bool)
+// Solidity: function isAllowedAt(uint8 action, bytes8 userId, string appName, string dataType, uint256 blockNumber) constant returns(bool)
 func (api *ConsentsAPI) IsAllowed(c *gin.Context) {
 	var req struct {
 		Action      uint8
@@ -161,6 +177,7 @@ func (api *ConsentsAPI) IsAllowed(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"allowed": allowed})
 }
 
+// AttachToAPI is a registrant of an api.
 func (api *ConsentsAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.RestAPIMux.Group("/consents")
 	apiMux.POST("/", api.Consent)
