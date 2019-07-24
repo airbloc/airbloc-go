@@ -16,21 +16,21 @@ import (
 	"github.com/airbloc/airbloc-go/shared/service/api"
 )
 
-// AccountsAPI is api wrapper of contract Accounts.sol
-type AccountsAPI struct {
+// accountsAPI is api wrapper of contract Accounts.sol
+type accountsAPI struct {
 	accounts *accounts.Manager
 }
 
-// NewAccountsAPI makes new *AccountsAPI struct
+// NewAccountsAPI makes new *accountsAPI struct
 func NewAccountsAPI(backend service.Backend) (api.API, error) {
 	ac := accounts.NewManager(backend.Client())
-	return &AccountsAPI{ac}, nil
+	return &accountsAPI{ac}, nil
 }
 
 // Create is a paid mutator transaction binding the contract method 0xefc81a8c.
 //
 // Solidity: function create() returns()
-func (api *AccountsAPI) Create(c *gin.Context) {
+func (api *accountsAPI) create(c *gin.Context) {
 	accountId, err := api.accounts.Create(c)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
@@ -42,7 +42,7 @@ func (api *AccountsAPI) Create(c *gin.Context) {
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
 //
 // Solidity: function createTemporary(bytes32 identityHash) returns()
-func (api *AccountsAPI) CreateTemporary(c *gin.Context) {
+func (api *accountsAPI) createTemporary(c *gin.Context) {
 	var req struct {
 		IdentityHash string
 	}
@@ -63,7 +63,7 @@ func (api *AccountsAPI) CreateTemporary(c *gin.Context) {
 // UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
 //
 // Solidity: function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) returns()
-func (api *AccountsAPI) UnlockTemporary(c *gin.Context) {
+func (api *accountsAPI) unlockTemporary(c *gin.Context) {
 	var req struct {
 		IdentityPreimage  string
 		NewOwner          string
@@ -93,7 +93,7 @@ func (api *AccountsAPI) UnlockTemporary(c *gin.Context) {
 // SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
 //
 // Solidity: function setController(address controller) returns()
-func (api *AccountsAPI) SetController(c *gin.Context) {
+func (api *accountsAPI) setController(c *gin.Context) {
 	var req struct {
 		Controller string
 	}
@@ -112,7 +112,7 @@ func (api *AccountsAPI) SetController(c *gin.Context) {
 // GetAccount is a free data retrieval call binding the contract method 0xf9292ddb.
 //
 // Solidity: function getAccount(bytes8 accountId) constant returns((address,uint8,address,address))
-func (api *AccountsAPI) GetAccount(c *gin.Context) {
+func (api *accountsAPI) getAccount(c *gin.Context) {
 	var req struct {
 		AccountId string
 	}
@@ -140,7 +140,7 @@ func (api *AccountsAPI) GetAccount(c *gin.Context) {
 //
 // Solidity: function getAccountId(address sender) constant returns(bytes8)
 // Solidity: function getAccountIdFromSignature(bytes32 messageHash, bytes signature) constant returns(bytes8)
-func (api *AccountsAPI) GetAccountId(c *gin.Context) {
+func (api *accountsAPI) getAccountId(c *gin.Context) {
 	var req struct {
 		Owner       string `form:"owner"`
 		MessageHash string `form:"messageHash"`
@@ -182,12 +182,12 @@ func (api *AccountsAPI) GetAccountId(c *gin.Context) {
 }
 
 // AttachToAPI is a registrant of an api.
-func (api *AccountsAPI) AttachToAPI(service *api.Service) {
+func (api *accountsAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.RestAPIMux.Group("/accounts")
-	apiMux.POST("/", api.Create)
-	apiMux.GET("/:accountId", api.GetAccount)
-	apiMux.GET("/id", api.GetAccountId)
-	apiMux.PATCH("/controller", api.SetController)
-	apiMux.POST("/temporary", api.CreateTemporary)
-	apiMux.PATCH("/temporary/unlock", api.UnlockTemporary)
+	apiMux.POST("/", api.create)
+	apiMux.GET("/:accountId", api.getAccount)
+	apiMux.GET("/id", api.getAccountId)
+	apiMux.PATCH("/controller", api.setController)
+	apiMux.POST("/temporary", api.createTemporary)
+	apiMux.PATCH("/temporary/unlock", api.unlockTemporary)
 }
