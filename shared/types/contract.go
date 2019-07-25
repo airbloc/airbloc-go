@@ -6,10 +6,18 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
+type AccountStatus uint8
+
+const (
+	AccountStatusNone = AccountStatus(iota)
+	AccountStatusTemporary
+	AccountStatusCreated
+)
+
 // Account is bind of Accounts.Account
 type Account struct {
 	Owner         common.Address "json:\"Owner\""
-	Status        uint8          "json:\"Status\""
+	Status        AccountStatus  "json:\"Status\""
 	Controller    common.Address "json:\"Controller\""
 	PasswordProof common.Address "json:\"PasswordProof\""
 }
@@ -20,6 +28,13 @@ type App struct {
 	Owner      common.Address "json:\"owner\""
 	HashedName common.Hash    "json:\"hashedName\""
 }
+
+type ConsentActionTypes uint8
+
+const (
+	ConsentActionCollection = ConsentActionTypes(iota)
+	ConsentActionExchange
+)
 
 // DataController is bind of ControllerRegistry.DataController
 type DataController struct {
