@@ -7,15 +7,15 @@ import (
 )
 
 type Offer struct {
-	Provider string
-	Consumer common.Address
-	DataIds  [][20]byte
-	At       *big.Int
-	Until    *big.Int
+	Provider string         "json:\"provider\""
+	Consumer common.Address "json:\"consumer\""
+	DataIds  []DataId       "json:\"dataIds\""
+	At       *big.Int       "json:\"at\""
+	Until    *big.Int       "json:\"until\""
 	Escrow   struct {
-		Addr common.Address
-		Sign [4]byte
-		Args []byte
-	}
-	Status uint8
+		Addr common.Address "json:\"addr\""
+		Sign [4]byte        "json:\"sign\""
+		Args []byte         "json:\"args\""
+	} "json:\"escrow\""
+	Status uint8 "json:\"status\""
 }

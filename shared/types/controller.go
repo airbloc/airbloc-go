@@ -7,6 +7,6 @@ import (
 )
 
 type DataController struct {
-	Controller common.Address
-	UsersCount *big.Int
+	Controller common.Address "json:\"controller\""
+	UsersCount *big.Int       "json:\"usersCount\""
 }
