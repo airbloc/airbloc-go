@@ -3,25 +3,25 @@ package controllers
 import (
 	"context"
 
-	"github.com/airbloc/airbloc-go/shared/types"
-
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
+	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/airbloc/logger"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/pkg/errors"
 )
 
 // Manager is contract wrapper struct
 type Manager struct {
-	client   blockchain.TxClient
-	contract *adapter.ControllerRegistry
+	contract adapter.IControllerRegistryContract
+	log      *logger.Logger
 }
 
 // NewManager makes new *Manager struct
-func NewManager(client blockchain.TxClient) adapter.ControllerRegistryManager {
-	contract := client.GetContract(&adapter.ControllerRegistry{})
+func NewManager(client blockchain.TxClient) adapter.IControllerRegistryManager {
 	return &Manager{
-		client:   client,
-		contract: contract.(*adapter.ControllerRegistry),
+		contract: adapter.NewControllerRegistryContract(client),
+		log:      logger.New("controller-registry"),
 	}
 }
 
@@ -29,17 +29,17 @@ func NewManager(client blockchain.TxClient) adapter.ControllerRegistryManager {
 //
 // Solidity: function register(address controllerAddr) returns()
 func (manager *Manager) Register(ctx context.Context, controllerAddr common.Address) error {
-	tx, err := manager.contract.Register(manager.client.Account(), controllerAddr)
+	receipt, err := manager.contract.Register(ctx, controllerAddr)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to transact")
 	}
 
-	receipt, err := manager.client.WaitMined(ctx, tx)
+	event, err := manager.contract.ParseRegistrationFromReceipt(receipt)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	_, err = manager.contract.ParseRegistrationFromReceipt(receipt)
+	manager.log.Info("Data controller registered.", logger.Attrs{"controller": event.Controller.Hex()})
 	return err
 }
 
@@ -47,45 +47,48 @@ func (manager *Manager) Register(ctx context.Context, controllerAddr common.Addr
 //
 // Solidity: function get(address controller) constant returns((address,uint256))
 func (manager *Manager) Get(controllerAddr common.Address) (types.DataController, error) {
-	return manager.contract.Get(nil, controllerAddr)
+	return manager.contract.Get(controllerAddr)
 }
 
 // Exists is a free data retrieval call binding the contract method 0xf6a3d24e.
 //
 // Solidity: function exists(address controller) constant returns(bool)
 func (manager *Manager) Exists(controller common.Address) (bool, error) {
-	return manager.contract.Exists(nil, controller)
+	return manager.contract.Exists(controller)
 }
 
 // IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
 //
 // Solidity: function isOwner() constant returns(bool)
 func (manager *Manager) IsOwner() (bool, error) {
-	return manager.contract.IsOwner(nil)
+	return manager.contract.IsOwner()
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() constant returns(address)
 func (manager *Manager) Owner() (common.Address, error) {
-	return manager.contract.Owner(nil)
+	return manager.contract.Owner()
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
 // Solidity: function renounceOwnership() returns()
 func (manager *Manager) RenounceOwnership(ctx context.Context) error {
-	tx, err := manager.contract.RenounceOwnership(manager.client.Account())
+	receipt, err := manager.contract.RenounceOwnership(ctx)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to transact")
 	}
 
-	receipt, err := manager.client.WaitMined(ctx, tx)
+	event, err := manager.contract.ParseOwnershipTransferredFromReceipt(receipt)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	_, err = manager.contract.ParseOwnershipTransferredFromReceipt(receipt)
+	manager.log.Info("Ownership renounced.", logger.Attrs{
+		"prev-owner": event.PreviousOwner.Hex(),
+		"new-owner":  event.NewOwner.Hex(),
+	})
 	return err
 }
 
@@ -93,16 +96,19 @@ func (manager *Manager) RenounceOwnership(ctx context.Context) error {
 //
 // Solidity: function transferOwnership(address newOwner) returns()
 func (manager *Manager) TransferOwnership(ctx context.Context, newOwner common.Address) error {
-	tx, err := manager.contract.TransferOwnership(manager.client.Account(), newOwner)
+	receipt, err := manager.contract.TransferOwnership(ctx, newOwner)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to transact")
 	}
 
-	receipt, err := manager.client.WaitMined(ctx, tx)
+	event, err := manager.contract.ParseOwnershipTransferredFromReceipt(receipt)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	_, err = manager.contract.ParseOwnershipTransferredFromReceipt(receipt)
+	manager.log.Info("Ownership transferred.", logger.Attrs{
+		"prev-owner": event.PreviousOwner.Hex(),
+		"new-owner":  event.NewOwner.Hex(),
+	})
 	return err
 }
