@@ -1,11 +1,12 @@
-package account
+package accounts
 
 import (
+	"testing"
+
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/test/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestManager_CreateTemporary(t *testing.T) {

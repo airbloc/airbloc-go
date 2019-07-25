@@ -1,12 +1,13 @@
-package account
+package accounts
 
 import (
+	"testing"
+
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/airbloc-go/shared/types"
 	common2 "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestSession_Sign(t *testing.T) {

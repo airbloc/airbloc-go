@@ -4,17 +4,19 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/airbloc/airbloc-go/shared/types"
-
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
+	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/airbloc/logger"
 	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/pkg/errors"
 )
 
 // Manager is contract wrapper struct
 type Manager struct {
 	client   blockchain.TxClient
 	contract *adapter.Accounts
+	log      *logger.Logger
 }
 
 // NewManager makes new *Manager struct
@@ -23,6 +25,7 @@ func NewManager(client blockchain.TxClient) adapter.AccountsManager {
 	return &Manager{
 		client:   client,
 		contract: contract.(*adapter.Accounts),
+		log:      logger.New("accounts"),
 	}
 }
 
@@ -45,6 +48,10 @@ func (manager *Manager) Create(ctx context.Context) (types.ID, error) {
 		return types.ID{}, err
 	}
 
+	manager.log.Info("Account created.", logger.Attrs{
+		"account_id": event.AccountId.Hex(),
+		"owner":      event.Owner.Hex(),
+	})
 	return event.AccountId, nil
 }
 
@@ -64,9 +71,13 @@ func (manager *Manager) CreateTemporary(ctx context.Context, identityHash ethCom
 
 	event, err := manager.contract.ParseTemporaryCreatedFromReceipt(receipt)
 	if err != nil {
-		return types.ID{}, err
+		return types.ID{}, errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
+	manager.log.Info("Temporary account created.", logger.Attrs{
+		"account_id": event.AccountId.Hex(),
+		"proxy":      event.Proxy.Hex(),
+	})
 	return event.AccountId, nil
 }
 
@@ -89,7 +100,15 @@ func (manager *Manager) UnlockTemporary(
 		return err
 	}
 
-	_, err = manager.contract.ParseUnlockedFromReceipt(receipt)
+	event, err := manager.contract.ParseUnlockedFromReceipt(receipt)
+	if err != nil {
+		return errors.Wrap(err, "failed to parse a event from the receipt")
+	}
+
+	manager.log.Info("Temporary account unlocked.", logger.Attrs{
+		"account_id": event.AccountId.Hex(),
+		"new_owner":  event.NewOwner.Hex(),
+	})
 	return err
 }
 
@@ -103,7 +122,12 @@ func (manager *Manager) SetController(ctx context.Context, controller ethCommon.
 	}
 
 	_, err = manager.client.WaitMined(ctx, tx)
-	return err
+	if err != nil {
+		return err
+	}
+
+	manager.log.Info("Controller changed.", logger.Attrs{"new_controller": controller.Hex()})
+	return nil
 }
 
 // GetAccount is a free data retrieval call binding the contract method 0xf9292ddb.
