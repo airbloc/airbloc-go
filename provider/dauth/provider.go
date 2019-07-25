@@ -5,7 +5,7 @@ import (
 	"crypto/ecdsa"
 
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
-	"github.com/airbloc/airbloc-go/shared/account"
+	"github.com/airbloc/airbloc-go/shared/accounts"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/airbloc-go/shared/p2p"
@@ -19,14 +19,14 @@ import (
 // it does not interact with blockchain directly; it just requests to designated user delegate nodes.
 type Provider struct {
 	providerId *ecdsa.PublicKey
-	accounts   *account.Manager
+	accounts   *accounts.Manager
 	p2pRpc     p2p.RPC
 	log        *logger.Logger
 }
 
 // NewProviderClient creates DAuth client for data provider (server) nodes.
 func NewProviderClient(kms key.Manager, client blockchain.TxClient, p2pServer p2p.Server) *Provider {
-	accounts := account.NewManager(client)
+	accounts := accounts.NewManager(client)
 	return &Provider{
 		providerId: &kms.NodeKey().PublicKey,
 		accounts:   accounts,
@@ -40,7 +40,7 @@ func NewProviderClient(kms key.Manager, client blockchain.TxClient, p2pServer p2
 func (client *Provider) SignIn(ctx context.Context, identity string, userDelegate common.Address) (types.ID, error) {
 	acc, err := client.accounts.GetByIdentity(identity)
 	if err != nil {
-		if err == account.ErrNoAccount {
+		if err == accounts.ErrNoAccount {
 			client.log.Info("No account for %s. creating new one...", identity)
 			return client.SignUp(ctx, identity, userDelegate)
 		}
