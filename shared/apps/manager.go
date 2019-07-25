@@ -6,21 +6,22 @@ import (
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/airbloc/logger"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/pkg/errors"
 )
 
 // Manager is contract wrapper struct
 type manager struct {
-	client   blockchain.TxClient
-	contract *adapter.AppRegistry
+	contract adapter.IAppRegistryContract
+	log      *logger.Logger
 }
 
 // NewManager makes new *Manager struct
-func NewManager(client blockchain.TxClient) adapter.AppRegistryManager {
-	contract := client.GetContract(&adapter.AppRegistry{})
+func NewManager(client blockchain.TxClient) adapter.IAppRegistryManager {
 	return &manager{
-		client:   client,
-		contract: contract.(*adapter.AppRegistry),
+		contract: adapter.NewAppRegistryContract(client),
+		log:      logger.New("app-registry"),
 	}
 }
 
@@ -28,17 +29,17 @@ func NewManager(client blockchain.TxClient) adapter.AppRegistryManager {
 //
 // Solidity: function register(string appName) returns()
 func (manager *manager) Register(ctx context.Context, appName string) error {
-	tx, err := manager.contract.Register(manager.client.Account(), appName)
+	receipt, err := manager.contract.Register(ctx, appName)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to transact")
 	}
 
-	receipt, err := manager.client.WaitMined(ctx, tx)
+	event, err := manager.contract.ParseRegistrationFromReceipt(receipt)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	_, err = manager.contract.ParseRegistrationFromReceipt(receipt)
+	manager.log.Info("App registered.", logger.Attrs{"name": event.AppName})
 	return err
 }
 
@@ -46,17 +47,17 @@ func (manager *manager) Register(ctx context.Context, appName string) error {
 //
 // Solidity: function unregister(string appName) returns()
 func (manager *manager) Unregister(ctx context.Context, appName string) error {
-	tx, err := manager.contract.Unregister(manager.client.Account(), appName)
+	receipt, err := manager.contract.Unregister(ctx, appName)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to transact")
 	}
 
-	receipt, err := manager.client.WaitMined(ctx, tx)
+	event, err := manager.contract.ParseUnregistrationFromReceipt(receipt)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	_, err = manager.contract.ParseUnregistrationFromReceipt(receipt)
+	manager.log.Info("App unregistered.", logger.Attrs{"name": event.AppName})
 	return err
 
 }
@@ -65,24 +66,27 @@ func (manager *manager) Unregister(ctx context.Context, appName string) error {
 //
 // Solidity: function get(string appName) constant returns((string,address,bytes32))
 func (manager *manager) Get(appName string) (types.App, error) {
-	return manager.contract.Get(nil, appName)
+	return manager.contract.Get(appName)
 }
 
 // TransferAppOwner is a paid mutator transaction binding the contract method 0x1a9dff9f.
 //
 // Solidity: function transferAppOwner(string appName, address newOwner) returns()
 func (manager *manager) TransferAppOwner(ctx context.Context, appName string, newOwner common.Address) error {
-	tx, err := manager.contract.TransferAppOwner(manager.client.Account(), appName, newOwner)
+	receipt, err := manager.contract.TransferAppOwner(ctx, appName, newOwner)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to transact")
 	}
 
-	receipt, err := manager.client.WaitMined(ctx, tx)
+	event, err := manager.contract.ParseAppOwnerTransferredFromReceipt(receipt)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	_, err = manager.contract.ParseAppOwnerTransferredFromReceipt(receipt)
+	manager.log.Info("App owner transfered.", logger.Attrs{
+		"prev-owner": event.OldOwner.Hex(),
+		"new-owner":  event.NewOwner.Hex(),
+	})
 	return err
 }
 
@@ -90,12 +94,12 @@ func (manager *manager) TransferAppOwner(ctx context.Context, appName string, ne
 //
 // Solidity: function exists(string appName) constant returns(bool)
 func (manager *manager) Exists(appName string) (bool, error) {
-	return manager.contract.Exists(nil, appName)
+	return manager.contract.Exists(appName)
 }
 
 // IsOwner is a free data retrieval call binding the contract method 0xbde1eee7.
 //
 // Solidity: function isOwner(string appName, address owner) constant returns(bool)
 func (manager *manager) IsOwner(appName string, owner common.Address) (bool, error) {
-	return manager.contract.IsOwner(nil, appName, owner)
+	return manager.contract.IsOwner(appName, owner)
 }
