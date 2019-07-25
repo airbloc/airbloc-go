@@ -4,7 +4,8 @@ import (
 	"encoding/hex"
 	"net/http"
 
-	"github.com/airbloc/airbloc-go/provider/exchange"
+	"github.com/airbloc/airbloc-go/shared/adapter"
+	"github.com/airbloc/airbloc-go/shared/exchange"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
@@ -15,7 +16,7 @@ import (
 
 // exchangeAPI is api wrapper of contract Exchange.sol
 type exchangeAPI struct {
-	manager *exchange.Manager
+	manager adapter.ExchangeManager
 }
 
 // NewExchangeAPI makes new *exchangeAPI struct
@@ -58,20 +59,18 @@ func (api *exchangeAPI) prepare(c *gin.Context) {
 		return
 	}
 
-	dataIds := make([][20]byte, len(req.DataIds))
+	dataIds := make([]types.DataId, len(req.DataIds))
 	for index, rawDataId := range req.DataIds {
-		dataId, err := types.NewDataId(rawDataId)
+		dataIds[index], err = types.NewDataId(rawDataId)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
 			return
 		}
-		dataIds[index] = dataId.Bytes()
 	}
 
 	offerId, err := api.manager.Prepare(
 		c, req.Provider, consumer,
-		escrow, escrowSign, escrowArgs,
-		dataIds...,
+		escrow, escrowSign, escrowArgs, dataIds,
 	)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
@@ -97,17 +96,17 @@ func (api *exchangeAPI) addDataIds(c *gin.Context) {
 		return
 	}
 
-	dataIds := make([][20]byte, len(req.DataIds))
+	dataIds := make([]types.DataId, len(req.DataIds))
 	for index, rawDataId := range req.DataIds {
-		dataId, err := types.NewDataId(rawDataId)
+		dataIds[index], err = types.NewDataId(rawDataId)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
 			return
 		}
-		dataIds[index] = dataId.Bytes()
 	}
 
-	if err := api.manager.AddDataIds(c, offerId, dataIds); err != nil {
+	err = api.manager.AddDataIds(c, offerId, dataIds)
+	if err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
 		return
 	}
@@ -126,7 +125,8 @@ func (api *exchangeAPI) order(c *gin.Context) {
 		return
 	}
 
-	if err := api.manager.Order(c, offerId); err != nil {
+	err = api.manager.Order(c, offerId)
+	if err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
 		return
 	}
@@ -144,7 +144,8 @@ func (api *exchangeAPI) cancel(c *gin.Context) {
 		return
 	}
 
-	if err := api.manager.Cancel(c, offerId); err != nil {
+	err = api.manager.Cancel(c, offerId)
+	if err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
 		return
 	}
