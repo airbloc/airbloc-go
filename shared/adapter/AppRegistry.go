@@ -4,6 +4,7 @@
 package adapter
 
 import (
+	"context"
 	"math/big"
 	"strings"
 
@@ -175,6 +176,22 @@ func NewAppRegistryFilterer(address common.Address, filterer bind.ContractFilter
 	return &AppRegistryFilterer{contract: contract}, nil
 }
 
+type AppRegistryManager interface {
+	// Pure/View methods
+	Exists(appName string) (bool, error)
+	Get(appName string) (types.App, error)
+	IsOwner() (bool, error)
+	IsOwner0(appName string, owner common.Address) (bool, error)
+	Owner() (common.Address, error)
+
+	// Other methods
+	Register(ctx context.Context, appName string) error
+	RenounceOwnership(ctx context.Context) error
+	TransferAppOwner(ctx context.Context, appName string, newOwner common.Address) error
+	TransferOwnership(ctx context.Context, newOwner common.Address) error
+	Unregister(ctx context.Context, appName string) error
+}
+
 // convenient hacks for blockchain.Client
 func init() {
 	blockchain.ContractList["AppRegistry"] = (&AppRegistry{}).new
@@ -183,7 +200,6 @@ func init() {
 	blockchain.RegisterSelector("0x1a9dff9f", "transferAppOwner(string,address)")
 	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
 	blockchain.RegisterSelector("0x6598a1ae", "unregister(string)")
-
 }
 
 // bindAppRegistry binds a generic wrapper to an already deployed contract.
@@ -228,16 +244,8 @@ func (_AppRegistry *AppRegistryCallerSession) Exists(appName string) (bool, erro
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
 // Solidity: function get(string appName) constant returns((string,address,bytes32))
-func (_AppRegistry *AppRegistryCaller) Get(opts *bind.CallOpts, appName string) (struct {
-	Name       string
-	Owner      common.Address
-	HashedName [32]byte
-}, error) {
-	ret := new(struct {
-		Name       string
-		Owner      common.Address
-		HashedName [32]byte
-	})
+func (_AppRegistry *AppRegistryCaller) Get(opts *bind.CallOpts, appName string) (types.App, error) {
+	ret := new(types.App)
 
 	out := ret
 	err := _AppRegistry.contract.Call(opts, out, "get", appName)
@@ -247,22 +255,14 @@ func (_AppRegistry *AppRegistryCaller) Get(opts *bind.CallOpts, appName string) 
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
 // Solidity: function get(string appName) constant returns((string,address,bytes32))
-func (_AppRegistry *AppRegistrySession) Get(appName string) (struct {
-	Name       string
-	Owner      common.Address
-	HashedName [32]byte
-}, error) {
+func (_AppRegistry *AppRegistrySession) Get(appName string) (types.App, error) {
 	return _AppRegistry.Contract.Get(&_AppRegistry.CallOpts, appName)
 }
 
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
 // Solidity: function get(string appName) constant returns((string,address,bytes32))
-func (_AppRegistry *AppRegistryCallerSession) Get(appName string) (struct {
-	Name       string
-	Owner      common.Address
-	HashedName [32]byte
-}, error) {
+func (_AppRegistry *AppRegistryCallerSession) Get(appName string) (types.App, error) {
 	return _AppRegistry.Contract.Get(&_AppRegistry.CallOpts, appName)
 }
 

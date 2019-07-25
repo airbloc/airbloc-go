@@ -4,6 +4,7 @@
 package adapter
 
 import (
+	"context"
 	"math/big"
 	"strings"
 
@@ -175,6 +176,21 @@ func NewDataTypeRegistryFilterer(address common.Address, filterer bind.ContractF
 	return &DataTypeRegistryFilterer{contract: contract}, nil
 }
 
+type DataTypeRegistryManager interface {
+	// Pure/View methods
+	Exists(name string) (bool, error)
+	Get(name string) (types.DataType, error)
+	IsOwner() (bool, error)
+	IsOwner0(name string, owner common.Address) (bool, error)
+	Owner() (common.Address, error)
+
+	// Other methods
+	Register(ctx context.Context, name string, schemaHash [32]byte) error
+	RenounceOwnership(ctx context.Context) error
+	TransferOwnership(ctx context.Context, newOwner common.Address) error
+	Unregister(ctx context.Context, name string) error
+}
+
 // convenient hacks for blockchain.Client
 func init() {
 	blockchain.ContractList["DataTypeRegistry"] = (&DataTypeRegistry{}).new
@@ -182,7 +198,6 @@ func init() {
 	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
 	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
 	blockchain.RegisterSelector("0x6598a1ae", "unregister(string)")
-
 }
 
 // bindDataTypeRegistry binds a generic wrapper to an already deployed contract.
@@ -227,16 +242,8 @@ func (_DataTypeRegistry *DataTypeRegistryCallerSession) Exists(name string) (boo
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
 // Solidity: function get(string name) constant returns((string,address,bytes32))
-func (_DataTypeRegistry *DataTypeRegistryCaller) Get(opts *bind.CallOpts, name string) (struct {
-	Name       string
-	Owner      common.Address
-	SchemaHash [32]byte
-}, error) {
-	ret := new(struct {
-		Name       string
-		Owner      common.Address
-		SchemaHash [32]byte
-	})
+func (_DataTypeRegistry *DataTypeRegistryCaller) Get(opts *bind.CallOpts, name string) (types.DataType, error) {
+	ret := new(types.DataType)
 
 	out := ret
 	err := _DataTypeRegistry.contract.Call(opts, out, "get", name)
@@ -246,22 +253,14 @@ func (_DataTypeRegistry *DataTypeRegistryCaller) Get(opts *bind.CallOpts, name s
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
 // Solidity: function get(string name) constant returns((string,address,bytes32))
-func (_DataTypeRegistry *DataTypeRegistrySession) Get(name string) (struct {
-	Name       string
-	Owner      common.Address
-	SchemaHash [32]byte
-}, error) {
+func (_DataTypeRegistry *DataTypeRegistrySession) Get(name string) (types.DataType, error) {
 	return _DataTypeRegistry.Contract.Get(&_DataTypeRegistry.CallOpts, name)
 }
 
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
 // Solidity: function get(string name) constant returns((string,address,bytes32))
-func (_DataTypeRegistry *DataTypeRegistryCallerSession) Get(name string) (struct {
-	Name       string
-	Owner      common.Address
-	SchemaHash [32]byte
-}, error) {
+func (_DataTypeRegistry *DataTypeRegistryCallerSession) Get(name string) (types.DataType, error) {
 	return _DataTypeRegistry.Contract.Get(&_DataTypeRegistry.CallOpts, name)
 }
 

@@ -4,6 +4,7 @@
 package adapter
 
 import (
+	"context"
 	"math/big"
 	"strings"
 
@@ -34,7 +35,7 @@ var (
 )
 
 // AccountsABI is the input ABI used to generate the binding from.
-const AccountsABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":[{\"Name\":\"controllerReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":null},\"Methods\":{\"accounts\":{\"Name\":\"accounts\",\"Const\":true,\"Inputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"owner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"status\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"controller\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"passwordProof\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"create\":{\"Name\":\"create\",\"Const\":false,\"Inputs\":[],\"Outputs\":[]},\"createTemporary\":{\"Name\":\"createTemporary\",\"Const\":false,\"Inputs\":[{\"Name\":\"identityHash\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"exists\":{\"Name\":\"exists\",\"Const\":true,\"Inputs\":[{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"getAccount\":{\"Name\":\"getAccount\",\"Const\":true,\"Inputs\":[{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"owner\",\"status\",\"controller\",\"passwordProof\"]},\"Indexed\":false}]},\"getAccountId\":{\"Name\":\"getAccountId\",\"Const\":true,\"Inputs\":[{\"Name\":\"sender\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"getAccountIdFromSignature\":{\"Name\":\"getAccountIdFromSignature\",\"Const\":true,\"Inputs\":[{\"Name\":\"messageHash\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"signature\",\"Type\":{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"identityHashToAccount\":{\"Name\":\"identityHashToAccount\",\"Const\":true,\"Inputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"isControllerOf\":{\"Name\":\"isControllerOf\",\"Const\":true,\"Inputs\":[{\"Name\":\"sender\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"isTemporary\":{\"Name\":\"isTemporary\",\"Const\":true,\"Inputs\":[{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"numberOfAccounts\":{\"Name\":\"numberOfAccounts\",\"Const\":true,\"Inputs\":[],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":22,\"Type\":{},\"Size\":256,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"setController\":{\"Name\":\"setController\",\"Const\":false,\"Inputs\":[{\"Name\":\"controller\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"unlockTemporary\":{\"Name\":\"unlockTemporary\",\"Const\":false,\"Inputs\":[{\"Name\":\"identityPreimage\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"newOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"passwordSignature\",\"Type\":{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]}},\"Events\":{\"SignUp\":{\"Name\":\"SignUp\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"owner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"TemporaryCreated\":{\"Name\":\"TemporaryCreated\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"proxy\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"identityHash\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"Unlocked\":{\"Name\":\"Unlocked\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"identityHash\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"newOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]}}}"
+const AccountsABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":[{\"Name\":\"controllerReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":null},\"Methods\":{\"accounts\":{\"Name\":\"accounts\",\"Const\":true,\"Inputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"owner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"status\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"controller\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"passwordProof\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"create\":{\"Name\":\"create\",\"Const\":false,\"Inputs\":[],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"createTemporary\":{\"Name\":\"createTemporary\",\"Const\":false,\"Inputs\":[{\"Name\":\"identityHash\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"exists\":{\"Name\":\"exists\",\"Const\":true,\"Inputs\":[{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"getAccount\":{\"Name\":\"getAccount\",\"Const\":true,\"Inputs\":[{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"owner\",\"status\",\"controller\",\"passwordProof\"]},\"Indexed\":false}]},\"getAccountId\":{\"Name\":\"getAccountId\",\"Const\":true,\"Inputs\":[{\"Name\":\"sender\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"getAccountIdFromSignature\":{\"Name\":\"getAccountIdFromSignature\",\"Const\":true,\"Inputs\":[{\"Name\":\"messageHash\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"signature\",\"Type\":{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"identityHashToAccount\":{\"Name\":\"identityHashToAccount\",\"Const\":true,\"Inputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"isControllerOf\":{\"Name\":\"isControllerOf\",\"Const\":true,\"Inputs\":[{\"Name\":\"sender\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"isTemporary\":{\"Name\":\"isTemporary\",\"Const\":true,\"Inputs\":[{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"numberOfAccounts\":{\"Name\":\"numberOfAccounts\",\"Const\":true,\"Inputs\":[],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":22,\"Type\":{},\"Size\":256,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"setController\":{\"Name\":\"setController\",\"Const\":false,\"Inputs\":[{\"Name\":\"controller\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"unlockTemporary\":{\"Name\":\"unlockTemporary\",\"Const\":false,\"Inputs\":[{\"Name\":\"identityPreimage\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"newOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"passwordSignature\",\"Type\":{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]}},\"Events\":{\"SignUp\":{\"Name\":\"SignUp\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"owner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"TemporaryCreated\":{\"Name\":\"TemporaryCreated\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"proxy\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"identityHash\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"Unlocked\":{\"Name\":\"Unlocked\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"identityHash\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"accountId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"newOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]}}}"
 
 // Accounts is an auto generated Go binding around an Ethereum contract.
 type Accounts struct {
@@ -175,6 +176,25 @@ func NewAccountsFilterer(address common.Address, filterer bind.ContractFilterer)
 	return &AccountsFilterer{contract: contract}, nil
 }
 
+type AccountsManager interface {
+	// Pure/View methods
+	Accounts(arg0 types.ID) (types.Account, error)
+	Exists(accountId types.ID) (bool, error)
+	GetAccount(accountId types.ID) (types.Account, error)
+	GetAccountId(sender common.Address) (types.ID, error)
+	GetAccountIdFromSignature(messageHash [32]byte, signature []byte) (types.ID, error)
+	IdentityHashToAccount(arg0 [32]byte) (types.ID, error)
+	IsControllerOf(sender common.Address, accountId types.ID) (bool, error)
+	IsTemporary(accountId types.ID) (bool, error)
+	NumberOfAccounts() (*big.Int, error)
+
+	// Other methods
+	Create(ctx context.Context) (types.ID, error)
+	CreateTemporary(ctx context.Context, identityHash [32]byte) (types.ID, error)
+	SetController(ctx context.Context, controller common.Address) error
+	UnlockTemporary(ctx context.Context, identityPreimage [32]byte, newOwner common.Address, passwordSignature []byte) error
+}
+
 // convenient hacks for blockchain.Client
 func init() {
 	blockchain.ContractList["Accounts"] = (&Accounts{}).new
@@ -182,7 +202,6 @@ func init() {
 	blockchain.RegisterSelector("0x56003f0f", "createTemporary(bytes32)")
 	blockchain.RegisterSelector("0x92eefe9b", "setController(address)")
 	blockchain.RegisterSelector("0x2299219d", "unlockTemporary(bytes32,address,bytes)")
-
 }
 
 // bindAccounts binds a generic wrapper to an already deployed contract.
@@ -201,18 +220,8 @@ func (_Accounts *Accounts) new(address common.Address, backend bind.ContractBack
 // Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
 //
 // Solidity: function accounts(bytes8 ) constant returns(address owner, uint8 status, address controller, address passwordProof)
-func (_Accounts *AccountsCaller) Accounts(opts *bind.CallOpts, arg0 [8]byte) (struct {
-	Owner         common.Address
-	Status        uint8
-	Controller    common.Address
-	PasswordProof common.Address
-}, error) {
-	ret := new(struct {
-		Owner         common.Address
-		Status        uint8
-		Controller    common.Address
-		PasswordProof common.Address
-	})
+func (_Accounts *AccountsCaller) Accounts(opts *bind.CallOpts, arg0 types.ID) (types.Account, error) {
+	ret := new(types.Account)
 
 	out := ret
 	err := _Accounts.contract.Call(opts, out, "accounts", arg0)
@@ -222,31 +231,21 @@ func (_Accounts *AccountsCaller) Accounts(opts *bind.CallOpts, arg0 [8]byte) (st
 // Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
 //
 // Solidity: function accounts(bytes8 ) constant returns(address owner, uint8 status, address controller, address passwordProof)
-func (_Accounts *AccountsSession) Accounts(arg0 [8]byte) (struct {
-	Owner         common.Address
-	Status        uint8
-	Controller    common.Address
-	PasswordProof common.Address
-}, error) {
+func (_Accounts *AccountsSession) Accounts(arg0 types.ID) (types.Account, error) {
 	return _Accounts.Contract.Accounts(&_Accounts.CallOpts, arg0)
 }
 
 // Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
 //
 // Solidity: function accounts(bytes8 ) constant returns(address owner, uint8 status, address controller, address passwordProof)
-func (_Accounts *AccountsCallerSession) Accounts(arg0 [8]byte) (struct {
-	Owner         common.Address
-	Status        uint8
-	Controller    common.Address
-	PasswordProof common.Address
-}, error) {
+func (_Accounts *AccountsCallerSession) Accounts(arg0 types.ID) (types.Account, error) {
 	return _Accounts.Contract.Accounts(&_Accounts.CallOpts, arg0)
 }
 
 // Exists is a free data retrieval call binding the contract method 0x97e4fea7.
 //
 // Solidity: function exists(bytes8 accountId) constant returns(bool)
-func (_Accounts *AccountsCaller) Exists(opts *bind.CallOpts, accountId [8]byte) (bool, error) {
+func (_Accounts *AccountsCaller) Exists(opts *bind.CallOpts, accountId types.ID) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
@@ -258,32 +257,22 @@ func (_Accounts *AccountsCaller) Exists(opts *bind.CallOpts, accountId [8]byte) 
 // Exists is a free data retrieval call binding the contract method 0x97e4fea7.
 //
 // Solidity: function exists(bytes8 accountId) constant returns(bool)
-func (_Accounts *AccountsSession) Exists(accountId [8]byte) (bool, error) {
+func (_Accounts *AccountsSession) Exists(accountId types.ID) (bool, error) {
 	return _Accounts.Contract.Exists(&_Accounts.CallOpts, accountId)
 }
 
 // Exists is a free data retrieval call binding the contract method 0x97e4fea7.
 //
 // Solidity: function exists(bytes8 accountId) constant returns(bool)
-func (_Accounts *AccountsCallerSession) Exists(accountId [8]byte) (bool, error) {
+func (_Accounts *AccountsCallerSession) Exists(accountId types.ID) (bool, error) {
 	return _Accounts.Contract.Exists(&_Accounts.CallOpts, accountId)
 }
 
 // GetAccount is a free data retrieval call binding the contract method 0xf9292ddb.
 //
 // Solidity: function getAccount(bytes8 accountId) constant returns((address,uint8,address,address))
-func (_Accounts *AccountsCaller) GetAccount(opts *bind.CallOpts, accountId [8]byte) (struct {
-	Owner         common.Address
-	Status        uint8
-	Controller    common.Address
-	PasswordProof common.Address
-}, error) {
-	ret := new(struct {
-		Owner         common.Address
-		Status        uint8
-		Controller    common.Address
-		PasswordProof common.Address
-	})
+func (_Accounts *AccountsCaller) GetAccount(opts *bind.CallOpts, accountId types.ID) (types.Account, error) {
+	ret := new(types.Account)
 
 	out := ret
 	err := _Accounts.contract.Call(opts, out, "getAccount", accountId)
@@ -293,33 +282,23 @@ func (_Accounts *AccountsCaller) GetAccount(opts *bind.CallOpts, accountId [8]by
 // GetAccount is a free data retrieval call binding the contract method 0xf9292ddb.
 //
 // Solidity: function getAccount(bytes8 accountId) constant returns((address,uint8,address,address))
-func (_Accounts *AccountsSession) GetAccount(accountId [8]byte) (struct {
-	Owner         common.Address
-	Status        uint8
-	Controller    common.Address
-	PasswordProof common.Address
-}, error) {
+func (_Accounts *AccountsSession) GetAccount(accountId types.ID) (types.Account, error) {
 	return _Accounts.Contract.GetAccount(&_Accounts.CallOpts, accountId)
 }
 
 // GetAccount is a free data retrieval call binding the contract method 0xf9292ddb.
 //
 // Solidity: function getAccount(bytes8 accountId) constant returns((address,uint8,address,address))
-func (_Accounts *AccountsCallerSession) GetAccount(accountId [8]byte) (struct {
-	Owner         common.Address
-	Status        uint8
-	Controller    common.Address
-	PasswordProof common.Address
-}, error) {
+func (_Accounts *AccountsCallerSession) GetAccount(accountId types.ID) (types.Account, error) {
 	return _Accounts.Contract.GetAccount(&_Accounts.CallOpts, accountId)
 }
 
 // GetAccountId is a free data retrieval call binding the contract method 0xe0b490f7.
 //
 // Solidity: function getAccountId(address sender) constant returns(bytes8)
-func (_Accounts *AccountsCaller) GetAccountId(opts *bind.CallOpts, sender common.Address) ([8]byte, error) {
+func (_Accounts *AccountsCaller) GetAccountId(opts *bind.CallOpts, sender common.Address) (types.ID, error) {
 	var (
-		ret0 = new([8]byte)
+		ret0 = new(types.ID)
 	)
 	out := &[]interface{}{ret0}
 	err := _Accounts.contract.Call(opts, out, "getAccountId", sender)
@@ -329,23 +308,23 @@ func (_Accounts *AccountsCaller) GetAccountId(opts *bind.CallOpts, sender common
 // GetAccountId is a free data retrieval call binding the contract method 0xe0b490f7.
 //
 // Solidity: function getAccountId(address sender) constant returns(bytes8)
-func (_Accounts *AccountsSession) GetAccountId(sender common.Address) ([8]byte, error) {
+func (_Accounts *AccountsSession) GetAccountId(sender common.Address) (types.ID, error) {
 	return _Accounts.Contract.GetAccountId(&_Accounts.CallOpts, sender)
 }
 
 // GetAccountId is a free data retrieval call binding the contract method 0xe0b490f7.
 //
 // Solidity: function getAccountId(address sender) constant returns(bytes8)
-func (_Accounts *AccountsCallerSession) GetAccountId(sender common.Address) ([8]byte, error) {
+func (_Accounts *AccountsCallerSession) GetAccountId(sender common.Address) (types.ID, error) {
 	return _Accounts.Contract.GetAccountId(&_Accounts.CallOpts, sender)
 }
 
 // GetAccountIdFromSignature is a free data retrieval call binding the contract method 0x23d0601d.
 //
 // Solidity: function getAccountIdFromSignature(bytes32 messageHash, bytes signature) constant returns(bytes8)
-func (_Accounts *AccountsCaller) GetAccountIdFromSignature(opts *bind.CallOpts, messageHash [32]byte, signature []byte) ([8]byte, error) {
+func (_Accounts *AccountsCaller) GetAccountIdFromSignature(opts *bind.CallOpts, messageHash [32]byte, signature []byte) (types.ID, error) {
 	var (
-		ret0 = new([8]byte)
+		ret0 = new(types.ID)
 	)
 	out := &[]interface{}{ret0}
 	err := _Accounts.contract.Call(opts, out, "getAccountIdFromSignature", messageHash, signature)
@@ -355,23 +334,23 @@ func (_Accounts *AccountsCaller) GetAccountIdFromSignature(opts *bind.CallOpts, 
 // GetAccountIdFromSignature is a free data retrieval call binding the contract method 0x23d0601d.
 //
 // Solidity: function getAccountIdFromSignature(bytes32 messageHash, bytes signature) constant returns(bytes8)
-func (_Accounts *AccountsSession) GetAccountIdFromSignature(messageHash [32]byte, signature []byte) ([8]byte, error) {
+func (_Accounts *AccountsSession) GetAccountIdFromSignature(messageHash [32]byte, signature []byte) (types.ID, error) {
 	return _Accounts.Contract.GetAccountIdFromSignature(&_Accounts.CallOpts, messageHash, signature)
 }
 
 // GetAccountIdFromSignature is a free data retrieval call binding the contract method 0x23d0601d.
 //
 // Solidity: function getAccountIdFromSignature(bytes32 messageHash, bytes signature) constant returns(bytes8)
-func (_Accounts *AccountsCallerSession) GetAccountIdFromSignature(messageHash [32]byte, signature []byte) ([8]byte, error) {
+func (_Accounts *AccountsCallerSession) GetAccountIdFromSignature(messageHash [32]byte, signature []byte) (types.ID, error) {
 	return _Accounts.Contract.GetAccountIdFromSignature(&_Accounts.CallOpts, messageHash, signature)
 }
 
 // IdentityHashToAccount is a free data retrieval call binding the contract method 0x17aba2d3.
 //
 // Solidity: function identityHashToAccount(bytes32 ) constant returns(bytes8)
-func (_Accounts *AccountsCaller) IdentityHashToAccount(opts *bind.CallOpts, arg0 [32]byte) ([8]byte, error) {
+func (_Accounts *AccountsCaller) IdentityHashToAccount(opts *bind.CallOpts, arg0 [32]byte) (types.ID, error) {
 	var (
-		ret0 = new([8]byte)
+		ret0 = new(types.ID)
 	)
 	out := &[]interface{}{ret0}
 	err := _Accounts.contract.Call(opts, out, "identityHashToAccount", arg0)
@@ -381,21 +360,21 @@ func (_Accounts *AccountsCaller) IdentityHashToAccount(opts *bind.CallOpts, arg0
 // IdentityHashToAccount is a free data retrieval call binding the contract method 0x17aba2d3.
 //
 // Solidity: function identityHashToAccount(bytes32 ) constant returns(bytes8)
-func (_Accounts *AccountsSession) IdentityHashToAccount(arg0 [32]byte) ([8]byte, error) {
+func (_Accounts *AccountsSession) IdentityHashToAccount(arg0 [32]byte) (types.ID, error) {
 	return _Accounts.Contract.IdentityHashToAccount(&_Accounts.CallOpts, arg0)
 }
 
 // IdentityHashToAccount is a free data retrieval call binding the contract method 0x17aba2d3.
 //
 // Solidity: function identityHashToAccount(bytes32 ) constant returns(bytes8)
-func (_Accounts *AccountsCallerSession) IdentityHashToAccount(arg0 [32]byte) ([8]byte, error) {
+func (_Accounts *AccountsCallerSession) IdentityHashToAccount(arg0 [32]byte) (types.ID, error) {
 	return _Accounts.Contract.IdentityHashToAccount(&_Accounts.CallOpts, arg0)
 }
 
 // IsControllerOf is a free data retrieval call binding the contract method 0xa83038e7.
 //
 // Solidity: function isControllerOf(address sender, bytes8 accountId) constant returns(bool)
-func (_Accounts *AccountsCaller) IsControllerOf(opts *bind.CallOpts, sender common.Address, accountId [8]byte) (bool, error) {
+func (_Accounts *AccountsCaller) IsControllerOf(opts *bind.CallOpts, sender common.Address, accountId types.ID) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
@@ -407,21 +386,21 @@ func (_Accounts *AccountsCaller) IsControllerOf(opts *bind.CallOpts, sender comm
 // IsControllerOf is a free data retrieval call binding the contract method 0xa83038e7.
 //
 // Solidity: function isControllerOf(address sender, bytes8 accountId) constant returns(bool)
-func (_Accounts *AccountsSession) IsControllerOf(sender common.Address, accountId [8]byte) (bool, error) {
+func (_Accounts *AccountsSession) IsControllerOf(sender common.Address, accountId types.ID) (bool, error) {
 	return _Accounts.Contract.IsControllerOf(&_Accounts.CallOpts, sender, accountId)
 }
 
 // IsControllerOf is a free data retrieval call binding the contract method 0xa83038e7.
 //
 // Solidity: function isControllerOf(address sender, bytes8 accountId) constant returns(bool)
-func (_Accounts *AccountsCallerSession) IsControllerOf(sender common.Address, accountId [8]byte) (bool, error) {
+func (_Accounts *AccountsCallerSession) IsControllerOf(sender common.Address, accountId types.ID) (bool, error) {
 	return _Accounts.Contract.IsControllerOf(&_Accounts.CallOpts, sender, accountId)
 }
 
 // IsTemporary is a free data retrieval call binding the contract method 0x6b886888.
 //
 // Solidity: function isTemporary(bytes8 accountId) constant returns(bool)
-func (_Accounts *AccountsCaller) IsTemporary(opts *bind.CallOpts, accountId [8]byte) (bool, error) {
+func (_Accounts *AccountsCaller) IsTemporary(opts *bind.CallOpts, accountId types.ID) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
@@ -433,14 +412,14 @@ func (_Accounts *AccountsCaller) IsTemporary(opts *bind.CallOpts, accountId [8]b
 // IsTemporary is a free data retrieval call binding the contract method 0x6b886888.
 //
 // Solidity: function isTemporary(bytes8 accountId) constant returns(bool)
-func (_Accounts *AccountsSession) IsTemporary(accountId [8]byte) (bool, error) {
+func (_Accounts *AccountsSession) IsTemporary(accountId types.ID) (bool, error) {
 	return _Accounts.Contract.IsTemporary(&_Accounts.CallOpts, accountId)
 }
 
 // IsTemporary is a free data retrieval call binding the contract method 0x6b886888.
 //
 // Solidity: function isTemporary(bytes8 accountId) constant returns(bool)
-func (_Accounts *AccountsCallerSession) IsTemporary(accountId [8]byte) (bool, error) {
+func (_Accounts *AccountsCallerSession) IsTemporary(accountId types.ID) (bool, error) {
 	return _Accounts.Contract.IsTemporary(&_Accounts.CallOpts, accountId)
 }
 
@@ -472,42 +451,42 @@ func (_Accounts *AccountsCallerSession) NumberOfAccounts() (*big.Int, error) {
 
 // Create is a paid mutator transaction binding the contract method 0xefc81a8c.
 //
-// Solidity: function create() returns()
+// Solidity: function create() returns(bytes8)
 func (_Accounts *AccountsTransactor) Create(opts *bind.TransactOpts) (*ethTypes.Transaction, error) {
 	return _Accounts.contract.Transact(opts, "create")
 }
 
 // Create is a paid mutator transaction binding the contract method 0xefc81a8c.
 //
-// Solidity: function create() returns()
+// Solidity: function create() returns(bytes8)
 func (_Accounts *AccountsSession) Create() (*ethTypes.Transaction, error) {
 	return _Accounts.Contract.Create(&_Accounts.TransactOpts)
 }
 
 // Create is a paid mutator transaction binding the contract method 0xefc81a8c.
 //
-// Solidity: function create() returns()
+// Solidity: function create() returns(bytes8)
 func (_Accounts *AccountsTransactorSession) Create() (*ethTypes.Transaction, error) {
 	return _Accounts.Contract.Create(&_Accounts.TransactOpts)
 }
 
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
 //
-// Solidity: function createTemporary(bytes32 identityHash) returns()
+// Solidity: function createTemporary(bytes32 identityHash) returns(bytes8)
 func (_Accounts *AccountsTransactor) CreateTemporary(opts *bind.TransactOpts, identityHash [32]byte) (*ethTypes.Transaction, error) {
 	return _Accounts.contract.Transact(opts, "createTemporary", identityHash)
 }
 
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
 //
-// Solidity: function createTemporary(bytes32 identityHash) returns()
+// Solidity: function createTemporary(bytes32 identityHash) returns(bytes8)
 func (_Accounts *AccountsSession) CreateTemporary(identityHash [32]byte) (*ethTypes.Transaction, error) {
 	return _Accounts.Contract.CreateTemporary(&_Accounts.TransactOpts, identityHash)
 }
 
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
 //
-// Solidity: function createTemporary(bytes32 identityHash) returns()
+// Solidity: function createTemporary(bytes32 identityHash) returns(bytes8)
 func (_Accounts *AccountsTransactorSession) CreateTemporary(identityHash [32]byte) (*ethTypes.Transaction, error) {
 	return _Accounts.Contract.CreateTemporary(&_Accounts.TransactOpts, identityHash)
 }
@@ -624,7 +603,7 @@ func (it *AccountsSignUpIterator) Close() error {
 // AccountsSignUp represents a SignUp event raised by the Accounts contract.
 type AccountsSignUp struct {
 	Owner     common.Address
-	AccountId [8]byte
+	AccountId types.ID
 	Raw       ethTypes.Log // Blockchain specific contextual infos
 }
 
@@ -774,7 +753,7 @@ func (it *AccountsTemporaryCreatedIterator) Close() error {
 type AccountsTemporaryCreated struct {
 	Proxy        common.Address
 	IdentityHash [32]byte
-	AccountId    [8]byte
+	AccountId    types.ID
 	Raw          ethTypes.Log // Blockchain specific contextual infos
 }
 
@@ -931,7 +910,7 @@ func (it *AccountsUnlockedIterator) Close() error {
 // AccountsUnlocked represents a Unlocked event raised by the Accounts contract.
 type AccountsUnlocked struct {
 	IdentityHash [32]byte
-	AccountId    [8]byte
+	AccountId    types.ID
 	NewOwner     common.Address
 	Raw          ethTypes.Log // Blockchain specific contextual infos
 }
@@ -939,7 +918,7 @@ type AccountsUnlocked struct {
 // FilterUnlocked is a free log retrieval operation binding the contract event 0x97e37defaf20fab5209164d8e3b54fdb1bd84d7ec6def1886c587be543d41bc0.
 //
 // Solidity: event Unlocked(bytes32 indexed identityHash, bytes8 indexed accountId, address newOwner)
-func (_Accounts *AccountsFilterer) FilterUnlocked(opts *bind.FilterOpts, identityHash [][32]byte, accountId [][8]byte) (*AccountsUnlockedIterator, error) {
+func (_Accounts *AccountsFilterer) FilterUnlocked(opts *bind.FilterOpts, identityHash [][32]byte, accountId []types.ID) (*AccountsUnlockedIterator, error) {
 
 	var identityHashRule []interface{}
 	for _, identityHashItem := range identityHash {
@@ -976,7 +955,7 @@ func (_Accounts *AccountsFilterer) ParseUnlockedFromReceipt(receipt *ethTypes.Re
 // WatchUnlocked is a free log subscription operation binding the contract event 0x97e37defaf20fab5209164d8e3b54fdb1bd84d7ec6def1886c587be543d41bc0.
 //
 // Solidity: event Unlocked(bytes32 indexed identityHash, bytes8 indexed accountId, address newOwner)
-func (_Accounts *AccountsFilterer) WatchUnlocked(opts *bind.WatchOpts, sink chan<- *AccountsUnlocked, identityHash [][32]byte, accountId [][8]byte) (event.Subscription, error) {
+func (_Accounts *AccountsFilterer) WatchUnlocked(opts *bind.WatchOpts, sink chan<- *AccountsUnlocked, identityHash [][32]byte, accountId []types.ID) (event.Subscription, error) {
 
 	var identityHashRule []interface{}
 	for _, identityHashItem := range identityHash {

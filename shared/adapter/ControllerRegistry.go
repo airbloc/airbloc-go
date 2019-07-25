@@ -4,6 +4,7 @@
 package adapter
 
 import (
+	"context"
 	"math/big"
 	"strings"
 
@@ -175,13 +176,25 @@ func NewControllerRegistryFilterer(address common.Address, filterer bind.Contrac
 	return &ControllerRegistryFilterer{contract: contract}, nil
 }
 
+type ControllerRegistryManager interface {
+	// Pure/View methods
+	Exists(controller common.Address) (bool, error)
+	Get(controller common.Address) (types.DataController, error)
+	IsOwner() (bool, error)
+	Owner() (common.Address, error)
+
+	// Other methods
+	Register(ctx context.Context, controllerAddr common.Address) error
+	RenounceOwnership(ctx context.Context) error
+	TransferOwnership(ctx context.Context, newOwner common.Address) error
+}
+
 // convenient hacks for blockchain.Client
 func init() {
 	blockchain.ContractList["ControllerRegistry"] = (&ControllerRegistry{}).new
 	blockchain.RegisterSelector("0x4420e486", "register(address)")
 	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
 	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
-
 }
 
 // bindControllerRegistry binds a generic wrapper to an already deployed contract.
@@ -226,14 +239,8 @@ func (_ControllerRegistry *ControllerRegistryCallerSession) Exists(controller co
 // Get is a free data retrieval call binding the contract method 0xc2bc2efc.
 //
 // Solidity: function get(address controller) constant returns((address,uint256))
-func (_ControllerRegistry *ControllerRegistryCaller) Get(opts *bind.CallOpts, controller common.Address) (struct {
-	Controller common.Address
-	UsersCount *big.Int
-}, error) {
-	ret := new(struct {
-		Controller common.Address
-		UsersCount *big.Int
-	})
+func (_ControllerRegistry *ControllerRegistryCaller) Get(opts *bind.CallOpts, controller common.Address) (types.DataController, error) {
+	ret := new(types.DataController)
 
 	out := ret
 	err := _ControllerRegistry.contract.Call(opts, out, "get", controller)
@@ -243,20 +250,14 @@ func (_ControllerRegistry *ControllerRegistryCaller) Get(opts *bind.CallOpts, co
 // Get is a free data retrieval call binding the contract method 0xc2bc2efc.
 //
 // Solidity: function get(address controller) constant returns((address,uint256))
-func (_ControllerRegistry *ControllerRegistrySession) Get(controller common.Address) (struct {
-	Controller common.Address
-	UsersCount *big.Int
-}, error) {
+func (_ControllerRegistry *ControllerRegistrySession) Get(controller common.Address) (types.DataController, error) {
 	return _ControllerRegistry.Contract.Get(&_ControllerRegistry.CallOpts, controller)
 }
 
 // Get is a free data retrieval call binding the contract method 0xc2bc2efc.
 //
 // Solidity: function get(address controller) constant returns((address,uint256))
-func (_ControllerRegistry *ControllerRegistryCallerSession) Get(controller common.Address) (struct {
-	Controller common.Address
-	UsersCount *big.Int
-}, error) {
+func (_ControllerRegistry *ControllerRegistryCallerSession) Get(controller common.Address) (types.DataController, error) {
 	return _ControllerRegistry.Contract.Get(&_ControllerRegistry.CallOpts, controller)
 }
 
