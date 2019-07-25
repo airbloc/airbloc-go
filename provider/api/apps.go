@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/airbloc/airbloc-go/shared/adapter"
+
 	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/gin-gonic/gin/binding"
@@ -15,7 +17,7 @@ import (
 
 // appRegistryAPI is api wrapper of contract AppRegistry.sol
 type appRegistryAPI struct {
-	apps *apps.Manager
+	apps adapter.AppRegistryManager
 }
 
 // NewAppRegistryAPI makes new *appRegistryAPI struct

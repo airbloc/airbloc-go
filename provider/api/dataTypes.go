@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/airbloc/airbloc-go/shared/adapter"
+
 	"github.com/airbloc/airbloc-go/provider/dataTypes"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
@@ -13,7 +15,7 @@ import (
 
 // dataTypeRegistryAPI is api wrapper of contract DataTypeRegistry.sol
 type dataTypeRegistryAPI struct {
-	dataTypes *dataTypes.Manager
+	dataTypes adapter.DataTypeRegistryManager
 }
 
 // NewDataTypeRegistryAPI makes new *dataTypeRegistryAPI struct
@@ -63,7 +65,7 @@ func (api *dataTypeRegistryAPI) unregister(c *gin.Context) {
 // Solidity: function get(string name) constant returns((string,address,bytes32))
 func (api *dataTypeRegistryAPI) get(c *gin.Context) {
 	name := c.Param("name")
-	dataType, err := api.dataTypes.Get(c, name)
+	dataType, err := api.dataTypes.Get(name)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": err})
 		return

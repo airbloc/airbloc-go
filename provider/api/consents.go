@@ -5,6 +5,8 @@ import (
 	"math/big"
 	"net/http"
 
+	"github.com/airbloc/airbloc-go/shared/adapter"
+
 	"github.com/airbloc/airbloc-go/shared/types"
 
 	"github.com/airbloc/airbloc-go/provider/consents"
@@ -16,7 +18,7 @@ import (
 
 // ConsentsAPI is api wrapper of contract Consents.sol
 type consentsAPI struct {
-	consents *consents.Manager
+	consents adapter.ConsentsManager
 }
 
 // NewConsentsAPI makes new *ConsentsAPI struct
@@ -149,10 +151,7 @@ func (api *consentsAPI) isAllowed(c *gin.Context) {
 	}
 
 	if req.BlockNumber == "" {
-		allowed, err := api.consents.IsAllowed(
-			c, req.Action,
-			userId, req.AppName, req.DataType,
-		)
+		allowed, err := api.consents.IsAllowed(req.Action, userId, req.AppName, req.DataType)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
 			return
@@ -166,10 +165,7 @@ func (api *consentsAPI) isAllowed(c *gin.Context) {
 		return
 	}
 
-	allowed, err := api.consents.IsAllowedAt(
-		c, req.Action,
-		userId, req.AppName, req.DataType, blockNumber,
-	)
+	allowed, err := api.consents.IsAllowedAt(req.Action, userId, req.AppName, req.DataType, blockNumber)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
 		return

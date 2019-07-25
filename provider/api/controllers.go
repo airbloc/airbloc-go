@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/airbloc/airbloc-go/shared/adapter"
+
 	"github.com/airbloc/airbloc-go/provider/controllers"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
@@ -12,7 +14,7 @@ import (
 
 // controllerRegistryAPI is api wrapper of contract ControllerRegistry.sol
 type controllerRegistryAPI struct {
-	controllers *controllers.Manager
+	controllers adapter.ControllerRegistryManager
 }
 
 // NewControllerRegistryAPI makes new *controllerRegistryAPI struct
@@ -42,7 +44,7 @@ func (api *controllerRegistryAPI) get(c *gin.Context) {
 	rawControllerAddr := c.Param("controllerAddr")
 	controllerAddr := common.HexToAddress(rawControllerAddr)
 
-	controller, err := api.controllers.Get(c, controllerAddr)
+	controller, err := api.controllers.Get(controllerAddr)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
 		return
