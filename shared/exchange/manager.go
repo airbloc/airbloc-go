@@ -4,22 +4,23 @@ import (
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/airbloc/logger"
 	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )
 
 // Manager is contract wrapper struct
 type Manager struct {
-	client   blockchain.TxClient
-	contract *adapter.Exchange
+	contract adapter.IExchangeContract
+	log      *logger.Logger
 }
 
 // NewManager makes new *Manager struct
-func NewManager(client blockchain.TxClient) adapter.ExchangeManager {
-	contract := client.GetContract(&adapter.Exchange{})
+func NewManager(client blockchain.TxClient) adapter.IExchangeManager {
 	return &Manager{
-		client:   client,
-		contract: contract.(*adapter.Exchange),
+		contract: adapter.NewExchangeContract(client),
+		log:      logger.New("exchange"),
 	}
 }
 
@@ -42,27 +43,20 @@ func (manager *Manager) Prepare(
 	if len(dataIds) < 20 {
 		ids = dataIds
 	}
-	tx, err := manager.contract.Prepare(
-		manager.client.Account(),
-		provider, consumer,
-		escrow, escrowSign, escrowArgs,
-		ids,
-	)
+	receipt, err := manager.contract.Prepare(ctx, provider, consumer, escrow, escrowSign, escrowArgs, ids)
 	if err != nil {
-		return types.ID{}, err
-	}
-
-	receipt, err := manager.client.WaitMined(ctx, tx)
-	if err != nil {
-		return types.ID{}, err
+		return types.ID{}, errors.Wrap(err, "failed to transact")
 	}
 
 	event, err := manager.contract.ParseOfferPreparedFromReceipt(receipt)
 	if err != nil {
-		return types.ID{}, err
+		return types.ID{}, errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	offerId := event.OfferId
+	manager.log.Info("Offer prepared.", logger.Attrs{
+		"offer-id":          event.OfferId.Hex(),
+		"provider-app-name": event.ProviderAppName,
+	})
 
 	// then, splits ids into chunks which maximum length is 20.
 	// and adds in offer struct one by one.
@@ -75,42 +69,46 @@ func (manager *Manager) Prepare(
 				end = l
 			}
 
-			err = manager.AddDataIds(ctx, offerId, dataIds[start:end])
+			err = manager.AddDataIds(ctx, event.OfferId, dataIds[start:end])
 			if err != nil {
-				return offerId, err
+				break
 			}
 		}
 	}
-	return offerId, err
+	return event.OfferId, err
 }
 
 // AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
 //
 // Solidity: function addDataIds(bytes8 offerId, bytes20[] dataIds) returns()
 func (manager *Manager) AddDataIds(ctx context.Context, offerId types.ID, dataIds []types.DataId) error {
-	tx, err := manager.contract.AddDataIds(manager.client.Account(), offerId, dataIds)
+	_, err := manager.contract.AddDataIds(ctx, offerId, dataIds)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to transact")
 	}
 
-	_, err = manager.client.WaitMined(ctx, tx)
-	return err
+	manager.log.Info("Offer updated.", logger.Attrs{
+		"offer-id":    offerId.Hex(),
+		"data-length": len(dataIds),
+	})
+	return nil
 }
 
 // Order is a paid mutator transaction binding the contract method 0x0cf833fb.
 //
 // Solidity: function order(bytes8 offerId) returns()
 func (manager *Manager) Order(ctx context.Context, offerId types.ID) error {
-	tx, err := manager.contract.Order(manager.client.Account(), offerId)
+	receipt, err := manager.contract.Order(ctx, offerId)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to transact")
 	}
 
-	receipt, err := manager.client.WaitMined(ctx, tx)
+	event, err := manager.contract.ParseOfferPresentedFromReceipt(receipt)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
-	_, err = manager.contract.ParseOfferPresentedFromReceipt(receipt)
+
+	manager.log.Info("Offer presented.", logger.Attrs{"offer-id": event.OfferId.Hex()})
 	return err
 }
 
@@ -118,16 +116,17 @@ func (manager *Manager) Order(ctx context.Context, offerId types.ID) error {
 //
 // Solidity: function cancel(bytes8 offerId) returns()
 func (manager *Manager) Cancel(ctx context.Context, offerId types.ID) error {
-	tx, err := manager.contract.Cancel(manager.client.Account(), offerId)
+	receipt, err := manager.contract.Cancel(ctx, offerId)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to transact")
 	}
 
-	receipt, err := manager.client.WaitMined(ctx, tx)
+	event, err := manager.contract.ParseOfferCanceledFromReceipt(receipt)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
-	_, err = manager.contract.ParseOfferCanceledFromReceipt(receipt)
+
+	manager.log.Info("Offer cancelled.", logger.Attrs{"offer-id": event.OfferId.Hex()})
 	return err
 }
 
@@ -135,15 +134,17 @@ func (manager *Manager) Cancel(ctx context.Context, offerId types.ID) error {
 //
 // Solidity: function settle(bytes8 offerId) returns()
 func (manager *Manager) Settle(ctx context.Context, offerId types.ID) error {
-	tx, err := manager.contract.Settle(manager.client.Account(), offerId)
+	receipt, err := manager.contract.Settle(ctx, offerId)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to transact")
 	}
 
-	_, err = manager.client.WaitMined(ctx, tx)
+	event, err := manager.contract.ParseOfferSettledFromReceipt(receipt)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
+
+	manager.log.Info("Offer settled", logger.Attrs{"offer-id": event.OfferId.Hex()})
 	return nil
 }
 
@@ -151,15 +152,17 @@ func (manager *Manager) Settle(ctx context.Context, offerId types.ID) error {
 //
 // Solidity: function reject(bytes8 offerId) returns()
 func (manager *Manager) Reject(ctx context.Context, offerId types.ID) error {
-	tx, err := manager.contract.Reject(manager.client.Account(), offerId)
+	receipt, err := manager.contract.Reject(ctx, offerId)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to transact")
 	}
 
-	_, err = manager.client.WaitMined(ctx, tx)
+	event, err := manager.contract.ParseOfferRejectedFromReceipt(receipt)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
+
+	manager.log.Info("Offer rejected", logger.Attrs{"offer-id": event.OfferId.Hex()})
 	return nil
 }
 
@@ -167,19 +170,19 @@ func (manager *Manager) Reject(ctx context.Context, offerId types.ID) error {
 //
 // Solidity: function getOffer(bytes8 offerId) constant returns((string,address,bytes20[],uint256,uint256,(address,bytes4,bytes),uint8))
 func (manager *Manager) GetOffer(offerId types.ID) (types.Offer, error) {
-	return manager.contract.GetOffer(nil, offerId)
+	return manager.contract.GetOffer(offerId)
 }
 
 // GetOfferMembers is a free data retrieval call binding the contract method 0x72dfa465.
 //
 // Solidity: function getOfferMembers(bytes8 offerId) constant returns(address, address)
 func (manager *Manager) GetOfferMembers(offerId types.ID) (ethCommon.Address, ethCommon.Address, error) {
-	return manager.contract.GetOfferMembers(nil, offerId)
+	return manager.contract.GetOfferMembers(offerId)
 }
 
 // OfferExists is a free data retrieval call binding the contract method 0xc4a03da9.
 //
 // Solidity: function offerExists(bytes8 offerId) constant returns(bool)
 func (manager *Manager) OfferExists(offerId types.ID) (bool, error) {
-	return manager.contract.OfferExists(nil, offerId)
+	return manager.contract.OfferExists(offerId)
 }
