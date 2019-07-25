@@ -2,18 +2,19 @@ package service
 
 import (
 	"context"
+	"os"
+	"os/signal"
+	"runtime"
+	"time"
+
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/database/localdb"
 	"github.com/airbloc/airbloc-go/shared/database/metadb"
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/airbloc-go/shared/p2p"
-	"github.com/libp2p/go-libp2p-peerstore"
-	"github.com/multiformats/go-multiaddr"
+	peerstore "github.com/libp2p/go-libp2p-peerstore"
+	multiaddr "github.com/multiformats/go-multiaddr"
 	"github.com/pkg/errors"
-	"os"
-	"os/signal"
-	"runtime"
-	"time"
 )
 
 type Backend interface {
@@ -30,7 +31,7 @@ type Backend interface {
 	DetachService(string)
 }
 
-// Airbloc implements Airbloc node service.
+// AirblocBackend is implements of Airbloc node service.
 // it composes all service used by Airbloc.
 type AirblocBackend struct {
 	kms           key.Manager
