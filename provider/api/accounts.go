@@ -81,7 +81,8 @@ func (api *accountsAPI) unlockTemporary(c *gin.Context) {
 		return
 	}
 
-	if err := api.accounts.UnlockTemporary(c, identityPreimage, newOwner, passwordSignature); err != nil {
+	err = api.accounts.UnlockTemporary(c, identityPreimage, newOwner, passwordSignature)
+	if err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
 		return
 	}
