@@ -4,24 +4,24 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/airbloc/airbloc-go/shared/types"
-
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
+	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/airbloc/logger"
+	"github.com/pkg/errors"
 )
 
 // Manager is contract wrapper struct
 type Manager struct {
-	client   blockchain.TxClient
-	contract *adapter.Consents
+	contract adapter.IConsentsContract
+	log      *logger.Logger
 }
 
 // NewManager makes new *Manager struct
-func NewManager(client blockchain.TxClient) adapter.ConsentsManager {
-	contract := client.GetContract(&adapter.Consents{})
+func NewManager(client blockchain.TxClient) adapter.IConsentsManager {
 	return &Manager{
-		client:   client,
-		contract: contract.(*adapter.Consents),
+		contract: adapter.NewConsentsContract(client),
+		log:      logger.New("consents"),
 	}
 }
 
@@ -29,20 +29,22 @@ func NewManager(client blockchain.TxClient) adapter.ConsentsManager {
 //
 // Solidity: function consent(uint8 action, string appName, string dataType, bool allowed) returns()
 func (manager *Manager) Consent(ctx context.Context, action uint8, appName, dataType string, allowed bool) error {
-	tx, err := manager.contract.Consent(
-		manager.client.Account(),
-		action, appName, dataType, allowed,
-	)
+	receipt, err := manager.contract.Consent(ctx, action, appName, dataType, allowed)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to transact")
 	}
 
-	receipt, err := manager.client.WaitMined(ctx, tx)
+	event, err := manager.contract.ParseConsentedFromReceipt(receipt)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	_, err = manager.contract.ParseConsentedFromReceipt(receipt)
+	manager.log.Info("Consented.", logger.Attrs{
+		"app-name":   event.AppName,
+		"data-type":  event.DataType,
+		"account-id": event.UserId.Hex(),
+		"allowed":    event.Allowed,
+	})
 	return err
 }
 
@@ -56,20 +58,22 @@ func (manager *Manager) ConsentByController(
 	appName, dataType string,
 	allowed bool,
 ) error {
-	tx, err := manager.contract.ConsentByController(
-		manager.client.Account(),
-		action, userId, appName, dataType, allowed,
-	)
+	receipt, err := manager.contract.ConsentByController(ctx, action, userId, appName, dataType, allowed)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to transact")
 	}
 
-	receipt, err := manager.client.WaitMined(ctx, tx)
+	event, err := manager.contract.ParseConsentedFromReceipt(receipt)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	_, err = manager.contract.ParseConsentedFromReceipt(receipt)
+	manager.log.Info("Consented by controller.", logger.Attrs{
+		"app-name":   event.AppName,
+		"data-type":  event.DataType,
+		"account-id": event.UserId.Hex(),
+		"allowed":    event.Allowed,
+	})
 	return err
 }
 
@@ -84,20 +88,22 @@ func (manager *Manager) ModifyConsentByController(
 	allowed bool,
 	passwordSignature []byte,
 ) error {
-	tx, err := manager.contract.ModifyConsentByController(
-		manager.client.Account(),
-		action, userId, appName, dataType, allowed, passwordSignature,
-	)
+	receipt, err := manager.contract.ModifyConsentByController(ctx, action, userId, appName, dataType, allowed, passwordSignature)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to transact")
 	}
 
-	receipt, err := manager.client.WaitMined(ctx, tx)
+	event, err := manager.contract.ParseConsentedFromReceipt(receipt)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	_, err = manager.contract.ParseConsentedFromReceipt(receipt)
+	manager.log.Info("Consent modified by controller.", logger.Attrs{
+		"app-name":   event.AppName,
+		"data-type":  event.DataType,
+		"account-id": event.UserId.Hex(),
+		"allowed":    event.Allowed,
+	})
 	return err
 }
 
@@ -109,7 +115,7 @@ func (manager *Manager) IsAllowed(
 	userId types.ID,
 	appName, dataType string,
 ) (bool, error) {
-	return manager.contract.IsAllowed(nil, action, userId, appName, dataType)
+	return manager.contract.IsAllowed(action, userId, appName, dataType)
 }
 
 // IsAllowedAt is a free data retrieval call binding the contract method 0x118642e1.
@@ -121,5 +127,5 @@ func (manager *Manager) IsAllowedAt(
 	appName, dataType string,
 	blockNumber *big.Int,
 ) (bool, error) {
-	return manager.contract.IsAllowedAt(nil, action, userId, appName, dataType, blockNumber)
+	return manager.contract.IsAllowedAt(action, userId, appName, dataType, blockNumber)
 }
