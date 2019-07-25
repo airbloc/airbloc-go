@@ -105,7 +105,6 @@ func (manager *Manager) ModifyConsentByController(
 //
 // Solidity: function isAllowed(uint8 action, bytes8 userId, string appName, string dataType) constant returns(bool)
 func (manager *Manager) IsAllowed(
-	ctx context.Context,
 	action uint8,
 	userId types.ID,
 	appName, dataType string,
@@ -117,7 +116,6 @@ func (manager *Manager) IsAllowed(
 //
 // Solidity: function isAllowedAt(uint8 action, bytes8 userId, string appName, string dataType, uint256 blockNumber) constant returns(bool)
 func (manager *Manager) IsAllowedAt(
-	ctx context.Context,
 	action uint8,
 	userId types.ID,
 	appName, dataType string,

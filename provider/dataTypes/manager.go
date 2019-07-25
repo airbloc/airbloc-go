@@ -64,6 +64,20 @@ func (manager *Manager) Unregister(ctx context.Context, name string) error {
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
 // Solidity: function get(string name) constant returns((string,address,bytes32))
-func (manager *Manager) Get(ctx context.Context, name string) (types.DataType, error) {
+func (manager *Manager) Get(name string) (types.DataType, error) {
 	return manager.contract.Get(nil, name)
+}
+
+// Exists is a free data retrieval call binding the contract method 0x261a323e.
+//
+// Solidity: function exists(string name) constant returns(bool)
+func (manager *Manager) Exists(name string) (bool, error) {
+	return manager.contract.Exists(nil, name)
+}
+
+// IsOwner is a free data retrieval call binding the contract method 0xbde1eee7.
+//
+// Solidity: function isOwner(string name, address owner) constant returns(bool)
+func (manager *Manager) IsOwner(name string, owner common.Address) (bool, error) {
+	return manager.contract.IsOwner(nil, name, owner)
 }

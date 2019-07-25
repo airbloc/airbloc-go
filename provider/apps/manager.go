@@ -10,7 +10,7 @@ import (
 )
 
 // Manager is contract wrapper struct
-type Manager struct {
+type manager struct {
 	client   blockchain.TxClient
 	contract *adapter.AppRegistry
 }
@@ -18,8 +18,7 @@ type Manager struct {
 // NewManager makes new *Manager struct
 func NewManager(client blockchain.TxClient) adapter.AppRegistryManager {
 	contract := client.GetContract(&adapter.AppRegistry{})
-	types.DataId{}
-	return &Manager{
+	return &manager{
 		client:   client,
 		contract: contract.(*adapter.AppRegistry),
 	}
@@ -28,7 +27,7 @@ func NewManager(client blockchain.TxClient) adapter.AppRegistryManager {
 // Register is a paid mutator transaction binding the contract method 0xf2c298be.
 //
 // Solidity: function register(string appName) returns()
-func (manager *Manager) Register(ctx context.Context, appName string) error {
+func (manager *manager) Register(ctx context.Context, appName string) error {
 	tx, err := manager.contract.Register(manager.client.Account(), appName)
 	if err != nil {
 		return err
@@ -46,7 +45,7 @@ func (manager *Manager) Register(ctx context.Context, appName string) error {
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
 //
 // Solidity: function unregister(string appName) returns()
-func (manager *Manager) Unregister(ctx context.Context, appName string) error {
+func (manager *manager) Unregister(ctx context.Context, appName string) error {
 	tx, err := manager.contract.Unregister(manager.client.Account(), appName)
 	if err != nil {
 		return err
@@ -65,14 +64,14 @@ func (manager *Manager) Unregister(ctx context.Context, appName string) error {
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
 // Solidity: function get(string appName) constant returns((string,address,bytes32))
-func (manager *Manager) Get(appName string) (types.App, error) {
+func (manager *manager) Get(appName string) (types.App, error) {
 	return manager.contract.Get(nil, appName)
 }
 
 // TransferAppOwner is a paid mutator transaction binding the contract method 0x1a9dff9f.
 //
 // Solidity: function transferAppOwner(string appName, address newOwner) returns()
-func (manager *Manager) TransferAppOwner(ctx context.Context, appName string, newOwner common.Address) error {
+func (manager *manager) TransferAppOwner(ctx context.Context, appName string, newOwner common.Address) error {
 	tx, err := manager.contract.TransferAppOwner(manager.client.Account(), appName, newOwner)
 	if err != nil {
 		return err
@@ -85,4 +84,18 @@ func (manager *Manager) TransferAppOwner(ctx context.Context, appName string, ne
 
 	_, err = manager.contract.ParseAppOwnerTransferredFromReceipt(receipt)
 	return err
+}
+
+// Exists is a free data retrieval call binding the contract method 0x261a323e.
+//
+// Solidity: function exists(string appName) constant returns(bool)
+func (manager *manager) Exists(appName string) (bool, error) {
+	return manager.contract.Exists(nil, appName)
+}
+
+// IsOwner is a free data retrieval call binding the contract method 0xbde1eee7.
+//
+// Solidity: function isOwner(string appName, address owner) constant returns(bool)
+func (manager *manager) IsOwner(appName string, owner common.Address) (bool, error) {
+	return manager.contract.IsOwner(nil, appName, owner)
 }
