@@ -196,6 +196,9 @@ type IConsentsContract interface {
 	Consent(ctx context.Context, action uint8, appName string, dataType string, allowed bool) (*ethTypes.Receipt, error)
 	ConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool) (*ethTypes.Receipt, error)
 	ModifyConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Receipt, error)
+
+	// Event parser
+	ParseConsentedFromReceipt(receipt *ethTypes.Receipt) (*ConsentsConsented, error)
 }
 
 // Manager is contract wrapper struct
@@ -497,6 +500,13 @@ func (_Consents *ConsentsFilterer) FilterConsented(opts *bind.FilterOpts, action
 		return nil, err
 	}
 	return &ConsentsConsentedIterator{contract: _Consents.contract, event: "Consented", logs: logs, sub: sub}, nil
+}
+
+// FilterConsented parses the event from given transaction receipt.
+//
+// Solidity: event Consented(uint8 indexed action, bytes8 indexed userId, bytes32 indexed app, string appName, string dataType, bool allowed)
+func (manager *ConsentsContract) ParseConsentedFromReceipt(receipt *ethTypes.Receipt) (*ConsentsConsented, error) {
+	return manager.contract.ParseConsentedFromReceipt(receipt)
 }
 
 // FilterConsented parses the event from given transaction receipt.

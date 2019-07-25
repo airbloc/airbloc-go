@@ -196,6 +196,10 @@ type IDataTypeRegistryContract interface {
 	// Transact methods
 	Register(ctx context.Context, name string, schemaHash common.Hash) (*ethTypes.Receipt, error)
 	Unregister(ctx context.Context, name string) (*ethTypes.Receipt, error)
+
+	// Event parser
+	ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*DataTypeRegistryRegistration, error)
+	ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*DataTypeRegistryUnregistration, error)
 }
 
 // Manager is contract wrapper struct
@@ -483,6 +487,13 @@ func (_DataTypeRegistry *DataTypeRegistryFilterer) FilterRegistration(opts *bind
 // FilterRegistration parses the event from given transaction receipt.
 //
 // Solidity: event Registration(string name)
+func (manager *DataTypeRegistryContract) ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*DataTypeRegistryRegistration, error) {
+	return manager.contract.ParseRegistrationFromReceipt(receipt)
+}
+
+// FilterRegistration parses the event from given transaction receipt.
+//
+// Solidity: event Registration(string name)
 func (_DataTypeRegistry *DataTypeRegistryFilterer) ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*DataTypeRegistryRegistration, error) {
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xd510136a132b28d5bccd27cc4dd52d556d9982ab168ba54b1e775d4d0f1ca948") {
@@ -616,6 +627,13 @@ func (_DataTypeRegistry *DataTypeRegistryFilterer) FilterUnregistration(opts *bi
 		return nil, err
 	}
 	return &DataTypeRegistryUnregistrationIterator{contract: _DataTypeRegistry.contract, event: "Unregistration", logs: logs, sub: sub}, nil
+}
+
+// FilterUnregistration parses the event from given transaction receipt.
+//
+// Solidity: event Unregistration(string name)
+func (manager *DataTypeRegistryContract) ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*DataTypeRegistryUnregistration, error) {
+	return manager.contract.ParseUnregistrationFromReceipt(receipt)
 }
 
 // FilterUnregistration parses the event from given transaction receipt.

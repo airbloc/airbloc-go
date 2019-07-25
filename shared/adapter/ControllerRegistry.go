@@ -200,6 +200,11 @@ type IControllerRegistryContract interface {
 	Register(ctx context.Context, controllerAddr common.Address) (*ethTypes.Receipt, error)
 	RenounceOwnership(ctx context.Context) (*ethTypes.Receipt, error)
 	TransferOwnership(ctx context.Context, newOwner common.Address) (*ethTypes.Receipt, error)
+
+	// Event parser
+	ParseOwnershipTransferredFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryOwnershipTransferred, error)
+	ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryRegistration, error)
+	ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryUnregistration, error)
 }
 
 // Manager is contract wrapper struct
@@ -563,6 +568,13 @@ func (_ControllerRegistry *ControllerRegistryFilterer) FilterOwnershipTransferre
 // FilterOwnershipTransferred parses the event from given transaction receipt.
 //
 // Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+func (manager *ControllerRegistryContract) ParseOwnershipTransferredFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryOwnershipTransferred, error) {
+	return manager.contract.ParseOwnershipTransferredFromReceipt(receipt)
+}
+
+// FilterOwnershipTransferred parses the event from given transaction receipt.
+//
+// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 func (_ControllerRegistry *ControllerRegistryFilterer) ParseOwnershipTransferredFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryOwnershipTransferred, error) {
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
@@ -715,6 +727,13 @@ func (_ControllerRegistry *ControllerRegistryFilterer) FilterRegistration(opts *
 // FilterRegistration parses the event from given transaction receipt.
 //
 // Solidity: event Registration(address indexed controller)
+func (manager *ControllerRegistryContract) ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryRegistration, error) {
+	return manager.contract.ParseRegistrationFromReceipt(receipt)
+}
+
+// FilterRegistration parses the event from given transaction receipt.
+//
+// Solidity: event Registration(address indexed controller)
 func (_ControllerRegistry *ControllerRegistryFilterer) ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryRegistration, error) {
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x478f5152d8fc568db3f8de9fb402fd9d98a1a7541ecfe434e59cf574fbfc5524") {
@@ -858,6 +877,13 @@ func (_ControllerRegistry *ControllerRegistryFilterer) FilterUnregistration(opts
 		return nil, err
 	}
 	return &ControllerRegistryUnregistrationIterator{contract: _ControllerRegistry.contract, event: "Unregistration", logs: logs, sub: sub}, nil
+}
+
+// FilterUnregistration parses the event from given transaction receipt.
+//
+// Solidity: event Unregistration(address indexed controller)
+func (manager *ControllerRegistryContract) ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryUnregistration, error) {
+	return manager.contract.ParseUnregistrationFromReceipt(receipt)
 }
 
 // FilterUnregistration parses the event from given transaction receipt.

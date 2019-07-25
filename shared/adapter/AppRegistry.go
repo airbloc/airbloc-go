@@ -198,6 +198,11 @@ type IAppRegistryContract interface {
 	Register(ctx context.Context, appName string) (*ethTypes.Receipt, error)
 	TransferAppOwner(ctx context.Context, appName string, newOwner common.Address) (*ethTypes.Receipt, error)
 	Unregister(ctx context.Context, appName string) (*ethTypes.Receipt, error)
+
+	// Event parser
+	ParseAppOwnerTransferredFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryAppOwnerTransferred, error)
+	ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryRegistration, error)
+	ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryUnregistration, error)
 }
 
 // Manager is contract wrapper struct
@@ -531,6 +536,13 @@ func (_AppRegistry *AppRegistryFilterer) FilterAppOwnerTransferred(opts *bind.Fi
 // FilterAppOwnerTransferred parses the event from given transaction receipt.
 //
 // Solidity: event AppOwnerTransferred(bytes32 indexed hashedAppName, string appName, address indexed oldOwner, address newOwner)
+func (manager *AppRegistryContract) ParseAppOwnerTransferredFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryAppOwnerTransferred, error) {
+	return manager.contract.ParseAppOwnerTransferredFromReceipt(receipt)
+}
+
+// FilterAppOwnerTransferred parses the event from given transaction receipt.
+//
+// Solidity: event AppOwnerTransferred(bytes32 indexed hashedAppName, string appName, address indexed oldOwner, address newOwner)
 func (_AppRegistry *AppRegistryFilterer) ParseAppOwnerTransferredFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryAppOwnerTransferred, error) {
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x9323f5fe9b72ac1fe704b80d8d53e6538f63d0d041068ef274c35b41d1cbc1de") {
@@ -685,6 +697,13 @@ func (_AppRegistry *AppRegistryFilterer) FilterRegistration(opts *bind.FilterOpt
 // FilterRegistration parses the event from given transaction receipt.
 //
 // Solidity: event Registration(bytes32 indexed hashedAppName, string appName)
+func (manager *AppRegistryContract) ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryRegistration, error) {
+	return manager.contract.ParseRegistrationFromReceipt(receipt)
+}
+
+// FilterRegistration parses the event from given transaction receipt.
+//
+// Solidity: event Registration(bytes32 indexed hashedAppName, string appName)
 func (_AppRegistry *AppRegistryFilterer) ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryRegistration, error) {
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xe7e1383b88439b9522e6630da35051999780d58947518c9a3d1620d19b1bc886") {
@@ -829,6 +848,13 @@ func (_AppRegistry *AppRegistryFilterer) FilterUnregistration(opts *bind.FilterO
 		return nil, err
 	}
 	return &AppRegistryUnregistrationIterator{contract: _AppRegistry.contract, event: "Unregistration", logs: logs, sub: sub}, nil
+}
+
+// FilterUnregistration parses the event from given transaction receipt.
+//
+// Solidity: event Unregistration(bytes32 indexed hashedAppName, string appName)
+func (manager *AppRegistryContract) ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryUnregistration, error) {
+	return manager.contract.ParseUnregistrationFromReceipt(receipt)
 }
 
 // FilterUnregistration parses the event from given transaction receipt.

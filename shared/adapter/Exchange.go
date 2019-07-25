@@ -204,6 +204,15 @@ type IExchangeContract interface {
 	Prepare(ctx context.Context, provider string, consumer common.Address, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds []types.DataId) (*ethTypes.Receipt, error)
 	Reject(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error)
 	Settle(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error)
+
+	// Event parser
+	ParseEscrowExecutionFailedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeEscrowExecutionFailed, error)
+	ParseOfferCanceledFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferCanceled, error)
+	ParseOfferPreparedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferPrepared, error)
+	ParseOfferPresentedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferPresented, error)
+	ParseOfferReceiptFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferReceipt, error)
+	ParseOfferRejectedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferRejected, error)
+	ParseOfferSettledFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferSettled, error)
 }
 
 // Manager is contract wrapper struct
@@ -623,6 +632,13 @@ func (_Exchange *ExchangeFilterer) FilterEscrowExecutionFailed(opts *bind.Filter
 // FilterEscrowExecutionFailed parses the event from given transaction receipt.
 //
 // Solidity: event EscrowExecutionFailed(bytes reason)
+func (manager *ExchangeContract) ParseEscrowExecutionFailedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeEscrowExecutionFailed, error) {
+	return manager.contract.ParseEscrowExecutionFailedFromReceipt(receipt)
+}
+
+// FilterEscrowExecutionFailed parses the event from given transaction receipt.
+//
+// Solidity: event EscrowExecutionFailed(bytes reason)
 func (_Exchange *ExchangeFilterer) ParseEscrowExecutionFailedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeEscrowExecutionFailed, error) {
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x40e7fa7728ad0189a69a1f7d9b3b202f751810b2be48db0b9224d7f81cd232f7") {
@@ -762,6 +778,13 @@ func (_Exchange *ExchangeFilterer) FilterOfferCanceled(opts *bind.FilterOpts, of
 		return nil, err
 	}
 	return &ExchangeOfferCanceledIterator{contract: _Exchange.contract, event: "OfferCanceled", logs: logs, sub: sub}, nil
+}
+
+// FilterOfferCanceled parses the event from given transaction receipt.
+//
+// Solidity: event OfferCanceled(bytes8 indexed offerId, string providerAppName)
+func (manager *ExchangeContract) ParseOfferCanceledFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferCanceled, error) {
+	return manager.contract.ParseOfferCanceledFromReceipt(receipt)
 }
 
 // FilterOfferCanceled parses the event from given transaction receipt.
@@ -916,6 +939,13 @@ func (_Exchange *ExchangeFilterer) FilterOfferPrepared(opts *bind.FilterOpts, of
 // FilterOfferPrepared parses the event from given transaction receipt.
 //
 // Solidity: event OfferPrepared(bytes8 indexed offerId, string providerAppName)
+func (manager *ExchangeContract) ParseOfferPreparedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferPrepared, error) {
+	return manager.contract.ParseOfferPreparedFromReceipt(receipt)
+}
+
+// FilterOfferPrepared parses the event from given transaction receipt.
+//
+// Solidity: event OfferPrepared(bytes8 indexed offerId, string providerAppName)
 func (_Exchange *ExchangeFilterer) ParseOfferPreparedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferPrepared, error) {
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x821d45f3b8db50a4777ad807928db085f0c986433cf51c2afdc8c6af90d1aef5") {
@@ -1060,6 +1090,13 @@ func (_Exchange *ExchangeFilterer) FilterOfferPresented(opts *bind.FilterOpts, o
 		return nil, err
 	}
 	return &ExchangeOfferPresentedIterator{contract: _Exchange.contract, event: "OfferPresented", logs: logs, sub: sub}, nil
+}
+
+// FilterOfferPresented parses the event from given transaction receipt.
+//
+// Solidity: event OfferPresented(bytes8 indexed offerId, string providerAppName)
+func (manager *ExchangeContract) ParseOfferPresentedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferPresented, error) {
+	return manager.contract.ParseOfferPresentedFromReceipt(receipt)
 }
 
 // FilterOfferPresented parses the event from given transaction receipt.
@@ -1216,6 +1253,13 @@ func (_Exchange *ExchangeFilterer) FilterOfferReceipt(opts *bind.FilterOpts, off
 		return nil, err
 	}
 	return &ExchangeOfferReceiptIterator{contract: _Exchange.contract, event: "OfferReceipt", logs: logs, sub: sub}, nil
+}
+
+// FilterOfferReceipt parses the event from given transaction receipt.
+//
+// Solidity: event OfferReceipt(bytes8 indexed offerId, string providerAppName, address indexed consumer, bytes result)
+func (manager *ExchangeContract) ParseOfferReceiptFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferReceipt, error) {
+	return manager.contract.ParseOfferReceiptFromReceipt(receipt)
 }
 
 // FilterOfferReceipt parses the event from given transaction receipt.
@@ -1379,6 +1423,13 @@ func (_Exchange *ExchangeFilterer) FilterOfferRejected(opts *bind.FilterOpts, of
 // FilterOfferRejected parses the event from given transaction receipt.
 //
 // Solidity: event OfferRejected(bytes8 indexed offerId, address indexed consumer)
+func (manager *ExchangeContract) ParseOfferRejectedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferRejected, error) {
+	return manager.contract.ParseOfferRejectedFromReceipt(receipt)
+}
+
+// FilterOfferRejected parses the event from given transaction receipt.
+//
+// Solidity: event OfferRejected(bytes8 indexed offerId, address indexed consumer)
 func (_Exchange *ExchangeFilterer) ParseOfferRejectedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferRejected, error) {
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x94c89cb0104a1fa8726bf8a9e9151423d67ff6f8eb09ed7392386649655c6843") {
@@ -1531,6 +1582,13 @@ func (_Exchange *ExchangeFilterer) FilterOfferSettled(opts *bind.FilterOpts, off
 		return nil, err
 	}
 	return &ExchangeOfferSettledIterator{contract: _Exchange.contract, event: "OfferSettled", logs: logs, sub: sub}, nil
+}
+
+// FilterOfferSettled parses the event from given transaction receipt.
+//
+// Solidity: event OfferSettled(bytes8 indexed offerId, address indexed consumer)
+func (manager *ExchangeContract) ParseOfferSettledFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferSettled, error) {
+	return manager.contract.ParseOfferSettledFromReceipt(receipt)
 }
 
 // FilterOfferSettled parses the event from given transaction receipt.
