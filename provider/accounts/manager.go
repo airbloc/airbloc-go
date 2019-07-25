@@ -2,6 +2,7 @@ package accounts
 
 import (
 	"context"
+	"math/big"
 
 	"github.com/airbloc/airbloc-go/shared/types"
 
@@ -124,4 +125,46 @@ func (manager *Manager) GetAccountId(owner ethCommon.Address) (types.ID, error) 
 // Solidity: function getAccountIdFromSignature(bytes32 messageHash, bytes signature) constant returns(bytes8)
 func (manager *Manager) GetAccountIdFromSignature(messageHash ethCommon.Hash, signature []byte) (types.ID, error) {
 	return manager.contract.GetAccountIdFromSignature(nil, messageHash, signature)
+}
+
+// Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
+//
+// Solidity: function accounts(bytes8 ) constant returns(address owner, uint8 status, address controller, address passwordProof)
+func (manager *Manager) Accounts(accountId types.ID) (types.Account, error) {
+	return manager.contract.Accounts(nil, accountId)
+}
+
+// Exists is a free data retrieval call binding the contract method 0x97e4fea7.
+//
+// Solidity: function exists(bytes8 accountId) constant returns(bool)
+func (manager *Manager) Exists(accountId types.ID) (bool, error) {
+	return manager.contract.Exists(nil, accountId)
+}
+
+// IdentityHashToAccount is a free data retrieval call binding the contract method 0x17aba2d3.
+//
+// Solidity: function identityHashToAccount(bytes32 ) constant returns(bytes8)
+func (manager *Manager) IdentityHashToAccount(identityHash ethCommon.Hash) (types.ID, error) {
+	return manager.contract.IdentityHashToAccount(nil, identityHash)
+}
+
+// IsControllerOf is a free data retrieval call binding the contract method 0xa83038e7.
+//
+// Solidity: function isControllerOf(address sender, bytes8 accountId) constant returns(bool)
+func (manager *Manager) IsControllerOf(sender ethCommon.Address, accountId types.ID) (bool, error) {
+	return manager.contract.IsControllerOf(nil, sender, accountId)
+}
+
+// IsTemporary is a free data retrieval call binding the contract method 0x6b886888.
+//
+// Solidity: function isTemporary(bytes8 accountId) constant returns(bool)
+func (manager *Manager) IsTemporary(accountId types.ID) (bool, error) {
+	return manager.contract.IsTemporary(nil, accountId)
+}
+
+// NumberOfAccounts is a free data retrieval call binding the contract method 0x0f03e4c3.
+//
+// Solidity: function numberOfAccounts() constant returns(uint256)
+func (manager *Manager) NumberOfAccounts() (*big.Int, error) {
+	return manager.contract.NumberOfAccounts(nil)
 }
