@@ -3,25 +3,25 @@ package dataTypes
 import (
 	"context"
 
-	"github.com/airbloc/airbloc-go/shared/types"
-
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
+	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/airbloc/logger"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/pkg/errors"
 )
 
 // Manager is contract wrapper struct
 type Manager struct {
-	client   blockchain.TxClient
-	contract *adapter.DataTypeRegistry
+	contract adapter.IDataTypeRegistryContract
+	log      *logger.Logger
 }
 
 // NewManager makes new *Manager struct
-func NewManager(client blockchain.TxClient) adapter.DataTypeRegistryManager {
-	contract := client.GetContract(&adapter.DataTypeRegistry{})
+func NewManager(client blockchain.TxClient) adapter.IDataTypeRegistryManager {
 	return &Manager{
-		client:   client,
-		contract: contract.(*adapter.DataTypeRegistry),
+		contract: adapter.NewDataTypeRegistryContract(client),
+		log:      logger.New("data-type-registry"),
 	}
 }
 
@@ -29,17 +29,17 @@ func NewManager(client blockchain.TxClient) adapter.DataTypeRegistryManager {
 //
 // Solidity: function register(string name, bytes32 schemaHash) returns()
 func (manager *Manager) Register(ctx context.Context, name string, schemaHash common.Hash) error {
-	tx, err := manager.contract.Register(manager.client.Account(), name, schemaHash)
+	receipt, err := manager.contract.Register(ctx, name, schemaHash)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to transact")
 	}
 
-	receipt, err := manager.client.WaitMined(ctx, tx)
+	event, err := manager.contract.ParseRegistrationFromReceipt(receipt)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	_, err = manager.contract.ParseRegistrationFromReceipt(receipt)
+	manager.log.Info("Data type registered.", logger.Attrs{"name": event.Name})
 	return err
 }
 
@@ -47,17 +47,17 @@ func (manager *Manager) Register(ctx context.Context, name string, schemaHash co
 //
 // Solidity: function unregister(string name) returns()
 func (manager *Manager) Unregister(ctx context.Context, name string) error {
-	tx, err := manager.contract.Unregister(manager.client.Account(), name)
+	receipt, err := manager.contract.Unregister(ctx, name)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to transact")
 	}
 
-	receipt, err := manager.client.WaitMined(ctx, tx)
+	event, err := manager.contract.ParseUnregistrationFromReceipt(receipt)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	_, err = manager.contract.ParseUnregistrationFromReceipt(receipt)
+	manager.log.Info("Data type unregistered.", logger.Attrs{"name": event.Name})
 	return err
 }
 
@@ -65,19 +65,19 @@ func (manager *Manager) Unregister(ctx context.Context, name string) error {
 //
 // Solidity: function get(string name) constant returns((string,address,bytes32))
 func (manager *Manager) Get(name string) (types.DataType, error) {
-	return manager.contract.Get(nil, name)
+	return manager.contract.Get(name)
 }
 
 // Exists is a free data retrieval call binding the contract method 0x261a323e.
 //
 // Solidity: function exists(string name) constant returns(bool)
 func (manager *Manager) Exists(name string) (bool, error) {
-	return manager.contract.Exists(nil, name)
+	return manager.contract.Exists(name)
 }
 
 // IsOwner is a free data retrieval call binding the contract method 0xbde1eee7.
 //
 // Solidity: function isOwner(string name, address owner) constant returns(bool)
 func (manager *Manager) IsOwner(name string, owner common.Address) (bool, error) {
-	return manager.contract.IsOwner(nil, name, owner)
+	return manager.contract.IsOwner(name, owner)
 }
