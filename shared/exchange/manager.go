@@ -15,7 +15,7 @@ type Manager struct {
 }
 
 // NewManager makes new *Manager struct
-func NewManager(client blockchain.TxClient) *Manager {
+func NewManager(client blockchain.TxClient) adapter.ExchangeManager {
 	contract := client.GetContract(&adapter.Exchange{})
 	return &Manager{
 		client:   client,
@@ -33,10 +33,10 @@ func (manager *Manager) Prepare(
 	escrow ethCommon.Address,
 	escrowSign [4]byte,
 	escrowArgs []byte,
-	dataIds ...[20]byte,
+	dataIds []types.DataId,
 ) (types.ID, error) {
 	var err error
-	var ids [][20]byte
+	var ids []types.DataId
 	// if length of dataIds exceeds 20,
 	// this won't put dataIds when Prepare() calls. and makes array ids keeps nil state
 	if len(dataIds) < 20 {
@@ -75,7 +75,7 @@ func (manager *Manager) Prepare(
 				end = l
 			}
 
-			err := manager.AddDataIds(ctx, offerId, dataIds[start:end])
+			err = manager.AddDataIds(ctx, offerId, dataIds[start:end])
 			if err != nil {
 				return offerId, err
 			}
@@ -87,7 +87,7 @@ func (manager *Manager) Prepare(
 // AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
 //
 // Solidity: function addDataIds(bytes8 offerId, bytes20[] dataIds) returns()
-func (manager *Manager) AddDataIds(ctx context.Context, offerId types.ID, dataIds [][20]byte) error {
+func (manager *Manager) AddDataIds(ctx context.Context, offerId types.ID, dataIds []types.DataId) error {
 	tx, err := manager.contract.AddDataIds(manager.client.Account(), offerId, dataIds)
 	if err != nil {
 		return err
@@ -131,9 +131,55 @@ func (manager *Manager) Cancel(ctx context.Context, offerId types.ID) error {
 	return err
 }
 
+// Settle is a paid mutator transaction binding the contract method 0xa60d9b5f.
+//
+// Solidity: function settle(bytes8 offerId) returns()
+func (manager *Manager) Settle(ctx context.Context, offerId types.ID) error {
+	tx, err := manager.contract.Settle(manager.client.Account(), offerId)
+	if err != nil {
+		return err
+	}
+
+	_, err = manager.client.WaitMined(ctx, tx)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Reject is a paid mutator transaction binding the contract method 0x6622e153.
+//
+// Solidity: function reject(bytes8 offerId) returns()
+func (manager *Manager) Reject(ctx context.Context, offerId types.ID) error {
+	tx, err := manager.contract.Reject(manager.client.Account(), offerId)
+	if err != nil {
+		return err
+	}
+
+	_, err = manager.client.WaitMined(ctx, tx)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
 //
 // Solidity: function getOffer(bytes8 offerId) constant returns((string,address,bytes20[],uint256,uint256,(address,bytes4,bytes),uint8))
 func (manager *Manager) GetOffer(offerId types.ID) (types.Offer, error) {
 	return manager.contract.GetOffer(nil, offerId)
+}
+
+// GetOfferMembers is a free data retrieval call binding the contract method 0x72dfa465.
+//
+// Solidity: function getOfferMembers(bytes8 offerId) constant returns(address, address)
+func (manager *Manager) GetOfferMembers(offerId types.ID) (ethCommon.Address, ethCommon.Address, error) {
+	return manager.contract.GetOfferMembers(nil, offerId)
+}
+
+// OfferExists is a free data retrieval call binding the contract method 0xc4a03da9.
+//
+// Solidity: function offerExists(bytes8 offerId) constant returns(bool)
+func (manager *Manager) OfferExists(offerId types.ID) (bool, error) {
+	return manager.contract.OfferExists(nil, offerId)
 }
