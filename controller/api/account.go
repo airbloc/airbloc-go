@@ -2,22 +2,22 @@ package api
 
 import (
 	"context"
-	"github.com/airbloc/airbloc-go/shared/service"
-	"github.com/airbloc/airbloc-go/shared/service/api"
 
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/userdelegate"
-	"github.com/airbloc/airbloc-go/shared/account"
+	"github.com/airbloc/airbloc-go/shared/service"
+	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/pkg/errors"
 )
 
 type AccountAPI struct {
-	manager *account.Manager
+	manager *accounts.Manager
 }
 
 func NewAccountAPI(backend service.Backend) (api.API, error) {
-	manager := account.NewManager(backend.Client())
+	manager := accounts.NewManager(backend.Client())
 	return &AccountAPI{manager}, nil
 }
 
