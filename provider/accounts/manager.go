@@ -17,7 +17,7 @@ type Manager struct {
 }
 
 // NewManager makes new *Manager struct
-func NewManager(client blockchain.TxClient) *Manager {
+func NewManager(client blockchain.TxClient) adapter.AccountsManager {
 	contract := client.GetContract(&adapter.Accounts{})
 	return &Manager{
 		client:   client,

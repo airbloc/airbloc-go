@@ -16,8 +16,9 @@ type Manager struct {
 }
 
 // NewManager makes new *Manager struct
-func NewManager(client blockchain.TxClient) *Manager {
+func NewManager(client blockchain.TxClient) adapter.AppRegistryManager {
 	contract := client.GetContract(&adapter.AppRegistry{})
+	types.DataId{}
 	return &Manager{
 		client:   client,
 		contract: contract.(*adapter.AppRegistry),
@@ -84,5 +85,4 @@ func (manager *Manager) TransferAppOwner(ctx context.Context, appName string, ne
 
 	_, err = manager.contract.ParseAppOwnerTransferredFromReceipt(receipt)
 	return err
-
 }
