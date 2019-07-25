@@ -4,9 +4,8 @@ import (
 	"encoding/hex"
 	"net/http"
 
+	"github.com/airbloc/airbloc-go/shared/accounts"
 	"github.com/airbloc/airbloc-go/shared/adapter"
-
-	"github.com/airbloc/airbloc-go/provider/accounts"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"

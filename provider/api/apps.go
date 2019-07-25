@@ -4,15 +4,12 @@ import (
 	"net/http"
 
 	"github.com/airbloc/airbloc-go/shared/adapter"
-
-	"github.com/ethereum/go-ethereum/common"
-
-	"github.com/gin-gonic/gin/binding"
-
-	"github.com/airbloc/airbloc-go/provider/apps"
+	"github.com/airbloc/airbloc-go/shared/apps"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 // appRegistryAPI is api wrapper of contract AppRegistry.sol
