@@ -3,7 +3,8 @@ package api
 import (
 	"net/http"
 
-	"github.com/airbloc/airbloc-go/consumer/exchange"
+	"github.com/airbloc/airbloc-go/shared/adapter"
+	"github.com/airbloc/airbloc-go/shared/exchange"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
@@ -11,7 +12,7 @@ import (
 )
 
 type ExchangeAPI struct {
-	manager *exchange.Manager
+	manager adapter.ExchangeManager
 }
 
 func NewExchangeAPI(backend service.Backend) (api.API, error) {
