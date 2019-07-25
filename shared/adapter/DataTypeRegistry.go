@@ -176,15 +176,41 @@ func NewDataTypeRegistryFilterer(address common.Address, filterer bind.ContractF
 	return &DataTypeRegistryFilterer{contract: contract}, nil
 }
 
-type DataTypeRegistryManager interface {
-	// Pure/View methods
+type IDataTypeRegistryManager interface {
+	// Call methods
 	Exists(name string) (bool, error)
 	Get(name string) (types.DataType, error)
 	IsOwner(name string, owner common.Address) (bool, error)
 
-	// Other methods
+	// Transact methods
 	Register(ctx context.Context, name string, schemaHash common.Hash) error
 	Unregister(ctx context.Context, name string) error
+}
+
+type IDataTypeRegistryContract interface {
+	// Call methods
+	Exists(name string) (bool, error)
+	Get(name string) (types.DataType, error)
+	IsOwner(name string, owner common.Address) (bool, error)
+
+	// Transact methods
+	Register(ctx context.Context, name string, schemaHash common.Hash) (*ethTypes.Receipt, error)
+	Unregister(ctx context.Context, name string) (*ethTypes.Receipt, error)
+}
+
+// Manager is contract wrapper struct
+type DataTypeRegistryContract struct {
+	client   blockchain.TxClient
+	contract *DataTypeRegistry
+}
+
+// NewManager makes new *Manager struct
+func NewDataTypeRegistryContract(client blockchain.TxClient) IDataTypeRegistryContract {
+	contract := client.GetContract(&DataTypeRegistry{})
+	return &DataTypeRegistryManager{
+		client:   client,
+		contract: contract.(*DataTypeRegistry),
+	}
 }
 
 // convenient hacks for blockchain.Client
@@ -205,6 +231,13 @@ func bindDataTypeRegistry(address common.Address, caller bind.ContractCaller, tr
 
 func (_DataTypeRegistry *DataTypeRegistry) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewDataTypeRegistry(address, backend)
+}
+
+// Exists is a free data retrieval call binding the contract method 0x261a323e.
+//
+// Solidity: function exists(string name) constant returns(bool)
+func (manager *DataTypeRegistryContract) Exists(name string) (bool, error) {
+	return manager.contract.Exists(nil, name)
 }
 
 // Exists is a free data retrieval call binding the contract method 0x261a323e.
@@ -236,6 +269,13 @@ func (_DataTypeRegistry *DataTypeRegistryCallerSession) Exists(name string) (boo
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
 // Solidity: function get(string name) constant returns((string,address,bytes32))
+func (manager *DataTypeRegistryContract) Get(name string) (types.DataType, error) {
+	return manager.contract.Get(nil, name)
+}
+
+// Get is a free data retrieval call binding the contract method 0x693ec85e.
+//
+// Solidity: function get(string name) constant returns((string,address,bytes32))
 func (_DataTypeRegistry *DataTypeRegistryCaller) Get(opts *bind.CallOpts, name string) (types.DataType, error) {
 	ret := new(types.DataType)
 
@@ -256,6 +296,13 @@ func (_DataTypeRegistry *DataTypeRegistrySession) Get(name string) (types.DataTy
 // Solidity: function get(string name) constant returns((string,address,bytes32))
 func (_DataTypeRegistry *DataTypeRegistryCallerSession) Get(name string) (types.DataType, error) {
 	return _DataTypeRegistry.Contract.Get(&_DataTypeRegistry.CallOpts, name)
+}
+
+// IsOwner is a free data retrieval call binding the contract method 0xbde1eee7.
+//
+// Solidity: function isOwner(string name, address owner) constant returns(bool)
+func (manager *DataTypeRegistryContract) IsOwner(name string, owner common.Address) (bool, error) {
+	return manager.contract.IsOwner(nil, name, owner)
 }
 
 // IsOwner is a free data retrieval call binding the contract method 0xbde1eee7.
@@ -287,6 +334,17 @@ func (_DataTypeRegistry *DataTypeRegistryCallerSession) IsOwner(name string, own
 // Register is a paid mutator transaction binding the contract method 0x656afdee.
 //
 // Solidity: function register(string name, bytes32 schemaHash) returns()
+func (manager *DataTypeRegistryContract) Register(ctx context.Context, name string, schemaHash common.Hash) (*ethTypes.Receipt, error) {
+	tx, err := manager.contract.Register(manager.client.Account(), name, schemaHash)
+	if err != nil {
+		return nil, err
+	}
+	return manager.client.WaitMined(ctx, tx)
+}
+
+// Register is a paid mutator transaction binding the contract method 0x656afdee.
+//
+// Solidity: function register(string name, bytes32 schemaHash) returns()
 func (_DataTypeRegistry *DataTypeRegistryTransactor) Register(opts *bind.TransactOpts, name string, schemaHash common.Hash) (*ethTypes.Transaction, error) {
 	return _DataTypeRegistry.contract.Transact(opts, "register", name, schemaHash)
 }
@@ -303,6 +361,17 @@ func (_DataTypeRegistry *DataTypeRegistrySession) Register(name string, schemaHa
 // Solidity: function register(string name, bytes32 schemaHash) returns()
 func (_DataTypeRegistry *DataTypeRegistryTransactorSession) Register(name string, schemaHash common.Hash) (*ethTypes.Transaction, error) {
 	return _DataTypeRegistry.Contract.Register(&_DataTypeRegistry.TransactOpts, name, schemaHash)
+}
+
+// Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
+//
+// Solidity: function unregister(string name) returns()
+func (manager *DataTypeRegistryContract) Unregister(ctx context.Context, name string) (*ethTypes.Receipt, error) {
+	tx, err := manager.contract.Unregister(manager.client.Account(), name)
+	if err != nil {
+		return nil, err
+	}
+	return manager.client.WaitMined(ctx, tx)
 }
 
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.

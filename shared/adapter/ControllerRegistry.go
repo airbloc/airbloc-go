@@ -176,17 +176,45 @@ func NewControllerRegistryFilterer(address common.Address, filterer bind.Contrac
 	return &ControllerRegistryFilterer{contract: contract}, nil
 }
 
-type ControllerRegistryManager interface {
-	// Pure/View methods
+type IControllerRegistryManager interface {
+	// Call methods
 	Exists(controller common.Address) (bool, error)
 	Get(controller common.Address) (types.DataController, error)
 	IsOwner() (bool, error)
 	Owner() (common.Address, error)
 
-	// Other methods
+	// Transact methods
 	Register(ctx context.Context, controllerAddr common.Address) error
 	RenounceOwnership(ctx context.Context) error
 	TransferOwnership(ctx context.Context, newOwner common.Address) error
+}
+
+type IControllerRegistryContract interface {
+	// Call methods
+	Exists(controller common.Address) (bool, error)
+	Get(controller common.Address) (types.DataController, error)
+	IsOwner() (bool, error)
+	Owner() (common.Address, error)
+
+	// Transact methods
+	Register(ctx context.Context, controllerAddr common.Address) (*ethTypes.Receipt, error)
+	RenounceOwnership(ctx context.Context) (*ethTypes.Receipt, error)
+	TransferOwnership(ctx context.Context, newOwner common.Address) (*ethTypes.Receipt, error)
+}
+
+// Manager is contract wrapper struct
+type ControllerRegistryContract struct {
+	client   blockchain.TxClient
+	contract *ControllerRegistry
+}
+
+// NewManager makes new *Manager struct
+func NewControllerRegistryContract(client blockchain.TxClient) IControllerRegistryContract {
+	contract := client.GetContract(&ControllerRegistry{})
+	return &ControllerRegistryManager{
+		client:   client,
+		contract: contract.(*ControllerRegistry),
+	}
 }
 
 // convenient hacks for blockchain.Client
@@ -208,6 +236,13 @@ func bindControllerRegistry(address common.Address, caller bind.ContractCaller, 
 
 func (_ControllerRegistry *ControllerRegistry) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewControllerRegistry(address, backend)
+}
+
+// Exists is a free data retrieval call binding the contract method 0xf6a3d24e.
+//
+// Solidity: function exists(address controller) constant returns(bool)
+func (manager *ControllerRegistryContract) Exists(controller common.Address) (bool, error) {
+	return manager.contract.Exists(nil, controller)
 }
 
 // Exists is a free data retrieval call binding the contract method 0xf6a3d24e.
@@ -239,6 +274,13 @@ func (_ControllerRegistry *ControllerRegistryCallerSession) Exists(controller co
 // Get is a free data retrieval call binding the contract method 0xc2bc2efc.
 //
 // Solidity: function get(address controller) constant returns((address,uint256))
+func (manager *ControllerRegistryContract) Get(controller common.Address) (types.DataController, error) {
+	return manager.contract.Get(nil, controller)
+}
+
+// Get is a free data retrieval call binding the contract method 0xc2bc2efc.
+//
+// Solidity: function get(address controller) constant returns((address,uint256))
 func (_ControllerRegistry *ControllerRegistryCaller) Get(opts *bind.CallOpts, controller common.Address) (types.DataController, error) {
 	ret := new(types.DataController)
 
@@ -259,6 +301,13 @@ func (_ControllerRegistry *ControllerRegistrySession) Get(controller common.Addr
 // Solidity: function get(address controller) constant returns((address,uint256))
 func (_ControllerRegistry *ControllerRegistryCallerSession) Get(controller common.Address) (types.DataController, error) {
 	return _ControllerRegistry.Contract.Get(&_ControllerRegistry.CallOpts, controller)
+}
+
+// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
+//
+// Solidity: function isOwner() constant returns(bool)
+func (manager *ControllerRegistryContract) IsOwner() (bool, error) {
+	return manager.contract.IsOwner(nil)
 }
 
 // IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
@@ -290,6 +339,13 @@ func (_ControllerRegistry *ControllerRegistryCallerSession) IsOwner() (bool, err
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() constant returns(address)
+func (manager *ControllerRegistryContract) Owner() (common.Address, error) {
+	return manager.contract.Owner(nil)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
 func (_ControllerRegistry *ControllerRegistryCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -316,6 +372,17 @@ func (_ControllerRegistry *ControllerRegistryCallerSession) Owner() (common.Addr
 // Register is a paid mutator transaction binding the contract method 0x4420e486.
 //
 // Solidity: function register(address controllerAddr) returns()
+func (manager *ControllerRegistryContract) Register(ctx context.Context, controllerAddr common.Address) (*ethTypes.Receipt, error) {
+	tx, err := manager.contract.Register(manager.client.Account(), controllerAddr)
+	if err != nil {
+		return nil, err
+	}
+	return manager.client.WaitMined(ctx, tx)
+}
+
+// Register is a paid mutator transaction binding the contract method 0x4420e486.
+//
+// Solidity: function register(address controllerAddr) returns()
 func (_ControllerRegistry *ControllerRegistryTransactor) Register(opts *bind.TransactOpts, controllerAddr common.Address) (*ethTypes.Transaction, error) {
 	return _ControllerRegistry.contract.Transact(opts, "register", controllerAddr)
 }
@@ -337,6 +404,17 @@ func (_ControllerRegistry *ControllerRegistryTransactorSession) Register(control
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
 // Solidity: function renounceOwnership() returns()
+func (manager *ControllerRegistryContract) RenounceOwnership(ctx context.Context) (*ethTypes.Receipt, error) {
+	tx, err := manager.contract.RenounceOwnership(manager.client.Account())
+	if err != nil {
+		return nil, err
+	}
+	return manager.client.WaitMined(ctx, tx)
+}
+
+// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
+//
+// Solidity: function renounceOwnership() returns()
 func (_ControllerRegistry *ControllerRegistryTransactor) RenounceOwnership(opts *bind.TransactOpts) (*ethTypes.Transaction, error) {
 	return _ControllerRegistry.contract.Transact(opts, "renounceOwnership")
 }
@@ -353,6 +431,17 @@ func (_ControllerRegistry *ControllerRegistrySession) RenounceOwnership() (*ethT
 // Solidity: function renounceOwnership() returns()
 func (_ControllerRegistry *ControllerRegistryTransactorSession) RenounceOwnership() (*ethTypes.Transaction, error) {
 	return _ControllerRegistry.Contract.RenounceOwnership(&_ControllerRegistry.TransactOpts)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(address newOwner) returns()
+func (manager *ControllerRegistryContract) TransferOwnership(ctx context.Context, newOwner common.Address) (*ethTypes.Receipt, error) {
+	tx, err := manager.contract.TransferOwnership(manager.client.Account(), newOwner)
+	if err != nil {
+		return nil, err
+	}
+	return manager.client.WaitMined(ctx, tx)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.

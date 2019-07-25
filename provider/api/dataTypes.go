@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/airbloc/airbloc-go/shared/adapter"
-	"github.com/airbloc/airbloc-go/shared/dataTypes"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/ethereum/go-ethereum/common"
@@ -14,12 +13,12 @@ import (
 
 // dataTypeRegistryAPI is api wrapper of contract DataTypeRegistry.sol
 type dataTypeRegistryAPI struct {
-	dataTypes adapter.DataTypeRegistryManager
+	dataTypes adapter.IDataTypeRegistryManager
 }
 
 // NewDataTypeRegistryAPI makes new *dataTypeRegistryAPI struct
 func NewDataTypeRegistryAPI(backend service.Backend) (api.API, error) {
-	dt := dataTypes.NewManager(backend.Client())
+	dt := adapter.NewDataTypeRegistryManager(backend.Client())
 	return &dataTypeRegistryAPI{dt}, nil
 }
 

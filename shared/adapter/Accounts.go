@@ -176,8 +176,8 @@ func NewAccountsFilterer(address common.Address, filterer bind.ContractFilterer)
 	return &AccountsFilterer{contract: contract}, nil
 }
 
-type AccountsManager interface {
-	// Pure/View methods
+type IAccountsManager interface {
+	// Call methods
 	Accounts(arg0 types.ID) (types.Account, error)
 	Exists(accountId types.ID) (bool, error)
 	GetAccount(accountId types.ID) (types.Account, error)
@@ -188,11 +188,45 @@ type AccountsManager interface {
 	IsTemporary(accountId types.ID) (bool, error)
 	NumberOfAccounts() (*big.Int, error)
 
-	// Other methods
+	// Transact methods
 	Create(ctx context.Context) (types.ID, error)
 	CreateTemporary(ctx context.Context, identityHash common.Hash) (types.ID, error)
 	SetController(ctx context.Context, controller common.Address) error
 	UnlockTemporary(ctx context.Context, identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) error
+}
+
+type IAccountsContract interface {
+	// Call methods
+	Accounts(arg0 types.ID) (types.Account, error)
+	Exists(accountId types.ID) (bool, error)
+	GetAccount(accountId types.ID) (types.Account, error)
+	GetAccountId(sender common.Address) (types.ID, error)
+	GetAccountIdFromSignature(messageHash common.Hash, signature []byte) (types.ID, error)
+	IdentityHashToAccount(arg0 common.Hash) (types.ID, error)
+	IsControllerOf(sender common.Address, accountId types.ID) (bool, error)
+	IsTemporary(accountId types.ID) (bool, error)
+	NumberOfAccounts() (*big.Int, error)
+
+	// Transact methods
+	Create(ctx context.Context) (*ethTypes.Receipt, error)
+	CreateTemporary(ctx context.Context, identityHash common.Hash) (*ethTypes.Receipt, error)
+	SetController(ctx context.Context, controller common.Address) (*ethTypes.Receipt, error)
+	UnlockTemporary(ctx context.Context, identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) (*ethTypes.Receipt, error)
+}
+
+// Manager is contract wrapper struct
+type AccountsContract struct {
+	client   blockchain.TxClient
+	contract *Accounts
+}
+
+// NewManager makes new *Manager struct
+func NewAccountsContract(client blockchain.TxClient) IAccountsContract {
+	contract := client.GetContract(&Accounts{})
+	return &AccountsManager{
+		client:   client,
+		contract: contract.(*Accounts),
+	}
 }
 
 // convenient hacks for blockchain.Client
@@ -220,6 +254,13 @@ func (_Accounts *Accounts) new(address common.Address, backend bind.ContractBack
 // Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
 //
 // Solidity: function accounts(bytes8 ) constant returns(address owner, uint8 status, address controller, address passwordProof)
+func (manager *AccountsContract) Accounts(arg0 types.ID) (types.Account, error) {
+	return manager.contract.Accounts(nil, arg0)
+}
+
+// Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
+//
+// Solidity: function accounts(bytes8 ) constant returns(address owner, uint8 status, address controller, address passwordProof)
 func (_Accounts *AccountsCaller) Accounts(opts *bind.CallOpts, arg0 types.ID) (types.Account, error) {
 	ret := new(types.Account)
 
@@ -240,6 +281,13 @@ func (_Accounts *AccountsSession) Accounts(arg0 types.ID) (types.Account, error)
 // Solidity: function accounts(bytes8 ) constant returns(address owner, uint8 status, address controller, address passwordProof)
 func (_Accounts *AccountsCallerSession) Accounts(arg0 types.ID) (types.Account, error) {
 	return _Accounts.Contract.Accounts(&_Accounts.CallOpts, arg0)
+}
+
+// Exists is a free data retrieval call binding the contract method 0x97e4fea7.
+//
+// Solidity: function exists(bytes8 accountId) constant returns(bool)
+func (manager *AccountsContract) Exists(accountId types.ID) (bool, error) {
+	return manager.contract.Exists(nil, accountId)
 }
 
 // Exists is a free data retrieval call binding the contract method 0x97e4fea7.
@@ -271,6 +319,13 @@ func (_Accounts *AccountsCallerSession) Exists(accountId types.ID) (bool, error)
 // GetAccount is a free data retrieval call binding the contract method 0xf9292ddb.
 //
 // Solidity: function getAccount(bytes8 accountId) constant returns((address,uint8,address,address))
+func (manager *AccountsContract) GetAccount(accountId types.ID) (types.Account, error) {
+	return manager.contract.GetAccount(nil, accountId)
+}
+
+// GetAccount is a free data retrieval call binding the contract method 0xf9292ddb.
+//
+// Solidity: function getAccount(bytes8 accountId) constant returns((address,uint8,address,address))
 func (_Accounts *AccountsCaller) GetAccount(opts *bind.CallOpts, accountId types.ID) (types.Account, error) {
 	ret := new(types.Account)
 
@@ -291,6 +346,13 @@ func (_Accounts *AccountsSession) GetAccount(accountId types.ID) (types.Account,
 // Solidity: function getAccount(bytes8 accountId) constant returns((address,uint8,address,address))
 func (_Accounts *AccountsCallerSession) GetAccount(accountId types.ID) (types.Account, error) {
 	return _Accounts.Contract.GetAccount(&_Accounts.CallOpts, accountId)
+}
+
+// GetAccountId is a free data retrieval call binding the contract method 0xe0b490f7.
+//
+// Solidity: function getAccountId(address sender) constant returns(bytes8)
+func (manager *AccountsContract) GetAccountId(sender common.Address) (types.ID, error) {
+	return manager.contract.GetAccountId(nil, sender)
 }
 
 // GetAccountId is a free data retrieval call binding the contract method 0xe0b490f7.
@@ -322,6 +384,13 @@ func (_Accounts *AccountsCallerSession) GetAccountId(sender common.Address) (typ
 // GetAccountIdFromSignature is a free data retrieval call binding the contract method 0x23d0601d.
 //
 // Solidity: function getAccountIdFromSignature(bytes32 messageHash, bytes signature) constant returns(bytes8)
+func (manager *AccountsContract) GetAccountIdFromSignature(messageHash common.Hash, signature []byte) (types.ID, error) {
+	return manager.contract.GetAccountIdFromSignature(nil, messageHash, signature)
+}
+
+// GetAccountIdFromSignature is a free data retrieval call binding the contract method 0x23d0601d.
+//
+// Solidity: function getAccountIdFromSignature(bytes32 messageHash, bytes signature) constant returns(bytes8)
 func (_Accounts *AccountsCaller) GetAccountIdFromSignature(opts *bind.CallOpts, messageHash common.Hash, signature []byte) (types.ID, error) {
 	var (
 		ret0 = new(types.ID)
@@ -343,6 +412,13 @@ func (_Accounts *AccountsSession) GetAccountIdFromSignature(messageHash common.H
 // Solidity: function getAccountIdFromSignature(bytes32 messageHash, bytes signature) constant returns(bytes8)
 func (_Accounts *AccountsCallerSession) GetAccountIdFromSignature(messageHash common.Hash, signature []byte) (types.ID, error) {
 	return _Accounts.Contract.GetAccountIdFromSignature(&_Accounts.CallOpts, messageHash, signature)
+}
+
+// IdentityHashToAccount is a free data retrieval call binding the contract method 0x17aba2d3.
+//
+// Solidity: function identityHashToAccount(bytes32 ) constant returns(bytes8)
+func (manager *AccountsContract) IdentityHashToAccount(arg0 common.Hash) (types.ID, error) {
+	return manager.contract.IdentityHashToAccount(nil, arg0)
 }
 
 // IdentityHashToAccount is a free data retrieval call binding the contract method 0x17aba2d3.
@@ -374,6 +450,13 @@ func (_Accounts *AccountsCallerSession) IdentityHashToAccount(arg0 common.Hash) 
 // IsControllerOf is a free data retrieval call binding the contract method 0xa83038e7.
 //
 // Solidity: function isControllerOf(address sender, bytes8 accountId) constant returns(bool)
+func (manager *AccountsContract) IsControllerOf(sender common.Address, accountId types.ID) (bool, error) {
+	return manager.contract.IsControllerOf(nil, sender, accountId)
+}
+
+// IsControllerOf is a free data retrieval call binding the contract method 0xa83038e7.
+//
+// Solidity: function isControllerOf(address sender, bytes8 accountId) constant returns(bool)
 func (_Accounts *AccountsCaller) IsControllerOf(opts *bind.CallOpts, sender common.Address, accountId types.ID) (bool, error) {
 	var (
 		ret0 = new(bool)
@@ -395,6 +478,13 @@ func (_Accounts *AccountsSession) IsControllerOf(sender common.Address, accountI
 // Solidity: function isControllerOf(address sender, bytes8 accountId) constant returns(bool)
 func (_Accounts *AccountsCallerSession) IsControllerOf(sender common.Address, accountId types.ID) (bool, error) {
 	return _Accounts.Contract.IsControllerOf(&_Accounts.CallOpts, sender, accountId)
+}
+
+// IsTemporary is a free data retrieval call binding the contract method 0x6b886888.
+//
+// Solidity: function isTemporary(bytes8 accountId) constant returns(bool)
+func (manager *AccountsContract) IsTemporary(accountId types.ID) (bool, error) {
+	return manager.contract.IsTemporary(nil, accountId)
 }
 
 // IsTemporary is a free data retrieval call binding the contract method 0x6b886888.
@@ -426,6 +516,13 @@ func (_Accounts *AccountsCallerSession) IsTemporary(accountId types.ID) (bool, e
 // NumberOfAccounts is a free data retrieval call binding the contract method 0x0f03e4c3.
 //
 // Solidity: function numberOfAccounts() constant returns(uint256)
+func (manager *AccountsContract) NumberOfAccounts() (*big.Int, error) {
+	return manager.contract.NumberOfAccounts(nil)
+}
+
+// NumberOfAccounts is a free data retrieval call binding the contract method 0x0f03e4c3.
+//
+// Solidity: function numberOfAccounts() constant returns(uint256)
 func (_Accounts *AccountsCaller) NumberOfAccounts(opts *bind.CallOpts) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -452,6 +549,17 @@ func (_Accounts *AccountsCallerSession) NumberOfAccounts() (*big.Int, error) {
 // Create is a paid mutator transaction binding the contract method 0xefc81a8c.
 //
 // Solidity: function create() returns(bytes8)
+func (manager *AccountsContract) Create(ctx context.Context) (*ethTypes.Receipt, error) {
+	tx, err := manager.contract.Create(manager.client.Account())
+	if err != nil {
+		return nil, err
+	}
+	return manager.client.WaitMined(ctx, tx)
+}
+
+// Create is a paid mutator transaction binding the contract method 0xefc81a8c.
+//
+// Solidity: function create() returns(bytes8)
 func (_Accounts *AccountsTransactor) Create(opts *bind.TransactOpts) (*ethTypes.Transaction, error) {
 	return _Accounts.contract.Transact(opts, "create")
 }
@@ -468,6 +576,17 @@ func (_Accounts *AccountsSession) Create() (*ethTypes.Transaction, error) {
 // Solidity: function create() returns(bytes8)
 func (_Accounts *AccountsTransactorSession) Create() (*ethTypes.Transaction, error) {
 	return _Accounts.Contract.Create(&_Accounts.TransactOpts)
+}
+
+// CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
+//
+// Solidity: function createTemporary(bytes32 identityHash) returns(bytes8)
+func (manager *AccountsContract) CreateTemporary(ctx context.Context, identityHash common.Hash) (*ethTypes.Receipt, error) {
+	tx, err := manager.contract.CreateTemporary(manager.client.Account(), identityHash)
+	if err != nil {
+		return nil, err
+	}
+	return manager.client.WaitMined(ctx, tx)
 }
 
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
@@ -494,6 +613,17 @@ func (_Accounts *AccountsTransactorSession) CreateTemporary(identityHash common.
 // SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
 //
 // Solidity: function setController(address controller) returns()
+func (manager *AccountsContract) SetController(ctx context.Context, controller common.Address) (*ethTypes.Receipt, error) {
+	tx, err := manager.contract.SetController(manager.client.Account(), controller)
+	if err != nil {
+		return nil, err
+	}
+	return manager.client.WaitMined(ctx, tx)
+}
+
+// SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
+//
+// Solidity: function setController(address controller) returns()
 func (_Accounts *AccountsTransactor) SetController(opts *bind.TransactOpts, controller common.Address) (*ethTypes.Transaction, error) {
 	return _Accounts.contract.Transact(opts, "setController", controller)
 }
@@ -510,6 +640,17 @@ func (_Accounts *AccountsSession) SetController(controller common.Address) (*eth
 // Solidity: function setController(address controller) returns()
 func (_Accounts *AccountsTransactorSession) SetController(controller common.Address) (*ethTypes.Transaction, error) {
 	return _Accounts.Contract.SetController(&_Accounts.TransactOpts, controller)
+}
+
+// UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
+//
+// Solidity: function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) returns()
+func (manager *AccountsContract) UnlockTemporary(ctx context.Context, identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) (*ethTypes.Receipt, error) {
+	tx, err := manager.contract.UnlockTemporary(manager.client.Account(), identityPreimage, newOwner, passwordSignature)
+	if err != nil {
+		return nil, err
+	}
+	return manager.client.WaitMined(ctx, tx)
 }
 
 // UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.

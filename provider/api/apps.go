@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/airbloc/airbloc-go/shared/adapter"
-	"github.com/airbloc/airbloc-go/shared/apps"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/ethereum/go-ethereum/common"
@@ -14,12 +13,12 @@ import (
 
 // appRegistryAPI is api wrapper of contract AppRegistry.sol
 type appRegistryAPI struct {
-	apps adapter.AppRegistryManager
+	apps adapter.IAppRegistryManager
 }
 
 // NewAppRegistryAPI makes new *appRegistryAPI struct
 func NewAppRegistryAPI(backend service.Backend) (api.API, error) {
-	ar := apps.NewManager(backend.Client())
+	ar := adapter.NewAppRegistryManager(backend.Client())
 	return &appRegistryAPI{ar}, nil
 }
 
