@@ -182,17 +182,17 @@ type AccountsManager interface {
 	Exists(accountId types.ID) (bool, error)
 	GetAccount(accountId types.ID) (types.Account, error)
 	GetAccountId(sender common.Address) (types.ID, error)
-	GetAccountIdFromSignature(messageHash [32]byte, signature []byte) (types.ID, error)
-	IdentityHashToAccount(arg0 [32]byte) (types.ID, error)
+	GetAccountIdFromSignature(messageHash common.Hash, signature []byte) (types.ID, error)
+	IdentityHashToAccount(arg0 common.Hash) (types.ID, error)
 	IsControllerOf(sender common.Address, accountId types.ID) (bool, error)
 	IsTemporary(accountId types.ID) (bool, error)
 	NumberOfAccounts() (*big.Int, error)
 
 	// Other methods
 	Create(ctx context.Context) (types.ID, error)
-	CreateTemporary(ctx context.Context, identityHash [32]byte) (types.ID, error)
+	CreateTemporary(ctx context.Context, identityHash common.Hash) (types.ID, error)
 	SetController(ctx context.Context, controller common.Address) error
-	UnlockTemporary(ctx context.Context, identityPreimage [32]byte, newOwner common.Address, passwordSignature []byte) error
+	UnlockTemporary(ctx context.Context, identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) error
 }
 
 // convenient hacks for blockchain.Client
@@ -322,7 +322,7 @@ func (_Accounts *AccountsCallerSession) GetAccountId(sender common.Address) (typ
 // GetAccountIdFromSignature is a free data retrieval call binding the contract method 0x23d0601d.
 //
 // Solidity: function getAccountIdFromSignature(bytes32 messageHash, bytes signature) constant returns(bytes8)
-func (_Accounts *AccountsCaller) GetAccountIdFromSignature(opts *bind.CallOpts, messageHash [32]byte, signature []byte) (types.ID, error) {
+func (_Accounts *AccountsCaller) GetAccountIdFromSignature(opts *bind.CallOpts, messageHash common.Hash, signature []byte) (types.ID, error) {
 	var (
 		ret0 = new(types.ID)
 	)
@@ -334,21 +334,21 @@ func (_Accounts *AccountsCaller) GetAccountIdFromSignature(opts *bind.CallOpts, 
 // GetAccountIdFromSignature is a free data retrieval call binding the contract method 0x23d0601d.
 //
 // Solidity: function getAccountIdFromSignature(bytes32 messageHash, bytes signature) constant returns(bytes8)
-func (_Accounts *AccountsSession) GetAccountIdFromSignature(messageHash [32]byte, signature []byte) (types.ID, error) {
+func (_Accounts *AccountsSession) GetAccountIdFromSignature(messageHash common.Hash, signature []byte) (types.ID, error) {
 	return _Accounts.Contract.GetAccountIdFromSignature(&_Accounts.CallOpts, messageHash, signature)
 }
 
 // GetAccountIdFromSignature is a free data retrieval call binding the contract method 0x23d0601d.
 //
 // Solidity: function getAccountIdFromSignature(bytes32 messageHash, bytes signature) constant returns(bytes8)
-func (_Accounts *AccountsCallerSession) GetAccountIdFromSignature(messageHash [32]byte, signature []byte) (types.ID, error) {
+func (_Accounts *AccountsCallerSession) GetAccountIdFromSignature(messageHash common.Hash, signature []byte) (types.ID, error) {
 	return _Accounts.Contract.GetAccountIdFromSignature(&_Accounts.CallOpts, messageHash, signature)
 }
 
 // IdentityHashToAccount is a free data retrieval call binding the contract method 0x17aba2d3.
 //
 // Solidity: function identityHashToAccount(bytes32 ) constant returns(bytes8)
-func (_Accounts *AccountsCaller) IdentityHashToAccount(opts *bind.CallOpts, arg0 [32]byte) (types.ID, error) {
+func (_Accounts *AccountsCaller) IdentityHashToAccount(opts *bind.CallOpts, arg0 common.Hash) (types.ID, error) {
 	var (
 		ret0 = new(types.ID)
 	)
@@ -360,14 +360,14 @@ func (_Accounts *AccountsCaller) IdentityHashToAccount(opts *bind.CallOpts, arg0
 // IdentityHashToAccount is a free data retrieval call binding the contract method 0x17aba2d3.
 //
 // Solidity: function identityHashToAccount(bytes32 ) constant returns(bytes8)
-func (_Accounts *AccountsSession) IdentityHashToAccount(arg0 [32]byte) (types.ID, error) {
+func (_Accounts *AccountsSession) IdentityHashToAccount(arg0 common.Hash) (types.ID, error) {
 	return _Accounts.Contract.IdentityHashToAccount(&_Accounts.CallOpts, arg0)
 }
 
 // IdentityHashToAccount is a free data retrieval call binding the contract method 0x17aba2d3.
 //
 // Solidity: function identityHashToAccount(bytes32 ) constant returns(bytes8)
-func (_Accounts *AccountsCallerSession) IdentityHashToAccount(arg0 [32]byte) (types.ID, error) {
+func (_Accounts *AccountsCallerSession) IdentityHashToAccount(arg0 common.Hash) (types.ID, error) {
 	return _Accounts.Contract.IdentityHashToAccount(&_Accounts.CallOpts, arg0)
 }
 
@@ -473,21 +473,21 @@ func (_Accounts *AccountsTransactorSession) Create() (*ethTypes.Transaction, err
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
 //
 // Solidity: function createTemporary(bytes32 identityHash) returns(bytes8)
-func (_Accounts *AccountsTransactor) CreateTemporary(opts *bind.TransactOpts, identityHash [32]byte) (*ethTypes.Transaction, error) {
+func (_Accounts *AccountsTransactor) CreateTemporary(opts *bind.TransactOpts, identityHash common.Hash) (*ethTypes.Transaction, error) {
 	return _Accounts.contract.Transact(opts, "createTemporary", identityHash)
 }
 
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
 //
 // Solidity: function createTemporary(bytes32 identityHash) returns(bytes8)
-func (_Accounts *AccountsSession) CreateTemporary(identityHash [32]byte) (*ethTypes.Transaction, error) {
+func (_Accounts *AccountsSession) CreateTemporary(identityHash common.Hash) (*ethTypes.Transaction, error) {
 	return _Accounts.Contract.CreateTemporary(&_Accounts.TransactOpts, identityHash)
 }
 
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
 //
 // Solidity: function createTemporary(bytes32 identityHash) returns(bytes8)
-func (_Accounts *AccountsTransactorSession) CreateTemporary(identityHash [32]byte) (*ethTypes.Transaction, error) {
+func (_Accounts *AccountsTransactorSession) CreateTemporary(identityHash common.Hash) (*ethTypes.Transaction, error) {
 	return _Accounts.Contract.CreateTemporary(&_Accounts.TransactOpts, identityHash)
 }
 
@@ -515,21 +515,21 @@ func (_Accounts *AccountsTransactorSession) SetController(controller common.Addr
 // UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
 //
 // Solidity: function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) returns()
-func (_Accounts *AccountsTransactor) UnlockTemporary(opts *bind.TransactOpts, identityPreimage [32]byte, newOwner common.Address, passwordSignature []byte) (*ethTypes.Transaction, error) {
+func (_Accounts *AccountsTransactor) UnlockTemporary(opts *bind.TransactOpts, identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) (*ethTypes.Transaction, error) {
 	return _Accounts.contract.Transact(opts, "unlockTemporary", identityPreimage, newOwner, passwordSignature)
 }
 
 // UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
 //
 // Solidity: function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) returns()
-func (_Accounts *AccountsSession) UnlockTemporary(identityPreimage [32]byte, newOwner common.Address, passwordSignature []byte) (*ethTypes.Transaction, error) {
+func (_Accounts *AccountsSession) UnlockTemporary(identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) (*ethTypes.Transaction, error) {
 	return _Accounts.Contract.UnlockTemporary(&_Accounts.TransactOpts, identityPreimage, newOwner, passwordSignature)
 }
 
 // UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
 //
 // Solidity: function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) returns()
-func (_Accounts *AccountsTransactorSession) UnlockTemporary(identityPreimage [32]byte, newOwner common.Address, passwordSignature []byte) (*ethTypes.Transaction, error) {
+func (_Accounts *AccountsTransactorSession) UnlockTemporary(identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) (*ethTypes.Transaction, error) {
 	return _Accounts.Contract.UnlockTemporary(&_Accounts.TransactOpts, identityPreimage, newOwner, passwordSignature)
 }
 
@@ -752,7 +752,7 @@ func (it *AccountsTemporaryCreatedIterator) Close() error {
 // AccountsTemporaryCreated represents a TemporaryCreated event raised by the Accounts contract.
 type AccountsTemporaryCreated struct {
 	Proxy        common.Address
-	IdentityHash [32]byte
+	IdentityHash common.Hash
 	AccountId    types.ID
 	Raw          ethTypes.Log // Blockchain specific contextual infos
 }
@@ -760,7 +760,7 @@ type AccountsTemporaryCreated struct {
 // FilterTemporaryCreated is a free log retrieval operation binding the contract event 0x7f475d23ee7af49ec9e9b689d8eddd76ab367e3d326ba1658216174b5adbf52e.
 //
 // Solidity: event TemporaryCreated(address indexed proxy, bytes32 indexed identityHash, bytes8 accountId)
-func (_Accounts *AccountsFilterer) FilterTemporaryCreated(opts *bind.FilterOpts, proxy []common.Address, identityHash [][32]byte) (*AccountsTemporaryCreatedIterator, error) {
+func (_Accounts *AccountsFilterer) FilterTemporaryCreated(opts *bind.FilterOpts, proxy []common.Address, identityHash []common.Hash) (*AccountsTemporaryCreatedIterator, error) {
 
 	var proxyRule []interface{}
 	for _, proxyItem := range proxy {
@@ -797,7 +797,7 @@ func (_Accounts *AccountsFilterer) ParseTemporaryCreatedFromReceipt(receipt *eth
 // WatchTemporaryCreated is a free log subscription operation binding the contract event 0x7f475d23ee7af49ec9e9b689d8eddd76ab367e3d326ba1658216174b5adbf52e.
 //
 // Solidity: event TemporaryCreated(address indexed proxy, bytes32 indexed identityHash, bytes8 accountId)
-func (_Accounts *AccountsFilterer) WatchTemporaryCreated(opts *bind.WatchOpts, sink chan<- *AccountsTemporaryCreated, proxy []common.Address, identityHash [][32]byte) (event.Subscription, error) {
+func (_Accounts *AccountsFilterer) WatchTemporaryCreated(opts *bind.WatchOpts, sink chan<- *AccountsTemporaryCreated, proxy []common.Address, identityHash []common.Hash) (event.Subscription, error) {
 
 	var proxyRule []interface{}
 	for _, proxyItem := range proxy {
@@ -909,7 +909,7 @@ func (it *AccountsUnlockedIterator) Close() error {
 
 // AccountsUnlocked represents a Unlocked event raised by the Accounts contract.
 type AccountsUnlocked struct {
-	IdentityHash [32]byte
+	IdentityHash common.Hash
 	AccountId    types.ID
 	NewOwner     common.Address
 	Raw          ethTypes.Log // Blockchain specific contextual infos
@@ -918,7 +918,7 @@ type AccountsUnlocked struct {
 // FilterUnlocked is a free log retrieval operation binding the contract event 0x97e37defaf20fab5209164d8e3b54fdb1bd84d7ec6def1886c587be543d41bc0.
 //
 // Solidity: event Unlocked(bytes32 indexed identityHash, bytes8 indexed accountId, address newOwner)
-func (_Accounts *AccountsFilterer) FilterUnlocked(opts *bind.FilterOpts, identityHash [][32]byte, accountId []types.ID) (*AccountsUnlockedIterator, error) {
+func (_Accounts *AccountsFilterer) FilterUnlocked(opts *bind.FilterOpts, identityHash []common.Hash, accountId []types.ID) (*AccountsUnlockedIterator, error) {
 
 	var identityHashRule []interface{}
 	for _, identityHashItem := range identityHash {
@@ -955,7 +955,7 @@ func (_Accounts *AccountsFilterer) ParseUnlockedFromReceipt(receipt *ethTypes.Re
 // WatchUnlocked is a free log subscription operation binding the contract event 0x97e37defaf20fab5209164d8e3b54fdb1bd84d7ec6def1886c587be543d41bc0.
 //
 // Solidity: event Unlocked(bytes32 indexed identityHash, bytes8 indexed accountId, address newOwner)
-func (_Accounts *AccountsFilterer) WatchUnlocked(opts *bind.WatchOpts, sink chan<- *AccountsUnlocked, identityHash [][32]byte, accountId []types.ID) (event.Subscription, error) {
+func (_Accounts *AccountsFilterer) WatchUnlocked(opts *bind.WatchOpts, sink chan<- *AccountsUnlocked, identityHash []common.Hash, accountId []types.ID) (event.Subscription, error) {
 
 	var identityHashRule []interface{}
 	for _, identityHashItem := range identityHash {

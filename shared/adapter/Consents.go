@@ -394,7 +394,7 @@ func (it *ConsentsConsentedIterator) Close() error {
 type ConsentsConsented struct {
 	Action   uint8
 	UserId   types.ID
-	App      [32]byte
+	App      common.Hash
 	AppName  string
 	DataType string
 	Allowed  bool
@@ -404,7 +404,7 @@ type ConsentsConsented struct {
 // FilterConsented is a free log retrieval operation binding the contract event 0xd0bd2a4b9fcbb6eee35bf0e8d542816e1d5244740220e033fff96b0abd805fac.
 //
 // Solidity: event Consented(uint8 indexed action, bytes8 indexed userId, bytes32 indexed app, string appName, string dataType, bool allowed)
-func (_Consents *ConsentsFilterer) FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, app [][32]byte) (*ConsentsConsentedIterator, error) {
+func (_Consents *ConsentsFilterer) FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, app []common.Hash) (*ConsentsConsentedIterator, error) {
 
 	var actionRule []interface{}
 	for _, actionItem := range action {
@@ -445,7 +445,7 @@ func (_Consents *ConsentsFilterer) ParseConsentedFromReceipt(receipt *ethTypes.R
 // WatchConsented is a free log subscription operation binding the contract event 0xd0bd2a4b9fcbb6eee35bf0e8d542816e1d5244740220e033fff96b0abd805fac.
 //
 // Solidity: event Consented(uint8 indexed action, bytes8 indexed userId, bytes32 indexed app, string appName, string dataType, bool allowed)
-func (_Consents *ConsentsFilterer) WatchConsented(opts *bind.WatchOpts, sink chan<- *ConsentsConsented, action []uint8, userId []types.ID, app [][32]byte) (event.Subscription, error) {
+func (_Consents *ConsentsFilterer) WatchConsented(opts *bind.WatchOpts, sink chan<- *ConsentsConsented, action []uint8, userId []types.ID, app []common.Hash) (event.Subscription, error) {
 
 	var actionRule []interface{}
 	for _, actionItem := range action {
