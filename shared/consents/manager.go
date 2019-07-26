@@ -12,14 +12,14 @@ import (
 )
 
 // Manager is contract wrapper struct
-type Manager struct {
+type manager struct {
 	contract adapter.IConsentsContract
 	log      *logger.Logger
 }
 
-// NewManager makes new *Manager struct
+// NewManager makes new *manager struct
 func NewManager(client blockchain.TxClient) adapter.IConsentsManager {
-	return &Manager{
+	return &manager{
 		contract: adapter.NewConsentsContract(client),
 		log:      logger.New("consents"),
 	}
@@ -28,7 +28,7 @@ func NewManager(client blockchain.TxClient) adapter.IConsentsManager {
 // Consent is a paid mutator transaction binding the contract method 0xbecae241.
 //
 // Solidity: function consent(uint8 action, string appName, string dataType, bool allowed) returns()
-func (manager *Manager) Consent(ctx context.Context, action uint8, appName, dataType string, allowed bool) error {
+func (manager *manager) Consent(ctx context.Context, action uint8, appName, dataType string, allowed bool) error {
 	receipt, err := manager.contract.Consent(ctx, action, appName, dataType, allowed)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
@@ -51,7 +51,7 @@ func (manager *Manager) Consent(ctx context.Context, action uint8, appName, data
 // ConsentByController is a paid mutator transaction binding the contract method 0xf92519d8.
 //
 // Solidity: function consentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed) returns()
-func (manager *Manager) ConsentByController(
+func (manager *manager) ConsentByController(
 	ctx context.Context,
 	action uint8,
 	userId types.ID,
@@ -80,7 +80,7 @@ func (manager *Manager) ConsentByController(
 // ModifyConsentByController is a paid mutator transaction binding the contract method 0xedf2ef20.
 //
 // Solidity: function modifyConsentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed, bytes passwordSignature) returns()
-func (manager *Manager) ModifyConsentByController(
+func (manager *manager) ModifyConsentByController(
 	ctx context.Context,
 	action uint8,
 	userId types.ID,
@@ -110,7 +110,7 @@ func (manager *Manager) ModifyConsentByController(
 // IsAllowed is a free data retrieval call binding the contract method 0xa1d2bbf5.
 //
 // Solidity: function isAllowed(uint8 action, bytes8 userId, string appName, string dataType) constant returns(bool)
-func (manager *Manager) IsAllowed(
+func (manager *manager) IsAllowed(
 	action uint8,
 	userId types.ID,
 	appName, dataType string,
@@ -121,7 +121,7 @@ func (manager *Manager) IsAllowed(
 // IsAllowedAt is a free data retrieval call binding the contract method 0x118642e1.
 //
 // Solidity: function isAllowedAt(uint8 action, bytes8 userId, string appName, string dataType, uint256 blockNumber) constant returns(bool)
-func (manager *Manager) IsAllowedAt(
+func (manager *manager) IsAllowedAt(
 	action uint8,
 	userId types.ID,
 	appName, dataType string,

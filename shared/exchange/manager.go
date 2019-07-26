@@ -11,14 +11,14 @@ import (
 )
 
 // Manager is contract wrapper struct
-type Manager struct {
+type manager struct {
 	contract adapter.IExchangeContract
 	log      *logger.Logger
 }
 
-// NewManager makes new *Manager struct
+// NewManager makes new *manager struct
 func NewManager(client blockchain.TxClient) adapter.IExchangeManager {
-	return &Manager{
+	return &manager{
 		contract: adapter.NewExchangeContract(client),
 		log:      logger.New("exchange"),
 	}
@@ -27,7 +27,7 @@ func NewManager(client blockchain.TxClient) adapter.IExchangeManager {
 // Prepare is a paid mutator transaction binding the contract method 0x77e61c33.
 //
 // Solidity: function prepare(string provider, address consumer, address escrow, bytes4 escrowSign, bytes escrowArgs, bytes20[] dataIds) returns(bytes8)
-func (manager *Manager) Prepare(
+func (manager *manager) Prepare(
 	ctx context.Context,
 	provider string,
 	consumer ethCommon.Address,
@@ -81,7 +81,7 @@ func (manager *Manager) Prepare(
 // AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
 //
 // Solidity: function addDataIds(bytes8 offerId, bytes20[] dataIds) returns()
-func (manager *Manager) AddDataIds(ctx context.Context, offerId types.ID, dataIds []types.DataId) error {
+func (manager *manager) AddDataIds(ctx context.Context, offerId types.ID, dataIds []types.DataId) error {
 	_, err := manager.contract.AddDataIds(ctx, offerId, dataIds)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
@@ -97,7 +97,7 @@ func (manager *Manager) AddDataIds(ctx context.Context, offerId types.ID, dataId
 // Order is a paid mutator transaction binding the contract method 0x0cf833fb.
 //
 // Solidity: function order(bytes8 offerId) returns()
-func (manager *Manager) Order(ctx context.Context, offerId types.ID) error {
+func (manager *manager) Order(ctx context.Context, offerId types.ID) error {
 	receipt, err := manager.contract.Order(ctx, offerId)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
@@ -115,7 +115,7 @@ func (manager *Manager) Order(ctx context.Context, offerId types.ID) error {
 // Cancel is a paid mutator transaction binding the contract method 0xb2d9ba39.
 //
 // Solidity: function cancel(bytes8 offerId) returns()
-func (manager *Manager) Cancel(ctx context.Context, offerId types.ID) error {
+func (manager *manager) Cancel(ctx context.Context, offerId types.ID) error {
 	receipt, err := manager.contract.Cancel(ctx, offerId)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
@@ -133,7 +133,7 @@ func (manager *Manager) Cancel(ctx context.Context, offerId types.ID) error {
 // Settle is a paid mutator transaction binding the contract method 0xa60d9b5f.
 //
 // Solidity: function settle(bytes8 offerId) returns()
-func (manager *Manager) Settle(ctx context.Context, offerId types.ID) error {
+func (manager *manager) Settle(ctx context.Context, offerId types.ID) error {
 	receipt, err := manager.contract.Settle(ctx, offerId)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
@@ -151,7 +151,7 @@ func (manager *Manager) Settle(ctx context.Context, offerId types.ID) error {
 // Reject is a paid mutator transaction binding the contract method 0x6622e153.
 //
 // Solidity: function reject(bytes8 offerId) returns()
-func (manager *Manager) Reject(ctx context.Context, offerId types.ID) error {
+func (manager *manager) Reject(ctx context.Context, offerId types.ID) error {
 	receipt, err := manager.contract.Reject(ctx, offerId)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
@@ -169,20 +169,20 @@ func (manager *Manager) Reject(ctx context.Context, offerId types.ID) error {
 // GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
 //
 // Solidity: function getOffer(bytes8 offerId) constant returns((string,address,bytes20[],uint256,uint256,(address,bytes4,bytes),uint8))
-func (manager *Manager) GetOffer(offerId types.ID) (types.Offer, error) {
+func (manager *manager) GetOffer(offerId types.ID) (types.Offer, error) {
 	return manager.contract.GetOffer(offerId)
 }
 
 // GetOfferMembers is a free data retrieval call binding the contract method 0x72dfa465.
 //
 // Solidity: function getOfferMembers(bytes8 offerId) constant returns(address, address)
-func (manager *Manager) GetOfferMembers(offerId types.ID) (ethCommon.Address, ethCommon.Address, error) {
+func (manager *manager) GetOfferMembers(offerId types.ID) (ethCommon.Address, ethCommon.Address, error) {
 	return manager.contract.GetOfferMembers(offerId)
 }
 
 // OfferExists is a free data retrieval call binding the contract method 0xc4a03da9.
 //
 // Solidity: function offerExists(bytes8 offerId) constant returns(bool)
-func (manager *Manager) OfferExists(offerId types.ID) (bool, error) {
+func (manager *manager) OfferExists(offerId types.ID) (bool, error) {
 	return manager.contract.OfferExists(offerId)
 }
