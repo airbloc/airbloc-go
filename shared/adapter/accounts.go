@@ -176,6 +176,7 @@ func NewAccountsFilterer(address common.Address, filterer bind.ContractFilterer)
 	return &AccountsFilterer{contract: contract}, nil
 }
 
+//go:generate mockgen -source accounts.go -destination ./mocks/mock_accounts.go -package mocks IAccountsManager,IAccountsContract
 type IAccountsManager interface {
 	// Call methods
 	Accounts(arg0 types.ID) (types.Account, error)

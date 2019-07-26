@@ -176,6 +176,7 @@ func NewDataTypeRegistryFilterer(address common.Address, filterer bind.ContractF
 	return &DataTypeRegistryFilterer{contract: contract}, nil
 }
 
+//go:generate mockgen -source data_type_registry.go -destination ./mocks/mock_data_type_registry.go -package mocks IDataTypeRegistryManager,IDataTypeRegistryContract
 type IDataTypeRegistryManager interface {
 	// Call methods
 	Exists(name string) (bool, error)

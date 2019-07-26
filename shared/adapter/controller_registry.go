@@ -176,6 +176,7 @@ func NewControllerRegistryFilterer(address common.Address, filterer bind.Contrac
 	return &ControllerRegistryFilterer{contract: contract}, nil
 }
 
+//go:generate mockgen -source controller_registry.go -destination ./mocks/mock_controller_registry.go -package mocks IControllerRegistryManager,IControllerRegistryContract
 type IControllerRegistryManager interface {
 	// Call methods
 	Exists(controller common.Address) (bool, error)

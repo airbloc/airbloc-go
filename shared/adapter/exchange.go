@@ -176,6 +176,7 @@ func NewExchangeFilterer(address common.Address, filterer bind.ContractFilterer)
 	return &ExchangeFilterer{contract: contract}, nil
 }
 
+//go:generate mockgen -source exchange.go -destination ./mocks/mock_exchange.go -package mocks IExchangeManager,IExchangeContract
 type IExchangeManager interface {
 	// Call methods
 	GetOffer(offerId types.ID) (types.Offer, error)

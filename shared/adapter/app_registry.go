@@ -176,6 +176,7 @@ func NewAppRegistryFilterer(address common.Address, filterer bind.ContractFilter
 	return &AppRegistryFilterer{contract: contract}, nil
 }
 
+//go:generate mockgen -source app_registry.go -destination ./mocks/mock_app_registry.go -package mocks IAppRegistryManager,IAppRegistryContract
 type IAppRegistryManager interface {
 	// Call methods
 	Exists(appName string) (bool, error)

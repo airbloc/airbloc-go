@@ -176,6 +176,7 @@ func NewConsentsFilterer(address common.Address, filterer bind.ContractFilterer)
 	return &ConsentsFilterer{contract: contract}, nil
 }
 
+//go:generate mockgen -source consents.go -destination ./mocks/mock_consents.go -package mocks IConsentsManager,IConsentsContract
 type IConsentsManager interface {
 	// Call methods
 	IsAllowed(action uint8, userId types.ID, appName string, dataType string) (bool, error)
