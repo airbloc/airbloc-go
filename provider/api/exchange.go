@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/airbloc/airbloc-go/shared/adapter"
+	"github.com/airbloc/airbloc-go/shared/exchange"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
@@ -20,7 +21,7 @@ type exchangeAPI struct {
 
 // NewExchangeAPI makes new *exchangeAPI struct
 func NewExchangeAPI(backend service.Backend) (api.API, error) {
-	ex := adapter.NewExchangeManager(backend.Client())
+	ex := exchange.NewManager(backend.Client())
 	return &exchangeAPI{ex}, nil
 }
 

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/airbloc/airbloc-go/shared/adapter"
+	"github.com/airbloc/airbloc-go/shared/controllers"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/ethereum/go-ethereum/common"
@@ -17,7 +18,7 @@ type controllerRegistryAPI struct {
 
 // NewControllerRegistryAPI makes new *controllerRegistryAPI struct
 func NewControllerRegistryAPI(backend service.Backend) (api.API, error) {
-	cr := adapter.NewControllerRegistryManager(backend.Client())
+	cr := controllers.NewManager(backend.Client())
 	return &controllerRegistryAPI{cr}, nil
 }
 

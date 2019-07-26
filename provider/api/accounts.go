@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"net/http"
 
+	"github.com/airbloc/airbloc-go/shared/account"
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
@@ -20,7 +21,7 @@ type accountsAPI struct {
 
 // NewAccountsAPI makes new *accountsAPI struct
 func NewAccountsAPI(backend service.Backend) (api.API, error) {
-	ac := adapter.NewAccountsManager(backend.Client())
+	ac := account.NewManager(backend.Client())
 	return &accountsAPI{ac}, nil
 }
 

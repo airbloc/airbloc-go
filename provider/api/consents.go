@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/airbloc/airbloc-go/shared/adapter"
+	"github.com/airbloc/airbloc-go/shared/consents"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
@@ -20,7 +21,7 @@ type consentsAPI struct {
 
 // NewConsentsAPI makes new *ConsentsAPI struct
 func NewConsentsAPI(backend service.Backend) (api.API, error) {
-	cs := adapter.NewConsentsManager(backend.Client())
+	cs := consents.NewManager(backend.Client())
 	return &consentsAPI{cs}, nil
 }
 
