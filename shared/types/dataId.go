@@ -4,9 +4,10 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
-
+	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type DataId [20]byte
@@ -39,26 +40,49 @@ func NewDataId(dataID string) (id DataId, err error) {
 
 	bundleId, err := HexToID(convert(dataID, 0))
 	if err != nil {
-		err = errors.Wrap(err, "failed to parse bundle ID from the given data ID.")
+		err = errors.Wrap(err, "failed to parse bundleId")
 		return
 	}
 	copy(id[:IDLength], bundleId[:])
 
 	userId, err := HexToID(convert(dataID, 1))
 	if err != nil {
-		err = errors.Wrap(err, "failed to parse owner ID from the given data ID")
+		err = errors.Wrap(err, "failed to parse ownerId")
 		return
 	}
 	copy(id[IDStrLength:IDStrLength*2], userId[:])
 
 	rowId, err := hex.DecodeString(dataID[IDStrLength*2:])
 	if err != nil {
-		err = errors.Wrap(err, "failed to parse row ID from the given data ID")
+		err = errors.Wrap(err, "failed to parse rowId")
 		return
 	}
 	copy(id[IDStrLength*2:], rowId[:])
 
 	return
+}
+
+func RawIdToDataId(d bson.D) (DataId, error) {
+	var rawDataId struct {
+		BundleId    string             `json:"bundleId" mapstructure:"bundleId"`
+		UserId      string             `json:"userId" mapstructure:"userId"`
+		RowId       string             `json:"rowId" mapstructure:"rowId"`
+		CollectedAt primitive.DateTime `json:"collectedAt" mapstructure:"collectedAt"`
+	}
+
+	if err := mapstructure.Decode(d.Map(), rawDataId); err != nil {
+		return DataId{}, errors.Wrap(err, "failed to decode rawDataId")
+	}
+
+	dataId, err := NewDataId(
+		rawDataId.BundleId +
+			rawDataId.UserId +
+			rawDataId.RowId)
+	if err != nil {
+		return DataId{}, errors.Wrap(err, "failed to convert dataId")
+	}
+
+	return dataId, nil
 }
 
 func (id DataId) Hex() string {
@@ -72,15 +96,4 @@ func (id DataId) String() string {
 		id.UserId().Hex(),
 		id.RowId().Hex(),
 	)
-}
-
-type RawDataId struct {
-	BundleId    string             `json:"bundleId" mapstructure:"bundleId"`
-	UserId      string             `json:"userId" mapstructure:"userId"`
-	RowId       string             `json:"rowId" mapstructure:"rowId"`
-	CollectedAt primitive.DateTime `json:"collectedAt" mapstructure:"collectedAt"`
-}
-
-func (id *RawDataId) Convert() (DataId, error) {
-	return NewDataId(id.BundleId + id.UserId + id.RowId)
 }
