@@ -40,6 +40,8 @@ const ExchangeABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":
 // Exchange is an auto generated Go binding around an Ethereum contract.
 type Exchange struct {
 	Address            common.Address
+	TxHash             common.Hash
+	CreatedAt          *big.Int
 	ExchangeCaller     // Read-only binding to the contract
 	ExchangeTransactor // Write-only binding to the contract
 	ExchangeFilterer   // Log filterer for contract events
@@ -59,17 +61,28 @@ type ExchangeRaw struct {
 }
 
 // NewExchange creates a new instance of Exchange, bound to a specific deployed contract.
-func NewExchange(address common.Address, backend bind.ContractBackend) (*Exchange, error) {
+func NewExchange(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (*Exchange, error) {
 	contract, err := bindExchange(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
 	return &Exchange{
 		Address:            address,
+		TxHash:             txHash,
+		CreatedAt:          createdAt,
 		ExchangeCaller:     ExchangeCaller{contract: contract},
 		ExchangeTransactor: ExchangeTransactor{contract: contract},
 		ExchangeFilterer:   ExchangeFilterer{contract: contract},
 	}, nil
+}
+
+// bindExchange binds a generic wrapper to an already deployed contract.
+func bindExchange(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(ExchangeABI))
+	if err != nil {
+		return nil, err
+	}
+	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
 // Call invokes the (constant) contract method with params as input values and
@@ -245,17 +258,8 @@ func init() {
 	blockchain.RegisterSelector("0xa60d9b5f", "settle(bytes8)")
 }
 
-// bindExchange binds a generic wrapper to an already deployed contract.
-func bindExchange(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(ExchangeABI))
-	if err != nil {
-		return nil, err
-	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
-}
-
-func (_Exchange *Exchange) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
-	return NewExchange(address, backend)
+func (_Exchange *Exchange) new(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (interface{}, error) {
+	return NewExchange(address, txHash, createdAt, backend)
 }
 
 type IExchangeCalls interface {

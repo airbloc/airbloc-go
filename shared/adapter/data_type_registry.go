@@ -40,6 +40,8 @@ const DataTypeRegistryABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"I
 // DataTypeRegistry is an auto generated Go binding around an Ethereum contract.
 type DataTypeRegistry struct {
 	Address                    common.Address
+	TxHash                     common.Hash
+	CreatedAt                  *big.Int
 	DataTypeRegistryCaller     // Read-only binding to the contract
 	DataTypeRegistryTransactor // Write-only binding to the contract
 	DataTypeRegistryFilterer   // Log filterer for contract events
@@ -59,17 +61,28 @@ type DataTypeRegistryRaw struct {
 }
 
 // NewDataTypeRegistry creates a new instance of DataTypeRegistry, bound to a specific deployed contract.
-func NewDataTypeRegistry(address common.Address, backend bind.ContractBackend) (*DataTypeRegistry, error) {
+func NewDataTypeRegistry(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (*DataTypeRegistry, error) {
 	contract, err := bindDataTypeRegistry(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
 	return &DataTypeRegistry{
 		Address:                    address,
+		TxHash:                     txHash,
+		CreatedAt:                  createdAt,
 		DataTypeRegistryCaller:     DataTypeRegistryCaller{contract: contract},
 		DataTypeRegistryTransactor: DataTypeRegistryTransactor{contract: contract},
 		DataTypeRegistryFilterer:   DataTypeRegistryFilterer{contract: contract},
 	}, nil
+}
+
+// bindDataTypeRegistry binds a generic wrapper to an already deployed contract.
+func bindDataTypeRegistry(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(DataTypeRegistryABI))
+	if err != nil {
+		return nil, err
+	}
+	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 
 // Call invokes the (constant) contract method with params as input values and
@@ -222,17 +235,8 @@ func init() {
 	blockchain.RegisterSelector("0x6598a1ae", "unregister(string)")
 }
 
-// bindDataTypeRegistry binds a generic wrapper to an already deployed contract.
-func bindDataTypeRegistry(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(DataTypeRegistryABI))
-	if err != nil {
-		return nil, err
-	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
-}
-
-func (_DataTypeRegistry *DataTypeRegistry) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
-	return NewDataTypeRegistry(address, backend)
+func (_DataTypeRegistry *DataTypeRegistry) new(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (interface{}, error) {
+	return NewDataTypeRegistry(address, txHash, createdAt, backend)
 }
 
 type IDataTypeRegistryCalls interface {
