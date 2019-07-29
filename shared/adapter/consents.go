@@ -39,12 +39,27 @@ const ConsentsABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":
 
 // Consents is an auto generated Go binding around an Ethereum contract.
 type Consents struct {
-	Address            common.Address
-	TxHash             common.Hash
-	CreatedAt          *big.Int
+	address            common.Address
+	txHash             common.Hash
+	createdAt          *big.Int
 	ConsentsCaller     // Read-only binding to the contract
 	ConsentsTransactor // Write-only binding to the contract
 	ConsentsFilterer   // Log filterer for contract events
+}
+
+// Address is getter method of Consents.address
+func (_Consents *Consents) Address() common.Address {
+	return _Consents.address
+}
+
+// TxHash is getter method of Consents.txHash
+func (_Consents *Consents) TxHash() common.Hash {
+	return _Consents.txHash
+}
+
+// CreatedAt is getter method of Consents.createdAt
+func (_Consents *Consents) CreatedAt() *big.Int {
+	return _Consents.createdAt
 }
 
 // ConsentsSession is an auto generated Go binding around an Ethereum contract,
@@ -67,9 +82,9 @@ func NewConsents(address common.Address, txHash common.Hash, createdAt *big.Int,
 		return nil, err
 	}
 	return &Consents{
-		Address:            address,
-		TxHash:             txHash,
-		CreatedAt:          createdAt,
+		address:            address,
+		txHash:             txHash,
+		createdAt:          createdAt,
 		ConsentsCaller:     ConsentsCaller{contract: contract},
 		ConsentsTransactor: ConsentsTransactor{contract: contract},
 		ConsentsFilterer:   ConsentsFilterer{contract: contract},
@@ -191,6 +206,10 @@ func NewConsentsFilterer(address common.Address, filterer bind.ContractFilterer)
 
 //go:generate mockgen -source consents.go -destination ./mocks/mock_consents.go -package mocks IConsentsManager,IConsentsContract
 type IConsentsManager interface {
+	Account() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+
 	// Call methods
 	IsAllowed(action uint8, userId types.ID, appName string, dataType string) (bool, error)
 	IsAllowedAt(action uint8, userId types.ID, appName string, dataType string, blockNumber *big.Int) (bool, error)
@@ -205,6 +224,10 @@ type IConsentsManager interface {
 }
 
 type IConsentsContract interface {
+	Account() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+
 	IConsentsCalls
 	IConsentsTransacts
 	IConsentsEvents

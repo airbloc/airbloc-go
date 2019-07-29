@@ -39,12 +39,27 @@ const AccountsABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":
 
 // Accounts is an auto generated Go binding around an Ethereum contract.
 type Accounts struct {
-	Address            common.Address
-	TxHash             common.Hash
-	CreatedAt          *big.Int
+	address            common.Address
+	txHash             common.Hash
+	createdAt          *big.Int
 	AccountsCaller     // Read-only binding to the contract
 	AccountsTransactor // Write-only binding to the contract
 	AccountsFilterer   // Log filterer for contract events
+}
+
+// Address is getter method of Accounts.address
+func (_Accounts *Accounts) Address() common.Address {
+	return _Accounts.address
+}
+
+// TxHash is getter method of Accounts.txHash
+func (_Accounts *Accounts) TxHash() common.Hash {
+	return _Accounts.txHash
+}
+
+// CreatedAt is getter method of Accounts.createdAt
+func (_Accounts *Accounts) CreatedAt() *big.Int {
+	return _Accounts.createdAt
 }
 
 // AccountsSession is an auto generated Go binding around an Ethereum contract,
@@ -67,9 +82,9 @@ func NewAccounts(address common.Address, txHash common.Hash, createdAt *big.Int,
 		return nil, err
 	}
 	return &Accounts{
-		Address:            address,
-		TxHash:             txHash,
-		CreatedAt:          createdAt,
+		address:            address,
+		txHash:             txHash,
+		createdAt:          createdAt,
 		AccountsCaller:     AccountsCaller{contract: contract},
 		AccountsTransactor: AccountsTransactor{contract: contract},
 		AccountsFilterer:   AccountsFilterer{contract: contract},
@@ -191,6 +206,10 @@ func NewAccountsFilterer(address common.Address, filterer bind.ContractFilterer)
 
 //go:generate mockgen -source accounts.go -destination ./mocks/mock_accounts.go -package mocks IAccountsManager,IAccountsContract
 type IAccountsManager interface {
+	Account() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+
 	// Call methods
 	Accounts(arg0 types.ID) (types.Account, error)
 	Exists(accountId types.ID) (bool, error)
@@ -222,6 +241,10 @@ type IAccountsManager interface {
 }
 
 type IAccountsContract interface {
+	Account() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+
 	IAccountsCalls
 	IAccountsTransacts
 	IAccountsEvents

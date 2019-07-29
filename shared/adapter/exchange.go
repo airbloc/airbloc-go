@@ -39,12 +39,27 @@ const ExchangeABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":
 
 // Exchange is an auto generated Go binding around an Ethereum contract.
 type Exchange struct {
-	Address            common.Address
-	TxHash             common.Hash
-	CreatedAt          *big.Int
+	address            common.Address
+	txHash             common.Hash
+	createdAt          *big.Int
 	ExchangeCaller     // Read-only binding to the contract
 	ExchangeTransactor // Write-only binding to the contract
 	ExchangeFilterer   // Log filterer for contract events
+}
+
+// Address is getter method of Exchange.address
+func (_Exchange *Exchange) Address() common.Address {
+	return _Exchange.address
+}
+
+// TxHash is getter method of Exchange.txHash
+func (_Exchange *Exchange) TxHash() common.Hash {
+	return _Exchange.txHash
+}
+
+// CreatedAt is getter method of Exchange.createdAt
+func (_Exchange *Exchange) CreatedAt() *big.Int {
+	return _Exchange.createdAt
 }
 
 // ExchangeSession is an auto generated Go binding around an Ethereum contract,
@@ -67,9 +82,9 @@ func NewExchange(address common.Address, txHash common.Hash, createdAt *big.Int,
 		return nil, err
 	}
 	return &Exchange{
-		Address:            address,
-		TxHash:             txHash,
-		CreatedAt:          createdAt,
+		address:            address,
+		txHash:             txHash,
+		createdAt:          createdAt,
 		ExchangeCaller:     ExchangeCaller{contract: contract},
 		ExchangeTransactor: ExchangeTransactor{contract: contract},
 		ExchangeFilterer:   ExchangeFilterer{contract: contract},
@@ -191,6 +206,10 @@ func NewExchangeFilterer(address common.Address, filterer bind.ContractFilterer)
 
 //go:generate mockgen -source exchange.go -destination ./mocks/mock_exchange.go -package mocks IExchangeManager,IExchangeContract
 type IExchangeManager interface {
+	Account() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+
 	// Call methods
 	GetOffer(offerId types.ID) (types.Offer, error)
 	GetOfferMembers(offerId types.ID) (common.Address, common.Address, error)
@@ -227,6 +246,10 @@ type IExchangeManager interface {
 }
 
 type IExchangeContract interface {
+	Account() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+
 	IExchangeCalls
 	IExchangeTransacts
 	IExchangeEvents

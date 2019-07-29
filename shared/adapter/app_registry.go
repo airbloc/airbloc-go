@@ -39,12 +39,27 @@ const AppRegistryABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs
 
 // AppRegistry is an auto generated Go binding around an Ethereum contract.
 type AppRegistry struct {
-	Address               common.Address
-	TxHash                common.Hash
-	CreatedAt             *big.Int
+	address               common.Address
+	txHash                common.Hash
+	createdAt             *big.Int
 	AppRegistryCaller     // Read-only binding to the contract
 	AppRegistryTransactor // Write-only binding to the contract
 	AppRegistryFilterer   // Log filterer for contract events
+}
+
+// Address is getter method of AppRegistry.address
+func (_AppRegistry *AppRegistry) Address() common.Address {
+	return _AppRegistry.address
+}
+
+// TxHash is getter method of AppRegistry.txHash
+func (_AppRegistry *AppRegistry) TxHash() common.Hash {
+	return _AppRegistry.txHash
+}
+
+// CreatedAt is getter method of AppRegistry.createdAt
+func (_AppRegistry *AppRegistry) CreatedAt() *big.Int {
+	return _AppRegistry.createdAt
 }
 
 // AppRegistrySession is an auto generated Go binding around an Ethereum contract,
@@ -67,9 +82,9 @@ func NewAppRegistry(address common.Address, txHash common.Hash, createdAt *big.I
 		return nil, err
 	}
 	return &AppRegistry{
-		Address:               address,
-		TxHash:                txHash,
-		CreatedAt:             createdAt,
+		address:               address,
+		txHash:                txHash,
+		createdAt:             createdAt,
 		AppRegistryCaller:     AppRegistryCaller{contract: contract},
 		AppRegistryTransactor: AppRegistryTransactor{contract: contract},
 		AppRegistryFilterer:   AppRegistryFilterer{contract: contract},
@@ -191,6 +206,10 @@ func NewAppRegistryFilterer(address common.Address, filterer bind.ContractFilter
 
 //go:generate mockgen -source app_registry.go -destination ./mocks/mock_app_registry.go -package mocks IAppRegistryManager,IAppRegistryContract
 type IAppRegistryManager interface {
+	Account() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+
 	// Call methods
 	Exists(appName string) (bool, error)
 	Get(appName string) (types.App, error)
@@ -212,6 +231,10 @@ type IAppRegistryManager interface {
 }
 
 type IAppRegistryContract interface {
+	Account() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+
 	IAppRegistryCalls
 	IAppRegistryTransacts
 	IAppRegistryEvents

@@ -39,12 +39,27 @@ const ControllerRegistryABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\
 
 // ControllerRegistry is an auto generated Go binding around an Ethereum contract.
 type ControllerRegistry struct {
-	Address                      common.Address
-	TxHash                       common.Hash
-	CreatedAt                    *big.Int
+	address                      common.Address
+	txHash                       common.Hash
+	createdAt                    *big.Int
 	ControllerRegistryCaller     // Read-only binding to the contract
 	ControllerRegistryTransactor // Write-only binding to the contract
 	ControllerRegistryFilterer   // Log filterer for contract events
+}
+
+// Address is getter method of ControllerRegistry.address
+func (_ControllerRegistry *ControllerRegistry) Address() common.Address {
+	return _ControllerRegistry.address
+}
+
+// TxHash is getter method of ControllerRegistry.txHash
+func (_ControllerRegistry *ControllerRegistry) TxHash() common.Hash {
+	return _ControllerRegistry.txHash
+}
+
+// CreatedAt is getter method of ControllerRegistry.createdAt
+func (_ControllerRegistry *ControllerRegistry) CreatedAt() *big.Int {
+	return _ControllerRegistry.createdAt
 }
 
 // ControllerRegistrySession is an auto generated Go binding around an Ethereum contract,
@@ -67,9 +82,9 @@ func NewControllerRegistry(address common.Address, txHash common.Hash, createdAt
 		return nil, err
 	}
 	return &ControllerRegistry{
-		Address:                      address,
-		TxHash:                       txHash,
-		CreatedAt:                    createdAt,
+		address:                      address,
+		txHash:                       txHash,
+		createdAt:                    createdAt,
 		ControllerRegistryCaller:     ControllerRegistryCaller{contract: contract},
 		ControllerRegistryTransactor: ControllerRegistryTransactor{contract: contract},
 		ControllerRegistryFilterer:   ControllerRegistryFilterer{contract: contract},
@@ -191,6 +206,10 @@ func NewControllerRegistryFilterer(address common.Address, filterer bind.Contrac
 
 //go:generate mockgen -source controller_registry.go -destination ./mocks/mock_controller_registry.go -package mocks IControllerRegistryManager,IControllerRegistryContract
 type IControllerRegistryManager interface {
+	Account() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+
 	// Call methods
 	Exists(controller common.Address) (bool, error)
 	Get(controller common.Address) (types.DataController, error)
@@ -213,6 +232,10 @@ type IControllerRegistryManager interface {
 }
 
 type IControllerRegistryContract interface {
+	Account() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+
 	IControllerRegistryCalls
 	IControllerRegistryTransacts
 	IControllerRegistryEvents

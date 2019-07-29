@@ -39,12 +39,27 @@ const DataTypeRegistryABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"I
 
 // DataTypeRegistry is an auto generated Go binding around an Ethereum contract.
 type DataTypeRegistry struct {
-	Address                    common.Address
-	TxHash                     common.Hash
-	CreatedAt                  *big.Int
+	address                    common.Address
+	txHash                     common.Hash
+	createdAt                  *big.Int
 	DataTypeRegistryCaller     // Read-only binding to the contract
 	DataTypeRegistryTransactor // Write-only binding to the contract
 	DataTypeRegistryFilterer   // Log filterer for contract events
+}
+
+// Address is getter method of DataTypeRegistry.address
+func (_DataTypeRegistry *DataTypeRegistry) Address() common.Address {
+	return _DataTypeRegistry.address
+}
+
+// TxHash is getter method of DataTypeRegistry.txHash
+func (_DataTypeRegistry *DataTypeRegistry) TxHash() common.Hash {
+	return _DataTypeRegistry.txHash
+}
+
+// CreatedAt is getter method of DataTypeRegistry.createdAt
+func (_DataTypeRegistry *DataTypeRegistry) CreatedAt() *big.Int {
+	return _DataTypeRegistry.createdAt
 }
 
 // DataTypeRegistrySession is an auto generated Go binding around an Ethereum contract,
@@ -67,9 +82,9 @@ func NewDataTypeRegistry(address common.Address, txHash common.Hash, createdAt *
 		return nil, err
 	}
 	return &DataTypeRegistry{
-		Address:                    address,
-		TxHash:                     txHash,
-		CreatedAt:                  createdAt,
+		address:                    address,
+		txHash:                     txHash,
+		createdAt:                  createdAt,
 		DataTypeRegistryCaller:     DataTypeRegistryCaller{contract: contract},
 		DataTypeRegistryTransactor: DataTypeRegistryTransactor{contract: contract},
 		DataTypeRegistryFilterer:   DataTypeRegistryFilterer{contract: contract},
@@ -191,6 +206,10 @@ func NewDataTypeRegistryFilterer(address common.Address, filterer bind.ContractF
 
 //go:generate mockgen -source data_type_registry.go -destination ./mocks/mock_data_type_registry.go -package mocks IDataTypeRegistryManager,IDataTypeRegistryContract
 type IDataTypeRegistryManager interface {
+	Account() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+
 	// Call methods
 	Exists(name string) (bool, error)
 	Get(name string) (types.DataType, error)
@@ -208,6 +227,10 @@ type IDataTypeRegistryManager interface {
 }
 
 type IDataTypeRegistryContract interface {
+	Account() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+
 	IDataTypeRegistryCalls
 	IDataTypeRegistryTransacts
 	IDataTypeRegistryEvents
