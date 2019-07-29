@@ -206,7 +206,7 @@ func NewAppRegistryFilterer(address common.Address, filterer bind.ContractFilter
 
 //go:generate mockgen -source app_registry.go -destination ./mocks/mock_app_registry.go -package mocks IAppRegistryManager,IAppRegistryContract
 type IAppRegistryManager interface {
-	Account() common.Address
+	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
 
@@ -231,7 +231,7 @@ type IAppRegistryManager interface {
 }
 
 type IAppRegistryContract interface {
-	Account() common.Address
+	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
 

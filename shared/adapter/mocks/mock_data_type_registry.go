@@ -41,16 +41,16 @@ func (m *MockIDataTypeRegistryManager) EXPECT() *MockIDataTypeRegistryManagerMoc
 	return m.recorder
 }
 
-// Account mocks base method
-func (m *MockIDataTypeRegistryManager) Account() common.Address {
-	ret := m.ctrl.Call(m, "Account")
+// Address mocks base method
+func (m *MockIDataTypeRegistryManager) Address() common.Address {
+	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
 }
 
-// Account indicates an expected call of Account
-func (mr *MockIDataTypeRegistryManagerMockRecorder) Account() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Account", reflect.TypeOf((*MockIDataTypeRegistryManager)(nil).Account))
+// Address indicates an expected call of Address
+func (mr *MockIDataTypeRegistryManagerMockRecorder) Address() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIDataTypeRegistryManager)(nil).Address))
 }
 
 // TxHash mocks base method
@@ -215,16 +215,16 @@ func (m *MockIDataTypeRegistryContract) EXPECT() *MockIDataTypeRegistryContractM
 	return m.recorder
 }
 
-// Account mocks base method
-func (m *MockIDataTypeRegistryContract) Account() common.Address {
-	ret := m.ctrl.Call(m, "Account")
+// Address mocks base method
+func (m *MockIDataTypeRegistryContract) Address() common.Address {
+	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
 }
 
-// Account indicates an expected call of Account
-func (mr *MockIDataTypeRegistryContractMockRecorder) Account() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Account", reflect.TypeOf((*MockIDataTypeRegistryContract)(nil).Account))
+// Address indicates an expected call of Address
+func (mr *MockIDataTypeRegistryContractMockRecorder) Address() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIDataTypeRegistryContract)(nil).Address))
 }
 
 // TxHash mocks base method

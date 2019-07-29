@@ -206,7 +206,7 @@ func NewConsentsFilterer(address common.Address, filterer bind.ContractFilterer)
 
 //go:generate mockgen -source consents.go -destination ./mocks/mock_consents.go -package mocks IConsentsManager,IConsentsContract
 type IConsentsManager interface {
-	Account() common.Address
+	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
 
@@ -224,7 +224,7 @@ type IConsentsManager interface {
 }
 
 type IConsentsContract interface {
-	Account() common.Address
+	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
 

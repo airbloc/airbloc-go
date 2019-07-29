@@ -206,7 +206,7 @@ func NewDataTypeRegistryFilterer(address common.Address, filterer bind.ContractF
 
 //go:generate mockgen -source data_type_registry.go -destination ./mocks/mock_data_type_registry.go -package mocks IDataTypeRegistryManager,IDataTypeRegistryContract
 type IDataTypeRegistryManager interface {
-	Account() common.Address
+	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
 
@@ -227,7 +227,7 @@ type IDataTypeRegistryManager interface {
 }
 
 type IDataTypeRegistryContract interface {
-	Account() common.Address
+	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
 

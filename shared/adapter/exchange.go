@@ -206,7 +206,7 @@ func NewExchangeFilterer(address common.Address, filterer bind.ContractFilterer)
 
 //go:generate mockgen -source exchange.go -destination ./mocks/mock_exchange.go -package mocks IExchangeManager,IExchangeContract
 type IExchangeManager interface {
-	Account() common.Address
+	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
 
@@ -246,7 +246,7 @@ type IExchangeManager interface {
 }
 
 type IExchangeContract interface {
-	Account() common.Address
+	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
 

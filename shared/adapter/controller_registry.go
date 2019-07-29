@@ -206,7 +206,7 @@ func NewControllerRegistryFilterer(address common.Address, filterer bind.Contrac
 
 //go:generate mockgen -source controller_registry.go -destination ./mocks/mock_controller_registry.go -package mocks IControllerRegistryManager,IControllerRegistryContract
 type IControllerRegistryManager interface {
-	Account() common.Address
+	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
 
@@ -232,7 +232,7 @@ type IControllerRegistryManager interface {
 }
 
 type IControllerRegistryContract interface {
-	Account() common.Address
+	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
 

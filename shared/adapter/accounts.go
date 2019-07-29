@@ -206,7 +206,7 @@ func NewAccountsFilterer(address common.Address, filterer bind.ContractFilterer)
 
 //go:generate mockgen -source accounts.go -destination ./mocks/mock_accounts.go -package mocks IAccountsManager,IAccountsContract
 type IAccountsManager interface {
-	Account() common.Address
+	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
 
@@ -241,7 +241,7 @@ type IAccountsManager interface {
 }
 
 type IAccountsContract interface {
-	Account() common.Address
+	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
 
