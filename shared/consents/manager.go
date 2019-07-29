@@ -4,6 +4,10 @@ import (
 	"context"
 	"math/big"
 
+	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/event"
+
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
@@ -128,4 +132,18 @@ func (manager *manager) IsAllowedAt(
 	blockNumber *big.Int,
 ) (bool, error) {
 	return manager.contract.IsAllowedAt(action, userId, appName, dataType, blockNumber)
+}
+
+// FilterConsented is a free log retrieval operation binding the contract event 0xd0bd2a4b9fcbb6eee35bf0e8d542816e1d5244740220e033fff96b0abd805fac.
+//
+// Solidity: event Consented(uint8 indexed action, bytes8 indexed userId, bytes32 indexed app, string appName, string dataType, bool allowed)
+func (manager manager) FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, app []common.Hash) (*adapter.ConsentsConsentedIterator, error) {
+	return manager.contract.FilterConsented(opts, action, userId, app)
+}
+
+// WatchConsented is a free log subscription operation binding the contract event 0xd0bd2a4b9fcbb6eee35bf0e8d542816e1d5244740220e033fff96b0abd805fac.
+//
+// Solidity: event Consented(uint8 indexed action, bytes8 indexed userId, bytes32 indexed app, string appName, string dataType, bool allowed)
+func (manager manager) WatchConsented(opts *bind.WatchOpts, sink chan<- *adapter.ConsentsConsented, action []uint8, userId []types.ID, app []common.Hash) (event.Subscription, error) {
+	return manager.contract.WatchConsented(opts, sink, action, userId, app)
 }

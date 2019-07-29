@@ -190,30 +190,33 @@ type IExchangeManager interface {
 	Prepare(ctx context.Context, provider string, consumer common.Address, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds []types.DataId) (types.ID, error)
 	Reject(ctx context.Context, offerId types.ID) error
 	Settle(ctx context.Context, offerId types.ID) error
+
+	FilterEscrowExecutionFailed(opts *bind.FilterOpts) (*ExchangeEscrowExecutionFailedIterator, error)
+	WatchEscrowExecutionFailed(opts *bind.WatchOpts, sink chan<- *ExchangeEscrowExecutionFailed) (event.Subscription, error)
+
+	FilterOfferCanceled(opts *bind.FilterOpts, offerId []types.ID) (*ExchangeOfferCanceledIterator, error)
+	WatchOfferCanceled(opts *bind.WatchOpts, sink chan<- *ExchangeOfferCanceled, offerId []types.ID) (event.Subscription, error)
+
+	FilterOfferPrepared(opts *bind.FilterOpts, offerId []types.ID) (*ExchangeOfferPreparedIterator, error)
+	WatchOfferPrepared(opts *bind.WatchOpts, sink chan<- *ExchangeOfferPrepared, offerId []types.ID) (event.Subscription, error)
+
+	FilterOfferPresented(opts *bind.FilterOpts, offerId []types.ID) (*ExchangeOfferPresentedIterator, error)
+	WatchOfferPresented(opts *bind.WatchOpts, sink chan<- *ExchangeOfferPresented, offerId []types.ID) (event.Subscription, error)
+
+	FilterOfferReceipt(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*ExchangeOfferReceiptIterator, error)
+	WatchOfferReceipt(opts *bind.WatchOpts, sink chan<- *ExchangeOfferReceipt, offerId []types.ID, consumer []common.Address) (event.Subscription, error)
+
+	FilterOfferRejected(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*ExchangeOfferRejectedIterator, error)
+	WatchOfferRejected(opts *bind.WatchOpts, sink chan<- *ExchangeOfferRejected, offerId []types.ID, consumer []common.Address) (event.Subscription, error)
+
+	FilterOfferSettled(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*ExchangeOfferSettledIterator, error)
+	WatchOfferSettled(opts *bind.WatchOpts, sink chan<- *ExchangeOfferSettled, offerId []types.ID, consumer []common.Address) (event.Subscription, error)
 }
 
 type IExchangeContract interface {
-	// Call methods
-	GetOffer(offerId types.ID) (types.Offer, error)
-	GetOfferMembers(offerId types.ID) (common.Address, common.Address, error)
-	OfferExists(offerId types.ID) (bool, error)
-
-	// Transact methods
-	AddDataIds(ctx context.Context, offerId types.ID, dataIds []types.DataId) (*ethTypes.Receipt, error)
-	Cancel(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error)
-	Order(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error)
-	Prepare(ctx context.Context, provider string, consumer common.Address, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds []types.DataId) (*ethTypes.Receipt, error)
-	Reject(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error)
-	Settle(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error)
-
-	// Event parser
-	ParseEscrowExecutionFailedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeEscrowExecutionFailed, error)
-	ParseOfferCanceledFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferCanceled, error)
-	ParseOfferPreparedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferPrepared, error)
-	ParseOfferPresentedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferPresented, error)
-	ParseOfferReceiptFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferReceipt, error)
-	ParseOfferRejectedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferRejected, error)
-	ParseOfferSettledFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferSettled, error)
+	IExchangeCalls
+	IExchangeTransacts
+	IExchangeEvents
 }
 
 // Manager is contract wrapper struct
@@ -253,6 +256,14 @@ func bindExchange(address common.Address, caller bind.ContractCaller, transactor
 
 func (_Exchange *Exchange) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewExchange(address, backend)
+}
+
+type IExchangeCalls interface {
+	GetOffer(offerId types.ID) (types.Offer, error)
+
+	GetOfferMembers(offerId types.ID) (common.Address, common.Address, error)
+
+	OfferExists(offerId types.ID) (bool, error)
 }
 
 // GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
@@ -351,6 +362,20 @@ func (_Exchange *ExchangeSession) OfferExists(offerId types.ID) (bool, error) {
 // Solidity: function offerExists(bytes8 offerId) constant returns(bool)
 func (_Exchange *ExchangeCallerSession) OfferExists(offerId types.ID) (bool, error) {
 	return _Exchange.Contract.OfferExists(&_Exchange.CallOpts, offerId)
+}
+
+type IExchangeTransacts interface {
+	AddDataIds(ctx context.Context, offerId types.ID, dataIds []types.DataId) (*ethTypes.Receipt, error)
+
+	Cancel(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error)
+
+	Order(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error)
+
+	Prepare(ctx context.Context, provider string, consumer common.Address, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds []types.DataId) (*ethTypes.Receipt, error)
+
+	Reject(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error)
+
+	Settle(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error)
 }
 
 // AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
@@ -543,6 +568,36 @@ func (_Exchange *ExchangeSession) Settle(offerId types.ID) (*ethTypes.Transactio
 // Solidity: function settle(bytes8 offerId) returns()
 func (_Exchange *ExchangeTransactorSession) Settle(offerId types.ID) (*ethTypes.Transaction, error) {
 	return _Exchange.Contract.Settle(&_Exchange.TransactOpts, offerId)
+}
+
+type IExchangeEvents interface {
+	FilterEscrowExecutionFailed(opts *bind.FilterOpts) (*ExchangeEscrowExecutionFailedIterator, error)
+	ParseEscrowExecutionFailedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeEscrowExecutionFailed, error)
+	WatchEscrowExecutionFailed(opts *bind.WatchOpts, sink chan<- *ExchangeEscrowExecutionFailed) (event.Subscription, error)
+
+	FilterOfferCanceled(opts *bind.FilterOpts, offerId []types.ID) (*ExchangeOfferCanceledIterator, error)
+	ParseOfferCanceledFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferCanceled, error)
+	WatchOfferCanceled(opts *bind.WatchOpts, sink chan<- *ExchangeOfferCanceled, offerId []types.ID) (event.Subscription, error)
+
+	FilterOfferPrepared(opts *bind.FilterOpts, offerId []types.ID) (*ExchangeOfferPreparedIterator, error)
+	ParseOfferPreparedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferPrepared, error)
+	WatchOfferPrepared(opts *bind.WatchOpts, sink chan<- *ExchangeOfferPrepared, offerId []types.ID) (event.Subscription, error)
+
+	FilterOfferPresented(opts *bind.FilterOpts, offerId []types.ID) (*ExchangeOfferPresentedIterator, error)
+	ParseOfferPresentedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferPresented, error)
+	WatchOfferPresented(opts *bind.WatchOpts, sink chan<- *ExchangeOfferPresented, offerId []types.ID) (event.Subscription, error)
+
+	FilterOfferReceipt(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*ExchangeOfferReceiptIterator, error)
+	ParseOfferReceiptFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferReceipt, error)
+	WatchOfferReceipt(opts *bind.WatchOpts, sink chan<- *ExchangeOfferReceipt, offerId []types.ID, consumer []common.Address) (event.Subscription, error)
+
+	FilterOfferRejected(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*ExchangeOfferRejectedIterator, error)
+	ParseOfferRejectedFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferRejected, error)
+	WatchOfferRejected(opts *bind.WatchOpts, sink chan<- *ExchangeOfferRejected, offerId []types.ID, consumer []common.Address) (event.Subscription, error)
+
+	FilterOfferSettled(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*ExchangeOfferSettledIterator, error)
+	ParseOfferSettledFromReceipt(receipt *ethTypes.Receipt) (*ExchangeOfferSettled, error)
+	WatchOfferSettled(opts *bind.WatchOpts, sink chan<- *ExchangeOfferSettled, offerId []types.ID, consumer []common.Address) (event.Subscription, error)
 }
 
 // ExchangeEscrowExecutionFailedIterator is returned from FilterEscrowExecutionFailed and is used to iterate over the raw logs and unpacked data for EscrowExecutionFailed events raised by the Exchange contract.

@@ -194,31 +194,24 @@ type IAccountsManager interface {
 	CreateTemporary(ctx context.Context, identityHash common.Hash) (types.ID, error)
 	SetController(ctx context.Context, controller common.Address) error
 	UnlockTemporary(ctx context.Context, identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) error
+
+	FilterControllerChanged(opts *bind.FilterOpts, prevController []common.Address, newController []common.Address) (*AccountsControllerChangedIterator, error)
+	WatchControllerChanged(opts *bind.WatchOpts, sink chan<- *AccountsControllerChanged, prevController []common.Address, newController []common.Address) (event.Subscription, error)
+
+	FilterSignUp(opts *bind.FilterOpts, owner []common.Address) (*AccountsSignUpIterator, error)
+	WatchSignUp(opts *bind.WatchOpts, sink chan<- *AccountsSignUp, owner []common.Address) (event.Subscription, error)
+
+	FilterTemporaryCreated(opts *bind.FilterOpts, proxy []common.Address, identityHash []common.Hash) (*AccountsTemporaryCreatedIterator, error)
+	WatchTemporaryCreated(opts *bind.WatchOpts, sink chan<- *AccountsTemporaryCreated, proxy []common.Address, identityHash []common.Hash) (event.Subscription, error)
+
+	FilterUnlocked(opts *bind.FilterOpts, identityHash []common.Hash, accountId []types.ID) (*AccountsUnlockedIterator, error)
+	WatchUnlocked(opts *bind.WatchOpts, sink chan<- *AccountsUnlocked, identityHash []common.Hash, accountId []types.ID) (event.Subscription, error)
 }
 
 type IAccountsContract interface {
-	// Call methods
-	Accounts(arg0 types.ID) (types.Account, error)
-	Exists(accountId types.ID) (bool, error)
-	GetAccount(accountId types.ID) (types.Account, error)
-	GetAccountId(sender common.Address) (types.ID, error)
-	GetAccountIdFromSignature(messageHash common.Hash, signature []byte) (types.ID, error)
-	IdentityHashToAccount(arg0 common.Hash) (types.ID, error)
-	IsControllerOf(sender common.Address, accountId types.ID) (bool, error)
-	IsTemporary(accountId types.ID) (bool, error)
-	NumberOfAccounts() (*big.Int, error)
-
-	// Transact methods
-	Create(ctx context.Context) (*ethTypes.Receipt, error)
-	CreateTemporary(ctx context.Context, identityHash common.Hash) (*ethTypes.Receipt, error)
-	SetController(ctx context.Context, controller common.Address) (*ethTypes.Receipt, error)
-	UnlockTemporary(ctx context.Context, identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) (*ethTypes.Receipt, error)
-
-	// Event parser
-	ParseControllerChangedFromReceipt(receipt *ethTypes.Receipt) (*AccountsControllerChanged, error)
-	ParseSignUpFromReceipt(receipt *ethTypes.Receipt) (*AccountsSignUp, error)
-	ParseTemporaryCreatedFromReceipt(receipt *ethTypes.Receipt) (*AccountsTemporaryCreated, error)
-	ParseUnlockedFromReceipt(receipt *ethTypes.Receipt) (*AccountsUnlocked, error)
+	IAccountsCalls
+	IAccountsTransacts
+	IAccountsEvents
 }
 
 // Manager is contract wrapper struct
@@ -256,6 +249,26 @@ func bindAccounts(address common.Address, caller bind.ContractCaller, transactor
 
 func (_Accounts *Accounts) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewAccounts(address, backend)
+}
+
+type IAccountsCalls interface {
+	Accounts(arg0 types.ID) (types.Account, error)
+
+	Exists(accountId types.ID) (bool, error)
+
+	GetAccount(accountId types.ID) (types.Account, error)
+
+	GetAccountId(sender common.Address) (types.ID, error)
+
+	GetAccountIdFromSignature(messageHash common.Hash, signature []byte) (types.ID, error)
+
+	IdentityHashToAccount(arg0 common.Hash) (types.ID, error)
+
+	IsControllerOf(sender common.Address, accountId types.ID) (bool, error)
+
+	IsTemporary(accountId types.ID) (bool, error)
+
+	NumberOfAccounts() (*big.Int, error)
 }
 
 // Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
@@ -553,6 +566,16 @@ func (_Accounts *AccountsCallerSession) NumberOfAccounts() (*big.Int, error) {
 	return _Accounts.Contract.NumberOfAccounts(&_Accounts.CallOpts)
 }
 
+type IAccountsTransacts interface {
+	Create(ctx context.Context) (*ethTypes.Receipt, error)
+
+	CreateTemporary(ctx context.Context, identityHash common.Hash) (*ethTypes.Receipt, error)
+
+	SetController(ctx context.Context, controller common.Address) (*ethTypes.Receipt, error)
+
+	UnlockTemporary(ctx context.Context, identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) (*ethTypes.Receipt, error)
+}
+
 // Create is a paid mutator transaction binding the contract method 0xefc81a8c.
 //
 // Solidity: function create() returns(bytes8)
@@ -679,6 +702,24 @@ func (_Accounts *AccountsSession) UnlockTemporary(identityPreimage common.Hash, 
 // Solidity: function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) returns()
 func (_Accounts *AccountsTransactorSession) UnlockTemporary(identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) (*ethTypes.Transaction, error) {
 	return _Accounts.Contract.UnlockTemporary(&_Accounts.TransactOpts, identityPreimage, newOwner, passwordSignature)
+}
+
+type IAccountsEvents interface {
+	FilterControllerChanged(opts *bind.FilterOpts, prevController []common.Address, newController []common.Address) (*AccountsControllerChangedIterator, error)
+	ParseControllerChangedFromReceipt(receipt *ethTypes.Receipt) (*AccountsControllerChanged, error)
+	WatchControllerChanged(opts *bind.WatchOpts, sink chan<- *AccountsControllerChanged, prevController []common.Address, newController []common.Address) (event.Subscription, error)
+
+	FilterSignUp(opts *bind.FilterOpts, owner []common.Address) (*AccountsSignUpIterator, error)
+	ParseSignUpFromReceipt(receipt *ethTypes.Receipt) (*AccountsSignUp, error)
+	WatchSignUp(opts *bind.WatchOpts, sink chan<- *AccountsSignUp, owner []common.Address) (event.Subscription, error)
+
+	FilterTemporaryCreated(opts *bind.FilterOpts, proxy []common.Address, identityHash []common.Hash) (*AccountsTemporaryCreatedIterator, error)
+	ParseTemporaryCreatedFromReceipt(receipt *ethTypes.Receipt) (*AccountsTemporaryCreated, error)
+	WatchTemporaryCreated(opts *bind.WatchOpts, sink chan<- *AccountsTemporaryCreated, proxy []common.Address, identityHash []common.Hash) (event.Subscription, error)
+
+	FilterUnlocked(opts *bind.FilterOpts, identityHash []common.Hash, accountId []types.ID) (*AccountsUnlockedIterator, error)
+	ParseUnlockedFromReceipt(receipt *ethTypes.Receipt) (*AccountsUnlocked, error)
+	WatchUnlocked(opts *bind.WatchOpts, sink chan<- *AccountsUnlocked, identityHash []common.Hash, accountId []types.ID) (event.Subscription, error)
 }
 
 // AccountsControllerChangedIterator is returned from FilterControllerChanged and is used to iterate over the raw logs and unpacked data for ControllerChanged events raised by the Accounts contract.

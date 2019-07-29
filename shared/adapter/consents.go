@@ -186,20 +186,15 @@ type IConsentsManager interface {
 	Consent(ctx context.Context, action uint8, appName string, dataType string, allowed bool) error
 	ConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool) error
 	ModifyConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool, passwordSignature []byte) error
+
+	FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, app []common.Hash) (*ConsentsConsentedIterator, error)
+	WatchConsented(opts *bind.WatchOpts, sink chan<- *ConsentsConsented, action []uint8, userId []types.ID, app []common.Hash) (event.Subscription, error)
 }
 
 type IConsentsContract interface {
-	// Call methods
-	IsAllowed(action uint8, userId types.ID, appName string, dataType string) (bool, error)
-	IsAllowedAt(action uint8, userId types.ID, appName string, dataType string, blockNumber *big.Int) (bool, error)
-
-	// Transact methods
-	Consent(ctx context.Context, action uint8, appName string, dataType string, allowed bool) (*ethTypes.Receipt, error)
-	ConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool) (*ethTypes.Receipt, error)
-	ModifyConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Receipt, error)
-
-	// Event parser
-	ParseConsentedFromReceipt(receipt *ethTypes.Receipt) (*ConsentsConsented, error)
+	IConsentsCalls
+	IConsentsTransacts
+	IConsentsEvents
 }
 
 // Manager is contract wrapper struct
@@ -236,6 +231,12 @@ func bindConsents(address common.Address, caller bind.ContractCaller, transactor
 
 func (_Consents *Consents) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewConsents(address, backend)
+}
+
+type IConsentsCalls interface {
+	IsAllowed(action uint8, userId types.ID, appName string, dataType string) (bool, error)
+
+	IsAllowedAt(action uint8, userId types.ID, appName string, dataType string, blockNumber *big.Int) (bool, error)
 }
 
 // IsAllowed is a free data retrieval call binding the contract method 0xa1d2bbf5.
@@ -302,6 +303,14 @@ func (_Consents *ConsentsSession) IsAllowedAt(action uint8, userId types.ID, app
 // Solidity: function isAllowedAt(uint8 action, bytes8 userId, string appName, string dataType, uint256 blockNumber) constant returns(bool)
 func (_Consents *ConsentsCallerSession) IsAllowedAt(action uint8, userId types.ID, appName string, dataType string, blockNumber *big.Int) (bool, error) {
 	return _Consents.Contract.IsAllowedAt(&_Consents.CallOpts, action, userId, appName, dataType, blockNumber)
+}
+
+type IConsentsTransacts interface {
+	Consent(ctx context.Context, action uint8, appName string, dataType string, allowed bool) (*ethTypes.Receipt, error)
+
+	ConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool) (*ethTypes.Receipt, error)
+
+	ModifyConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Receipt, error)
 }
 
 // Consent is a paid mutator transaction binding the contract method 0xbecae241.
@@ -398,6 +407,12 @@ func (_Consents *ConsentsSession) ModifyConsentByController(action uint8, userId
 // Solidity: function modifyConsentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed, bytes passwordSignature) returns()
 func (_Consents *ConsentsTransactorSession) ModifyConsentByController(action uint8, userId types.ID, appName string, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Transaction, error) {
 	return _Consents.Contract.ModifyConsentByController(&_Consents.TransactOpts, action, userId, appName, dataType, allowed, passwordSignature)
+}
+
+type IConsentsEvents interface {
+	FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, app []common.Hash) (*ConsentsConsentedIterator, error)
+	ParseConsentedFromReceipt(receipt *ethTypes.Receipt) (*ConsentsConsented, error)
+	WatchConsented(opts *bind.WatchOpts, sink chan<- *ConsentsConsented, action []uint8, userId []types.ID, app []common.Hash) (event.Subscription, error)
 }
 
 // ConsentsConsentedIterator is returned from FilterConsented and is used to iterate over the raw logs and unpacked data for Consented events raised by the Consents contract.

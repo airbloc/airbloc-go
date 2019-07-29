@@ -187,23 +187,21 @@ type IAppRegistryManager interface {
 	Register(ctx context.Context, appName string) error
 	TransferAppOwner(ctx context.Context, appName string, newOwner common.Address) error
 	Unregister(ctx context.Context, appName string) error
+
+	FilterAppOwnerTransferred(opts *bind.FilterOpts, hashedAppName []common.Hash, oldOwner []common.Address) (*AppRegistryAppOwnerTransferredIterator, error)
+	WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *AppRegistryAppOwnerTransferred, hashedAppName []common.Hash, oldOwner []common.Address) (event.Subscription, error)
+
+	FilterRegistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*AppRegistryRegistrationIterator, error)
+	WatchRegistration(opts *bind.WatchOpts, sink chan<- *AppRegistryRegistration, hashedAppName []common.Hash) (event.Subscription, error)
+
+	FilterUnregistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*AppRegistryUnregistrationIterator, error)
+	WatchUnregistration(opts *bind.WatchOpts, sink chan<- *AppRegistryUnregistration, hashedAppName []common.Hash) (event.Subscription, error)
 }
 
 type IAppRegistryContract interface {
-	// Call methods
-	Exists(appName string) (bool, error)
-	Get(appName string) (types.App, error)
-	IsOwner(appName string, owner common.Address) (bool, error)
-
-	// Transact methods
-	Register(ctx context.Context, appName string) (*ethTypes.Receipt, error)
-	TransferAppOwner(ctx context.Context, appName string, newOwner common.Address) (*ethTypes.Receipt, error)
-	Unregister(ctx context.Context, appName string) (*ethTypes.Receipt, error)
-
-	// Event parser
-	ParseAppOwnerTransferredFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryAppOwnerTransferred, error)
-	ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryRegistration, error)
-	ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryUnregistration, error)
+	IAppRegistryCalls
+	IAppRegistryTransacts
+	IAppRegistryEvents
 }
 
 // Manager is contract wrapper struct
@@ -240,6 +238,14 @@ func bindAppRegistry(address common.Address, caller bind.ContractCaller, transac
 
 func (_AppRegistry *AppRegistry) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewAppRegistry(address, backend)
+}
+
+type IAppRegistryCalls interface {
+	Exists(appName string) (bool, error)
+
+	Get(appName string) (types.App, error)
+
+	IsOwner(appName string, owner common.Address) (bool, error)
 }
 
 // Exists is a free data retrieval call binding the contract method 0x261a323e.
@@ -340,6 +346,14 @@ func (_AppRegistry *AppRegistryCallerSession) IsOwner(appName string, owner comm
 	return _AppRegistry.Contract.IsOwner(&_AppRegistry.CallOpts, appName, owner)
 }
 
+type IAppRegistryTransacts interface {
+	Register(ctx context.Context, appName string) (*ethTypes.Receipt, error)
+
+	TransferAppOwner(ctx context.Context, appName string, newOwner common.Address) (*ethTypes.Receipt, error)
+
+	Unregister(ctx context.Context, appName string) (*ethTypes.Receipt, error)
+}
+
 // Register is a paid mutator transaction binding the contract method 0xf2c298be.
 //
 // Solidity: function register(string appName) returns()
@@ -434,6 +448,20 @@ func (_AppRegistry *AppRegistrySession) Unregister(appName string) (*ethTypes.Tr
 // Solidity: function unregister(string appName) returns()
 func (_AppRegistry *AppRegistryTransactorSession) Unregister(appName string) (*ethTypes.Transaction, error) {
 	return _AppRegistry.Contract.Unregister(&_AppRegistry.TransactOpts, appName)
+}
+
+type IAppRegistryEvents interface {
+	FilterAppOwnerTransferred(opts *bind.FilterOpts, hashedAppName []common.Hash, oldOwner []common.Address) (*AppRegistryAppOwnerTransferredIterator, error)
+	ParseAppOwnerTransferredFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryAppOwnerTransferred, error)
+	WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *AppRegistryAppOwnerTransferred, hashedAppName []common.Hash, oldOwner []common.Address) (event.Subscription, error)
+
+	FilterRegistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*AppRegistryRegistrationIterator, error)
+	ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryRegistration, error)
+	WatchRegistration(opts *bind.WatchOpts, sink chan<- *AppRegistryRegistration, hashedAppName []common.Hash) (event.Subscription, error)
+
+	FilterUnregistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*AppRegistryUnregistrationIterator, error)
+	ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryUnregistration, error)
+	WatchUnregistration(opts *bind.WatchOpts, sink chan<- *AppRegistryUnregistration, hashedAppName []common.Hash) (event.Subscription, error)
 }
 
 // AppRegistryAppOwnerTransferredIterator is returned from FilterAppOwnerTransferred and is used to iterate over the raw logs and unpacked data for AppOwnerTransferred events raised by the AppRegistry contract.

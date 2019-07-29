@@ -186,21 +186,18 @@ type IDataTypeRegistryManager interface {
 	// Transact methods
 	Register(ctx context.Context, name string, schemaHash common.Hash) error
 	Unregister(ctx context.Context, name string) error
+
+	FilterRegistration(opts *bind.FilterOpts) (*DataTypeRegistryRegistrationIterator, error)
+	WatchRegistration(opts *bind.WatchOpts, sink chan<- *DataTypeRegistryRegistration) (event.Subscription, error)
+
+	FilterUnregistration(opts *bind.FilterOpts) (*DataTypeRegistryUnregistrationIterator, error)
+	WatchUnregistration(opts *bind.WatchOpts, sink chan<- *DataTypeRegistryUnregistration) (event.Subscription, error)
 }
 
 type IDataTypeRegistryContract interface {
-	// Call methods
-	Exists(name string) (bool, error)
-	Get(name string) (types.DataType, error)
-	IsOwner(name string, owner common.Address) (bool, error)
-
-	// Transact methods
-	Register(ctx context.Context, name string, schemaHash common.Hash) (*ethTypes.Receipt, error)
-	Unregister(ctx context.Context, name string) (*ethTypes.Receipt, error)
-
-	// Event parser
-	ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*DataTypeRegistryRegistration, error)
-	ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*DataTypeRegistryUnregistration, error)
+	IDataTypeRegistryCalls
+	IDataTypeRegistryTransacts
+	IDataTypeRegistryEvents
 }
 
 // Manager is contract wrapper struct
@@ -236,6 +233,14 @@ func bindDataTypeRegistry(address common.Address, caller bind.ContractCaller, tr
 
 func (_DataTypeRegistry *DataTypeRegistry) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewDataTypeRegistry(address, backend)
+}
+
+type IDataTypeRegistryCalls interface {
+	Exists(name string) (bool, error)
+
+	Get(name string) (types.DataType, error)
+
+	IsOwner(name string, owner common.Address) (bool, error)
 }
 
 // Exists is a free data retrieval call binding the contract method 0x261a323e.
@@ -336,6 +341,12 @@ func (_DataTypeRegistry *DataTypeRegistryCallerSession) IsOwner(name string, own
 	return _DataTypeRegistry.Contract.IsOwner(&_DataTypeRegistry.CallOpts, name, owner)
 }
 
+type IDataTypeRegistryTransacts interface {
+	Register(ctx context.Context, name string, schemaHash common.Hash) (*ethTypes.Receipt, error)
+
+	Unregister(ctx context.Context, name string) (*ethTypes.Receipt, error)
+}
+
 // Register is a paid mutator transaction binding the contract method 0x656afdee.
 //
 // Solidity: function register(string name, bytes32 schemaHash) returns()
@@ -398,6 +409,16 @@ func (_DataTypeRegistry *DataTypeRegistrySession) Unregister(name string) (*ethT
 // Solidity: function unregister(string name) returns()
 func (_DataTypeRegistry *DataTypeRegistryTransactorSession) Unregister(name string) (*ethTypes.Transaction, error) {
 	return _DataTypeRegistry.Contract.Unregister(&_DataTypeRegistry.TransactOpts, name)
+}
+
+type IDataTypeRegistryEvents interface {
+	FilterRegistration(opts *bind.FilterOpts) (*DataTypeRegistryRegistrationIterator, error)
+	ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*DataTypeRegistryRegistration, error)
+	WatchRegistration(opts *bind.WatchOpts, sink chan<- *DataTypeRegistryRegistration) (event.Subscription, error)
+
+	FilterUnregistration(opts *bind.FilterOpts) (*DataTypeRegistryUnregistrationIterator, error)
+	ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*DataTypeRegistryUnregistration, error)
+	WatchUnregistration(opts *bind.WatchOpts, sink chan<- *DataTypeRegistryUnregistration) (event.Subscription, error)
 }
 
 // DataTypeRegistryRegistrationIterator is returned from FilterRegistration and is used to iterate over the raw logs and unpacked data for Registration events raised by the DataTypeRegistry contract.

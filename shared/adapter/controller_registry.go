@@ -188,24 +188,21 @@ type IControllerRegistryManager interface {
 	Register(ctx context.Context, controllerAddr common.Address) error
 	RenounceOwnership(ctx context.Context) error
 	TransferOwnership(ctx context.Context, newOwner common.Address) error
+
+	FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*ControllerRegistryOwnershipTransferredIterator, error)
+	WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *ControllerRegistryOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error)
+
+	FilterRegistration(opts *bind.FilterOpts, controller []common.Address) (*ControllerRegistryRegistrationIterator, error)
+	WatchRegistration(opts *bind.WatchOpts, sink chan<- *ControllerRegistryRegistration, controller []common.Address) (event.Subscription, error)
+
+	FilterUnregistration(opts *bind.FilterOpts, controller []common.Address) (*ControllerRegistryUnregistrationIterator, error)
+	WatchUnregistration(opts *bind.WatchOpts, sink chan<- *ControllerRegistryUnregistration, controller []common.Address) (event.Subscription, error)
 }
 
 type IControllerRegistryContract interface {
-	// Call methods
-	Exists(controller common.Address) (bool, error)
-	Get(controller common.Address) (types.DataController, error)
-	IsOwner() (bool, error)
-	Owner() (common.Address, error)
-
-	// Transact methods
-	Register(ctx context.Context, controllerAddr common.Address) (*ethTypes.Receipt, error)
-	RenounceOwnership(ctx context.Context) (*ethTypes.Receipt, error)
-	TransferOwnership(ctx context.Context, newOwner common.Address) (*ethTypes.Receipt, error)
-
-	// Event parser
-	ParseOwnershipTransferredFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryOwnershipTransferred, error)
-	ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryRegistration, error)
-	ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryUnregistration, error)
+	IControllerRegistryCalls
+	IControllerRegistryTransacts
+	IControllerRegistryEvents
 }
 
 // Manager is contract wrapper struct
@@ -242,6 +239,16 @@ func bindControllerRegistry(address common.Address, caller bind.ContractCaller, 
 
 func (_ControllerRegistry *ControllerRegistry) new(address common.Address, backend bind.ContractBackend) (interface{}, error) {
 	return NewControllerRegistry(address, backend)
+}
+
+type IControllerRegistryCalls interface {
+	Exists(controller common.Address) (bool, error)
+
+	Get(controller common.Address) (types.DataController, error)
+
+	IsOwner() (bool, error)
+
+	Owner() (common.Address, error)
 }
 
 // Exists is a free data retrieval call binding the contract method 0xf6a3d24e.
@@ -375,6 +382,14 @@ func (_ControllerRegistry *ControllerRegistryCallerSession) Owner() (common.Addr
 	return _ControllerRegistry.Contract.Owner(&_ControllerRegistry.CallOpts)
 }
 
+type IControllerRegistryTransacts interface {
+	Register(ctx context.Context, controllerAddr common.Address) (*ethTypes.Receipt, error)
+
+	RenounceOwnership(ctx context.Context) (*ethTypes.Receipt, error)
+
+	TransferOwnership(ctx context.Context, newOwner common.Address) (*ethTypes.Receipt, error)
+}
+
 // Register is a paid mutator transaction binding the contract method 0x4420e486.
 //
 // Solidity: function register(address controllerAddr) returns()
@@ -469,6 +484,20 @@ func (_ControllerRegistry *ControllerRegistrySession) TransferOwnership(newOwner
 // Solidity: function transferOwnership(address newOwner) returns()
 func (_ControllerRegistry *ControllerRegistryTransactorSession) TransferOwnership(newOwner common.Address) (*ethTypes.Transaction, error) {
 	return _ControllerRegistry.Contract.TransferOwnership(&_ControllerRegistry.TransactOpts, newOwner)
+}
+
+type IControllerRegistryEvents interface {
+	FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*ControllerRegistryOwnershipTransferredIterator, error)
+	ParseOwnershipTransferredFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryOwnershipTransferred, error)
+	WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *ControllerRegistryOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error)
+
+	FilterRegistration(opts *bind.FilterOpts, controller []common.Address) (*ControllerRegistryRegistrationIterator, error)
+	ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryRegistration, error)
+	WatchRegistration(opts *bind.WatchOpts, sink chan<- *ControllerRegistryRegistration, controller []common.Address) (event.Subscription, error)
+
+	FilterUnregistration(opts *bind.FilterOpts, controller []common.Address) (*ControllerRegistryUnregistrationIterator, error)
+	ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryUnregistration, error)
+	WatchUnregistration(opts *bind.WatchOpts, sink chan<- *ControllerRegistryUnregistration, controller []common.Address) (event.Subscription, error)
 }
 
 // ControllerRegistryOwnershipTransferredIterator is returned from FilterOwnershipTransferred and is used to iterate over the raw logs and unpacked data for OwnershipTransferred events raised by the ControllerRegistry contract.

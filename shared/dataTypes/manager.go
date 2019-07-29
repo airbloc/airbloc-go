@@ -3,6 +3,9 @@ package dataTypes
 import (
 	"context"
 
+	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
+	"github.com/ethereum/go-ethereum/event"
+
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
@@ -80,4 +83,32 @@ func (manager *manager) Exists(name string) (bool, error) {
 // Solidity: function isOwner(string name, address owner) constant returns(bool)
 func (manager *manager) IsOwner(name string, owner common.Address) (bool, error) {
 	return manager.contract.IsOwner(name, owner)
+}
+
+// FilterRegistration is a free log retrieval operation binding the contract event 0xd510136a132b28d5bccd27cc4dd52d556d9982ab168ba54b1e775d4d0f1ca948.
+//
+// Solidity: event Registration(string name)
+func (manager manager) FilterRegistration(opts *bind.FilterOpts) (*adapter.DataTypeRegistryRegistrationIterator, error) {
+	return manager.contract.FilterRegistration(opts)
+}
+
+// WatchRegistration is a free log subscription operation binding the contract event 0xd510136a132b28d5bccd27cc4dd52d556d9982ab168ba54b1e775d4d0f1ca948.
+//
+// Solidity: event Registration(string name)
+func (manager manager) WatchRegistration(opts *bind.WatchOpts, sink chan<- *adapter.DataTypeRegistryRegistration) (event.Subscription, error) {
+	return manager.contract.WatchRegistration(opts, sink)
+}
+
+// FilterUnregistration is a free log retrieval operation binding the contract event 0x2c7e9e18beb0594fa2ccaf8412bbe719d47f3c1efb1349e2ba03c1a3e4f64c83.
+//
+// Solidity: event Unregistration(string name)
+func (manager manager) FilterUnregistration(opts *bind.FilterOpts) (*adapter.DataTypeRegistryUnregistrationIterator, error) {
+	return manager.contract.FilterUnregistration(opts)
+}
+
+// WatchUnregistration is a free log subscription operation binding the contract event 0x2c7e9e18beb0594fa2ccaf8412bbe719d47f3c1efb1349e2ba03c1a3e4f64c83.
+//
+// Solidity: event Unregistration(string name)
+func (manager manager) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *adapter.DataTypeRegistryUnregistration) (event.Subscription, error) {
+	return manager.contract.WatchUnregistration(opts, sink)
 }

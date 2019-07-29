@@ -6,11 +6,19 @@ import (
 
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
+	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/logger"
 	ethCommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/event"
 	"github.com/pkg/errors"
 )
+
+type ErrNoAccount struct{}
+
+func (err ErrNoAccount) Error() string {
+	return "no account"
+}
 
 // Manager is contract wrapper struct
 type Manager struct {
@@ -176,4 +184,60 @@ func (manager *Manager) IsTemporary(accountId types.ID) (bool, error) {
 // Solidity: function numberOfAccounts() constant returns(uint256)
 func (manager *Manager) NumberOfAccounts() (*big.Int, error) {
 	return manager.contract.NumberOfAccounts()
+}
+
+// FilterControllerChanged is a free log retrieval operation binding the contract event 0x7870b760e42dc95a63cbc10da0a922297123992dac9ae3ed98f28f9950a92c68.
+//
+// Solidity: event ControllerChanged(address indexed prevController, address indexed newController, bytes8 accountId)
+func (manager *Manager) FilterControllerChanged(opts *bind.FilterOpts, prevController []ethCommon.Address, newController []ethCommon.Address) (*adapter.AccountsControllerChangedIterator, error) {
+	return manager.contract.FilterControllerChanged(opts, prevController, newController)
+}
+
+// WatchControllerChanged is a free log subscription operation binding the contract event 0x7870b760e42dc95a63cbc10da0a922297123992dac9ae3ed98f28f9950a92c68.
+//
+// Solidity: event ControllerChanged(address indexed prevController, address indexed newController, bytes8 accountId)
+func (manager *Manager) WatchControllerChanged(opts *bind.WatchOpts, sink chan<- *adapter.AccountsControllerChanged, prevController []ethCommon.Address, newController []ethCommon.Address) (event.Subscription, error) {
+	return manager.contract.WatchControllerChanged(opts, sink, prevController, newController)
+}
+
+// FilterSignUp is a free log retrieval operation binding the contract event 0xb98ae0923087f0b489e49e611630c8accd44d415c9fcbd5d59c6511877754ec4.
+//
+// Solidity: event SignUp(address indexed owner, bytes8 accountId)
+func (manager *Manager) FilterSignUp(opts *bind.FilterOpts, owner []ethCommon.Address) (*adapter.AccountsSignUpIterator, error) {
+	return manager.contract.FilterSignUp(opts, owner)
+}
+
+// WatchSignUp is a free log subscription operation binding the contract event 0xb98ae0923087f0b489e49e611630c8accd44d415c9fcbd5d59c6511877754ec4.
+//
+// Solidity: event SignUp(address indexed owner, bytes8 accountId)
+func (manager *Manager) WatchSignUp(opts *bind.WatchOpts, sink chan<- *adapter.AccountsSignUp, owner []ethCommon.Address) (event.Subscription, error) {
+	return manager.contract.WatchSignUp(opts, sink, owner)
+}
+
+// FilterTemporaryCreated is a free log retrieval operation binding the contract event 0x7f475d23ee7af49ec9e9b689d8eddd76ab367e3d326ba1658216174b5adbf52e.
+//
+// Solidity: event TemporaryCreated(address indexed proxy, bytes32 indexed identityHash, bytes8 accountId)
+func (manager *Manager) FilterTemporaryCreated(opts *bind.FilterOpts, proxy []ethCommon.Address, identityHash []ethCommon.Hash) (*adapter.AccountsTemporaryCreatedIterator, error) {
+	return manager.contract.FilterTemporaryCreated(opts, proxy, identityHash)
+}
+
+// WatchTemporaryCreated is a free log subscription operation binding the contract event 0x7f475d23ee7af49ec9e9b689d8eddd76ab367e3d326ba1658216174b5adbf52e.
+//
+// Solidity: event TemporaryCreated(address indexed proxy, bytes32 indexed identityHash, bytes8 accountId)
+func (manager *Manager) WatchTemporaryCreated(opts *bind.WatchOpts, sink chan<- *adapter.AccountsTemporaryCreated, proxy []ethCommon.Address, identityHash []ethCommon.Hash) (event.Subscription, error) {
+	return manager.contract.WatchTemporaryCreated(opts, sink, proxy, identityHash)
+}
+
+// FilterUnlocked is a free log retrieval operation binding the contract event 0x97e37defaf20fab5209164d8e3b54fdb1bd84d7ec6def1886c587be543d41bc0.
+//
+// Solidity: event Unlocked(bytes32 indexed identityHash, bytes8 indexed accountId, address newOwner)
+func (manager *Manager) FilterUnlocked(opts *bind.FilterOpts, identityHash []ethCommon.Hash, accountId []types.ID) (*adapter.AccountsUnlockedIterator, error) {
+	return manager.contract.FilterUnlocked(opts, identityHash, accountId)
+}
+
+// WatchUnlocked is a free log subscription operation binding the contract event 0x97e37defaf20fab5209164d8e3b54fdb1bd84d7ec6def1886c587be543d41bc0.
+//
+// Solidity: event Unlocked(bytes32 indexed identityHash, bytes8 indexed accountId, address newOwner)
+func (manager *Manager) WatchUnlocked(opts *bind.WatchOpts, sink chan<- *adapter.AccountsUnlocked, identityHash []ethCommon.Hash, accountId []types.ID) (event.Subscription, error) {
+	return manager.contract.WatchUnlocked(opts, sink, identityHash, accountId)
 }

@@ -3,6 +3,9 @@ package apps
 import (
 	"context"
 
+	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
+	"github.com/ethereum/go-ethereum/event"
+
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
@@ -102,4 +105,46 @@ func (manager *manager) Exists(appName string) (bool, error) {
 // Solidity: function isOwner(string appName, address owner) constant returns(bool)
 func (manager *manager) IsOwner(appName string, owner common.Address) (bool, error) {
 	return manager.contract.IsOwner(appName, owner)
+}
+
+// FilterAppOwnerTransferred is a free log retrieval operation binding the contract event 0x9323f5fe9b72ac1fe704b80d8d53e6538f63d0d041068ef274c35b41d1cbc1de.
+//
+// Solidity: event AppOwnerTransferred(bytes32 indexed hashedAppName, string appName, address indexed oldOwner, address newOwner)
+func (manager manager) FilterAppOwnerTransferred(opts *bind.FilterOpts, hashedAppName []common.Hash, oldOwner []common.Address) (*adapter.AppRegistryAppOwnerTransferredIterator, error) {
+	return manager.contract.FilterAppOwnerTransferred(opts, hashedAppName, oldOwner)
+}
+
+// WatchAppOwnerTransferred is a free log subscription operation binding the contract event 0x9323f5fe9b72ac1fe704b80d8d53e6538f63d0d041068ef274c35b41d1cbc1de.
+//
+// Solidity: event AppOwnerTransferred(bytes32 indexed hashedAppName, string appName, address indexed oldOwner, address newOwner)
+func (manager manager) WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryAppOwnerTransferred, hashedAppName []common.Hash, oldOwner []common.Address) (event.Subscription, error) {
+	return manager.contract.WatchAppOwnerTransferred(opts, sink, hashedAppName, oldOwner)
+}
+
+// FilterRegistration is a free log retrieval operation binding the contract event 0xe7e1383b88439b9522e6630da35051999780d58947518c9a3d1620d19b1bc886.
+//
+// Solidity: event Registration(bytes32 indexed hashedAppName, string appName)
+func (manager manager) FilterRegistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*adapter.AppRegistryRegistrationIterator, error) {
+	return manager.contract.FilterRegistration(opts, hashedAppName)
+}
+
+// WatchRegistration is a free log subscription operation binding the contract event 0xe7e1383b88439b9522e6630da35051999780d58947518c9a3d1620d19b1bc886.
+//
+// Solidity: event Registration(bytes32 indexed hashedAppName, string appName)
+func (manager manager) WatchRegistration(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryRegistration, hashedAppName []common.Hash) (event.Subscription, error) {
+	return manager.contract.WatchRegistration(opts, sink, hashedAppName)
+}
+
+// FilterUnregistration is a free log retrieval operation binding the contract event 0xe2d00f1029a39aa8484ea81b8c2794180aa48eb0a1f28c721acdc94789f1d638.
+//
+// Solidity: event Unregistration(bytes32 indexed hashedAppName, string appName)
+func (manager manager) FilterUnregistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*adapter.AppRegistryUnregistrationIterator, error) {
+	return manager.contract.FilterUnregistration(opts, hashedAppName)
+}
+
+// WatchUnregistration is a free log subscription operation binding the contract event 0xe2d00f1029a39aa8484ea81b8c2794180aa48eb0a1f28c721acdc94789f1d638.
+//
+// Solidity: event Unregistration(bytes32 indexed hashedAppName, string appName)
+func (manager manager) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryUnregistration, hashedAppName []common.Hash) (event.Subscription, error) {
+	return manager.contract.WatchUnregistration(opts, sink, hashedAppName)
 }
