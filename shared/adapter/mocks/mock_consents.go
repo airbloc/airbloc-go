@@ -78,29 +78,29 @@ func (mr *MockIConsentsManagerMockRecorder) CreatedAt() *gomock.Call {
 }
 
 // IsAllowed mocks base method
-func (m *MockIConsentsManager) IsAllowed(action uint8, userId types.ID, appName, dataType string) (bool, error) {
-	ret := m.ctrl.Call(m, "IsAllowed", action, userId, appName, dataType)
+func (m *MockIConsentsManager) IsAllowed(userId types.ID, appName string, action uint8, dataType string) (bool, error) {
+	ret := m.ctrl.Call(m, "IsAllowed", userId, appName, action, dataType)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // IsAllowed indicates an expected call of IsAllowed
-func (mr *MockIConsentsManagerMockRecorder) IsAllowed(action, userId, appName, dataType interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowed", reflect.TypeOf((*MockIConsentsManager)(nil).IsAllowed), action, userId, appName, dataType)
+func (mr *MockIConsentsManagerMockRecorder) IsAllowed(userId, appName, action, dataType interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowed", reflect.TypeOf((*MockIConsentsManager)(nil).IsAllowed), userId, appName, action, dataType)
 }
 
 // IsAllowedAt mocks base method
-func (m *MockIConsentsManager) IsAllowedAt(action uint8, userId types.ID, appName, dataType string, blockNumber *big.Int) (bool, error) {
-	ret := m.ctrl.Call(m, "IsAllowedAt", action, userId, appName, dataType, blockNumber)
+func (m *MockIConsentsManager) IsAllowedAt(userId types.ID, appName string, action uint8, dataType string, blockNumber *big.Int) (bool, error) {
+	ret := m.ctrl.Call(m, "IsAllowedAt", userId, appName, action, dataType, blockNumber)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // IsAllowedAt indicates an expected call of IsAllowedAt
-func (mr *MockIConsentsManagerMockRecorder) IsAllowedAt(action, userId, appName, dataType, blockNumber interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowedAt", reflect.TypeOf((*MockIConsentsManager)(nil).IsAllowedAt), action, userId, appName, dataType, blockNumber)
+func (mr *MockIConsentsManagerMockRecorder) IsAllowedAt(userId, appName, action, dataType, blockNumber interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowedAt", reflect.TypeOf((*MockIConsentsManager)(nil).IsAllowedAt), userId, appName, action, dataType, blockNumber)
 }
 
 // Consent mocks base method
@@ -225,29 +225,29 @@ func (mr *MockIConsentsContractMockRecorder) CreatedAt() *gomock.Call {
 }
 
 // IsAllowed mocks base method
-func (m *MockIConsentsContract) IsAllowed(action uint8, userId types.ID, appName, dataType string) (bool, error) {
-	ret := m.ctrl.Call(m, "IsAllowed", action, userId, appName, dataType)
+func (m *MockIConsentsContract) IsAllowed(userId types.ID, appName string, action uint8, dataType string) (bool, error) {
+	ret := m.ctrl.Call(m, "IsAllowed", userId, appName, action, dataType)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // IsAllowed indicates an expected call of IsAllowed
-func (mr *MockIConsentsContractMockRecorder) IsAllowed(action, userId, appName, dataType interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowed", reflect.TypeOf((*MockIConsentsContract)(nil).IsAllowed), action, userId, appName, dataType)
+func (mr *MockIConsentsContractMockRecorder) IsAllowed(userId, appName, action, dataType interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowed", reflect.TypeOf((*MockIConsentsContract)(nil).IsAllowed), userId, appName, action, dataType)
 }
 
 // IsAllowedAt mocks base method
-func (m *MockIConsentsContract) IsAllowedAt(action uint8, userId types.ID, appName, dataType string, blockNumber *big.Int) (bool, error) {
-	ret := m.ctrl.Call(m, "IsAllowedAt", action, userId, appName, dataType, blockNumber)
+func (m *MockIConsentsContract) IsAllowedAt(userId types.ID, appName string, action uint8, dataType string, blockNumber *big.Int) (bool, error) {
+	ret := m.ctrl.Call(m, "IsAllowedAt", userId, appName, action, dataType, blockNumber)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // IsAllowedAt indicates an expected call of IsAllowedAt
-func (mr *MockIConsentsContractMockRecorder) IsAllowedAt(action, userId, appName, dataType, blockNumber interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowedAt", reflect.TypeOf((*MockIConsentsContract)(nil).IsAllowedAt), action, userId, appName, dataType, blockNumber)
+func (mr *MockIConsentsContractMockRecorder) IsAllowedAt(userId, appName, action, dataType, blockNumber interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowedAt", reflect.TypeOf((*MockIConsentsContract)(nil).IsAllowedAt), userId, appName, action, dataType, blockNumber)
 }
 
 // Consent mocks base method
@@ -352,29 +352,29 @@ func (m *MockIConsentsCalls) EXPECT() *MockIConsentsCallsMockRecorder {
 }
 
 // IsAllowed mocks base method
-func (m *MockIConsentsCalls) IsAllowed(action uint8, userId types.ID, appName, dataType string) (bool, error) {
-	ret := m.ctrl.Call(m, "IsAllowed", action, userId, appName, dataType)
+func (m *MockIConsentsCalls) IsAllowed(userId types.ID, appName string, action uint8, dataType string) (bool, error) {
+	ret := m.ctrl.Call(m, "IsAllowed", userId, appName, action, dataType)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // IsAllowed indicates an expected call of IsAllowed
-func (mr *MockIConsentsCallsMockRecorder) IsAllowed(action, userId, appName, dataType interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowed", reflect.TypeOf((*MockIConsentsCalls)(nil).IsAllowed), action, userId, appName, dataType)
+func (mr *MockIConsentsCallsMockRecorder) IsAllowed(userId, appName, action, dataType interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowed", reflect.TypeOf((*MockIConsentsCalls)(nil).IsAllowed), userId, appName, action, dataType)
 }
 
 // IsAllowedAt mocks base method
-func (m *MockIConsentsCalls) IsAllowedAt(action uint8, userId types.ID, appName, dataType string, blockNumber *big.Int) (bool, error) {
-	ret := m.ctrl.Call(m, "IsAllowedAt", action, userId, appName, dataType, blockNumber)
+func (m *MockIConsentsCalls) IsAllowedAt(userId types.ID, appName string, action uint8, dataType string, blockNumber *big.Int) (bool, error) {
+	ret := m.ctrl.Call(m, "IsAllowedAt", userId, appName, action, dataType, blockNumber)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // IsAllowedAt indicates an expected call of IsAllowedAt
-func (mr *MockIConsentsCallsMockRecorder) IsAllowedAt(action, userId, appName, dataType, blockNumber interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowedAt", reflect.TypeOf((*MockIConsentsCalls)(nil).IsAllowedAt), action, userId, appName, dataType, blockNumber)
+func (mr *MockIConsentsCallsMockRecorder) IsAllowedAt(userId, appName, action, dataType, blockNumber interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowedAt", reflect.TypeOf((*MockIConsentsCalls)(nil).IsAllowedAt), userId, appName, action, dataType, blockNumber)
 }
 
 // MockIConsentsTransacts is a mock of IConsentsTransacts interface
