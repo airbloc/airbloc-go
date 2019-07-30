@@ -12,7 +12,7 @@ import (
 )
 
 type ExchangeAPI struct {
-	manager adapter.ExchangeManager
+	manager adapter.IExchangeManager
 }
 
 func NewExchangeAPI(backend service.Backend) (api.API, error) {
