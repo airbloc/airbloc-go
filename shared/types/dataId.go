@@ -27,7 +27,14 @@ func (id DataId) RowId() (rowId RowId) {
 	return
 }
 
-func NewDataId(dataID string) (id DataId, err error) {
+func NewDataIdFromIds(bundleId ID, accountId ID, rowId RowId) (id DataId) {
+	copy(id[:IDLength], bundleId[:])
+	copy(id[IDLength:IDLength*2], accountId[:])
+	copy(id[IDLength*2:], rowId[:])
+	return
+}
+
+func NewDataIdFromStr(dataID string) (id DataId, err error) {
 	convert := func(dataID string, index int) string {
 		var str string
 		if index == 0 {
@@ -43,7 +50,7 @@ func NewDataId(dataID string) (id DataId, err error) {
 		err = errors.Wrap(err, "failed to parse bundleId")
 		return
 	}
-	copy(id[:IDLength], bundleId[:])
+	copy(id[:IDStrLength], bundleId[:])
 
 	userId, err := HexToID(convert(dataID, 1))
 	if err != nil {
@@ -62,7 +69,7 @@ func NewDataId(dataID string) (id DataId, err error) {
 	return
 }
 
-func RawIdToDataId(d bson.D) (DataId, error) {
+func RawIdToDataId(d bson.D) (DataId, int64, error) {
 	var rawDataId struct {
 		BundleId    string             `json:"bundleId" mapstructure:"bundleId"`
 		UserId      string             `json:"userId" mapstructure:"userId"`
@@ -71,18 +78,18 @@ func RawIdToDataId(d bson.D) (DataId, error) {
 	}
 
 	if err := mapstructure.Decode(d.Map(), rawDataId); err != nil {
-		return DataId{}, errors.Wrap(err, "failed to decode rawDataId")
+		return DataId{}, 0, errors.Wrap(err, "failed to decode rawDataId")
 	}
 
-	dataId, err := NewDataId(
+	dataId, err := NewDataIdFromStr(
 		rawDataId.BundleId +
 			rawDataId.UserId +
 			rawDataId.RowId)
 	if err != nil {
-		return DataId{}, errors.Wrap(err, "failed to convert dataId")
+		return DataId{}, 0, errors.Wrap(err, "failed to convert dataId")
 	}
 
-	return dataId, nil
+	return dataId, int64(rawDataId.CollectedAt), nil
 }
 
 func (id DataId) Hex() string {
