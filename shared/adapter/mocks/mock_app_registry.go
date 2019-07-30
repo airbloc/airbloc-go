@@ -153,81 +153,81 @@ func (mr *MockIAppRegistryManagerMockRecorder) Unregister(ctx, appName interface
 }
 
 // FilterAppOwnerTransferred mocks base method
-func (m *MockIAppRegistryManager) FilterAppOwnerTransferred(opts *bind.FilterOpts, hashedAppName []common.Hash, oldOwner []common.Address) (*adapter.AppRegistryAppOwnerTransferredIterator, error) {
-	ret := m.ctrl.Call(m, "FilterAppOwnerTransferred", opts, hashedAppName, oldOwner)
+func (m *MockIAppRegistryManager) FilterAppOwnerTransferred(opts *bind.FilterOpts, appAddr, oldOwner []common.Address) (*adapter.AppRegistryAppOwnerTransferredIterator, error) {
+	ret := m.ctrl.Call(m, "FilterAppOwnerTransferred", opts, appAddr, oldOwner)
 	ret0, _ := ret[0].(*adapter.AppRegistryAppOwnerTransferredIterator)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FilterAppOwnerTransferred indicates an expected call of FilterAppOwnerTransferred
-func (mr *MockIAppRegistryManagerMockRecorder) FilterAppOwnerTransferred(opts, hashedAppName, oldOwner interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterAppOwnerTransferred", reflect.TypeOf((*MockIAppRegistryManager)(nil).FilterAppOwnerTransferred), opts, hashedAppName, oldOwner)
+func (mr *MockIAppRegistryManagerMockRecorder) FilterAppOwnerTransferred(opts, appAddr, oldOwner interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterAppOwnerTransferred", reflect.TypeOf((*MockIAppRegistryManager)(nil).FilterAppOwnerTransferred), opts, appAddr, oldOwner)
 }
 
 // WatchAppOwnerTransferred mocks base method
-func (m *MockIAppRegistryManager) WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryAppOwnerTransferred, hashedAppName []common.Hash, oldOwner []common.Address) (event.Subscription, error) {
-	ret := m.ctrl.Call(m, "WatchAppOwnerTransferred", opts, sink, hashedAppName, oldOwner)
+func (m *MockIAppRegistryManager) WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryAppOwnerTransferred, appAddr, oldOwner []common.Address) (event.Subscription, error) {
+	ret := m.ctrl.Call(m, "WatchAppOwnerTransferred", opts, sink, appAddr, oldOwner)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // WatchAppOwnerTransferred indicates an expected call of WatchAppOwnerTransferred
-func (mr *MockIAppRegistryManagerMockRecorder) WatchAppOwnerTransferred(opts, sink, hashedAppName, oldOwner interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchAppOwnerTransferred", reflect.TypeOf((*MockIAppRegistryManager)(nil).WatchAppOwnerTransferred), opts, sink, hashedAppName, oldOwner)
+func (mr *MockIAppRegistryManagerMockRecorder) WatchAppOwnerTransferred(opts, sink, appAddr, oldOwner interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchAppOwnerTransferred", reflect.TypeOf((*MockIAppRegistryManager)(nil).WatchAppOwnerTransferred), opts, sink, appAddr, oldOwner)
 }
 
 // FilterRegistration mocks base method
-func (m *MockIAppRegistryManager) FilterRegistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*adapter.AppRegistryRegistrationIterator, error) {
-	ret := m.ctrl.Call(m, "FilterRegistration", opts, hashedAppName)
+func (m *MockIAppRegistryManager) FilterRegistration(opts *bind.FilterOpts, appAddr []common.Address) (*adapter.AppRegistryRegistrationIterator, error) {
+	ret := m.ctrl.Call(m, "FilterRegistration", opts, appAddr)
 	ret0, _ := ret[0].(*adapter.AppRegistryRegistrationIterator)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FilterRegistration indicates an expected call of FilterRegistration
-func (mr *MockIAppRegistryManagerMockRecorder) FilterRegistration(opts, hashedAppName interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterRegistration", reflect.TypeOf((*MockIAppRegistryManager)(nil).FilterRegistration), opts, hashedAppName)
+func (mr *MockIAppRegistryManagerMockRecorder) FilterRegistration(opts, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterRegistration", reflect.TypeOf((*MockIAppRegistryManager)(nil).FilterRegistration), opts, appAddr)
 }
 
 // WatchRegistration mocks base method
-func (m *MockIAppRegistryManager) WatchRegistration(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryRegistration, hashedAppName []common.Hash) (event.Subscription, error) {
-	ret := m.ctrl.Call(m, "WatchRegistration", opts, sink, hashedAppName)
+func (m *MockIAppRegistryManager) WatchRegistration(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryRegistration, appAddr []common.Address) (event.Subscription, error) {
+	ret := m.ctrl.Call(m, "WatchRegistration", opts, sink, appAddr)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // WatchRegistration indicates an expected call of WatchRegistration
-func (mr *MockIAppRegistryManagerMockRecorder) WatchRegistration(opts, sink, hashedAppName interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchRegistration", reflect.TypeOf((*MockIAppRegistryManager)(nil).WatchRegistration), opts, sink, hashedAppName)
+func (mr *MockIAppRegistryManagerMockRecorder) WatchRegistration(opts, sink, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchRegistration", reflect.TypeOf((*MockIAppRegistryManager)(nil).WatchRegistration), opts, sink, appAddr)
 }
 
 // FilterUnregistration mocks base method
-func (m *MockIAppRegistryManager) FilterUnregistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*adapter.AppRegistryUnregistrationIterator, error) {
-	ret := m.ctrl.Call(m, "FilterUnregistration", opts, hashedAppName)
+func (m *MockIAppRegistryManager) FilterUnregistration(opts *bind.FilterOpts, appAddr []common.Address) (*adapter.AppRegistryUnregistrationIterator, error) {
+	ret := m.ctrl.Call(m, "FilterUnregistration", opts, appAddr)
 	ret0, _ := ret[0].(*adapter.AppRegistryUnregistrationIterator)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FilterUnregistration indicates an expected call of FilterUnregistration
-func (mr *MockIAppRegistryManagerMockRecorder) FilterUnregistration(opts, hashedAppName interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterUnregistration", reflect.TypeOf((*MockIAppRegistryManager)(nil).FilterUnregistration), opts, hashedAppName)
+func (mr *MockIAppRegistryManagerMockRecorder) FilterUnregistration(opts, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterUnregistration", reflect.TypeOf((*MockIAppRegistryManager)(nil).FilterUnregistration), opts, appAddr)
 }
 
 // WatchUnregistration mocks base method
-func (m *MockIAppRegistryManager) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryUnregistration, hashedAppName []common.Hash) (event.Subscription, error) {
-	ret := m.ctrl.Call(m, "WatchUnregistration", opts, sink, hashedAppName)
+func (m *MockIAppRegistryManager) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryUnregistration, appAddr []common.Address) (event.Subscription, error) {
+	ret := m.ctrl.Call(m, "WatchUnregistration", opts, sink, appAddr)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // WatchUnregistration indicates an expected call of WatchUnregistration
-func (mr *MockIAppRegistryManagerMockRecorder) WatchUnregistration(opts, sink, hashedAppName interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchUnregistration", reflect.TypeOf((*MockIAppRegistryManager)(nil).WatchUnregistration), opts, sink, hashedAppName)
+func (mr *MockIAppRegistryManagerMockRecorder) WatchUnregistration(opts, sink, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchUnregistration", reflect.TypeOf((*MockIAppRegistryManager)(nil).WatchUnregistration), opts, sink, appAddr)
 }
 
 // MockIAppRegistryContract is a mock of IAppRegistryContract interface
@@ -368,16 +368,16 @@ func (mr *MockIAppRegistryContractMockRecorder) Unregister(ctx, appName interfac
 }
 
 // FilterAppOwnerTransferred mocks base method
-func (m *MockIAppRegistryContract) FilterAppOwnerTransferred(opts *bind.FilterOpts, hashedAppName []common.Hash, oldOwner []common.Address) (*adapter.AppRegistryAppOwnerTransferredIterator, error) {
-	ret := m.ctrl.Call(m, "FilterAppOwnerTransferred", opts, hashedAppName, oldOwner)
+func (m *MockIAppRegistryContract) FilterAppOwnerTransferred(opts *bind.FilterOpts, appAddr, oldOwner []common.Address) (*adapter.AppRegistryAppOwnerTransferredIterator, error) {
+	ret := m.ctrl.Call(m, "FilterAppOwnerTransferred", opts, appAddr, oldOwner)
 	ret0, _ := ret[0].(*adapter.AppRegistryAppOwnerTransferredIterator)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FilterAppOwnerTransferred indicates an expected call of FilterAppOwnerTransferred
-func (mr *MockIAppRegistryContractMockRecorder) FilterAppOwnerTransferred(opts, hashedAppName, oldOwner interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterAppOwnerTransferred", reflect.TypeOf((*MockIAppRegistryContract)(nil).FilterAppOwnerTransferred), opts, hashedAppName, oldOwner)
+func (mr *MockIAppRegistryContractMockRecorder) FilterAppOwnerTransferred(opts, appAddr, oldOwner interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterAppOwnerTransferred", reflect.TypeOf((*MockIAppRegistryContract)(nil).FilterAppOwnerTransferred), opts, appAddr, oldOwner)
 }
 
 // ParseAppOwnerTransferredFromReceipt mocks base method
@@ -394,29 +394,29 @@ func (mr *MockIAppRegistryContractMockRecorder) ParseAppOwnerTransferredFromRece
 }
 
 // WatchAppOwnerTransferred mocks base method
-func (m *MockIAppRegistryContract) WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryAppOwnerTransferred, hashedAppName []common.Hash, oldOwner []common.Address) (event.Subscription, error) {
-	ret := m.ctrl.Call(m, "WatchAppOwnerTransferred", opts, sink, hashedAppName, oldOwner)
+func (m *MockIAppRegistryContract) WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryAppOwnerTransferred, appAddr, oldOwner []common.Address) (event.Subscription, error) {
+	ret := m.ctrl.Call(m, "WatchAppOwnerTransferred", opts, sink, appAddr, oldOwner)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // WatchAppOwnerTransferred indicates an expected call of WatchAppOwnerTransferred
-func (mr *MockIAppRegistryContractMockRecorder) WatchAppOwnerTransferred(opts, sink, hashedAppName, oldOwner interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchAppOwnerTransferred", reflect.TypeOf((*MockIAppRegistryContract)(nil).WatchAppOwnerTransferred), opts, sink, hashedAppName, oldOwner)
+func (mr *MockIAppRegistryContractMockRecorder) WatchAppOwnerTransferred(opts, sink, appAddr, oldOwner interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchAppOwnerTransferred", reflect.TypeOf((*MockIAppRegistryContract)(nil).WatchAppOwnerTransferred), opts, sink, appAddr, oldOwner)
 }
 
 // FilterRegistration mocks base method
-func (m *MockIAppRegistryContract) FilterRegistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*adapter.AppRegistryRegistrationIterator, error) {
-	ret := m.ctrl.Call(m, "FilterRegistration", opts, hashedAppName)
+func (m *MockIAppRegistryContract) FilterRegistration(opts *bind.FilterOpts, appAddr []common.Address) (*adapter.AppRegistryRegistrationIterator, error) {
+	ret := m.ctrl.Call(m, "FilterRegistration", opts, appAddr)
 	ret0, _ := ret[0].(*adapter.AppRegistryRegistrationIterator)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FilterRegistration indicates an expected call of FilterRegistration
-func (mr *MockIAppRegistryContractMockRecorder) FilterRegistration(opts, hashedAppName interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterRegistration", reflect.TypeOf((*MockIAppRegistryContract)(nil).FilterRegistration), opts, hashedAppName)
+func (mr *MockIAppRegistryContractMockRecorder) FilterRegistration(opts, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterRegistration", reflect.TypeOf((*MockIAppRegistryContract)(nil).FilterRegistration), opts, appAddr)
 }
 
 // ParseRegistrationFromReceipt mocks base method
@@ -433,29 +433,29 @@ func (mr *MockIAppRegistryContractMockRecorder) ParseRegistrationFromReceipt(rec
 }
 
 // WatchRegistration mocks base method
-func (m *MockIAppRegistryContract) WatchRegistration(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryRegistration, hashedAppName []common.Hash) (event.Subscription, error) {
-	ret := m.ctrl.Call(m, "WatchRegistration", opts, sink, hashedAppName)
+func (m *MockIAppRegistryContract) WatchRegistration(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryRegistration, appAddr []common.Address) (event.Subscription, error) {
+	ret := m.ctrl.Call(m, "WatchRegistration", opts, sink, appAddr)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // WatchRegistration indicates an expected call of WatchRegistration
-func (mr *MockIAppRegistryContractMockRecorder) WatchRegistration(opts, sink, hashedAppName interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchRegistration", reflect.TypeOf((*MockIAppRegistryContract)(nil).WatchRegistration), opts, sink, hashedAppName)
+func (mr *MockIAppRegistryContractMockRecorder) WatchRegistration(opts, sink, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchRegistration", reflect.TypeOf((*MockIAppRegistryContract)(nil).WatchRegistration), opts, sink, appAddr)
 }
 
 // FilterUnregistration mocks base method
-func (m *MockIAppRegistryContract) FilterUnregistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*adapter.AppRegistryUnregistrationIterator, error) {
-	ret := m.ctrl.Call(m, "FilterUnregistration", opts, hashedAppName)
+func (m *MockIAppRegistryContract) FilterUnregistration(opts *bind.FilterOpts, appAddr []common.Address) (*adapter.AppRegistryUnregistrationIterator, error) {
+	ret := m.ctrl.Call(m, "FilterUnregistration", opts, appAddr)
 	ret0, _ := ret[0].(*adapter.AppRegistryUnregistrationIterator)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FilterUnregistration indicates an expected call of FilterUnregistration
-func (mr *MockIAppRegistryContractMockRecorder) FilterUnregistration(opts, hashedAppName interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterUnregistration", reflect.TypeOf((*MockIAppRegistryContract)(nil).FilterUnregistration), opts, hashedAppName)
+func (mr *MockIAppRegistryContractMockRecorder) FilterUnregistration(opts, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterUnregistration", reflect.TypeOf((*MockIAppRegistryContract)(nil).FilterUnregistration), opts, appAddr)
 }
 
 // ParseUnregistrationFromReceipt mocks base method
@@ -472,16 +472,16 @@ func (mr *MockIAppRegistryContractMockRecorder) ParseUnregistrationFromReceipt(r
 }
 
 // WatchUnregistration mocks base method
-func (m *MockIAppRegistryContract) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryUnregistration, hashedAppName []common.Hash) (event.Subscription, error) {
-	ret := m.ctrl.Call(m, "WatchUnregistration", opts, sink, hashedAppName)
+func (m *MockIAppRegistryContract) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryUnregistration, appAddr []common.Address) (event.Subscription, error) {
+	ret := m.ctrl.Call(m, "WatchUnregistration", opts, sink, appAddr)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // WatchUnregistration indicates an expected call of WatchUnregistration
-func (mr *MockIAppRegistryContractMockRecorder) WatchUnregistration(opts, sink, hashedAppName interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchUnregistration", reflect.TypeOf((*MockIAppRegistryContract)(nil).WatchUnregistration), opts, sink, hashedAppName)
+func (mr *MockIAppRegistryContractMockRecorder) WatchUnregistration(opts, sink, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchUnregistration", reflect.TypeOf((*MockIAppRegistryContract)(nil).WatchUnregistration), opts, sink, appAddr)
 }
 
 // MockIAppRegistryCalls is a mock of IAppRegistryCalls interface
@@ -632,16 +632,16 @@ func (m *MockIAppRegistryEvents) EXPECT() *MockIAppRegistryEventsMockRecorder {
 }
 
 // FilterAppOwnerTransferred mocks base method
-func (m *MockIAppRegistryEvents) FilterAppOwnerTransferred(opts *bind.FilterOpts, hashedAppName []common.Hash, oldOwner []common.Address) (*adapter.AppRegistryAppOwnerTransferredIterator, error) {
-	ret := m.ctrl.Call(m, "FilterAppOwnerTransferred", opts, hashedAppName, oldOwner)
+func (m *MockIAppRegistryEvents) FilterAppOwnerTransferred(opts *bind.FilterOpts, appAddr, oldOwner []common.Address) (*adapter.AppRegistryAppOwnerTransferredIterator, error) {
+	ret := m.ctrl.Call(m, "FilterAppOwnerTransferred", opts, appAddr, oldOwner)
 	ret0, _ := ret[0].(*adapter.AppRegistryAppOwnerTransferredIterator)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FilterAppOwnerTransferred indicates an expected call of FilterAppOwnerTransferred
-func (mr *MockIAppRegistryEventsMockRecorder) FilterAppOwnerTransferred(opts, hashedAppName, oldOwner interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterAppOwnerTransferred", reflect.TypeOf((*MockIAppRegistryEvents)(nil).FilterAppOwnerTransferred), opts, hashedAppName, oldOwner)
+func (mr *MockIAppRegistryEventsMockRecorder) FilterAppOwnerTransferred(opts, appAddr, oldOwner interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterAppOwnerTransferred", reflect.TypeOf((*MockIAppRegistryEvents)(nil).FilterAppOwnerTransferred), opts, appAddr, oldOwner)
 }
 
 // ParseAppOwnerTransferredFromReceipt mocks base method
@@ -658,29 +658,29 @@ func (mr *MockIAppRegistryEventsMockRecorder) ParseAppOwnerTransferredFromReceip
 }
 
 // WatchAppOwnerTransferred mocks base method
-func (m *MockIAppRegistryEvents) WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryAppOwnerTransferred, hashedAppName []common.Hash, oldOwner []common.Address) (event.Subscription, error) {
-	ret := m.ctrl.Call(m, "WatchAppOwnerTransferred", opts, sink, hashedAppName, oldOwner)
+func (m *MockIAppRegistryEvents) WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryAppOwnerTransferred, appAddr, oldOwner []common.Address) (event.Subscription, error) {
+	ret := m.ctrl.Call(m, "WatchAppOwnerTransferred", opts, sink, appAddr, oldOwner)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // WatchAppOwnerTransferred indicates an expected call of WatchAppOwnerTransferred
-func (mr *MockIAppRegistryEventsMockRecorder) WatchAppOwnerTransferred(opts, sink, hashedAppName, oldOwner interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchAppOwnerTransferred", reflect.TypeOf((*MockIAppRegistryEvents)(nil).WatchAppOwnerTransferred), opts, sink, hashedAppName, oldOwner)
+func (mr *MockIAppRegistryEventsMockRecorder) WatchAppOwnerTransferred(opts, sink, appAddr, oldOwner interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchAppOwnerTransferred", reflect.TypeOf((*MockIAppRegistryEvents)(nil).WatchAppOwnerTransferred), opts, sink, appAddr, oldOwner)
 }
 
 // FilterRegistration mocks base method
-func (m *MockIAppRegistryEvents) FilterRegistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*adapter.AppRegistryRegistrationIterator, error) {
-	ret := m.ctrl.Call(m, "FilterRegistration", opts, hashedAppName)
+func (m *MockIAppRegistryEvents) FilterRegistration(opts *bind.FilterOpts, appAddr []common.Address) (*adapter.AppRegistryRegistrationIterator, error) {
+	ret := m.ctrl.Call(m, "FilterRegistration", opts, appAddr)
 	ret0, _ := ret[0].(*adapter.AppRegistryRegistrationIterator)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FilterRegistration indicates an expected call of FilterRegistration
-func (mr *MockIAppRegistryEventsMockRecorder) FilterRegistration(opts, hashedAppName interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterRegistration", reflect.TypeOf((*MockIAppRegistryEvents)(nil).FilterRegistration), opts, hashedAppName)
+func (mr *MockIAppRegistryEventsMockRecorder) FilterRegistration(opts, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterRegistration", reflect.TypeOf((*MockIAppRegistryEvents)(nil).FilterRegistration), opts, appAddr)
 }
 
 // ParseRegistrationFromReceipt mocks base method
@@ -697,29 +697,29 @@ func (mr *MockIAppRegistryEventsMockRecorder) ParseRegistrationFromReceipt(recei
 }
 
 // WatchRegistration mocks base method
-func (m *MockIAppRegistryEvents) WatchRegistration(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryRegistration, hashedAppName []common.Hash) (event.Subscription, error) {
-	ret := m.ctrl.Call(m, "WatchRegistration", opts, sink, hashedAppName)
+func (m *MockIAppRegistryEvents) WatchRegistration(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryRegistration, appAddr []common.Address) (event.Subscription, error) {
+	ret := m.ctrl.Call(m, "WatchRegistration", opts, sink, appAddr)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // WatchRegistration indicates an expected call of WatchRegistration
-func (mr *MockIAppRegistryEventsMockRecorder) WatchRegistration(opts, sink, hashedAppName interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchRegistration", reflect.TypeOf((*MockIAppRegistryEvents)(nil).WatchRegistration), opts, sink, hashedAppName)
+func (mr *MockIAppRegistryEventsMockRecorder) WatchRegistration(opts, sink, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchRegistration", reflect.TypeOf((*MockIAppRegistryEvents)(nil).WatchRegistration), opts, sink, appAddr)
 }
 
 // FilterUnregistration mocks base method
-func (m *MockIAppRegistryEvents) FilterUnregistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*adapter.AppRegistryUnregistrationIterator, error) {
-	ret := m.ctrl.Call(m, "FilterUnregistration", opts, hashedAppName)
+func (m *MockIAppRegistryEvents) FilterUnregistration(opts *bind.FilterOpts, appAddr []common.Address) (*adapter.AppRegistryUnregistrationIterator, error) {
+	ret := m.ctrl.Call(m, "FilterUnregistration", opts, appAddr)
 	ret0, _ := ret[0].(*adapter.AppRegistryUnregistrationIterator)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FilterUnregistration indicates an expected call of FilterUnregistration
-func (mr *MockIAppRegistryEventsMockRecorder) FilterUnregistration(opts, hashedAppName interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterUnregistration", reflect.TypeOf((*MockIAppRegistryEvents)(nil).FilterUnregistration), opts, hashedAppName)
+func (mr *MockIAppRegistryEventsMockRecorder) FilterUnregistration(opts, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterUnregistration", reflect.TypeOf((*MockIAppRegistryEvents)(nil).FilterUnregistration), opts, appAddr)
 }
 
 // ParseUnregistrationFromReceipt mocks base method
@@ -736,14 +736,14 @@ func (mr *MockIAppRegistryEventsMockRecorder) ParseUnregistrationFromReceipt(rec
 }
 
 // WatchUnregistration mocks base method
-func (m *MockIAppRegistryEvents) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryUnregistration, hashedAppName []common.Hash) (event.Subscription, error) {
-	ret := m.ctrl.Call(m, "WatchUnregistration", opts, sink, hashedAppName)
+func (m *MockIAppRegistryEvents) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *adapter.AppRegistryUnregistration, appAddr []common.Address) (event.Subscription, error) {
+	ret := m.ctrl.Call(m, "WatchUnregistration", opts, sink, appAddr)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // WatchUnregistration indicates an expected call of WatchUnregistration
-func (mr *MockIAppRegistryEventsMockRecorder) WatchUnregistration(opts, sink, hashedAppName interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchUnregistration", reflect.TypeOf((*MockIAppRegistryEvents)(nil).WatchUnregistration), opts, sink, hashedAppName)
+func (mr *MockIAppRegistryEventsMockRecorder) WatchUnregistration(opts, sink, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchUnregistration", reflect.TypeOf((*MockIAppRegistryEvents)(nil).WatchUnregistration), opts, sink, appAddr)
 }

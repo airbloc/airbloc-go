@@ -35,7 +35,7 @@ var (
 )
 
 // AppRegistryABI is the input ABI used to generate the binding from.
-const AppRegistryABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":null,\"Outputs\":null},\"Methods\":{\"exists\":{\"Name\":\"exists\",\"Const\":true,\"Inputs\":[{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"get\":{\"Name\":\"get\",\"Const\":true,\"Inputs\":[{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"name\",\"owner\",\"hashedName\"]},\"Indexed\":false}]},\"isOwner\":{\"Name\":\"isOwner\",\"Const\":true,\"Inputs\":[{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"owner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"register\":{\"Name\":\"register\",\"Const\":false,\"Inputs\":[{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"transferAppOwner\":{\"Name\":\"transferAppOwner\",\"Const\":false,\"Inputs\":[{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"newOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"unregister\":{\"Name\":\"unregister\",\"Const\":false,\"Inputs\":[{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]}},\"Events\":{\"AppOwnerTransferred\":{\"Name\":\"AppOwnerTransferred\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"hashedAppName\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"oldOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"newOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"Registration\":{\"Name\":\"Registration\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"hashedAppName\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"Unregistration\":{\"Name\":\"Unregistration\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"hashedAppName\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]}}}"
+const AppRegistryABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":null,\"Outputs\":null},\"Methods\":{\"exists\":{\"Name\":\"exists\",\"Const\":true,\"Inputs\":[{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"get\":{\"Name\":\"get\",\"Const\":true,\"Inputs\":[{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"name\",\"owner\",\"addr\"]},\"Indexed\":false}]},\"isOwner\":{\"Name\":\"isOwner\",\"Const\":true,\"Inputs\":[{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"owner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"register\":{\"Name\":\"register\",\"Const\":false,\"Inputs\":[{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"transferAppOwner\":{\"Name\":\"transferAppOwner\",\"Const\":false,\"Inputs\":[{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"newOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"unregister\":{\"Name\":\"unregister\",\"Const\":false,\"Inputs\":[{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]}},\"Events\":{\"AppOwnerTransferred\":{\"Name\":\"AppOwnerTransferred\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"appAddr\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"oldOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"newOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"Registration\":{\"Name\":\"Registration\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"appAddr\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"Unregistration\":{\"Name\":\"Unregistration\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"appAddr\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]}}}"
 
 // AppRegistry is an auto generated Go binding around an Ethereum contract.
 type AppRegistry struct {
@@ -220,14 +220,14 @@ type IAppRegistryManager interface {
 	TransferAppOwner(ctx context.Context, appName string, newOwner common.Address) error
 	Unregister(ctx context.Context, appName string) error
 
-	FilterAppOwnerTransferred(opts *bind.FilterOpts, hashedAppName []common.Hash, oldOwner []common.Address) (*AppRegistryAppOwnerTransferredIterator, error)
-	WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *AppRegistryAppOwnerTransferred, hashedAppName []common.Hash, oldOwner []common.Address) (event.Subscription, error)
+	FilterAppOwnerTransferred(opts *bind.FilterOpts, appAddr []common.Address, oldOwner []common.Address) (*AppRegistryAppOwnerTransferredIterator, error)
+	WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *AppRegistryAppOwnerTransferred, appAddr []common.Address, oldOwner []common.Address) (event.Subscription, error)
 
-	FilterRegistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*AppRegistryRegistrationIterator, error)
-	WatchRegistration(opts *bind.WatchOpts, sink chan<- *AppRegistryRegistration, hashedAppName []common.Hash) (event.Subscription, error)
+	FilterRegistration(opts *bind.FilterOpts, appAddr []common.Address) (*AppRegistryRegistrationIterator, error)
+	WatchRegistration(opts *bind.WatchOpts, sink chan<- *AppRegistryRegistration, appAddr []common.Address) (event.Subscription, error)
 
-	FilterUnregistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*AppRegistryUnregistrationIterator, error)
-	WatchUnregistration(opts *bind.WatchOpts, sink chan<- *AppRegistryUnregistration, hashedAppName []common.Hash) (event.Subscription, error)
+	FilterUnregistration(opts *bind.FilterOpts, appAddr []common.Address) (*AppRegistryUnregistrationIterator, error)
+	WatchUnregistration(opts *bind.WatchOpts, sink chan<- *AppRegistryUnregistration, appAddr []common.Address) (event.Subscription, error)
 }
 
 type IAppRegistryContract interface {
@@ -310,14 +310,14 @@ func (_AppRegistry *AppRegistryCallerSession) Exists(appName string) (bool, erro
 
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
-// Solidity: function get(string appName) constant returns((string,address,bytes32))
+// Solidity: function get(string appName) constant returns((string,address,address))
 func (manager *AppRegistryContract) Get(appName string) (types.App, error) {
 	return manager.contract.Get(nil, appName)
 }
 
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
-// Solidity: function get(string appName) constant returns((string,address,bytes32))
+// Solidity: function get(string appName) constant returns((string,address,address))
 func (_AppRegistry *AppRegistryCaller) Get(opts *bind.CallOpts, appName string) (types.App, error) {
 	ret := new(types.App)
 
@@ -328,14 +328,14 @@ func (_AppRegistry *AppRegistryCaller) Get(opts *bind.CallOpts, appName string) 
 
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
-// Solidity: function get(string appName) constant returns((string,address,bytes32))
+// Solidity: function get(string appName) constant returns((string,address,address))
 func (_AppRegistry *AppRegistrySession) Get(appName string) (types.App, error) {
 	return _AppRegistry.Contract.Get(&_AppRegistry.CallOpts, appName)
 }
 
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
-// Solidity: function get(string appName) constant returns((string,address,bytes32))
+// Solidity: function get(string appName) constant returns((string,address,address))
 func (_AppRegistry *AppRegistryCallerSession) Get(appName string) (types.App, error) {
 	return _AppRegistry.Contract.Get(&_AppRegistry.CallOpts, appName)
 }
@@ -478,17 +478,17 @@ func (_AppRegistry *AppRegistryTransactorSession) Unregister(appName string) (*e
 }
 
 type IAppRegistryEvents interface {
-	FilterAppOwnerTransferred(opts *bind.FilterOpts, hashedAppName []common.Hash, oldOwner []common.Address) (*AppRegistryAppOwnerTransferredIterator, error)
+	FilterAppOwnerTransferred(opts *bind.FilterOpts, appAddr []common.Address, oldOwner []common.Address) (*AppRegistryAppOwnerTransferredIterator, error)
 	ParseAppOwnerTransferredFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryAppOwnerTransferred, error)
-	WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *AppRegistryAppOwnerTransferred, hashedAppName []common.Hash, oldOwner []common.Address) (event.Subscription, error)
+	WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *AppRegistryAppOwnerTransferred, appAddr []common.Address, oldOwner []common.Address) (event.Subscription, error)
 
-	FilterRegistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*AppRegistryRegistrationIterator, error)
+	FilterRegistration(opts *bind.FilterOpts, appAddr []common.Address) (*AppRegistryRegistrationIterator, error)
 	ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryRegistration, error)
-	WatchRegistration(opts *bind.WatchOpts, sink chan<- *AppRegistryRegistration, hashedAppName []common.Hash) (event.Subscription, error)
+	WatchRegistration(opts *bind.WatchOpts, sink chan<- *AppRegistryRegistration, appAddr []common.Address) (event.Subscription, error)
 
-	FilterUnregistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*AppRegistryUnregistrationIterator, error)
+	FilterUnregistration(opts *bind.FilterOpts, appAddr []common.Address) (*AppRegistryUnregistrationIterator, error)
 	ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryUnregistration, error)
-	WatchUnregistration(opts *bind.WatchOpts, sink chan<- *AppRegistryUnregistration, hashedAppName []common.Hash) (event.Subscription, error)
+	WatchUnregistration(opts *bind.WatchOpts, sink chan<- *AppRegistryUnregistration, appAddr []common.Address) (event.Subscription, error)
 }
 
 // AppRegistryAppOwnerTransferredIterator is returned from FilterAppOwnerTransferred and is used to iterate over the raw logs and unpacked data for AppOwnerTransferred events raised by the AppRegistry contract.
@@ -560,21 +560,21 @@ func (it *AppRegistryAppOwnerTransferredIterator) Close() error {
 
 // AppRegistryAppOwnerTransferred represents a AppOwnerTransferred event raised by the AppRegistry contract.
 type AppRegistryAppOwnerTransferred struct {
-	HashedAppName common.Hash
-	AppName       string
-	OldOwner      common.Address
-	NewOwner      common.Address
-	Raw           ethTypes.Log // Blockchain specific contextual infos
+	AppAddr  common.Address
+	AppName  string
+	OldOwner common.Address
+	NewOwner common.Address
+	Raw      ethTypes.Log // Blockchain specific contextual infos
 }
 
-// FilterAppOwnerTransferred is a free log retrieval operation binding the contract event 0x9323f5fe9b72ac1fe704b80d8d53e6538f63d0d041068ef274c35b41d1cbc1de.
+// FilterAppOwnerTransferred is a free log retrieval operation binding the contract event 0xbf3f214e451e16a835d0833b12209f2928a822c65ee68cce51eb31338747e3df.
 //
-// Solidity: event AppOwnerTransferred(bytes32 indexed hashedAppName, string appName, address indexed oldOwner, address newOwner)
-func (_AppRegistry *AppRegistryFilterer) FilterAppOwnerTransferred(opts *bind.FilterOpts, hashedAppName []common.Hash, oldOwner []common.Address) (*AppRegistryAppOwnerTransferredIterator, error) {
+// Solidity: event AppOwnerTransferred(address indexed appAddr, string appName, address indexed oldOwner, address newOwner)
+func (_AppRegistry *AppRegistryFilterer) FilterAppOwnerTransferred(opts *bind.FilterOpts, appAddr []common.Address, oldOwner []common.Address) (*AppRegistryAppOwnerTransferredIterator, error) {
 
-	var hashedAppNameRule []interface{}
-	for _, hashedAppNameItem := range hashedAppName {
-		hashedAppNameRule = append(hashedAppNameRule, hashedAppNameItem)
+	var appAddrRule []interface{}
+	for _, appAddrItem := range appAddr {
+		appAddrRule = append(appAddrRule, appAddrItem)
 	}
 
 	var oldOwnerRule []interface{}
@@ -582,7 +582,7 @@ func (_AppRegistry *AppRegistryFilterer) FilterAppOwnerTransferred(opts *bind.Fi
 		oldOwnerRule = append(oldOwnerRule, oldOwnerItem)
 	}
 
-	logs, sub, err := _AppRegistry.contract.FilterLogs(opts, "AppOwnerTransferred", hashedAppNameRule, oldOwnerRule)
+	logs, sub, err := _AppRegistry.contract.FilterLogs(opts, "AppOwnerTransferred", appAddrRule, oldOwnerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -591,17 +591,17 @@ func (_AppRegistry *AppRegistryFilterer) FilterAppOwnerTransferred(opts *bind.Fi
 
 // FilterAppOwnerTransferred parses the event from given transaction receipt.
 //
-// Solidity: event AppOwnerTransferred(bytes32 indexed hashedAppName, string appName, address indexed oldOwner, address newOwner)
+// Solidity: event AppOwnerTransferred(address indexed appAddr, string appName, address indexed oldOwner, address newOwner)
 func (manager *AppRegistryContract) ParseAppOwnerTransferredFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryAppOwnerTransferred, error) {
 	return manager.contract.ParseAppOwnerTransferredFromReceipt(receipt)
 }
 
 // FilterAppOwnerTransferred parses the event from given transaction receipt.
 //
-// Solidity: event AppOwnerTransferred(bytes32 indexed hashedAppName, string appName, address indexed oldOwner, address newOwner)
+// Solidity: event AppOwnerTransferred(address indexed appAddr, string appName, address indexed oldOwner, address newOwner)
 func (_AppRegistry *AppRegistryFilterer) ParseAppOwnerTransferredFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryAppOwnerTransferred, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0x9323f5fe9b72ac1fe704b80d8d53e6538f63d0d041068ef274c35b41d1cbc1de") {
+		if log.Topics[0] == common.HexToHash("0xbf3f214e451e16a835d0833b12209f2928a822c65ee68cce51eb31338747e3df") {
 			event := new(AppRegistryAppOwnerTransferred)
 			if err := _AppRegistry.contract.UnpackLog(event, "AppOwnerTransferred", *log); err != nil {
 				return nil, err
@@ -612,14 +612,14 @@ func (_AppRegistry *AppRegistryFilterer) ParseAppOwnerTransferredFromReceipt(rec
 	return nil, errors.New("AppOwnerTransferred event not found")
 }
 
-// WatchAppOwnerTransferred is a free log subscription operation binding the contract event 0x9323f5fe9b72ac1fe704b80d8d53e6538f63d0d041068ef274c35b41d1cbc1de.
+// WatchAppOwnerTransferred is a free log subscription operation binding the contract event 0xbf3f214e451e16a835d0833b12209f2928a822c65ee68cce51eb31338747e3df.
 //
-// Solidity: event AppOwnerTransferred(bytes32 indexed hashedAppName, string appName, address indexed oldOwner, address newOwner)
-func (_AppRegistry *AppRegistryFilterer) WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *AppRegistryAppOwnerTransferred, hashedAppName []common.Hash, oldOwner []common.Address) (event.Subscription, error) {
+// Solidity: event AppOwnerTransferred(address indexed appAddr, string appName, address indexed oldOwner, address newOwner)
+func (_AppRegistry *AppRegistryFilterer) WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *AppRegistryAppOwnerTransferred, appAddr []common.Address, oldOwner []common.Address) (event.Subscription, error) {
 
-	var hashedAppNameRule []interface{}
-	for _, hashedAppNameItem := range hashedAppName {
-		hashedAppNameRule = append(hashedAppNameRule, hashedAppNameItem)
+	var appAddrRule []interface{}
+	for _, appAddrItem := range appAddr {
+		appAddrRule = append(appAddrRule, appAddrItem)
 	}
 
 	var oldOwnerRule []interface{}
@@ -627,7 +627,7 @@ func (_AppRegistry *AppRegistryFilterer) WatchAppOwnerTransferred(opts *bind.Wat
 		oldOwnerRule = append(oldOwnerRule, oldOwnerItem)
 	}
 
-	logs, sub, err := _AppRegistry.contract.WatchLogs(opts, "AppOwnerTransferred", hashedAppNameRule, oldOwnerRule)
+	logs, sub, err := _AppRegistry.contract.WatchLogs(opts, "AppOwnerTransferred", appAddrRule, oldOwnerRule)
 	if err != nil {
 		return nil, err
 	}
@@ -728,22 +728,22 @@ func (it *AppRegistryRegistrationIterator) Close() error {
 
 // AppRegistryRegistration represents a Registration event raised by the AppRegistry contract.
 type AppRegistryRegistration struct {
-	HashedAppName common.Hash
-	AppName       string
-	Raw           ethTypes.Log // Blockchain specific contextual infos
+	AppAddr common.Address
+	AppName string
+	Raw     ethTypes.Log // Blockchain specific contextual infos
 }
 
-// FilterRegistration is a free log retrieval operation binding the contract event 0xe7e1383b88439b9522e6630da35051999780d58947518c9a3d1620d19b1bc886.
+// FilterRegistration is a free log retrieval operation binding the contract event 0x0d8d636375a5c89a44d886dc1bd7257c82dbf9d475396c77cdbf443158ecf4e8.
 //
-// Solidity: event Registration(bytes32 indexed hashedAppName, string appName)
-func (_AppRegistry *AppRegistryFilterer) FilterRegistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*AppRegistryRegistrationIterator, error) {
+// Solidity: event Registration(address indexed appAddr, string appName)
+func (_AppRegistry *AppRegistryFilterer) FilterRegistration(opts *bind.FilterOpts, appAddr []common.Address) (*AppRegistryRegistrationIterator, error) {
 
-	var hashedAppNameRule []interface{}
-	for _, hashedAppNameItem := range hashedAppName {
-		hashedAppNameRule = append(hashedAppNameRule, hashedAppNameItem)
+	var appAddrRule []interface{}
+	for _, appAddrItem := range appAddr {
+		appAddrRule = append(appAddrRule, appAddrItem)
 	}
 
-	logs, sub, err := _AppRegistry.contract.FilterLogs(opts, "Registration", hashedAppNameRule)
+	logs, sub, err := _AppRegistry.contract.FilterLogs(opts, "Registration", appAddrRule)
 	if err != nil {
 		return nil, err
 	}
@@ -752,17 +752,17 @@ func (_AppRegistry *AppRegistryFilterer) FilterRegistration(opts *bind.FilterOpt
 
 // FilterRegistration parses the event from given transaction receipt.
 //
-// Solidity: event Registration(bytes32 indexed hashedAppName, string appName)
+// Solidity: event Registration(address indexed appAddr, string appName)
 func (manager *AppRegistryContract) ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryRegistration, error) {
 	return manager.contract.ParseRegistrationFromReceipt(receipt)
 }
 
 // FilterRegistration parses the event from given transaction receipt.
 //
-// Solidity: event Registration(bytes32 indexed hashedAppName, string appName)
+// Solidity: event Registration(address indexed appAddr, string appName)
 func (_AppRegistry *AppRegistryFilterer) ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryRegistration, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xe7e1383b88439b9522e6630da35051999780d58947518c9a3d1620d19b1bc886") {
+		if log.Topics[0] == common.HexToHash("0x0d8d636375a5c89a44d886dc1bd7257c82dbf9d475396c77cdbf443158ecf4e8") {
 			event := new(AppRegistryRegistration)
 			if err := _AppRegistry.contract.UnpackLog(event, "Registration", *log); err != nil {
 				return nil, err
@@ -773,17 +773,17 @@ func (_AppRegistry *AppRegistryFilterer) ParseRegistrationFromReceipt(receipt *e
 	return nil, errors.New("Registration event not found")
 }
 
-// WatchRegistration is a free log subscription operation binding the contract event 0xe7e1383b88439b9522e6630da35051999780d58947518c9a3d1620d19b1bc886.
+// WatchRegistration is a free log subscription operation binding the contract event 0x0d8d636375a5c89a44d886dc1bd7257c82dbf9d475396c77cdbf443158ecf4e8.
 //
-// Solidity: event Registration(bytes32 indexed hashedAppName, string appName)
-func (_AppRegistry *AppRegistryFilterer) WatchRegistration(opts *bind.WatchOpts, sink chan<- *AppRegistryRegistration, hashedAppName []common.Hash) (event.Subscription, error) {
+// Solidity: event Registration(address indexed appAddr, string appName)
+func (_AppRegistry *AppRegistryFilterer) WatchRegistration(opts *bind.WatchOpts, sink chan<- *AppRegistryRegistration, appAddr []common.Address) (event.Subscription, error) {
 
-	var hashedAppNameRule []interface{}
-	for _, hashedAppNameItem := range hashedAppName {
-		hashedAppNameRule = append(hashedAppNameRule, hashedAppNameItem)
+	var appAddrRule []interface{}
+	for _, appAddrItem := range appAddr {
+		appAddrRule = append(appAddrRule, appAddrItem)
 	}
 
-	logs, sub, err := _AppRegistry.contract.WatchLogs(opts, "Registration", hashedAppNameRule)
+	logs, sub, err := _AppRegistry.contract.WatchLogs(opts, "Registration", appAddrRule)
 	if err != nil {
 		return nil, err
 	}
@@ -884,22 +884,22 @@ func (it *AppRegistryUnregistrationIterator) Close() error {
 
 // AppRegistryUnregistration represents a Unregistration event raised by the AppRegistry contract.
 type AppRegistryUnregistration struct {
-	HashedAppName common.Hash
-	AppName       string
-	Raw           ethTypes.Log // Blockchain specific contextual infos
+	AppAddr common.Address
+	AppName string
+	Raw     ethTypes.Log // Blockchain specific contextual infos
 }
 
-// FilterUnregistration is a free log retrieval operation binding the contract event 0xe2d00f1029a39aa8484ea81b8c2794180aa48eb0a1f28c721acdc94789f1d638.
+// FilterUnregistration is a free log retrieval operation binding the contract event 0x03adf6d1cf18f8d8f64f7dbe8bde608e0d3fbca9079aa3cb3498715ef807bde9.
 //
-// Solidity: event Unregistration(bytes32 indexed hashedAppName, string appName)
-func (_AppRegistry *AppRegistryFilterer) FilterUnregistration(opts *bind.FilterOpts, hashedAppName []common.Hash) (*AppRegistryUnregistrationIterator, error) {
+// Solidity: event Unregistration(address indexed appAddr, string appName)
+func (_AppRegistry *AppRegistryFilterer) FilterUnregistration(opts *bind.FilterOpts, appAddr []common.Address) (*AppRegistryUnregistrationIterator, error) {
 
-	var hashedAppNameRule []interface{}
-	for _, hashedAppNameItem := range hashedAppName {
-		hashedAppNameRule = append(hashedAppNameRule, hashedAppNameItem)
+	var appAddrRule []interface{}
+	for _, appAddrItem := range appAddr {
+		appAddrRule = append(appAddrRule, appAddrItem)
 	}
 
-	logs, sub, err := _AppRegistry.contract.FilterLogs(opts, "Unregistration", hashedAppNameRule)
+	logs, sub, err := _AppRegistry.contract.FilterLogs(opts, "Unregistration", appAddrRule)
 	if err != nil {
 		return nil, err
 	}
@@ -908,17 +908,17 @@ func (_AppRegistry *AppRegistryFilterer) FilterUnregistration(opts *bind.FilterO
 
 // FilterUnregistration parses the event from given transaction receipt.
 //
-// Solidity: event Unregistration(bytes32 indexed hashedAppName, string appName)
+// Solidity: event Unregistration(address indexed appAddr, string appName)
 func (manager *AppRegistryContract) ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryUnregistration, error) {
 	return manager.contract.ParseUnregistrationFromReceipt(receipt)
 }
 
 // FilterUnregistration parses the event from given transaction receipt.
 //
-// Solidity: event Unregistration(bytes32 indexed hashedAppName, string appName)
+// Solidity: event Unregistration(address indexed appAddr, string appName)
 func (_AppRegistry *AppRegistryFilterer) ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*AppRegistryUnregistration, error) {
 	for _, log := range receipt.Logs {
-		if log.Topics[0] == common.HexToHash("0xe2d00f1029a39aa8484ea81b8c2794180aa48eb0a1f28c721acdc94789f1d638") {
+		if log.Topics[0] == common.HexToHash("0x03adf6d1cf18f8d8f64f7dbe8bde608e0d3fbca9079aa3cb3498715ef807bde9") {
 			event := new(AppRegistryUnregistration)
 			if err := _AppRegistry.contract.UnpackLog(event, "Unregistration", *log); err != nil {
 				return nil, err
@@ -929,17 +929,17 @@ func (_AppRegistry *AppRegistryFilterer) ParseUnregistrationFromReceipt(receipt 
 	return nil, errors.New("Unregistration event not found")
 }
 
-// WatchUnregistration is a free log subscription operation binding the contract event 0xe2d00f1029a39aa8484ea81b8c2794180aa48eb0a1f28c721acdc94789f1d638.
+// WatchUnregistration is a free log subscription operation binding the contract event 0x03adf6d1cf18f8d8f64f7dbe8bde608e0d3fbca9079aa3cb3498715ef807bde9.
 //
-// Solidity: event Unregistration(bytes32 indexed hashedAppName, string appName)
-func (_AppRegistry *AppRegistryFilterer) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *AppRegistryUnregistration, hashedAppName []common.Hash) (event.Subscription, error) {
+// Solidity: event Unregistration(address indexed appAddr, string appName)
+func (_AppRegistry *AppRegistryFilterer) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *AppRegistryUnregistration, appAddr []common.Address) (event.Subscription, error) {
 
-	var hashedAppNameRule []interface{}
-	for _, hashedAppNameItem := range hashedAppName {
-		hashedAppNameRule = append(hashedAppNameRule, hashedAppNameItem)
+	var appAddrRule []interface{}
+	for _, appAddrItem := range appAddr {
+		appAddrRule = append(appAddrRule, appAddrItem)
 	}
 
-	logs, sub, err := _AppRegistry.contract.WatchLogs(opts, "Unregistration", hashedAppNameRule)
+	logs, sub, err := _AppRegistry.contract.WatchLogs(opts, "Unregistration", appAddrRule)
 	if err != nil {
 		return nil, err
 	}

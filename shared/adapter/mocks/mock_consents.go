@@ -140,29 +140,29 @@ func (mr *MockIConsentsManagerMockRecorder) ModifyConsentByController(ctx, actio
 }
 
 // FilterConsented mocks base method
-func (m *MockIConsentsManager) FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, app []common.Hash) (*adapter.ConsentsConsentedIterator, error) {
-	ret := m.ctrl.Call(m, "FilterConsented", opts, action, userId, app)
+func (m *MockIConsentsManager) FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, appAddr []common.Address) (*adapter.ConsentsConsentedIterator, error) {
+	ret := m.ctrl.Call(m, "FilterConsented", opts, action, userId, appAddr)
 	ret0, _ := ret[0].(*adapter.ConsentsConsentedIterator)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FilterConsented indicates an expected call of FilterConsented
-func (mr *MockIConsentsManagerMockRecorder) FilterConsented(opts, action, userId, app interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterConsented", reflect.TypeOf((*MockIConsentsManager)(nil).FilterConsented), opts, action, userId, app)
+func (mr *MockIConsentsManagerMockRecorder) FilterConsented(opts, action, userId, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterConsented", reflect.TypeOf((*MockIConsentsManager)(nil).FilterConsented), opts, action, userId, appAddr)
 }
 
 // WatchConsented mocks base method
-func (m *MockIConsentsManager) WatchConsented(opts *bind.WatchOpts, sink chan<- *adapter.ConsentsConsented, action []uint8, userId []types.ID, app []common.Hash) (event.Subscription, error) {
-	ret := m.ctrl.Call(m, "WatchConsented", opts, sink, action, userId, app)
+func (m *MockIConsentsManager) WatchConsented(opts *bind.WatchOpts, sink chan<- *adapter.ConsentsConsented, action []uint8, userId []types.ID, appAddr []common.Address) (event.Subscription, error) {
+	ret := m.ctrl.Call(m, "WatchConsented", opts, sink, action, userId, appAddr)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // WatchConsented indicates an expected call of WatchConsented
-func (mr *MockIConsentsManagerMockRecorder) WatchConsented(opts, sink, action, userId, app interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchConsented", reflect.TypeOf((*MockIConsentsManager)(nil).WatchConsented), opts, sink, action, userId, app)
+func (mr *MockIConsentsManagerMockRecorder) WatchConsented(opts, sink, action, userId, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchConsented", reflect.TypeOf((*MockIConsentsManager)(nil).WatchConsented), opts, sink, action, userId, appAddr)
 }
 
 // MockIConsentsContract is a mock of IConsentsContract interface
@@ -290,16 +290,16 @@ func (mr *MockIConsentsContractMockRecorder) ModifyConsentByController(ctx, acti
 }
 
 // FilterConsented mocks base method
-func (m *MockIConsentsContract) FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, app []common.Hash) (*adapter.ConsentsConsentedIterator, error) {
-	ret := m.ctrl.Call(m, "FilterConsented", opts, action, userId, app)
+func (m *MockIConsentsContract) FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, appAddr []common.Address) (*adapter.ConsentsConsentedIterator, error) {
+	ret := m.ctrl.Call(m, "FilterConsented", opts, action, userId, appAddr)
 	ret0, _ := ret[0].(*adapter.ConsentsConsentedIterator)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FilterConsented indicates an expected call of FilterConsented
-func (mr *MockIConsentsContractMockRecorder) FilterConsented(opts, action, userId, app interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterConsented", reflect.TypeOf((*MockIConsentsContract)(nil).FilterConsented), opts, action, userId, app)
+func (mr *MockIConsentsContractMockRecorder) FilterConsented(opts, action, userId, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterConsented", reflect.TypeOf((*MockIConsentsContract)(nil).FilterConsented), opts, action, userId, appAddr)
 }
 
 // ParseConsentedFromReceipt mocks base method
@@ -316,16 +316,16 @@ func (mr *MockIConsentsContractMockRecorder) ParseConsentedFromReceipt(receipt i
 }
 
 // WatchConsented mocks base method
-func (m *MockIConsentsContract) WatchConsented(opts *bind.WatchOpts, sink chan<- *adapter.ConsentsConsented, action []uint8, userId []types.ID, app []common.Hash) (event.Subscription, error) {
-	ret := m.ctrl.Call(m, "WatchConsented", opts, sink, action, userId, app)
+func (m *MockIConsentsContract) WatchConsented(opts *bind.WatchOpts, sink chan<- *adapter.ConsentsConsented, action []uint8, userId []types.ID, appAddr []common.Address) (event.Subscription, error) {
+	ret := m.ctrl.Call(m, "WatchConsented", opts, sink, action, userId, appAddr)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // WatchConsented indicates an expected call of WatchConsented
-func (mr *MockIConsentsContractMockRecorder) WatchConsented(opts, sink, action, userId, app interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchConsented", reflect.TypeOf((*MockIConsentsContract)(nil).WatchConsented), opts, sink, action, userId, app)
+func (mr *MockIConsentsContractMockRecorder) WatchConsented(opts, sink, action, userId, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchConsented", reflect.TypeOf((*MockIConsentsContract)(nil).WatchConsented), opts, sink, action, userId, appAddr)
 }
 
 // MockIConsentsCalls is a mock of IConsentsCalls interface
@@ -463,16 +463,16 @@ func (m *MockIConsentsEvents) EXPECT() *MockIConsentsEventsMockRecorder {
 }
 
 // FilterConsented mocks base method
-func (m *MockIConsentsEvents) FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, app []common.Hash) (*adapter.ConsentsConsentedIterator, error) {
-	ret := m.ctrl.Call(m, "FilterConsented", opts, action, userId, app)
+func (m *MockIConsentsEvents) FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, appAddr []common.Address) (*adapter.ConsentsConsentedIterator, error) {
+	ret := m.ctrl.Call(m, "FilterConsented", opts, action, userId, appAddr)
 	ret0, _ := ret[0].(*adapter.ConsentsConsentedIterator)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FilterConsented indicates an expected call of FilterConsented
-func (mr *MockIConsentsEventsMockRecorder) FilterConsented(opts, action, userId, app interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterConsented", reflect.TypeOf((*MockIConsentsEvents)(nil).FilterConsented), opts, action, userId, app)
+func (mr *MockIConsentsEventsMockRecorder) FilterConsented(opts, action, userId, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterConsented", reflect.TypeOf((*MockIConsentsEvents)(nil).FilterConsented), opts, action, userId, appAddr)
 }
 
 // ParseConsentedFromReceipt mocks base method
@@ -489,14 +489,14 @@ func (mr *MockIConsentsEventsMockRecorder) ParseConsentedFromReceipt(receipt int
 }
 
 // WatchConsented mocks base method
-func (m *MockIConsentsEvents) WatchConsented(opts *bind.WatchOpts, sink chan<- *adapter.ConsentsConsented, action []uint8, userId []types.ID, app []common.Hash) (event.Subscription, error) {
-	ret := m.ctrl.Call(m, "WatchConsented", opts, sink, action, userId, app)
+func (m *MockIConsentsEvents) WatchConsented(opts *bind.WatchOpts, sink chan<- *adapter.ConsentsConsented, action []uint8, userId []types.ID, appAddr []common.Address) (event.Subscription, error) {
+	ret := m.ctrl.Call(m, "WatchConsented", opts, sink, action, userId, appAddr)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // WatchConsented indicates an expected call of WatchConsented
-func (mr *MockIConsentsEventsMockRecorder) WatchConsented(opts, sink, action, userId, app interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchConsented", reflect.TypeOf((*MockIConsentsEvents)(nil).WatchConsented), opts, sink, action, userId, app)
+func (mr *MockIConsentsEventsMockRecorder) WatchConsented(opts, sink, action, userId, appAddr interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchConsented", reflect.TypeOf((*MockIConsentsEvents)(nil).WatchConsented), opts, sink, action, userId, appAddr)
 }
