@@ -1,4 +1,4 @@
-package data
+package batch
 
 import (
 	"crypto/rand"

@@ -1,8 +1,9 @@
-package data
+package batch
 
 import (
-	"github.com/airbloc/airbloc-go/shared/types"
 	"strings"
+
+	"github.com/airbloc/airbloc-go/shared/types"
 )
 
 type UserIds map[types.ID][][4]byte
@@ -27,18 +28,18 @@ func newBatch(id string) *Batch {
 // Append adds a data ID to the batch.
 func (batch *Batch) Append(dataID types.DataId) {
 	// padding is same in data id now.
-	userIds := batch.set[dataID.BundleId]
+	userIds := batch.set[dataID.BundleId()]
 	if userIds == nil {
 		userIds = make(UserIds)
 	}
 
-	rowIDs := userIds[dataID.UserId]
+	rowIDs := userIds[dataID.UserId()]
 	if rowIDs == nil {
 		rowIDs = [][4]byte{}
 	}
-	rowIDs = append(rowIDs, dataID.RowId)
+	rowIDs = append(rowIDs, dataID.RowId())
 
-	batch.set[dataID.BundleId][dataID.UserId] = rowIDs
+	batch.set[dataID.BundleId()][dataID.UserId()] = rowIDs
 	batch.Count += 1
 }
 
@@ -47,14 +48,10 @@ func (batch *Batch) Append(dataID types.DataId) {
 func (batch *Batch) Iterator() chan types.DataId {
 	ch := make(chan types.DataId)
 	go func() {
-		for bundleID, userIds := range batch.set {
+		for bundleId, userIds := range batch.set {
 			for userId, rowIds := range userIds {
 				for _, rowId := range rowIds {
-					ch <- types.DataId{
-						BundleId: bundleID,
-						UserId:   userId,
-						RowId:    rowId,
-					}
+					ch <- types.NewDataIdFromIds(bundleId, userId, rowId)
 				}
 			}
 		}
@@ -63,7 +60,7 @@ func (batch *Batch) Iterator() chan types.DataId {
 	return ch
 }
 
-// Marshall encodes a batch to the bytes.
+// Marshal encodes a batch to the bytes.
 func (batch *Batch) Marshal() []byte {
 	var csv strings.Builder
 	for dataID := range batch.Iterator() {
@@ -81,14 +78,14 @@ func (batch *Batch) Marshal() []byte {
 
 // UnmarshalBatch decodes a batch from the bytes.
 func UnmarshalBatch(batchID string, rawBatch []byte) (*Batch, error) {
-	dataIDs := strings.Split(string(rawBatch), ",")
+	dataIds := strings.Split(string(rawBatch), ",")
 	batch := newBatch(batchID)
-	for _, rawDataId := range dataIDs {
-		dataID, err := types.NewDataId(rawDataId)
+	for _, rawDataId := range dataIds {
+		dataId, err := types.NewDataIdFromStr(rawDataId)
 		if err != nil {
 			return nil, err
 		}
-		batch.Append(*dataID)
+		batch.Append(dataId)
 	}
 	return batch, nil
 }
