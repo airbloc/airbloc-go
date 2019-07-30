@@ -6,11 +6,8 @@ import (
 	"time"
 
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
-	"github.com/airbloc/airbloc-go/provider/apps"
-	"github.com/airbloc/airbloc-go/provider/collections"
-	"github.com/airbloc/airbloc-go/shared/account"
+	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
-	"github.com/airbloc/airbloc-go/shared/dauth"
 	"github.com/airbloc/airbloc-go/shared/p2p"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/types"
@@ -35,10 +32,9 @@ type Service struct {
 	addr ethCommon.Address
 
 	// managers for blockchain interaction
-	apps        *apps.Manager
-	dauth       *dauth.Manager
-	accounts    *account.Manager
-	collections *collections.Manager
+	apps     adapter.IAppRegistryManager
+	consents adapter.IConsentsManager
+	accounts adapter.IAccountsManager
 
 	log *logger.Logger
 }
@@ -55,15 +51,14 @@ func NewService(backend service.Backend) (service.Service, error) {
 	key := backend.Kms().NodeKey()
 	nodeId := base64.StdEncoding.EncodeToString(crypto.FromECDSAPub(&key.PublicKey))
 	return &Service{
-		accountIds:  accountIds,
-		p2p:         backend.P2P(),
-		addr:        key.EthereumAddress,
-		id:          nodeId,
-		apps:        apps.NewManager(backend.Client()),
-		dauth:       dauth.NewManager(backend.Client()),
-		accounts:    account.NewManager(backend.Client()),
-		collections: collections.NewManager(backend.Client()),
-		log:         logger.New("controller"),
+		accountIds: accountIds,
+		p2p:        backend.P2P(),
+		addr:       key.EthereumAddress,
+		id:         nodeId,
+		apps:       adapter.NewAppRegistryManager(backend.Client()),
+		consents:   adapter.NewConsentsManager(backend.Client()),
+		accounts:   adapter.NewAccountsManager(backend.Client()),
+		log:        logger.New("controller"),
 	}, nil
 }
 
