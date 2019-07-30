@@ -4,7 +4,6 @@ import (
 	"context"
 
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/userdelegate"
-	"github.com/airbloc/airbloc-go/shared/account"
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
@@ -18,7 +17,7 @@ type AccountAPI struct {
 }
 
 func NewAccountAPI(backend service.Backend) (api.API, error) {
-	manager := account.NewManager(backend.Client())
+	manager := adapter.NewAccountsManager(backend.Client())
 	return &AccountAPI{manager}, nil
 }
 
