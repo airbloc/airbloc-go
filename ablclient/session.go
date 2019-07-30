@@ -1,4 +1,4 @@
-package account
+package ablclient
 
 import (
 	"github.com/airbloc/airbloc-go/shared/key"
@@ -8,6 +8,10 @@ import (
 )
 
 type Session struct {
+	session
+}
+
+type session struct {
 	AccountId     types.ID
 	WalletAddress ethCommon.Address
 	Key           *key.Key
@@ -16,13 +20,13 @@ type Session struct {
 func NewSession(accountId types.ID, walletAddress ethCommon.Address, password string) *Session {
 	identityHash := crypto.Keccak256Hash(walletAddress.Bytes())
 	priv := key.DeriveFromPassword(identityHash, password)
-	return &Session{
+	return &Session{session{
 		AccountId:     accountId,
 		WalletAddress: walletAddress,
 		Key:           priv,
-	}
+	}}
 }
 
-func (session *Session) Sign(hash ethCommon.Hash) ([]byte, error) {
+func (session *session) Sign(hash ethCommon.Hash) ([]byte, error) {
 	return crypto.Sign(hash[:], session.Key.PrivateKey)
 }

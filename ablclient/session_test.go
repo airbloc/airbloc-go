@@ -1,4 +1,4 @@
-package account
+package ablclient
 
 import (
 	"testing"
