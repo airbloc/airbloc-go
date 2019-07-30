@@ -1,137 +1,212 @@
 package api
 
 import (
-	"context"
-	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/airbloc/airbloc-go/provider/collections"
+	"net/http"
+
 	"github.com/airbloc/airbloc-go/provider/dauth"
+	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
 	ethCommon "github.com/ethereum/go-ethereum/common"
-	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/pkg/errors"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
-type DAuthAPI struct {
-	dauthClient *dauth.Provider
-	collections *collections.Manager
+type dAuthAPI struct {
+	dauthClient *dauth.Client
+	consents    adapter.IConsentsManager
+	dataTypes   adapter.IDataTypeRegistryManager
 }
 
+// NewDAuthAPI makes new *dAuthAPI struct
 func NewDAuthAPI(backend service.Backend) (api.API, error) {
 	dauthClient := dauth.NewProviderClient(backend.Kms(), backend.Client(), backend.P2P())
-	return &DAuthAPI{
+	return &dAuthAPI{
 		dauthClient: dauthClient,
-		collections: collections.NewManager(backend.Client()),
+		consents:    adapter.NewConsentsManager(backend.Client()),
+		dataTypes:   adapter.NewDataTypeRegistryManager(backend.Client()),
 	}, nil
 }
 
-func (api *DAuthAPI) SignIn(ctx context.Context, req *pb.SignInRequest) (*pb.SignInResponse, error) {
-	userDelegateAddr := ethCommon.HexToAddress(req.GetUserDelegate())
-	accountId, err := api.dauthClient.SignIn(ctx, req.GetIdentity(), userDelegateAddr)
-	if err != nil {
-		return nil, err
+func (api *dAuthAPI) signIn(c *gin.Context) {
+	var req struct {
+		Identity   string
+		Controller string
 	}
-	return &pb.SignInResponse{
-		AccountId: accountId.Hex(),
-	}, nil
+
+	if err := c.MustBindWith(&req, binding.JSON); err != nil {
+		return
+	}
+
+	controller := ethCommon.HexToAddress(req.Controller)
+	accountId, err := api.dauthClient.SignIn(c, req.Identity, controller)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"accountId": accountId.Hex()})
 }
 
-func (api *DAuthAPI) GetAuthorizations(ctx context.Context, req *pb.GetAuthorizationsRequest) (*pb.GetAuthorizationsResponse, error) {
-	appId, err := types.HexToID(req.GetAppId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Invalid app ID: %s", req.GetAppId())
-	}
-	accountId, err := types.HexToID(req.GetAccountId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Invalid account ID: %s", req.GetAccountId())
+func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
+	var req struct {
+		AccountId string
+		AppName   string
 	}
 
-	collectionIds, err := api.collections.ListID(ctx, appId)
-	if err != nil {
-		return nil, err
+	if err := c.MustBindWith(&req, binding.Query); err != nil {
+		return
 	}
 
-	// check that user have been DAuthed at least once
-	hasAuthorizedBefore, err := api.hasAuthedBefore(collectionIds, accountId)
+	accountId, err := types.HexToID(req.AccountId)
 	if err != nil {
-		return nil, err
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+		return
 	}
 
-	response := &pb.GetAuthorizationsResponse{
-		HasAuthorizedBefore: hasAuthorizedBefore,
-	}
-	for _, collectionId := range collectionIds {
-		// collectionId
-		authorized, err := api.collections.IsCollectionAllowed(collectionId, accountId)
-		if err != nil {
-			return nil, err
+	var resp struct {
+		HasAuthorizedBefore bool
+		Authorizations      []struct {
+			Action     types.ConsentActionTypes
+			DataType   string
+			Authorized bool
 		}
-		response.Authorizations = append(response.Authorizations, &pb.GetAuthorizationsResponse_Authorization{
-			CollectionId: collectionId.Hex(),
-			Authorized:   authorized,
-		})
 	}
-	return response, nil
+
+	consentEventIter, err := api.consents.FilterConsented(&bind.FilterOpts{
+		Context: c,
+		Start:   api.consents.CreatedAt().Uint64(),
+	}, nil, []types.ID{accountId}, nil)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": err})
+		return
+	}
+
+	if !consentEventIter.Next() {
+		resp.HasAuthorizedBefore = false
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+
+	dataTypeEventIter, err := api.dataTypes.FilterRegistration(&bind.FilterOpts{
+		Context: c,
+		Start:   api.consents.CreatedAt().Uint64(),
+	})
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": err})
+		return
+	}
+
+	var (
+		actions = []types.ConsentActionTypes{
+			types.ConsentActionCollection,
+			types.ConsentActionExchange,
+		}
+		dataTypeRegisterEvent *adapter.DataTypeRegistryRegistration
+	)
+
+	// data type
+	for ; dataTypeEventIter.Next(); dataTypeRegisterEvent = dataTypeEventIter.Event {
+		if dataTypeRegisterEvent == nil {
+			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+			return
+		}
+
+		// action
+		for _, action := range actions {
+			dataType := dataTypeRegisterEvent.Name
+			allowed, err := api.consents.IsAllowed(accountId, dataType, uint8(action), req.AppName)
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+				return
+			}
+
+			resp.Authorizations = append(resp.Authorizations, struct {
+				Action     types.ConsentActionTypes
+				DataType   string
+				Authorized bool
+			}{
+				Action:     action,
+				DataType:   dataType,
+				Authorized: allowed,
+			})
+		}
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
-func (api *DAuthAPI) Allow(ctx context.Context, req *pb.DAuthRequest) (*empty.Empty, error) {
-	collectionId, err := types.HexToID(req.GetCollectionId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Invalid collection ID: %s", req.GetCollectionId())
+func (api *dAuthAPI) allow(c *gin.Context) {
+	var req struct {
+		AccountId string
+		DataType  string
+		Action    types.ConsentActionTypes
+		AppName   string
 	}
-	accountId, err := types.HexToID(req.GetAccountId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Invalid account ID: %s", req.GetAccountId())
+
+	if err := c.MustBindWith(&req, binding.JSON); err != nil {
+		return
 	}
-	err = api.dauthClient.Allow(ctx, collectionId, accountId)
-	return &empty.Empty{}, err
+
+	accountId, err := types.HexToID(req.AccountId)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+		return
+	}
+
+	err = api.dauthClient.Allow(
+		c, accountId,
+		req.DataType,
+		req.Action,
+		req.AppName,
+	)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
-func (api *DAuthAPI) Deny(ctx context.Context, req *pb.DAuthRequest) (*empty.Empty, error) {
-	collectionId, err := types.HexToID(req.GetCollectionId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Invalid collection ID: %s", req.GetCollectionId())
+func (api *dAuthAPI) deny(c *gin.Context) {
+	var req struct {
+		AccountId string
+		DataType  string
+		Action    types.ConsentActionTypes
+		AppName   string
 	}
-	accountId, err := types.HexToID(req.GetAccountId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Invalid account ID: %s", req.GetAccountId())
+
+	if err := c.MustBindWith(&req, binding.JSON); err != nil {
+		return
 	}
-	err = api.dauthClient.Deny(ctx, collectionId, accountId)
-	return &empty.Empty{}, err
+
+	accountId, err := types.HexToID(req.AccountId)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+		return
+	}
+
+	err = api.dauthClient.Deny(
+		c, accountId,
+		req.DataType,
+		req.Action,
+		req.AppName,
+	)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
-func (api *DAuthAPI) AttachToAPI(service *api.Service) {
-	pb.RegisterDAuthServer(service.GrpcServer, api)
-	pb.RegisterDAuthHandlerFromEndpoint(context.Background(), service.RestAPIMux, service.Address, []grpc.DialOption{grpc.WithInsecure()})
-}
-
-func (api *DAuthAPI) hasAuthedBefore(collectionIds []types.ID, accountId types.ID) (bool, error) {
-	collectionIdBytes := types.IDListToByteList(collectionIds)
-
-	allowEvents, err := api.collections.GetContract().FilterAllowed(&bind.FilterOpts{}, collectionIdBytes, [][8]byte{accountId})
-	if err != nil {
-		return false, errors.Wrap(err, "failed to scan allow DAuth events of the user")
-	}
-	defer allowEvents.Close()
-	if allowEvents.Next() {
-		return true, nil
-	}
-	if allowEvents.Error() != nil {
-		return false, allowEvents.Error()
-	}
-
-	denyEvents, err := api.collections.GetContract().FilterAllowed(&bind.FilterOpts{}, collectionIdBytes, [][8]byte{accountId})
-	if err != nil {
-		return false, errors.Wrap(err, "failed to scan deny DAuth events of the user")
-	}
-	defer denyEvents.Close()
-	if denyEvents.Next() {
-		return true, nil
-	}
-	return false, denyEvents.Error()
+// AttachToAPI is a registrant of an api.
+func (api *dAuthAPI) AttachToAPI(service *api.Service) {
+	apiMux := service.RestAPIMux.Group("/dauth")
+	apiMux.GET("/auth", api.getAuthorizations)
+	apiMux.POST("/signin", api.signIn)
+	apiMux.PUT("/allow", api.allow)
+	apiMux.PUT("/deny", api.deny)
 }

@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/airbloc/airbloc-go/shared/adapter"
-	"github.com/airbloc/airbloc-go/shared/exchange"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
@@ -21,7 +20,7 @@ type exchangeAPI struct {
 
 // NewExchangeAPI makes new *exchangeAPI struct
 func NewExchangeAPI(backend service.Backend) (api.API, error) {
-	ex := exchange.NewManager(backend.Client())
+	ex := adapter.NewExchangeManager(backend.Client())
 	return &exchangeAPI{ex}, nil
 }
 
@@ -61,7 +60,7 @@ func (api *exchangeAPI) prepare(c *gin.Context) {
 
 	dataIds := make([]types.DataId, len(req.DataIds))
 	for index, rawDataId := range req.DataIds {
-		dataIds[index], err = types.NewDataId(rawDataId)
+		dataIds[index], err = types.NewDataIdFromStr(rawDataId)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
 			return
@@ -98,7 +97,7 @@ func (api *exchangeAPI) addDataIds(c *gin.Context) {
 
 	dataIds := make([]types.DataId, len(req.DataIds))
 	for index, rawDataId := range req.DataIds {
-		dataIds[index], err = types.NewDataId(rawDataId)
+		dataIds[index], err = types.NewDataIdFromStr(rawDataId)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
 			return
