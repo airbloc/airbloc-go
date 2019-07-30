@@ -4,27 +4,25 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"github.com/airbloc/airbloc-go/shared/database/resdb"
-	"github.com/airbloc/airframe/afclient"
-	"github.com/mitchellh/mapstructure"
 	"math/big"
 	"math/rand"
 	"net/url"
 	"time"
 
-	"github.com/airbloc/airbloc-go/provider/collections"
-	"github.com/airbloc/airbloc-go/provider/schemas"
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/database/localdb"
 	"github.com/airbloc/airbloc-go/shared/database/metadb"
-	"github.com/airbloc/airbloc-go/shared/dauth"
+	"github.com/airbloc/airbloc-go/shared/database/resdb"
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/airbloc-go/warehouse/protocol"
 	"github.com/airbloc/airbloc-go/warehouse/storage"
+	"github.com/airbloc/airbloc-go/warehouse/validator"
+	"github.com/airbloc/airframe/afclient"
 	"github.com/airbloc/logger"
+	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
 )
 
@@ -42,8 +40,6 @@ type Manager struct {
 	metaDatabase metadb.Database
 	ethclient    blockchain.TxClient
 	dataRegistry *adapter.DataRegistry
-	schemas      *schemas.Schemas
-	collections  *collections.Manager
 
 	// data storage layer
 	protocols      map[string]protocol.Protocol
@@ -51,7 +47,7 @@ type Manager struct {
 	resourceDB     resdb.Model
 
 	// data validators
-	dauthValidator *dauth.Validator
+	dauthValidator *validator.Validator
 
 	config service.Config
 	log    *logger.Logger
@@ -82,8 +78,8 @@ func NewManager(
 			"BECAUSE IT CAN CAUSE A FINANCIAL LOSS OF YOUR STAKED COLLETRALS. " + "\033[0m")
 	}
 
-	dauthManager := dauth.NewManager(ethclient)
-	dauthValidator := dauth.NewValidator(dauthManager)
+	dauthManager := validator.NewManager(ethclient)
+	dauthValidator := validator.NewValidator(dauthManager)
 
 	contract := ethclient.GetContract(&adapter.DataRegistry{})
 
@@ -99,8 +95,6 @@ func NewManager(
 		metaDatabase: metadb.NewModel(metaDatabase, "bundles"),
 		ethclient:    ethclient,
 		dataRegistry: contract.(*adapter.DataRegistry),
-		collections:  collections.NewManager(ethclient),
-		schemas:      schemas.New(metaDatabase, ethclient),
 
 		protocols:      protocols,
 		defaultStorage: defaultStorage,
@@ -112,32 +106,35 @@ func NewManager(
 	}, nil
 }
 
+// TODO
 func (dw *Manager) CreateBundle(ctx context.Context, collectionId types.ID) (*BundleStream, error) {
-	collection, err := dw.collections.Get(collectionId)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to retrieve a collection")
-	}
-	schema, err := dw.schemas.Get(ctx, collection.Schema.Id)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to retrieve a schema")
-	}
-	collection.Schema = *schema
-	return newBundleStream(dw, collection.AppId, collection), nil
+	return nil, nil
+	//collection, err := dw.collections.Get(collectionId)
+	//if err != nil {
+	//	return nil, errors.Wrap(err, "unable to retrieve a collection")
+	//}
+	//schema, err := dw.schemas.Get(ctx, collection.Schema.Id)
+	//if err != nil {
+	//	return nil, errors.Wrap(err, "unable to retrieve a schema")
+	//}
+	//collection.Schema = *schema
+	//return newBundleStream(dw, collection.AppId, collection), nil
 }
 
-func (dw *Manager) validate(collection *collections.Collection, data *types.Data) error {
-	if !dw.config.Warehouse.Debug.DisableUserAuthValidation && !dw.dauthValidator.IsCollectible(collection.Id, data) {
-		return errors.Wrap(errValidationFailed, "user hasn't been authorized the data collection")
-	}
-
-	if !dw.config.Warehouse.Debug.DisableSchemaValidation {
-		isValidFormat, err := collection.Schema.IsValidFormat(data)
-		if err != nil {
-			return err
-		} else if !isValidFormat {
-			return errors.Wrap(errValidationFailed, "wrong format")
-		}
-	}
+// TODO
+func (dw *Manager) validate(collection interface{}, data *types.Data) error {
+	//if !dw.config.Warehouse.Debug.DisableUserAuthValidation && !dw.dauthValidator.IsCollectible(collection.Id, data) {
+	//	return errors.Wrap(errValidationFailed, "user hasn't been authorized the data collection")
+	//}
+	//
+	//if !dw.config.Warehouse.Debug.DisableSchemaValidation {
+	//	isValidFormat, err := collection.Schema.IsValidFormat(data)
+	//	if err != nil {
+	//		return err
+	//	} else if !isValidFormat {
+	//		return errors.Wrap(errValidationFailed, "wrong format")
+	//	}
+	//}
 	return nil
 }
 
@@ -268,7 +265,7 @@ func (dw *Manager) registerBundleOnChain(bundle *Bundle) (bundleId types.ID, _ e
 	return
 }
 
-func (dw *Manager) Get(id *types.DataId) (*Bundle, error) {
+func (dw *Manager) Get(id types.DataId) (*Bundle, error) {
 	bundle, err := dw.dataRegistry.Bundles(nil, id.BundleId)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get uri")
