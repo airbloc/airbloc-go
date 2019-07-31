@@ -259,20 +259,37 @@ type IExchangeContract interface {
 type ExchangeContract struct {
 	client   blockchain.TxClient
 	contract *Exchange
+	ExchangeFilterer
+}
+
+// Address is getter method of Exchange.address
+func (c *ExchangeContract) Address() common.Address {
+	return c.contract.Address()
+}
+
+// TxHash is getter method of Exchange.txHash
+func (c *ExchangeContract) TxHash() common.Hash {
+	return c.contract.TxHash()
+}
+
+// CreatedAt is getter method of Exchange.createdAt
+func (c *ExchangeContract) CreatedAt() *big.Int {
+	return c.contract.CreatedAt()
 }
 
 // NewManager makes new *Manager struct
 func NewExchangeContract(client blockchain.TxClient) IExchangeContract {
-	contract := client.GetContract(&Exchange{})
-	return &ExchangeManager{
-		client:   client,
-		contract: contract.(*Exchange),
+	contract := client.GetContract(&Exchange{}).(*Exchange)
+	return &ExchangeContract{
+		client:           client,
+		contract:         contract,
+		ExchangeFilterer: contract.ExchangeFilterer,
 	}
 }
 
 // convenient hacks for blockchain.Client
 func init() {
-	blockchain.ContractList["Exchange"] = (&Exchange{}).new
+	blockchain.AddContractConstructor("Exchange", (&Exchange{}).new)
 	blockchain.RegisterSelector("0x367a9005", "addDataIds(bytes8,bytes20[])")
 	blockchain.RegisterSelector("0xb2d9ba39", "cancel(bytes8)")
 	blockchain.RegisterSelector("0x0cf833fb", "order(bytes8)")
@@ -287,17 +304,15 @@ func (_Exchange *Exchange) new(address common.Address, txHash common.Hash, creat
 
 type IExchangeCalls interface {
 	GetOffer(offerId types.ID) (types.Offer, error)
-
 	GetOfferMembers(offerId types.ID) (common.Address, common.Address, error)
-
 	OfferExists(offerId types.ID) (bool, error)
 }
 
 // GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
 //
 // Solidity: function getOffer(bytes8 offerId) constant returns((string,address,bytes20[],uint256,uint256,(address,bytes4,bytes),uint8))
-func (manager *ExchangeContract) GetOffer(offerId types.ID) (types.Offer, error) {
-	return manager.contract.GetOffer(nil, offerId)
+func (c *ExchangeContract) GetOffer(offerId types.ID) (types.Offer, error) {
+	return c.contract.GetOffer(nil, offerId)
 }
 
 // GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
@@ -328,8 +343,8 @@ func (_Exchange *ExchangeCallerSession) GetOffer(offerId types.ID) (types.Offer,
 // GetOfferMembers is a free data retrieval call binding the contract method 0x72dfa465.
 //
 // Solidity: function getOfferMembers(bytes8 offerId) constant returns(address, address)
-func (manager *ExchangeContract) GetOfferMembers(offerId types.ID) (common.Address, common.Address, error) {
-	return manager.contract.GetOfferMembers(nil, offerId)
+func (c *ExchangeContract) GetOfferMembers(offerId types.ID) (common.Address, common.Address, error) {
+	return c.contract.GetOfferMembers(nil, offerId)
 }
 
 // GetOfferMembers is a free data retrieval call binding the contract method 0x72dfa465.
@@ -361,8 +376,8 @@ func (_Exchange *ExchangeCallerSession) GetOfferMembers(offerId types.ID) (commo
 // OfferExists is a free data retrieval call binding the contract method 0xc4a03da9.
 //
 // Solidity: function offerExists(bytes8 offerId) constant returns(bool)
-func (manager *ExchangeContract) OfferExists(offerId types.ID) (bool, error) {
-	return manager.contract.OfferExists(nil, offerId)
+func (c *ExchangeContract) OfferExists(offerId types.ID) (bool, error) {
+	return c.contract.OfferExists(nil, offerId)
 }
 
 // OfferExists is a free data retrieval call binding the contract method 0xc4a03da9.
@@ -393,27 +408,22 @@ func (_Exchange *ExchangeCallerSession) OfferExists(offerId types.ID) (bool, err
 
 type IExchangeTransacts interface {
 	AddDataIds(ctx context.Context, offerId types.ID, dataIds []types.DataId) (*ethTypes.Receipt, error)
-
 	Cancel(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error)
-
 	Order(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error)
-
 	Prepare(ctx context.Context, provider string, consumer common.Address, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds []types.DataId) (*ethTypes.Receipt, error)
-
 	Reject(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error)
-
 	Settle(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error)
 }
 
 // AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
 //
 // Solidity: function addDataIds(bytes8 offerId, bytes20[] dataIds) returns()
-func (manager *ExchangeContract) AddDataIds(ctx context.Context, offerId types.ID, dataIds []types.DataId) (*ethTypes.Receipt, error) {
-	tx, err := manager.contract.AddDataIds(manager.client.Account(), offerId, dataIds)
+func (c *ExchangeContract) AddDataIds(ctx context.Context, offerId types.ID, dataIds []types.DataId) (*ethTypes.Receipt, error) {
+	tx, err := c.contract.AddDataIds(c.client.Account(), offerId, dataIds)
 	if err != nil {
 		return nil, err
 	}
-	return manager.client.WaitMined(ctx, tx)
+	return c.client.WaitMined(ctx, tx)
 }
 
 // AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
@@ -440,12 +450,12 @@ func (_Exchange *ExchangeTransactorSession) AddDataIds(offerId types.ID, dataIds
 // Cancel is a paid mutator transaction binding the contract method 0xb2d9ba39.
 //
 // Solidity: function cancel(bytes8 offerId) returns()
-func (manager *ExchangeContract) Cancel(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error) {
-	tx, err := manager.contract.Cancel(manager.client.Account(), offerId)
+func (c *ExchangeContract) Cancel(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error) {
+	tx, err := c.contract.Cancel(c.client.Account(), offerId)
 	if err != nil {
 		return nil, err
 	}
-	return manager.client.WaitMined(ctx, tx)
+	return c.client.WaitMined(ctx, tx)
 }
 
 // Cancel is a paid mutator transaction binding the contract method 0xb2d9ba39.
@@ -472,12 +482,12 @@ func (_Exchange *ExchangeTransactorSession) Cancel(offerId types.ID) (*ethTypes.
 // Order is a paid mutator transaction binding the contract method 0x0cf833fb.
 //
 // Solidity: function order(bytes8 offerId) returns()
-func (manager *ExchangeContract) Order(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error) {
-	tx, err := manager.contract.Order(manager.client.Account(), offerId)
+func (c *ExchangeContract) Order(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error) {
+	tx, err := c.contract.Order(c.client.Account(), offerId)
 	if err != nil {
 		return nil, err
 	}
-	return manager.client.WaitMined(ctx, tx)
+	return c.client.WaitMined(ctx, tx)
 }
 
 // Order is a paid mutator transaction binding the contract method 0x0cf833fb.
@@ -504,12 +514,12 @@ func (_Exchange *ExchangeTransactorSession) Order(offerId types.ID) (*ethTypes.T
 // Prepare is a paid mutator transaction binding the contract method 0x77e61c33.
 //
 // Solidity: function prepare(string provider, address consumer, address escrow, bytes4 escrowSign, bytes escrowArgs, bytes20[] dataIds) returns(bytes8)
-func (manager *ExchangeContract) Prepare(ctx context.Context, provider string, consumer common.Address, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds []types.DataId) (*ethTypes.Receipt, error) {
-	tx, err := manager.contract.Prepare(manager.client.Account(), provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
+func (c *ExchangeContract) Prepare(ctx context.Context, provider string, consumer common.Address, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds []types.DataId) (*ethTypes.Receipt, error) {
+	tx, err := c.contract.Prepare(c.client.Account(), provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
 	if err != nil {
 		return nil, err
 	}
-	return manager.client.WaitMined(ctx, tx)
+	return c.client.WaitMined(ctx, tx)
 }
 
 // Prepare is a paid mutator transaction binding the contract method 0x77e61c33.
@@ -536,12 +546,12 @@ func (_Exchange *ExchangeTransactorSession) Prepare(provider string, consumer co
 // Reject is a paid mutator transaction binding the contract method 0x6622e153.
 //
 // Solidity: function reject(bytes8 offerId) returns()
-func (manager *ExchangeContract) Reject(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error) {
-	tx, err := manager.contract.Reject(manager.client.Account(), offerId)
+func (c *ExchangeContract) Reject(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error) {
+	tx, err := c.contract.Reject(c.client.Account(), offerId)
 	if err != nil {
 		return nil, err
 	}
-	return manager.client.WaitMined(ctx, tx)
+	return c.client.WaitMined(ctx, tx)
 }
 
 // Reject is a paid mutator transaction binding the contract method 0x6622e153.
@@ -568,12 +578,12 @@ func (_Exchange *ExchangeTransactorSession) Reject(offerId types.ID) (*ethTypes.
 // Settle is a paid mutator transaction binding the contract method 0xa60d9b5f.
 //
 // Solidity: function settle(bytes8 offerId) returns()
-func (manager *ExchangeContract) Settle(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error) {
-	tx, err := manager.contract.Settle(manager.client.Account(), offerId)
+func (c *ExchangeContract) Settle(ctx context.Context, offerId types.ID) (*ethTypes.Receipt, error) {
+	tx, err := c.contract.Settle(c.client.Account(), offerId)
 	if err != nil {
 		return nil, err
 	}
-	return manager.client.WaitMined(ctx, tx)
+	return c.client.WaitMined(ctx, tx)
 }
 
 // Settle is a paid mutator transaction binding the contract method 0xa60d9b5f.

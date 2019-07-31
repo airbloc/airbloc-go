@@ -244,20 +244,37 @@ type IAppRegistryContract interface {
 type AppRegistryContract struct {
 	client   blockchain.TxClient
 	contract *AppRegistry
+	AppRegistryFilterer
+}
+
+// Address is getter method of AppRegistry.address
+func (c *AppRegistryContract) Address() common.Address {
+	return c.contract.Address()
+}
+
+// TxHash is getter method of AppRegistry.txHash
+func (c *AppRegistryContract) TxHash() common.Hash {
+	return c.contract.TxHash()
+}
+
+// CreatedAt is getter method of AppRegistry.createdAt
+func (c *AppRegistryContract) CreatedAt() *big.Int {
+	return c.contract.CreatedAt()
 }
 
 // NewManager makes new *Manager struct
 func NewAppRegistryContract(client blockchain.TxClient) IAppRegistryContract {
-	contract := client.GetContract(&AppRegistry{})
-	return &AppRegistryManager{
-		client:   client,
-		contract: contract.(*AppRegistry),
+	contract := client.GetContract(&AppRegistry{}).(*AppRegistry)
+	return &AppRegistryContract{
+		client:              client,
+		contract:            contract,
+		AppRegistryFilterer: contract.AppRegistryFilterer,
 	}
 }
 
 // convenient hacks for blockchain.Client
 func init() {
-	blockchain.ContractList["AppRegistry"] = (&AppRegistry{}).new
+	blockchain.AddContractConstructor("AppRegistry", (&AppRegistry{}).new)
 	blockchain.RegisterSelector("0xf2c298be", "register(string)")
 	blockchain.RegisterSelector("0x1a9dff9f", "transferAppOwner(string,address)")
 	blockchain.RegisterSelector("0x6598a1ae", "unregister(string)")
@@ -269,17 +286,15 @@ func (_AppRegistry *AppRegistry) new(address common.Address, txHash common.Hash,
 
 type IAppRegistryCalls interface {
 	Exists(appName string) (bool, error)
-
 	Get(appName string) (types.App, error)
-
 	IsOwner(appName string, owner common.Address) (bool, error)
 }
 
 // Exists is a free data retrieval call binding the contract method 0x261a323e.
 //
 // Solidity: function exists(string appName) constant returns(bool)
-func (manager *AppRegistryContract) Exists(appName string) (bool, error) {
-	return manager.contract.Exists(nil, appName)
+func (c *AppRegistryContract) Exists(appName string) (bool, error) {
+	return c.contract.Exists(nil, appName)
 }
 
 // Exists is a free data retrieval call binding the contract method 0x261a323e.
@@ -311,8 +326,8 @@ func (_AppRegistry *AppRegistryCallerSession) Exists(appName string) (bool, erro
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
 // Solidity: function get(string appName) constant returns((string,address,address))
-func (manager *AppRegistryContract) Get(appName string) (types.App, error) {
-	return manager.contract.Get(nil, appName)
+func (c *AppRegistryContract) Get(appName string) (types.App, error) {
+	return c.contract.Get(nil, appName)
 }
 
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
@@ -343,8 +358,8 @@ func (_AppRegistry *AppRegistryCallerSession) Get(appName string) (types.App, er
 // IsOwner is a free data retrieval call binding the contract method 0xbde1eee7.
 //
 // Solidity: function isOwner(string appName, address owner) constant returns(bool)
-func (manager *AppRegistryContract) IsOwner(appName string, owner common.Address) (bool, error) {
-	return manager.contract.IsOwner(nil, appName, owner)
+func (c *AppRegistryContract) IsOwner(appName string, owner common.Address) (bool, error) {
+	return c.contract.IsOwner(nil, appName, owner)
 }
 
 // IsOwner is a free data retrieval call binding the contract method 0xbde1eee7.
@@ -375,21 +390,19 @@ func (_AppRegistry *AppRegistryCallerSession) IsOwner(appName string, owner comm
 
 type IAppRegistryTransacts interface {
 	Register(ctx context.Context, appName string) (*ethTypes.Receipt, error)
-
 	TransferAppOwner(ctx context.Context, appName string, newOwner common.Address) (*ethTypes.Receipt, error)
-
 	Unregister(ctx context.Context, appName string) (*ethTypes.Receipt, error)
 }
 
 // Register is a paid mutator transaction binding the contract method 0xf2c298be.
 //
 // Solidity: function register(string appName) returns()
-func (manager *AppRegistryContract) Register(ctx context.Context, appName string) (*ethTypes.Receipt, error) {
-	tx, err := manager.contract.Register(manager.client.Account(), appName)
+func (c *AppRegistryContract) Register(ctx context.Context, appName string) (*ethTypes.Receipt, error) {
+	tx, err := c.contract.Register(c.client.Account(), appName)
 	if err != nil {
 		return nil, err
 	}
-	return manager.client.WaitMined(ctx, tx)
+	return c.client.WaitMined(ctx, tx)
 }
 
 // Register is a paid mutator transaction binding the contract method 0xf2c298be.
@@ -416,12 +429,12 @@ func (_AppRegistry *AppRegistryTransactorSession) Register(appName string) (*eth
 // TransferAppOwner is a paid mutator transaction binding the contract method 0x1a9dff9f.
 //
 // Solidity: function transferAppOwner(string appName, address newOwner) returns()
-func (manager *AppRegistryContract) TransferAppOwner(ctx context.Context, appName string, newOwner common.Address) (*ethTypes.Receipt, error) {
-	tx, err := manager.contract.TransferAppOwner(manager.client.Account(), appName, newOwner)
+func (c *AppRegistryContract) TransferAppOwner(ctx context.Context, appName string, newOwner common.Address) (*ethTypes.Receipt, error) {
+	tx, err := c.contract.TransferAppOwner(c.client.Account(), appName, newOwner)
 	if err != nil {
 		return nil, err
 	}
-	return manager.client.WaitMined(ctx, tx)
+	return c.client.WaitMined(ctx, tx)
 }
 
 // TransferAppOwner is a paid mutator transaction binding the contract method 0x1a9dff9f.
@@ -448,12 +461,12 @@ func (_AppRegistry *AppRegistryTransactorSession) TransferAppOwner(appName strin
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
 //
 // Solidity: function unregister(string appName) returns()
-func (manager *AppRegistryContract) Unregister(ctx context.Context, appName string) (*ethTypes.Receipt, error) {
-	tx, err := manager.contract.Unregister(manager.client.Account(), appName)
+func (c *AppRegistryContract) Unregister(ctx context.Context, appName string) (*ethTypes.Receipt, error) {
+	tx, err := c.contract.Unregister(c.client.Account(), appName)
 	if err != nil {
 		return nil, err
 	}
-	return manager.client.WaitMined(ctx, tx)
+	return c.client.WaitMined(ctx, tx)
 }
 
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.

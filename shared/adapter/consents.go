@@ -237,20 +237,37 @@ type IConsentsContract interface {
 type ConsentsContract struct {
 	client   blockchain.TxClient
 	contract *Consents
+	ConsentsFilterer
+}
+
+// Address is getter method of Consents.address
+func (c *ConsentsContract) Address() common.Address {
+	return c.contract.Address()
+}
+
+// TxHash is getter method of Consents.txHash
+func (c *ConsentsContract) TxHash() common.Hash {
+	return c.contract.TxHash()
+}
+
+// CreatedAt is getter method of Consents.createdAt
+func (c *ConsentsContract) CreatedAt() *big.Int {
+	return c.contract.CreatedAt()
 }
 
 // NewManager makes new *Manager struct
 func NewConsentsContract(client blockchain.TxClient) IConsentsContract {
-	contract := client.GetContract(&Consents{})
-	return &ConsentsManager{
-		client:   client,
-		contract: contract.(*Consents),
+	contract := client.GetContract(&Consents{}).(*Consents)
+	return &ConsentsContract{
+		client:           client,
+		contract:         contract,
+		ConsentsFilterer: contract.ConsentsFilterer,
 	}
 }
 
 // convenient hacks for blockchain.Client
 func init() {
-	blockchain.ContractList["Consents"] = (&Consents{}).new
+	blockchain.AddContractConstructor("Consents", (&Consents{}).new)
 	blockchain.RegisterSelector("0xbecae241", "consent(uint8,string,string,bool)")
 	blockchain.RegisterSelector("0xf92519d8", "consentByController(uint8,bytes8,string,string,bool)")
 	blockchain.RegisterSelector("0xedf2ef20", "modifyConsentByController(uint8,bytes8,string,string,bool,bytes)")
@@ -262,15 +279,14 @@ func (_Consents *Consents) new(address common.Address, txHash common.Hash, creat
 
 type IConsentsCalls interface {
 	IsAllowed(userId types.ID, appName string, action uint8, dataType string) (bool, error)
-
 	IsAllowedAt(userId types.ID, appName string, action uint8, dataType string, blockNumber *big.Int) (bool, error)
 }
 
 // IsAllowed is a free data retrieval call binding the contract method 0x50615985.
 //
 // Solidity: function isAllowed(bytes8 userId, string appName, uint8 action, string dataType) constant returns(bool)
-func (manager *ConsentsContract) IsAllowed(userId types.ID, appName string, action uint8, dataType string) (bool, error) {
-	return manager.contract.IsAllowed(nil, userId, appName, action, dataType)
+func (c *ConsentsContract) IsAllowed(userId types.ID, appName string, action uint8, dataType string) (bool, error) {
+	return c.contract.IsAllowed(nil, userId, appName, action, dataType)
 }
 
 // IsAllowed is a free data retrieval call binding the contract method 0x50615985.
@@ -302,8 +318,8 @@ func (_Consents *ConsentsCallerSession) IsAllowed(userId types.ID, appName strin
 // IsAllowedAt is a free data retrieval call binding the contract method 0x7cdda67c.
 //
 // Solidity: function isAllowedAt(bytes8 userId, string appName, uint8 action, string dataType, uint256 blockNumber) constant returns(bool)
-func (manager *ConsentsContract) IsAllowedAt(userId types.ID, appName string, action uint8, dataType string, blockNumber *big.Int) (bool, error) {
-	return manager.contract.IsAllowedAt(nil, userId, appName, action, dataType, blockNumber)
+func (c *ConsentsContract) IsAllowedAt(userId types.ID, appName string, action uint8, dataType string, blockNumber *big.Int) (bool, error) {
+	return c.contract.IsAllowedAt(nil, userId, appName, action, dataType, blockNumber)
 }
 
 // IsAllowedAt is a free data retrieval call binding the contract method 0x7cdda67c.
@@ -334,21 +350,19 @@ func (_Consents *ConsentsCallerSession) IsAllowedAt(userId types.ID, appName str
 
 type IConsentsTransacts interface {
 	Consent(ctx context.Context, action uint8, appName string, dataType string, allowed bool) (*ethTypes.Receipt, error)
-
 	ConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool) (*ethTypes.Receipt, error)
-
 	ModifyConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Receipt, error)
 }
 
 // Consent is a paid mutator transaction binding the contract method 0xbecae241.
 //
 // Solidity: function consent(uint8 action, string appName, string dataType, bool allowed) returns()
-func (manager *ConsentsContract) Consent(ctx context.Context, action uint8, appName string, dataType string, allowed bool) (*ethTypes.Receipt, error) {
-	tx, err := manager.contract.Consent(manager.client.Account(), action, appName, dataType, allowed)
+func (c *ConsentsContract) Consent(ctx context.Context, action uint8, appName string, dataType string, allowed bool) (*ethTypes.Receipt, error) {
+	tx, err := c.contract.Consent(c.client.Account(), action, appName, dataType, allowed)
 	if err != nil {
 		return nil, err
 	}
-	return manager.client.WaitMined(ctx, tx)
+	return c.client.WaitMined(ctx, tx)
 }
 
 // Consent is a paid mutator transaction binding the contract method 0xbecae241.
@@ -375,12 +389,12 @@ func (_Consents *ConsentsTransactorSession) Consent(action uint8, appName string
 // ConsentByController is a paid mutator transaction binding the contract method 0xf92519d8.
 //
 // Solidity: function consentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed) returns()
-func (manager *ConsentsContract) ConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool) (*ethTypes.Receipt, error) {
-	tx, err := manager.contract.ConsentByController(manager.client.Account(), action, userId, appName, dataType, allowed)
+func (c *ConsentsContract) ConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool) (*ethTypes.Receipt, error) {
+	tx, err := c.contract.ConsentByController(c.client.Account(), action, userId, appName, dataType, allowed)
 	if err != nil {
 		return nil, err
 	}
-	return manager.client.WaitMined(ctx, tx)
+	return c.client.WaitMined(ctx, tx)
 }
 
 // ConsentByController is a paid mutator transaction binding the contract method 0xf92519d8.
@@ -407,12 +421,12 @@ func (_Consents *ConsentsTransactorSession) ConsentByController(action uint8, us
 // ModifyConsentByController is a paid mutator transaction binding the contract method 0xedf2ef20.
 //
 // Solidity: function modifyConsentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed, bytes passwordSignature) returns()
-func (manager *ConsentsContract) ModifyConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Receipt, error) {
-	tx, err := manager.contract.ModifyConsentByController(manager.client.Account(), action, userId, appName, dataType, allowed, passwordSignature)
+func (c *ConsentsContract) ModifyConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Receipt, error) {
+	tx, err := c.contract.ModifyConsentByController(c.client.Account(), action, userId, appName, dataType, allowed, passwordSignature)
 	if err != nil {
 		return nil, err
 	}
-	return manager.client.WaitMined(ctx, tx)
+	return c.client.WaitMined(ctx, tx)
 }
 
 // ModifyConsentByController is a paid mutator transaction binding the contract method 0xedf2ef20.
