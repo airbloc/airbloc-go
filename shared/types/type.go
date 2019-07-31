@@ -3,11 +3,12 @@ package types
 import (
 	"encoding/binary"
 	"encoding/hex"
+	"time"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/json-iterator/go"
 	"github.com/pkg/errors"
-	"time"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -137,11 +138,11 @@ func UintToRowId(i uint32) RowId {
 	return id
 }
 
-func (id *RowId) Uint32() uint32 {
+func (id RowId) Uint32() uint32 {
 	return binary.LittleEndian.Uint32(id[:])
 }
 
-func (id *RowId) Hex() string {
+func (id RowId) Hex() string {
 	return hex.EncodeToString(id[:])
 }
 
@@ -162,6 +163,6 @@ func (id *RowId) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (id *RowId) MarshalJSON() ([]byte, error) {
+func (id RowId) MarshalJSON() ([]byte, error) {
 	return json.Marshal(id.Hex())
 }
