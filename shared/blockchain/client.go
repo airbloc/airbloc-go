@@ -2,6 +2,11 @@ package blockchain
 
 import (
 	"context"
+	"net/url"
+	"reflect"
+	"strings"
+	"time"
+
 	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/logger"
@@ -10,10 +15,6 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/pkg/errors"
-	"net/url"
-	"reflect"
-	"strings"
-	"time"
 )
 
 type Client struct {
@@ -21,7 +22,7 @@ type Client struct {
 	ctx        context.Context
 	cfg        ClientOpt
 	transactor *bind.TransactOpts
-	contracts  *ContractManager
+	contracts  *contractManager
 	logger     *logger.Logger
 }
 
