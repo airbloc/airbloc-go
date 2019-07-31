@@ -50,21 +50,21 @@ func NewDataIdFromStr(dataID string) (id DataId, err error) {
 		err = errors.Wrap(err, "failed to parse bundleId")
 		return
 	}
-	copy(id[:IDStrLength], bundleId[:])
+	copy(id[:IDLength], bundleId[:])
 
 	userId, err := HexToID(convert(dataID, 1))
 	if err != nil {
 		err = errors.Wrap(err, "failed to parse ownerId")
 		return
 	}
-	copy(id[IDStrLength:IDStrLength*2], userId[:])
+	copy(id[IDLength:IDLength*2], userId[:])
 
 	rowId, err := hex.DecodeString(dataID[IDStrLength*2:])
 	if err != nil {
 		err = errors.Wrap(err, "failed to parse rowId")
 		return
 	}
-	copy(id[IDStrLength*2:], rowId[:])
+	copy(id[IDLength*2:], rowId[:])
 
 	return
 }
