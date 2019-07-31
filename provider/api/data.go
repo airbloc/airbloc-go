@@ -31,13 +31,13 @@ func (api *dataAPI) GetData(c *gin.Context) {
 	rawDataId := c.Param("dataId")
 	dataId, err := types.NewDataIdFromStr(rawDataId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
 	res, err := api.manager.Get(dataId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, res)
@@ -48,13 +48,13 @@ func (api *dataAPI) GetBatch(c *gin.Context) {
 	batchManager := api.manager.Batches()
 	batchInfo, err := batchManager.Get(batchId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 
 	res, err := api.manager.GetBatch(batchInfo)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, res)
@@ -64,13 +64,13 @@ func (api *dataAPI) GetBundle(c *gin.Context) {
 	rawBundleId := c.Param("bundleId")
 	bundleId, err := types.HexToID(rawBundleId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
 	res, err := api.manager.GetBundle(c, bundleId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, res)
@@ -112,7 +112,7 @@ func (api *dataAPI) Delete(c *gin.Context) {
 	rawDataId := c.Param("dataId")
 	dataId, err := types.NewDataIdFromStr(rawDataId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -127,7 +127,7 @@ func (api *dataAPI) DeleteBatch(c *gin.Context) {
 	batchManager := api.manager.Batches()
 	batchInfo, err := batchManager.Get(batchId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 

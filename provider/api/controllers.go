@@ -29,7 +29,7 @@ func (api *controllerRegistryAPI) register(c *gin.Context) {
 	controllerAddr := common.HexToAddress(rawControllerAddr)
 
 	if err := api.controllers.Register(c, controllerAddr); err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
@@ -44,7 +44,7 @@ func (api *controllerRegistryAPI) get(c *gin.Context) {
 
 	controller, err := api.controllers.Get(controllerAddr)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, controller)

@@ -46,7 +46,7 @@ func (api *exchangeAPI) prepare(c *gin.Context) {
 
 	var escrowSign [4]byte
 	if tmpBytes, err := hex.DecodeString(req.EscrowSign); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	} else {
 		copy(escrowSign[:], tmpBytes[:])
@@ -54,7 +54,7 @@ func (api *exchangeAPI) prepare(c *gin.Context) {
 
 	escrowArgs, err := hex.DecodeString(req.EscrowArgs)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -62,7 +62,7 @@ func (api *exchangeAPI) prepare(c *gin.Context) {
 	for index, rawDataId := range req.DataIds {
 		dataIds[index], err = types.NewDataIdFromStr(rawDataId)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			return
 		}
 	}
@@ -72,7 +72,7 @@ func (api *exchangeAPI) prepare(c *gin.Context) {
 		escrow, escrowSign, escrowArgs, dataIds,
 	)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -91,7 +91,7 @@ func (api *exchangeAPI) addDataIds(c *gin.Context) {
 	rawOfferId := c.Param("offerId")
 	offerId, err := types.HexToID(rawOfferId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -99,14 +99,14 @@ func (api *exchangeAPI) addDataIds(c *gin.Context) {
 	for index, rawDataId := range req.DataIds {
 		dataIds[index], err = types.NewDataIdFromStr(rawDataId)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			return
 		}
 	}
 
 	err = api.manager.AddDataIds(c, offerId, dataIds)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -120,13 +120,13 @@ func (api *exchangeAPI) order(c *gin.Context) {
 	rawOfferId := c.Param("offerId")
 	offerId, err := types.HexToID(rawOfferId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
 	err = api.manager.Order(c, offerId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
@@ -139,13 +139,13 @@ func (api *exchangeAPI) cancel(c *gin.Context) {
 	rawOfferId := c.Param("offerId")
 	offerId, err := types.HexToID(rawOfferId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
 	err = api.manager.Cancel(c, offerId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
@@ -158,13 +158,13 @@ func (api *exchangeAPI) getOffer(c *gin.Context) {
 	rawOfferId := c.Param("offerId")
 	offerId, err := types.HexToID(rawOfferId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
 	offer, err := api.manager.GetOffer(offerId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, offer)

@@ -28,7 +28,7 @@ func NewAppRegistryAPI(backend service.Backend) (api.API, error) {
 func (api *appRegistryAPI) register(c *gin.Context) {
 	appName := c.Param(":appName")
 	if err := api.apps.Register(c, appName); err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
@@ -40,7 +40,7 @@ func (api *appRegistryAPI) register(c *gin.Context) {
 func (api *appRegistryAPI) unregister(c *gin.Context) {
 	appName := c.Param(":appName")
 	if err := api.apps.Unregister(c, appName); err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
@@ -54,7 +54,7 @@ func (api *appRegistryAPI) get(c *gin.Context) {
 
 	app, err := api.apps.Get(appName)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, app)
@@ -73,7 +73,7 @@ func (api *appRegistryAPI) transferAppOwner(c *gin.Context) {
 
 	newOwner := common.HexToAddress(req.NewOwner)
 	if err := api.apps.TransferAppOwner(c, appName, newOwner); err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "success"})

@@ -30,7 +30,7 @@ func NewAccountsAPI(backend service.Backend) (api.API, error) {
 func (api *accountsAPI) create(c *gin.Context) {
 	accountId, err := api.accounts.Create(c)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"accountId": accountId.Hex()})
@@ -51,7 +51,7 @@ func (api *accountsAPI) createTemporary(c *gin.Context) {
 	identityHash := common.HexToHash(req.IdentityHash)
 	accountId, err := api.accounts.CreateTemporary(c, identityHash)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"accountId": accountId.Hex()})
@@ -75,13 +75,13 @@ func (api *accountsAPI) unlockTemporary(c *gin.Context) {
 	newOwner := common.HexToAddress(req.NewOwner)
 	passwordSignature, err := hex.DecodeString(req.PasswordSignature)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
 	err = api.accounts.UnlockTemporary(c, identityPreimage, newOwner, passwordSignature)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -102,7 +102,7 @@ func (api *accountsAPI) setController(c *gin.Context) {
 
 	controller := common.HexToAddress(req.Controller)
 	if err := api.accounts.SetController(c, controller); err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
@@ -121,13 +121,13 @@ func (api *accountsAPI) getAccount(c *gin.Context) {
 
 	accountId, err := types.HexToID(req.AccountId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
 	account, err := api.accounts.GetAccount(accountId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": err})
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, account)
@@ -153,7 +153,7 @@ func (api *accountsAPI) getAccountId(c *gin.Context) {
 		owner := common.HexToAddress(req.Owner)
 		accountId, err := api.accounts.GetAccountId(owner)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"accountId": accountId.Hex()})
@@ -164,13 +164,13 @@ func (api *accountsAPI) getAccountId(c *gin.Context) {
 		messageHash := common.HexToHash(req.MessageHash)
 		signature, err := hex.DecodeString(req.Signature)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 			return
 		}
 
 		accountId, err := api.accounts.GetAccountIdFromSignature(messageHash, signature)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
+			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"accountId": accountId.Hex()})
