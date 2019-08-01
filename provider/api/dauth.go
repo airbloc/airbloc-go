@@ -36,14 +36,15 @@ func (api *dAuthAPI) signIn(c *gin.Context) {
 		Controller string
 	}
 
-	if err := c.MustBindWith(&req, binding.JSON); err != nil {
+	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	controller := ethCommon.HexToAddress(req.Controller)
 	accountId, err := api.dauthClient.SignIn(c, req.Identity, controller)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -56,13 +57,14 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 		AppName   string
 	}
 
-	if err := c.MustBindWith(&req, binding.Query); err != nil {
+	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	accountId, err := types.HexToID(req.AccountId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -80,7 +82,7 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 		Start:   api.consents.CreatedAt().Uint64(),
 	}, nil, []types.ID{accountId}, nil)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": err.Error()})
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -95,7 +97,7 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 		Start:   api.consents.CreatedAt().Uint64(),
 	})
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": err.Error()})
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -110,7 +112,7 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 	// data type
 	for ; dataTypeEventIter.Next(); dataTypeRegisterEvent = dataTypeEventIter.Event {
 		if dataTypeRegisterEvent == nil {
-			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
+			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 			return
 		}
 
@@ -119,7 +121,7 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 			dataType := dataTypeRegisterEvent.Name
 			allowed, err := api.consents.IsAllowed(accountId, dataType, uint8(action), req.AppName)
 			if err != nil {
-				c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
+				c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 				return
 			}
 
@@ -146,13 +148,14 @@ func (api *dAuthAPI) allow(c *gin.Context) {
 		AppName   string
 	}
 
-	if err := c.MustBindWith(&req, binding.JSON); err != nil {
+	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	accountId, err := types.HexToID(req.AccountId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -163,7 +166,7 @@ func (api *dAuthAPI) allow(c *gin.Context) {
 		req.AppName,
 	)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -178,13 +181,14 @@ func (api *dAuthAPI) deny(c *gin.Context) {
 		AppName   string
 	}
 
-	if err := c.MustBindWith(&req, binding.JSON); err != nil {
+	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	accountId, err := types.HexToID(req.AccountId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -195,7 +199,7 @@ func (api *dAuthAPI) deny(c *gin.Context) {
 		req.AppName,
 	)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
 

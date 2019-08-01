@@ -31,7 +31,9 @@ func (api *dataTypeRegistryAPI) register(c *gin.Context) {
 		SchemaHash string
 	}
 
-	if err := c.MustBindWith(&req, binding.JSON); err != nil {
+	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -40,7 +42,7 @@ func (api *dataTypeRegistryAPI) register(c *gin.Context) {
 		schemaHash = common.HexToHash(req.SchemaHash)
 	)
 	if err := api.dataTypes.Register(c, name, schemaHash); err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
@@ -52,7 +54,7 @@ func (api *dataTypeRegistryAPI) register(c *gin.Context) {
 func (api *dataTypeRegistryAPI) unregister(c *gin.Context) {
 	name := c.Param("name")
 	if err := api.dataTypes.Unregister(c, name); err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err.Error()})
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
@@ -65,7 +67,7 @@ func (api *dataTypeRegistryAPI) get(c *gin.Context) {
 	name := c.Param("name")
 	dataType, err := api.dataTypes.Get(name)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": err.Error()})
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, dataType)
