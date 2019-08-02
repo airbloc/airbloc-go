@@ -3,6 +3,7 @@ package testutils
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -11,6 +12,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/stretchr/testify/assert"
+)
+
+var (
+	TestErr        = errors.New("error")
+	TestErrStr     = `{"error":"error"}`
+	TestIdHex      = "deadbeefdeadbeef"
+	TestSuccessStr = `{"message":"success"}`
 )
 
 // CreateTestRequest creates gin TestContext and inject request data in context and return.

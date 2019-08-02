@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -19,44 +18,41 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	testErr           = errors.New("error")
-	testErrStr        = `{"error":"error"}`
-	testIdHex         = "deadbeefdeadbeef"
-	testSuccessMsgStr = `{"message":"success"}`
-)
-
 // happy path
 func TestAccountsAPI_Create(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
-
 	w, c := testutils.CreateTestRequest(t, gin.H{}, binding.JSON)
-	mockManager.EXPECT().Create(c).Return(types.HexToID(testIdHex))
+
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	mockManager.EXPECT().
+		Create(c).
+		Return(types.HexToID(testutils.TestIdHex))
 
 	api := accountsAPI{mockManager}
 	api.create(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, fmt.Sprintf(`{"accountId":"%s"}`, testIdHex), w.Body.String())
+	assert.Equal(t, fmt.Sprintf(`{"accountId":"%s"}`, testutils.TestIdHex), w.Body.String())
 }
 
 func TestAccountsAPI_Create_Conflict(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
-
 	w, c := testutils.CreateTestRequest(t, gin.H{}, binding.JSON)
-	mockManager.EXPECT().Create(c).Return(types.ID{}, testErr)
+
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	mockManager.EXPECT().
+		Create(c).
+		Return(types.ID{}, testutils.TestErr)
 
 	api := accountsAPI{mockManager}
 	api.create(c)
 
 	assert.Equal(t, http.StatusConflict, w.Code)
-	assert.Equal(t, testErrStr, w.Body.String())
+	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
 // happy path
@@ -64,25 +60,27 @@ func TestAccountsAPI_CreateTemporary(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	w, c := testutils.CreateTestRequest(t, gin.H{"identityHash": testutils.TestIdHex}, binding.JSON)
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"identityHash": testIdHex}, binding.JSON)
-	mockManager.EXPECT().CreateTemporary(c, common.HexToHash(testIdHex)).Return(types.HexToID(testIdHex))
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	mockManager.EXPECT().
+		CreateTemporary(c, common.HexToHash(testutils.TestIdHex)).
+		Return(types.HexToID(testutils.TestIdHex))
 
 	api := accountsAPI{mockManager}
 	api.createTemporary(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, fmt.Sprintf(`{"accountId":"%s"}`, testIdHex), w.Body.String())
+	assert.Equal(t, fmt.Sprintf(`{"accountId":"%s"}`, testutils.TestIdHex), w.Body.String())
 }
 
 func TestAccountsAPI_CreateTemporary_InvalidJSON(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
-
 	w, c := testutils.CreateTestRequest(t, gin.H{}, binding.JSON)
+
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 
 	api := accountsAPI{mockManager}
 	api.createTemporary(c)
@@ -95,16 +93,18 @@ func TestAccountsAPI_CreateTemporary_Conflict(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	w, c := testutils.CreateTestRequest(t, gin.H{"identityHash": testutils.TestIdHex}, binding.JSON)
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"identityHash": testIdHex}, binding.JSON)
-	mockManager.EXPECT().CreateTemporary(c, common.HexToHash(testIdHex)).Return(types.ID{}, testErr)
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	mockManager.EXPECT().
+		CreateTemporary(c, common.HexToHash(testutils.TestIdHex)).
+		Return(types.ID{}, testutils.TestErr)
 
 	api := accountsAPI{mockManager}
 	api.createTemporary(c)
 
 	assert.Equal(t, http.StatusConflict, w.Code)
-	assert.Equal(t, testErrStr, w.Body.String())
+	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
 // happy path
@@ -112,35 +112,35 @@ func TestAccountsAPI_UnlockTemporary(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
-
 	w, c := testutils.CreateTestRequest(t, gin.H{
-		"identityPreimage":  testIdHex,
-		"newOwner":          testIdHex,
-		"passwordSignature": testIdHex,
+		"identityPreimage":  testutils.TestIdHex,
+		"newOwner":          testutils.TestIdHex,
+		"passwordSignature": testutils.TestIdHex,
 	}, binding.JSON)
-	passSig, _ := hex.DecodeString(testIdHex)
+	passSig, _ := hex.DecodeString(testutils.TestIdHex)
 
-	mockManager.EXPECT().UnlockTemporary(
-		c, common.HexToHash(testIdHex),
-		common.HexToAddress(testIdHex),
-		passSig,
-	).Return(nil)
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	mockManager.EXPECT().
+		UnlockTemporary(
+			c, common.HexToHash(testutils.TestIdHex),
+			common.HexToAddress(testutils.TestIdHex),
+			passSig,
+		).Return(nil)
 
 	api := accountsAPI{mockManager}
 	api.unlockTemporary(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, testSuccessMsgStr, w.Body.String())
+	assert.Equal(t, testutils.TestSuccessStr, w.Body.String())
 }
 
 func TestAccountsAPI_UnlockTemporary_InvalidJSON(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
-
 	w, c := testutils.CreateTestRequest(t, gin.H{}, binding.JSON)
+
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 
 	api := accountsAPI{mockManager}
 	api.unlockTemporary(c)
@@ -153,13 +153,13 @@ func TestAccountsAPI_UnlockTemporary_InvalidPassordSignature(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
-
 	w, c := testutils.CreateTestRequest(t, gin.H{
-		"identityPreimage":  testIdHex,
-		"newOwner":          testIdHex,
-		"passwordSignature": testIdHex + "z", // make invalid hex
+		"identityPreimage":  testutils.TestIdHex,
+		"newOwner":          testutils.TestIdHex,
+		"passwordSignature": testutils.TestIdHex + "z", // make invalid hex
 	}, binding.JSON)
+
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 
 	api := accountsAPI{mockManager}
 	api.unlockTemporary(c)
@@ -172,26 +172,26 @@ func TestAccountsAPI_UnlockTemporary_Conflict(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
-
 	w, c := testutils.CreateTestRequest(t, gin.H{
-		"identityPreimage":  testIdHex,
-		"newOwner":          testIdHex,
-		"passwordSignature": testIdHex,
+		"identityPreimage":  testutils.TestIdHex,
+		"newOwner":          testutils.TestIdHex,
+		"passwordSignature": testutils.TestIdHex,
 	}, binding.JSON)
-	passSig, _ := hex.DecodeString(testIdHex)
+	passSig, _ := hex.DecodeString(testutils.TestIdHex)
 
-	mockManager.EXPECT().UnlockTemporary(
-		c, common.HexToHash(testIdHex),
-		common.HexToAddress(testIdHex),
-		passSig,
-	).Return(testErr)
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	mockManager.EXPECT().
+		UnlockTemporary(
+			c, common.HexToHash(testutils.TestIdHex),
+			common.HexToAddress(testutils.TestIdHex),
+			passSig,
+		).Return(testutils.TestErr)
 
 	api := accountsAPI{mockManager}
 	api.unlockTemporary(c)
 
 	assert.Equal(t, http.StatusConflict, w.Code)
-	assert.Equal(t, testErrStr, w.Body.String())
+	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
 // happy path
@@ -199,25 +199,27 @@ func TestAccountsAPI_SetController(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	w, c := testutils.CreateTestRequest(t, gin.H{"controller": testutils.TestIdHex}, binding.JSON)
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"controller": testIdHex}, binding.JSON)
-	mockManager.EXPECT().SetController(c, common.HexToAddress(testIdHex)).Return(nil)
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	mockManager.EXPECT().
+		SetController(c, common.HexToAddress(testutils.TestIdHex)).
+		Return(nil)
 
 	api := accountsAPI{mockManager}
 	api.setController(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, testSuccessMsgStr, w.Body.String())
+	assert.Equal(t, testutils.TestSuccessStr, w.Body.String())
 }
 
 func TestAccountsAPI_SetController_InvalidJSON(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
-
 	w, c := testutils.CreateTestRequest(t, gin.H{}, binding.JSON)
+
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 
 	api := accountsAPI{mockManager}
 	api.setController(c)
@@ -230,16 +232,18 @@ func TestAccountsAPI_SetController_Conflict(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	w, c := testutils.CreateTestRequest(t, gin.H{"controller": testutils.TestIdHex}, binding.JSON)
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"controller": testIdHex}, binding.JSON)
-	mockManager.EXPECT().SetController(c, common.HexToAddress(testIdHex)).Return(testErr)
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	mockManager.EXPECT().
+		SetController(c, common.HexToAddress(testutils.TestIdHex)).
+		Return(testutils.TestErr)
 
 	api := accountsAPI{mockManager}
 	api.setController(c)
 
 	assert.Equal(t, http.StatusConflict, w.Code)
-	assert.Equal(t, testErrStr, w.Body.String())
+	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
 // happy path
@@ -247,11 +251,13 @@ func TestAccountsAPI_GetAccount(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	w, c := testutils.CreateTestRequest(t, gin.H{"accountId": testutils.TestIdHex}, nil)
+	accountId, _ := types.HexToID(testutils.TestIdHex)
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"accountId": testIdHex}, nil)
-	accountId, _ := types.HexToID(testIdHex)
-	mockManager.EXPECT().GetAccount(accountId).Return(types.Account{}, nil)
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	mockManager.EXPECT().
+		GetAccount(accountId).
+		Return(types.Account{}, nil)
 
 	api := accountsAPI{mockManager}
 	api.getAccount(c)
@@ -265,9 +271,9 @@ func TestAccountsAPI_GetAccount_InvalidParam(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
-
 	w, c := testutils.CreateTestRequest(t, gin.H{}, nil)
+
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 
 	api := accountsAPI{mockManager}
 	api.getAccount(c)
@@ -280,9 +286,9 @@ func TestAccountsAPI_GetAccount_InvalidAccountId(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	w, c := testutils.CreateTestRequest(t, gin.H{"accountId": testutils.TestIdHex + "z"}, nil)
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"accountId": testIdHex + "z"}, nil)
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 
 	api := accountsAPI{mockManager}
 	api.getAccount(c)
@@ -295,17 +301,19 @@ func TestAccountsAPI_GetAccount_FailedToGetAccount(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	w, c := testutils.CreateTestRequest(t, gin.H{"accountId": testutils.TestIdHex}, nil)
+	accountId, _ := types.HexToID(testutils.TestIdHex)
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"accountId": testIdHex}, nil)
-	accountId, _ := types.HexToID(testIdHex)
-	mockManager.EXPECT().GetAccount(accountId).Return(types.Account{}, testErr)
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	mockManager.EXPECT().
+		GetAccount(accountId).
+		Return(types.Account{}, testutils.TestErr)
 
 	api := accountsAPI{mockManager}
 	api.getAccount(c)
 
 	assert.Equal(t, http.StatusConflict, w.Code)
-	assert.Equal(t, testErrStr, w.Body.String())
+	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
 // happy path
@@ -313,32 +321,36 @@ func TestAccountsAPI_GetAccountId(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	w, c := testutils.CreateTestRequest(t, gin.H{"owner": testutils.TestIdHex}, binding.Query)
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"owner": testIdHex}, binding.Query)
-	mockManager.EXPECT().GetAccountId(common.HexToAddress(testIdHex)).Return(types.HexToID(testIdHex))
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	mockManager.EXPECT().
+		GetAccountId(common.HexToAddress(testutils.TestIdHex)).
+		Return(types.HexToID(testutils.TestIdHex))
 
 	api := accountsAPI{mockManager}
 	api.getAccountId(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, fmt.Sprintf(`{"accountId":"%s"}`, testIdHex), w.Body.String())
+	assert.Equal(t, fmt.Sprintf(`{"accountId":"%s"}`, testutils.TestIdHex), w.Body.String())
 }
 
 func TestAccountsAPI_GetAccountId_FailedToGetAccountId(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	w, c := testutils.CreateTestRequest(t, gin.H{"owner": testutils.TestIdHex}, binding.Query)
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"owner": testIdHex}, binding.Query)
-	mockManager.EXPECT().GetAccountId(common.HexToAddress(testIdHex)).Return(types.ID{}, testErr)
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	mockManager.EXPECT().
+		GetAccountId(common.HexToAddress(testutils.TestIdHex)).
+		Return(types.ID{}, testutils.TestErr)
 
 	api := accountsAPI{mockManager}
 	api.getAccountId(c)
 
 	assert.Equal(t, http.StatusConflict, w.Code)
-	assert.Equal(t, testErrStr, w.Body.String())
+	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
 // happy path
@@ -346,33 +358,34 @@ func TestAccountsAPI_GetAccountIdWithSignature(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
-
 	w, c := testutils.CreateTestRequest(t, gin.H{
-		"messageHash": testIdHex,
-		"signature":   testIdHex,
+		"messageHash": testutils.TestIdHex,
+		"signature":   testutils.TestIdHex,
 	}, binding.Query)
-	sig, _ := hex.DecodeString(testIdHex)
+	sig, _ := hex.DecodeString(testutils.TestIdHex)
 
-	mockManager.EXPECT().GetAccountIdFromSignature(common.HexToHash(testIdHex), sig).Return(types.HexToID(testIdHex))
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	mockManager.EXPECT().
+		GetAccountIdFromSignature(common.HexToHash(testutils.TestIdHex), sig).
+		Return(types.HexToID(testutils.TestIdHex))
 
 	api := accountsAPI{mockManager}
 	api.getAccountId(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, fmt.Sprintf(`{"accountId":"%s"}`, testIdHex), w.Body.String())
+	assert.Equal(t, fmt.Sprintf(`{"accountId":"%s"}`, testutils.TestIdHex), w.Body.String())
 }
 
 func TestAccountsAPI_GetAccountIdWithSignature_InvalidSignature(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
-
 	w, c := testutils.CreateTestRequest(t, gin.H{
-		"messageHash": testIdHex,
-		"signature":   testIdHex + "z",
+		"messageHash": testutils.TestIdHex,
+		"signature":   testutils.TestIdHex + "z",
 	}, binding.Query)
+
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 
 	api := accountsAPI{mockManager}
 	api.getAccountId(c)
@@ -385,30 +398,31 @@ func TestAccountsAPI_GetAccountIdWithSignature_FailedToGetAccountIdFromSignature
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
-
 	w, c := testutils.CreateTestRequest(t, gin.H{
-		"messageHash": testIdHex,
-		"signature":   testIdHex,
+		"messageHash": testutils.TestIdHex,
+		"signature":   testutils.TestIdHex,
 	}, binding.Query)
-	sig, _ := hex.DecodeString(testIdHex)
+	sig, _ := hex.DecodeString(testutils.TestIdHex)
 
-	mockManager.EXPECT().GetAccountIdFromSignature(common.HexToHash(testIdHex), sig).Return(types.ID{}, testErr)
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
+	mockManager.EXPECT().
+		GetAccountIdFromSignature(common.HexToHash(testutils.TestIdHex), sig).
+		Return(types.ID{}, testutils.TestErr)
 
 	api := accountsAPI{mockManager}
 	api.getAccountId(c)
 
 	assert.Equal(t, http.StatusConflict, w.Code)
-	assert.Equal(t, testErrStr, w.Body.String())
+	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
 func TestAccountsAPI_GetAccount_BadRequest(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
-
 	w, c := testutils.CreateTestRequest(t, gin.H{}, nil)
+
+	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 
 	api := accountsAPI{mockManager}
 	api.getAccountId(c)
