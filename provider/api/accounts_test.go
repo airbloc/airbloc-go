@@ -64,7 +64,7 @@ func createTestRequest(t *testing.T, msg gin.H, b binding.Binding) (*httptest.Re
 }
 
 // happy path
-func TestNewAccountsAPI_Create(t *testing.T) {
+func TestAccountsAPI_Create(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -80,7 +80,7 @@ func TestNewAccountsAPI_Create(t *testing.T) {
 	assert.Equal(t, fmt.Sprintf(`{"accountId":"%s"}`, testIdHex), w.Body.String())
 }
 
-func TestNewAccountAPI_Create_Conflict(t *testing.T) {
+func TestAccountsAPI_Create_Conflict(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -97,7 +97,7 @@ func TestNewAccountAPI_Create_Conflict(t *testing.T) {
 }
 
 // happy path
-func TestNewAccountsAPI_CreateTemporary(t *testing.T) {
+func TestAccountsAPI_CreateTemporary(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -113,7 +113,7 @@ func TestNewAccountsAPI_CreateTemporary(t *testing.T) {
 	assert.Equal(t, fmt.Sprintf(`{"accountId":"%s"}`, testIdHex), w.Body.String())
 }
 
-func TestNewAccountsAPI_CreateTemporary_InvalidJSON(t *testing.T) {
+func TestAccountsAPI_CreateTemporary_InvalidJSON(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -128,7 +128,7 @@ func TestNewAccountsAPI_CreateTemporary_InvalidJSON(t *testing.T) {
 	assert.True(t, strings.HasPrefix(w.Body.String(), `{"error":`))
 }
 
-func TestNewAccountsAPI_CreateTemporary_Conflict(t *testing.T) {
+func TestAccountsAPI_CreateTemporary_Conflict(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -145,7 +145,7 @@ func TestNewAccountsAPI_CreateTemporary_Conflict(t *testing.T) {
 }
 
 // happy path
-func TestNewAccountsAPI_UnlockTemporary(t *testing.T) {
+func TestAccountsAPI_UnlockTemporary(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -171,7 +171,7 @@ func TestNewAccountsAPI_UnlockTemporary(t *testing.T) {
 	assert.Equal(t, testSuccessMsgStr, w.Body.String())
 }
 
-func TestNewAccountsAPI_UnlockTemporary_InvalidJSON(t *testing.T) {
+func TestAccountsAPI_UnlockTemporary_InvalidJSON(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -186,7 +186,7 @@ func TestNewAccountsAPI_UnlockTemporary_InvalidJSON(t *testing.T) {
 	assert.True(t, strings.HasPrefix(w.Body.String(), `{"error":`))
 }
 
-func TestNewAccountsAPI_UnlockTemporary_InvalidPassordSignature(t *testing.T) {
+func TestAccountsAPI_UnlockTemporary_InvalidPassordSignature(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -205,7 +205,7 @@ func TestNewAccountsAPI_UnlockTemporary_InvalidPassordSignature(t *testing.T) {
 	assert.True(t, strings.HasPrefix(w.Body.String(), `{"error":`))
 }
 
-func TestNewAccountsAPI_UnlockTemporary_Conflict(t *testing.T) {
+func TestAccountsAPI_UnlockTemporary_Conflict(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -232,7 +232,7 @@ func TestNewAccountsAPI_UnlockTemporary_Conflict(t *testing.T) {
 }
 
 // happy path
-func TestNewAccountsAPI_SetController(t *testing.T) {
+func TestAccountsAPI_SetController(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -248,7 +248,7 @@ func TestNewAccountsAPI_SetController(t *testing.T) {
 	assert.Equal(t, testSuccessMsgStr, w.Body.String())
 }
 
-func TestNewAccountsAPI_SetController_InvalidJSON(t *testing.T) {
+func TestAccountsAPI_SetController_InvalidJSON(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -263,7 +263,7 @@ func TestNewAccountsAPI_SetController_InvalidJSON(t *testing.T) {
 	assert.True(t, strings.HasPrefix(w.Body.String(), `{"error":`))
 }
 
-func TestNewAccountsAPI_SetController_Conflict(t *testing.T) {
+func TestAccountsAPI_SetController_Conflict(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -280,7 +280,7 @@ func TestNewAccountsAPI_SetController_Conflict(t *testing.T) {
 }
 
 // happy path
-func TestNewAccountsAPI_GetAccount(t *testing.T) {
+func TestAccountsAPI_GetAccount(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -298,7 +298,7 @@ func TestNewAccountsAPI_GetAccount(t *testing.T) {
 	assert.Equal(t, string(d), w.Body.String())
 }
 
-func TestNewAccountsAPI_GetAccount_InvalidParam(t *testing.T) {
+func TestAccountsAPI_GetAccount_InvalidParam(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -313,7 +313,7 @@ func TestNewAccountsAPI_GetAccount_InvalidParam(t *testing.T) {
 	assert.True(t, strings.HasPrefix(w.Body.String(), `{"error":`))
 }
 
-func TestNewAccountsAPI_GetAccount_InvalidAccountId(t *testing.T) {
+func TestAccountsAPI_GetAccount_InvalidAccountId(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -328,7 +328,7 @@ func TestNewAccountsAPI_GetAccount_InvalidAccountId(t *testing.T) {
 	assert.True(t, strings.HasPrefix(w.Body.String(), `{"error":`))
 }
 
-func TestNewAccountsAPI_GetAccount_FailedToGetAccount(t *testing.T) {
+func TestAccountsAPI_GetAccount_FailedToGetAccount(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -346,7 +346,7 @@ func TestNewAccountsAPI_GetAccount_FailedToGetAccount(t *testing.T) {
 }
 
 // happy path
-func TestNewAccountsAPI_GetAccountId(t *testing.T) {
+func TestAccountsAPI_GetAccountId(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -362,7 +362,7 @@ func TestNewAccountsAPI_GetAccountId(t *testing.T) {
 	assert.Equal(t, fmt.Sprintf(`{"accountId":"%s"}`, testIdHex), w.Body.String())
 }
 
-func TestNewAccountsAPI_GetAccountId_FailedToGetAccountId(t *testing.T) {
+func TestAccountsAPI_GetAccountId_FailedToGetAccountId(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -379,7 +379,7 @@ func TestNewAccountsAPI_GetAccountId_FailedToGetAccountId(t *testing.T) {
 }
 
 // happy path
-func TestNewAccountsAPI_GetAccountIdWithSignature(t *testing.T) {
+func TestAccountsAPI_GetAccountIdWithSignature(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -400,7 +400,7 @@ func TestNewAccountsAPI_GetAccountIdWithSignature(t *testing.T) {
 	assert.Equal(t, fmt.Sprintf(`{"accountId":"%s"}`, testIdHex), w.Body.String())
 }
 
-func TestNewAccountsAPI_GetAccountIdWithSignature_InvalidSignature(t *testing.T) {
+func TestAccountsAPI_GetAccountIdWithSignature_InvalidSignature(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -418,7 +418,7 @@ func TestNewAccountsAPI_GetAccountIdWithSignature_InvalidSignature(t *testing.T)
 	assert.True(t, strings.HasPrefix(w.Body.String(), `{"error":`))
 }
 
-func TestNewAccountsAPI_GetAccountIdWithSignature_FailedToGetAccountIdFromSignature(t *testing.T) {
+func TestAccountsAPI_GetAccountIdWithSignature_FailedToGetAccountIdFromSignature(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
@@ -439,7 +439,7 @@ func TestNewAccountsAPI_GetAccountIdWithSignature_FailedToGetAccountIdFromSignat
 	assert.Equal(t, testErrStr, w.Body.String())
 }
 
-func TestNewAccountsAPI_GetAccount_BadRequest(t *testing.T) {
+func TestAccountsAPI_GetAccount_BadRequest(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
