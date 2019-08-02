@@ -46,8 +46,8 @@ func NewConsentsManager(client blockchain.TxClient) IConsentsManager {
 // Consent is a paid mutator transaction binding the contract method 0xbecae241.
 //
 // Solidity: function consent(uint8 action, string appName, string dataType, bool allowed) returns()
-func (manager *consentsManager) Consent(ctx context.Context, action uint8, appName, dataType string, allowed bool) error {
-	receipt, err := manager.contract.Consent(ctx, action, appName, dataType, allowed)
+func (manager *consentsManager) Consent(ctx context.Context, appName string, action uint8, dataType string, allowed bool) error {
+	receipt, err := manager.contract.Consent(ctx, appName, action, dataType, allowed)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
@@ -71,12 +71,13 @@ func (manager *consentsManager) Consent(ctx context.Context, action uint8, appNa
 // Solidity: function consentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed) returns()
 func (manager *consentsManager) ConsentByController(
 	ctx context.Context,
-	action uint8,
 	userId types.ID,
-	appName, dataType string,
+	appName string,
+	action uint8,
+	dataType string,
 	allowed bool,
 ) error {
-	receipt, err := manager.contract.ConsentByController(ctx, action, userId, appName, dataType, allowed)
+	receipt, err := manager.contract.ConsentByController(ctx, userId, appName, action, dataType, allowed)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
@@ -100,13 +101,14 @@ func (manager *consentsManager) ConsentByController(
 // Solidity: function modifyConsentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed, bytes passwordSignature) returns()
 func (manager *consentsManager) ModifyConsentByController(
 	ctx context.Context,
-	action uint8,
 	userId types.ID,
-	appName, dataType string,
+	appName string,
+	action uint8,
+	dataType string,
 	allowed bool,
 	passwordSignature []byte,
 ) error {
-	receipt, err := manager.contract.ModifyConsentByController(ctx, action, userId, appName, dataType, allowed, passwordSignature)
+	receipt, err := manager.contract.ModifyConsentByController(ctx, userId, appName, action, dataType, allowed, passwordSignature)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}

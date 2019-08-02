@@ -104,39 +104,39 @@ func (mr *MockIConsentsManagerMockRecorder) IsAllowedAt(userId, appName, action,
 }
 
 // Consent mocks base method
-func (m *MockIConsentsManager) Consent(ctx context.Context, action uint8, appName, dataType string, allowed bool) error {
-	ret := m.ctrl.Call(m, "Consent", ctx, action, appName, dataType, allowed)
+func (m *MockIConsentsManager) Consent(ctx context.Context, appName string, action uint8, dataType string, allowed bool) error {
+	ret := m.ctrl.Call(m, "Consent", ctx, appName, action, dataType, allowed)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Consent indicates an expected call of Consent
-func (mr *MockIConsentsManagerMockRecorder) Consent(ctx, action, appName, dataType, allowed interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Consent", reflect.TypeOf((*MockIConsentsManager)(nil).Consent), ctx, action, appName, dataType, allowed)
+func (mr *MockIConsentsManagerMockRecorder) Consent(ctx, appName, action, dataType, allowed interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Consent", reflect.TypeOf((*MockIConsentsManager)(nil).Consent), ctx, appName, action, dataType, allowed)
 }
 
 // ConsentByController mocks base method
-func (m *MockIConsentsManager) ConsentByController(ctx context.Context, action uint8, userId types.ID, appName, dataType string, allowed bool) error {
-	ret := m.ctrl.Call(m, "ConsentByController", ctx, action, userId, appName, dataType, allowed)
+func (m *MockIConsentsManager) ConsentByController(ctx context.Context, userId types.ID, appName string, action uint8, dataType string, allowed bool) error {
+	ret := m.ctrl.Call(m, "ConsentByController", ctx, userId, appName, action, dataType, allowed)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ConsentByController indicates an expected call of ConsentByController
-func (mr *MockIConsentsManagerMockRecorder) ConsentByController(ctx, action, userId, appName, dataType, allowed interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentByController", reflect.TypeOf((*MockIConsentsManager)(nil).ConsentByController), ctx, action, userId, appName, dataType, allowed)
+func (mr *MockIConsentsManagerMockRecorder) ConsentByController(ctx, userId, appName, action, dataType, allowed interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentByController", reflect.TypeOf((*MockIConsentsManager)(nil).ConsentByController), ctx, userId, appName, action, dataType, allowed)
 }
 
 // ModifyConsentByController mocks base method
-func (m *MockIConsentsManager) ModifyConsentByController(ctx context.Context, action uint8, userId types.ID, appName, dataType string, allowed bool, passwordSignature []byte) error {
-	ret := m.ctrl.Call(m, "ModifyConsentByController", ctx, action, userId, appName, dataType, allowed, passwordSignature)
+func (m *MockIConsentsManager) ModifyConsentByController(ctx context.Context, userId types.ID, appName string, action uint8, dataType string, allowed bool, passwordSignature []byte) error {
+	ret := m.ctrl.Call(m, "ModifyConsentByController", ctx, userId, appName, action, dataType, allowed, passwordSignature)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ModifyConsentByController indicates an expected call of ModifyConsentByController
-func (mr *MockIConsentsManagerMockRecorder) ModifyConsentByController(ctx, action, userId, appName, dataType, allowed, passwordSignature interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentByController", reflect.TypeOf((*MockIConsentsManager)(nil).ModifyConsentByController), ctx, action, userId, appName, dataType, allowed, passwordSignature)
+func (mr *MockIConsentsManagerMockRecorder) ModifyConsentByController(ctx, userId, appName, action, dataType, allowed, passwordSignature interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentByController", reflect.TypeOf((*MockIConsentsManager)(nil).ModifyConsentByController), ctx, userId, appName, action, dataType, allowed, passwordSignature)
 }
 
 // FilterConsented mocks base method
@@ -251,42 +251,42 @@ func (mr *MockIConsentsContractMockRecorder) IsAllowedAt(userId, appName, action
 }
 
 // Consent mocks base method
-func (m *MockIConsentsContract) Consent(ctx context.Context, action uint8, appName, dataType string, allowed bool) (*types0.Receipt, error) {
-	ret := m.ctrl.Call(m, "Consent", ctx, action, appName, dataType, allowed)
+func (m *MockIConsentsContract) Consent(ctx context.Context, appName string, action uint8, dataType string, allowed bool) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "Consent", ctx, appName, action, dataType, allowed)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Consent indicates an expected call of Consent
-func (mr *MockIConsentsContractMockRecorder) Consent(ctx, action, appName, dataType, allowed interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Consent", reflect.TypeOf((*MockIConsentsContract)(nil).Consent), ctx, action, appName, dataType, allowed)
+func (mr *MockIConsentsContractMockRecorder) Consent(ctx, appName, action, dataType, allowed interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Consent", reflect.TypeOf((*MockIConsentsContract)(nil).Consent), ctx, appName, action, dataType, allowed)
 }
 
 // ConsentByController mocks base method
-func (m *MockIConsentsContract) ConsentByController(ctx context.Context, action uint8, userId types.ID, appName, dataType string, allowed bool) (*types0.Receipt, error) {
-	ret := m.ctrl.Call(m, "ConsentByController", ctx, action, userId, appName, dataType, allowed)
+func (m *MockIConsentsContract) ConsentByController(ctx context.Context, userId types.ID, appName string, action uint8, dataType string, allowed bool) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "ConsentByController", ctx, userId, appName, action, dataType, allowed)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ConsentByController indicates an expected call of ConsentByController
-func (mr *MockIConsentsContractMockRecorder) ConsentByController(ctx, action, userId, appName, dataType, allowed interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentByController", reflect.TypeOf((*MockIConsentsContract)(nil).ConsentByController), ctx, action, userId, appName, dataType, allowed)
+func (mr *MockIConsentsContractMockRecorder) ConsentByController(ctx, userId, appName, action, dataType, allowed interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentByController", reflect.TypeOf((*MockIConsentsContract)(nil).ConsentByController), ctx, userId, appName, action, dataType, allowed)
 }
 
 // ModifyConsentByController mocks base method
-func (m *MockIConsentsContract) ModifyConsentByController(ctx context.Context, action uint8, userId types.ID, appName, dataType string, allowed bool, passwordSignature []byte) (*types0.Receipt, error) {
-	ret := m.ctrl.Call(m, "ModifyConsentByController", ctx, action, userId, appName, dataType, allowed, passwordSignature)
+func (m *MockIConsentsContract) ModifyConsentByController(ctx context.Context, userId types.ID, appName string, action uint8, dataType string, allowed bool, passwordSignature []byte) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "ModifyConsentByController", ctx, userId, appName, action, dataType, allowed, passwordSignature)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ModifyConsentByController indicates an expected call of ModifyConsentByController
-func (mr *MockIConsentsContractMockRecorder) ModifyConsentByController(ctx, action, userId, appName, dataType, allowed, passwordSignature interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentByController", reflect.TypeOf((*MockIConsentsContract)(nil).ModifyConsentByController), ctx, action, userId, appName, dataType, allowed, passwordSignature)
+func (mr *MockIConsentsContractMockRecorder) ModifyConsentByController(ctx, userId, appName, action, dataType, allowed, passwordSignature interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentByController", reflect.TypeOf((*MockIConsentsContract)(nil).ModifyConsentByController), ctx, userId, appName, action, dataType, allowed, passwordSignature)
 }
 
 // FilterConsented mocks base method
@@ -401,42 +401,42 @@ func (m *MockIConsentsTransacts) EXPECT() *MockIConsentsTransactsMockRecorder {
 }
 
 // Consent mocks base method
-func (m *MockIConsentsTransacts) Consent(ctx context.Context, action uint8, appName, dataType string, allowed bool) (*types0.Receipt, error) {
-	ret := m.ctrl.Call(m, "Consent", ctx, action, appName, dataType, allowed)
+func (m *MockIConsentsTransacts) Consent(ctx context.Context, appName string, action uint8, dataType string, allowed bool) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "Consent", ctx, appName, action, dataType, allowed)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Consent indicates an expected call of Consent
-func (mr *MockIConsentsTransactsMockRecorder) Consent(ctx, action, appName, dataType, allowed interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Consent", reflect.TypeOf((*MockIConsentsTransacts)(nil).Consent), ctx, action, appName, dataType, allowed)
+func (mr *MockIConsentsTransactsMockRecorder) Consent(ctx, appName, action, dataType, allowed interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Consent", reflect.TypeOf((*MockIConsentsTransacts)(nil).Consent), ctx, appName, action, dataType, allowed)
 }
 
 // ConsentByController mocks base method
-func (m *MockIConsentsTransacts) ConsentByController(ctx context.Context, action uint8, userId types.ID, appName, dataType string, allowed bool) (*types0.Receipt, error) {
-	ret := m.ctrl.Call(m, "ConsentByController", ctx, action, userId, appName, dataType, allowed)
+func (m *MockIConsentsTransacts) ConsentByController(ctx context.Context, userId types.ID, appName string, action uint8, dataType string, allowed bool) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "ConsentByController", ctx, userId, appName, action, dataType, allowed)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ConsentByController indicates an expected call of ConsentByController
-func (mr *MockIConsentsTransactsMockRecorder) ConsentByController(ctx, action, userId, appName, dataType, allowed interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentByController", reflect.TypeOf((*MockIConsentsTransacts)(nil).ConsentByController), ctx, action, userId, appName, dataType, allowed)
+func (mr *MockIConsentsTransactsMockRecorder) ConsentByController(ctx, userId, appName, action, dataType, allowed interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentByController", reflect.TypeOf((*MockIConsentsTransacts)(nil).ConsentByController), ctx, userId, appName, action, dataType, allowed)
 }
 
 // ModifyConsentByController mocks base method
-func (m *MockIConsentsTransacts) ModifyConsentByController(ctx context.Context, action uint8, userId types.ID, appName, dataType string, allowed bool, passwordSignature []byte) (*types0.Receipt, error) {
-	ret := m.ctrl.Call(m, "ModifyConsentByController", ctx, action, userId, appName, dataType, allowed, passwordSignature)
+func (m *MockIConsentsTransacts) ModifyConsentByController(ctx context.Context, userId types.ID, appName string, action uint8, dataType string, allowed bool, passwordSignature []byte) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "ModifyConsentByController", ctx, userId, appName, action, dataType, allowed, passwordSignature)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ModifyConsentByController indicates an expected call of ModifyConsentByController
-func (mr *MockIConsentsTransactsMockRecorder) ModifyConsentByController(ctx, action, userId, appName, dataType, allowed, passwordSignature interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentByController", reflect.TypeOf((*MockIConsentsTransacts)(nil).ModifyConsentByController), ctx, action, userId, appName, dataType, allowed, passwordSignature)
+func (mr *MockIConsentsTransactsMockRecorder) ModifyConsentByController(ctx, userId, appName, action, dataType, allowed, passwordSignature interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentByController", reflect.TypeOf((*MockIConsentsTransacts)(nil).ModifyConsentByController), ctx, userId, appName, action, dataType, allowed, passwordSignature)
 }
 
 // MockIConsentsEvents is a mock of IConsentsEvents interface

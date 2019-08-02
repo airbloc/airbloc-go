@@ -121,20 +121,12 @@ func (manager *accountsManager) UnlockTemporary(
 //
 // Solidity: function setController(address controller) returns()
 func (manager *accountsManager) SetController(ctx context.Context, controller ethCommon.Address) error {
-	receipt, err := manager.contract.SetController(ctx, controller)
+	_, err := manager.contract.SetController(ctx, controller)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
 
-	evt, err := manager.contract.ParseControllerChangedFromReceipt(receipt)
-	if err != nil {
-		return errors.Wrap(err, "failed to parse a event from the receipt")
-	}
-
-	manager.log.Info("Controller changed.", logger.Attrs{
-		"account_id":     evt.AccountId.Hex(),
-		"new_controller": evt.NewController.Hex(),
-	})
+	manager.log.Info("Controller changed.", logger.Attrs{"controller": controller.Hex()})
 	return nil
 }
 
@@ -199,20 +191,6 @@ func (manager *accountsManager) IsTemporary(accountId types.ID) (bool, error) {
 // Solidity: function numberOfAccounts() constant returns(uint256)
 func (manager *accountsManager) NumberOfAccounts() (*big.Int, error) {
 	return manager.contract.NumberOfAccounts()
-}
-
-// FilterControllerChanged is a free log retrieval operation binding the contract event 0x7870b760e42dc95a63cbc10da0a922297123992dac9ae3ed98f28f9950a92c68.
-//
-// Solidity: event ControllerChanged(address indexed prevController, address indexed newController, bytes8 accountId)
-func (manager *accountsManager) FilterControllerChanged(opts *bind.FilterOpts, prevController []ethCommon.Address, newController []ethCommon.Address) (*AccountsControllerChangedIterator, error) {
-	return manager.contract.FilterControllerChanged(opts, prevController, newController)
-}
-
-// WatchControllerChanged is a free log subscription operation binding the contract event 0x7870b760e42dc95a63cbc10da0a922297123992dac9ae3ed98f28f9950a92c68.
-//
-// Solidity: event ControllerChanged(address indexed prevController, address indexed newController, bytes8 accountId)
-func (manager *accountsManager) WatchControllerChanged(opts *bind.WatchOpts, sink chan<- *AccountsControllerChanged, prevController []ethCommon.Address, newController []ethCommon.Address) (event.Subscription, error) {
-	return manager.contract.WatchControllerChanged(opts, sink, prevController, newController)
 }
 
 // FilterSignUp is a free log retrieval operation binding the contract event 0xb98ae0923087f0b489e49e611630c8accd44d415c9fcbd5d59c6511877754ec4.

@@ -35,7 +35,7 @@ var (
 )
 
 // ConsentsABI is the input ABI used to generate the binding from.
-const ConsentsABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":[{\"Name\":\"accountReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"controllerReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataTypeReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":null},\"Methods\":{\"consent\":{\"Name\":\"consent\",\"Const\":false,\"Inputs\":[{\"Name\":\"action\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataType\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"allowed\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"consentByController\":{\"Name\":\"consentByController\",\"Const\":false,\"Inputs\":[{\"Name\":\"action\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"userId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataType\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"allowed\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"isAllowed\":{\"Name\":\"isAllowed\",\"Const\":true,\"Inputs\":[{\"Name\":\"userId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"action\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataType\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"isAllowedAt\":{\"Name\":\"isAllowedAt\",\"Const\":true,\"Inputs\":[{\"Name\":\"userId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"action\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataType\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"blockNumber\",\"Type\":{\"Elem\":null,\"Kind\":22,\"Type\":{},\"Size\":256,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"modifyConsentByController\":{\"Name\":\"modifyConsentByController\",\"Const\":false,\"Inputs\":[{\"Name\":\"action\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"userId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataType\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"allowed\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"passwordSignature\",\"Type\":{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]}},\"Events\":{\"Consented\":{\"Name\":\"Consented\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"action\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"userId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"appAddr\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataType\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"allowed\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]}}}"
+const ConsentsABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":[{\"Name\":\"accountReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"controllerReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataTypeReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":null},\"Methods\":{\"consent\":{\"Name\":\"consent\",\"Const\":false,\"Inputs\":[{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"action\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataType\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"allowed\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"consentByController\":{\"Name\":\"consentByController\",\"Const\":false,\"Inputs\":[{\"Name\":\"userId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"action\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataType\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"allowed\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"isAllowed\":{\"Name\":\"isAllowed\",\"Const\":true,\"Inputs\":[{\"Name\":\"userId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"action\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataType\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"isAllowedAt\":{\"Name\":\"isAllowedAt\",\"Const\":true,\"Inputs\":[{\"Name\":\"userId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"action\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataType\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"blockNumber\",\"Type\":{\"Elem\":null,\"Kind\":22,\"Type\":{},\"Size\":256,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"modifyConsentByController\":{\"Name\":\"modifyConsentByController\",\"Const\":false,\"Inputs\":[{\"Name\":\"userId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"action\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataType\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"allowed\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"passwordSignature\",\"Type\":{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]}},\"Events\":{\"Consented\":{\"Name\":\"Consented\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"action\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"userId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"appAddr\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataType\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"allowed\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]}}}"
 
 // Consents is an auto generated Go binding around an Ethereum contract.
 type Consents struct {
@@ -215,9 +215,9 @@ type IConsentsManager interface {
 	IsAllowedAt(userId types.ID, appName string, action uint8, dataType string, blockNumber *big.Int) (bool, error)
 
 	// Transact methods
-	Consent(ctx context.Context, action uint8, appName string, dataType string, allowed bool) error
-	ConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool) error
-	ModifyConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool, passwordSignature []byte) error
+	Consent(ctx context.Context, appName string, action uint8, dataType string, allowed bool) error
+	ConsentByController(ctx context.Context, userId types.ID, appName string, action uint8, dataType string, allowed bool) error
+	ModifyConsentByController(ctx context.Context, userId types.ID, appName string, action uint8, dataType string, allowed bool, passwordSignature []byte) error
 
 	FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, appAddr []common.Address) (*ConsentsConsentedIterator, error)
 	WatchConsented(opts *bind.WatchOpts, sink chan<- *ConsentsConsented, action []uint8, userId []types.ID, appAddr []common.Address) (event.Subscription, error)
@@ -268,9 +268,9 @@ func NewConsentsContract(client blockchain.TxClient) IConsentsContract {
 // convenient hacks for blockchain.Client
 func init() {
 	blockchain.AddContractConstructor("Consents", (&Consents{}).new)
-	blockchain.RegisterSelector("0xbecae241", "consent(uint8,string,string,bool)")
-	blockchain.RegisterSelector("0xf92519d8", "consentByController(uint8,bytes8,string,string,bool)")
-	blockchain.RegisterSelector("0xedf2ef20", "modifyConsentByController(uint8,bytes8,string,string,bool,bytes)")
+	blockchain.RegisterSelector("0x40561d8d", "consent(string,uint8,string,bool)")
+	blockchain.RegisterSelector("0x2f928d24", "consentByController(bytes8,string,uint8,string,bool)")
+	blockchain.RegisterSelector("0xda5b0f50", "modifyConsentByController(bytes8,string,uint8,string,bool,bytes)")
 }
 
 func (_Consents *Consents) new(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (interface{}, error) {
@@ -349,105 +349,105 @@ func (_Consents *ConsentsCallerSession) IsAllowedAt(userId types.ID, appName str
 }
 
 type IConsentsTransacts interface {
-	Consent(ctx context.Context, action uint8, appName string, dataType string, allowed bool) (*ethTypes.Receipt, error)
-	ConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool) (*ethTypes.Receipt, error)
-	ModifyConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Receipt, error)
+	Consent(ctx context.Context, appName string, action uint8, dataType string, allowed bool) (*ethTypes.Receipt, error)
+	ConsentByController(ctx context.Context, userId types.ID, appName string, action uint8, dataType string, allowed bool) (*ethTypes.Receipt, error)
+	ModifyConsentByController(ctx context.Context, userId types.ID, appName string, action uint8, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Receipt, error)
 }
 
-// Consent is a paid mutator transaction binding the contract method 0xbecae241.
+// Consent is a paid mutator transaction binding the contract method 0x40561d8d.
 //
-// Solidity: function consent(uint8 action, string appName, string dataType, bool allowed) returns()
-func (c *ConsentsContract) Consent(ctx context.Context, action uint8, appName string, dataType string, allowed bool) (*ethTypes.Receipt, error) {
-	tx, err := c.contract.Consent(c.client.Account(), action, appName, dataType, allowed)
+// Solidity: function consent(string appName, uint8 action, string dataType, bool allowed) returns()
+func (c *ConsentsContract) Consent(ctx context.Context, appName string, action uint8, dataType string, allowed bool) (*ethTypes.Receipt, error) {
+	tx, err := c.contract.Consent(c.client.Account(), appName, action, dataType, allowed)
 	if err != nil {
 		return nil, err
 	}
 	return c.client.WaitMined(ctx, tx)
 }
 
-// Consent is a paid mutator transaction binding the contract method 0xbecae241.
+// Consent is a paid mutator transaction binding the contract method 0x40561d8d.
 //
-// Solidity: function consent(uint8 action, string appName, string dataType, bool allowed) returns()
-func (_Consents *ConsentsTransactor) Consent(opts *bind.TransactOpts, action uint8, appName string, dataType string, allowed bool) (*ethTypes.Transaction, error) {
-	return _Consents.contract.Transact(opts, "consent", action, appName, dataType, allowed)
+// Solidity: function consent(string appName, uint8 action, string dataType, bool allowed) returns()
+func (_Consents *ConsentsTransactor) Consent(opts *bind.TransactOpts, appName string, action uint8, dataType string, allowed bool) (*ethTypes.Transaction, error) {
+	return _Consents.contract.Transact(opts, "consent", appName, action, dataType, allowed)
 }
 
-// Consent is a paid mutator transaction binding the contract method 0xbecae241.
+// Consent is a paid mutator transaction binding the contract method 0x40561d8d.
 //
-// Solidity: function consent(uint8 action, string appName, string dataType, bool allowed) returns()
-func (_Consents *ConsentsSession) Consent(action uint8, appName string, dataType string, allowed bool) (*ethTypes.Transaction, error) {
-	return _Consents.Contract.Consent(&_Consents.TransactOpts, action, appName, dataType, allowed)
+// Solidity: function consent(string appName, uint8 action, string dataType, bool allowed) returns()
+func (_Consents *ConsentsSession) Consent(appName string, action uint8, dataType string, allowed bool) (*ethTypes.Transaction, error) {
+	return _Consents.Contract.Consent(&_Consents.TransactOpts, appName, action, dataType, allowed)
 }
 
-// Consent is a paid mutator transaction binding the contract method 0xbecae241.
+// Consent is a paid mutator transaction binding the contract method 0x40561d8d.
 //
-// Solidity: function consent(uint8 action, string appName, string dataType, bool allowed) returns()
-func (_Consents *ConsentsTransactorSession) Consent(action uint8, appName string, dataType string, allowed bool) (*ethTypes.Transaction, error) {
-	return _Consents.Contract.Consent(&_Consents.TransactOpts, action, appName, dataType, allowed)
+// Solidity: function consent(string appName, uint8 action, string dataType, bool allowed) returns()
+func (_Consents *ConsentsTransactorSession) Consent(appName string, action uint8, dataType string, allowed bool) (*ethTypes.Transaction, error) {
+	return _Consents.Contract.Consent(&_Consents.TransactOpts, appName, action, dataType, allowed)
 }
 
-// ConsentByController is a paid mutator transaction binding the contract method 0xf92519d8.
+// ConsentByController is a paid mutator transaction binding the contract method 0x2f928d24.
 //
-// Solidity: function consentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed) returns()
-func (c *ConsentsContract) ConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool) (*ethTypes.Receipt, error) {
-	tx, err := c.contract.ConsentByController(c.client.Account(), action, userId, appName, dataType, allowed)
+// Solidity: function consentByController(bytes8 userId, string appName, uint8 action, string dataType, bool allowed) returns()
+func (c *ConsentsContract) ConsentByController(ctx context.Context, userId types.ID, appName string, action uint8, dataType string, allowed bool) (*ethTypes.Receipt, error) {
+	tx, err := c.contract.ConsentByController(c.client.Account(), userId, appName, action, dataType, allowed)
 	if err != nil {
 		return nil, err
 	}
 	return c.client.WaitMined(ctx, tx)
 }
 
-// ConsentByController is a paid mutator transaction binding the contract method 0xf92519d8.
+// ConsentByController is a paid mutator transaction binding the contract method 0x2f928d24.
 //
-// Solidity: function consentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed) returns()
-func (_Consents *ConsentsTransactor) ConsentByController(opts *bind.TransactOpts, action uint8, userId types.ID, appName string, dataType string, allowed bool) (*ethTypes.Transaction, error) {
-	return _Consents.contract.Transact(opts, "consentByController", action, userId, appName, dataType, allowed)
+// Solidity: function consentByController(bytes8 userId, string appName, uint8 action, string dataType, bool allowed) returns()
+func (_Consents *ConsentsTransactor) ConsentByController(opts *bind.TransactOpts, userId types.ID, appName string, action uint8, dataType string, allowed bool) (*ethTypes.Transaction, error) {
+	return _Consents.contract.Transact(opts, "consentByController", userId, appName, action, dataType, allowed)
 }
 
-// ConsentByController is a paid mutator transaction binding the contract method 0xf92519d8.
+// ConsentByController is a paid mutator transaction binding the contract method 0x2f928d24.
 //
-// Solidity: function consentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed) returns()
-func (_Consents *ConsentsSession) ConsentByController(action uint8, userId types.ID, appName string, dataType string, allowed bool) (*ethTypes.Transaction, error) {
-	return _Consents.Contract.ConsentByController(&_Consents.TransactOpts, action, userId, appName, dataType, allowed)
+// Solidity: function consentByController(bytes8 userId, string appName, uint8 action, string dataType, bool allowed) returns()
+func (_Consents *ConsentsSession) ConsentByController(userId types.ID, appName string, action uint8, dataType string, allowed bool) (*ethTypes.Transaction, error) {
+	return _Consents.Contract.ConsentByController(&_Consents.TransactOpts, userId, appName, action, dataType, allowed)
 }
 
-// ConsentByController is a paid mutator transaction binding the contract method 0xf92519d8.
+// ConsentByController is a paid mutator transaction binding the contract method 0x2f928d24.
 //
-// Solidity: function consentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed) returns()
-func (_Consents *ConsentsTransactorSession) ConsentByController(action uint8, userId types.ID, appName string, dataType string, allowed bool) (*ethTypes.Transaction, error) {
-	return _Consents.Contract.ConsentByController(&_Consents.TransactOpts, action, userId, appName, dataType, allowed)
+// Solidity: function consentByController(bytes8 userId, string appName, uint8 action, string dataType, bool allowed) returns()
+func (_Consents *ConsentsTransactorSession) ConsentByController(userId types.ID, appName string, action uint8, dataType string, allowed bool) (*ethTypes.Transaction, error) {
+	return _Consents.Contract.ConsentByController(&_Consents.TransactOpts, userId, appName, action, dataType, allowed)
 }
 
-// ModifyConsentByController is a paid mutator transaction binding the contract method 0xedf2ef20.
+// ModifyConsentByController is a paid mutator transaction binding the contract method 0xda5b0f50.
 //
-// Solidity: function modifyConsentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed, bytes passwordSignature) returns()
-func (c *ConsentsContract) ModifyConsentByController(ctx context.Context, action uint8, userId types.ID, appName string, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Receipt, error) {
-	tx, err := c.contract.ModifyConsentByController(c.client.Account(), action, userId, appName, dataType, allowed, passwordSignature)
+// Solidity: function modifyConsentByController(bytes8 userId, string appName, uint8 action, string dataType, bool allowed, bytes passwordSignature) returns()
+func (c *ConsentsContract) ModifyConsentByController(ctx context.Context, userId types.ID, appName string, action uint8, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Receipt, error) {
+	tx, err := c.contract.ModifyConsentByController(c.client.Account(), userId, appName, action, dataType, allowed, passwordSignature)
 	if err != nil {
 		return nil, err
 	}
 	return c.client.WaitMined(ctx, tx)
 }
 
-// ModifyConsentByController is a paid mutator transaction binding the contract method 0xedf2ef20.
+// ModifyConsentByController is a paid mutator transaction binding the contract method 0xda5b0f50.
 //
-// Solidity: function modifyConsentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed, bytes passwordSignature) returns()
-func (_Consents *ConsentsTransactor) ModifyConsentByController(opts *bind.TransactOpts, action uint8, userId types.ID, appName string, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Transaction, error) {
-	return _Consents.contract.Transact(opts, "modifyConsentByController", action, userId, appName, dataType, allowed, passwordSignature)
+// Solidity: function modifyConsentByController(bytes8 userId, string appName, uint8 action, string dataType, bool allowed, bytes passwordSignature) returns()
+func (_Consents *ConsentsTransactor) ModifyConsentByController(opts *bind.TransactOpts, userId types.ID, appName string, action uint8, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Transaction, error) {
+	return _Consents.contract.Transact(opts, "modifyConsentByController", userId, appName, action, dataType, allowed, passwordSignature)
 }
 
-// ModifyConsentByController is a paid mutator transaction binding the contract method 0xedf2ef20.
+// ModifyConsentByController is a paid mutator transaction binding the contract method 0xda5b0f50.
 //
-// Solidity: function modifyConsentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed, bytes passwordSignature) returns()
-func (_Consents *ConsentsSession) ModifyConsentByController(action uint8, userId types.ID, appName string, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Transaction, error) {
-	return _Consents.Contract.ModifyConsentByController(&_Consents.TransactOpts, action, userId, appName, dataType, allowed, passwordSignature)
+// Solidity: function modifyConsentByController(bytes8 userId, string appName, uint8 action, string dataType, bool allowed, bytes passwordSignature) returns()
+func (_Consents *ConsentsSession) ModifyConsentByController(userId types.ID, appName string, action uint8, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Transaction, error) {
+	return _Consents.Contract.ModifyConsentByController(&_Consents.TransactOpts, userId, appName, action, dataType, allowed, passwordSignature)
 }
 
-// ModifyConsentByController is a paid mutator transaction binding the contract method 0xedf2ef20.
+// ModifyConsentByController is a paid mutator transaction binding the contract method 0xda5b0f50.
 //
-// Solidity: function modifyConsentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed, bytes passwordSignature) returns()
-func (_Consents *ConsentsTransactorSession) ModifyConsentByController(action uint8, userId types.ID, appName string, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Transaction, error) {
-	return _Consents.Contract.ModifyConsentByController(&_Consents.TransactOpts, action, userId, appName, dataType, allowed, passwordSignature)
+// Solidity: function modifyConsentByController(bytes8 userId, string appName, uint8 action, string dataType, bool allowed, bytes passwordSignature) returns()
+func (_Consents *ConsentsTransactorSession) ModifyConsentByController(userId types.ID, appName string, action uint8, dataType string, allowed bool, passwordSignature []byte) (*ethTypes.Transaction, error) {
+	return _Consents.Contract.ModifyConsentByController(&_Consents.TransactOpts, userId, appName, action, dataType, allowed, passwordSignature)
 }
 
 type IConsentsEvents interface {

@@ -244,32 +244,6 @@ func (mr *MockIAccountsManagerMockRecorder) UnlockTemporary(ctx, identityPreimag
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnlockTemporary", reflect.TypeOf((*MockIAccountsManager)(nil).UnlockTemporary), ctx, identityPreimage, newOwner, passwordSignature)
 }
 
-// FilterControllerChanged mocks base method
-func (m *MockIAccountsManager) FilterControllerChanged(opts *bind.FilterOpts, prevController, newController []common.Address) (*adapter.AccountsControllerChangedIterator, error) {
-	ret := m.ctrl.Call(m, "FilterControllerChanged", opts, prevController, newController)
-	ret0, _ := ret[0].(*adapter.AccountsControllerChangedIterator)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// FilterControllerChanged indicates an expected call of FilterControllerChanged
-func (mr *MockIAccountsManagerMockRecorder) FilterControllerChanged(opts, prevController, newController interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterControllerChanged", reflect.TypeOf((*MockIAccountsManager)(nil).FilterControllerChanged), opts, prevController, newController)
-}
-
-// WatchControllerChanged mocks base method
-func (m *MockIAccountsManager) WatchControllerChanged(opts *bind.WatchOpts, sink chan<- *adapter.AccountsControllerChanged, prevController, newController []common.Address) (event.Subscription, error) {
-	ret := m.ctrl.Call(m, "WatchControllerChanged", opts, sink, prevController, newController)
-	ret0, _ := ret[0].(event.Subscription)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// WatchControllerChanged indicates an expected call of WatchControllerChanged
-func (mr *MockIAccountsManagerMockRecorder) WatchControllerChanged(opts, sink, prevController, newController interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchControllerChanged", reflect.TypeOf((*MockIAccountsManager)(nil).WatchControllerChanged), opts, sink, prevController, newController)
-}
-
 // FilterSignUp mocks base method
 func (m *MockIAccountsManager) FilterSignUp(opts *bind.FilterOpts, owner []common.Address) (*adapter.AccountsSignUpIterator, error) {
 	ret := m.ctrl.Call(m, "FilterSignUp", opts, owner)
@@ -574,45 +548,6 @@ func (m *MockIAccountsContract) UnlockTemporary(ctx context.Context, identityPre
 // UnlockTemporary indicates an expected call of UnlockTemporary
 func (mr *MockIAccountsContractMockRecorder) UnlockTemporary(ctx, identityPreimage, newOwner, passwordSignature interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnlockTemporary", reflect.TypeOf((*MockIAccountsContract)(nil).UnlockTemporary), ctx, identityPreimage, newOwner, passwordSignature)
-}
-
-// FilterControllerChanged mocks base method
-func (m *MockIAccountsContract) FilterControllerChanged(opts *bind.FilterOpts, prevController, newController []common.Address) (*adapter.AccountsControllerChangedIterator, error) {
-	ret := m.ctrl.Call(m, "FilterControllerChanged", opts, prevController, newController)
-	ret0, _ := ret[0].(*adapter.AccountsControllerChangedIterator)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// FilterControllerChanged indicates an expected call of FilterControllerChanged
-func (mr *MockIAccountsContractMockRecorder) FilterControllerChanged(opts, prevController, newController interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterControllerChanged", reflect.TypeOf((*MockIAccountsContract)(nil).FilterControllerChanged), opts, prevController, newController)
-}
-
-// ParseControllerChangedFromReceipt mocks base method
-func (m *MockIAccountsContract) ParseControllerChangedFromReceipt(receipt *types0.Receipt) (*adapter.AccountsControllerChanged, error) {
-	ret := m.ctrl.Call(m, "ParseControllerChangedFromReceipt", receipt)
-	ret0, _ := ret[0].(*adapter.AccountsControllerChanged)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ParseControllerChangedFromReceipt indicates an expected call of ParseControllerChangedFromReceipt
-func (mr *MockIAccountsContractMockRecorder) ParseControllerChangedFromReceipt(receipt interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseControllerChangedFromReceipt", reflect.TypeOf((*MockIAccountsContract)(nil).ParseControllerChangedFromReceipt), receipt)
-}
-
-// WatchControllerChanged mocks base method
-func (m *MockIAccountsContract) WatchControllerChanged(opts *bind.WatchOpts, sink chan<- *adapter.AccountsControllerChanged, prevController, newController []common.Address) (event.Subscription, error) {
-	ret := m.ctrl.Call(m, "WatchControllerChanged", opts, sink, prevController, newController)
-	ret0, _ := ret[0].(event.Subscription)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// WatchControllerChanged indicates an expected call of WatchControllerChanged
-func (mr *MockIAccountsContractMockRecorder) WatchControllerChanged(opts, sink, prevController, newController interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchControllerChanged", reflect.TypeOf((*MockIAccountsContract)(nil).WatchControllerChanged), opts, sink, prevController, newController)
 }
 
 // FilterSignUp mocks base method
@@ -968,45 +903,6 @@ func NewMockIAccountsEvents(ctrl *gomock.Controller) *MockIAccountsEvents {
 // EXPECT returns an object that allows the caller to indicate expected use
 func (m *MockIAccountsEvents) EXPECT() *MockIAccountsEventsMockRecorder {
 	return m.recorder
-}
-
-// FilterControllerChanged mocks base method
-func (m *MockIAccountsEvents) FilterControllerChanged(opts *bind.FilterOpts, prevController, newController []common.Address) (*adapter.AccountsControllerChangedIterator, error) {
-	ret := m.ctrl.Call(m, "FilterControllerChanged", opts, prevController, newController)
-	ret0, _ := ret[0].(*adapter.AccountsControllerChangedIterator)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// FilterControllerChanged indicates an expected call of FilterControllerChanged
-func (mr *MockIAccountsEventsMockRecorder) FilterControllerChanged(opts, prevController, newController interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterControllerChanged", reflect.TypeOf((*MockIAccountsEvents)(nil).FilterControllerChanged), opts, prevController, newController)
-}
-
-// ParseControllerChangedFromReceipt mocks base method
-func (m *MockIAccountsEvents) ParseControllerChangedFromReceipt(receipt *types0.Receipt) (*adapter.AccountsControllerChanged, error) {
-	ret := m.ctrl.Call(m, "ParseControllerChangedFromReceipt", receipt)
-	ret0, _ := ret[0].(*adapter.AccountsControllerChanged)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ParseControllerChangedFromReceipt indicates an expected call of ParseControllerChangedFromReceipt
-func (mr *MockIAccountsEventsMockRecorder) ParseControllerChangedFromReceipt(receipt interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseControllerChangedFromReceipt", reflect.TypeOf((*MockIAccountsEvents)(nil).ParseControllerChangedFromReceipt), receipt)
-}
-
-// WatchControllerChanged mocks base method
-func (m *MockIAccountsEvents) WatchControllerChanged(opts *bind.WatchOpts, sink chan<- *adapter.AccountsControllerChanged, prevController, newController []common.Address) (event.Subscription, error) {
-	ret := m.ctrl.Call(m, "WatchControllerChanged", opts, sink, prevController, newController)
-	ret0, _ := ret[0].(event.Subscription)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// WatchControllerChanged indicates an expected call of WatchControllerChanged
-func (mr *MockIAccountsEventsMockRecorder) WatchControllerChanged(opts, sink, prevController, newController interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchControllerChanged", reflect.TypeOf((*MockIAccountsEvents)(nil).WatchControllerChanged), opts, sink, prevController, newController)
 }
 
 // FilterSignUp mocks base method
