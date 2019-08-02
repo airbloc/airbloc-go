@@ -3,12 +3,12 @@ package api
 import (
 	"net/http"
 
+	"github.com/ethereum/go-ethereum/common"
+
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 )
 
 // appRegistryAPI is api wrapper of contract AppRegistry.sol
@@ -26,7 +26,12 @@ func NewAppRegistryAPI(backend service.Backend) (api.API, error) {
 //
 // Solidity: function register(string appName) returns()
 func (api *appRegistryAPI) register(c *gin.Context) {
-	appName := c.Param(":appName")
+	appName := c.Param("appName")
+	if appName == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+		return
+	}
+
 	if err := api.apps.Register(c, appName); err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
@@ -38,7 +43,12 @@ func (api *appRegistryAPI) register(c *gin.Context) {
 //
 // Solidity: function unregister(string appName) returns()
 func (api *appRegistryAPI) unregister(c *gin.Context) {
-	appName := c.Param(":appName")
+	appName := c.Param("appName")
+	if appName == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+		return
+	}
+
 	if err := api.apps.Unregister(c, appName); err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
@@ -50,7 +60,11 @@ func (api *appRegistryAPI) unregister(c *gin.Context) {
 //
 // Solidity: function get(string appName) constant returns((string,address,bytes32))
 func (api *appRegistryAPI) get(c *gin.Context) {
-	appName := c.Param(":appName")
+	appName := c.Param("appName")
+	if appName == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+		return
+	}
 
 	app, err := api.apps.Get(appName)
 	if err != nil {
@@ -64,16 +78,14 @@ func (api *appRegistryAPI) get(c *gin.Context) {
 //
 // Solidity: function transferAppOwner(string appName, address newOwner) returns()
 func (api *appRegistryAPI) transferAppOwner(c *gin.Context) {
-	appName := c.Param(":appName")
-
-	var req struct{ NewOwner string }
-	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	appName := c.Param("appName")
+	newOwner := c.Param("newOwner")
+	if appName == "" || newOwner == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
 		return
 	}
 
-	newOwner := common.HexToAddress(req.NewOwner)
-	if err := api.apps.TransferAppOwner(c, appName, newOwner); err != nil {
+	if err := api.apps.TransferAppOwner(c, appName, common.HexToAddress(newOwner)); err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
@@ -86,5 +98,5 @@ func (api *appRegistryAPI) AttachToAPI(service *api.Service) {
 	apiMux.GET("/:appName", api.register)
 	apiMux.POST("/:appName", api.unregister)
 	apiMux.PATCH("/:appName", api.get)
-	apiMux.DELETE("/:appName", api.transferAppOwner)
+	apiMux.DELETE("/:appName/:newOwner", api.transferAppOwner)
 }
