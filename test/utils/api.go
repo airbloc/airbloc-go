@@ -15,10 +15,11 @@ import (
 )
 
 var (
-	TestErr        = errors.New("error")
-	TestErrStr     = `{"error":"error"}`
-	TestIdHex      = "deadbeefdeadbeef"
-	TestSuccessStr = `{"message":"success"}`
+	TestErr              = errors.New("error")
+	TestErrStr           = `{"error":"error"}`
+	TestErrBadRequestStr = `{"error":"Bad Request"}`
+	TestIdHex            = "deadbeefdeadbeef"
+	TestSuccessStr       = `{"message":"success"}`
 )
 
 // CreateTestRequest creates gin TestContext and inject request data in context and return.
