@@ -84,7 +84,9 @@ func (api *exchangeAPI) prepare(c *gin.Context) {
 //
 // Solidity: function addDataIds(bytes8 offerId, bytes20[] dataIds) returns()
 func (api *exchangeAPI) addDataIds(c *gin.Context) {
-	var req struct{ DataIds []string }
+	var req struct {
+		DataIds []string `binding:"required"`
+	}
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -141,6 +143,7 @@ func (api *exchangeAPI) order(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
@@ -165,6 +168,7 @@ func (api *exchangeAPI) cancel(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 

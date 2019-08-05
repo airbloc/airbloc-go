@@ -2,7 +2,7 @@ package provider
 
 import (
 	pAPI "github.com/airbloc/airbloc-go/provider/api"
-	"github.com/airbloc/airbloc-go/shared/service"
+	serviceLib "github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 )
 
@@ -18,11 +18,11 @@ var apis = []api.Constructor{
 	pAPI.NewUserAPI,
 }
 
-type Service struct {
+type service struct {
 	*api.Service
 }
 
-func NewService(backend service.Backend) (service.Service, error) {
+func NewService(backend serviceLib.Backend) (serviceLib.Service, error) {
 	svc, err := api.NewService(backend)
 	if err != nil {
 		return nil, err
@@ -39,13 +39,13 @@ func NewService(backend service.Backend) (service.Service, error) {
 		apiInstance.AttachToAPI(apiSvc)
 	}
 
-	return &Service{Service: apiSvc}, nil
+	return &service{Service: apiSvc}, nil
 }
 
-func (service Service) Start() error {
+func (service service) Start() error {
 	return service.Service.Start()
 }
 
-func (service Service) Stop() {
+func (service service) Stop() {
 	service.Service.Stop()
 }
