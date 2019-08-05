@@ -30,7 +30,7 @@ func (manager *Manager) Allow(
 	action types.ConsentActionTypes,
 	appName, dataType string,
 ) error {
-	return manager.consents.Consent(ctx, uint8(action), appName, dataType, true)
+	return manager.consents.Consent(ctx, appName, uint8(action), dataType, true)
 }
 
 func (manager *Manager) AllowByController(
@@ -49,9 +49,9 @@ func (manager *Manager) AllowByController(
 	}
 
 	if iter.Next() {
-		return manager.consents.ConsentByController(ctx, uint8(action), userId, appName, dataType, true)
+		return manager.consents.ConsentByController(ctx, userId, appName, uint8(action), dataType, true)
 	}
-	return manager.consents.ModifyConsentByController(ctx, uint8(action), userId, appName, dataType, true, passwordSignature)
+	return manager.consents.ModifyConsentByController(ctx, userId, appName, uint8(action), dataType, true, passwordSignature)
 }
 
 func (manager *Manager) Deny(
@@ -59,7 +59,7 @@ func (manager *Manager) Deny(
 	action types.ConsentActionTypes,
 	appName, dataType string,
 ) error {
-	return manager.consents.Consent(ctx, uint8(action), appName, dataType, false)
+	return manager.consents.Consent(ctx, appName, uint8(action), dataType, false)
 }
 
 func (manager *Manager) DenyByController(ctx context.Context,
@@ -77,7 +77,7 @@ func (manager *Manager) DenyByController(ctx context.Context,
 	}
 
 	if iter.Next() {
-		return manager.consents.ConsentByController(ctx, uint8(action), userId, appName, dataType, false)
+		return manager.consents.ConsentByController(ctx, userId, appName, uint8(action), dataType, false)
 	}
-	return manager.consents.ModifyConsentByController(ctx, uint8(action), userId, appName, dataType, false, passwordSignature)
+	return manager.consents.ModifyConsentByController(ctx, userId, appName, uint8(action), dataType, false, passwordSignature)
 }
