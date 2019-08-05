@@ -25,10 +25,13 @@ func NewControllerRegistryAPI(backend service.Backend) (api.API, error) {
 //
 // Solidity: function register(address controllerAddr) returns()
 func (api *controllerRegistryAPI) register(c *gin.Context) {
-	rawControllerAddr := c.Param("controllerAddr")
-	controllerAddr := common.HexToAddress(rawControllerAddr)
+	controllerAddr := c.Param("controllerAddr")
+	if controllerAddr == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+		return
+	}
 
-	if err := api.controllers.Register(c, controllerAddr); err != nil {
+	if err := api.controllers.Register(c, common.HexToAddress(controllerAddr)); err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
@@ -39,10 +42,13 @@ func (api *controllerRegistryAPI) register(c *gin.Context) {
 //
 // Solidity: function get(address controller) constant returns((address,uint256))
 func (api *controllerRegistryAPI) get(c *gin.Context) {
-	rawControllerAddr := c.Param("controllerAddr")
-	controllerAddr := common.HexToAddress(rawControllerAddr)
+	controllerAddr := c.Param("controllerAddr")
+	if controllerAddr == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+		return
+	}
 
-	controller, err := api.controllers.Get(controllerAddr)
+	controller, err := api.controllers.Get(common.HexToAddress(controllerAddr))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
