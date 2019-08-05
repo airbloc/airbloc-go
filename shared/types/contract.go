@@ -18,6 +18,13 @@ const (
 	AccountStatusCreated
 )
 
+// AccountStatusList is list of AccountStatus
+var AccountStatusList = map[uint8]AccountStatus{
+	uint8(AccountStatusNone):      AccountStatusNone,
+	uint8(AccountStatusTemporary): AccountStatusTemporary,
+	uint8(AccountStatusCreated):   AccountStatusCreated,
+}
+
 // Account is bind of Accounts.Account
 type Account struct {
 	Owner         common.Address "json:\"Owner\""
@@ -42,6 +49,12 @@ const (
 	// ConsentActionExchange is bind of Consents.ActionTypes.Exchange
 	ConsentActionExchange
 )
+
+// ConsentActionList is list of ConsentAction
+var ConsentActionList = map[uint8]ConsentActionTypes{
+	uint8(ConsentActionCollection): ConsentActionCollection,
+	uint8(ConsentActionExchange):   ConsentActionExchange,
+}
 
 // DataController is bind of ControllerRegistry.DataController
 type DataController struct {
