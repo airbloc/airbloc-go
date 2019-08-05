@@ -381,6 +381,18 @@ func (mr *MockIAccountsContractMockRecorder) CreatedAt() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIAccountsContract)(nil).CreatedAt))
 }
 
+// Filterer mocks base method
+func (m *MockIAccountsContract) Filterer() adapter.AccountsFilterer {
+	ret := m.ctrl.Call(m, "Filterer")
+	ret0, _ := ret[0].(adapter.AccountsFilterer)
+	return ret0
+}
+
+// Filterer indicates an expected call of Filterer
+func (mr *MockIAccountsContractMockRecorder) Filterer() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Filterer", reflect.TypeOf((*MockIAccountsContract)(nil).Filterer))
+}
+
 // Accounts mocks base method
 func (m *MockIAccountsContract) Accounts(arg0 types.ID) (types.Account, error) {
 	ret := m.ctrl.Call(m, "Accounts", arg0)

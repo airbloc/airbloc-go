@@ -289,6 +289,18 @@ func (mr *MockIAppRegistryContractMockRecorder) CreatedAt() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIAppRegistryContract)(nil).CreatedAt))
 }
 
+// Filterer mocks base method
+func (m *MockIAppRegistryContract) Filterer() adapter.AppRegistryFilterer {
+	ret := m.ctrl.Call(m, "Filterer")
+	ret0, _ := ret[0].(adapter.AppRegistryFilterer)
+	return ret0
+}
+
+// Filterer indicates an expected call of Filterer
+func (mr *MockIAppRegistryContractMockRecorder) Filterer() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Filterer", reflect.TypeOf((*MockIAppRegistryContract)(nil).Filterer))
+}
+
 // Exists mocks base method
 func (m *MockIAppRegistryContract) Exists(appName string) (bool, error) {
 	ret := m.ctrl.Call(m, "Exists", appName)

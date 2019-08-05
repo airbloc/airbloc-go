@@ -4,9 +4,6 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
-	"github.com/ethereum/go-ethereum/event"
-
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/logger"
@@ -14,8 +11,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Manager is contract wrapper struct
 type dataTypeRegistryManager struct {
+	DataTypeRegistryFilterer
 	contract IDataTypeRegistryContract
 	log      *logger.Logger
 }
@@ -37,9 +34,11 @@ func (manager *dataTypeRegistryManager) CreatedAt() *big.Int {
 
 // NewDataTypeRegistryManager makes new *dataTypeRegistryManager struct
 func NewDataTypeRegistryManager(client blockchain.TxClient) IDataTypeRegistryManager {
+	contract := NewDataTypeRegistryContract(client)
 	return &dataTypeRegistryManager{
-		contract: NewDataTypeRegistryContract(client),
-		log:      logger.New("data-type-registry"),
+		DataTypeRegistryFilterer: contract.Filterer(),
+		contract:                 contract,
+		log:                      logger.New("data-type-registry"),
 	}
 }
 
@@ -98,32 +97,4 @@ func (manager *dataTypeRegistryManager) Exists(name string) (bool, error) {
 // Solidity: function isOwner(string name, address owner) constant returns(bool)
 func (manager *dataTypeRegistryManager) IsOwner(name string, owner common.Address) (bool, error) {
 	return manager.contract.IsOwner(name, owner)
-}
-
-// FilterRegistration is a free log retrieval operation binding the contract event 0xd510136a132b28d5bccd27cc4dd52d556d9982ab168ba54b1e775d4d0f1ca948.
-//
-// Solidity: event Registration(string name)
-func (manager dataTypeRegistryManager) FilterRegistration(opts *bind.FilterOpts) (*DataTypeRegistryRegistrationIterator, error) {
-	return manager.contract.FilterRegistration(opts)
-}
-
-// WatchRegistration is a free log subscription operation binding the contract event 0xd510136a132b28d5bccd27cc4dd52d556d9982ab168ba54b1e775d4d0f1ca948.
-//
-// Solidity: event Registration(string name)
-func (manager dataTypeRegistryManager) WatchRegistration(opts *bind.WatchOpts, sink chan<- *DataTypeRegistryRegistration) (event.Subscription, error) {
-	return manager.contract.WatchRegistration(opts, sink)
-}
-
-// FilterUnregistration is a free log retrieval operation binding the contract event 0x2c7e9e18beb0594fa2ccaf8412bbe719d47f3c1efb1349e2ba03c1a3e4f64c83.
-//
-// Solidity: event Unregistration(string name)
-func (manager dataTypeRegistryManager) FilterUnregistration(opts *bind.FilterOpts) (*DataTypeRegistryUnregistrationIterator, error) {
-	return manager.contract.FilterUnregistration(opts)
-}
-
-// WatchUnregistration is a free log subscription operation binding the contract event 0x2c7e9e18beb0594fa2ccaf8412bbe719d47f3c1efb1349e2ba03c1a3e4f64c83.
-//
-// Solidity: event Unregistration(string name)
-func (manager dataTypeRegistryManager) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *DataTypeRegistryUnregistration) (event.Subscription, error) {
-	return manager.contract.WatchUnregistration(opts, sink)
 }

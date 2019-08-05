@@ -234,13 +234,14 @@ type IAppRegistryContract interface {
 	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
+	Filterer() AppRegistryFilterer
 
 	IAppRegistryCalls
 	IAppRegistryTransacts
 	IAppRegistryEvents
 }
 
-// Manager is contract wrapper struct
+// AppRegistryContract is contract wrapper struct
 type AppRegistryContract struct {
 	client   blockchain.TxClient
 	contract *AppRegistry
@@ -262,7 +263,12 @@ func (c *AppRegistryContract) CreatedAt() *big.Int {
 	return c.contract.CreatedAt()
 }
 
-// NewManager makes new *Manager struct
+// Filterer is getter method of AppRegistry.AppRegistryFilterer
+func (c *AppRegistryContract) Filterer() AppRegistryFilterer {
+	return c.AppRegistryFilterer
+}
+
+// NewAppRegistryContract makes new *AppRegistryContract struct
 func NewAppRegistryContract(client blockchain.TxClient) IAppRegistryContract {
 	contract := client.GetContract(&AppRegistry{}).(*AppRegistry)
 	return &AppRegistryContract{

@@ -4,9 +4,7 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/event"
 
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
@@ -14,8 +12,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Manager is contract wrapper struct
 type consentsManager struct {
+	ConsentsFilterer
 	contract IConsentsContract
 	log      *logger.Logger
 }
@@ -37,9 +35,11 @@ func (manager *consentsManager) CreatedAt() *big.Int {
 
 // NewConsentsManager makes new *consentsManager struct
 func NewConsentsManager(client blockchain.TxClient) IConsentsManager {
+	contract := NewConsentsContract(client)
 	return &consentsManager{
-		contract: NewConsentsContract(client),
-		log:      logger.New("consents"),
+		ConsentsFilterer: contract.Filterer(),
+		contract:         contract,
+		log:              logger.New("consents"),
 	}
 }
 
@@ -150,18 +150,4 @@ func (manager *consentsManager) IsAllowedAt(
 	blockNumber *big.Int,
 ) (bool, error) {
 	return manager.contract.IsAllowedAt(userId, appName, action, dataType, blockNumber)
-}
-
-// FilterConsented is a free log retrieval operation binding the contract event 0xd0bd2a4b9fcbb6eee35bf0e8d542816e1d5244740220e033fff96b0abd805fac.
-//
-// Solidity: event Consented(uint8 indexed action, bytes8 indexed userId, bytes32 indexed app, string appName, string dataType, bool allowed)
-func (manager consentsManager) FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, app []common.Address) (*ConsentsConsentedIterator, error) {
-	return manager.contract.FilterConsented(opts, action, userId, app)
-}
-
-// WatchConsented is a free log subscription operation binding the contract event 0xd0bd2a4b9fcbb6eee35bf0e8d542816e1d5244740220e033fff96b0abd805fac.
-//
-// Solidity: event Consented(uint8 indexed action, bytes8 indexed userId, bytes32 indexed app, string appName, string dataType, bool allowed)
-func (manager consentsManager) WatchConsented(opts *bind.WatchOpts, sink chan<- *ConsentsConsented, action []uint8, userId []types.ID, app []common.Address) (event.Subscription, error) {
-	return manager.contract.WatchConsented(opts, sink, action, userId, app)
 }

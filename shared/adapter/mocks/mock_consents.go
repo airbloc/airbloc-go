@@ -224,6 +224,18 @@ func (mr *MockIConsentsContractMockRecorder) CreatedAt() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIConsentsContract)(nil).CreatedAt))
 }
 
+// Filterer mocks base method
+func (m *MockIConsentsContract) Filterer() adapter.ConsentsFilterer {
+	ret := m.ctrl.Call(m, "Filterer")
+	ret0, _ := ret[0].(adapter.ConsentsFilterer)
+	return ret0
+}
+
+// Filterer indicates an expected call of Filterer
+func (mr *MockIConsentsContractMockRecorder) Filterer() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Filterer", reflect.TypeOf((*MockIConsentsContract)(nil).Filterer))
+}
+
 // IsAllowed mocks base method
 func (m *MockIConsentsContract) IsAllowed(userId types.ID, appName string, action uint8, dataType string) (bool, error) {
 	ret := m.ctrl.Call(m, "IsAllowed", userId, appName, action, dataType)

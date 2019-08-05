@@ -4,17 +4,15 @@ import (
 	"math/big"
 
 	"github.com/airbloc/airbloc-go/shared/blockchain"
-	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/logger"
 	ethCommon "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/event"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 )
 
-// Manager is contract wrapper struct
 type exchangeManager struct {
+	ExchangeFilterer
 	contract IExchangeContract
 	log      *logger.Logger
 }
@@ -36,9 +34,11 @@ func (manager *exchangeManager) CreatedAt() *big.Int {
 
 // NewExchangeManager makes new *accountsManager struct
 func NewExchangeManager(client blockchain.TxClient) IExchangeManager {
+	contract := NewExchangeContract(client)
 	return &exchangeManager{
-		contract: NewExchangeContract(client),
-		log:      logger.New("exchange"),
+		ExchangeFilterer: contract.Filterer(),
+		contract:         contract,
+		log:              logger.New("exchange"),
 	}
 }
 
@@ -203,102 +203,4 @@ func (manager *exchangeManager) GetOfferMembers(offerId types.ID) (ethCommon.Add
 // Solidity: function offerExists(bytes8 offerId) constant returns(bool)
 func (manager *exchangeManager) OfferExists(offerId types.ID) (bool, error) {
 	return manager.contract.OfferExists(offerId)
-}
-
-// FilterEscrowExecutionFailed is a free log retrieval operation binding the contract event 0x40e7fa7728ad0189a69a1f7d9b3b202f751810b2be48db0b9224d7f81cd232f7.
-//
-// Solidity: event EscrowExecutionFailed(bytes reason)
-func (manager exchangeManager) FilterEscrowExecutionFailed(opts *bind.FilterOpts) (*ExchangeEscrowExecutionFailedIterator, error) {
-	return manager.contract.FilterEscrowExecutionFailed(opts)
-}
-
-// WatchEscrowExecutionFailed is a free log subscription operation binding the contract event 0x40e7fa7728ad0189a69a1f7d9b3b202f751810b2be48db0b9224d7f81cd232f7.
-//
-// Solidity: event EscrowExecutionFailed(bytes reason)
-func (manager exchangeManager) WatchEscrowExecutionFailed(opts *bind.WatchOpts, sink chan<- *ExchangeEscrowExecutionFailed) (event.Subscription, error) {
-	return manager.contract.WatchEscrowExecutionFailed(opts, sink)
-}
-
-// FilterOfferCanceled is a free log retrieval operation binding the contract event 0x05b47b0f8bd37a836f7a5c080cb883841c1282c69dd1874a46d4fafc7e8aa27a.
-//
-// Solidity: event OfferCanceled(bytes8 indexed offerId, string providerAppName)
-func (manager exchangeManager) FilterOfferCanceled(opts *bind.FilterOpts, offerId []types.ID) (*ExchangeOfferCanceledIterator, error) {
-	return manager.contract.FilterOfferCanceled(opts, offerId)
-}
-
-// WatchOfferCanceled is a free log subscription operation binding the contract event 0x05b47b0f8bd37a836f7a5c080cb883841c1282c69dd1874a46d4fafc7e8aa27a.
-//
-// Solidity: event OfferCanceled(bytes8 indexed offerId, string providerAppName)
-func (manager exchangeManager) WatchOfferCanceled(opts *bind.WatchOpts, sink chan<- *ExchangeOfferCanceled, offerId []types.ID) (event.Subscription, error) {
-	return manager.contract.WatchOfferCanceled(opts, sink, offerId)
-}
-
-// FilterOfferPrepared is a free log retrieval operation binding the contract event 0x821d45f3b8db50a4777ad807928db085f0c986433cf51c2afdc8c6af90d1aef5.
-//
-// Solidity: event OfferPrepared(bytes8 indexed offerId, string providerAppName)
-func (manager exchangeManager) FilterOfferPrepared(opts *bind.FilterOpts, offerId []types.ID) (*ExchangeOfferPreparedIterator, error) {
-	return manager.contract.FilterOfferPrepared(opts, offerId)
-}
-
-// WatchOfferPrepared is a free log subscription operation binding the contract event 0x821d45f3b8db50a4777ad807928db085f0c986433cf51c2afdc8c6af90d1aef5.
-//
-// Solidity: event OfferPrepared(bytes8 indexed offerId, string providerAppName)
-func (manager exchangeManager) WatchOfferPrepared(opts *bind.WatchOpts, sink chan<- *ExchangeOfferPrepared, offerId []types.ID) (event.Subscription, error) {
-	return manager.contract.WatchOfferPrepared(opts, sink, offerId)
-}
-
-// FilterOfferPresented is a free log retrieval operation binding the contract event 0x198eb5e3b4b2cd8cca381c07c5696b7caffe2c775d93f75d0053073e36a865fa.
-//
-// Solidity: event OfferPresented(bytes8 indexed offerId, string providerAppName)
-func (manager exchangeManager) FilterOfferPresented(opts *bind.FilterOpts, offerId []types.ID) (*ExchangeOfferPresentedIterator, error) {
-	return manager.contract.FilterOfferPresented(opts, offerId)
-}
-
-// WatchOfferPresented is a free log subscription operation binding the contract event 0x198eb5e3b4b2cd8cca381c07c5696b7caffe2c775d93f75d0053073e36a865fa.
-//
-// Solidity: event OfferPresented(bytes8 indexed offerId, string providerAppName)
-func (manager exchangeManager) WatchOfferPresented(opts *bind.WatchOpts, sink chan<- *ExchangeOfferPresented, offerId []types.ID) (event.Subscription, error) {
-	return manager.contract.WatchOfferPresented(opts, sink, offerId)
-}
-
-// FilterOfferReceipt is a free log retrieval operation binding the contract event 0x7a2b40d55d10a35fd97231e1d36fc9df7c48361f16299086103e0712135c59fa.
-//
-// Solidity: event OfferReceipt(bytes8 indexed offerId, string providerAppName, address indexed consumer, bytes result)
-func (manager exchangeManager) FilterOfferReceipt(opts *bind.FilterOpts, offerId []types.ID, consumer []ethCommon.Address) (*ExchangeOfferReceiptIterator, error) {
-	return manager.contract.FilterOfferReceipt(opts, offerId, consumer)
-}
-
-// WatchOfferReceipt is a free log subscription operation binding the contract event 0x7a2b40d55d10a35fd97231e1d36fc9df7c48361f16299086103e0712135c59fa.
-//
-// Solidity: event OfferReceipt(bytes8 indexed offerId, string providerAppName, address indexed consumer, bytes result)
-func (manager exchangeManager) WatchOfferReceipt(opts *bind.WatchOpts, sink chan<- *ExchangeOfferReceipt, offerId []types.ID, consumer []ethCommon.Address) (event.Subscription, error) {
-	return manager.contract.WatchOfferReceipt(opts, sink, offerId, consumer)
-}
-
-// FilterOfferRejected is a free log retrieval operation binding the contract event 0x94c89cb0104a1fa8726bf8a9e9151423d67ff6f8eb09ed7392386649655c6843.
-//
-// Solidity: event OfferRejected(bytes8 indexed offerId, address indexed consumer)
-func (manager exchangeManager) FilterOfferRejected(opts *bind.FilterOpts, offerId []types.ID, consumer []ethCommon.Address) (*ExchangeOfferRejectedIterator, error) {
-	return manager.contract.FilterOfferRejected(opts, offerId, consumer)
-}
-
-// WatchOfferRejected is a free log subscription operation binding the contract event 0x94c89cb0104a1fa8726bf8a9e9151423d67ff6f8eb09ed7392386649655c6843.
-//
-// Solidity: event OfferRejected(bytes8 indexed offerId, address indexed consumer)
-func (manager exchangeManager) WatchOfferRejected(opts *bind.WatchOpts, sink chan<- *ExchangeOfferRejected, offerId []types.ID, consumer []ethCommon.Address) (event.Subscription, error) {
-	return manager.contract.WatchOfferRejected(opts, sink, offerId, consumer)
-}
-
-// FilterOfferSettled is a free log retrieval operation binding the contract event 0xb37cb3a83f4f40ee469256bdfc4a2881c9ce188960c87bf11359151a461b723e.
-//
-// Solidity: event OfferSettled(bytes8 indexed offerId, address indexed consumer)
-func (manager exchangeManager) FilterOfferSettled(opts *bind.FilterOpts, offerId []types.ID, consumer []ethCommon.Address) (*ExchangeOfferSettledIterator, error) {
-	return manager.contract.FilterOfferSettled(opts, offerId, consumer)
-}
-
-// WatchOfferSettled is a free log subscription operation binding the contract event 0xb37cb3a83f4f40ee469256bdfc4a2881c9ce188960c87bf11359151a461b723e.
-//
-// Solidity: event OfferSettled(bytes8 indexed offerId, address indexed consumer)
-func (manager exchangeManager) WatchOfferSettled(opts *bind.WatchOpts, sink chan<- *ExchangeOfferSettled, offerId []types.ID, consumer []ethCommon.Address) (event.Subscription, error) {
-	return manager.contract.WatchOfferSettled(opts, sink, offerId, consumer)
 }

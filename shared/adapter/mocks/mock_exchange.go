@@ -431,6 +431,18 @@ func (mr *MockIExchangeContractMockRecorder) CreatedAt() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIExchangeContract)(nil).CreatedAt))
 }
 
+// Filterer mocks base method
+func (m *MockIExchangeContract) Filterer() adapter.ExchangeFilterer {
+	ret := m.ctrl.Call(m, "Filterer")
+	ret0, _ := ret[0].(adapter.ExchangeFilterer)
+	return ret0
+}
+
+// Filterer indicates an expected call of Filterer
+func (mr *MockIExchangeContractMockRecorder) Filterer() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Filterer", reflect.TypeOf((*MockIExchangeContract)(nil).Filterer))
+}
+
 // GetOffer mocks base method
 func (m *MockIExchangeContract) GetOffer(offerId types.ID) (types.Offer, error) {
 	ret := m.ctrl.Call(m, "GetOffer", offerId)

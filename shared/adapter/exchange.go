@@ -249,13 +249,14 @@ type IExchangeContract interface {
 	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
+	Filterer() ExchangeFilterer
 
 	IExchangeCalls
 	IExchangeTransacts
 	IExchangeEvents
 }
 
-// Manager is contract wrapper struct
+// ExchangeContract is contract wrapper struct
 type ExchangeContract struct {
 	client   blockchain.TxClient
 	contract *Exchange
@@ -277,7 +278,12 @@ func (c *ExchangeContract) CreatedAt() *big.Int {
 	return c.contract.CreatedAt()
 }
 
-// NewManager makes new *Manager struct
+// Filterer is getter method of Exchange.ExchangeFilterer
+func (c *ExchangeContract) Filterer() ExchangeFilterer {
+	return c.ExchangeFilterer
+}
+
+// NewExchangeContract makes new *ExchangeContract struct
 func NewExchangeContract(client blockchain.TxClient) IExchangeContract {
 	contract := client.GetContract(&Exchange{}).(*Exchange)
 	return &ExchangeContract{

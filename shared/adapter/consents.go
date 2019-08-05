@@ -227,13 +227,14 @@ type IConsentsContract interface {
 	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
+	Filterer() ConsentsFilterer
 
 	IConsentsCalls
 	IConsentsTransacts
 	IConsentsEvents
 }
 
-// Manager is contract wrapper struct
+// ConsentsContract is contract wrapper struct
 type ConsentsContract struct {
 	client   blockchain.TxClient
 	contract *Consents
@@ -255,7 +256,12 @@ func (c *ConsentsContract) CreatedAt() *big.Int {
 	return c.contract.CreatedAt()
 }
 
-// NewManager makes new *Manager struct
+// Filterer is getter method of Consents.ConsentsFilterer
+func (c *ConsentsContract) Filterer() ConsentsFilterer {
+	return c.ConsentsFilterer
+}
+
+// NewConsentsContract makes new *ConsentsContract struct
 func NewConsentsContract(client blockchain.TxClient) IConsentsContract {
 	contract := client.GetContract(&Consents{}).(*Consents)
 	return &ConsentsContract{

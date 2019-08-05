@@ -241,13 +241,14 @@ type IAccountsContract interface {
 	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
+	Filterer() AccountsFilterer
 
 	IAccountsCalls
 	IAccountsTransacts
 	IAccountsEvents
 }
 
-// Manager is contract wrapper struct
+// AccountsContract is contract wrapper struct
 type AccountsContract struct {
 	client   blockchain.TxClient
 	contract *Accounts
@@ -269,7 +270,12 @@ func (c *AccountsContract) CreatedAt() *big.Int {
 	return c.contract.CreatedAt()
 }
 
-// NewManager makes new *Manager struct
+// Filterer is getter method of Accounts.AccountsFilterer
+func (c *AccountsContract) Filterer() AccountsFilterer {
+	return c.AccountsFilterer
+}
+
+// NewAccountsContract makes new *AccountsContract struct
 func NewAccountsContract(client blockchain.TxClient) IAccountsContract {
 	contract := client.GetContract(&Accounts{}).(*Accounts)
 	return &AccountsContract{

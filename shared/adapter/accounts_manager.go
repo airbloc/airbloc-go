@@ -5,11 +5,9 @@ import (
 	"math/big"
 
 	"github.com/airbloc/airbloc-go/shared/blockchain"
-	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/logger"
 	ethCommon "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/event"
 	"github.com/pkg/errors"
 )
 
@@ -22,6 +20,7 @@ func (err ErrNoAccount) Error() string {
 
 // accountsManager is contract wrapper struct
 type accountsManager struct {
+	AccountsFilterer
 	contract IAccountsContract
 	log      *logger.Logger
 }
@@ -43,9 +42,11 @@ func (manager *accountsManager) CreatedAt() *big.Int {
 
 // NewAccountsManager makes new *accountsManager struct
 func NewAccountsManager(client blockchain.TxClient) IAccountsManager {
+	contract := NewAccountsContract(client)
 	return &accountsManager{
-		contract: NewAccountsContract(client),
-		log:      logger.New("accounts"),
+		AccountsFilterer: contract.Filterer(),
+		contract:         contract,
+		log:              logger.New("accounts"),
 	}
 }
 
@@ -191,46 +192,4 @@ func (manager *accountsManager) IsTemporary(accountId types.ID) (bool, error) {
 // Solidity: function numberOfAccounts() constant returns(uint256)
 func (manager *accountsManager) NumberOfAccounts() (*big.Int, error) {
 	return manager.contract.NumberOfAccounts()
-}
-
-// FilterSignUp is a free log retrieval operation binding the contract event 0xb98ae0923087f0b489e49e611630c8accd44d415c9fcbd5d59c6511877754ec4.
-//
-// Solidity: event SignUp(address indexed owner, bytes8 accountId)
-func (manager *accountsManager) FilterSignUp(opts *bind.FilterOpts, owner []ethCommon.Address) (*AccountsSignUpIterator, error) {
-	return manager.contract.FilterSignUp(opts, owner)
-}
-
-// WatchSignUp is a free log subscription operation binding the contract event 0xb98ae0923087f0b489e49e611630c8accd44d415c9fcbd5d59c6511877754ec4.
-//
-// Solidity: event SignUp(address indexed owner, bytes8 accountId)
-func (manager *accountsManager) WatchSignUp(opts *bind.WatchOpts, sink chan<- *AccountsSignUp, owner []ethCommon.Address) (event.Subscription, error) {
-	return manager.contract.WatchSignUp(opts, sink, owner)
-}
-
-// FilterTemporaryCreated is a free log retrieval operation binding the contract event 0x7f475d23ee7af49ec9e9b689d8eddd76ab367e3d326ba1658216174b5adbf52e.
-//
-// Solidity: event TemporaryCreated(address indexed proxy, bytes32 indexed identityHash, bytes8 accountId)
-func (manager *accountsManager) FilterTemporaryCreated(opts *bind.FilterOpts, proxy []ethCommon.Address, identityHash []ethCommon.Hash) (*AccountsTemporaryCreatedIterator, error) {
-	return manager.contract.FilterTemporaryCreated(opts, proxy, identityHash)
-}
-
-// WatchTemporaryCreated is a free log subscription operation binding the contract event 0x7f475d23ee7af49ec9e9b689d8eddd76ab367e3d326ba1658216174b5adbf52e.
-//
-// Solidity: event TemporaryCreated(address indexed proxy, bytes32 indexed identityHash, bytes8 accountId)
-func (manager *accountsManager) WatchTemporaryCreated(opts *bind.WatchOpts, sink chan<- *AccountsTemporaryCreated, proxy []ethCommon.Address, identityHash []ethCommon.Hash) (event.Subscription, error) {
-	return manager.contract.WatchTemporaryCreated(opts, sink, proxy, identityHash)
-}
-
-// FilterUnlocked is a free log retrieval operation binding the contract event 0x97e37defaf20fab5209164d8e3b54fdb1bd84d7ec6def1886c587be543d41bc0.
-//
-// Solidity: event Unlocked(bytes32 indexed identityHash, bytes8 indexed accountId, address newOwner)
-func (manager *accountsManager) FilterUnlocked(opts *bind.FilterOpts, identityHash []ethCommon.Hash, accountId []types.ID) (*AccountsUnlockedIterator, error) {
-	return manager.contract.FilterUnlocked(opts, identityHash, accountId)
-}
-
-// WatchUnlocked is a free log subscription operation binding the contract event 0x97e37defaf20fab5209164d8e3b54fdb1bd84d7ec6def1886c587be543d41bc0.
-//
-// Solidity: event Unlocked(bytes32 indexed identityHash, bytes8 indexed accountId, address newOwner)
-func (manager *accountsManager) WatchUnlocked(opts *bind.WatchOpts, sink chan<- *AccountsUnlocked, identityHash []ethCommon.Hash, accountId []types.ID) (event.Subscription, error) {
-	return manager.contract.WatchUnlocked(opts, sink, identityHash, accountId)
 }

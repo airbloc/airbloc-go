@@ -230,13 +230,14 @@ type IDataTypeRegistryContract interface {
 	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
+	Filterer() DataTypeRegistryFilterer
 
 	IDataTypeRegistryCalls
 	IDataTypeRegistryTransacts
 	IDataTypeRegistryEvents
 }
 
-// Manager is contract wrapper struct
+// DataTypeRegistryContract is contract wrapper struct
 type DataTypeRegistryContract struct {
 	client   blockchain.TxClient
 	contract *DataTypeRegistry
@@ -258,7 +259,12 @@ func (c *DataTypeRegistryContract) CreatedAt() *big.Int {
 	return c.contract.CreatedAt()
 }
 
-// NewManager makes new *Manager struct
+// Filterer is getter method of DataTypeRegistry.DataTypeRegistryFilterer
+func (c *DataTypeRegistryContract) Filterer() DataTypeRegistryFilterer {
+	return c.DataTypeRegistryFilterer
+}
+
+// NewDataTypeRegistryContract makes new *DataTypeRegistryContract struct
 func NewDataTypeRegistryContract(client blockchain.TxClient) IDataTypeRegistryContract {
 	contract := client.GetContract(&DataTypeRegistry{}).(*DataTypeRegistry)
 	return &DataTypeRegistryContract{
