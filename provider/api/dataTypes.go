@@ -27,12 +27,11 @@ func NewDataTypeRegistryAPI(backend service.Backend) (api.API, error) {
 // Solidity: function register(string name, bytes32 schemaHash) returns()
 func (api *dataTypeRegistryAPI) register(c *gin.Context) {
 	var req struct {
-		Name       string
-		SchemaHash string
+		Name       string `binding:"required"`
+		SchemaHash string `binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -52,8 +51,13 @@ func (api *dataTypeRegistryAPI) register(c *gin.Context) {
 //
 // Solidity: function unregister(string name) returns()
 func (api *dataTypeRegistryAPI) unregister(c *gin.Context) {
-	name := c.Param("name")
-	if err := api.dataTypes.Unregister(c, name); err != nil {
+	dataType := c.Param("dataType")
+	if dataType == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+		return
+	}
+
+	if err := api.dataTypes.Unregister(c, dataType); err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
@@ -64,19 +68,24 @@ func (api *dataTypeRegistryAPI) unregister(c *gin.Context) {
 //
 // Solidity: function get(string name) constant returns((string,address,bytes32))
 func (api *dataTypeRegistryAPI) get(c *gin.Context) {
-	name := c.Param("name")
-	dataType, err := api.dataTypes.Get(name)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
+	dataType := c.Param("dataType")
+	if dataType == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
 		return
 	}
-	c.JSON(http.StatusOK, dataType)
+
+	typ, err := api.dataTypes.Get(dataType)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, typ)
 }
 
 // AttachToAPI is a registrant of an api.
 func (api *dataTypeRegistryAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.RestAPIMux.Group("/data-types")
-	apiMux.GET("/:name", api.get)
+	apiMux.GET("/:dataType", api.get)
 	apiMux.POST("/", api.register)
-	apiMux.DELETE("/:name", api.unregister)
+	apiMux.DELETE("/:dataType", api.unregister)
 }

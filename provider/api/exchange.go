@@ -29,12 +29,12 @@ func NewExchangeAPI(backend service.Backend) (api.API, error) {
 // Solidity: function prepare(string provider, address consumer, address escrow, bytes4 escrowSign, bytes escrowArgs, bytes20[] dataIds) returns(bytes8)
 func (api *exchangeAPI) prepare(c *gin.Context) {
 	var req struct {
-		Provider   string   // string
-		Consumer   string   // address
-		Escrow     string   // address
-		EscrowSign string   // bytes4
-		EscrowArgs string   // bytes
-		DataIds    []string // [][20]bytes
+		Provider   string   `binding:"required"` // string
+		Consumer   string   `binding:"required"` // address
+		Escrow     string   `binding:"required"` // address
+		EscrowSign string   `binding:"required"` // bytes4
+		EscrowArgs string   `binding:"required"` // bytes
+		DataIds    []string `binding:"required"` // [][20]bytes
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
@@ -91,6 +91,11 @@ func (api *exchangeAPI) addDataIds(c *gin.Context) {
 	}
 
 	rawOfferId := c.Param("offerId")
+	if rawOfferId == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+		return
+	}
+
 	offerId, err := types.HexToID(rawOfferId)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -120,6 +125,11 @@ func (api *exchangeAPI) addDataIds(c *gin.Context) {
 // Solidity: function order(bytes8 offerId) returns()
 func (api *exchangeAPI) order(c *gin.Context) {
 	rawOfferId := c.Param("offerId")
+	if rawOfferId == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+		return
+	}
+
 	offerId, err := types.HexToID(rawOfferId)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -139,6 +149,11 @@ func (api *exchangeAPI) order(c *gin.Context) {
 // Solidity: function cancel(bytes8 offerId) returns()
 func (api *exchangeAPI) cancel(c *gin.Context) {
 	rawOfferId := c.Param("offerId")
+	if rawOfferId == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+		return
+	}
+
 	offerId, err := types.HexToID(rawOfferId)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -158,6 +173,11 @@ func (api *exchangeAPI) cancel(c *gin.Context) {
 // Solidity: function getOffer(bytes8 offerId) constant returns((string,address,bytes20[],uint256,uint256,(address,bytes4,bytes),uint8))
 func (api *exchangeAPI) getOffer(c *gin.Context) {
 	rawOfferId := c.Param("offerId")
+	if rawOfferId == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+		return
+	}
+
 	offerId, err := types.HexToID(rawOfferId)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
