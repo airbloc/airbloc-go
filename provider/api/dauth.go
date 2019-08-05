@@ -32,8 +32,8 @@ func NewDAuthAPI(backend service.Backend) (api.API, error) {
 
 func (api *dAuthAPI) signIn(c *gin.Context) {
 	var req struct {
-		Identity   string
-		Controller string
+		Identity   string `binding:"required"`
+		Controller string `binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
@@ -53,8 +53,8 @@ func (api *dAuthAPI) signIn(c *gin.Context) {
 
 func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 	var req struct {
-		AccountId string
-		AppName   string
+		AccountId string `binding:"required"`
+		AppName   string `binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
@@ -142,10 +142,10 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 
 func (api *dAuthAPI) allow(c *gin.Context) {
 	var req struct {
-		AccountId string
-		DataType  string
-		Action    types.ConsentActionTypes
-		AppName   string
+		AccountId string                   `binding:"required"`
+		DataType  string                   `binding:"required"`
+		Action    types.ConsentActionTypes `binding:"required"`
+		AppName   string                   `binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
@@ -175,10 +175,10 @@ func (api *dAuthAPI) allow(c *gin.Context) {
 
 func (api *dAuthAPI) deny(c *gin.Context) {
 	var req struct {
-		AccountId string
-		DataType  string
-		Action    types.ConsentActionTypes
-		AppName   string
+		AccountId string                   `binding:"required"`
+		DataType  string                   `binding:"required"`
+		Action    types.ConsentActionTypes `binding:"required"`
+		AppName   string                   `binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
