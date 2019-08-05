@@ -1,9 +1,8 @@
-package dauth
+package adapter
 
 import (
 	"context"
 
-	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/types"
@@ -11,13 +10,13 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 )
 
-type Manager struct {
-	consents adapter.IConsentsManager
+type DAuthManager struct {
+	consents IConsentsManager
 }
 
-func NewManager(client blockchain.TxClient) *Manager {
-	return &Manager{
-		consents: adapter.NewConsentsManager(client),
+func NewDAuthManager(client blockchain.TxClient) *DAuthManager {
+	return &DAuthManager{
+		consents: NewConsentsManager(client),
 	}
 }
 
@@ -25,7 +24,7 @@ func appNameToAddr(appName string) common.Address {
 	return common.BytesToAddress(crypto.Keccak256([]byte(appName)))
 }
 
-func (manager *Manager) Allow(
+func (manager *DAuthManager) Allow(
 	ctx context.Context,
 	action types.ConsentActionTypes,
 	appName, dataType string,
@@ -33,7 +32,7 @@ func (manager *Manager) Allow(
 	return manager.consents.Consent(ctx, appName, uint8(action), dataType, true)
 }
 
-func (manager *Manager) AllowByController(
+func (manager *DAuthManager) AllowByController(
 	ctx context.Context,
 	action types.ConsentActionTypes,
 	userId types.ID,
@@ -54,7 +53,7 @@ func (manager *Manager) AllowByController(
 	return manager.consents.ModifyConsentByController(ctx, userId, appName, uint8(action), dataType, true, passwordSignature)
 }
 
-func (manager *Manager) Deny(
+func (manager *DAuthManager) Deny(
 	ctx context.Context,
 	action types.ConsentActionTypes,
 	appName, dataType string,
@@ -62,7 +61,7 @@ func (manager *Manager) Deny(
 	return manager.consents.Consent(ctx, appName, uint8(action), dataType, false)
 }
 
-func (manager *Manager) DenyByController(ctx context.Context,
+func (manager *DAuthManager) DenyByController(ctx context.Context,
 	action types.ConsentActionTypes,
 	userId types.ID,
 	appName, dataType string,
