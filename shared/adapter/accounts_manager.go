@@ -22,6 +22,7 @@ func (err ErrNoAccount) Error() string {
 type accountsManager struct {
 	AccountsFilterer
 	contract IAccountsContract
+	client   blockchain.TxClient
 	log      *logger.Logger
 }
 
@@ -46,6 +47,7 @@ func NewAccountsManager(client blockchain.TxClient) IAccountsManager {
 	return &accountsManager{
 		AccountsFilterer: contract.Filterer(),
 		contract:         contract,
+		client:           client,
 		log:              logger.New("accounts"),
 	}
 }
@@ -142,7 +144,11 @@ func (manager *accountsManager) GetAccount(accountId types.ID) (types.Account, e
 //
 // Solidity: function getAccountId(address sender) constant returns(bytes8)
 func (manager *accountsManager) GetAccountId(owner ethCommon.Address) (types.ID, error) {
-	return manager.contract.GetAccountId(owner)
+	if owner == (ethCommon.Address{}) {
+		return manager.contract.GetAccountId(manager.client.Account().From)
+	} else {
+		return manager.contract.GetAccountId(owner)
+	}
 }
 
 // GetAccountIdFromSignature is a free data retrieval call binding the contract method 0x23d0601d.
