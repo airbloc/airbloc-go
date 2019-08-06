@@ -28,8 +28,16 @@ func NewDataAPI(backend service.Backend) (api.API, error) {
 }
 
 func (api *dataAPI) GetData(c *gin.Context) {
-	rawDataId := c.Param("dataId")
-	dataId, err := types.NewDataIdFromStr(rawDataId)
+	var req struct {
+		DataId string `form:"dataId" binding:"required"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	dataId, err := types.NewDataIdFromStr(req.DataId)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -44,9 +52,17 @@ func (api *dataAPI) GetData(c *gin.Context) {
 }
 
 func (api *dataAPI) GetBatch(c *gin.Context) {
-	batchId := c.Param("batchId")
+	var req struct {
+		BatchId string `form:"batchId" binding:"required"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	batchManager := api.manager.Batches()
-	batchInfo, err := batchManager.Get(batchId)
+	batchInfo, err := batchManager.Get(req.BatchId)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
@@ -61,8 +77,16 @@ func (api *dataAPI) GetBatch(c *gin.Context) {
 }
 
 func (api *dataAPI) GetBundle(c *gin.Context) {
-	rawBundleId := c.Param("bundleId")
-	bundleId, err := types.HexToID(rawBundleId)
+	var req struct {
+		BundleId string `form:"bundleId" binding:"required"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	bundleId, err := types.HexToID(req.BundleId)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -78,9 +102,9 @@ func (api *dataAPI) GetBundle(c *gin.Context) {
 
 func (api *dataAPI) SetPermission(c *gin.Context) {
 	var req struct {
-		DataId     string
-		ConsumerId string
-		Allowed    bool
+		DataId     string `binding:"required"`
+		ConsumerId string `binding:"required"`
+		Allowed    bool   `binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
@@ -95,9 +119,9 @@ func (api *dataAPI) SetPermission(c *gin.Context) {
 
 func (api *dataAPI) SetPermissionBatch(c *gin.Context) {
 	var req struct {
-		BatchId    string
-		ConsumerId string
-		Allowed    bool
+		BatchId    string `binding:"required"`
+		ConsumerId string `binding:"required"`
+		Allowed    bool   `binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
@@ -111,8 +135,16 @@ func (api *dataAPI) SetPermissionBatch(c *gin.Context) {
 }
 
 func (api *dataAPI) Delete(c *gin.Context) {
-	rawDataId := c.Param("dataId")
-	dataId, err := types.NewDataIdFromStr(rawDataId)
+	var req struct {
+		DataId string `form:"dataId" binding:"required"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	dataId, err := types.NewDataIdFromStr(req.DataId)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -125,9 +157,17 @@ func (api *dataAPI) Delete(c *gin.Context) {
 }
 
 func (api *dataAPI) DeleteBatch(c *gin.Context) {
-	batchId := c.Param("batchId")
+	var req struct {
+		BatchId string `form:"batchId" binding:"required"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	batchManager := api.manager.Batches()
-	batchInfo, err := batchManager.Get(batchId)
+	batchInfo, err := batchManager.Get(req.BatchId)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
@@ -149,13 +189,13 @@ func (api *dataAPI) DeleteBatch(c *gin.Context) {
 
 func (api *dataAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.RestAPIMux.Group("/data")
-	apiMux.GET("/:dataId", api.GetData)
-	apiMux.GET("/batch/:batchId", api.GetBatch)
-	apiMux.GET("/bundle/:bundleId", api.GetBundle)
+	apiMux.GET("/", api.GetData)
+	apiMux.GET("/batch", api.GetBatch)
+	apiMux.GET("/bundle", api.GetBundle)
 	apiMux.PUT("/permission", api.SetPermission)
 	apiMux.PUT("/permission/batch", api.SetPermissionBatch)
-	apiMux.DELETE("/:dataId", api.Delete)
-	apiMux.DELETE("/batch/:batchId", api.DeleteBatch)
+	apiMux.DELETE("/", api.Delete)
+	apiMux.DELETE("/batch", api.DeleteBatch)
 	// TODO
 	// apiMux.[Method]([path], api.Select)
 	// apiMux.[Method]([path], api.Release)
