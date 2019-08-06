@@ -191,16 +191,23 @@ func (api *accountsAPI) getAccountId(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"accountId": accountId.Hex()})
 		return
 	}
-	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+
+	accountId, err := api.accounts.GetAccountId(common.Address{})
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"accountId": accountId.Hex()})
+	return
 }
 
 // AttachToAPI is a registrant of an api.
 func (api *accountsAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.RestAPIMux.Group("/accounts")
-	apiMux.POST("/", api.create)
+	apiMux.GET("/", api.getAccountId)
 	apiMux.GET("/:accountId", api.getAccount)
-	apiMux.GET("/id", api.getAccountId)
-	apiMux.PATCH("/controller", api.setController)
+	apiMux.POST("/", api.create)
 	apiMux.POST("/temporary", api.createTemporary)
+	apiMux.PATCH("/controller", api.setController)
 	apiMux.PATCH("/temporary/unlock", api.unlockTemporary)
 }
