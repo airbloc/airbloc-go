@@ -19,7 +19,7 @@ tmux new -d -s airbloc
 tmux rename-window 'Airbloc'
 tmux send-keys "./build/bin/airbloc server -c local/airbloc.yml --verbose" "C-m"
 tmux split-window -v
-tmux send-keys "./build/bin/airbloc userdelegate -c local/userdelegate.yml --verbose" "C-m"
+tmux send-keys "./build/bin/airbloc controller -c local/controller.yml --verbose" "C-m"
 tmux -2 attach-session -t airbloc
 
 if [[ $1 = "test" ]]; then

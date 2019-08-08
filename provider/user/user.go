@@ -78,7 +78,7 @@ func (manager *Manager) GetData(ctx context.Context, id types.ID, from int64) ([
 			}
 
 			if _, ok := bundle.Data[dataId.UserId()]; !ok {
-				return nil, errors.Errorf("cannot find user %s on given bundle", dataId.UserId)
+				return nil, errors.Errorf("cannot find user %s on given bundle", dataId.UserId().Hex())
 			}
 
 			if uint32(len(bundle.Data[dataId.UserId()])) <= dataId.RowId().Uint32() {
