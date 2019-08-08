@@ -29,31 +29,29 @@ var _ = Describe("Apps", func() {
 		}
 	)
 
-	{
-		BeforeEach(func() {
-			ctrl := gomock.NewController(t)
+	BeforeEach(func() {
+		ctrl := gomock.NewController(t)
 
-			client, err := e2eutils.ConnectBlockchain()
-			Ω(err).ShouldNot(HaveOccurred())
-			testClient = client
+		client, err := e2eutils.ConnectBlockchain()
+		Ω(err).ShouldNot(HaveOccurred())
+		testClient = client
 
-			backend := serviceMock.NewMockBackend(ctrl)
-			backend.EXPECT().Client().Return(testClient)
+		backend := serviceMock.NewMockBackend(ctrl)
+		backend.EXPECT().Client().Return(testClient)
 
-			_, engine := gin.CreateTestContext(nil)
+		_, engine := gin.CreateTestContext(nil)
 
-			api, err := api.NewAppRegistryAPI(backend)
-			Ω(err).ShouldNot(HaveOccurred())
-			api.AttachToAPI(&apilib.Service{HttpServer: engine})
+		api, err := api.NewAppRegistryAPI(backend)
+		Ω(err).ShouldNot(HaveOccurred())
+		api.AttachToAPI(&apilib.Service{HttpServer: engine})
 
-			testServer = httptest.NewServer(engine)
-		})
+		testServer = httptest.NewServer(engine)
+	})
 
-		AfterEach(func() {
-			testServer.Close()
-			testClient.Close()
-		})
-	}
+	AfterEach(func() {
+		testServer.Close()
+		testClient.Close()
+	})
 
 	It("should register app", func() {
 		req, err := e2eutils.CreateRequest(
