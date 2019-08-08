@@ -17,6 +17,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+//go:generate mockgen -source backend.go -aux_files github.com/airbloc/airbloc-go/shared/service=service.go -destination ./mocks/mock_backend.go -package mocks Backend
 type Backend interface {
 	Kms() key.Manager
 	Client() *blockchain.Client
