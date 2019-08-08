@@ -61,7 +61,7 @@ func TestExchangeAPI_Prepare(t *testing.T) {
 	mockManager := adapterMock.NewMockIExchangeManager(mockController)
 	mockManager.EXPECT().
 		Prepare(c,
-			common.HexToAddress(testProvider),
+			testProvider,
 			common.HexToAddress(testConsumer),
 			common.HexToAddress(testEscrow),
 			escrowSign,
@@ -183,7 +183,7 @@ func TestExchangeAPI_Prepare_FailedToPrepare(t *testing.T) {
 	mockManager := adapterMock.NewMockIExchangeManager(mockController)
 	mockManager.EXPECT().
 		Prepare(c,
-			common.HexToAddress(testProvider),
+			testProvider,
 			common.HexToAddress(testConsumer),
 			common.HexToAddress(testEscrow),
 			escrowSign,
@@ -217,6 +217,9 @@ func TestExchangeAPI_AddDataIds(t *testing.T) {
 		AddDataIds(c, offerId, dataIds).
 		Return(nil)
 
+	api := &exchangeAPI{mockManager}
+	api.addDataIds(c)
+
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, testutils.TestSuccessStr, w.Body.String())
 }
@@ -235,6 +238,9 @@ func TestExchangeAPI_Order(t *testing.T) {
 		Order(c, offerId).
 		Return(nil)
 
+	api := &exchangeAPI{mockManager}
+	api.order(c)
+
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, testutils.TestSuccessStr, w.Body.String())
 }
@@ -252,6 +258,9 @@ func TestExchangeAPI_Cancel(t *testing.T) {
 	mockManager.EXPECT().
 		Cancel(c, offerId).
 		Return(nil)
+
+	api := &exchangeAPI{mockManager}
+	api.cancel(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, testutils.TestSuccessStr, w.Body.String())

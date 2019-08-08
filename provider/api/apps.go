@@ -47,10 +47,10 @@ func (api *appRegistryAPI) register(c *gin.Context) {
 // Solidity: function unregister(string appName) returns()
 func (api *appRegistryAPI) unregister(c *gin.Context) {
 	var req struct {
-		AppName string `form:"app_name" binding:"required"`
+		AppName string `json:"app_name" binding:"required"`
 	}
 
-	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
+	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

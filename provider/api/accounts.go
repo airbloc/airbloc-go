@@ -33,7 +33,7 @@ func (api *accountsAPI) create(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"accountId": accountId.Hex()})
+	c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
 }
 
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
@@ -41,7 +41,7 @@ func (api *accountsAPI) create(c *gin.Context) {
 // Solidity: function createTemporary(bytes32 identityHash) returns()
 func (api *accountsAPI) createTemporary(c *gin.Context) {
 	var req struct {
-		IdentityHash string `binding:"required"`
+		IdentityHash string `json:"identity_hash" binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
@@ -55,7 +55,7 @@ func (api *accountsAPI) createTemporary(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"accountId": accountId.Hex()})
+	c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
 }
 
 // UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
@@ -63,9 +63,9 @@ func (api *accountsAPI) createTemporary(c *gin.Context) {
 // Solidity: function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) returns()
 func (api *accountsAPI) unlockTemporary(c *gin.Context) {
 	var req struct {
-		IdentityPreimage  string `binding:"required"`
-		NewOwner          string `binding:"required"`
-		PasswordSignature string `binding:"required"`
+		IdentityPreimage  string `json:"identity_preimage" binding:"required"`
+		NewOwner          string `json:"new_owner" binding:"required"`
+		PasswordSignature string `json:"password_signature" binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
@@ -95,7 +95,7 @@ func (api *accountsAPI) unlockTemporary(c *gin.Context) {
 // Solidity: function setController(address controller) returns()
 func (api *accountsAPI) setController(c *gin.Context) {
 	var req struct {
-		Controller string `binding:"required"`
+		Controller string `json:"controller" binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
@@ -115,23 +115,16 @@ func (api *accountsAPI) setController(c *gin.Context) {
 //
 // Solidity: function getAccount(bytes8 accountId) constant returns((address,uint8,address,address))
 func (api *accountsAPI) getAccount(c *gin.Context) {
-	/* TODO: wait til' gin supports c.ShouldBindWith(&req, binding.Uri)
 	var req struct {
-		AccountId string `uri:"accountId" binding:"required"`
+		AccountId string `form:"account_id" binding:"required"`
 	}
 
-	if err := c.ShouldBindWith(&req, binding.Uri); err != nil {
+	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	*/
-	rawAccountId := c.Param("accountId")
-	if rawAccountId == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "empty account id"})
-		return
-	}
 
-	accountId, err := types.HexToID(rawAccountId)
+	accountId, err := types.HexToID(req.AccountId)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -156,7 +149,7 @@ func (api *accountsAPI) getAccountId(c *gin.Context) {
 			Owner string `form:"owner" binding:"required"`
 		}
 		accountIdFromSigRequest struct {
-			MessageHash string `form:"messageHash" binding:"required"`
+			MessageHash string `form:"message_hash" binding:"required"`
 			Signature   string `form:"signature" binding:"required"`
 		}
 	)
@@ -171,7 +164,7 @@ func (api *accountsAPI) getAccountId(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"accountId": accountId.Hex()})
+		c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
 		return
 	}
 
@@ -188,7 +181,7 @@ func (api *accountsAPI) getAccountId(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"accountId": accountId.Hex()})
+		c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
 		return
 	}
 
@@ -197,15 +190,15 @@ func (api *accountsAPI) getAccountId(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"accountId": accountId.Hex()})
+	c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
 	return
 }
 
 // AttachToAPI is a registrant of an api.
 func (api *accountsAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.HttpServer.Group("/accounts")
-	apiMux.GET("/", api.getAccountId)
-	apiMux.GET("/:accountId", api.getAccount)
+	apiMux.GET("/", api.getAccount)
+	apiMux.GET("/id", api.getAccountId)
 	apiMux.POST("/", api.create)
 	apiMux.POST("/temporary", api.createTemporary)
 	apiMux.PATCH("/controller", api.setController)

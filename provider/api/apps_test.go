@@ -2,7 +2,10 @@ package api
 
 import (
 	"net/http"
+	"strings"
 	"testing"
+
+	"github.com/gin-gonic/gin/binding"
 
 	adapterMock "github.com/airbloc/airbloc-go/shared/adapter/mocks"
 	"github.com/airbloc/airbloc-go/shared/types"
@@ -22,7 +25,7 @@ func TestAppRegistryAPI_Register(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"appName": testAppName}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"app_name": testAppName}, binding.JSON)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 	mockManager.EXPECT().
@@ -40,7 +43,7 @@ func TestAppRegistryAPI_Register_InvalidAppName(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{}, binding.JSON)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 
@@ -48,14 +51,14 @@ func TestAppRegistryAPI_Register_InvalidAppName(t *testing.T) {
 	api.register(c)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
-	assert.Equal(t, testutils.TestErrBadRequestStr, w.Body.String())
+	assert.True(t, strings.HasPrefix(w.Body.String(), `{"error":`))
 }
 
 func TestAppRegistryAPI_Register_FailedToRegister(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"appName": testAppName}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"app_name": testAppName}, binding.JSON)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 	mockManager.EXPECT().
@@ -74,7 +77,7 @@ func TestAppRegistryAPI_Unregister(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"appName": testAppName}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"app_name": testAppName}, binding.JSON)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 	mockManager.EXPECT().
@@ -93,7 +96,7 @@ func TestAppRegistryAPI_Unregister_InvalidAppName(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{}, binding.JSON)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 
@@ -101,14 +104,14 @@ func TestAppRegistryAPI_Unregister_InvalidAppName(t *testing.T) {
 	api.unregister(c)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
-	assert.Equal(t, testutils.TestErrBadRequestStr, w.Body.String())
+	assert.True(t, strings.HasPrefix(w.Body.String(), `{"error":`))
 }
 
 func TestAppRegistryAPI_Unregister_FailedToUnregister(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"appName": testAppName}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"app_name": testAppName}, binding.JSON)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 	mockManager.EXPECT().
@@ -126,7 +129,7 @@ func TestAppRegistryAPI_Get(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"appName": testAppName}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"app_name": testAppName}, binding.Query)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 	mockManager.EXPECT().
@@ -145,7 +148,7 @@ func TestAppRegistryAPI_Get_InvalidAppName(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{}, binding.Query)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 
@@ -153,14 +156,14 @@ func TestAppRegistryAPI_Get_InvalidAppName(t *testing.T) {
 	api.get(c)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
-	assert.Equal(t, testutils.TestErrBadRequestStr, w.Body.String())
+	assert.True(t, strings.HasPrefix(w.Body.String(), `{"error":`))
 }
 
 func TestAppRegistryAPI_Get_FailedToGet(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"appName": testAppName}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"app_name": testAppName}, binding.Query)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 	mockManager.EXPECT().
@@ -178,7 +181,7 @@ func TestAppRegistryAPI_TransferAppOwner(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"appName": testAppName, "newOwner": testAccountId}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"app_name": testAppName, "new_owner": testAccountId}, binding.JSON)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 	mockManager.EXPECT().
@@ -196,7 +199,7 @@ func TestAppRegistryAPI_TransferAppOwner_InvalidAppName(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"newOwner": testAccountId}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"new_owner": testAccountId}, binding.JSON)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 
@@ -204,14 +207,14 @@ func TestAppRegistryAPI_TransferAppOwner_InvalidAppName(t *testing.T) {
 	api.transferAppOwner(c)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
-	assert.Equal(t, testutils.TestErrBadRequestStr, w.Body.String())
+	assert.True(t, strings.HasPrefix(w.Body.String(), `{"error":`))
 }
 
 func TestAppRegistryAPI_TransferAppOwner_InvalidNewOwner(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"appName": testAppName}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"app_name": testAppName}, binding.JSON)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 
@@ -219,14 +222,14 @@ func TestAppRegistryAPI_TransferAppOwner_InvalidNewOwner(t *testing.T) {
 	api.transferAppOwner(c)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
-	assert.Equal(t, testutils.TestErrBadRequestStr, w.Body.String())
+	assert.True(t, strings.HasPrefix(w.Body.String(), `{"error":`))
 }
 
 func TestAppRegistryAPI_TransferAppOwner_FailedToTransferAppOwner(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"appName": testAppName, "newOwner": testAccountId}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"app_name": testAppName, "new_owner": testAccountId}, binding.JSON)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 	mockManager.EXPECT().
