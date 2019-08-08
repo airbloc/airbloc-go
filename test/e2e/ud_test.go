@@ -38,8 +38,8 @@ func TestChallengeDataTransaction(t *testing.T) {
 func testUserSignup(conn *grpc.ClientConn, index int) string {
 	dauth := pb.NewDAuthClient(conn)
 	req := &pb.SignInRequest{
-		Identity:     fmt.Sprintf("test-user-%d@airbloc.org", index),
-		UserDelegate: "BCcAUp859mBwSiXCZU3y931BcdDmR7nuCSaDIxkf0LwXMKLxsuVF6O0O4AdoiZ2enfccMaCfs7reFFg/yOiWk4w=",
+		Identity:   fmt.Sprintf("test-user-%d@airbloc.org", index),
+		Controller: "BCcAUp859mBwSiXCZU3y931BcdDmR7nuCSaDIxkf0LwXMKLxsuVF6O0O4AdoiZ2enfccMaCfs7reFFg/yOiWk4w=",
 	}
 	resp, err := dauth.SignIn(context.Background(), req)
 	if err != nil {
@@ -51,8 +51,7 @@ func testUserSignup(conn *grpc.ClientConn, index int) string {
 func testDAuth(conn *grpc.ClientConn, collectionId string, accountId string, allow bool) {
 	dauth := pb.NewDAuthClient(conn)
 	req := &pb.DAuthRequest{
-		CollectionId: collectionId,
-		AccountId:    accountId,
+		AccountId: accountId,
 	}
 	dauthModifyMethod := dauth.Allow
 	if !allow {

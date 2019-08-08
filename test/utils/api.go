@@ -38,7 +38,6 @@ func CreateTestRequest(t *testing.T, msg gin.H, b binding.Binding) (*httptest.Re
 		assert.NoError(t, err)
 
 		c.Request.Body = ioutil.NopCloser(bytes.NewReader(d))
-		assert.NoError(t, err)
 	case binding.Query:
 		q := c.Request.URL.Query()
 		for key, val := range msg {

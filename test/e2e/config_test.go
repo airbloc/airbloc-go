@@ -2,13 +2,14 @@ package e2e
 
 import (
 	"crypto/ecdsa"
+	"log"
+	"net/http"
+
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/jinzhu/configor"
 	"github.com/stretchr/testify/require"
-	"log"
-	"net/http"
 )
 
 const ConfigFilePath = "../../config.yml"

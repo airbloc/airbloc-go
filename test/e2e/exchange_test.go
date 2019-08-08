@@ -1,18 +1,21 @@
 package e2e
 
 import (
+	"log"
+	"math/big"
+	"strings"
+
+	"github.com/ethereum/go-ethereum/common"
+
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
+	testadapter "github.com/airbloc/airbloc-go/test/e2e/adapter"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	ethbind "github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/stretchr/testify/require"
-	"log"
-	"math/big"
-	"strings"
 )
 
 func (t *T) prepareEscrow() *pb.Contract {
@@ -21,7 +24,7 @@ func (t *T) prepareEscrow() *pb.Contract {
 	client, err := ethclient.DialContext(t.ctx, t.config.EthereumEndpoint)
 	require.NoError(t, err)
 
-	token, err := adapter.NewERC20Mintable(t.config.DeployedContracts["ERC20Mintable"], client)
+	token, err := testadapter.NewSimpleToken(t.config.DeployedContracts["ERC20Mintable"], common.Hash{}, big.NewInt(0), client)
 	require.NoError(t, err)
 
 	// mint 10000 Tokens
@@ -44,7 +47,7 @@ func (t *T) prepareEscrow() *pb.Contract {
 		new(big.Float).SetInt(big.NewInt(params.Ether))),
 		"tokens are minted now.")
 
-	simpleContract, err := abi.JSON(strings.NewReader(adapter.SimpleContractABI))
+	simpleContract, err := abi.JSON(strings.NewReader(testadapter.ERC20EscrowABI))
 	require.NoError(t, err)
 
 	// prepare escrow condition details: SimpleContract.transact(ERC20Mintable.address, 100 Tokens)

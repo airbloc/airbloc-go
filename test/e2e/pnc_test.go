@@ -4,21 +4,17 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/json-iterator/go"
 	"log"
 	"math/rand"
 	"net/http"
 	"testing"
 	"time"
 
+	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
+	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
-
-	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 )
-
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 const numberOfUsers = 3
 const numberOfCollections = 5
@@ -92,8 +88,8 @@ func (t *T) testCreateCollection(appId string, schemaId string) string {
 func (t *T) testCreateUserAccount(index int) string {
 	dauth := pb.NewDAuthClient(t.conn)
 	response, err := dauth.SignIn(t.ctx, &pb.SignInRequest{
-		Identity:     fmt.Sprintf("test-user-%s-%d@airbloc.org", generateUniqueName(), index),
-		UserDelegate: t.config.UserDelegateAddress.Hex(),
+		Identity:   fmt.Sprintf("test-user-%s-%d@airbloc.org", generateUniqueName(), index),
+		Controller: t.config.UserDelegateAddress.Hex(),
 	})
 	require.NoError(t, err)
 	return response.GetAccountId()
