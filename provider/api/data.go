@@ -188,7 +188,7 @@ func (api *dataAPI) DeleteBatch(c *gin.Context) {
 //}
 
 func (api *dataAPI) AttachToAPI(service *api.Service) {
-	apiMux := service.RestAPIMux.Group("/data")
+	apiMux := service.HttpServer.Group("/data")
 	apiMux.GET("/", api.GetData)
 	apiMux.GET("/batch", api.GetBatch)
 	apiMux.GET("/bundle", api.GetBundle)

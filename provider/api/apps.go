@@ -3,12 +3,12 @@ package api
 import (
 	"net/http"
 
-	"github.com/ethereum/go-ethereum/common"
-
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 // appRegistryAPI is api wrapper of contract AppRegistry.sol
@@ -26,13 +26,16 @@ func NewAppRegistryAPI(backend service.Backend) (api.API, error) {
 //
 // Solidity: function register(string appName) returns()
 func (api *appRegistryAPI) register(c *gin.Context) {
-	appName := c.Param("appName")
-	if appName == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+	var req struct {
+		AppName string `json:"app_name" binding:"required"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := api.apps.Register(c, appName); err != nil {
+	if err := api.apps.Register(c, req.AppName); err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
@@ -43,16 +46,20 @@ func (api *appRegistryAPI) register(c *gin.Context) {
 //
 // Solidity: function unregister(string appName) returns()
 func (api *appRegistryAPI) unregister(c *gin.Context) {
-	appName := c.Param("appName")
-	if appName == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+	var req struct {
+		AppName string `form:"app_name" binding:"required"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := api.apps.Unregister(c, appName); err != nil {
+	if err := api.apps.Unregister(c, req.AppName); err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
@@ -60,17 +67,21 @@ func (api *appRegistryAPI) unregister(c *gin.Context) {
 //
 // Solidity: function get(string appName) constant returns((string,address,bytes32))
 func (api *appRegistryAPI) get(c *gin.Context) {
-	appName := c.Param("appName")
-	if appName == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+	var req struct {
+		AppName string `form:"app_name" binding:"required"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	app, err := api.apps.Get(appName)
+	app, err := api.apps.Get(req.AppName)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
+
 	c.JSON(http.StatusOK, app)
 }
 
@@ -78,25 +89,29 @@ func (api *appRegistryAPI) get(c *gin.Context) {
 //
 // Solidity: function transferAppOwner(string appName, address newOwner) returns()
 func (api *appRegistryAPI) transferAppOwner(c *gin.Context) {
-	appName := c.Param("appName")
-	newOwner := c.Param("newOwner")
-	if appName == "" || newOwner == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+	var req struct {
+		AppName  string `json:"app_name" binding:"required"`
+		NewOwner string `json:"new_owner" binding:"required"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := api.apps.TransferAppOwner(c, appName, common.HexToAddress(newOwner)); err != nil {
+	if err := api.apps.TransferAppOwner(c, req.AppName, common.HexToAddress(req.NewOwner)); err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
 // AttachToAPI is a registrant of an api.
 func (api *appRegistryAPI) AttachToAPI(service *api.Service) {
-	apiMux := service.RestAPIMux.Group("/apps")
-	apiMux.GET("/:appName", api.register)
-	apiMux.POST("/:appName", api.unregister)
-	apiMux.PATCH("/:appName", api.get)
-	apiMux.DELETE("/:appName/:newOwner", api.transferAppOwner)
+	apiMux := service.HttpServer.Group("/apps")
+	apiMux.GET("/", api.get)
+	apiMux.POST("/", api.register)
+	apiMux.PATCH("/", api.transferAppOwner)
+	apiMux.DELETE("/", api.unregister)
 }

@@ -208,7 +208,7 @@ func (api *dAuthAPI) deny(c *gin.Context) {
 
 // AttachToAPI is a registrant of an api.
 func (api *dAuthAPI) AttachToAPI(service *api.Service) {
-	apiMux := service.RestAPIMux.Group("/dauth")
+	apiMux := service.HttpServer.Group("/dauth")
 	apiMux.GET("/auth", api.getAuthorizations)
 	apiMux.POST("/signin", api.signIn)
 	apiMux.PUT("/allow", api.allow)

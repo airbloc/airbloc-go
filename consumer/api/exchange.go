@@ -66,7 +66,7 @@ func (api *ExchangeAPI) GetOffer(c *gin.Context) {
 }
 
 func (api *ExchangeAPI) AttachToAPI(service *api.Service) {
-	apiMux := service.RestAPIMux.Group("/exchange")
+	apiMux := service.HttpServer.Group("/exchange")
 	apiMux.GET("/settle/:offerId", api.Settle)
 	apiMux.GET("/reject/:offerId", api.Reject)
 	apiMux.GET("/order/:offerId", api.GetOffer)

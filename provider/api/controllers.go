@@ -58,7 +58,7 @@ func (api *controllerRegistryAPI) get(c *gin.Context) {
 
 // AttachToAPI is a registrant of an api.
 func (api *controllerRegistryAPI) AttachToAPI(service *api.Service) {
-	apiMux := service.RestAPIMux.Group("/controllers")
+	apiMux := service.HttpServer.Group("/controllers")
 	apiMux.GET("/:controllerAddr", api.get)
 	apiMux.POST("/:controllerAddr", api.register)
 }

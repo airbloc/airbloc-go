@@ -84,7 +84,7 @@ func (api *dataTypeRegistryAPI) get(c *gin.Context) {
 
 // AttachToAPI is a registrant of an api.
 func (api *dataTypeRegistryAPI) AttachToAPI(service *api.Service) {
-	apiMux := service.RestAPIMux.Group("/data-types")
+	apiMux := service.HttpServer.Group("/data-types")
 	apiMux.GET("/:dataType", api.get)
 	apiMux.POST("/", api.register)
 	apiMux.DELETE("/:dataType", api.unregister)

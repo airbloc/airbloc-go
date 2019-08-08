@@ -198,7 +198,7 @@ func (api *exchangeAPI) getOffer(c *gin.Context) {
 
 // AttachToAPI is a registrant of an api.
 func (api *exchangeAPI) AttachToAPI(service *api.Service) {
-	apiMux := service.RestAPIMux.Group("/exchange")
+	apiMux := service.HttpServer.Group("/exchange")
 	apiMux.POST("/prepare", api.prepare)
 	apiMux.GET("/order/:offerId", api.getOffer)
 	apiMux.POST("/order/:offerId", api.order)

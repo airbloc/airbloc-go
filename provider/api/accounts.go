@@ -203,7 +203,7 @@ func (api *accountsAPI) getAccountId(c *gin.Context) {
 
 // AttachToAPI is a registrant of an api.
 func (api *accountsAPI) AttachToAPI(service *api.Service) {
-	apiMux := service.RestAPIMux.Group("/accounts")
+	apiMux := service.HttpServer.Group("/accounts")
 	apiMux.GET("/", api.getAccountId)
 	apiMux.GET("/:accountId", api.getAccount)
 	apiMux.POST("/", api.create)
