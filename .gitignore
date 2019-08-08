@@ -15,6 +15,7 @@ local.db
 **/.vscode
 **/node_modules
 **/build
+test/tester.key
 test/playground
 
 # Created by https://www.gitignore.io/api/go,intellij
