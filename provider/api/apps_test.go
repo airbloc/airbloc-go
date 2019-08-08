@@ -68,7 +68,7 @@ func TestAppRegistryAPI_Register_FailedToRegister(t *testing.T) {
 	api := &appRegistryAPI{mockManager}
 	api.register(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 
 }
@@ -121,7 +121,7 @@ func TestAppRegistryAPI_Unregister_FailedToUnregister(t *testing.T) {
 	api := &appRegistryAPI{mockManager}
 	api.unregister(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
@@ -173,7 +173,7 @@ func TestAppRegistryAPI_Get_FailedToGet(t *testing.T) {
 	api := &appRegistryAPI{mockManager}
 	api.get(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
@@ -239,6 +239,6 @@ func TestAppRegistryAPI_TransferAppOwner_FailedToTransferAppOwner(t *testing.T) 
 	api := &appRegistryAPI{mockManager}
 	api.transferAppOwner(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }

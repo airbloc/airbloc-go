@@ -74,7 +74,7 @@ func TestDataTypeRegistryAPI_Register_FailedToRegister(t *testing.T) {
 	api := &dataTypeRegistryAPI{mockManager}
 	api.register(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
@@ -125,7 +125,7 @@ func TestDataTypeRegistryAPI_Unregister_FailedToUnregister(t *testing.T) {
 	api := &dataTypeRegistryAPI{mockManager}
 	api.unregister(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
@@ -177,6 +177,6 @@ func TestDataTypeRegistryAPI_Get_FailedToGet(t *testing.T) {
 	api := &dataTypeRegistryAPI{mockManager}
 	api.get(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }

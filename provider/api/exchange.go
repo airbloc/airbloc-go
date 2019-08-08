@@ -73,7 +73,7 @@ func (api *exchangeAPI) prepare(c *gin.Context) {
 		escrow, escrowSign, escrowArgs, dataIds,
 	)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -115,7 +115,7 @@ func (api *exchangeAPI) addDataIds(c *gin.Context) {
 
 	err = api.manager.AddDataIds(c, offerId, dataIds)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -140,7 +140,7 @@ func (api *exchangeAPI) order(c *gin.Context) {
 
 	err = api.manager.Order(c, offerId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -165,7 +165,7 @@ func (api *exchangeAPI) cancel(c *gin.Context) {
 
 	err = api.manager.Cancel(c, offerId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 

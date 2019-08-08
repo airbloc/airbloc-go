@@ -69,7 +69,7 @@ func TestControllerRegistryAPI_Register_FailedToRegister(t *testing.T) {
 	api := &controllerRegistryAPI{mockManager}
 	api.register(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
@@ -121,6 +121,6 @@ func TestControllerRegistryAPI_Get_FailedToGet(t *testing.T) {
 	api := &controllerRegistryAPI{mockManager}
 	api.get(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }

@@ -55,7 +55,7 @@ func TestAccountsAPI_Create_Conflict(t *testing.T) {
 	api := accountsAPI{mockManager}
 	api.create(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
@@ -107,7 +107,7 @@ func TestAccountsAPI_CreateTemporary_Conflict(t *testing.T) {
 	api := accountsAPI{mockManager}
 	api.createTemporary(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
@@ -194,7 +194,7 @@ func TestAccountsAPI_UnlockTemporary_Conflict(t *testing.T) {
 	api := accountsAPI{mockManager}
 	api.unlockTemporary(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
@@ -246,7 +246,7 @@ func TestAccountsAPI_SetController_Conflict(t *testing.T) {
 	api := accountsAPI{mockManager}
 	api.setController(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
@@ -316,7 +316,7 @@ func TestAccountsAPI_GetAccount_FailedToGetAccount(t *testing.T) {
 	api := accountsAPI{mockManager}
 	api.getAccount(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
@@ -353,7 +353,7 @@ func TestAccountsAPI_GetAccountId_FailedToGetAccountId(t *testing.T) {
 	api := accountsAPI{mockManager}
 	api.getAccountId(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 
@@ -416,6 +416,6 @@ func TestAccountsAPI_GetAccountIdWithSignature_FailedToGetAccountIdFromSignature
 	api := accountsAPI{mockManager}
 	api.getAccountId(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }

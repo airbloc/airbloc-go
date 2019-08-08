@@ -36,7 +36,7 @@ func (api *appRegistryAPI) register(c *gin.Context) {
 	}
 
 	if err := api.apps.Register(c, req.AppName); err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
@@ -56,7 +56,7 @@ func (api *appRegistryAPI) unregister(c *gin.Context) {
 	}
 
 	if err := api.apps.Unregister(c, req.AppName); err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -78,7 +78,7 @@ func (api *appRegistryAPI) get(c *gin.Context) {
 
 	app, err := api.apps.Get(req.AppName)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -100,7 +100,7 @@ func (api *appRegistryAPI) transferAppOwner(c *gin.Context) {
 	}
 
 	if err := api.apps.TransferAppOwner(c, req.AppName, common.HexToAddress(req.NewOwner)); err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 

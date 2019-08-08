@@ -44,7 +44,7 @@ func (api *dAuthAPI) signIn(c *gin.Context) {
 	controller := ethCommon.HexToAddress(req.Controller)
 	accountId, err := api.dauthClient.SignIn(c, req.Identity, controller)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -112,7 +112,7 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 	// data type
 	for ; dataTypeEventIter.Next(); dataTypeRegisterEvent = dataTypeEventIter.Event {
 		if dataTypeRegisterEvent == nil {
-			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
@@ -121,7 +121,7 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 			dataType := dataTypeRegisterEvent.Name
 			allowed, err := api.consents.IsAllowed(accountId, dataType, uint8(action), req.AppName)
 			if err != nil {
-				c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
 
@@ -166,7 +166,7 @@ func (api *dAuthAPI) allow(c *gin.Context) {
 		req.AppName,
 	)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -199,7 +199,7 @@ func (api *dAuthAPI) deny(c *gin.Context) {
 		req.AppName,
 	)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 

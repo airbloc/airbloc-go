@@ -194,7 +194,7 @@ func TestExchangeAPI_Prepare_FailedToPrepare(t *testing.T) {
 	api := &exchangeAPI{mockManager}
 	api.prepare(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, testutils.TestErrStr, w.Body.String())
 }
 

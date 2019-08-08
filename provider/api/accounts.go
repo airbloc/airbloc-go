@@ -30,7 +30,7 @@ func NewAccountsAPI(backend service.Backend) (api.API, error) {
 func (api *accountsAPI) create(c *gin.Context) {
 	accountId, err := api.accounts.Create(c)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
@@ -52,7 +52,7 @@ func (api *accountsAPI) createTemporary(c *gin.Context) {
 	identityHash := common.HexToHash(req.IdentityHash)
 	accountId, err := api.accounts.CreateTemporary(c, identityHash)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
@@ -83,7 +83,7 @@ func (api *accountsAPI) unlockTemporary(c *gin.Context) {
 
 	err = api.accounts.UnlockTemporary(c, identityPreimage, newOwner, passwordSignature)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -105,7 +105,7 @@ func (api *accountsAPI) setController(c *gin.Context) {
 
 	controller := common.HexToAddress(req.Controller)
 	if err := api.accounts.SetController(c, controller); err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "success"})
@@ -132,7 +132,7 @@ func (api *accountsAPI) getAccount(c *gin.Context) {
 
 	account, err := api.accounts.GetAccount(accountId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, account)
@@ -161,7 +161,7 @@ func (api *accountsAPI) getAccountId(c *gin.Context) {
 		owner := common.HexToAddress(accountIdRequest.Owner)
 		accountId, err := api.accounts.GetAccountId(owner)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
@@ -178,7 +178,7 @@ func (api *accountsAPI) getAccountId(c *gin.Context) {
 
 		accountId, err := api.accounts.GetAccountIdFromSignature(messageHash, signature)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
@@ -187,7 +187,7 @@ func (api *accountsAPI) getAccountId(c *gin.Context) {
 
 	accountId, err := api.accounts.GetAccountId(common.Address{})
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})

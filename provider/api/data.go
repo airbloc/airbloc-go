@@ -45,7 +45,7 @@ func (api *dataAPI) GetData(c *gin.Context) {
 
 	res, err := api.manager.Get(dataId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, res)
@@ -64,13 +64,13 @@ func (api *dataAPI) GetBatch(c *gin.Context) {
 	batchManager := api.manager.Batches()
 	batchInfo, err := batchManager.Get(req.BatchId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	res, err := api.manager.GetBatch(batchInfo)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, res)
@@ -94,7 +94,7 @@ func (api *dataAPI) GetBundle(c *gin.Context) {
 
 	res, err := api.manager.GetBundle(c, bundleId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, res)
@@ -169,7 +169,7 @@ func (api *dataAPI) DeleteBatch(c *gin.Context) {
 	batchManager := api.manager.Batches()
 	batchInfo, err := batchManager.Get(req.BatchId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
