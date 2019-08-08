@@ -3,7 +3,7 @@ package ablclient
 import (
 	"context"
 
-	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/userdelegate"
+	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/controller"
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/airbloc-go/shared/types"
 	ethCommon "github.com/ethereum/go-ethereum/common"
