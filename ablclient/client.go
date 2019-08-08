@@ -48,11 +48,13 @@ func (client *Client) Create(walletAddress ethCommon.Address, password string) (
 	if err != nil {
 		return nil, errors.Wrapf(err, "invalid ID returned from the server: %s", response.GetAccountId())
 	}
-	return &Session{session{
-		AccountId:     accountId,
-		WalletAddress: walletAddress,
-		Key:           priv,
-	}}, nil
+	return &Session{
+		session{
+			AccountId:     accountId,
+			WalletAddress: walletAddress,
+			Key:           priv,
+		},
+	}, nil
 }
 
 func (client *Client) LogIn(identity string, password string) (*Session, error) {

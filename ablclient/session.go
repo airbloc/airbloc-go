@@ -20,11 +20,13 @@ type session struct {
 func NewSession(accountId types.ID, walletAddress ethCommon.Address, password string) *Session {
 	identityHash := crypto.Keccak256Hash(walletAddress.Bytes())
 	priv := key.DeriveFromPassword(identityHash, password)
-	return &Session{session{
-		AccountId:     accountId,
-		WalletAddress: walletAddress,
-		Key:           priv,
-	}}
+	return &Session{
+		session{
+			AccountId:     accountId,
+			WalletAddress: walletAddress,
+			Key:           priv,
+		},
+	}
 }
 
 func (session *session) Sign(hash ethCommon.Hash) ([]byte, error) {
