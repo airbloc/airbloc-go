@@ -3,53 +3,20 @@ package e2e
 import (
 	"fmt"
 	"math/rand"
-	"net"
 	"net/http"
 	"net/http/httptest"
-	"strconv"
-
-	"github.com/airbloc/airbloc-go/shared/blockchain"
-
-	e2eutils "github.com/airbloc/airbloc-go/test/e2e/utils"
-
-	testutils "github.com/airbloc/airbloc-go/test/utils"
 
 	"github.com/airbloc/airbloc-go/provider/api"
+	"github.com/airbloc/airbloc-go/shared/blockchain"
 	apilib "github.com/airbloc/airbloc-go/shared/service/api"
 	serviceMock "github.com/airbloc/airbloc-go/shared/service/mocks"
+	e2eutils "github.com/airbloc/airbloc-go/test/e2e/utils"
+	testutils "github.com/airbloc/airbloc-go/test/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
-
-func getAvailablePort() (port int, rerr error) {
-	server, err := net.Listen("tcp", ":0")
-	if err != nil {
-		return 0, err
-	}
-	defer func() {
-		err = server.Close()
-		if err != nil {
-			rerr = err
-		}
-	}()
-
-	host := server.Addr().String()
-
-	_, portStr, err := net.SplitHostPort(host)
-	if err != nil {
-		return 0, err
-	}
-
-	// Return the port as an int
-	p, err := strconv.Atoi(portStr)
-	if err != nil {
-		return 0, err
-	}
-
-	return p, nil
-}
 
 var _ = Describe("Apps", func() {
 	var (
