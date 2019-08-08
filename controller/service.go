@@ -113,7 +113,7 @@ func (service *service) sync(ctx context.Context) (rerr error) {
 func (service *service) addUser(accountId types.ID) error {
 	// you can be delegate of a user after the user designate you as a delegate.
 	if isController, err := service.accounts.IsControllerOf(service.addr, accountId); err != nil {
-		return errors.Wrapf(err, "failed to call %s", "accounts.isControllerOf")
+		return errors.Wrap(err, "failed to call accounts.isControllerOf")
 	} else if !isController {
 		return ErrDelegationNotAllowed
 	}
@@ -163,40 +163,34 @@ func (service *service) createDAuthHandler(allow bool) p2p.RPCHandler {
 		}
 
 		var (
-			err error
-
-			accountId types.ID
-			appName   = request.GetAppName()
-			action    types.ConsentActionTypes
-			dataType  = request.GetDataType()
+			appName  = request.GetAppName()
+			dataType = request.GetDataType()
 		)
 
-		// validation
-		{
-			// accountId
-			if accountId, err = types.HexToID(request.GetAccountId()); err != nil {
-				return nil, errors.Wrapf(err, "invalid account ID %s", request.GetAccountId())
-			}
+		// accountId
+		accountId, err := types.HexToID(request.GetAccountId())
+		if err != nil {
+			return nil, errors.Wrapf(err, "invalid account ID %s", request.GetAccountId())
+		}
 
-			// appName
-			if appExists, err := service.apps.Exists(appName); err != nil {
-				return nil, errors.Wrapf(err, "failed to call %s", "appRegistry.Exists")
-			} else if !appExists {
-				return nil, errors.Errorf("app does not exist. appName: %s", appName)
-			}
+		// appName
+		if appExists, err := service.apps.Exists(appName); err != nil {
+			return nil, errors.Wrap(err, "failed to call appRegistry.Exists")
+		} else if !appExists {
+			return nil, errors.Errorf("app does not exist. appName: %s", appName)
+		}
 
-			// action
-			var actionExists bool
-			if action, actionExists = types.ConsentActionList[uint8(request.GetAction())]; !actionExists {
-				return nil, errors.Errorf("action does not exist. action: %d", request.GetAction())
-			}
+		// action
+		action, actionExists := types.ConsentActionList[uint8(request.GetAction())]
+		if !actionExists {
+			return nil, errors.Errorf("action does not exist. action: %d", request.GetAction())
+		}
 
-			// dataType
-			if dataTypeExists, err := service.dataTypes.Exists(dataType); err != nil {
-				return nil, errors.Wrapf(err, "failed to call %s", "dataTypeRegistry.Exists")
-			} else if !dataTypeExists {
-				return nil, errors.Errorf("data type does not exist. dataType: %s", dataType)
-			}
+		// dataType
+		if dataTypeExists, err := service.dataTypes.Exists(dataType); err != nil {
+			return nil, errors.Wrap(err, "failed to call dataTypeRegistry.Exists")
+		} else if !dataTypeExists {
+			return nil, errors.Errorf("data type does not exist. dataType: %s", dataType)
 		}
 
 		// check that the given user is registered
@@ -205,7 +199,7 @@ func (service *service) createDAuthHandler(allow bool) p2p.RPCHandler {
 		}
 
 		if isController, err := service.accounts.IsControllerOf(service.addr, accountId); err != nil {
-			return nil, errors.Wrapf(err, "failed to call %s", "accounts.isControllerOf")
+			return nil, errors.Wrap(err, "failed to call accounts.isControllerOf")
 		} else if !isController {
 			return nil, ErrDelegationNotAllowed
 		}
