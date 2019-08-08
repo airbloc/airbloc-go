@@ -134,7 +134,7 @@ var _ = Describe("Apps", func() {
 	It("should unregister app", func() {
 		req, err := e2eutils.CreateRequest(
 			e2eutils.MethodDelete, testEndpoint(""),
-			gin.H{"app_name": testAppName}, e2eutils.RequestQuery,
+			gin.H{"app_name": testAppName}, e2eutils.RequestJSON,
 		)
 		Ω(err).ShouldNot(HaveOccurred())
 
