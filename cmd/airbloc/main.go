@@ -3,6 +3,10 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
+	log2 "log"
+	"os"
+	"strings"
+
 	"github.com/airbloc/airbloc-go/consumer"
 	"github.com/airbloc/airbloc-go/controller"
 	"github.com/airbloc/airbloc-go/provider"
@@ -12,11 +16,8 @@ import (
 	"github.com/airbloc/logger"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/jinzhu/configor"
-	"github.com/mitchellh/go-homedir"
+	home "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
-	log2 "log"
-	"os"
-	"strings"
 )
 
 var (
@@ -57,10 +58,10 @@ var (
 		//Run:   start("provider,consumer,warehouse"),
 	}
 
-	userDelegateCmd = &cobra.Command{
-		Use:   "userdelegate",
-		Short: "Start Airbloc user delegate daemon.",
-		Long:  "Start user delegate daemon, watching and supervising user's data event.",
+	dataControllerCmd = &cobra.Command{
+		Use:   "controller",
+		Short: "Start Airbloc data controller daemon.",
+		Long:  "Start data controller daemon, watching and supervising user's data event.",
 		Run:   start("warehouse,controller"),
 	}
 
@@ -112,7 +113,7 @@ func init() {
 	rootCmd.AddCommand(
 		initCmd,
 		serverCmd,
-		userDelegateCmd,
+		dataControllerCmd,
 		versionCmd,
 	)
 }
@@ -124,7 +125,7 @@ func loadConfig() {
 	}
 
 	// get data directory
-	dataDir, err := homedir.Expand(rootFlags.dataDir)
+	dataDir, err := home.Expand(rootFlags.dataDir)
 	if err != nil {
 		log.Error("Error: failed to resolve data directory {}", err, rootFlags.dataDir)
 	}
