@@ -9,6 +9,7 @@ import (
 
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/klaytn/klaytn/accounts/abi"
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	klayTypes "github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/common"
@@ -107,11 +108,8 @@ func (c *AppRegistryContract) CreatedAt() *big.Int {
 	return c.createdAt
 }
 
-func newAppRegistryContract(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (*AppRegistryContract, error) {
-	contract, err := newAppRegistry(address, txHash, createdAt, backend)
-	if err != nil {
-		return nil, err
-	}
+func newAppRegistryContract(address common.Address, txHash common.Hash, createdAt *big.Int, parsedABI abi.ABI, backend bind.ContractBackend) interface{} {
+	contract := bind.NewBoundContract(address, parsedABI, backend, backend, backend)
 
 	return &AppRegistryContract{
 		address:   address,
@@ -119,15 +117,15 @@ func newAppRegistryContract(address common.Address, txHash common.Hash, createdA
 		createdAt: createdAt,
 		client:    backend.(blockchain.TxClient),
 
-		AppRegistryCaller:     contract.AppRegistryCaller,
-		AppRegistryFilterer:   contract.AppRegistryFilterer,
-		AppRegistryTransactor: contract.AppRegistryTransactor,
-	}, nil
+		AppRegistryCaller:     AppRegistryCaller{contract: contract},
+		AppRegistryTransactor: AppRegistryTransactor{contract: contract},
+		AppRegistryFilterer:   AppRegistryFilterer{contract: contract},
+	}
 }
 
 // convenient hacks for blockchain.Client
 func init() {
-	blockchain.AddContractConstructor("AppRegistry", (&AppRegistry{}).new)
+	blockchain.AddContractConstructor("AppRegistry", newAppRegistryContract)
 	blockchain.RegisterSelector("0xf2c298be", "register(string)")
 	blockchain.RegisterSelector("0x1a9dff9f", "transferAppOwner(string,address)")
 	blockchain.RegisterSelector("0x6598a1ae", "unregister(string)")

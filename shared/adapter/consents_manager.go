@@ -154,3 +154,32 @@ func (manager *consentsManager) ModifyConsentByController(
 	})
 	return nil
 }
+
+// ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xe031b1cf.
+//
+// Solidity: function modifyConsentManyByController(bytes8 userId, string appName, (uint8,string,bool)[] consentData, bytes passwordSignature) returns()
+func (manager *consentsManager) ModifyConsentManyByController(
+	ctx context.Context,
+	userId types.ID,
+	appName string,
+	consentData []types.ConsentData,
+	passwordSignature []byte,
+) error {
+	receipt, err := manager.IConsentsContract.ModifyConsentManyByController(ctx, userId, appName, consentData, passwordSignature)
+	if err != nil {
+		return errors.Wrap(err, "failed to transact")
+	}
+
+	evt, err := manager.IConsentsContract.ParseConsentedFromReceipt(receipt)
+	if err != nil {
+		return errors.Wrap(err, "failed to parse a event from the receipt")
+	}
+
+	manager.log.Info("Consent modified by controller.", logger.Attrs{
+		"app-name":   evt.AppName,
+		"data-type":  evt.DataType,
+		"account-id": evt.UserId.Hex(),
+		"data-count": len(receipt.Logs),
+	})
+	return nil
+}

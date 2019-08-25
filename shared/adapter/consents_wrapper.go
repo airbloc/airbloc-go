@@ -9,6 +9,7 @@ import (
 
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/klaytn/klaytn/accounts/abi"
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	klayTypes "github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/common"
@@ -30,6 +31,7 @@ type IConsentsManager interface {
 	ConsentMany(ctx context.Context, appName string, consentData []types.ConsentData) error
 	ConsentManyByController(ctx context.Context, userId types.ID, appName string, consentData []types.ConsentData) error
 	ModifyConsentByController(ctx context.Context, userId types.ID, appName string, consentData types.ConsentData, passwordSignature []byte) error
+	ModifyConsentManyByController(ctx context.Context, userId types.ID, appName string, consentData []types.ConsentData, passwordSignature []byte) error
 
 	// Event methods
 	IConsentsFilterer
@@ -47,6 +49,7 @@ type IConsentsTransacts interface {
 	ConsentMany(ctx context.Context, appName string, consentData []types.ConsentData) (*klayTypes.Receipt, error)
 	ConsentManyByController(ctx context.Context, userId types.ID, appName string, consentData []types.ConsentData) (*klayTypes.Receipt, error)
 	ModifyConsentByController(ctx context.Context, userId types.ID, appName string, consentData types.ConsentData, passwordSignature []byte) (*klayTypes.Receipt, error)
+	ModifyConsentManyByController(ctx context.Context, userId types.ID, appName string, consentData []types.ConsentData, passwordSignature []byte) (*klayTypes.Receipt, error)
 }
 
 type IConsentsEvents interface {
@@ -104,11 +107,8 @@ func (c *ConsentsContract) CreatedAt() *big.Int {
 	return c.createdAt
 }
 
-func newConsentsContract(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (*ConsentsContract, error) {
-	contract, err := newConsents(address, txHash, createdAt, backend)
-	if err != nil {
-		return nil, err
-	}
+func newConsentsContract(address common.Address, txHash common.Hash, createdAt *big.Int, parsedABI abi.ABI, backend bind.ContractBackend) interface{} {
+	contract := bind.NewBoundContract(address, parsedABI, backend, backend, backend)
 
 	return &ConsentsContract{
 		address:   address,
@@ -116,20 +116,21 @@ func newConsentsContract(address common.Address, txHash common.Hash, createdAt *
 		createdAt: createdAt,
 		client:    backend.(blockchain.TxClient),
 
-		ConsentsCaller:     contract.ConsentsCaller,
-		ConsentsFilterer:   contract.ConsentsFilterer,
-		ConsentsTransactor: contract.ConsentsTransactor,
-	}, nil
+		ConsentsCaller:     ConsentsCaller{contract: contract},
+		ConsentsTransactor: ConsentsTransactor{contract: contract},
+		ConsentsFilterer:   ConsentsFilterer{contract: contract},
+	}
 }
 
 // convenient hacks for blockchain.Client
 func init() {
-	blockchain.AddContractConstructor("Consents", (&Consents{}).new)
+	blockchain.AddContractConstructor("Consents", newConsentsContract)
 	blockchain.RegisterSelector("0xcd4dc804", "consent(string,(uint8,string,bool))")
 	blockchain.RegisterSelector("0xf573f89a", "consentByController(bytes8,string,(uint8,string,bool))")
 	blockchain.RegisterSelector("0xdd43ad05", "consentMany(string,(uint8,string,bool)[])")
 	blockchain.RegisterSelector("0xae6d5034", "consentManyByController(bytes8,string,(uint8,string,bool)[])")
 	blockchain.RegisterSelector("0x0bfec389", "modifyConsentByController(bytes8,string,(uint8,string,bool),bytes)")
+	blockchain.RegisterSelector("0xe031b1cf", "modifyConsentManyByController(bytes8,string,(uint8,string,bool)[],bytes)")
 }
 
 // IsAllowed is a free data retrieval call binding the contract method 0x50615985.
@@ -195,6 +196,17 @@ func (c *ConsentsContract) ConsentManyByController(ctx context.Context, userId t
 // Solidity: function modifyConsentByController(bytes8 userId, string appName, (uint8,string,bool) consentData, bytes passwordSignature) returns()
 func (c *ConsentsContract) ModifyConsentByController(ctx context.Context, userId types.ID, appName string, consentData types.ConsentData, passwordSignature []byte) (*klayTypes.Receipt, error) {
 	tx, err := c.ConsentsTransactor.ModifyConsentByController(c.client.Account(), userId, appName, consentData, passwordSignature)
+	if err != nil {
+		return nil, err
+	}
+	return c.client.WaitMined(ctx, tx)
+}
+
+// ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xe031b1cf.
+//
+// Solidity: function modifyConsentManyByController(bytes8 userId, string appName, (uint8,string,bool)[] consentData, bytes passwordSignature) returns()
+func (c *ConsentsContract) ModifyConsentManyByController(ctx context.Context, userId types.ID, appName string, consentData []types.ConsentData, passwordSignature []byte) (*klayTypes.Receipt, error) {
+	tx, err := c.ConsentsTransactor.ModifyConsentManyByController(c.client.Account(), userId, appName, consentData, passwordSignature)
 	if err != nil {
 		return nil, err
 	}

@@ -9,6 +9,7 @@ import (
 
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/klaytn/klaytn/accounts/abi"
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	klayTypes "github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/common"
@@ -108,11 +109,8 @@ func (c *ControllerRegistryContract) CreatedAt() *big.Int {
 	return c.createdAt
 }
 
-func newControllerRegistryContract(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (*ControllerRegistryContract, error) {
-	contract, err := newControllerRegistry(address, txHash, createdAt, backend)
-	if err != nil {
-		return nil, err
-	}
+func newControllerRegistryContract(address common.Address, txHash common.Hash, createdAt *big.Int, parsedABI abi.ABI, backend bind.ContractBackend) interface{} {
+	contract := bind.NewBoundContract(address, parsedABI, backend, backend, backend)
 
 	return &ControllerRegistryContract{
 		address:   address,
@@ -120,15 +118,15 @@ func newControllerRegistryContract(address common.Address, txHash common.Hash, c
 		createdAt: createdAt,
 		client:    backend.(blockchain.TxClient),
 
-		ControllerRegistryCaller:     contract.ControllerRegistryCaller,
-		ControllerRegistryFilterer:   contract.ControllerRegistryFilterer,
-		ControllerRegistryTransactor: contract.ControllerRegistryTransactor,
-	}, nil
+		ControllerRegistryCaller:     ControllerRegistryCaller{contract: contract},
+		ControllerRegistryTransactor: ControllerRegistryTransactor{contract: contract},
+		ControllerRegistryFilterer:   ControllerRegistryFilterer{contract: contract},
+	}
 }
 
 // convenient hacks for blockchain.Client
 func init() {
-	blockchain.AddContractConstructor("ControllerRegistry", (&ControllerRegistry{}).new)
+	blockchain.AddContractConstructor("ControllerRegistry", newControllerRegistryContract)
 	blockchain.RegisterSelector("0x4420e486", "register(address)")
 	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
 	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")

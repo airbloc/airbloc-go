@@ -5,21 +5,15 @@ package adapter
 
 import (
 	"math/big"
-	"strings"
 
-	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
 	klaytn "github.com/klaytn/klaytn"
-	"github.com/klaytn/klaytn/accounts/abi"
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	klayTypes "github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/common"
 	"github.com/klaytn/klaytn/event"
 	"github.com/pkg/errors"
 )
-
-// ExchangeABI is the input ABI used to generate the binding from.
-const ExchangeABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":[{\"Name\":\"appReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":null},\"Methods\":{\"addDataIds\":{\"Name\":\"addDataIds\",\"Const\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataIds\",\"Type\":{\"Elem\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":4,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"cancel\":{\"Name\":\"cancel\",\"Const\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"getOffer\":{\"Name\":\"getOffer\",\"Const\":true,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":4,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":22,\"Type\":{},\"Size\":256,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":22,\"Type\":{},\"Size\":256,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":4,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"addr\",\"sign\",\"args\"]},{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"provider\",\"consumer\",\"dataIds\",\"at\",\"until\",\"escrow\",\"status\"]},\"Indexed\":false}]},\"getOfferMembers\":{\"Name\":\"getOfferMembers\",\"Const\":true,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"offerExists\":{\"Name\":\"offerExists\",\"Const\":true,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"order\":{\"Name\":\"order\",\"Const\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"prepare\":{\"Name\":\"prepare\",\"Const\":false,\"Inputs\":[{\"Name\":\"provider\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"consumer\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"escrow\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"escrowSign\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":4,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"escrowArgs\",\"Type\":{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataIds\",\"Type\":{\"Elem\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":4,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"reject\":{\"Name\":\"reject\",\"Const\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"settle\":{\"Name\":\"settle\",\"Const\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]}},\"Events\":{\"EscrowExecutionFailed\":{\"Name\":\"EscrowExecutionFailed\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"reason\",\"Type\":{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"OfferCanceled\":{\"Name\":\"OfferCanceled\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"providerAppName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"OfferPrepared\":{\"Name\":\"OfferPrepared\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"providerAppName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"OfferPresented\":{\"Name\":\"OfferPresented\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"providerAppName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"OfferReceipt\":{\"Name\":\"OfferReceipt\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"providerAppName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"consumer\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"result\",\"Type\":{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"OfferRejected\":{\"Name\":\"OfferRejected\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"consumer\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true}]},\"OfferSettled\":{\"Name\":\"OfferSettled\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"offerId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"consumer\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true}]}}}"
 
 // Exchange is an auto generated Go binding around an Ethereum contract.
 type Exchange struct {
@@ -59,30 +53,6 @@ type ExchangeRaw struct {
 	Contract *Exchange // Generic contract binding to access the raw methods on
 }
 
-func newExchange(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (*Exchange, error) {
-	contract, err := bindExchange(address, backend, backend, backend)
-	if err != nil {
-		return nil, err
-	}
-	return &Exchange{
-		address:            address,
-		txHash:             txHash,
-		createdAt:          createdAt,
-		ExchangeCaller:     ExchangeCaller{contract: contract},
-		ExchangeTransactor: ExchangeTransactor{contract: contract},
-		ExchangeFilterer:   ExchangeFilterer{contract: contract},
-	}, nil
-}
-
-// bindExchange binds a generic wrapper to an already deployed contract.
-func bindExchange(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(ExchangeABI))
-	if err != nil {
-		return nil, err
-	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
-}
-
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
@@ -119,15 +89,6 @@ type ExchangeCallerRaw struct {
 	Contract *ExchangeCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// NewExchangeCaller creates a new read-only instance of Exchange, bound to a specific deployed contract.
-func NewExchangeCaller(address common.Address, caller bind.ContractCaller) (*ExchangeCaller, error) {
-	contract, err := bindExchange(address, caller, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &ExchangeCaller{contract: contract}, nil
-}
-
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
@@ -153,15 +114,6 @@ type ExchangeTransactorRaw struct {
 	Contract *ExchangeTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-// NewExchangeTransactor creates a new write-only instance of Exchange, bound to a specific deployed contract.
-func NewExchangeTransactor(address common.Address, transactor bind.ContractTransactor) (*ExchangeTransactor, error) {
-	contract, err := bindExchange(address, nil, transactor, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &ExchangeTransactor{contract: contract}, nil
-}
-
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
 func (_Exchange *ExchangeTransactorRaw) Transfer(opts *bind.TransactOpts) (*klayTypes.Transaction, error) {
@@ -176,30 +128,6 @@ func (_Exchange *ExchangeTransactorRaw) Transact(opts *bind.TransactOpts, method
 // ExchangeFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
 type ExchangeFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// NewExchangeFilterer creates a new log filterer instance of Exchange, bound to a specific deployed contract.
-func NewExchangeFilterer(address common.Address, filterer bind.ContractFilterer) (*ExchangeFilterer, error) {
-	contract, err := bindExchange(address, nil, nil, filterer)
-	if err != nil {
-		return nil, err
-	}
-	return &ExchangeFilterer{contract: contract}, nil
-}
-
-// convenient hacks for blockchain.Client
-func init() {
-	blockchain.AddContractConstructor("Exchange", (&Exchange{}).new)
-	blockchain.RegisterSelector("0x367a9005", "addDataIds(bytes8,bytes20[])")
-	blockchain.RegisterSelector("0xb2d9ba39", "cancel(bytes8)")
-	blockchain.RegisterSelector("0x0cf833fb", "order(bytes8)")
-	blockchain.RegisterSelector("0x77e61c33", "prepare(string,address,address,bytes4,bytes,bytes20[])")
-	blockchain.RegisterSelector("0x6622e153", "reject(bytes8)")
-	blockchain.RegisterSelector("0xa60d9b5f", "settle(bytes8)")
-}
-
-func (_Exchange *Exchange) new(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (interface{}, error) {
-	return newExchangeContract(address, txHash, createdAt, backend)
 }
 
 // GetOffer is a free data retrieval call binding the contract method 0x107f04b4.

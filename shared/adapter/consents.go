@@ -5,21 +5,15 @@ package adapter
 
 import (
 	"math/big"
-	"strings"
 
-	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
 	klaytn "github.com/klaytn/klaytn"
-	"github.com/klaytn/klaytn/accounts/abi"
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	klayTypes "github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/common"
 	"github.com/klaytn/klaytn/event"
 	"github.com/pkg/errors"
 )
-
-// ConsentsABI is the input ABI used to generate the binding from.
-const ConsentsABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":[{\"Name\":\"accountReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"controllerReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataTypeReg\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":null},\"Methods\":{\"consent\":{\"Name\":\"consent\",\"Const\":false,\"Inputs\":[{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"consentData\",\"Type\":{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"action\",\"dataType\",\"allowed\"]},\"Indexed\":false}],\"Outputs\":[]},\"consentByController\":{\"Name\":\"consentByController\",\"Const\":false,\"Inputs\":[{\"Name\":\"userId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"consentData\",\"Type\":{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"action\",\"dataType\",\"allowed\"]},\"Indexed\":false}],\"Outputs\":[]},\"consentMany\":{\"Name\":\"consentMany\",\"Const\":false,\"Inputs\":[{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"consentData\",\"Type\":{\"Elem\":{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"action\",\"dataType\",\"allowed\"]},\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":4,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"consentManyByController\":{\"Name\":\"consentManyByController\",\"Const\":false,\"Inputs\":[{\"Name\":\"userId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"consentData\",\"Type\":{\"Elem\":{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"action\",\"dataType\",\"allowed\"]},\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":4,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"isAllowed\":{\"Name\":\"isAllowed\",\"Const\":true,\"Inputs\":[{\"Name\":\"userId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"action\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataType\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"isAllowedAt\":{\"Name\":\"isAllowedAt\",\"Const\":true,\"Inputs\":[{\"Name\":\"userId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"action\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataType\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"blockNumber\",\"Type\":{\"Elem\":null,\"Kind\":22,\"Type\":{},\"Size\":256,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"modifyConsentByController\":{\"Name\":\"modifyConsentByController\",\"Const\":false,\"Inputs\":[{\"Name\":\"userId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"consentData\",\"Type\":{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"action\",\"dataType\",\"allowed\"]},\"Indexed\":false},{\"Name\":\"passwordSignature\",\"Type\":{\"Elem\":null,\"Kind\":23,\"Type\":{},\"Size\":0,\"T\":9,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]}},\"Events\":{\"Consented\":{\"Name\":\"Consented\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"action\",\"Type\":{\"Elem\":null,\"Kind\":8,\"Type\":{},\"Size\":8,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"userId\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":8,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"appAddr\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"appName\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"dataType\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"allowed\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]}}}"
 
 // Consents is an auto generated Go binding around an Ethereum contract.
 type Consents struct {
@@ -59,30 +53,6 @@ type ConsentsRaw struct {
 	Contract *Consents // Generic contract binding to access the raw methods on
 }
 
-func newConsents(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (*Consents, error) {
-	contract, err := bindConsents(address, backend, backend, backend)
-	if err != nil {
-		return nil, err
-	}
-	return &Consents{
-		address:            address,
-		txHash:             txHash,
-		createdAt:          createdAt,
-		ConsentsCaller:     ConsentsCaller{contract: contract},
-		ConsentsTransactor: ConsentsTransactor{contract: contract},
-		ConsentsFilterer:   ConsentsFilterer{contract: contract},
-	}, nil
-}
-
-// bindConsents binds a generic wrapper to an already deployed contract.
-func bindConsents(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(ConsentsABI))
-	if err != nil {
-		return nil, err
-	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
-}
-
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
@@ -119,15 +89,6 @@ type ConsentsCallerRaw struct {
 	Contract *ConsentsCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// NewConsentsCaller creates a new read-only instance of Consents, bound to a specific deployed contract.
-func NewConsentsCaller(address common.Address, caller bind.ContractCaller) (*ConsentsCaller, error) {
-	contract, err := bindConsents(address, caller, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &ConsentsCaller{contract: contract}, nil
-}
-
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
@@ -153,15 +114,6 @@ type ConsentsTransactorRaw struct {
 	Contract *ConsentsTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-// NewConsentsTransactor creates a new write-only instance of Consents, bound to a specific deployed contract.
-func NewConsentsTransactor(address common.Address, transactor bind.ContractTransactor) (*ConsentsTransactor, error) {
-	contract, err := bindConsents(address, nil, transactor, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &ConsentsTransactor{contract: contract}, nil
-}
-
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
 func (_Consents *ConsentsTransactorRaw) Transfer(opts *bind.TransactOpts) (*klayTypes.Transaction, error) {
@@ -176,29 +128,6 @@ func (_Consents *ConsentsTransactorRaw) Transact(opts *bind.TransactOpts, method
 // ConsentsFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
 type ConsentsFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// NewConsentsFilterer creates a new log filterer instance of Consents, bound to a specific deployed contract.
-func NewConsentsFilterer(address common.Address, filterer bind.ContractFilterer) (*ConsentsFilterer, error) {
-	contract, err := bindConsents(address, nil, nil, filterer)
-	if err != nil {
-		return nil, err
-	}
-	return &ConsentsFilterer{contract: contract}, nil
-}
-
-// convenient hacks for blockchain.Client
-func init() {
-	blockchain.AddContractConstructor("Consents", (&Consents{}).new)
-	blockchain.RegisterSelector("0xcd4dc804", "consent(string,(uint8,string,bool))")
-	blockchain.RegisterSelector("0xf573f89a", "consentByController(bytes8,string,(uint8,string,bool))")
-	blockchain.RegisterSelector("0xdd43ad05", "consentMany(string,(uint8,string,bool)[])")
-	blockchain.RegisterSelector("0xae6d5034", "consentManyByController(bytes8,string,(uint8,string,bool)[])")
-	blockchain.RegisterSelector("0x0bfec389", "modifyConsentByController(bytes8,string,(uint8,string,bool),bytes)")
-}
-
-func (_Consents *Consents) new(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (interface{}, error) {
-	return newConsentsContract(address, txHash, createdAt, backend)
 }
 
 // IsAllowed is a free data retrieval call binding the contract method 0x50615985.
@@ -356,6 +285,27 @@ func (_Consents *ConsentsSession) ModifyConsentByController(userId types.ID, app
 // Solidity: function modifyConsentByController(bytes8 userId, string appName, (uint8,string,bool) consentData, bytes passwordSignature) returns()
 func (_Consents *ConsentsTransactorSession) ModifyConsentByController(userId types.ID, appName string, consentData types.ConsentData, passwordSignature []byte) (*klayTypes.Transaction, error) {
 	return _Consents.Contract.ModifyConsentByController(&_Consents.TransactOpts, userId, appName, consentData, passwordSignature)
+}
+
+// ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xe031b1cf.
+//
+// Solidity: function modifyConsentManyByController(bytes8 userId, string appName, (uint8,string,bool)[] consentData, bytes passwordSignature) returns()
+func (_Consents *ConsentsTransactor) ModifyConsentManyByController(opts *bind.TransactOpts, userId types.ID, appName string, consentData []types.ConsentData, passwordSignature []byte) (*klayTypes.Transaction, error) {
+	return _Consents.contract.Transact(opts, "modifyConsentManyByController", userId, appName, consentData, passwordSignature)
+}
+
+// ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xe031b1cf.
+//
+// Solidity: function modifyConsentManyByController(bytes8 userId, string appName, (uint8,string,bool)[] consentData, bytes passwordSignature) returns()
+func (_Consents *ConsentsSession) ModifyConsentManyByController(userId types.ID, appName string, consentData []types.ConsentData, passwordSignature []byte) (*klayTypes.Transaction, error) {
+	return _Consents.Contract.ModifyConsentManyByController(&_Consents.TransactOpts, userId, appName, consentData, passwordSignature)
+}
+
+// ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xe031b1cf.
+//
+// Solidity: function modifyConsentManyByController(bytes8 userId, string appName, (uint8,string,bool)[] consentData, bytes passwordSignature) returns()
+func (_Consents *ConsentsTransactorSession) ModifyConsentManyByController(userId types.ID, appName string, consentData []types.ConsentData, passwordSignature []byte) (*klayTypes.Transaction, error) {
+	return _Consents.Contract.ModifyConsentManyByController(&_Consents.TransactOpts, userId, appName, consentData, passwordSignature)
 }
 
 // ConsentsConsentedIterator is returned from FilterConsented and is used to iterate over the raw logs and unpacked data for Consented events raised by the Consents contract.

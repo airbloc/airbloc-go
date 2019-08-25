@@ -5,21 +5,15 @@ package adapter
 
 import (
 	"math/big"
-	"strings"
 
-	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
 	klaytn "github.com/klaytn/klaytn"
-	"github.com/klaytn/klaytn/accounts/abi"
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	klayTypes "github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/common"
 	"github.com/klaytn/klaytn/event"
 	"github.com/pkg/errors"
 )
-
-// DataTypeRegistryABI is the input ABI used to generate the binding from.
-const DataTypeRegistryABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":null,\"Outputs\":null},\"Methods\":{\"exists\":{\"Name\":\"exists\",\"Const\":true,\"Inputs\":[{\"Name\":\"name\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"get\":{\"Name\":\"get\",\"Const\":true,\"Inputs\":[{\"Name\":\"name\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"name\",\"owner\",\"schemaHash\"]},\"Indexed\":false}]},\"isOwner\":{\"Name\":\"isOwner\",\"Const\":true,\"Inputs\":[{\"Name\":\"name\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"owner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"register\":{\"Name\":\"register\",\"Const\":false,\"Inputs\":[{\"Name\":\"name\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false},{\"Name\":\"schemaHash\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":32,\"T\":8,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"unregister\":{\"Name\":\"unregister\",\"Const\":false,\"Inputs\":[{\"Name\":\"name\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]}},\"Events\":{\"Registration\":{\"Name\":\"Registration\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"name\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"Unregistration\":{\"Name\":\"Unregistration\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"name\",\"Type\":{\"Elem\":null,\"Kind\":24,\"Type\":{},\"Size\":0,\"T\":3,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]}}}"
 
 // DataTypeRegistry is an auto generated Go binding around an Ethereum contract.
 type DataTypeRegistry struct {
@@ -59,30 +53,6 @@ type DataTypeRegistryRaw struct {
 	Contract *DataTypeRegistry // Generic contract binding to access the raw methods on
 }
 
-func newDataTypeRegistry(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (*DataTypeRegistry, error) {
-	contract, err := bindDataTypeRegistry(address, backend, backend, backend)
-	if err != nil {
-		return nil, err
-	}
-	return &DataTypeRegistry{
-		address:                    address,
-		txHash:                     txHash,
-		createdAt:                  createdAt,
-		DataTypeRegistryCaller:     DataTypeRegistryCaller{contract: contract},
-		DataTypeRegistryTransactor: DataTypeRegistryTransactor{contract: contract},
-		DataTypeRegistryFilterer:   DataTypeRegistryFilterer{contract: contract},
-	}, nil
-}
-
-// bindDataTypeRegistry binds a generic wrapper to an already deployed contract.
-func bindDataTypeRegistry(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(DataTypeRegistryABI))
-	if err != nil {
-		return nil, err
-	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
-}
-
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
@@ -119,15 +89,6 @@ type DataTypeRegistryCallerRaw struct {
 	Contract *DataTypeRegistryCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// NewDataTypeRegistryCaller creates a new read-only instance of DataTypeRegistry, bound to a specific deployed contract.
-func NewDataTypeRegistryCaller(address common.Address, caller bind.ContractCaller) (*DataTypeRegistryCaller, error) {
-	contract, err := bindDataTypeRegistry(address, caller, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &DataTypeRegistryCaller{contract: contract}, nil
-}
-
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
@@ -153,15 +114,6 @@ type DataTypeRegistryTransactorRaw struct {
 	Contract *DataTypeRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-// NewDataTypeRegistryTransactor creates a new write-only instance of DataTypeRegistry, bound to a specific deployed contract.
-func NewDataTypeRegistryTransactor(address common.Address, transactor bind.ContractTransactor) (*DataTypeRegistryTransactor, error) {
-	contract, err := bindDataTypeRegistry(address, nil, transactor, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &DataTypeRegistryTransactor{contract: contract}, nil
-}
-
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
 func (_DataTypeRegistry *DataTypeRegistryTransactorRaw) Transfer(opts *bind.TransactOpts) (*klayTypes.Transaction, error) {
@@ -176,26 +128,6 @@ func (_DataTypeRegistry *DataTypeRegistryTransactorRaw) Transact(opts *bind.Tran
 // DataTypeRegistryFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
 type DataTypeRegistryFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// NewDataTypeRegistryFilterer creates a new log filterer instance of DataTypeRegistry, bound to a specific deployed contract.
-func NewDataTypeRegistryFilterer(address common.Address, filterer bind.ContractFilterer) (*DataTypeRegistryFilterer, error) {
-	contract, err := bindDataTypeRegistry(address, nil, nil, filterer)
-	if err != nil {
-		return nil, err
-	}
-	return &DataTypeRegistryFilterer{contract: contract}, nil
-}
-
-// convenient hacks for blockchain.Client
-func init() {
-	blockchain.AddContractConstructor("DataTypeRegistry", (&DataTypeRegistry{}).new)
-	blockchain.RegisterSelector("0x656afdee", "register(string,bytes32)")
-	blockchain.RegisterSelector("0x6598a1ae", "unregister(string)")
-}
-
-func (_DataTypeRegistry *DataTypeRegistry) new(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (interface{}, error) {
-	return newDataTypeRegistryContract(address, txHash, createdAt, backend)
 }
 
 // Exists is a free data retrieval call binding the contract method 0x261a323e.

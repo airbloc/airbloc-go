@@ -18,7 +18,7 @@ type controllerRegistryManager struct {
 func NewControllerRegistryManager(client blockchain.TxClient) IControllerRegistryManager {
 	return &controllerRegistryManager{
 		IControllerRegistryContract: client.GetContract(&ControllerRegistryContract{}).(*ControllerRegistryContract),
-		log: logger.New("controller-registry"),
+		log:                         logger.New("controller-registry"),
 	}
 }
 

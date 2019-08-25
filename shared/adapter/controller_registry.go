@@ -5,21 +5,15 @@ package adapter
 
 import (
 	"math/big"
-	"strings"
 
-	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
 	klaytn "github.com/klaytn/klaytn"
-	"github.com/klaytn/klaytn/accounts/abi"
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	klayTypes "github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/common"
 	"github.com/klaytn/klaytn/event"
 	"github.com/pkg/errors"
 )
-
-// ControllerRegistryABI is the input ABI used to generate the binding from.
-const ControllerRegistryABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":null,\"Outputs\":null},\"Methods\":{\"exists\":{\"Name\":\"exists\",\"Const\":true,\"Inputs\":[{\"Name\":\"controller\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"get\":{\"Name\":\"get\",\"Const\":true,\"Inputs\":[{\"Name\":\"controller\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":22,\"Type\":{},\"Size\":256,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"controller\",\"usersCount\"]},\"Indexed\":false}]},\"isOwner\":{\"Name\":\"isOwner\",\"Const\":true,\"Inputs\":[],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"owner\":{\"Name\":\"owner\",\"Const\":true,\"Inputs\":[],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"register\":{\"Name\":\"register\",\"Const\":false,\"Inputs\":[{\"Name\":\"controllerAddr\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"renounceOwnership\":{\"Name\":\"renounceOwnership\",\"Const\":false,\"Inputs\":[],\"Outputs\":[]},\"transferOwnership\":{\"Name\":\"transferOwnership\",\"Const\":false,\"Inputs\":[{\"Name\":\"newOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]}},\"Events\":{\"OwnershipTransferred\":{\"Name\":\"OwnershipTransferred\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"previousOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"newOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true}]},\"Registration\":{\"Name\":\"Registration\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"controller\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true}]},\"Unregistration\":{\"Name\":\"Unregistration\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"controller\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true}]}}}"
 
 // ControllerRegistry is an auto generated Go binding around an Ethereum contract.
 type ControllerRegistry struct {
@@ -59,30 +53,6 @@ type ControllerRegistryRaw struct {
 	Contract *ControllerRegistry // Generic contract binding to access the raw methods on
 }
 
-func newControllerRegistry(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (*ControllerRegistry, error) {
-	contract, err := bindControllerRegistry(address, backend, backend, backend)
-	if err != nil {
-		return nil, err
-	}
-	return &ControllerRegistry{
-		address:                      address,
-		txHash:                       txHash,
-		createdAt:                    createdAt,
-		ControllerRegistryCaller:     ControllerRegistryCaller{contract: contract},
-		ControllerRegistryTransactor: ControllerRegistryTransactor{contract: contract},
-		ControllerRegistryFilterer:   ControllerRegistryFilterer{contract: contract},
-	}, nil
-}
-
-// bindControllerRegistry binds a generic wrapper to an already deployed contract.
-func bindControllerRegistry(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(ControllerRegistryABI))
-	if err != nil {
-		return nil, err
-	}
-	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
-}
-
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
@@ -119,15 +89,6 @@ type ControllerRegistryCallerRaw struct {
 	Contract *ControllerRegistryCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// NewControllerRegistryCaller creates a new read-only instance of ControllerRegistry, bound to a specific deployed contract.
-func NewControllerRegistryCaller(address common.Address, caller bind.ContractCaller) (*ControllerRegistryCaller, error) {
-	contract, err := bindControllerRegistry(address, caller, nil, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &ControllerRegistryCaller{contract: contract}, nil
-}
-
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
@@ -153,15 +114,6 @@ type ControllerRegistryTransactorRaw struct {
 	Contract *ControllerRegistryTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-// NewControllerRegistryTransactor creates a new write-only instance of ControllerRegistry, bound to a specific deployed contract.
-func NewControllerRegistryTransactor(address common.Address, transactor bind.ContractTransactor) (*ControllerRegistryTransactor, error) {
-	contract, err := bindControllerRegistry(address, nil, transactor, nil)
-	if err != nil {
-		return nil, err
-	}
-	return &ControllerRegistryTransactor{contract: contract}, nil
-}
-
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
 func (_ControllerRegistry *ControllerRegistryTransactorRaw) Transfer(opts *bind.TransactOpts) (*klayTypes.Transaction, error) {
@@ -176,27 +128,6 @@ func (_ControllerRegistry *ControllerRegistryTransactorRaw) Transact(opts *bind.
 // ControllerRegistryFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
 type ControllerRegistryFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-// NewControllerRegistryFilterer creates a new log filterer instance of ControllerRegistry, bound to a specific deployed contract.
-func NewControllerRegistryFilterer(address common.Address, filterer bind.ContractFilterer) (*ControllerRegistryFilterer, error) {
-	contract, err := bindControllerRegistry(address, nil, nil, filterer)
-	if err != nil {
-		return nil, err
-	}
-	return &ControllerRegistryFilterer{contract: contract}, nil
-}
-
-// convenient hacks for blockchain.Client
-func init() {
-	blockchain.AddContractConstructor("ControllerRegistry", (&ControllerRegistry{}).new)
-	blockchain.RegisterSelector("0x4420e486", "register(address)")
-	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
-	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
-}
-
-func (_ControllerRegistry *ControllerRegistry) new(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (interface{}, error) {
-	return newControllerRegistryContract(address, txHash, createdAt, backend)
 }
 
 // Exists is a free data retrieval call binding the contract method 0xf6a3d24e.

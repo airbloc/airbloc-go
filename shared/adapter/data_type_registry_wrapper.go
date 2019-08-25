@@ -9,6 +9,7 @@ import (
 
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/klaytn/klaytn/accounts/abi"
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	klayTypes "github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/common"
@@ -102,11 +103,8 @@ func (c *DataTypeRegistryContract) CreatedAt() *big.Int {
 	return c.createdAt
 }
 
-func newDataTypeRegistryContract(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (*DataTypeRegistryContract, error) {
-	contract, err := newDataTypeRegistry(address, txHash, createdAt, backend)
-	if err != nil {
-		return nil, err
-	}
+func newDataTypeRegistryContract(address common.Address, txHash common.Hash, createdAt *big.Int, parsedABI abi.ABI, backend bind.ContractBackend) interface{} {
+	contract := bind.NewBoundContract(address, parsedABI, backend, backend, backend)
 
 	return &DataTypeRegistryContract{
 		address:   address,
@@ -114,15 +112,15 @@ func newDataTypeRegistryContract(address common.Address, txHash common.Hash, cre
 		createdAt: createdAt,
 		client:    backend.(blockchain.TxClient),
 
-		DataTypeRegistryCaller:     contract.DataTypeRegistryCaller,
-		DataTypeRegistryFilterer:   contract.DataTypeRegistryFilterer,
-		DataTypeRegistryTransactor: contract.DataTypeRegistryTransactor,
-	}, nil
+		DataTypeRegistryCaller:     DataTypeRegistryCaller{contract: contract},
+		DataTypeRegistryTransactor: DataTypeRegistryTransactor{contract: contract},
+		DataTypeRegistryFilterer:   DataTypeRegistryFilterer{contract: contract},
+	}
 }
 
 // convenient hacks for blockchain.Client
 func init() {
-	blockchain.AddContractConstructor("DataTypeRegistry", (&DataTypeRegistry{}).new)
+	blockchain.AddContractConstructor("DataTypeRegistry", newDataTypeRegistryContract)
 	blockchain.RegisterSelector("0x656afdee", "register(string,bytes32)")
 	blockchain.RegisterSelector("0x6598a1ae", "unregister(string)")
 }

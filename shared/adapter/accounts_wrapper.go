@@ -9,6 +9,7 @@ import (
 
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/klaytn/klaytn/accounts/abi"
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	klayTypes "github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/common"
@@ -115,11 +116,8 @@ func (c *AccountsContract) CreatedAt() *big.Int {
 	return c.createdAt
 }
 
-func newAccountsContract(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (*AccountsContract, error) {
-	contract, err := newAccounts(address, txHash, createdAt, backend)
-	if err != nil {
-		return nil, err
-	}
+func newAccountsContract(address common.Address, txHash common.Hash, createdAt *big.Int, parsedABI abi.ABI, backend bind.ContractBackend) interface{} {
+	contract := bind.NewBoundContract(address, parsedABI, backend, backend, backend)
 
 	return &AccountsContract{
 		address:   address,
@@ -127,15 +125,15 @@ func newAccountsContract(address common.Address, txHash common.Hash, createdAt *
 		createdAt: createdAt,
 		client:    backend.(blockchain.TxClient),
 
-		AccountsCaller:     contract.AccountsCaller,
-		AccountsFilterer:   contract.AccountsFilterer,
-		AccountsTransactor: contract.AccountsTransactor,
-	}, nil
+		AccountsCaller:     AccountsCaller{contract: contract},
+		AccountsTransactor: AccountsTransactor{contract: contract},
+		AccountsFilterer:   AccountsFilterer{contract: contract},
+	}
 }
 
 // convenient hacks for blockchain.Client
 func init() {
-	blockchain.AddContractConstructor("Accounts", (&Accounts{}).new)
+	blockchain.AddContractConstructor("Accounts", newAccountsContract)
 	blockchain.RegisterSelector("0xefc81a8c", "create()")
 	blockchain.RegisterSelector("0x56003f0f", "createTemporary(bytes32)")
 	blockchain.RegisterSelector("0x92eefe9b", "setController(address)")
