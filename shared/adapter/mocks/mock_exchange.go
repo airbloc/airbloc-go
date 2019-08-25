@@ -6,6 +6,9 @@ package mocks
 
 import (
 	context "context"
+	big "math/big"
+	reflect "reflect"
+
 	adapter "github.com/airbloc/airbloc-go/shared/adapter"
 	types "github.com/airbloc/airbloc-go/shared/types"
 	gomock "github.com/golang/mock/gomock"
@@ -13,8 +16,6 @@ import (
 	types0 "github.com/klaytn/klaytn/blockchain/types"
 	common "github.com/klaytn/klaytn/common"
 	event "github.com/klaytn/klaytn/event"
-	big "math/big"
-	reflect "reflect"
 )
 
 // MockIExchangeManager is a mock of IExchangeManager interface
