@@ -7,18 +7,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/logger"
-	ethbind "github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/klaytn/klaytn/accounts/abi/bind"
+	"github.com/klaytn/klaytn/blockchain/types"
+	"github.com/klaytn/klaytn/client"
+	"github.com/klaytn/klaytn/common"
 	"github.com/pkg/errors"
 )
 
 type Client struct {
-	*ethclient.Client
+	*client.Client
 	ctx        context.Context
 	cfg        ClientOpt
 	transactor *bind.TransactOpts
@@ -44,7 +43,7 @@ func NewClient(key *key.Key, rawurl string, cfg ClientOpt) (*Client, error) {
 	}
 
 	// try to connect to Ethereum
-	ethClient, err := ethclient.DialContext(ctx, rawurl)
+	ethClient, err := client.DialContext(ctx, rawurl)
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +109,7 @@ func (c *Client) WaitMined(ctx context.Context, tx *types.Transaction) (*types.R
 	methodName, details := GetTransactionDetails(c.contracts, tx)
 	timer := c.logger.Timer()
 
-	receipt, err := ethbind.WaitMined(ctx, c, tx)
+	receipt, err := bind.WaitMined(ctx, c, tx)
 	if err != nil {
 		return nil, err
 	}

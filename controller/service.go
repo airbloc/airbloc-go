@@ -9,14 +9,14 @@ import (
 
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/airbloc/airbloc-go/shared/adapter"
-	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/p2p"
 	serviceLib "github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/logger"
-	ethCommon "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/golang/protobuf/proto"
+	"github.com/klaytn/klaytn/accounts/abi/bind"
+	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/crypto"
 	"github.com/pkg/errors"
 )
 
@@ -38,7 +38,7 @@ type service struct {
 
 	// node identity information
 	id   string
-	addr ethCommon.Address
+	addr common.Address
 
 	// managers for blockchain interaction
 	apps      adapter.IAppRegistryManager
@@ -80,13 +80,13 @@ func NewService(backend serviceLib.Backend) (serviceLib.Service, error) {
 }
 
 func (service *service) sync(ctx context.Context) (rerr error) {
-	proxyAddress := []ethCommon.Address{service.addr}
+	proxyAddress := []common.Address{service.addr}
 	options := &bind.FilterOpts{
 		Start:   0,
 		End:     nil,
 		Context: ctx,
 	}
-	events, err := service.accounts.FilterTemporaryCreated(options, proxyAddress, []ethCommon.Hash{})
+	events, err := service.accounts.FilterTemporaryCreated(options, proxyAddress, []common.Hash{})
 	if err != nil {
 		return errors.Wrap(err, "failed to scan events in Accounts")
 	}
@@ -131,6 +131,7 @@ func (service *service) hasUser(accountId types.ID) bool {
 	return false
 }
 
+// Start controller service
 func (service *service) Start() error {
 	service.log.Info("Starting service...")
 
@@ -204,7 +205,12 @@ func (service *service) createDAuthHandler(allow bool) p2p.RPCHandler {
 			return nil, ErrDelegationNotAllowed
 		}
 
-		err = service.consents.ConsentByController(ctx, accountId, appName, uint8(action), dataType, allow)
+		consentData := types.ConsentData{
+			Action:   action,
+			DataType: dataType,
+			Allow:    allow,
+		}
+		err = service.consents.ConsentByController(ctx, accountId, appName, consentData)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to modify DAuth settings")
 		}
@@ -222,7 +228,7 @@ func (service *service) signUpHandler(
 		return nil, &MessageTypeError{"invalid message type", reflect.TypeOf(req)}
 	}
 
-	identityHash := ethCommon.HexToHash(request.GetIdentityHash())
+	identityHash := common.HexToHash(request.GetIdentityHash())
 	accountId, err := service.accounts.CreateTemporary(ctx, identityHash)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create temporary account")
@@ -243,6 +249,7 @@ func (service *service) signUpHandler(
 	}, nil
 }
 
+// Stop controller service
 func (service *service) Stop() {
 	service.log.Info("Stopping...")
 	service.isRunning = false

@@ -6,8 +6,8 @@ import (
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/controller"
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/airbloc-go/shared/types"
-	ethCommon "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/crypto"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 )
@@ -26,7 +26,7 @@ func NewClient(conn *grpc.ClientConn) *Client {
 	}
 }
 
-func (client *Client) Create(walletAddress ethCommon.Address, password string) (*Session, error) {
+func (client *Client) Create(walletAddress common.Address, password string) (*Session, error) {
 	identity := crypto.Keccak256Hash(walletAddress.Bytes())
 	priv := key.DeriveFromPassword(identity, password)
 
@@ -69,7 +69,7 @@ func (client *Client) LogIn(identity string, password string) (*Session, error) 
 	if err != nil {
 		return nil, errors.Wrapf(err, "invalid ID returned from the server: %s", response.GetAccountId())
 	}
-	session := NewSession(accountId, ethCommon.HexToAddress(response.GetOwnerAddress()), password)
+	session := NewSession(accountId, common.HexToAddress(response.GetOwnerAddress()), password)
 
 	// generate test signature
 	identityHash := crypto.Keccak256Hash([]byte(identity))

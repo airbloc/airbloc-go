@@ -5,8 +5,9 @@ import (
 	"math/rand"
 	"testing"
 
-	ethCommon "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/klaytn/klaytn/common"
+
+	"github.com/klaytn/klaytn/crypto"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -23,7 +24,7 @@ func TestNewSubTree(t *testing.T) {
 			sInput = append(sInput, UintToRowId(j))
 		}
 
-		lvl := make([]ethCommon.Hash, len(sInput))
+		lvl := make([]common.Hash, len(sInput))
 		for index, rowId := range sInput {
 			lvl[index] = crypto.Keccak256Hash(rowId[:])
 		}
@@ -33,7 +34,7 @@ func TestNewSubTree(t *testing.T) {
 				break
 			}
 
-			var nlvl []ethCommon.Hash
+			var nlvl []common.Hash
 			for index := 0; index < len(lvl); index++ {
 				if index%2 != 0 {
 					continue

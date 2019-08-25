@@ -13,11 +13,11 @@ import (
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/types"
-	ethereum "github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/common"
-	ethTypes "github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/event"
+	ethereum "github.com/klaytn/klaytn"
+	"github.com/klaytn/klaytn/accounts/abi"
+	klayTypes "github.com/klaytn/klaytn/blockchain/types"
+	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/event"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -30,7 +30,7 @@ var (
 	_ = bind.NewKeyedTransactor
 	_ = types.HexToID
 	_ = common.Big1
-	_ = ethTypes.BloomLookup
+	_ = klayTypes.BloomLookup
 	_ = event.NewSubscription
 )
 
@@ -110,12 +110,12 @@ func (_SimpleToken *SimpleTokenRaw) Call(opts *bind.CallOpts, result interface{}
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_SimpleToken *SimpleTokenRaw) Transfer(opts *bind.TransactOpts) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenRaw) Transfer(opts *bind.TransactOpts) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.SimpleTokenTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_SimpleToken *SimpleTokenRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.SimpleTokenTransactor.contract.Transact(opts, method, params...)
 }
 
@@ -181,12 +181,12 @@ func NewSimpleTokenTransactor(address common.Address, transactor bind.ContractTr
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_SimpleToken *SimpleTokenTransactorRaw) Transfer(opts *bind.TransactOpts) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactorRaw) Transfer(opts *bind.TransactOpts) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_SimpleToken *SimpleTokenTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.contract.Transact(opts, method, params...)
 }
 
@@ -444,20 +444,20 @@ func (_SimpleToken *SimpleTokenCallerSession) TotalSupply() (*big.Int, error) {
 }
 
 type ISimpleTokenTransacts interface {
-	AddMinter(ctx context.Context, account common.Address) (*ethTypes.Receipt, error)
-	Approve(ctx context.Context, spender common.Address, value *big.Int) (*ethTypes.Receipt, error)
-	DecreaseAllowance(ctx context.Context, spender common.Address, subtractedValue *big.Int) (*ethTypes.Receipt, error)
-	IncreaseAllowance(ctx context.Context, spender common.Address, addedValue *big.Int) (*ethTypes.Receipt, error)
-	Mint(ctx context.Context, account common.Address, amount *big.Int) (*ethTypes.Receipt, error)
-	RenounceMinter(ctx context.Context) (*ethTypes.Receipt, error)
-	Transfer(ctx context.Context, recipient common.Address, amount *big.Int) (*ethTypes.Receipt, error)
-	TransferFrom(ctx context.Context, sender common.Address, recipient common.Address, amount *big.Int) (*ethTypes.Receipt, error)
+	AddMinter(ctx context.Context, account common.Address) (*klayTypes.Receipt, error)
+	Approve(ctx context.Context, spender common.Address, value *big.Int) (*klayTypes.Receipt, error)
+	DecreaseAllowance(ctx context.Context, spender common.Address, subtractedValue *big.Int) (*klayTypes.Receipt, error)
+	IncreaseAllowance(ctx context.Context, spender common.Address, addedValue *big.Int) (*klayTypes.Receipt, error)
+	Mint(ctx context.Context, account common.Address, amount *big.Int) (*klayTypes.Receipt, error)
+	RenounceMinter(ctx context.Context) (*klayTypes.Receipt, error)
+	Transfer(ctx context.Context, recipient common.Address, amount *big.Int) (*klayTypes.Receipt, error)
+	TransferFrom(ctx context.Context, sender common.Address, recipient common.Address, amount *big.Int) (*klayTypes.Receipt, error)
 }
 
 // AddMinter is a paid mutator transaction binding the contract method 0x983b2d56.
 //
 // Solidity: function addMinter(address account) returns()
-func (c *SimpleTokenContract) AddMinter(ctx context.Context, account common.Address) (*ethTypes.Receipt, error) {
+func (c *SimpleTokenContract) AddMinter(ctx context.Context, account common.Address) (*klayTypes.Receipt, error) {
 	tx, err := c.contract.AddMinter(c.client.Account(), account)
 	if err != nil {
 		return nil, err
@@ -468,28 +468,28 @@ func (c *SimpleTokenContract) AddMinter(ctx context.Context, account common.Addr
 // AddMinter is a paid mutator transaction binding the contract method 0x983b2d56.
 //
 // Solidity: function addMinter(address account) returns()
-func (_SimpleToken *SimpleTokenTransactor) AddMinter(opts *bind.TransactOpts, account common.Address) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactor) AddMinter(opts *bind.TransactOpts, account common.Address) (*klayTypes.Transaction, error) {
 	return _SimpleToken.contract.Transact(opts, "addMinter", account)
 }
 
 // AddMinter is a paid mutator transaction binding the contract method 0x983b2d56.
 //
 // Solidity: function addMinter(address account) returns()
-func (_SimpleToken *SimpleTokenSession) AddMinter(account common.Address) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenSession) AddMinter(account common.Address) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.AddMinter(&_SimpleToken.TransactOpts, account)
 }
 
 // AddMinter is a paid mutator transaction binding the contract method 0x983b2d56.
 //
 // Solidity: function addMinter(address account) returns()
-func (_SimpleToken *SimpleTokenTransactorSession) AddMinter(account common.Address) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactorSession) AddMinter(account common.Address) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.AddMinter(&_SimpleToken.TransactOpts, account)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
 // Solidity: function approve(address spender, uint256 value) returns(bool)
-func (c *SimpleTokenContract) Approve(ctx context.Context, spender common.Address, value *big.Int) (*ethTypes.Receipt, error) {
+func (c *SimpleTokenContract) Approve(ctx context.Context, spender common.Address, value *big.Int) (*klayTypes.Receipt, error) {
 	tx, err := c.contract.Approve(c.client.Account(), spender, value)
 	if err != nil {
 		return nil, err
@@ -500,28 +500,28 @@ func (c *SimpleTokenContract) Approve(ctx context.Context, spender common.Addres
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
 // Solidity: function approve(address spender, uint256 value) returns(bool)
-func (_SimpleToken *SimpleTokenTransactor) Approve(opts *bind.TransactOpts, spender common.Address, value *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactor) Approve(opts *bind.TransactOpts, spender common.Address, value *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.contract.Transact(opts, "approve", spender, value)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
 // Solidity: function approve(address spender, uint256 value) returns(bool)
-func (_SimpleToken *SimpleTokenSession) Approve(spender common.Address, value *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenSession) Approve(spender common.Address, value *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.Approve(&_SimpleToken.TransactOpts, spender, value)
 }
 
 // Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
 //
 // Solidity: function approve(address spender, uint256 value) returns(bool)
-func (_SimpleToken *SimpleTokenTransactorSession) Approve(spender common.Address, value *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactorSession) Approve(spender common.Address, value *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.Approve(&_SimpleToken.TransactOpts, spender, value)
 }
 
 // DecreaseAllowance is a paid mutator transaction binding the contract method 0xa457c2d7.
 //
 // Solidity: function decreaseAllowance(address spender, uint256 subtractedValue) returns(bool)
-func (c *SimpleTokenContract) DecreaseAllowance(ctx context.Context, spender common.Address, subtractedValue *big.Int) (*ethTypes.Receipt, error) {
+func (c *SimpleTokenContract) DecreaseAllowance(ctx context.Context, spender common.Address, subtractedValue *big.Int) (*klayTypes.Receipt, error) {
 	tx, err := c.contract.DecreaseAllowance(c.client.Account(), spender, subtractedValue)
 	if err != nil {
 		return nil, err
@@ -532,28 +532,28 @@ func (c *SimpleTokenContract) DecreaseAllowance(ctx context.Context, spender com
 // DecreaseAllowance is a paid mutator transaction binding the contract method 0xa457c2d7.
 //
 // Solidity: function decreaseAllowance(address spender, uint256 subtractedValue) returns(bool)
-func (_SimpleToken *SimpleTokenTransactor) DecreaseAllowance(opts *bind.TransactOpts, spender common.Address, subtractedValue *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactor) DecreaseAllowance(opts *bind.TransactOpts, spender common.Address, subtractedValue *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.contract.Transact(opts, "decreaseAllowance", spender, subtractedValue)
 }
 
 // DecreaseAllowance is a paid mutator transaction binding the contract method 0xa457c2d7.
 //
 // Solidity: function decreaseAllowance(address spender, uint256 subtractedValue) returns(bool)
-func (_SimpleToken *SimpleTokenSession) DecreaseAllowance(spender common.Address, subtractedValue *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenSession) DecreaseAllowance(spender common.Address, subtractedValue *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.DecreaseAllowance(&_SimpleToken.TransactOpts, spender, subtractedValue)
 }
 
 // DecreaseAllowance is a paid mutator transaction binding the contract method 0xa457c2d7.
 //
 // Solidity: function decreaseAllowance(address spender, uint256 subtractedValue) returns(bool)
-func (_SimpleToken *SimpleTokenTransactorSession) DecreaseAllowance(spender common.Address, subtractedValue *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactorSession) DecreaseAllowance(spender common.Address, subtractedValue *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.DecreaseAllowance(&_SimpleToken.TransactOpts, spender, subtractedValue)
 }
 
 // IncreaseAllowance is a paid mutator transaction binding the contract method 0x39509351.
 //
 // Solidity: function increaseAllowance(address spender, uint256 addedValue) returns(bool)
-func (c *SimpleTokenContract) IncreaseAllowance(ctx context.Context, spender common.Address, addedValue *big.Int) (*ethTypes.Receipt, error) {
+func (c *SimpleTokenContract) IncreaseAllowance(ctx context.Context, spender common.Address, addedValue *big.Int) (*klayTypes.Receipt, error) {
 	tx, err := c.contract.IncreaseAllowance(c.client.Account(), spender, addedValue)
 	if err != nil {
 		return nil, err
@@ -564,28 +564,28 @@ func (c *SimpleTokenContract) IncreaseAllowance(ctx context.Context, spender com
 // IncreaseAllowance is a paid mutator transaction binding the contract method 0x39509351.
 //
 // Solidity: function increaseAllowance(address spender, uint256 addedValue) returns(bool)
-func (_SimpleToken *SimpleTokenTransactor) IncreaseAllowance(opts *bind.TransactOpts, spender common.Address, addedValue *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactor) IncreaseAllowance(opts *bind.TransactOpts, spender common.Address, addedValue *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.contract.Transact(opts, "increaseAllowance", spender, addedValue)
 }
 
 // IncreaseAllowance is a paid mutator transaction binding the contract method 0x39509351.
 //
 // Solidity: function increaseAllowance(address spender, uint256 addedValue) returns(bool)
-func (_SimpleToken *SimpleTokenSession) IncreaseAllowance(spender common.Address, addedValue *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenSession) IncreaseAllowance(spender common.Address, addedValue *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.IncreaseAllowance(&_SimpleToken.TransactOpts, spender, addedValue)
 }
 
 // IncreaseAllowance is a paid mutator transaction binding the contract method 0x39509351.
 //
 // Solidity: function increaseAllowance(address spender, uint256 addedValue) returns(bool)
-func (_SimpleToken *SimpleTokenTransactorSession) IncreaseAllowance(spender common.Address, addedValue *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactorSession) IncreaseAllowance(spender common.Address, addedValue *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.IncreaseAllowance(&_SimpleToken.TransactOpts, spender, addedValue)
 }
 
 // Mint is a paid mutator transaction binding the contract method 0x40c10f19.
 //
 // Solidity: function mint(address account, uint256 amount) returns(bool)
-func (c *SimpleTokenContract) Mint(ctx context.Context, account common.Address, amount *big.Int) (*ethTypes.Receipt, error) {
+func (c *SimpleTokenContract) Mint(ctx context.Context, account common.Address, amount *big.Int) (*klayTypes.Receipt, error) {
 	tx, err := c.contract.Mint(c.client.Account(), account, amount)
 	if err != nil {
 		return nil, err
@@ -596,28 +596,28 @@ func (c *SimpleTokenContract) Mint(ctx context.Context, account common.Address, 
 // Mint is a paid mutator transaction binding the contract method 0x40c10f19.
 //
 // Solidity: function mint(address account, uint256 amount) returns(bool)
-func (_SimpleToken *SimpleTokenTransactor) Mint(opts *bind.TransactOpts, account common.Address, amount *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactor) Mint(opts *bind.TransactOpts, account common.Address, amount *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.contract.Transact(opts, "mint", account, amount)
 }
 
 // Mint is a paid mutator transaction binding the contract method 0x40c10f19.
 //
 // Solidity: function mint(address account, uint256 amount) returns(bool)
-func (_SimpleToken *SimpleTokenSession) Mint(account common.Address, amount *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenSession) Mint(account common.Address, amount *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.Mint(&_SimpleToken.TransactOpts, account, amount)
 }
 
 // Mint is a paid mutator transaction binding the contract method 0x40c10f19.
 //
 // Solidity: function mint(address account, uint256 amount) returns(bool)
-func (_SimpleToken *SimpleTokenTransactorSession) Mint(account common.Address, amount *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactorSession) Mint(account common.Address, amount *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.Mint(&_SimpleToken.TransactOpts, account, amount)
 }
 
 // RenounceMinter is a paid mutator transaction binding the contract method 0x98650275.
 //
 // Solidity: function renounceMinter() returns()
-func (c *SimpleTokenContract) RenounceMinter(ctx context.Context) (*ethTypes.Receipt, error) {
+func (c *SimpleTokenContract) RenounceMinter(ctx context.Context) (*klayTypes.Receipt, error) {
 	tx, err := c.contract.RenounceMinter(c.client.Account())
 	if err != nil {
 		return nil, err
@@ -628,28 +628,28 @@ func (c *SimpleTokenContract) RenounceMinter(ctx context.Context) (*ethTypes.Rec
 // RenounceMinter is a paid mutator transaction binding the contract method 0x98650275.
 //
 // Solidity: function renounceMinter() returns()
-func (_SimpleToken *SimpleTokenTransactor) RenounceMinter(opts *bind.TransactOpts) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactor) RenounceMinter(opts *bind.TransactOpts) (*klayTypes.Transaction, error) {
 	return _SimpleToken.contract.Transact(opts, "renounceMinter")
 }
 
 // RenounceMinter is a paid mutator transaction binding the contract method 0x98650275.
 //
 // Solidity: function renounceMinter() returns()
-func (_SimpleToken *SimpleTokenSession) RenounceMinter() (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenSession) RenounceMinter() (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.RenounceMinter(&_SimpleToken.TransactOpts)
 }
 
 // RenounceMinter is a paid mutator transaction binding the contract method 0x98650275.
 //
 // Solidity: function renounceMinter() returns()
-func (_SimpleToken *SimpleTokenTransactorSession) RenounceMinter() (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactorSession) RenounceMinter() (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.RenounceMinter(&_SimpleToken.TransactOpts)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
 // Solidity: function transfer(address recipient, uint256 amount) returns(bool)
-func (c *SimpleTokenContract) Transfer(ctx context.Context, recipient common.Address, amount *big.Int) (*ethTypes.Receipt, error) {
+func (c *SimpleTokenContract) Transfer(ctx context.Context, recipient common.Address, amount *big.Int) (*klayTypes.Receipt, error) {
 	tx, err := c.contract.Transfer(c.client.Account(), recipient, amount)
 	if err != nil {
 		return nil, err
@@ -660,28 +660,28 @@ func (c *SimpleTokenContract) Transfer(ctx context.Context, recipient common.Add
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
 // Solidity: function transfer(address recipient, uint256 amount) returns(bool)
-func (_SimpleToken *SimpleTokenTransactor) Transfer(opts *bind.TransactOpts, recipient common.Address, amount *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactor) Transfer(opts *bind.TransactOpts, recipient common.Address, amount *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.contract.Transact(opts, "transfer", recipient, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
 // Solidity: function transfer(address recipient, uint256 amount) returns(bool)
-func (_SimpleToken *SimpleTokenSession) Transfer(recipient common.Address, amount *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenSession) Transfer(recipient common.Address, amount *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.Transfer(&_SimpleToken.TransactOpts, recipient, amount)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
 //
 // Solidity: function transfer(address recipient, uint256 amount) returns(bool)
-func (_SimpleToken *SimpleTokenTransactorSession) Transfer(recipient common.Address, amount *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactorSession) Transfer(recipient common.Address, amount *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.Transfer(&_SimpleToken.TransactOpts, recipient, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
 // Solidity: function transferFrom(address sender, address recipient, uint256 amount) returns(bool)
-func (c *SimpleTokenContract) TransferFrom(ctx context.Context, sender common.Address, recipient common.Address, amount *big.Int) (*ethTypes.Receipt, error) {
+func (c *SimpleTokenContract) TransferFrom(ctx context.Context, sender common.Address, recipient common.Address, amount *big.Int) (*klayTypes.Receipt, error) {
 	tx, err := c.contract.TransferFrom(c.client.Account(), sender, recipient, amount)
 	if err != nil {
 		return nil, err
@@ -692,39 +692,39 @@ func (c *SimpleTokenContract) TransferFrom(ctx context.Context, sender common.Ad
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
 // Solidity: function transferFrom(address sender, address recipient, uint256 amount) returns(bool)
-func (_SimpleToken *SimpleTokenTransactor) TransferFrom(opts *bind.TransactOpts, sender common.Address, recipient common.Address, amount *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactor) TransferFrom(opts *bind.TransactOpts, sender common.Address, recipient common.Address, amount *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.contract.Transact(opts, "transferFrom", sender, recipient, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
 // Solidity: function transferFrom(address sender, address recipient, uint256 amount) returns(bool)
-func (_SimpleToken *SimpleTokenSession) TransferFrom(sender common.Address, recipient common.Address, amount *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenSession) TransferFrom(sender common.Address, recipient common.Address, amount *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.TransferFrom(&_SimpleToken.TransactOpts, sender, recipient, amount)
 }
 
 // TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
 //
 // Solidity: function transferFrom(address sender, address recipient, uint256 amount) returns(bool)
-func (_SimpleToken *SimpleTokenTransactorSession) TransferFrom(sender common.Address, recipient common.Address, amount *big.Int) (*ethTypes.Transaction, error) {
+func (_SimpleToken *SimpleTokenTransactorSession) TransferFrom(sender common.Address, recipient common.Address, amount *big.Int) (*klayTypes.Transaction, error) {
 	return _SimpleToken.Contract.TransferFrom(&_SimpleToken.TransactOpts, sender, recipient, amount)
 }
 
 type ISimpleTokenEvents interface {
 	FilterApproval(opts *bind.FilterOpts, owner []common.Address, spender []common.Address) (*SimpleTokenApprovalIterator, error)
-	ParseApprovalFromReceipt(receipt *ethTypes.Receipt) (*SimpleTokenApproval, error)
+	ParseApprovalFromReceipt(receipt *klayTypes.Receipt) (*SimpleTokenApproval, error)
 	WatchApproval(opts *bind.WatchOpts, sink chan<- *SimpleTokenApproval, owner []common.Address, spender []common.Address) (event.Subscription, error)
 
 	FilterMinterAdded(opts *bind.FilterOpts, account []common.Address) (*SimpleTokenMinterAddedIterator, error)
-	ParseMinterAddedFromReceipt(receipt *ethTypes.Receipt) (*SimpleTokenMinterAdded, error)
+	ParseMinterAddedFromReceipt(receipt *klayTypes.Receipt) (*SimpleTokenMinterAdded, error)
 	WatchMinterAdded(opts *bind.WatchOpts, sink chan<- *SimpleTokenMinterAdded, account []common.Address) (event.Subscription, error)
 
 	FilterMinterRemoved(opts *bind.FilterOpts, account []common.Address) (*SimpleTokenMinterRemovedIterator, error)
-	ParseMinterRemovedFromReceipt(receipt *ethTypes.Receipt) (*SimpleTokenMinterRemoved, error)
+	ParseMinterRemovedFromReceipt(receipt *klayTypes.Receipt) (*SimpleTokenMinterRemoved, error)
 	WatchMinterRemoved(opts *bind.WatchOpts, sink chan<- *SimpleTokenMinterRemoved, account []common.Address) (event.Subscription, error)
 
 	FilterTransfer(opts *bind.FilterOpts, from []common.Address, to []common.Address) (*SimpleTokenTransferIterator, error)
-	ParseTransferFromReceipt(receipt *ethTypes.Receipt) (*SimpleTokenTransfer, error)
+	ParseTransferFromReceipt(receipt *klayTypes.Receipt) (*SimpleTokenTransfer, error)
 	WatchTransfer(opts *bind.WatchOpts, sink chan<- *SimpleTokenTransfer, from []common.Address, to []common.Address) (event.Subscription, error)
 }
 
@@ -735,7 +735,7 @@ type SimpleTokenApprovalIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan ethTypes.Log     // Log channel receiving the found contract events
+	logs chan klayTypes.Log    // Log channel receiving the found contract events
 	sub  ethereum.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
@@ -800,7 +800,7 @@ type SimpleTokenApproval struct {
 	Owner   common.Address
 	Spender common.Address
 	Value   *big.Int
-	Raw     ethTypes.Log // Blockchain specific contextual infos
+	Raw     klayTypes.Log // Blockchain specific contextual infos
 }
 
 // FilterApproval is a free log retrieval operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
@@ -827,14 +827,14 @@ func (_SimpleToken *SimpleTokenFilterer) FilterApproval(opts *bind.FilterOpts, o
 // FilterApproval parses the event from given transaction receipt.
 //
 // Solidity: event Approval(address indexed owner, address indexed spender, uint256 value)
-func (manager *SimpleTokenContract) ParseApprovalFromReceipt(receipt *ethTypes.Receipt) (*SimpleTokenApproval, error) {
+func (manager *SimpleTokenContract) ParseApprovalFromReceipt(receipt *klayTypes.Receipt) (*SimpleTokenApproval, error) {
 	return manager.contract.ParseApprovalFromReceipt(receipt)
 }
 
 // FilterApproval parses the event from given transaction receipt.
 //
 // Solidity: event Approval(address indexed owner, address indexed spender, uint256 value)
-func (_SimpleToken *SimpleTokenFilterer) ParseApprovalFromReceipt(receipt *ethTypes.Receipt) (*SimpleTokenApproval, error) {
+func (_SimpleToken *SimpleTokenFilterer) ParseApprovalFromReceipt(receipt *klayTypes.Receipt) (*SimpleTokenApproval, error) {
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925") {
 			event := new(SimpleTokenApproval)
@@ -900,7 +900,7 @@ type SimpleTokenMinterAddedIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan ethTypes.Log     // Log channel receiving the found contract events
+	logs chan klayTypes.Log    // Log channel receiving the found contract events
 	sub  ethereum.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
@@ -963,7 +963,7 @@ func (it *SimpleTokenMinterAddedIterator) Close() error {
 // SimpleTokenMinterAdded represents a MinterAdded event raised by the SimpleToken contract.
 type SimpleTokenMinterAdded struct {
 	Account common.Address
-	Raw     ethTypes.Log // Blockchain specific contextual infos
+	Raw     klayTypes.Log // Blockchain specific contextual infos
 }
 
 // FilterMinterAdded is a free log retrieval operation binding the contract event 0x6ae172837ea30b801fbfcdd4108aa1d5bf8ff775444fd70256b44e6bf3dfc3f6.
@@ -986,14 +986,14 @@ func (_SimpleToken *SimpleTokenFilterer) FilterMinterAdded(opts *bind.FilterOpts
 // FilterMinterAdded parses the event from given transaction receipt.
 //
 // Solidity: event MinterAdded(address indexed account)
-func (manager *SimpleTokenContract) ParseMinterAddedFromReceipt(receipt *ethTypes.Receipt) (*SimpleTokenMinterAdded, error) {
+func (manager *SimpleTokenContract) ParseMinterAddedFromReceipt(receipt *klayTypes.Receipt) (*SimpleTokenMinterAdded, error) {
 	return manager.contract.ParseMinterAddedFromReceipt(receipt)
 }
 
 // FilterMinterAdded parses the event from given transaction receipt.
 //
 // Solidity: event MinterAdded(address indexed account)
-func (_SimpleToken *SimpleTokenFilterer) ParseMinterAddedFromReceipt(receipt *ethTypes.Receipt) (*SimpleTokenMinterAdded, error) {
+func (_SimpleToken *SimpleTokenFilterer) ParseMinterAddedFromReceipt(receipt *klayTypes.Receipt) (*SimpleTokenMinterAdded, error) {
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x6ae172837ea30b801fbfcdd4108aa1d5bf8ff775444fd70256b44e6bf3dfc3f6") {
 			event := new(SimpleTokenMinterAdded)
@@ -1055,7 +1055,7 @@ type SimpleTokenMinterRemovedIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan ethTypes.Log     // Log channel receiving the found contract events
+	logs chan klayTypes.Log    // Log channel receiving the found contract events
 	sub  ethereum.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
@@ -1118,7 +1118,7 @@ func (it *SimpleTokenMinterRemovedIterator) Close() error {
 // SimpleTokenMinterRemoved represents a MinterRemoved event raised by the SimpleToken contract.
 type SimpleTokenMinterRemoved struct {
 	Account common.Address
-	Raw     ethTypes.Log // Blockchain specific contextual infos
+	Raw     klayTypes.Log // Blockchain specific contextual infos
 }
 
 // FilterMinterRemoved is a free log retrieval operation binding the contract event 0xe94479a9f7e1952cc78f2d6baab678adc1b772d936c6583def489e524cb66692.
@@ -1141,14 +1141,14 @@ func (_SimpleToken *SimpleTokenFilterer) FilterMinterRemoved(opts *bind.FilterOp
 // FilterMinterRemoved parses the event from given transaction receipt.
 //
 // Solidity: event MinterRemoved(address indexed account)
-func (manager *SimpleTokenContract) ParseMinterRemovedFromReceipt(receipt *ethTypes.Receipt) (*SimpleTokenMinterRemoved, error) {
+func (manager *SimpleTokenContract) ParseMinterRemovedFromReceipt(receipt *klayTypes.Receipt) (*SimpleTokenMinterRemoved, error) {
 	return manager.contract.ParseMinterRemovedFromReceipt(receipt)
 }
 
 // FilterMinterRemoved parses the event from given transaction receipt.
 //
 // Solidity: event MinterRemoved(address indexed account)
-func (_SimpleToken *SimpleTokenFilterer) ParseMinterRemovedFromReceipt(receipt *ethTypes.Receipt) (*SimpleTokenMinterRemoved, error) {
+func (_SimpleToken *SimpleTokenFilterer) ParseMinterRemovedFromReceipt(receipt *klayTypes.Receipt) (*SimpleTokenMinterRemoved, error) {
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xe94479a9f7e1952cc78f2d6baab678adc1b772d936c6583def489e524cb66692") {
 			event := new(SimpleTokenMinterRemoved)
@@ -1210,7 +1210,7 @@ type SimpleTokenTransferIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan ethTypes.Log     // Log channel receiving the found contract events
+	logs chan klayTypes.Log    // Log channel receiving the found contract events
 	sub  ethereum.Subscription // Subscription for errors, completion and termination
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
@@ -1275,7 +1275,7 @@ type SimpleTokenTransfer struct {
 	From  common.Address
 	To    common.Address
 	Value *big.Int
-	Raw   ethTypes.Log // Blockchain specific contextual infos
+	Raw   klayTypes.Log // Blockchain specific contextual infos
 }
 
 // FilterTransfer is a free log retrieval operation binding the contract event 0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef.
@@ -1302,14 +1302,14 @@ func (_SimpleToken *SimpleTokenFilterer) FilterTransfer(opts *bind.FilterOpts, f
 // FilterTransfer parses the event from given transaction receipt.
 //
 // Solidity: event Transfer(address indexed from, address indexed to, uint256 value)
-func (manager *SimpleTokenContract) ParseTransferFromReceipt(receipt *ethTypes.Receipt) (*SimpleTokenTransfer, error) {
+func (manager *SimpleTokenContract) ParseTransferFromReceipt(receipt *klayTypes.Receipt) (*SimpleTokenTransfer, error) {
 	return manager.contract.ParseTransferFromReceipt(receipt)
 }
 
 // FilterTransfer parses the event from given transaction receipt.
 //
 // Solidity: event Transfer(address indexed from, address indexed to, uint256 value)
-func (_SimpleToken *SimpleTokenFilterer) ParseTransferFromReceipt(receipt *ethTypes.Receipt) (*SimpleTokenTransfer, error) {
+func (_SimpleToken *SimpleTokenFilterer) ParseTransferFromReceipt(receipt *klayTypes.Receipt) (*SimpleTokenTransfer, error) {
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef") {
 			event := new(SimpleTokenTransfer)

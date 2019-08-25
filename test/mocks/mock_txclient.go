@@ -6,13 +6,14 @@ package mocks
 
 import (
 	context "context"
-	bind "github.com/airbloc/airbloc-go/shared/blockchain/bind"
-	go_ethereum "github.com/ethereum/go-ethereum"
-	common "github.com/ethereum/go-ethereum/common"
-	types "github.com/ethereum/go-ethereum/core/types"
-	gomock "github.com/golang/mock/gomock"
 	big "math/big"
 	reflect "reflect"
+
+	bind "github.com/airbloc/airbloc-go/shared/blockchain/bind"
+	gomock "github.com/golang/mock/gomock"
+	go_ethereum "github.com/klaytn/klaytn"
+	types "github.com/klaytn/klaytn/blockchain/types"
+	common "github.com/klaytn/klaytn/common"
 )
 
 // MockTxClient is a mock of TxClient interface

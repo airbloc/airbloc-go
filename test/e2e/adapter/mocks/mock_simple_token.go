@@ -11,10 +11,10 @@ import (
 
 	bind "github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	adapter "github.com/airbloc/airbloc-go/test/e2e/adapter"
-	common "github.com/ethereum/go-ethereum/common"
-	types "github.com/ethereum/go-ethereum/core/types"
-	event "github.com/ethereum/go-ethereum/event"
 	gomock "github.com/golang/mock/gomock"
+	types "github.com/klaytn/klaytn/blockchain/types"
+	common "github.com/klaytn/klaytn/common"
+	event "github.com/klaytn/klaytn/event"
 )
 
 // MockISimpleTokenManager is a mock of ISimpleTokenManager interface

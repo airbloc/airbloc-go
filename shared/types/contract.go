@@ -3,7 +3,7 @@ package types
 import (
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/klaytn/klaytn/common"
 )
 
 // AccountStatus is bind of Accounts.Status
@@ -27,17 +27,17 @@ var AccountStatusList = map[uint8]AccountStatus{
 
 // Account is bind of Accounts.Account
 type Account struct {
-	Owner         common.Address "json:\"Owner\""
-	Status        AccountStatus  "json:\"Status\""
-	Controller    common.Address "json:\"Controller\""
-	PasswordProof common.Address "json:\"PasswordProof\""
+	Owner         common.Address
+	Status        AccountStatus
+	Controller    common.Address
+	PasswordProof common.Address
 }
 
 // App is bind of AppRegistry.App
 type App struct {
-	Name  string         "json:\"name\""
-	Owner common.Address "json:\"owner\""
-	Addr  common.Address "json:\"hashedName\""
+	Name  string
+	Owner common.Address
+	Addr  common.Address
 }
 
 // ConsentActionTypes is bind of Consents.ActionTypes
@@ -56,30 +56,37 @@ var ConsentActionList = map[uint8]ConsentActionTypes{
 	uint8(ConsentActionExchange):   ConsentActionExchange,
 }
 
+// ConsentData is bind of Consents.ConsentData
+type ConsentData struct {
+	Action   ConsentActionTypes
+	DataType string
+	Allow    bool
+}
+
 // DataController is bind of ControllerRegistry.DataController
 type DataController struct {
-	Controller common.Address "json:\"controller\""
-	UsersCount *big.Int       "json:\"usersCount\""
+	Controller common.Address
+	UsersCount *big.Int
 }
 
 // DataType is bind of DataTypeRegistry.DataType
 type DataType struct {
-	Name       string         "json:\"name\""
-	Owner      common.Address "json:\"owner\""
-	SchemaHash common.Hash    "json:\"schemaHash\""
+	Name       string
+	Owner      common.Address
+	SchemaHash common.Hash
 }
 
 // Offer is bind of ExchangeLib.Offer
 type Offer struct {
-	Provider string         "json:\"provider\""
-	Consumer common.Address "json:\"consumer\""
-	DataIds  []DataId       "json:\"dataIds\""
-	At       *big.Int       "json:\"at\""
-	Until    *big.Int       "json:\"until\""
+	Provider string
+	Consumer common.Address
+	DataIds  []DataId
+	At       *big.Int
+	Until    *big.Int
 	Escrow   struct {
-		Addr common.Address "json:\"addr\""
-		Sign [4]byte        "json:\"sign\""
-		Args []byte         "json:\"args\""
-	} "json:\"escrow\""
-	Status uint8 "json:\"status\""
+		Addr common.Address
+		Sign [4]byte
+		Args []byte
+	}
+	Status uint8
 }

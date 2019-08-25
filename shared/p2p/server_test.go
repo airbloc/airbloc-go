@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"github.com/golang/protobuf/proto"
 	"log"
 	"os"
 	"reflect"
@@ -17,17 +16,18 @@ import (
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/airbloc-go/test/utils"
 	"github.com/airbloc/logger"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ipfs/go-cid"
-	"github.com/libp2p/go-libp2p"
-	"github.com/libp2p/go-libp2p-host"
+	"github.com/golang/protobuf/proto"
+	id "github.com/ipfs/go-cid"
+	"github.com/klaytn/klaytn/crypto"
+	p2p "github.com/libp2p/go-libp2p"
+	host "github.com/libp2p/go-libp2p-host"
 	kaddht "github.com/libp2p/go-libp2p-kad-dht"
-	"github.com/libp2p/go-libp2p-net"
-	"github.com/libp2p/go-libp2p-peer"
-	"github.com/libp2p/go-libp2p-peerstore"
-	"github.com/libp2p/go-libp2p-pubsub"
+	net "github.com/libp2p/go-libp2p-net"
+	peer "github.com/libp2p/go-libp2p-peer"
+	peerstore "github.com/libp2p/go-libp2p-peerstore"
+	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	rhost "github.com/libp2p/go-libp2p/p2p/host/routed"
-	"github.com/multiformats/go-multiaddr"
+	ma "github.com/multiformats/go-multiaddr"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -45,7 +45,7 @@ type testServer struct {
 	cancel context.CancelFunc
 
 	// network
-	id      cid.Cid
+	id      id.Cid
 	host    host.Host
 	nodekey *key.Key
 
@@ -63,7 +63,7 @@ type testServer struct {
 func NewTestServer(
 	t *testing.T,
 	nodekey *key.Key,
-	addr multiaddr.Multiaddr,
+	addr ma.Multiaddr,
 ) Server {
 	privKey, err := nodekey.DeriveLibp2pKeyPair()
 	require.NoError(t, err)
@@ -80,11 +80,11 @@ func NewTestServer(
 		unsubscriber: make(map[string]context.CancelFunc),
 	}
 
-	h, err := libp2p.New(
+	h, err := p2p.New(
 		ctx,
-		libp2p.Identity(privKey),
-		libp2p.ListenAddrs(addr),
-		libp2p.DisableRelay(),
+		p2p.Identity(privKey),
+		p2p.ListenAddrs(addr),
+		p2p.DisableRelay(),
 	)
 	require.NoError(t, err)
 
@@ -251,7 +251,7 @@ func setupTestPeers(t *testing.T, numPeers int) (keys []*key.Key, peers []Server
 	keys = make([]*key.Key, numPeers)
 	peers = make([]Server, numPeers)
 	for i := 0; i < numPeers; i++ {
-		addr := multiaddr.StringCast("/ip4/127.0.0.1/tcp/" + strconv.Itoa(testutils.ReservePort()))
+		addr := ma.StringCast("/ip4/127.0.0.1/tcp/" + strconv.Itoa(testutils.ReservePort()))
 		keys[i], _ = key.Generate()
 		peers[i] = NewTestServer(t, keys[i], addr)
 		require.NoError(t, err)
@@ -274,7 +274,7 @@ func setupAirblocPeers(t *testing.T, numPeers int) (keys []*key.Key, peers []Ser
 	time.Sleep(bootNodeTimeout)
 
 	// launch bootnode for DHT
-	addr := multiaddr.StringCast("/ip4/127.0.0.1/tcp/" + strconv.Itoa(testutils.ReservePort()))
+	addr := ma.StringCast("/ip4/127.0.0.1/tcp/" + strconv.Itoa(testutils.ReservePort()))
 	k, _ := key.Generate()
 	bootInfo, err := StartBootstrapServer(ctx, k, addr)
 	require.NoError(t, err)
@@ -285,7 +285,7 @@ func setupAirblocPeers(t *testing.T, numPeers int) (keys []*key.Key, peers []Ser
 	keys = make([]*key.Key, numPeers)
 	peers = make([]Server, numPeers)
 	for i := 0; i < numPeers; i++ {
-		addr := multiaddr.StringCast("/ip4/127.0.0.1/tcp/" + strconv.Itoa(testutils.ReservePort()))
+		addr := ma.StringCast("/ip4/127.0.0.1/tcp/" + strconv.Itoa(testutils.ReservePort()))
 		keys[i], _ = key.Generate()
 		peers[i], err = NewAirblocServer(keys[i], addr, []peerstore.PeerInfo{bootInfo}, Options{EnableMDNS: false})
 		require.NoError(t, err)

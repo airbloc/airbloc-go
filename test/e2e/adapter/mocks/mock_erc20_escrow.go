@@ -11,9 +11,9 @@ import (
 
 	types "github.com/airbloc/airbloc-go/shared/types"
 	adapter "github.com/airbloc/airbloc-go/test/e2e/adapter"
-	common "github.com/ethereum/go-ethereum/common"
-	types0 "github.com/ethereum/go-ethereum/core/types"
 	gomock "github.com/golang/mock/gomock"
+	types0 "github.com/klaytn/klaytn/blockchain/types"
+	common "github.com/klaytn/klaytn/common"
 )
 
 // MockIERC20EscrowManager is a mock of IERC20EscrowManager interface

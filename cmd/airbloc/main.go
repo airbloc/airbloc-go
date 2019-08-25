@@ -14,8 +14,8 @@ import (
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/warehouse"
 	"github.com/airbloc/logger"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/jinzhu/configor"
+	"github.com/klaytn/klaytn/crypto"
 	home "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )

@@ -13,11 +13,11 @@ import (
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/types"
-	ethereum "github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/common"
-	ethTypes "github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/event"
+	ethereum "github.com/klaytn/klaytn"
+	"github.com/klaytn/klaytn/accounts/abi"
+	klayTypes "github.com/klaytn/klaytn/blockchain/types"
+	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/event"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -30,7 +30,7 @@ var (
 	_ = bind.NewKeyedTransactor
 	_ = types.HexToID
 	_ = common.Big1
-	_ = ethTypes.BloomLookup
+	_ = klayTypes.BloomLookup
 	_ = event.NewSubscription
 )
 
@@ -110,12 +110,12 @@ func (_ERC20Escrow *ERC20EscrowRaw) Call(opts *bind.CallOpts, result interface{}
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_ERC20Escrow *ERC20EscrowRaw) Transfer(opts *bind.TransactOpts) (*ethTypes.Transaction, error) {
+func (_ERC20Escrow *ERC20EscrowRaw) Transfer(opts *bind.TransactOpts) (*klayTypes.Transaction, error) {
 	return _ERC20Escrow.Contract.ERC20EscrowTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_ERC20Escrow *ERC20EscrowRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*ethTypes.Transaction, error) {
+func (_ERC20Escrow *ERC20EscrowRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*klayTypes.Transaction, error) {
 	return _ERC20Escrow.Contract.ERC20EscrowTransactor.contract.Transact(opts, method, params...)
 }
 
@@ -181,12 +181,12 @@ func NewERC20EscrowTransactor(address common.Address, transactor bind.ContractTr
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_ERC20Escrow *ERC20EscrowTransactorRaw) Transfer(opts *bind.TransactOpts) (*ethTypes.Transaction, error) {
+func (_ERC20Escrow *ERC20EscrowTransactorRaw) Transfer(opts *bind.TransactOpts) (*klayTypes.Transaction, error) {
 	return _ERC20Escrow.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_ERC20Escrow *ERC20EscrowTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*ethTypes.Transaction, error) {
+func (_ERC20Escrow *ERC20EscrowTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*klayTypes.Transaction, error) {
 	return _ERC20Escrow.Contract.contract.Transact(opts, method, params...)
 }
 
@@ -348,13 +348,13 @@ func (_ERC20Escrow *ERC20EscrowCallerSession) GetTransactSelector() ([4]byte, er
 }
 
 type IERC20EscrowTransacts interface {
-	Transact(ctx context.Context, token common.Address, amount *big.Int, offerId types.ID) (*ethTypes.Receipt, error)
+	Transact(ctx context.Context, token common.Address, amount *big.Int, offerId types.ID) (*klayTypes.Receipt, error)
 }
 
 // Transact is a paid mutator transaction binding the contract method 0x0bd9e0f8.
 //
 // Solidity: function transact(address token, uint256 amount, bytes8 offerId) returns()
-func (c *ERC20EscrowContract) Transact(ctx context.Context, token common.Address, amount *big.Int, offerId types.ID) (*ethTypes.Receipt, error) {
+func (c *ERC20EscrowContract) Transact(ctx context.Context, token common.Address, amount *big.Int, offerId types.ID) (*klayTypes.Receipt, error) {
 	tx, err := c.contract.Transact(c.client.Account(), token, amount, offerId)
 	if err != nil {
 		return nil, err
@@ -365,21 +365,21 @@ func (c *ERC20EscrowContract) Transact(ctx context.Context, token common.Address
 // Transact is a paid mutator transaction binding the contract method 0x0bd9e0f8.
 //
 // Solidity: function transact(address token, uint256 amount, bytes8 offerId) returns()
-func (_ERC20Escrow *ERC20EscrowTransactor) Transact(opts *bind.TransactOpts, token common.Address, amount *big.Int, offerId types.ID) (*ethTypes.Transaction, error) {
+func (_ERC20Escrow *ERC20EscrowTransactor) Transact(opts *bind.TransactOpts, token common.Address, amount *big.Int, offerId types.ID) (*klayTypes.Transaction, error) {
 	return _ERC20Escrow.contract.Transact(opts, "transact", token, amount, offerId)
 }
 
 // Transact is a paid mutator transaction binding the contract method 0x0bd9e0f8.
 //
 // Solidity: function transact(address token, uint256 amount, bytes8 offerId) returns()
-func (_ERC20Escrow *ERC20EscrowSession) Transact(token common.Address, amount *big.Int, offerId types.ID) (*ethTypes.Transaction, error) {
+func (_ERC20Escrow *ERC20EscrowSession) Transact(token common.Address, amount *big.Int, offerId types.ID) (*klayTypes.Transaction, error) {
 	return _ERC20Escrow.Contract.Transact(&_ERC20Escrow.TransactOpts, token, amount, offerId)
 }
 
 // Transact is a paid mutator transaction binding the contract method 0x0bd9e0f8.
 //
 // Solidity: function transact(address token, uint256 amount, bytes8 offerId) returns()
-func (_ERC20Escrow *ERC20EscrowTransactorSession) Transact(token common.Address, amount *big.Int, offerId types.ID) (*ethTypes.Transaction, error) {
+func (_ERC20Escrow *ERC20EscrowTransactorSession) Transact(token common.Address, amount *big.Int, offerId types.ID) (*klayTypes.Transaction, error) {
 	return _ERC20Escrow.Contract.Transact(&_ERC20Escrow.TransactOpts, token, amount, offerId)
 }
 

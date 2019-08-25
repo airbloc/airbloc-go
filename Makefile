@@ -11,6 +11,7 @@ RPC_PROTO_SRCS := $(shell find $(PROTO_DIR)/rpc -name *.proto)
 GOTEST ?= go test
 
 # build tags
+# LDFLAGS += -v "-linkmode=external" # for test
 LDFLAGS += -X "main.Version=$(shell git rev-list --tags --max-count=1)"
 LDFLAGS += -X "main.BuildDate=$(shell date)"
 LDFLAGS += -X "main.GitCommit=$(shell git rev-parse --short HEAD)"

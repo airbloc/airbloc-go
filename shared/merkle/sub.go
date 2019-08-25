@@ -3,30 +3,30 @@ package merkle
 import (
 	"bytes"
 	"encoding/binary"
-	"github.com/pkg/errors"
 	"math/big"
 	"sort"
 
-	ethCommon "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/crypto"
+	"github.com/pkg/errors"
 )
 
 const (
-	Left  = 0x00
-	Right = 0x01
+	left  = 0x00
+	right = 0x01
 )
 
 type SubTree struct {
 	leaves [][4]byte
-	tree   [][]ethCommon.Hash
-	root   ethCommon.Hash
+	tree   [][]common.Hash
+	root   common.Hash
 }
 
 func (st *SubTree) Leaves() [][4]byte {
 	return st.leaves
 }
 
-func (st *SubTree) Root() ethCommon.Hash {
+func (st *SubTree) Root() common.Hash {
 	return st.root
 }
 
@@ -43,12 +43,12 @@ func (st *SubTree) GenerateProof(rowId [4]byte) ([]byte, error) {
 	buf := new(bytes.Buffer)
 	for _, lvl := range st.tree[:len(st.tree)-1] {
 		if index%2 != 0 { // left
-			buf.Write(append([]byte{Left}, lvl[index-1].Bytes()...))
+			buf.Write(append([]byte{left}, lvl[index-1].Bytes()...))
 		} else { // right
 			if len(lvl) == (index + 1) {
-				buf.Write(append([]byte{Right}, lvl[index].Bytes()...))
+				buf.Write(append([]byte{right}, lvl[index].Bytes()...))
 			} else {
-				buf.Write(append([]byte{Right}, lvl[index+1].Bytes()...))
+				buf.Write(append([]byte{right}, lvl[index+1].Bytes()...))
 			}
 		}
 
@@ -58,7 +58,7 @@ func (st *SubTree) GenerateProof(rowId [4]byte) ([]byte, error) {
 }
 
 func verifySubProof(rowId [4]byte, subRoot, proof []byte) bool {
-	root := ethCommon.BytesToHash(subRoot)
+	root := common.BytesToHash(subRoot)
 	base := crypto.Keccak256Hash(rowId[:])
 
 	for {
@@ -70,7 +70,7 @@ func verifySubProof(rowId [4]byte, subRoot, proof []byte) bool {
 		leaf, direction := leaf[1:], leaf[0]
 		proof = proof[SubProofLength:]
 
-		if direction == Left {
+		if direction == left {
 			base = crypto.Keccak256Hash(leaf, base.Bytes())
 		} else {
 			base = crypto.Keccak256Hash(base.Bytes(), leaf)
@@ -108,7 +108,7 @@ func NewSubTree(input [][4]byte) (*SubTree, error) {
 	})
 
 	// hashing
-	base := make([]ethCommon.Hash, len(input))
+	base := make([]common.Hash, len(input))
 	for index, elem := range input {
 		base[index] = crypto.Keccak256Hash(elem[:])
 	}
@@ -116,7 +116,7 @@ func NewSubTree(input [][4]byte) (*SubTree, error) {
 	// create tree structure
 	st := &SubTree{
 		leaves: input,
-		tree:   [][]ethCommon.Hash{base},
+		tree:   [][]common.Hash{base},
 	}
 
 	// generate tree
@@ -126,14 +126,14 @@ func NewSubTree(input [][4]byte) (*SubTree, error) {
 			break
 		}
 
-		var nextLvl []ethCommon.Hash
+		var nextLvl []common.Hash
 		for j := 0; j < len(st.tree[i]); j++ {
 			if j%2 != 0 {
 				continue
 			}
 
 			leaf := st.tree[i][j]
-			coleaf := ethCommon.Hash{}
+			coleaf := common.Hash{}
 
 			if len(st.tree[i]) == j+1 {
 				coleaf = leaf

@@ -7,20 +7,20 @@ import (
 	"math/big"
 	"sort"
 
-	ethCommon "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/crypto"
 	"github.com/pkg/errors"
 )
 
 const depth = 64
 
 var (
-	empty []ethCommon.Hash
-	hash  = func(b ...[]byte) ethCommon.Hash { return crypto.Keccak256Hash(b...) }
+	empty []common.Hash
+	hash  = func(b ...[]byte) common.Hash { return crypto.Keccak256Hash(b...) }
 )
 
 func init() {
-	empty = make([]ethCommon.Hash, depth+1)
+	empty = make([]common.Hash, depth+1)
 	base := crypto.Keccak256Hash(bytes.Repeat([]byte{0x00}, 32))
 	empty[0] = base
 
@@ -34,7 +34,7 @@ func init() {
 // n is smallest element type of sparse merkle tree
 type n struct {
 	k uint64
-	v ethCommon.Hash
+	v common.Hash
 	n uint64 // points to leaf that placed in next level
 }
 type ns []*n
@@ -49,7 +49,7 @@ type MainTree struct {
 		*SubTree
 	}
 	tree  []ns
-	root  ethCommon.Hash
+	root  common.Hash
 	cache map[uint64]*SubTree
 }
 
@@ -61,7 +61,7 @@ func (mt *MainTree) Leaves() map[[8]byte][][4]byte {
 	return leaves
 }
 
-func (mt *MainTree) Root() ethCommon.Hash {
+func (mt *MainTree) Root() common.Hash {
 	return mt.root
 }
 
@@ -120,7 +120,7 @@ func (mt *MainTree) GenerateProof(rowId [4]byte, userId [8]byte) ([]byte, error)
 
 func verifyMainProof(userId [8]byte, subRoot, mainRoot, proofBits, proofBytes []byte) bool {
 	k := binary.LittleEndian.Uint64(userId[:])
-	v := ethCommon.BytesToHash(subRoot)
+	v := common.BytesToHash(subRoot)
 
 	for i := 0; i < len(proofBits)*8; i++ {
 		h := empty[i].Bytes()

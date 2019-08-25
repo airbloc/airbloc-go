@@ -5,49 +5,47 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common"
-
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
-	testadapter "github.com/airbloc/airbloc-go/test/e2e/adapter"
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	ethbind "github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethereum/go-ethereum/params"
+	testAdapter "github.com/airbloc/airbloc-go/test/e2e/adapter"
+	"github.com/klaytn/klaytn/accounts/abi"
+	"github.com/klaytn/klaytn/accounts/abi/bind"
+	"github.com/klaytn/klaytn/client"
+	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/crypto"
+	"github.com/klaytn/klaytn/params"
 	"github.com/stretchr/testify/require"
 )
 
 func (t *T) prepareEscrow() *pb.Contract {
 	self := bind.NewKeyedTransactor(t.config.TransactorPrivateKey)
 
-	client, err := ethclient.DialContext(t.ctx, t.config.EthereumEndpoint)
+	klient, err := client.DialContext(t.ctx, t.config.EthereumEndpoint)
 	require.NoError(t, err)
 
-	token, err := testadapter.NewSimpleToken(t.config.DeployedContracts["ERC20Mintable"], common.Hash{}, big.NewInt(0), client)
+	token, err := testAdapter.NewSimpleToken(t.config.DeployedContracts["ERC20Mintable"], common.Hash{}, big.NewInt(0), klient)
 	require.NoError(t, err)
 
 	// mint 10000 Tokens
-	tx, err := token.Mint(self, self.From, new(big.Int).Mul(big.NewInt(10000), big.NewInt(params.Ether)))
+	tx, err := token.Mint(self, self.From, new(big.Int).Mul(big.NewInt(10000), big.NewInt(params.KLAY)))
 	require.NoError(t, err)
-	_, err = ethbind.WaitMined(t.ctx, client, tx)
+	_, err = bind.WaitMined(t.ctx, klient, tx)
 	require.NoError(t, err)
 	log.Println("10000 new tokens are minted.")
 
 	// approve SimpleContract (Trade Escrow Contract) to take 10000 tokens from me
-	tx, err = token.Approve(self, t.config.DeployedContracts["SimpleContract"], new(big.Int).Mul(big.NewInt(10000), big.NewInt(params.Ether)))
+	tx, err = token.Approve(self, t.config.DeployedContracts["SimpleContract"], new(big.Int).Mul(big.NewInt(10000), big.NewInt(params.KLAY)))
 	require.NoError(t, err)
-	_, err = ethbind.WaitMined(t.ctx, client, tx)
+	_, err = bind.WaitMined(t.ctx, klient, tx)
 	require.NoError(t, err)
 	log.Println("Allowed taking 10000 tokens")
 
 	mintBalance, _ := token.BalanceOf(nil, self.From)
 	log.Println("Currently", new(big.Float).Quo(
 		new(big.Float).SetInt(mintBalance),
-		new(big.Float).SetInt(big.NewInt(params.Ether))),
+		new(big.Float).SetInt(big.NewInt(params.KLAY))),
 		"tokens are minted now.")
 
-	simpleContract, err := abi.JSON(strings.NewReader(testadapter.ERC20EscrowABI))
+	simpleContract, err := abi.JSON(strings.NewReader(testAdapter.ERC20EscrowABI))
 	require.NoError(t, err)
 
 	// prepare escrow condition details: SimpleContract.transact(ERC20Mintable.address, 100 Tokens)
@@ -57,7 +55,7 @@ func (t *T) prepareEscrow() *pb.Contract {
 	// address, uint256, bytes8
 	escrowFuncArgs, err := escrowFunc.Inputs[:len(escrowFunc.Inputs)-1].Pack(
 		t.config.DeployedContracts["ERC20Mintable"],
-		new(big.Int).Mul(big.NewInt(100), big.NewInt(params.Ether)),
+		new(big.Int).Mul(big.NewInt(100), big.NewInt(params.KLAY)),
 	)
 	require.NoError(t, err)
 

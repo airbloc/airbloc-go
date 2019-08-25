@@ -2,13 +2,14 @@ package key
 
 import (
 	"crypto/rand"
+
 	"github.com/airbloc/airbloc-go/shared/types"
 
 	"github.com/airbloc/logger"
 
 	"github.com/airbloc/airbloc-go/shared/database/localdb"
-	ethTypes "github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto/ecies"
+	klayTypes "github.com/klaytn/klaytn/blockchain/types"
+	"github.com/klaytn/klaytn/crypto/ecies"
 )
 
 // Manager is local key-manager service (KMS) containing the account's private key
@@ -70,6 +71,6 @@ func (kms *manager) Decrypt(encryptedPayload []byte) (string, error) {
 	return string(payload), err
 }
 
-func (kms *manager) SignEthTx(tx *ethTypes.Transaction) (*ethTypes.Transaction, error) {
-	return ethTypes.SignTx(tx, ethTypes.EIP155Signer{}, kms.ownerKey.PrivateKey)
+func (kms *manager) SignEthTx(tx *klayTypes.Transaction) (*klayTypes.Transaction, error) {
+	return klayTypes.SignTx(tx, klayTypes.EIP155Signer{}, kms.ownerKey.PrivateKey)
 }

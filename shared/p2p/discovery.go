@@ -2,12 +2,12 @@ package p2p
 
 import (
 	"context"
-	"github.com/airbloc/logger"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/libp2p/go-libp2p-host"
-	"github.com/libp2p/go-libp2p-peerstore"
-	mdns "github.com/libp2p/go-libp2p/p2p/discovery"
 	"time"
+
+	"github.com/airbloc/logger"
+	host "github.com/libp2p/go-libp2p-host"
+	peerstore "github.com/libp2p/go-libp2p-peerstore"
+	mdns "github.com/libp2p/go-libp2p/p2p/discovery"
 )
 
 // Discovery interval for multicast DNS querying.
@@ -46,7 +46,7 @@ func (d *discovery) HandlePeerFound(pi peerstore.PeerInfo) {
 			"id": pi.ID.String(),
 		})
 	}
-	log.Debug("Peers are now {peerCount}", logger.Attrs{
+	d.log.Debug("Peers are now {peerCount}", logger.Attrs{
 		"peers": d.host.Peerstore().Peers(),
 	})
 }

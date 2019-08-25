@@ -44,7 +44,7 @@ func NewManager(
 		p2p:       p2p,
 		warehouse: warehouse,
 		//registry:  contract.(*adapter.DataRegistry),
-		dataTypes: adapter.NewDataTypeRegistryContract(client),
+		dataTypes: client.GetContract(&adapter.DataTypeRegistryContract{}).(*adapter.DataTypeRegistryContract),
 		batches:   batches,
 		metadb:    metadb.NewModel(metaDB, "bundles"),
 	}
