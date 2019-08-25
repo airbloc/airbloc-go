@@ -5,13 +5,13 @@ import (
 
 	"github.com/airbloc/airbloc-go/provider/dauth"
 	"github.com/airbloc/airbloc-go/shared/adapter"
-	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
-	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/klaytn/klaytn/accounts/abi/bind"
+	"github.com/klaytn/klaytn/common"
 )
 
 type dAuthAPI struct {
@@ -41,7 +41,7 @@ func (api *dAuthAPI) signIn(c *gin.Context) {
 		return
 	}
 
-	controller := ethCommon.HexToAddress(req.Controller)
+	controller := common.HexToAddress(req.Controller)
 	accountId, err := api.dauthClient.SignIn(c, req.Identity, controller)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

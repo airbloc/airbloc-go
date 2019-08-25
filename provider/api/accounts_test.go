@@ -11,10 +11,10 @@ import (
 	adapterMocks "github.com/airbloc/airbloc-go/shared/adapter/mocks"
 	"github.com/airbloc/airbloc-go/shared/types"
 	testutils "github.com/airbloc/airbloc-go/test/utils"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/golang/mock/gomock"
+	"github.com/klaytn/klaytn/common"
 	"github.com/stretchr/testify/assert"
 )
 

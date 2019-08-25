@@ -6,9 +6,9 @@ import (
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/klaytn/klaytn/common"
 )
 
 // dataTypeRegistryAPI is api wrapper of contract DataTypeRegistry.sol

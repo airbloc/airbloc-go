@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/klaytn/klaytn/common"
 
 	testutils "github.com/airbloc/airbloc-go/test/utils"
 	"github.com/gin-gonic/gin"
