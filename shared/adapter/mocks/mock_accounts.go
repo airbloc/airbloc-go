@@ -43,6 +43,7 @@ func (m *MockIAccountsManager) EXPECT() *MockIAccountsManagerMockRecorder {
 
 // Address mocks base method
 func (m *MockIAccountsManager) Address() common.Address {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
@@ -50,11 +51,13 @@ func (m *MockIAccountsManager) Address() common.Address {
 
 // Address indicates an expected call of Address
 func (mr *MockIAccountsManagerMockRecorder) Address() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIAccountsManager)(nil).Address))
 }
 
 // TxHash mocks base method
 func (m *MockIAccountsManager) TxHash() common.Hash {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TxHash")
 	ret0, _ := ret[0].(common.Hash)
 	return ret0
@@ -62,11 +65,13 @@ func (m *MockIAccountsManager) TxHash() common.Hash {
 
 // TxHash indicates an expected call of TxHash
 func (mr *MockIAccountsManagerMockRecorder) TxHash() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockIAccountsManager)(nil).TxHash))
 }
 
 // CreatedAt mocks base method
 func (m *MockIAccountsManager) CreatedAt() *big.Int {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatedAt")
 	ret0, _ := ret[0].(*big.Int)
 	return ret0
@@ -74,11 +79,13 @@ func (m *MockIAccountsManager) CreatedAt() *big.Int {
 
 // CreatedAt indicates an expected call of CreatedAt
 func (mr *MockIAccountsManagerMockRecorder) CreatedAt() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIAccountsManager)(nil).CreatedAt))
 }
 
 // Accounts mocks base method
 func (m *MockIAccountsManager) Accounts(arg0 types.ID) (types.Account, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Accounts", arg0)
 	ret0, _ := ret[0].(types.Account)
 	ret1, _ := ret[1].(error)
@@ -87,11 +94,13 @@ func (m *MockIAccountsManager) Accounts(arg0 types.ID) (types.Account, error) {
 
 // Accounts indicates an expected call of Accounts
 func (mr *MockIAccountsManagerMockRecorder) Accounts(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Accounts", reflect.TypeOf((*MockIAccountsManager)(nil).Accounts), arg0)
 }
 
 // Exists mocks base method
 func (m *MockIAccountsManager) Exists(accountId types.ID) (bool, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Exists", accountId)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -100,11 +109,13 @@ func (m *MockIAccountsManager) Exists(accountId types.ID) (bool, error) {
 
 // Exists indicates an expected call of Exists
 func (mr *MockIAccountsManagerMockRecorder) Exists(accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exists", reflect.TypeOf((*MockIAccountsManager)(nil).Exists), accountId)
 }
 
 // GetAccount mocks base method
 func (m *MockIAccountsManager) GetAccount(accountId types.ID) (types.Account, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAccount", accountId)
 	ret0, _ := ret[0].(types.Account)
 	ret1, _ := ret[1].(error)
@@ -113,11 +124,13 @@ func (m *MockIAccountsManager) GetAccount(accountId types.ID) (types.Account, er
 
 // GetAccount indicates an expected call of GetAccount
 func (mr *MockIAccountsManagerMockRecorder) GetAccount(accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccount", reflect.TypeOf((*MockIAccountsManager)(nil).GetAccount), accountId)
 }
 
 // GetAccountId mocks base method
 func (m *MockIAccountsManager) GetAccountId(sender common.Address) (types.ID, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAccountId", sender)
 	ret0, _ := ret[0].(types.ID)
 	ret1, _ := ret[1].(error)
@@ -126,11 +139,13 @@ func (m *MockIAccountsManager) GetAccountId(sender common.Address) (types.ID, er
 
 // GetAccountId indicates an expected call of GetAccountId
 func (mr *MockIAccountsManagerMockRecorder) GetAccountId(sender interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccountId", reflect.TypeOf((*MockIAccountsManager)(nil).GetAccountId), sender)
 }
 
 // GetAccountIdFromSignature mocks base method
 func (m *MockIAccountsManager) GetAccountIdFromSignature(messageHash common.Hash, signature []byte) (types.ID, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAccountIdFromSignature", messageHash, signature)
 	ret0, _ := ret[0].(types.ID)
 	ret1, _ := ret[1].(error)
@@ -139,11 +154,13 @@ func (m *MockIAccountsManager) GetAccountIdFromSignature(messageHash common.Hash
 
 // GetAccountIdFromSignature indicates an expected call of GetAccountIdFromSignature
 func (mr *MockIAccountsManagerMockRecorder) GetAccountIdFromSignature(messageHash, signature interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccountIdFromSignature", reflect.TypeOf((*MockIAccountsManager)(nil).GetAccountIdFromSignature), messageHash, signature)
 }
 
 // IdentityHashToAccount mocks base method
 func (m *MockIAccountsManager) IdentityHashToAccount(arg0 common.Hash) (types.ID, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IdentityHashToAccount", arg0)
 	ret0, _ := ret[0].(types.ID)
 	ret1, _ := ret[1].(error)
@@ -152,11 +169,13 @@ func (m *MockIAccountsManager) IdentityHashToAccount(arg0 common.Hash) (types.ID
 
 // IdentityHashToAccount indicates an expected call of IdentityHashToAccount
 func (mr *MockIAccountsManagerMockRecorder) IdentityHashToAccount(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IdentityHashToAccount", reflect.TypeOf((*MockIAccountsManager)(nil).IdentityHashToAccount), arg0)
 }
 
 // IsControllerOf mocks base method
 func (m *MockIAccountsManager) IsControllerOf(sender common.Address, accountId types.ID) (bool, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsControllerOf", sender, accountId)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -165,11 +184,13 @@ func (m *MockIAccountsManager) IsControllerOf(sender common.Address, accountId t
 
 // IsControllerOf indicates an expected call of IsControllerOf
 func (mr *MockIAccountsManagerMockRecorder) IsControllerOf(sender, accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsControllerOf", reflect.TypeOf((*MockIAccountsManager)(nil).IsControllerOf), sender, accountId)
 }
 
 // IsTemporary mocks base method
 func (m *MockIAccountsManager) IsTemporary(accountId types.ID) (bool, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsTemporary", accountId)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -178,11 +199,13 @@ func (m *MockIAccountsManager) IsTemporary(accountId types.ID) (bool, error) {
 
 // IsTemporary indicates an expected call of IsTemporary
 func (mr *MockIAccountsManagerMockRecorder) IsTemporary(accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsTemporary", reflect.TypeOf((*MockIAccountsManager)(nil).IsTemporary), accountId)
 }
 
 // NumberOfAccounts mocks base method
 func (m *MockIAccountsManager) NumberOfAccounts() (*big.Int, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "NumberOfAccounts")
 	ret0, _ := ret[0].(*big.Int)
 	ret1, _ := ret[1].(error)
@@ -191,11 +214,13 @@ func (m *MockIAccountsManager) NumberOfAccounts() (*big.Int, error) {
 
 // NumberOfAccounts indicates an expected call of NumberOfAccounts
 func (mr *MockIAccountsManagerMockRecorder) NumberOfAccounts() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NumberOfAccounts", reflect.TypeOf((*MockIAccountsManager)(nil).NumberOfAccounts))
 }
 
 // Create mocks base method
 func (m *MockIAccountsManager) Create(ctx context.Context) (types.ID, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", ctx)
 	ret0, _ := ret[0].(types.ID)
 	ret1, _ := ret[1].(error)
@@ -204,11 +229,13 @@ func (m *MockIAccountsManager) Create(ctx context.Context) (types.ID, error) {
 
 // Create indicates an expected call of Create
 func (mr *MockIAccountsManagerMockRecorder) Create(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockIAccountsManager)(nil).Create), ctx)
 }
 
 // CreateTemporary mocks base method
 func (m *MockIAccountsManager) CreateTemporary(ctx context.Context, identityHash common.Hash) (types.ID, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateTemporary", ctx, identityHash)
 	ret0, _ := ret[0].(types.ID)
 	ret1, _ := ret[1].(error)
@@ -217,11 +244,13 @@ func (m *MockIAccountsManager) CreateTemporary(ctx context.Context, identityHash
 
 // CreateTemporary indicates an expected call of CreateTemporary
 func (mr *MockIAccountsManagerMockRecorder) CreateTemporary(ctx, identityHash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTemporary", reflect.TypeOf((*MockIAccountsManager)(nil).CreateTemporary), ctx, identityHash)
 }
 
 // SetController mocks base method
 func (m *MockIAccountsManager) SetController(ctx context.Context, controller common.Address) error {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SetController", ctx, controller)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -229,11 +258,13 @@ func (m *MockIAccountsManager) SetController(ctx context.Context, controller com
 
 // SetController indicates an expected call of SetController
 func (mr *MockIAccountsManagerMockRecorder) SetController(ctx, controller interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetController", reflect.TypeOf((*MockIAccountsManager)(nil).SetController), ctx, controller)
 }
 
 // UnlockTemporary mocks base method
 func (m *MockIAccountsManager) UnlockTemporary(ctx context.Context, identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) error {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UnlockTemporary", ctx, identityPreimage, newOwner, passwordSignature)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -241,11 +272,13 @@ func (m *MockIAccountsManager) UnlockTemporary(ctx context.Context, identityPrei
 
 // UnlockTemporary indicates an expected call of UnlockTemporary
 func (mr *MockIAccountsManagerMockRecorder) UnlockTemporary(ctx, identityPreimage, newOwner, passwordSignature interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnlockTemporary", reflect.TypeOf((*MockIAccountsManager)(nil).UnlockTemporary), ctx, identityPreimage, newOwner, passwordSignature)
 }
 
 // FilterSignUp mocks base method
 func (m *MockIAccountsManager) FilterSignUp(opts *bind.FilterOpts, owner []common.Address) (*adapter.AccountsSignUpIterator, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterSignUp", opts, owner)
 	ret0, _ := ret[0].(*adapter.AccountsSignUpIterator)
 	ret1, _ := ret[1].(error)
@@ -254,11 +287,13 @@ func (m *MockIAccountsManager) FilterSignUp(opts *bind.FilterOpts, owner []commo
 
 // FilterSignUp indicates an expected call of FilterSignUp
 func (mr *MockIAccountsManagerMockRecorder) FilterSignUp(opts, owner interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterSignUp", reflect.TypeOf((*MockIAccountsManager)(nil).FilterSignUp), opts, owner)
 }
 
 // FilterTemporaryCreated mocks base method
 func (m *MockIAccountsManager) FilterTemporaryCreated(opts *bind.FilterOpts, proxy []common.Address, identityHash []common.Hash) (*adapter.AccountsTemporaryCreatedIterator, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterTemporaryCreated", opts, proxy, identityHash)
 	ret0, _ := ret[0].(*adapter.AccountsTemporaryCreatedIterator)
 	ret1, _ := ret[1].(error)
@@ -267,11 +302,13 @@ func (m *MockIAccountsManager) FilterTemporaryCreated(opts *bind.FilterOpts, pro
 
 // FilterTemporaryCreated indicates an expected call of FilterTemporaryCreated
 func (mr *MockIAccountsManagerMockRecorder) FilterTemporaryCreated(opts, proxy, identityHash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterTemporaryCreated", reflect.TypeOf((*MockIAccountsManager)(nil).FilterTemporaryCreated), opts, proxy, identityHash)
 }
 
 // FilterUnlocked mocks base method
 func (m *MockIAccountsManager) FilterUnlocked(opts *bind.FilterOpts, identityHash []common.Hash, accountId []types.ID) (*adapter.AccountsUnlockedIterator, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterUnlocked", opts, identityHash, accountId)
 	ret0, _ := ret[0].(*adapter.AccountsUnlockedIterator)
 	ret1, _ := ret[1].(error)
@@ -280,11 +317,13 @@ func (m *MockIAccountsManager) FilterUnlocked(opts *bind.FilterOpts, identityHas
 
 // FilterUnlocked indicates an expected call of FilterUnlocked
 func (mr *MockIAccountsManagerMockRecorder) FilterUnlocked(opts, identityHash, accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterUnlocked", reflect.TypeOf((*MockIAccountsManager)(nil).FilterUnlocked), opts, identityHash, accountId)
 }
 
 // WatchSignUp mocks base method
 func (m *MockIAccountsManager) WatchSignUp(opts *bind.WatchOpts, sink chan<- *adapter.AccountsSignUp, owner []common.Address) (event.Subscription, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchSignUp", opts, sink, owner)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -293,11 +332,13 @@ func (m *MockIAccountsManager) WatchSignUp(opts *bind.WatchOpts, sink chan<- *ad
 
 // WatchSignUp indicates an expected call of WatchSignUp
 func (mr *MockIAccountsManagerMockRecorder) WatchSignUp(opts, sink, owner interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchSignUp", reflect.TypeOf((*MockIAccountsManager)(nil).WatchSignUp), opts, sink, owner)
 }
 
 // WatchTemporaryCreated mocks base method
 func (m *MockIAccountsManager) WatchTemporaryCreated(opts *bind.WatchOpts, sink chan<- *adapter.AccountsTemporaryCreated, proxy []common.Address, identityHash []common.Hash) (event.Subscription, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchTemporaryCreated", opts, sink, proxy, identityHash)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -306,11 +347,13 @@ func (m *MockIAccountsManager) WatchTemporaryCreated(opts *bind.WatchOpts, sink 
 
 // WatchTemporaryCreated indicates an expected call of WatchTemporaryCreated
 func (mr *MockIAccountsManagerMockRecorder) WatchTemporaryCreated(opts, sink, proxy, identityHash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchTemporaryCreated", reflect.TypeOf((*MockIAccountsManager)(nil).WatchTemporaryCreated), opts, sink, proxy, identityHash)
 }
 
 // WatchUnlocked mocks base method
 func (m *MockIAccountsManager) WatchUnlocked(opts *bind.WatchOpts, sink chan<- *adapter.AccountsUnlocked, identityHash []common.Hash, accountId []types.ID) (event.Subscription, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchUnlocked", opts, sink, identityHash, accountId)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -319,6 +362,7 @@ func (m *MockIAccountsManager) WatchUnlocked(opts *bind.WatchOpts, sink chan<- *
 
 // WatchUnlocked indicates an expected call of WatchUnlocked
 func (mr *MockIAccountsManagerMockRecorder) WatchUnlocked(opts, sink, identityHash, accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchUnlocked", reflect.TypeOf((*MockIAccountsManager)(nil).WatchUnlocked), opts, sink, identityHash, accountId)
 }
 
@@ -347,6 +391,7 @@ func (m *MockIAccountsCalls) EXPECT() *MockIAccountsCallsMockRecorder {
 
 // Accounts mocks base method
 func (m *MockIAccountsCalls) Accounts(arg0 types.ID) (types.Account, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Accounts", arg0)
 	ret0, _ := ret[0].(types.Account)
 	ret1, _ := ret[1].(error)
@@ -355,11 +400,13 @@ func (m *MockIAccountsCalls) Accounts(arg0 types.ID) (types.Account, error) {
 
 // Accounts indicates an expected call of Accounts
 func (mr *MockIAccountsCallsMockRecorder) Accounts(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Accounts", reflect.TypeOf((*MockIAccountsCalls)(nil).Accounts), arg0)
 }
 
 // Exists mocks base method
 func (m *MockIAccountsCalls) Exists(accountId types.ID) (bool, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Exists", accountId)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -368,11 +415,13 @@ func (m *MockIAccountsCalls) Exists(accountId types.ID) (bool, error) {
 
 // Exists indicates an expected call of Exists
 func (mr *MockIAccountsCallsMockRecorder) Exists(accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exists", reflect.TypeOf((*MockIAccountsCalls)(nil).Exists), accountId)
 }
 
 // GetAccount mocks base method
 func (m *MockIAccountsCalls) GetAccount(accountId types.ID) (types.Account, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAccount", accountId)
 	ret0, _ := ret[0].(types.Account)
 	ret1, _ := ret[1].(error)
@@ -381,11 +430,13 @@ func (m *MockIAccountsCalls) GetAccount(accountId types.ID) (types.Account, erro
 
 // GetAccount indicates an expected call of GetAccount
 func (mr *MockIAccountsCallsMockRecorder) GetAccount(accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccount", reflect.TypeOf((*MockIAccountsCalls)(nil).GetAccount), accountId)
 }
 
 // GetAccountId mocks base method
 func (m *MockIAccountsCalls) GetAccountId(sender common.Address) (types.ID, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAccountId", sender)
 	ret0, _ := ret[0].(types.ID)
 	ret1, _ := ret[1].(error)
@@ -394,11 +445,13 @@ func (m *MockIAccountsCalls) GetAccountId(sender common.Address) (types.ID, erro
 
 // GetAccountId indicates an expected call of GetAccountId
 func (mr *MockIAccountsCallsMockRecorder) GetAccountId(sender interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccountId", reflect.TypeOf((*MockIAccountsCalls)(nil).GetAccountId), sender)
 }
 
 // GetAccountIdFromSignature mocks base method
 func (m *MockIAccountsCalls) GetAccountIdFromSignature(messageHash common.Hash, signature []byte) (types.ID, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAccountIdFromSignature", messageHash, signature)
 	ret0, _ := ret[0].(types.ID)
 	ret1, _ := ret[1].(error)
@@ -407,11 +460,13 @@ func (m *MockIAccountsCalls) GetAccountIdFromSignature(messageHash common.Hash, 
 
 // GetAccountIdFromSignature indicates an expected call of GetAccountIdFromSignature
 func (mr *MockIAccountsCallsMockRecorder) GetAccountIdFromSignature(messageHash, signature interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccountIdFromSignature", reflect.TypeOf((*MockIAccountsCalls)(nil).GetAccountIdFromSignature), messageHash, signature)
 }
 
 // IdentityHashToAccount mocks base method
 func (m *MockIAccountsCalls) IdentityHashToAccount(arg0 common.Hash) (types.ID, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IdentityHashToAccount", arg0)
 	ret0, _ := ret[0].(types.ID)
 	ret1, _ := ret[1].(error)
@@ -420,11 +475,13 @@ func (m *MockIAccountsCalls) IdentityHashToAccount(arg0 common.Hash) (types.ID, 
 
 // IdentityHashToAccount indicates an expected call of IdentityHashToAccount
 func (mr *MockIAccountsCallsMockRecorder) IdentityHashToAccount(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IdentityHashToAccount", reflect.TypeOf((*MockIAccountsCalls)(nil).IdentityHashToAccount), arg0)
 }
 
 // IsControllerOf mocks base method
 func (m *MockIAccountsCalls) IsControllerOf(sender common.Address, accountId types.ID) (bool, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsControllerOf", sender, accountId)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -433,11 +490,13 @@ func (m *MockIAccountsCalls) IsControllerOf(sender common.Address, accountId typ
 
 // IsControllerOf indicates an expected call of IsControllerOf
 func (mr *MockIAccountsCallsMockRecorder) IsControllerOf(sender, accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsControllerOf", reflect.TypeOf((*MockIAccountsCalls)(nil).IsControllerOf), sender, accountId)
 }
 
 // IsTemporary mocks base method
 func (m *MockIAccountsCalls) IsTemporary(accountId types.ID) (bool, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsTemporary", accountId)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -446,11 +505,13 @@ func (m *MockIAccountsCalls) IsTemporary(accountId types.ID) (bool, error) {
 
 // IsTemporary indicates an expected call of IsTemporary
 func (mr *MockIAccountsCallsMockRecorder) IsTemporary(accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsTemporary", reflect.TypeOf((*MockIAccountsCalls)(nil).IsTemporary), accountId)
 }
 
 // NumberOfAccounts mocks base method
 func (m *MockIAccountsCalls) NumberOfAccounts() (*big.Int, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "NumberOfAccounts")
 	ret0, _ := ret[0].(*big.Int)
 	ret1, _ := ret[1].(error)
@@ -459,6 +520,7 @@ func (m *MockIAccountsCalls) NumberOfAccounts() (*big.Int, error) {
 
 // NumberOfAccounts indicates an expected call of NumberOfAccounts
 func (mr *MockIAccountsCallsMockRecorder) NumberOfAccounts() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NumberOfAccounts", reflect.TypeOf((*MockIAccountsCalls)(nil).NumberOfAccounts))
 }
 
@@ -487,6 +549,7 @@ func (m *MockIAccountsTransacts) EXPECT() *MockIAccountsTransactsMockRecorder {
 
 // Create mocks base method
 func (m *MockIAccountsTransacts) Create(ctx context.Context) (*types0.Receipt, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", ctx)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
@@ -495,11 +558,13 @@ func (m *MockIAccountsTransacts) Create(ctx context.Context) (*types0.Receipt, e
 
 // Create indicates an expected call of Create
 func (mr *MockIAccountsTransactsMockRecorder) Create(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockIAccountsTransacts)(nil).Create), ctx)
 }
 
 // CreateTemporary mocks base method
 func (m *MockIAccountsTransacts) CreateTemporary(ctx context.Context, identityHash common.Hash) (*types0.Receipt, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateTemporary", ctx, identityHash)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
@@ -508,11 +573,13 @@ func (m *MockIAccountsTransacts) CreateTemporary(ctx context.Context, identityHa
 
 // CreateTemporary indicates an expected call of CreateTemporary
 func (mr *MockIAccountsTransactsMockRecorder) CreateTemporary(ctx, identityHash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTemporary", reflect.TypeOf((*MockIAccountsTransacts)(nil).CreateTemporary), ctx, identityHash)
 }
 
 // SetController mocks base method
 func (m *MockIAccountsTransacts) SetController(ctx context.Context, controller common.Address) (*types0.Receipt, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SetController", ctx, controller)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
@@ -521,11 +588,13 @@ func (m *MockIAccountsTransacts) SetController(ctx context.Context, controller c
 
 // SetController indicates an expected call of SetController
 func (mr *MockIAccountsTransactsMockRecorder) SetController(ctx, controller interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetController", reflect.TypeOf((*MockIAccountsTransacts)(nil).SetController), ctx, controller)
 }
 
 // UnlockTemporary mocks base method
 func (m *MockIAccountsTransacts) UnlockTemporary(ctx context.Context, identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) (*types0.Receipt, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UnlockTemporary", ctx, identityPreimage, newOwner, passwordSignature)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
@@ -534,6 +603,7 @@ func (m *MockIAccountsTransacts) UnlockTemporary(ctx context.Context, identityPr
 
 // UnlockTemporary indicates an expected call of UnlockTemporary
 func (mr *MockIAccountsTransactsMockRecorder) UnlockTemporary(ctx, identityPreimage, newOwner, passwordSignature interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnlockTemporary", reflect.TypeOf((*MockIAccountsTransacts)(nil).UnlockTemporary), ctx, identityPreimage, newOwner, passwordSignature)
 }
 
@@ -562,6 +632,7 @@ func (m *MockIAccountsEvents) EXPECT() *MockIAccountsEventsMockRecorder {
 
 // FilterSignUp mocks base method
 func (m *MockIAccountsEvents) FilterSignUp(opts *bind.FilterOpts, owner []common.Address) (*adapter.AccountsSignUpIterator, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterSignUp", opts, owner)
 	ret0, _ := ret[0].(*adapter.AccountsSignUpIterator)
 	ret1, _ := ret[1].(error)
@@ -570,11 +641,13 @@ func (m *MockIAccountsEvents) FilterSignUp(opts *bind.FilterOpts, owner []common
 
 // FilterSignUp indicates an expected call of FilterSignUp
 func (mr *MockIAccountsEventsMockRecorder) FilterSignUp(opts, owner interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterSignUp", reflect.TypeOf((*MockIAccountsEvents)(nil).FilterSignUp), opts, owner)
 }
 
 // FilterTemporaryCreated mocks base method
 func (m *MockIAccountsEvents) FilterTemporaryCreated(opts *bind.FilterOpts, proxy []common.Address, identityHash []common.Hash) (*adapter.AccountsTemporaryCreatedIterator, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterTemporaryCreated", opts, proxy, identityHash)
 	ret0, _ := ret[0].(*adapter.AccountsTemporaryCreatedIterator)
 	ret1, _ := ret[1].(error)
@@ -583,11 +656,13 @@ func (m *MockIAccountsEvents) FilterTemporaryCreated(opts *bind.FilterOpts, prox
 
 // FilterTemporaryCreated indicates an expected call of FilterTemporaryCreated
 func (mr *MockIAccountsEventsMockRecorder) FilterTemporaryCreated(opts, proxy, identityHash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterTemporaryCreated", reflect.TypeOf((*MockIAccountsEvents)(nil).FilterTemporaryCreated), opts, proxy, identityHash)
 }
 
 // FilterUnlocked mocks base method
 func (m *MockIAccountsEvents) FilterUnlocked(opts *bind.FilterOpts, identityHash []common.Hash, accountId []types.ID) (*adapter.AccountsUnlockedIterator, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterUnlocked", opts, identityHash, accountId)
 	ret0, _ := ret[0].(*adapter.AccountsUnlockedIterator)
 	ret1, _ := ret[1].(error)
@@ -596,11 +671,13 @@ func (m *MockIAccountsEvents) FilterUnlocked(opts *bind.FilterOpts, identityHash
 
 // FilterUnlocked indicates an expected call of FilterUnlocked
 func (mr *MockIAccountsEventsMockRecorder) FilterUnlocked(opts, identityHash, accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterUnlocked", reflect.TypeOf((*MockIAccountsEvents)(nil).FilterUnlocked), opts, identityHash, accountId)
 }
 
 // ParseSignUpFromReceipt mocks base method
 func (m *MockIAccountsEvents) ParseSignUpFromReceipt(receipt *types0.Receipt) (*adapter.AccountsSignUp, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseSignUpFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.AccountsSignUp)
 	ret1, _ := ret[1].(error)
@@ -609,11 +686,13 @@ func (m *MockIAccountsEvents) ParseSignUpFromReceipt(receipt *types0.Receipt) (*
 
 // ParseSignUpFromReceipt indicates an expected call of ParseSignUpFromReceipt
 func (mr *MockIAccountsEventsMockRecorder) ParseSignUpFromReceipt(receipt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseSignUpFromReceipt", reflect.TypeOf((*MockIAccountsEvents)(nil).ParseSignUpFromReceipt), receipt)
 }
 
 // ParseTemporaryCreatedFromReceipt mocks base method
 func (m *MockIAccountsEvents) ParseTemporaryCreatedFromReceipt(receipt *types0.Receipt) (*adapter.AccountsTemporaryCreated, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseTemporaryCreatedFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.AccountsTemporaryCreated)
 	ret1, _ := ret[1].(error)
@@ -622,11 +701,13 @@ func (m *MockIAccountsEvents) ParseTemporaryCreatedFromReceipt(receipt *types0.R
 
 // ParseTemporaryCreatedFromReceipt indicates an expected call of ParseTemporaryCreatedFromReceipt
 func (mr *MockIAccountsEventsMockRecorder) ParseTemporaryCreatedFromReceipt(receipt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseTemporaryCreatedFromReceipt", reflect.TypeOf((*MockIAccountsEvents)(nil).ParseTemporaryCreatedFromReceipt), receipt)
 }
 
 // ParseUnlockedFromReceipt mocks base method
 func (m *MockIAccountsEvents) ParseUnlockedFromReceipt(receipt *types0.Receipt) (*adapter.AccountsUnlocked, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseUnlockedFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.AccountsUnlocked)
 	ret1, _ := ret[1].(error)
@@ -635,11 +716,13 @@ func (m *MockIAccountsEvents) ParseUnlockedFromReceipt(receipt *types0.Receipt) 
 
 // ParseUnlockedFromReceipt indicates an expected call of ParseUnlockedFromReceipt
 func (mr *MockIAccountsEventsMockRecorder) ParseUnlockedFromReceipt(receipt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseUnlockedFromReceipt", reflect.TypeOf((*MockIAccountsEvents)(nil).ParseUnlockedFromReceipt), receipt)
 }
 
 // WatchSignUp mocks base method
 func (m *MockIAccountsEvents) WatchSignUp(opts *bind.WatchOpts, sink chan<- *adapter.AccountsSignUp, owner []common.Address) (event.Subscription, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchSignUp", opts, sink, owner)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -648,11 +731,13 @@ func (m *MockIAccountsEvents) WatchSignUp(opts *bind.WatchOpts, sink chan<- *ada
 
 // WatchSignUp indicates an expected call of WatchSignUp
 func (mr *MockIAccountsEventsMockRecorder) WatchSignUp(opts, sink, owner interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchSignUp", reflect.TypeOf((*MockIAccountsEvents)(nil).WatchSignUp), opts, sink, owner)
 }
 
 // WatchTemporaryCreated mocks base method
 func (m *MockIAccountsEvents) WatchTemporaryCreated(opts *bind.WatchOpts, sink chan<- *adapter.AccountsTemporaryCreated, proxy []common.Address, identityHash []common.Hash) (event.Subscription, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchTemporaryCreated", opts, sink, proxy, identityHash)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -661,11 +746,13 @@ func (m *MockIAccountsEvents) WatchTemporaryCreated(opts *bind.WatchOpts, sink c
 
 // WatchTemporaryCreated indicates an expected call of WatchTemporaryCreated
 func (mr *MockIAccountsEventsMockRecorder) WatchTemporaryCreated(opts, sink, proxy, identityHash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchTemporaryCreated", reflect.TypeOf((*MockIAccountsEvents)(nil).WatchTemporaryCreated), opts, sink, proxy, identityHash)
 }
 
 // WatchUnlocked mocks base method
 func (m *MockIAccountsEvents) WatchUnlocked(opts *bind.WatchOpts, sink chan<- *adapter.AccountsUnlocked, identityHash []common.Hash, accountId []types.ID) (event.Subscription, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchUnlocked", opts, sink, identityHash, accountId)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -674,6 +761,7 @@ func (m *MockIAccountsEvents) WatchUnlocked(opts *bind.WatchOpts, sink chan<- *a
 
 // WatchUnlocked indicates an expected call of WatchUnlocked
 func (mr *MockIAccountsEventsMockRecorder) WatchUnlocked(opts, sink, identityHash, accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchUnlocked", reflect.TypeOf((*MockIAccountsEvents)(nil).WatchUnlocked), opts, sink, identityHash, accountId)
 }
 
@@ -702,6 +790,7 @@ func (m *MockIAccountsFilterer) EXPECT() *MockIAccountsFiltererMockRecorder {
 
 // FilterSignUp mocks base method
 func (m *MockIAccountsFilterer) FilterSignUp(opts *bind.FilterOpts, owner []common.Address) (*adapter.AccountsSignUpIterator, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterSignUp", opts, owner)
 	ret0, _ := ret[0].(*adapter.AccountsSignUpIterator)
 	ret1, _ := ret[1].(error)
@@ -710,11 +799,13 @@ func (m *MockIAccountsFilterer) FilterSignUp(opts *bind.FilterOpts, owner []comm
 
 // FilterSignUp indicates an expected call of FilterSignUp
 func (mr *MockIAccountsFiltererMockRecorder) FilterSignUp(opts, owner interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterSignUp", reflect.TypeOf((*MockIAccountsFilterer)(nil).FilterSignUp), opts, owner)
 }
 
 // FilterTemporaryCreated mocks base method
 func (m *MockIAccountsFilterer) FilterTemporaryCreated(opts *bind.FilterOpts, proxy []common.Address, identityHash []common.Hash) (*adapter.AccountsTemporaryCreatedIterator, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterTemporaryCreated", opts, proxy, identityHash)
 	ret0, _ := ret[0].(*adapter.AccountsTemporaryCreatedIterator)
 	ret1, _ := ret[1].(error)
@@ -723,11 +814,13 @@ func (m *MockIAccountsFilterer) FilterTemporaryCreated(opts *bind.FilterOpts, pr
 
 // FilterTemporaryCreated indicates an expected call of FilterTemporaryCreated
 func (mr *MockIAccountsFiltererMockRecorder) FilterTemporaryCreated(opts, proxy, identityHash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterTemporaryCreated", reflect.TypeOf((*MockIAccountsFilterer)(nil).FilterTemporaryCreated), opts, proxy, identityHash)
 }
 
 // FilterUnlocked mocks base method
 func (m *MockIAccountsFilterer) FilterUnlocked(opts *bind.FilterOpts, identityHash []common.Hash, accountId []types.ID) (*adapter.AccountsUnlockedIterator, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterUnlocked", opts, identityHash, accountId)
 	ret0, _ := ret[0].(*adapter.AccountsUnlockedIterator)
 	ret1, _ := ret[1].(error)
@@ -736,6 +829,7 @@ func (m *MockIAccountsFilterer) FilterUnlocked(opts *bind.FilterOpts, identityHa
 
 // FilterUnlocked indicates an expected call of FilterUnlocked
 func (mr *MockIAccountsFiltererMockRecorder) FilterUnlocked(opts, identityHash, accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterUnlocked", reflect.TypeOf((*MockIAccountsFilterer)(nil).FilterUnlocked), opts, identityHash, accountId)
 }
 
@@ -764,6 +858,7 @@ func (m *MockIAccountsParser) EXPECT() *MockIAccountsParserMockRecorder {
 
 // ParseSignUpFromReceipt mocks base method
 func (m *MockIAccountsParser) ParseSignUpFromReceipt(receipt *types0.Receipt) (*adapter.AccountsSignUp, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseSignUpFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.AccountsSignUp)
 	ret1, _ := ret[1].(error)
@@ -772,11 +867,13 @@ func (m *MockIAccountsParser) ParseSignUpFromReceipt(receipt *types0.Receipt) (*
 
 // ParseSignUpFromReceipt indicates an expected call of ParseSignUpFromReceipt
 func (mr *MockIAccountsParserMockRecorder) ParseSignUpFromReceipt(receipt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseSignUpFromReceipt", reflect.TypeOf((*MockIAccountsParser)(nil).ParseSignUpFromReceipt), receipt)
 }
 
 // ParseTemporaryCreatedFromReceipt mocks base method
 func (m *MockIAccountsParser) ParseTemporaryCreatedFromReceipt(receipt *types0.Receipt) (*adapter.AccountsTemporaryCreated, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseTemporaryCreatedFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.AccountsTemporaryCreated)
 	ret1, _ := ret[1].(error)
@@ -785,11 +882,13 @@ func (m *MockIAccountsParser) ParseTemporaryCreatedFromReceipt(receipt *types0.R
 
 // ParseTemporaryCreatedFromReceipt indicates an expected call of ParseTemporaryCreatedFromReceipt
 func (mr *MockIAccountsParserMockRecorder) ParseTemporaryCreatedFromReceipt(receipt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseTemporaryCreatedFromReceipt", reflect.TypeOf((*MockIAccountsParser)(nil).ParseTemporaryCreatedFromReceipt), receipt)
 }
 
 // ParseUnlockedFromReceipt mocks base method
 func (m *MockIAccountsParser) ParseUnlockedFromReceipt(receipt *types0.Receipt) (*adapter.AccountsUnlocked, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseUnlockedFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.AccountsUnlocked)
 	ret1, _ := ret[1].(error)
@@ -798,6 +897,7 @@ func (m *MockIAccountsParser) ParseUnlockedFromReceipt(receipt *types0.Receipt) 
 
 // ParseUnlockedFromReceipt indicates an expected call of ParseUnlockedFromReceipt
 func (mr *MockIAccountsParserMockRecorder) ParseUnlockedFromReceipt(receipt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseUnlockedFromReceipt", reflect.TypeOf((*MockIAccountsParser)(nil).ParseUnlockedFromReceipt), receipt)
 }
 
@@ -826,6 +926,7 @@ func (m *MockIAccountsWatcher) EXPECT() *MockIAccountsWatcherMockRecorder {
 
 // WatchSignUp mocks base method
 func (m *MockIAccountsWatcher) WatchSignUp(opts *bind.WatchOpts, sink chan<- *adapter.AccountsSignUp, owner []common.Address) (event.Subscription, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchSignUp", opts, sink, owner)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -834,11 +935,13 @@ func (m *MockIAccountsWatcher) WatchSignUp(opts *bind.WatchOpts, sink chan<- *ad
 
 // WatchSignUp indicates an expected call of WatchSignUp
 func (mr *MockIAccountsWatcherMockRecorder) WatchSignUp(opts, sink, owner interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchSignUp", reflect.TypeOf((*MockIAccountsWatcher)(nil).WatchSignUp), opts, sink, owner)
 }
 
 // WatchTemporaryCreated mocks base method
 func (m *MockIAccountsWatcher) WatchTemporaryCreated(opts *bind.WatchOpts, sink chan<- *adapter.AccountsTemporaryCreated, proxy []common.Address, identityHash []common.Hash) (event.Subscription, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchTemporaryCreated", opts, sink, proxy, identityHash)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -847,11 +950,13 @@ func (m *MockIAccountsWatcher) WatchTemporaryCreated(opts *bind.WatchOpts, sink 
 
 // WatchTemporaryCreated indicates an expected call of WatchTemporaryCreated
 func (mr *MockIAccountsWatcherMockRecorder) WatchTemporaryCreated(opts, sink, proxy, identityHash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchTemporaryCreated", reflect.TypeOf((*MockIAccountsWatcher)(nil).WatchTemporaryCreated), opts, sink, proxy, identityHash)
 }
 
 // WatchUnlocked mocks base method
 func (m *MockIAccountsWatcher) WatchUnlocked(opts *bind.WatchOpts, sink chan<- *adapter.AccountsUnlocked, identityHash []common.Hash, accountId []types.ID) (event.Subscription, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchUnlocked", opts, sink, identityHash, accountId)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -860,6 +965,7 @@ func (m *MockIAccountsWatcher) WatchUnlocked(opts *bind.WatchOpts, sink chan<- *
 
 // WatchUnlocked indicates an expected call of WatchUnlocked
 func (mr *MockIAccountsWatcherMockRecorder) WatchUnlocked(opts, sink, identityHash, accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchUnlocked", reflect.TypeOf((*MockIAccountsWatcher)(nil).WatchUnlocked), opts, sink, identityHash, accountId)
 }
 
@@ -888,6 +994,7 @@ func (m *MockIAccountsContract) EXPECT() *MockIAccountsContractMockRecorder {
 
 // Address mocks base method
 func (m *MockIAccountsContract) Address() common.Address {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
@@ -895,11 +1002,13 @@ func (m *MockIAccountsContract) Address() common.Address {
 
 // Address indicates an expected call of Address
 func (mr *MockIAccountsContractMockRecorder) Address() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIAccountsContract)(nil).Address))
 }
 
 // TxHash mocks base method
 func (m *MockIAccountsContract) TxHash() common.Hash {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TxHash")
 	ret0, _ := ret[0].(common.Hash)
 	return ret0
@@ -907,11 +1016,13 @@ func (m *MockIAccountsContract) TxHash() common.Hash {
 
 // TxHash indicates an expected call of TxHash
 func (mr *MockIAccountsContractMockRecorder) TxHash() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockIAccountsContract)(nil).TxHash))
 }
 
 // CreatedAt mocks base method
 func (m *MockIAccountsContract) CreatedAt() *big.Int {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatedAt")
 	ret0, _ := ret[0].(*big.Int)
 	return ret0
@@ -919,11 +1030,13 @@ func (m *MockIAccountsContract) CreatedAt() *big.Int {
 
 // CreatedAt indicates an expected call of CreatedAt
 func (mr *MockIAccountsContractMockRecorder) CreatedAt() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIAccountsContract)(nil).CreatedAt))
 }
 
 // Accounts mocks base method
 func (m *MockIAccountsContract) Accounts(arg0 types.ID) (types.Account, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Accounts", arg0)
 	ret0, _ := ret[0].(types.Account)
 	ret1, _ := ret[1].(error)
@@ -932,11 +1045,13 @@ func (m *MockIAccountsContract) Accounts(arg0 types.ID) (types.Account, error) {
 
 // Accounts indicates an expected call of Accounts
 func (mr *MockIAccountsContractMockRecorder) Accounts(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Accounts", reflect.TypeOf((*MockIAccountsContract)(nil).Accounts), arg0)
 }
 
 // Exists mocks base method
 func (m *MockIAccountsContract) Exists(accountId types.ID) (bool, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Exists", accountId)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -945,11 +1060,13 @@ func (m *MockIAccountsContract) Exists(accountId types.ID) (bool, error) {
 
 // Exists indicates an expected call of Exists
 func (mr *MockIAccountsContractMockRecorder) Exists(accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exists", reflect.TypeOf((*MockIAccountsContract)(nil).Exists), accountId)
 }
 
 // GetAccount mocks base method
 func (m *MockIAccountsContract) GetAccount(accountId types.ID) (types.Account, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAccount", accountId)
 	ret0, _ := ret[0].(types.Account)
 	ret1, _ := ret[1].(error)
@@ -958,11 +1075,13 @@ func (m *MockIAccountsContract) GetAccount(accountId types.ID) (types.Account, e
 
 // GetAccount indicates an expected call of GetAccount
 func (mr *MockIAccountsContractMockRecorder) GetAccount(accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccount", reflect.TypeOf((*MockIAccountsContract)(nil).GetAccount), accountId)
 }
 
 // GetAccountId mocks base method
 func (m *MockIAccountsContract) GetAccountId(sender common.Address) (types.ID, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAccountId", sender)
 	ret0, _ := ret[0].(types.ID)
 	ret1, _ := ret[1].(error)
@@ -971,11 +1090,13 @@ func (m *MockIAccountsContract) GetAccountId(sender common.Address) (types.ID, e
 
 // GetAccountId indicates an expected call of GetAccountId
 func (mr *MockIAccountsContractMockRecorder) GetAccountId(sender interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccountId", reflect.TypeOf((*MockIAccountsContract)(nil).GetAccountId), sender)
 }
 
 // GetAccountIdFromSignature mocks base method
 func (m *MockIAccountsContract) GetAccountIdFromSignature(messageHash common.Hash, signature []byte) (types.ID, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAccountIdFromSignature", messageHash, signature)
 	ret0, _ := ret[0].(types.ID)
 	ret1, _ := ret[1].(error)
@@ -984,11 +1105,13 @@ func (m *MockIAccountsContract) GetAccountIdFromSignature(messageHash common.Has
 
 // GetAccountIdFromSignature indicates an expected call of GetAccountIdFromSignature
 func (mr *MockIAccountsContractMockRecorder) GetAccountIdFromSignature(messageHash, signature interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccountIdFromSignature", reflect.TypeOf((*MockIAccountsContract)(nil).GetAccountIdFromSignature), messageHash, signature)
 }
 
 // IdentityHashToAccount mocks base method
 func (m *MockIAccountsContract) IdentityHashToAccount(arg0 common.Hash) (types.ID, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IdentityHashToAccount", arg0)
 	ret0, _ := ret[0].(types.ID)
 	ret1, _ := ret[1].(error)
@@ -997,11 +1120,13 @@ func (m *MockIAccountsContract) IdentityHashToAccount(arg0 common.Hash) (types.I
 
 // IdentityHashToAccount indicates an expected call of IdentityHashToAccount
 func (mr *MockIAccountsContractMockRecorder) IdentityHashToAccount(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IdentityHashToAccount", reflect.TypeOf((*MockIAccountsContract)(nil).IdentityHashToAccount), arg0)
 }
 
 // IsControllerOf mocks base method
 func (m *MockIAccountsContract) IsControllerOf(sender common.Address, accountId types.ID) (bool, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsControllerOf", sender, accountId)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -1010,11 +1135,13 @@ func (m *MockIAccountsContract) IsControllerOf(sender common.Address, accountId 
 
 // IsControllerOf indicates an expected call of IsControllerOf
 func (mr *MockIAccountsContractMockRecorder) IsControllerOf(sender, accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsControllerOf", reflect.TypeOf((*MockIAccountsContract)(nil).IsControllerOf), sender, accountId)
 }
 
 // IsTemporary mocks base method
 func (m *MockIAccountsContract) IsTemporary(accountId types.ID) (bool, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsTemporary", accountId)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -1023,11 +1150,13 @@ func (m *MockIAccountsContract) IsTemporary(accountId types.ID) (bool, error) {
 
 // IsTemporary indicates an expected call of IsTemporary
 func (mr *MockIAccountsContractMockRecorder) IsTemporary(accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsTemporary", reflect.TypeOf((*MockIAccountsContract)(nil).IsTemporary), accountId)
 }
 
 // NumberOfAccounts mocks base method
 func (m *MockIAccountsContract) NumberOfAccounts() (*big.Int, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "NumberOfAccounts")
 	ret0, _ := ret[0].(*big.Int)
 	ret1, _ := ret[1].(error)
@@ -1036,11 +1165,13 @@ func (m *MockIAccountsContract) NumberOfAccounts() (*big.Int, error) {
 
 // NumberOfAccounts indicates an expected call of NumberOfAccounts
 func (mr *MockIAccountsContractMockRecorder) NumberOfAccounts() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NumberOfAccounts", reflect.TypeOf((*MockIAccountsContract)(nil).NumberOfAccounts))
 }
 
 // Create mocks base method
 func (m *MockIAccountsContract) Create(ctx context.Context) (*types0.Receipt, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", ctx)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
@@ -1049,11 +1180,13 @@ func (m *MockIAccountsContract) Create(ctx context.Context) (*types0.Receipt, er
 
 // Create indicates an expected call of Create
 func (mr *MockIAccountsContractMockRecorder) Create(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockIAccountsContract)(nil).Create), ctx)
 }
 
 // CreateTemporary mocks base method
 func (m *MockIAccountsContract) CreateTemporary(ctx context.Context, identityHash common.Hash) (*types0.Receipt, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateTemporary", ctx, identityHash)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
@@ -1062,11 +1195,13 @@ func (m *MockIAccountsContract) CreateTemporary(ctx context.Context, identityHas
 
 // CreateTemporary indicates an expected call of CreateTemporary
 func (mr *MockIAccountsContractMockRecorder) CreateTemporary(ctx, identityHash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTemporary", reflect.TypeOf((*MockIAccountsContract)(nil).CreateTemporary), ctx, identityHash)
 }
 
 // SetController mocks base method
 func (m *MockIAccountsContract) SetController(ctx context.Context, controller common.Address) (*types0.Receipt, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SetController", ctx, controller)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
@@ -1075,11 +1210,13 @@ func (m *MockIAccountsContract) SetController(ctx context.Context, controller co
 
 // SetController indicates an expected call of SetController
 func (mr *MockIAccountsContractMockRecorder) SetController(ctx, controller interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetController", reflect.TypeOf((*MockIAccountsContract)(nil).SetController), ctx, controller)
 }
 
 // UnlockTemporary mocks base method
 func (m *MockIAccountsContract) UnlockTemporary(ctx context.Context, identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) (*types0.Receipt, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UnlockTemporary", ctx, identityPreimage, newOwner, passwordSignature)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
@@ -1088,11 +1225,13 @@ func (m *MockIAccountsContract) UnlockTemporary(ctx context.Context, identityPre
 
 // UnlockTemporary indicates an expected call of UnlockTemporary
 func (mr *MockIAccountsContractMockRecorder) UnlockTemporary(ctx, identityPreimage, newOwner, passwordSignature interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnlockTemporary", reflect.TypeOf((*MockIAccountsContract)(nil).UnlockTemporary), ctx, identityPreimage, newOwner, passwordSignature)
 }
 
 // FilterSignUp mocks base method
 func (m *MockIAccountsContract) FilterSignUp(opts *bind.FilterOpts, owner []common.Address) (*adapter.AccountsSignUpIterator, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterSignUp", opts, owner)
 	ret0, _ := ret[0].(*adapter.AccountsSignUpIterator)
 	ret1, _ := ret[1].(error)
@@ -1101,11 +1240,13 @@ func (m *MockIAccountsContract) FilterSignUp(opts *bind.FilterOpts, owner []comm
 
 // FilterSignUp indicates an expected call of FilterSignUp
 func (mr *MockIAccountsContractMockRecorder) FilterSignUp(opts, owner interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterSignUp", reflect.TypeOf((*MockIAccountsContract)(nil).FilterSignUp), opts, owner)
 }
 
 // FilterTemporaryCreated mocks base method
 func (m *MockIAccountsContract) FilterTemporaryCreated(opts *bind.FilterOpts, proxy []common.Address, identityHash []common.Hash) (*adapter.AccountsTemporaryCreatedIterator, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterTemporaryCreated", opts, proxy, identityHash)
 	ret0, _ := ret[0].(*adapter.AccountsTemporaryCreatedIterator)
 	ret1, _ := ret[1].(error)
@@ -1114,11 +1255,13 @@ func (m *MockIAccountsContract) FilterTemporaryCreated(opts *bind.FilterOpts, pr
 
 // FilterTemporaryCreated indicates an expected call of FilterTemporaryCreated
 func (mr *MockIAccountsContractMockRecorder) FilterTemporaryCreated(opts, proxy, identityHash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterTemporaryCreated", reflect.TypeOf((*MockIAccountsContract)(nil).FilterTemporaryCreated), opts, proxy, identityHash)
 }
 
 // FilterUnlocked mocks base method
 func (m *MockIAccountsContract) FilterUnlocked(opts *bind.FilterOpts, identityHash []common.Hash, accountId []types.ID) (*adapter.AccountsUnlockedIterator, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterUnlocked", opts, identityHash, accountId)
 	ret0, _ := ret[0].(*adapter.AccountsUnlockedIterator)
 	ret1, _ := ret[1].(error)
@@ -1127,11 +1270,13 @@ func (m *MockIAccountsContract) FilterUnlocked(opts *bind.FilterOpts, identityHa
 
 // FilterUnlocked indicates an expected call of FilterUnlocked
 func (mr *MockIAccountsContractMockRecorder) FilterUnlocked(opts, identityHash, accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterUnlocked", reflect.TypeOf((*MockIAccountsContract)(nil).FilterUnlocked), opts, identityHash, accountId)
 }
 
 // ParseSignUpFromReceipt mocks base method
 func (m *MockIAccountsContract) ParseSignUpFromReceipt(receipt *types0.Receipt) (*adapter.AccountsSignUp, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseSignUpFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.AccountsSignUp)
 	ret1, _ := ret[1].(error)
@@ -1140,11 +1285,13 @@ func (m *MockIAccountsContract) ParseSignUpFromReceipt(receipt *types0.Receipt) 
 
 // ParseSignUpFromReceipt indicates an expected call of ParseSignUpFromReceipt
 func (mr *MockIAccountsContractMockRecorder) ParseSignUpFromReceipt(receipt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseSignUpFromReceipt", reflect.TypeOf((*MockIAccountsContract)(nil).ParseSignUpFromReceipt), receipt)
 }
 
 // ParseTemporaryCreatedFromReceipt mocks base method
 func (m *MockIAccountsContract) ParseTemporaryCreatedFromReceipt(receipt *types0.Receipt) (*adapter.AccountsTemporaryCreated, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseTemporaryCreatedFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.AccountsTemporaryCreated)
 	ret1, _ := ret[1].(error)
@@ -1153,11 +1300,13 @@ func (m *MockIAccountsContract) ParseTemporaryCreatedFromReceipt(receipt *types0
 
 // ParseTemporaryCreatedFromReceipt indicates an expected call of ParseTemporaryCreatedFromReceipt
 func (mr *MockIAccountsContractMockRecorder) ParseTemporaryCreatedFromReceipt(receipt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseTemporaryCreatedFromReceipt", reflect.TypeOf((*MockIAccountsContract)(nil).ParseTemporaryCreatedFromReceipt), receipt)
 }
 
 // ParseUnlockedFromReceipt mocks base method
 func (m *MockIAccountsContract) ParseUnlockedFromReceipt(receipt *types0.Receipt) (*adapter.AccountsUnlocked, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseUnlockedFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.AccountsUnlocked)
 	ret1, _ := ret[1].(error)
@@ -1166,11 +1315,13 @@ func (m *MockIAccountsContract) ParseUnlockedFromReceipt(receipt *types0.Receipt
 
 // ParseUnlockedFromReceipt indicates an expected call of ParseUnlockedFromReceipt
 func (mr *MockIAccountsContractMockRecorder) ParseUnlockedFromReceipt(receipt interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseUnlockedFromReceipt", reflect.TypeOf((*MockIAccountsContract)(nil).ParseUnlockedFromReceipt), receipt)
 }
 
 // WatchSignUp mocks base method
 func (m *MockIAccountsContract) WatchSignUp(opts *bind.WatchOpts, sink chan<- *adapter.AccountsSignUp, owner []common.Address) (event.Subscription, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchSignUp", opts, sink, owner)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1179,11 +1330,13 @@ func (m *MockIAccountsContract) WatchSignUp(opts *bind.WatchOpts, sink chan<- *a
 
 // WatchSignUp indicates an expected call of WatchSignUp
 func (mr *MockIAccountsContractMockRecorder) WatchSignUp(opts, sink, owner interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchSignUp", reflect.TypeOf((*MockIAccountsContract)(nil).WatchSignUp), opts, sink, owner)
 }
 
 // WatchTemporaryCreated mocks base method
 func (m *MockIAccountsContract) WatchTemporaryCreated(opts *bind.WatchOpts, sink chan<- *adapter.AccountsTemporaryCreated, proxy []common.Address, identityHash []common.Hash) (event.Subscription, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchTemporaryCreated", opts, sink, proxy, identityHash)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1192,11 +1345,13 @@ func (m *MockIAccountsContract) WatchTemporaryCreated(opts *bind.WatchOpts, sink
 
 // WatchTemporaryCreated indicates an expected call of WatchTemporaryCreated
 func (mr *MockIAccountsContractMockRecorder) WatchTemporaryCreated(opts, sink, proxy, identityHash interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchTemporaryCreated", reflect.TypeOf((*MockIAccountsContract)(nil).WatchTemporaryCreated), opts, sink, proxy, identityHash)
 }
 
 // WatchUnlocked mocks base method
 func (m *MockIAccountsContract) WatchUnlocked(opts *bind.WatchOpts, sink chan<- *adapter.AccountsUnlocked, identityHash []common.Hash, accountId []types.ID) (event.Subscription, error) {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchUnlocked", opts, sink, identityHash, accountId)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1205,5 +1360,6 @@ func (m *MockIAccountsContract) WatchUnlocked(opts *bind.WatchOpts, sink chan<- 
 
 // WatchUnlocked indicates an expected call of WatchUnlocked
 func (mr *MockIAccountsContractMockRecorder) WatchUnlocked(opts, sink, identityHash, accountId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchUnlocked", reflect.TypeOf((*MockIAccountsContract)(nil).WatchUnlocked), opts, sink, identityHash, accountId)
 }
