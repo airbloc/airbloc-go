@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/airbloc/airbloc-go/shared/blockchain"
-	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/klaytn/klaytn/accounts/abi/bind"
+	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/crypto"
 )
 
 type DAuthManager struct {
@@ -29,7 +29,12 @@ func (manager *DAuthManager) Allow(
 	action types.ConsentActionTypes,
 	appName, dataType string,
 ) error {
-	return manager.consents.Consent(ctx, appName, uint8(action), dataType, true)
+	consentData := types.ConsentData{
+		Action:   action,
+		DataType: dataType,
+		Allow:    true,
+	}
+	return manager.consents.Consent(ctx, appName, consentData)
 }
 
 func (manager *DAuthManager) AllowByController(
@@ -47,10 +52,16 @@ func (manager *DAuthManager) AllowByController(
 		return err
 	}
 
-	if iter.Next() {
-		return manager.consents.ConsentByController(ctx, userId, appName, uint8(action), dataType, true)
+	consentData := types.ConsentData{
+		Action:   action,
+		DataType: dataType,
+		Allow:    true,
 	}
-	return manager.consents.ModifyConsentByController(ctx, userId, appName, uint8(action), dataType, true, passwordSignature)
+
+	if iter.Next() {
+		return manager.consents.ConsentByController(ctx, userId, appName, consentData)
+	}
+	return manager.consents.ModifyConsentByController(ctx, userId, appName, consentData, passwordSignature)
 }
 
 func (manager *DAuthManager) Deny(
@@ -58,7 +69,12 @@ func (manager *DAuthManager) Deny(
 	action types.ConsentActionTypes,
 	appName, dataType string,
 ) error {
-	return manager.consents.Consent(ctx, appName, uint8(action), dataType, false)
+	consentData := types.ConsentData{
+		Action:   action,
+		DataType: dataType,
+		Allow:    false,
+	}
+	return manager.consents.Consent(ctx, appName, consentData)
 }
 
 func (manager *DAuthManager) DenyByController(ctx context.Context,
@@ -75,8 +91,14 @@ func (manager *DAuthManager) DenyByController(ctx context.Context,
 		return err
 	}
 
-	if iter.Next() {
-		return manager.consents.ConsentByController(ctx, userId, appName, uint8(action), dataType, false)
+	consentData := types.ConsentData{
+		Action:   action,
+		DataType: dataType,
+		Allow:    false,
 	}
-	return manager.consents.ModifyConsentByController(ctx, userId, appName, uint8(action), dataType, false, passwordSignature)
+
+	if iter.Next() {
+		return manager.consents.ConsentByController(ctx, userId, appName, consentData)
+	}
+	return manager.consents.ModifyConsentByController(ctx, userId, appName, consentData, passwordSignature)
 }

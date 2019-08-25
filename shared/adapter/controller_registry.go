@@ -4,38 +4,22 @@
 package adapter
 
 import (
-	"context"
 	"math/big"
 	"strings"
 
-	"github.com/pkg/errors"
-
 	"github.com/airbloc/airbloc-go/shared/blockchain"
-	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/types"
-	ethereum "github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi"
-	"github.com/ethereum/go-ethereum/common"
-	ethTypes "github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/event"
-)
-
-// Reference imports to suppress errors if they are not otherwise used.
-var (
-	_ = errors.New
-	_ = big.NewInt
-	_ = strings.NewReader
-	_ = ethereum.NotFound
-	_ = abi.U256
-	_ = bind.NewKeyedTransactor
-	_ = types.HexToID
-	_ = common.Big1
-	_ = ethTypes.BloomLookup
-	_ = event.NewSubscription
+	klaytn "github.com/klaytn/klaytn"
+	"github.com/klaytn/klaytn/accounts/abi"
+	"github.com/klaytn/klaytn/accounts/abi/bind"
+	klayTypes "github.com/klaytn/klaytn/blockchain/types"
+	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/event"
+	"github.com/pkg/errors"
 )
 
 // ControllerRegistryABI is the input ABI used to generate the binding from.
-const ControllerRegistryABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"signature\":\"0x715018a6\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"signature\":\"0x8da5cb5b\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"signature\":\"0x8f32d59b\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"signature\":\"0xf2fde38b\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"controller\",\"type\":\"address\"}],\"name\":\"Registration\",\"signature\":\"0x478f5152d8fc568db3f8de9fb402fd9d98a1a7541ecfe434e59cf574fbfc5524\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"controller\",\"type\":\"address\"}],\"name\":\"Unregistration\",\"signature\":\"0x2171d18d6eaa5385a17d6cacd86394726517e8399c558ab99acf728be83f5bb9\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"signature\":\"0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"controllerAddr\",\"type\":\"address\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"signature\":\"0x4420e486\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"controller\",\"type\":\"address\"}],\"name\":\"get\",\"outputs\":[{\"components\":[{\"name\":\"controller\",\"type\":\"address\"},{\"name\":\"usersCount\",\"type\":\"uint256\"}],\"name\":\"\",\"type\":\"tuple\"}],\"payable\":false,\"signature\":\"0xc2bc2efc\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"controller\",\"type\":\"address\"}],\"name\":\"exists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"signature\":\"0xf6a3d24e\",\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const ControllerRegistryABI = "{\"Constructor\":{\"Name\":\"\",\"Const\":false,\"Inputs\":null,\"Outputs\":null},\"Methods\":{\"exists\":{\"Name\":\"exists\",\"Const\":true,\"Inputs\":[{\"Name\":\"controller\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"get\":{\"Name\":\"get\",\"Const\":true,\"Inputs\":[{\"Name\":\"controller\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":25,\"Type\":{},\"Size\":0,\"T\":6,\"TupleElems\":[{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},{\"Elem\":null,\"Kind\":22,\"Type\":{},\"Size\":256,\"T\":1,\"TupleElems\":null,\"TupleRawNames\":null}],\"TupleRawNames\":[\"controller\",\"usersCount\"]},\"Indexed\":false}]},\"isOwner\":{\"Name\":\"isOwner\",\"Const\":true,\"Inputs\":[],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":1,\"Type\":{},\"Size\":0,\"T\":2,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"owner\":{\"Name\":\"owner\",\"Const\":true,\"Inputs\":[],\"Outputs\":[{\"Name\":\"\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}]},\"register\":{\"Name\":\"register\",\"Const\":false,\"Inputs\":[{\"Name\":\"controllerAddr\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]},\"renounceOwnership\":{\"Name\":\"renounceOwnership\",\"Const\":false,\"Inputs\":[],\"Outputs\":[]},\"transferOwnership\":{\"Name\":\"transferOwnership\",\"Const\":false,\"Inputs\":[{\"Name\":\"newOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":false}],\"Outputs\":[]}},\"Events\":{\"OwnershipTransferred\":{\"Name\":\"OwnershipTransferred\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"previousOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true},{\"Name\":\"newOwner\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true}]},\"Registration\":{\"Name\":\"Registration\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"controller\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true}]},\"Unregistration\":{\"Name\":\"Unregistration\",\"Anonymous\":false,\"Inputs\":[{\"Name\":\"controller\",\"Type\":{\"Elem\":null,\"Kind\":17,\"Type\":{},\"Size\":20,\"T\":7,\"TupleElems\":null,\"TupleRawNames\":null},\"Indexed\":true}]}}}"
 
 // ControllerRegistry is an auto generated Go binding around an Ethereum contract.
 type ControllerRegistry struct {
@@ -75,8 +59,7 @@ type ControllerRegistryRaw struct {
 	Contract *ControllerRegistry // Generic contract binding to access the raw methods on
 }
 
-// NewControllerRegistry creates a new instance of ControllerRegistry, bound to a specific deployed contract.
-func NewControllerRegistry(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (*ControllerRegistry, error) {
+func newControllerRegistry(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (*ControllerRegistry, error) {
 	contract, err := bindControllerRegistry(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
@@ -110,12 +93,12 @@ func (_ControllerRegistry *ControllerRegistryRaw) Call(opts *bind.CallOpts, resu
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_ControllerRegistry *ControllerRegistryRaw) Transfer(opts *bind.TransactOpts) (*ethTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistryRaw) Transfer(opts *bind.TransactOpts) (*klayTypes.Transaction, error) {
 	return _ControllerRegistry.Contract.ControllerRegistryTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_ControllerRegistry *ControllerRegistryRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*ethTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistryRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*klayTypes.Transaction, error) {
 	return _ControllerRegistry.Contract.ControllerRegistryTransactor.contract.Transact(opts, method, params...)
 }
 
@@ -181,12 +164,12 @@ func NewControllerRegistryTransactor(address common.Address, transactor bind.Con
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_ControllerRegistry *ControllerRegistryTransactorRaw) Transfer(opts *bind.TransactOpts) (*ethTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistryTransactorRaw) Transfer(opts *bind.TransactOpts) (*klayTypes.Transaction, error) {
 	return _ControllerRegistry.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_ControllerRegistry *ControllerRegistryTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*ethTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistryTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*klayTypes.Transaction, error) {
 	return _ControllerRegistry.Contract.contract.Transact(opts, method, params...)
 }
 
@@ -204,81 +187,6 @@ func NewControllerRegistryFilterer(address common.Address, filterer bind.Contrac
 	return &ControllerRegistryFilterer{contract: contract}, nil
 }
 
-//go:generate mockgen -source controller_registry.go -destination ./mocks/mock_controller_registry.go -package mocks IControllerRegistryManager,IControllerRegistryContract
-type IControllerRegistryManager interface {
-	Address() common.Address
-	TxHash() common.Hash
-	CreatedAt() *big.Int
-
-	// Call methods
-	Exists(controller common.Address) (bool, error)
-	Get(controller common.Address) (types.DataController, error)
-	IsOwner() (bool, error)
-	Owner() (common.Address, error)
-
-	// Transact methods
-	Register(ctx context.Context, controllerAddr common.Address) error
-	RenounceOwnership(ctx context.Context) error
-	TransferOwnership(ctx context.Context, newOwner common.Address) error
-
-	FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*ControllerRegistryOwnershipTransferredIterator, error)
-	WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *ControllerRegistryOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error)
-
-	FilterRegistration(opts *bind.FilterOpts, controller []common.Address) (*ControllerRegistryRegistrationIterator, error)
-	WatchRegistration(opts *bind.WatchOpts, sink chan<- *ControllerRegistryRegistration, controller []common.Address) (event.Subscription, error)
-
-	FilterUnregistration(opts *bind.FilterOpts, controller []common.Address) (*ControllerRegistryUnregistrationIterator, error)
-	WatchUnregistration(opts *bind.WatchOpts, sink chan<- *ControllerRegistryUnregistration, controller []common.Address) (event.Subscription, error)
-}
-
-type IControllerRegistryContract interface {
-	Address() common.Address
-	TxHash() common.Hash
-	CreatedAt() *big.Int
-	Filterer() ControllerRegistryFilterer
-
-	IControllerRegistryCalls
-	IControllerRegistryTransacts
-	IControllerRegistryEvents
-}
-
-// ControllerRegistryContract is contract wrapper struct
-type ControllerRegistryContract struct {
-	client   blockchain.TxClient
-	contract *ControllerRegistry
-	ControllerRegistryFilterer
-}
-
-// Address is getter method of ControllerRegistry.address
-func (c *ControllerRegistryContract) Address() common.Address {
-	return c.contract.Address()
-}
-
-// TxHash is getter method of ControllerRegistry.txHash
-func (c *ControllerRegistryContract) TxHash() common.Hash {
-	return c.contract.TxHash()
-}
-
-// CreatedAt is getter method of ControllerRegistry.createdAt
-func (c *ControllerRegistryContract) CreatedAt() *big.Int {
-	return c.contract.CreatedAt()
-}
-
-// Filterer is getter method of ControllerRegistry.ControllerRegistryFilterer
-func (c *ControllerRegistryContract) Filterer() ControllerRegistryFilterer {
-	return c.ControllerRegistryFilterer
-}
-
-// NewControllerRegistryContract makes new *ControllerRegistryContract struct
-func NewControllerRegistryContract(client blockchain.TxClient) IControllerRegistryContract {
-	contract := client.GetContract(&ControllerRegistry{}).(*ControllerRegistry)
-	return &ControllerRegistryContract{
-		client:                     client,
-		contract:                   contract,
-		ControllerRegistryFilterer: contract.ControllerRegistryFilterer,
-	}
-}
-
 // convenient hacks for blockchain.Client
 func init() {
 	blockchain.AddContractConstructor("ControllerRegistry", (&ControllerRegistry{}).new)
@@ -288,21 +196,7 @@ func init() {
 }
 
 func (_ControllerRegistry *ControllerRegistry) new(address common.Address, txHash common.Hash, createdAt *big.Int, backend bind.ContractBackend) (interface{}, error) {
-	return NewControllerRegistry(address, txHash, createdAt, backend)
-}
-
-type IControllerRegistryCalls interface {
-	Exists(controller common.Address) (bool, error)
-	Get(controller common.Address) (types.DataController, error)
-	IsOwner() (bool, error)
-	Owner() (common.Address, error)
-}
-
-// Exists is a free data retrieval call binding the contract method 0xf6a3d24e.
-//
-// Solidity: function exists(address controller) constant returns(bool)
-func (c *ControllerRegistryContract) Exists(controller common.Address) (bool, error) {
-	return c.contract.Exists(nil, controller)
+	return newControllerRegistryContract(address, txHash, createdAt, backend)
 }
 
 // Exists is a free data retrieval call binding the contract method 0xf6a3d24e.
@@ -334,13 +228,6 @@ func (_ControllerRegistry *ControllerRegistryCallerSession) Exists(controller co
 // Get is a free data retrieval call binding the contract method 0xc2bc2efc.
 //
 // Solidity: function get(address controller) constant returns((address,uint256))
-func (c *ControllerRegistryContract) Get(controller common.Address) (types.DataController, error) {
-	return c.contract.Get(nil, controller)
-}
-
-// Get is a free data retrieval call binding the contract method 0xc2bc2efc.
-//
-// Solidity: function get(address controller) constant returns((address,uint256))
 func (_ControllerRegistry *ControllerRegistryCaller) Get(opts *bind.CallOpts, controller common.Address) (types.DataController, error) {
 	ret := new(types.DataController)
 
@@ -361,13 +248,6 @@ func (_ControllerRegistry *ControllerRegistrySession) Get(controller common.Addr
 // Solidity: function get(address controller) constant returns((address,uint256))
 func (_ControllerRegistry *ControllerRegistryCallerSession) Get(controller common.Address) (types.DataController, error) {
 	return _ControllerRegistry.Contract.Get(&_ControllerRegistry.CallOpts, controller)
-}
-
-// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
-//
-// Solidity: function isOwner() constant returns(bool)
-func (c *ControllerRegistryContract) IsOwner() (bool, error) {
-	return c.contract.IsOwner(nil)
 }
 
 // IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
@@ -399,13 +279,6 @@ func (_ControllerRegistry *ControllerRegistryCallerSession) IsOwner() (bool, err
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
 //
 // Solidity: function owner() constant returns(address)
-func (c *ControllerRegistryContract) Owner() (common.Address, error) {
-	return c.contract.Owner(nil)
-}
-
-// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() constant returns(address)
 func (_ControllerRegistry *ControllerRegistryCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
 	var (
 		ret0 = new(common.Address)
@@ -429,120 +302,67 @@ func (_ControllerRegistry *ControllerRegistryCallerSession) Owner() (common.Addr
 	return _ControllerRegistry.Contract.Owner(&_ControllerRegistry.CallOpts)
 }
 
-type IControllerRegistryTransacts interface {
-	Register(ctx context.Context, controllerAddr common.Address) (*ethTypes.Receipt, error)
-	RenounceOwnership(ctx context.Context) (*ethTypes.Receipt, error)
-	TransferOwnership(ctx context.Context, newOwner common.Address) (*ethTypes.Receipt, error)
-}
-
 // Register is a paid mutator transaction binding the contract method 0x4420e486.
 //
 // Solidity: function register(address controllerAddr) returns()
-func (c *ControllerRegistryContract) Register(ctx context.Context, controllerAddr common.Address) (*ethTypes.Receipt, error) {
-	tx, err := c.contract.Register(c.client.Account(), controllerAddr)
-	if err != nil {
-		return nil, err
-	}
-	return c.client.WaitMined(ctx, tx)
-}
-
-// Register is a paid mutator transaction binding the contract method 0x4420e486.
-//
-// Solidity: function register(address controllerAddr) returns()
-func (_ControllerRegistry *ControllerRegistryTransactor) Register(opts *bind.TransactOpts, controllerAddr common.Address) (*ethTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistryTransactor) Register(opts *bind.TransactOpts, controllerAddr common.Address) (*klayTypes.Transaction, error) {
 	return _ControllerRegistry.contract.Transact(opts, "register", controllerAddr)
 }
 
 // Register is a paid mutator transaction binding the contract method 0x4420e486.
 //
 // Solidity: function register(address controllerAddr) returns()
-func (_ControllerRegistry *ControllerRegistrySession) Register(controllerAddr common.Address) (*ethTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistrySession) Register(controllerAddr common.Address) (*klayTypes.Transaction, error) {
 	return _ControllerRegistry.Contract.Register(&_ControllerRegistry.TransactOpts, controllerAddr)
 }
 
 // Register is a paid mutator transaction binding the contract method 0x4420e486.
 //
 // Solidity: function register(address controllerAddr) returns()
-func (_ControllerRegistry *ControllerRegistryTransactorSession) Register(controllerAddr common.Address) (*ethTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistryTransactorSession) Register(controllerAddr common.Address) (*klayTypes.Transaction, error) {
 	return _ControllerRegistry.Contract.Register(&_ControllerRegistry.TransactOpts, controllerAddr)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
 // Solidity: function renounceOwnership() returns()
-func (c *ControllerRegistryContract) RenounceOwnership(ctx context.Context) (*ethTypes.Receipt, error) {
-	tx, err := c.contract.RenounceOwnership(c.client.Account())
-	if err != nil {
-		return nil, err
-	}
-	return c.client.WaitMined(ctx, tx)
-}
-
-// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
-//
-// Solidity: function renounceOwnership() returns()
-func (_ControllerRegistry *ControllerRegistryTransactor) RenounceOwnership(opts *bind.TransactOpts) (*ethTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistryTransactor) RenounceOwnership(opts *bind.TransactOpts) (*klayTypes.Transaction, error) {
 	return _ControllerRegistry.contract.Transact(opts, "renounceOwnership")
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
 // Solidity: function renounceOwnership() returns()
-func (_ControllerRegistry *ControllerRegistrySession) RenounceOwnership() (*ethTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistrySession) RenounceOwnership() (*klayTypes.Transaction, error) {
 	return _ControllerRegistry.Contract.RenounceOwnership(&_ControllerRegistry.TransactOpts)
 }
 
 // RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
 //
 // Solidity: function renounceOwnership() returns()
-func (_ControllerRegistry *ControllerRegistryTransactorSession) RenounceOwnership() (*ethTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistryTransactorSession) RenounceOwnership() (*klayTypes.Transaction, error) {
 	return _ControllerRegistry.Contract.RenounceOwnership(&_ControllerRegistry.TransactOpts)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
 // Solidity: function transferOwnership(address newOwner) returns()
-func (c *ControllerRegistryContract) TransferOwnership(ctx context.Context, newOwner common.Address) (*ethTypes.Receipt, error) {
-	tx, err := c.contract.TransferOwnership(c.client.Account(), newOwner)
-	if err != nil {
-		return nil, err
-	}
-	return c.client.WaitMined(ctx, tx)
-}
-
-// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
-//
-// Solidity: function transferOwnership(address newOwner) returns()
-func (_ControllerRegistry *ControllerRegistryTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*ethTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistryTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*klayTypes.Transaction, error) {
 	return _ControllerRegistry.contract.Transact(opts, "transferOwnership", newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
 // Solidity: function transferOwnership(address newOwner) returns()
-func (_ControllerRegistry *ControllerRegistrySession) TransferOwnership(newOwner common.Address) (*ethTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistrySession) TransferOwnership(newOwner common.Address) (*klayTypes.Transaction, error) {
 	return _ControllerRegistry.Contract.TransferOwnership(&_ControllerRegistry.TransactOpts, newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
 // Solidity: function transferOwnership(address newOwner) returns()
-func (_ControllerRegistry *ControllerRegistryTransactorSession) TransferOwnership(newOwner common.Address) (*ethTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistryTransactorSession) TransferOwnership(newOwner common.Address) (*klayTypes.Transaction, error) {
 	return _ControllerRegistry.Contract.TransferOwnership(&_ControllerRegistry.TransactOpts, newOwner)
-}
-
-type IControllerRegistryEvents interface {
-	FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*ControllerRegistryOwnershipTransferredIterator, error)
-	ParseOwnershipTransferredFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryOwnershipTransferred, error)
-	WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *ControllerRegistryOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error)
-
-	FilterRegistration(opts *bind.FilterOpts, controller []common.Address) (*ControllerRegistryRegistrationIterator, error)
-	ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryRegistration, error)
-	WatchRegistration(opts *bind.WatchOpts, sink chan<- *ControllerRegistryRegistration, controller []common.Address) (event.Subscription, error)
-
-	FilterUnregistration(opts *bind.FilterOpts, controller []common.Address) (*ControllerRegistryUnregistrationIterator, error)
-	ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryUnregistration, error)
-	WatchUnregistration(opts *bind.WatchOpts, sink chan<- *ControllerRegistryUnregistration, controller []common.Address) (event.Subscription, error)
 }
 
 // ControllerRegistryOwnershipTransferredIterator is returned from FilterOwnershipTransferred and is used to iterate over the raw logs and unpacked data for OwnershipTransferred events raised by the ControllerRegistry contract.
@@ -552,10 +372,10 @@ type ControllerRegistryOwnershipTransferredIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan ethTypes.Log     // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
+	logs chan klayTypes.Log  // Log channel receiving the found contract events
+	sub  klaytn.Subscription // Subscription for errors, completion and termination
+	done bool                // Whether the subscription completed delivering logs
+	fail error               // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -616,7 +436,7 @@ func (it *ControllerRegistryOwnershipTransferredIterator) Close() error {
 type ControllerRegistryOwnershipTransferred struct {
 	PreviousOwner common.Address
 	NewOwner      common.Address
-	Raw           ethTypes.Log // Blockchain specific contextual infos
+	Raw           klayTypes.Log // Blockchain specific contextual infos
 }
 
 // FilterOwnershipTransferred is a free log retrieval operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
@@ -643,14 +463,7 @@ func (_ControllerRegistry *ControllerRegistryFilterer) FilterOwnershipTransferre
 // FilterOwnershipTransferred parses the event from given transaction receipt.
 //
 // Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-func (manager *ControllerRegistryContract) ParseOwnershipTransferredFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryOwnershipTransferred, error) {
-	return manager.contract.ParseOwnershipTransferredFromReceipt(receipt)
-}
-
-// FilterOwnershipTransferred parses the event from given transaction receipt.
-//
-// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
-func (_ControllerRegistry *ControllerRegistryFilterer) ParseOwnershipTransferredFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryOwnershipTransferred, error) {
+func (_ControllerRegistry *ControllerRegistryFilterer) ParseOwnershipTransferredFromReceipt(receipt *klayTypes.Receipt) (*ControllerRegistryOwnershipTransferred, error) {
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0") {
 			event := new(ControllerRegistryOwnershipTransferred)
@@ -716,10 +529,10 @@ type ControllerRegistryRegistrationIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan ethTypes.Log     // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
+	logs chan klayTypes.Log  // Log channel receiving the found contract events
+	sub  klaytn.Subscription // Subscription for errors, completion and termination
+	done bool                // Whether the subscription completed delivering logs
+	fail error               // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -779,7 +592,7 @@ func (it *ControllerRegistryRegistrationIterator) Close() error {
 // ControllerRegistryRegistration represents a Registration event raised by the ControllerRegistry contract.
 type ControllerRegistryRegistration struct {
 	Controller common.Address
-	Raw        ethTypes.Log // Blockchain specific contextual infos
+	Raw        klayTypes.Log // Blockchain specific contextual infos
 }
 
 // FilterRegistration is a free log retrieval operation binding the contract event 0x478f5152d8fc568db3f8de9fb402fd9d98a1a7541ecfe434e59cf574fbfc5524.
@@ -802,14 +615,7 @@ func (_ControllerRegistry *ControllerRegistryFilterer) FilterRegistration(opts *
 // FilterRegistration parses the event from given transaction receipt.
 //
 // Solidity: event Registration(address indexed controller)
-func (manager *ControllerRegistryContract) ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryRegistration, error) {
-	return manager.contract.ParseRegistrationFromReceipt(receipt)
-}
-
-// FilterRegistration parses the event from given transaction receipt.
-//
-// Solidity: event Registration(address indexed controller)
-func (_ControllerRegistry *ControllerRegistryFilterer) ParseRegistrationFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryRegistration, error) {
+func (_ControllerRegistry *ControllerRegistryFilterer) ParseRegistrationFromReceipt(receipt *klayTypes.Receipt) (*ControllerRegistryRegistration, error) {
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x478f5152d8fc568db3f8de9fb402fd9d98a1a7541ecfe434e59cf574fbfc5524") {
 			event := new(ControllerRegistryRegistration)
@@ -871,10 +677,10 @@ type ControllerRegistryUnregistrationIterator struct {
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
 
-	logs chan ethTypes.Log     // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
+	logs chan klayTypes.Log  // Log channel receiving the found contract events
+	sub  klaytn.Subscription // Subscription for errors, completion and termination
+	done bool                // Whether the subscription completed delivering logs
+	fail error               // Occurred error to stop iteration
 }
 
 // Next advances the iterator to the subsequent event, returning whether there
@@ -934,7 +740,7 @@ func (it *ControllerRegistryUnregistrationIterator) Close() error {
 // ControllerRegistryUnregistration represents a Unregistration event raised by the ControllerRegistry contract.
 type ControllerRegistryUnregistration struct {
 	Controller common.Address
-	Raw        ethTypes.Log // Blockchain specific contextual infos
+	Raw        klayTypes.Log // Blockchain specific contextual infos
 }
 
 // FilterUnregistration is a free log retrieval operation binding the contract event 0x2171d18d6eaa5385a17d6cacd86394726517e8399c558ab99acf728be83f5bb9.
@@ -957,14 +763,7 @@ func (_ControllerRegistry *ControllerRegistryFilterer) FilterUnregistration(opts
 // FilterUnregistration parses the event from given transaction receipt.
 //
 // Solidity: event Unregistration(address indexed controller)
-func (manager *ControllerRegistryContract) ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryUnregistration, error) {
-	return manager.contract.ParseUnregistrationFromReceipt(receipt)
-}
-
-// FilterUnregistration parses the event from given transaction receipt.
-//
-// Solidity: event Unregistration(address indexed controller)
-func (_ControllerRegistry *ControllerRegistryFilterer) ParseUnregistrationFromReceipt(receipt *ethTypes.Receipt) (*ControllerRegistryUnregistration, error) {
+func (_ControllerRegistry *ControllerRegistryFilterer) ParseUnregistrationFromReceipt(receipt *klayTypes.Receipt) (*ControllerRegistryUnregistration, error) {
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x2171d18d6eaa5385a17d6cacd86394726517e8399c558ab99acf728be83f5bb9") {
 			event := new(ControllerRegistryUnregistration)
