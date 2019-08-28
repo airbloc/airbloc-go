@@ -5,15 +5,15 @@
 package mocks
 
 import (
-	context "context"
-	big "math/big"
-	reflect "reflect"
+	"context"
+	"math/big"
+	"reflect"
 
-	bind "github.com/airbloc/airbloc-go/shared/blockchain/bind"
-	gomock "github.com/golang/mock/gomock"
-	go_ethereum "github.com/klaytn/klaytn"
-	types "github.com/klaytn/klaytn/blockchain/types"
-	common "github.com/klaytn/klaytn/common"
+	"github.com/golang/mock/gomock"
+	"github.com/klaytn/common"
+	"github.com/klaytn/klaytn"
+	"github.com/klaytn/klaytn/accounts/abi/bind"
+	"github.com/klaytn/klaytn/blockchain/types"
 )
 
 // MockTxClient is a mock of TxClient interface
@@ -54,7 +54,7 @@ func (mr *MockTxClientMockRecorder) Account() *gomock.Call {
 }
 
 // CallContract mocks base method
-func (m *MockTxClient) CallContract(arg0 context.Context, arg1 go_ethereum.CallMsg, arg2 *big.Int) ([]byte, error) {
+func (m *MockTxClient) CallContract(arg0 context.Context, arg1 klaytn.CallMsg, arg2 *big.Int) ([]byte, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CallContract", arg0, arg1, arg2)
 	ret0, _ := ret[0].([]byte)
@@ -84,7 +84,7 @@ func (mr *MockTxClientMockRecorder) CodeAt(arg0, arg1, arg2 interface{}) *gomock
 }
 
 // EstimateGas mocks base method
-func (m *MockTxClient) EstimateGas(arg0 context.Context, arg1 go_ethereum.CallMsg) (uint64, error) {
+func (m *MockTxClient) EstimateGas(arg0 context.Context, arg1 klaytn.CallMsg) (uint64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EstimateGas", arg0, arg1)
 	ret0, _ := ret[0].(uint64)
@@ -99,7 +99,7 @@ func (mr *MockTxClientMockRecorder) EstimateGas(arg0, arg1 interface{}) *gomock.
 }
 
 // FilterLogs mocks base method
-func (m *MockTxClient) FilterLogs(arg0 context.Context, arg1 go_ethereum.FilterQuery) ([]types.Log, error) {
+func (m *MockTxClient) FilterLogs(arg0 context.Context, arg1 klaytn.FilterQuery) ([]types.Log, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterLogs", arg0, arg1)
 	ret0, _ := ret[0].([]types.Log)
@@ -172,10 +172,10 @@ func (mr *MockTxClientMockRecorder) SendTransaction(arg0, arg1 interface{}) *gom
 }
 
 // SubscribeFilterLogs mocks base method
-func (m *MockTxClient) SubscribeFilterLogs(arg0 context.Context, arg1 go_ethereum.FilterQuery, arg2 chan<- types.Log) (go_ethereum.Subscription, error) {
+func (m *MockTxClient) SubscribeFilterLogs(arg0 context.Context, arg1 klaytn.FilterQuery, arg2 chan<- types.Log) (klaytn.Subscription, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SubscribeFilterLogs", arg0, arg1, arg2)
-	ret0, _ := ret[0].(go_ethereum.Subscription)
+	ret0, _ := ret[0].(klaytn.Subscription)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
