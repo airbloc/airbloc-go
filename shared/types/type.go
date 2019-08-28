@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/json-iterator/go"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/klaytn/klaytn/common"
 	"github.com/klaytn/klaytn/crypto"
 	"github.com/pkg/errors"

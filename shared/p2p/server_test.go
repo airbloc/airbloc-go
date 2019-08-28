@@ -14,7 +14,7 @@ import (
 
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/airbloc/airbloc-go/shared/key"
-	"github.com/airbloc/airbloc-go/test/utils"
+	testutils "github.com/airbloc/airbloc-go/test/utils"
 	"github.com/airbloc/logger"
 	"github.com/golang/protobuf/proto"
 	id "github.com/ipfs/go-cid"
