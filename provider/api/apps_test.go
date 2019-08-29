@@ -5,12 +5,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gin-gonic/gin/binding"
-
 	adapterMock "github.com/airbloc/airbloc-go/shared/adapter/mocks"
 	"github.com/airbloc/airbloc-go/shared/types"
 	testutils "github.com/airbloc/airbloc-go/test/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/gin-gonic/gin/json"
 	"github.com/golang/mock/gomock"
 	"github.com/klaytn/klaytn/common"
