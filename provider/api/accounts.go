@@ -33,7 +33,7 @@ func (api *accountsAPI) create(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
+	c.JSON(http.StatusCreated, gin.H{"account_id": accountId.Hex()})
 }
 
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
@@ -55,7 +55,7 @@ func (api *accountsAPI) createTemporary(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
+	c.JSON(http.StatusCreated, gin.H{"account_id": accountId.Hex()})
 }
 
 // UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.

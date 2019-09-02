@@ -44,7 +44,7 @@ func (api *dataTypeRegistryAPI) register(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusCreated, gin.H{"message": "success"})
 }
 
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.

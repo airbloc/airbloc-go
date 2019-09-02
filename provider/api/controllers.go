@@ -35,7 +35,7 @@ func (api *controllerRegistryAPI) register(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusCreated, gin.H{"message": "success"})
 }
 
 // Get is a free data retrieval call binding the contract method 0xc2bc2efc.
