@@ -146,8 +146,9 @@ func (service *service) Start() error {
 
 	// register p2p RPC handlers
 	rpc := p2p.NewRPC(service.p2p)
-	rpc.Handle("dauth-allow", &pb.DAuthRequest{}, &pb.DAuthResponse{}, service.createDAuthHandler(true))
-	rpc.Handle("dauth-deny", &pb.DAuthRequest{}, &pb.DAuthResponse{}, service.createDAuthHandler(false))
+	rpc.Handle("dauth-allow", &pb.DAuthRequest{}, &pb.DAuthResponse{}, service.createConsentHandler(true))
+	rpc.Handle("dauth-deny", &pb.DAuthRequest{}, &pb.DAuthResponse{}, service.createConsentHandler(false))
+	rpc.Handle("dauth-many", &pb.DAuthManyRequest{}, &pb.DAuthResponse{}, service.consentManyHandler)
 	rpc.Handle("dauth-signup", &pb.DAuthSignUpRequest{}, &pb.DAuthSignUpResponse{}, service.signUpHandler)
 
 	service.isRunning = true
@@ -156,7 +157,7 @@ func (service *service) Start() error {
 	return nil
 }
 
-func (service *service) createDAuthHandler(allow bool) p2p.RPCHandler {
+func (service *service) createConsentHandler(allow bool) p2p.RPCHandler {
 	return func(ctx context.Context, from p2p.SenderInfo, req proto.Message) (proto.Message, error) {
 		request, ok := req.(*pb.DAuthRequest)
 		if !ok {
@@ -216,6 +217,47 @@ func (service *service) createDAuthHandler(allow bool) p2p.RPCHandler {
 		}
 		return &pb.DAuthResponse{}, nil
 	}
+}
+
+func (service *service) consentManyHandler(
+	ctx context.Context,
+	from p2p.SenderInfo,
+	req proto.Message,
+) (proto.Message, error) {
+	request, ok := req.(*pb.DAuthManyRequest)
+	if !ok {
+		return nil, &MessageTypeError{"invalid message type", reflect.TypeOf(req)}
+	}
+
+	appName := request.GetAppName()
+
+	// accountId
+	accountId, err := types.HexToID(request.GetAccountId())
+	if err != nil {
+		return nil, errors.Wrapf(err, "invalid account ID %s", request.GetAccountId())
+	}
+
+	// appName
+	if appExists, err := service.apps.Exists(appName); err != nil {
+		return nil, errors.Wrap(err, "failed to call appRegistry.Exists")
+	} else if !appExists {
+		return nil, errors.Errorf("app does not exist. appName: %s", appName)
+	}
+
+	consentData := make([]types.ConsentData, len(request.GetConsentData()))
+	for index, consentRawData := range request.GetConsentData() {
+		consentData[index] = types.ConsentData{
+			Action:   types.ConsentActionList[uint8(consentRawData.GetAction())],
+			DataType: consentRawData.GetDataType(),
+			Allow:    consentRawData.GetAllow(),
+		}
+	}
+
+	err = service.consents.ConsentManyByController(ctx, accountId, appName, consentData)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to modify DAuth settings")
+	}
+	return &pb.DAuthResponse{}, nil
 }
 
 func (service *service) signUpHandler(
