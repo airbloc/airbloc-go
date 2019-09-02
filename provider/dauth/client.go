@@ -114,6 +114,39 @@ func (client *Client) Deny(
 	return client.sendDauthRequest(ctx, appName, action, dataType, accountId, "deny")
 }
 
+func (client *Client) Many(
+	ctx context.Context,
+	accountId types.ID,
+	appName string,
+	consentData []types.ConsentData,
+) error {
+	acc, err := client.accounts.GetAccount(accountId)
+	if err != nil {
+		return err
+	}
+
+	consentRawData := make([]*pb.DAuthManyRequest_ConsentData, len(consentData))
+	for index, consent := range consentData {
+		consentRawData[index] = &pb.DAuthManyRequest_ConsentData{
+			Action:   uint32(consent.Action),
+			DataType: consent.DataType,
+			Allow:    consent.Allow,
+		}
+	}
+
+	req := &pb.DAuthManyRequest{
+		AppName:     appName,
+		AccountId:   accountId.Hex(),
+		ConsentData: consentRawData,
+	}
+
+	_, err = client.p2pRpc.Invoke(ctx, acc.Controller, "dauth-many", req, &pb.DAuthResponse{})
+	if err != nil {
+		return errors.Wrapf(err, "failed to publish DAuth many message")
+	}
+	return nil
+}
+
 func (client *Client) sendDauthRequest(
 	ctx context.Context,
 	appName string,
@@ -134,7 +167,8 @@ func (client *Client) sendDauthRequest(
 		AppName:   appName,
 	}
 
-	if _, err = client.p2pRpc.Invoke(ctx, acc.Controller, "dauth-"+messageType, req, &pb.DAuthResponse{}); err != nil {
+	_, err = client.p2pRpc.Invoke(ctx, acc.Controller, "dauth-"+messageType, req, &pb.DAuthResponse{})
+	if err != nil {
 		return errors.Wrapf(err, "failed to publish DAuth %s message", messageType)
 	}
 	return nil

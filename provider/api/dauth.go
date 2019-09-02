@@ -206,6 +206,41 @@ func (api *dAuthAPI) deny(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
+func (api *dAuthAPI) many(c *gin.Context) {
+	var req struct {
+		AccountId   string `json:"account_id" binding:"required"`
+		AppName     string `json:"app_name" binding:"required"`
+		ConsentData struct {
+			Action   types.ConsentActionTypes `json:"action" binding:"required"`
+			DataType string                   `json:"data_type" binding:"required"`
+			Allow    bool                     `json:"allow" binding:"required"`
+		} `json:"consent_data" binding:"required"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	accountId, err := types.HexToID(req.AccountId)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = api.dauthClient.Many(
+		c, accountId,
+		req.AppName,
+		nil, // TODO: refactor type system
+	)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{})
+}
+
 // AttachToAPI is a registrant of an api.
 func (api *dAuthAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.HttpServer.Group("/dauth")
