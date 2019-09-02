@@ -3,6 +3,7 @@ module github.com/airbloc/airbloc-go
 go 1.12
 
 replace (
+	git.apache.org/thrift.git => github.com/apache/thrift v0.12.0
 	github.com/airbloc/airframe => github.com/frostornge/airframe v0.0.0-20190822082946-296a12f1f9f2
 	github.com/ethereum/go-ethereum/crypto => github.com/klaytn/klaytn v1.1.0
 	github.com/klaytn/klaytn => github.com/frostornge/klaytn v0.0.0-20190825165342-de85be0ec1b7
