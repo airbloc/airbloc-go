@@ -25,17 +25,27 @@ func NewControllerRegistryAPI(backend service.Backend) (api.API, error) {
 //
 // Solidity: function register(address controllerAddr) returns()
 func (api *controllerRegistryAPI) register(c *gin.Context) {
-	controllerAddr := c.Param("controllerAddr")
-	if controllerAddr == "" {
+	controllerAddrHex := c.Param("controllerAddr")
+	if controllerAddrHex == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
 		return
 	}
 
-	if err := api.controllers.Register(c, common.HexToAddress(controllerAddr)); err != nil {
+	controllerAddr := common.HexToAddress(controllerAddrHex)
+
+	if exists, err := api.controllers.Exists(controllerAddr); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	} else if exists {
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{})
+		return
+	}
+
+	if err := api.controllers.Register(c, controllerAddr); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"message": "success"})
+	c.JSON(http.StatusCreated, gin.H{})
 }
 
 // Get is a free data retrieval call binding the contract method 0xc2bc2efc.

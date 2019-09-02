@@ -170,7 +170,7 @@ func (api *dAuthAPI) allow(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 func (api *dAuthAPI) deny(c *gin.Context) {
@@ -203,7 +203,7 @@ func (api *dAuthAPI) deny(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 // AttachToAPI is a registrant of an api.

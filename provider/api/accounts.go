@@ -87,7 +87,7 @@ func (api *accountsAPI) unlockTemporary(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 // SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
@@ -108,7 +108,7 @@ func (api *accountsAPI) setController(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 // GetAccount is a free data retrieval call binding the contract method 0xf9292ddb.

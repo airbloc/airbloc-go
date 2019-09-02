@@ -119,7 +119,7 @@ func (api *exchangeAPI) addDataIds(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 // Order is a paid mutator transaction binding the contract method 0x0cf833fb.
@@ -144,7 +144,7 @@ func (api *exchangeAPI) order(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 // Cancel is a paid mutator transaction binding the contract method 0xb2d9ba39.
@@ -169,7 +169,7 @@ func (api *exchangeAPI) cancel(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 // GetOffer is a free data retrieval call binding the contract method 0x107f04b4.

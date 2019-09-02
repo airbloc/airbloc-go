@@ -35,11 +35,19 @@ func (api *appRegistryAPI) register(c *gin.Context) {
 		return
 	}
 
+	if exists, err := api.apps.Exists(req.AppName); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	} else if exists {
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{})
+		return
+	}
+
 	if err := api.apps.Register(c, req.AppName); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"message": "success"})
+	c.JSON(http.StatusCreated, gin.H{})
 }
 
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
@@ -60,7 +68,7 @@ func (api *appRegistryAPI) unregister(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
@@ -104,7 +112,7 @@ func (api *appRegistryAPI) transferAppOwner(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 // AttachToAPI is a registrant of an api.

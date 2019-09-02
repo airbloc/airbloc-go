@@ -40,11 +40,20 @@ func (api *dataTypeRegistryAPI) register(c *gin.Context) {
 		name       = req.Name
 		schemaHash = common.HexToHash(req.SchemaHash)
 	)
+
+	if exists, err := api.dataTypes.Exists(name); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	} else if exists {
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{})
+		return
+	}
+
 	if err := api.dataTypes.Register(c, name, schemaHash); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"message": "success"})
+	c.JSON(http.StatusCreated, gin.H{})
 }
 
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
@@ -61,7 +70,7 @@ func (api *dataTypeRegistryAPI) unregister(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
