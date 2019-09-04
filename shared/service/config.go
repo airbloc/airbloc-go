@@ -1,12 +1,14 @@
 package service
 
 import (
-	"github.com/mcuadros/go-defaults"
 	"time"
+
+	defaults "github.com/mcuadros/go-defaults"
 )
 
 type Config struct {
 	PrivateKeyPath string `default:"private.key" yaml:"privateKeyPath"`
+	Host           string `default:"localhost" yaml:"host"`
 	Port           int    `default:"9124" yaml:"port"`
 
 	P2P struct {
