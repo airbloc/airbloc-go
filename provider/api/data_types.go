@@ -27,8 +27,8 @@ func NewDataTypeRegistryAPI(backend service.Backend) (api.API, error) {
 // Solidity: function register(string name, bytes32 schemaHash) returns()
 func (api *dataTypeRegistryAPI) register(c *gin.Context) {
 	var req struct {
-		Name       string `binding:"required"`
-		SchemaHash string `binding:"required"`
+		Name       string `json:"name" binding:"required"`
+		SchemaHash string `json:"schema_hash" binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {

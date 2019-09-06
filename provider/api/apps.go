@@ -84,6 +84,14 @@ func (api *appRegistryAPI) get(c *gin.Context) {
 		return
 	}
 
+	if exists, err := api.apps.Exists(req.AppName); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	} else if !exists {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": "cannot find app information"})
+		return
+	}
+
 	app, err := api.apps.Get(req.AppName)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

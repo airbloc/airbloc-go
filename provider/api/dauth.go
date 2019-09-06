@@ -30,10 +30,10 @@ func NewDAuthAPI(backend service.Backend) (api.API, error) {
 	}, nil
 }
 
-func (api *dAuthAPI) signIn(c *gin.Context) {
+func (api *dAuthAPI) signUp(c *gin.Context) {
 	var req struct {
-		Identity   string `json:"identity" binding:"required"`
-		Controller string `json:"controller" binding:"required"`
+		IdentityHash string `json:"identity_hash" binding:"required"`
+		Controller   string `json:"controller" binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
@@ -42,7 +42,7 @@ func (api *dAuthAPI) signIn(c *gin.Context) {
 	}
 
 	controller := common.HexToAddress(req.Controller)
-	accountId, err := api.dauthClient.SignIn(c, req.Identity, controller)
+	accountId, err := api.dauthClient.SignIn(c, req.IdentityHash, controller)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -53,8 +53,8 @@ func (api *dAuthAPI) signIn(c *gin.Context) {
 
 func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 	var req struct {
-		AccountId string `json:"account_id" binding:"required"`
-		AppName   string `json:"app_name" binding:"required"`
+		AccountId string `form:"account_id" binding:"required"`
+		AppName   string `form:"app_name" binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
@@ -71,7 +71,7 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 	var resp struct {
 		HasAuthorizedBefore bool
 		Authorizations      []struct {
-			Action     types.ConsentActionTypes
+			Action     uint8
 			DataType   string
 			Authorized bool
 		}
@@ -102,7 +102,7 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 	}
 
 	var (
-		actions = []types.ConsentActionTypes{
+		actions = []uint8{
 			types.ConsentActionCollection,
 			types.ConsentActionExchange,
 		}
@@ -119,14 +119,14 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 		// action
 		for _, action := range actions {
 			dataType := dataTypeRegisterEvent.Name
-			allowed, err := api.consents.IsAllowed(accountId, dataType, uint8(action), req.AppName)
+			allowed, err := api.consents.IsAllowed(accountId, dataType, action, req.AppName)
 			if err != nil {
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
 
 			resp.Authorizations = append(resp.Authorizations, struct {
-				Action     types.ConsentActionTypes
+				Action     uint8
 				DataType   string
 				Authorized bool
 			}{
@@ -142,10 +142,10 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 
 func (api *dAuthAPI) allow(c *gin.Context) {
 	var req struct {
-		AccountId string                   `json:"account_id" binding:"required"`
-		DataType  string                   `json:"data_type" binding:"required"`
-		Action    types.ConsentActionTypes `json:"action" binding:"required"`
-		AppName   string                   `json:"app_name" binding:"required"`
+		AccountId string `json:"account_id" binding:"required"`
+		DataType  string `json:"data_type" binding:"required"`
+		Action    uint8  `json:"action" binding:"required"`
+		AppName   string `json:"app_name" binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
@@ -175,10 +175,10 @@ func (api *dAuthAPI) allow(c *gin.Context) {
 
 func (api *dAuthAPI) deny(c *gin.Context) {
 	var req struct {
-		AccountId string                   `json:"account_id" binding:"required"`
-		DataType  string                   `json:"data_type" binding:"required"`
-		Action    types.ConsentActionTypes `json:"action" binding:"required"`
-		AppName   string                   `json:"app_name" binding:"required"`
+		AccountId string `json:"account_id" binding:"required"`
+		DataType  string `json:"data_type" binding:"required"`
+		Action    uint8  `json:"action" binding:"required"`
+		AppName   string `json:"app_name" binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
@@ -208,13 +208,9 @@ func (api *dAuthAPI) deny(c *gin.Context) {
 
 func (api *dAuthAPI) many(c *gin.Context) {
 	var req struct {
-		AccountId   string `json:"account_id" binding:"required"`
-		AppName     string `json:"app_name" binding:"required"`
-		ConsentData struct {
-			Action   types.ConsentActionTypes `json:"action" binding:"required"`
-			DataType string                   `json:"data_type" binding:"required"`
-			Allow    bool                     `json:"allow" binding:"required"`
-		} `json:"consent_data" binding:"required"`
+		AccountId   string                     `json:"account_id" binding:"required"`
+		AppName     string                     `json:"app_name" binding:"required"`
+		ConsentData []types.ConsentRequestData `json:"consent_data" binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
@@ -228,10 +224,15 @@ func (api *dAuthAPI) many(c *gin.Context) {
 		return
 	}
 
+	consentData := make([]types.ConsentData, len(req.ConsentData))
+	for index, data := range req.ConsentData {
+		consentData[index] = data.ToConsentData()
+	}
+
 	err = api.dauthClient.Many(
 		c, accountId,
 		req.AppName,
-		nil, // TODO: refactor type system
+		consentData,
 	)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -245,7 +246,7 @@ func (api *dAuthAPI) many(c *gin.Context) {
 func (api *dAuthAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.HttpServer.Group("/dauth")
 	apiMux.GET("/auth", api.getAuthorizations)
-	apiMux.POST("/signin", api.signIn)
+	apiMux.POST("/signin", api.signUp)
 	apiMux.PUT("/allow", api.allow)
 	apiMux.PUT("/deny", api.deny)
 }
