@@ -1,4 +1,4 @@
-FROM golang:1.11.5-alpine as base
+FROM golang:1.12.9-alpine as base
 
 # Install build toolchain for alpine
 RUN apk add --no-cache make git g++ musl-dev linux-headers bash ca-certificates
@@ -6,6 +6,7 @@ WORKDIR /airbloc
 
 # use go modules
 ENV GO111MODULE=on
+ENV GOPROXY=https://proxy.golang.org
 
 # 1. Fetch and cache go module dependencies
 COPY go.mod .
@@ -19,8 +20,11 @@ RUN GOOS=linux GOARCH=amd64 make all
 
 # 3. Pull binary into a clean alpine container
 FROM alpine:latest
+
+RUN apk add ca-certificates
+
 COPY --from=builder /airbloc/build/bin/* /usr/local/bin/
 
-EXPOSE 9124
+EXPOSE 2471-2474
 ENTRYPOINT ["airbloc"]
 # or it can be ENTRYPOINT ["bootnode"]

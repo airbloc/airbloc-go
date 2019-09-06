@@ -104,7 +104,7 @@ func (c *Client) waitConfirmation(ctx context.Context) error {
 	return err
 }
 
-// Wait Mined
+// WaitMined waits until transcaction created.
 func (c *Client) WaitMined(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
 	methodName, details := GetTransactionDetails(c.contracts, tx)
 	timer := c.logger.Timer()
@@ -122,7 +122,7 @@ func (c *Client) WaitMined(ctx context.Context, tx *types.Transaction) (*types.R
 	return receipt, err
 }
 
-// Wait Deployed
+// WaitDeployed waits until contract created.
 func (c *Client) WaitDeployed(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
 	if tx.To() != nil {
 		return nil, ErrTxNoContract

@@ -42,7 +42,6 @@ func (m *MockISimpleTokenManager) EXPECT() *MockISimpleTokenManagerMockRecorder 
 
 // Address mocks base method
 func (m *MockISimpleTokenManager) Address() common.Address {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
@@ -50,13 +49,11 @@ func (m *MockISimpleTokenManager) Address() common.Address {
 
 // Address indicates an expected call of Address
 func (mr *MockISimpleTokenManagerMockRecorder) Address() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockISimpleTokenManager)(nil).Address))
 }
 
 // TxHash mocks base method
 func (m *MockISimpleTokenManager) TxHash() common.Hash {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TxHash")
 	ret0, _ := ret[0].(common.Hash)
 	return ret0
@@ -64,13 +61,11 @@ func (m *MockISimpleTokenManager) TxHash() common.Hash {
 
 // TxHash indicates an expected call of TxHash
 func (mr *MockISimpleTokenManagerMockRecorder) TxHash() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockISimpleTokenManager)(nil).TxHash))
 }
 
 // CreatedAt mocks base method
 func (m *MockISimpleTokenManager) CreatedAt() *big.Int {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatedAt")
 	ret0, _ := ret[0].(*big.Int)
 	return ret0
@@ -78,13 +73,11 @@ func (m *MockISimpleTokenManager) CreatedAt() *big.Int {
 
 // CreatedAt indicates an expected call of CreatedAt
 func (mr *MockISimpleTokenManagerMockRecorder) CreatedAt() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockISimpleTokenManager)(nil).CreatedAt))
 }
 
 // Allowance mocks base method
 func (m *MockISimpleTokenManager) Allowance(owner, spender common.Address) (*big.Int, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Allowance", owner, spender)
 	ret0, _ := ret[0].(*big.Int)
 	ret1, _ := ret[1].(error)
@@ -93,13 +86,11 @@ func (m *MockISimpleTokenManager) Allowance(owner, spender common.Address) (*big
 
 // Allowance indicates an expected call of Allowance
 func (mr *MockISimpleTokenManagerMockRecorder) Allowance(owner, spender interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Allowance", reflect.TypeOf((*MockISimpleTokenManager)(nil).Allowance), owner, spender)
 }
 
 // BalanceOf mocks base method
 func (m *MockISimpleTokenManager) BalanceOf(account common.Address) (*big.Int, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "BalanceOf", account)
 	ret0, _ := ret[0].(*big.Int)
 	ret1, _ := ret[1].(error)
@@ -108,13 +99,11 @@ func (m *MockISimpleTokenManager) BalanceOf(account common.Address) (*big.Int, e
 
 // BalanceOf indicates an expected call of BalanceOf
 func (mr *MockISimpleTokenManagerMockRecorder) BalanceOf(account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BalanceOf", reflect.TypeOf((*MockISimpleTokenManager)(nil).BalanceOf), account)
 }
 
 // IsMinter mocks base method
 func (m *MockISimpleTokenManager) IsMinter(account common.Address) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsMinter", account)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -123,13 +112,11 @@ func (m *MockISimpleTokenManager) IsMinter(account common.Address) (bool, error)
 
 // IsMinter indicates an expected call of IsMinter
 func (mr *MockISimpleTokenManagerMockRecorder) IsMinter(account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsMinter", reflect.TypeOf((*MockISimpleTokenManager)(nil).IsMinter), account)
 }
 
 // TotalSupply mocks base method
 func (m *MockISimpleTokenManager) TotalSupply() (*big.Int, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TotalSupply")
 	ret0, _ := ret[0].(*big.Int)
 	ret1, _ := ret[1].(error)
@@ -138,13 +125,11 @@ func (m *MockISimpleTokenManager) TotalSupply() (*big.Int, error) {
 
 // TotalSupply indicates an expected call of TotalSupply
 func (mr *MockISimpleTokenManagerMockRecorder) TotalSupply() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TotalSupply", reflect.TypeOf((*MockISimpleTokenManager)(nil).TotalSupply))
 }
 
 // AddMinter mocks base method
 func (m *MockISimpleTokenManager) AddMinter(ctx context.Context, account common.Address) error {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddMinter", ctx, account)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -152,13 +137,11 @@ func (m *MockISimpleTokenManager) AddMinter(ctx context.Context, account common.
 
 // AddMinter indicates an expected call of AddMinter
 func (mr *MockISimpleTokenManagerMockRecorder) AddMinter(ctx, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddMinter", reflect.TypeOf((*MockISimpleTokenManager)(nil).AddMinter), ctx, account)
 }
 
 // Approve mocks base method
 func (m *MockISimpleTokenManager) Approve(ctx context.Context, spender common.Address, value *big.Int) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Approve", ctx, spender, value)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -167,13 +150,11 @@ func (m *MockISimpleTokenManager) Approve(ctx context.Context, spender common.Ad
 
 // Approve indicates an expected call of Approve
 func (mr *MockISimpleTokenManagerMockRecorder) Approve(ctx, spender, value interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Approve", reflect.TypeOf((*MockISimpleTokenManager)(nil).Approve), ctx, spender, value)
 }
 
 // DecreaseAllowance mocks base method
 func (m *MockISimpleTokenManager) DecreaseAllowance(ctx context.Context, spender common.Address, subtractedValue *big.Int) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DecreaseAllowance", ctx, spender, subtractedValue)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -182,13 +163,11 @@ func (m *MockISimpleTokenManager) DecreaseAllowance(ctx context.Context, spender
 
 // DecreaseAllowance indicates an expected call of DecreaseAllowance
 func (mr *MockISimpleTokenManagerMockRecorder) DecreaseAllowance(ctx, spender, subtractedValue interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DecreaseAllowance", reflect.TypeOf((*MockISimpleTokenManager)(nil).DecreaseAllowance), ctx, spender, subtractedValue)
 }
 
 // IncreaseAllowance mocks base method
 func (m *MockISimpleTokenManager) IncreaseAllowance(ctx context.Context, spender common.Address, addedValue *big.Int) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IncreaseAllowance", ctx, spender, addedValue)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -197,13 +176,11 @@ func (m *MockISimpleTokenManager) IncreaseAllowance(ctx context.Context, spender
 
 // IncreaseAllowance indicates an expected call of IncreaseAllowance
 func (mr *MockISimpleTokenManagerMockRecorder) IncreaseAllowance(ctx, spender, addedValue interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncreaseAllowance", reflect.TypeOf((*MockISimpleTokenManager)(nil).IncreaseAllowance), ctx, spender, addedValue)
 }
 
 // Mint mocks base method
 func (m *MockISimpleTokenManager) Mint(ctx context.Context, account common.Address, amount *big.Int) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Mint", ctx, account, amount)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -212,13 +189,11 @@ func (m *MockISimpleTokenManager) Mint(ctx context.Context, account common.Addre
 
 // Mint indicates an expected call of Mint
 func (mr *MockISimpleTokenManagerMockRecorder) Mint(ctx, account, amount interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Mint", reflect.TypeOf((*MockISimpleTokenManager)(nil).Mint), ctx, account, amount)
 }
 
 // RenounceMinter mocks base method
 func (m *MockISimpleTokenManager) RenounceMinter(ctx context.Context) error {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RenounceMinter", ctx)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -226,13 +201,11 @@ func (m *MockISimpleTokenManager) RenounceMinter(ctx context.Context) error {
 
 // RenounceMinter indicates an expected call of RenounceMinter
 func (mr *MockISimpleTokenManagerMockRecorder) RenounceMinter(ctx interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RenounceMinter", reflect.TypeOf((*MockISimpleTokenManager)(nil).RenounceMinter), ctx)
 }
 
 // Transfer mocks base method
 func (m *MockISimpleTokenManager) Transfer(ctx context.Context, recipient common.Address, amount *big.Int) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Transfer", ctx, recipient, amount)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -241,13 +214,11 @@ func (m *MockISimpleTokenManager) Transfer(ctx context.Context, recipient common
 
 // Transfer indicates an expected call of Transfer
 func (mr *MockISimpleTokenManagerMockRecorder) Transfer(ctx, recipient, amount interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Transfer", reflect.TypeOf((*MockISimpleTokenManager)(nil).Transfer), ctx, recipient, amount)
 }
 
 // TransferFrom mocks base method
 func (m *MockISimpleTokenManager) TransferFrom(ctx context.Context, sender, recipient common.Address, amount *big.Int) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TransferFrom", ctx, sender, recipient, amount)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -256,13 +227,11 @@ func (m *MockISimpleTokenManager) TransferFrom(ctx context.Context, sender, reci
 
 // TransferFrom indicates an expected call of TransferFrom
 func (mr *MockISimpleTokenManagerMockRecorder) TransferFrom(ctx, sender, recipient, amount interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransferFrom", reflect.TypeOf((*MockISimpleTokenManager)(nil).TransferFrom), ctx, sender, recipient, amount)
 }
 
 // FilterApproval mocks base method
 func (m *MockISimpleTokenManager) FilterApproval(opts *bind.FilterOpts, owner, spender []common.Address) (*adapter.SimpleTokenApprovalIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterApproval", opts, owner, spender)
 	ret0, _ := ret[0].(*adapter.SimpleTokenApprovalIterator)
 	ret1, _ := ret[1].(error)
@@ -271,13 +240,11 @@ func (m *MockISimpleTokenManager) FilterApproval(opts *bind.FilterOpts, owner, s
 
 // FilterApproval indicates an expected call of FilterApproval
 func (mr *MockISimpleTokenManagerMockRecorder) FilterApproval(opts, owner, spender interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterApproval", reflect.TypeOf((*MockISimpleTokenManager)(nil).FilterApproval), opts, owner, spender)
 }
 
 // FilterMinterAdded mocks base method
 func (m *MockISimpleTokenManager) FilterMinterAdded(opts *bind.FilterOpts, account []common.Address) (*adapter.SimpleTokenMinterAddedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterMinterAdded", opts, account)
 	ret0, _ := ret[0].(*adapter.SimpleTokenMinterAddedIterator)
 	ret1, _ := ret[1].(error)
@@ -286,13 +253,11 @@ func (m *MockISimpleTokenManager) FilterMinterAdded(opts *bind.FilterOpts, accou
 
 // FilterMinterAdded indicates an expected call of FilterMinterAdded
 func (mr *MockISimpleTokenManagerMockRecorder) FilterMinterAdded(opts, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterMinterAdded", reflect.TypeOf((*MockISimpleTokenManager)(nil).FilterMinterAdded), opts, account)
 }
 
 // FilterMinterRemoved mocks base method
 func (m *MockISimpleTokenManager) FilterMinterRemoved(opts *bind.FilterOpts, account []common.Address) (*adapter.SimpleTokenMinterRemovedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterMinterRemoved", opts, account)
 	ret0, _ := ret[0].(*adapter.SimpleTokenMinterRemovedIterator)
 	ret1, _ := ret[1].(error)
@@ -301,13 +266,11 @@ func (m *MockISimpleTokenManager) FilterMinterRemoved(opts *bind.FilterOpts, acc
 
 // FilterMinterRemoved indicates an expected call of FilterMinterRemoved
 func (mr *MockISimpleTokenManagerMockRecorder) FilterMinterRemoved(opts, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterMinterRemoved", reflect.TypeOf((*MockISimpleTokenManager)(nil).FilterMinterRemoved), opts, account)
 }
 
 // FilterTransfer mocks base method
 func (m *MockISimpleTokenManager) FilterTransfer(opts *bind.FilterOpts, from, to []common.Address) (*adapter.SimpleTokenTransferIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterTransfer", opts, from, to)
 	ret0, _ := ret[0].(*adapter.SimpleTokenTransferIterator)
 	ret1, _ := ret[1].(error)
@@ -316,13 +279,11 @@ func (m *MockISimpleTokenManager) FilterTransfer(opts *bind.FilterOpts, from, to
 
 // FilterTransfer indicates an expected call of FilterTransfer
 func (mr *MockISimpleTokenManagerMockRecorder) FilterTransfer(opts, from, to interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterTransfer", reflect.TypeOf((*MockISimpleTokenManager)(nil).FilterTransfer), opts, from, to)
 }
 
 // WatchApproval mocks base method
 func (m *MockISimpleTokenManager) WatchApproval(opts *bind.WatchOpts, sink chan<- *adapter.SimpleTokenApproval, owner, spender []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchApproval", opts, sink, owner, spender)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -331,13 +292,11 @@ func (m *MockISimpleTokenManager) WatchApproval(opts *bind.WatchOpts, sink chan<
 
 // WatchApproval indicates an expected call of WatchApproval
 func (mr *MockISimpleTokenManagerMockRecorder) WatchApproval(opts, sink, owner, spender interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchApproval", reflect.TypeOf((*MockISimpleTokenManager)(nil).WatchApproval), opts, sink, owner, spender)
 }
 
 // WatchMinterAdded mocks base method
 func (m *MockISimpleTokenManager) WatchMinterAdded(opts *bind.WatchOpts, sink chan<- *adapter.SimpleTokenMinterAdded, account []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchMinterAdded", opts, sink, account)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -346,13 +305,11 @@ func (m *MockISimpleTokenManager) WatchMinterAdded(opts *bind.WatchOpts, sink ch
 
 // WatchMinterAdded indicates an expected call of WatchMinterAdded
 func (mr *MockISimpleTokenManagerMockRecorder) WatchMinterAdded(opts, sink, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchMinterAdded", reflect.TypeOf((*MockISimpleTokenManager)(nil).WatchMinterAdded), opts, sink, account)
 }
 
 // WatchMinterRemoved mocks base method
 func (m *MockISimpleTokenManager) WatchMinterRemoved(opts *bind.WatchOpts, sink chan<- *adapter.SimpleTokenMinterRemoved, account []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchMinterRemoved", opts, sink, account)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -361,13 +318,11 @@ func (m *MockISimpleTokenManager) WatchMinterRemoved(opts *bind.WatchOpts, sink 
 
 // WatchMinterRemoved indicates an expected call of WatchMinterRemoved
 func (mr *MockISimpleTokenManagerMockRecorder) WatchMinterRemoved(opts, sink, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchMinterRemoved", reflect.TypeOf((*MockISimpleTokenManager)(nil).WatchMinterRemoved), opts, sink, account)
 }
 
 // WatchTransfer mocks base method
 func (m *MockISimpleTokenManager) WatchTransfer(opts *bind.WatchOpts, sink chan<- *adapter.SimpleTokenTransfer, from, to []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchTransfer", opts, sink, from, to)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -376,7 +331,6 @@ func (m *MockISimpleTokenManager) WatchTransfer(opts *bind.WatchOpts, sink chan<
 
 // WatchTransfer indicates an expected call of WatchTransfer
 func (mr *MockISimpleTokenManagerMockRecorder) WatchTransfer(opts, sink, from, to interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchTransfer", reflect.TypeOf((*MockISimpleTokenManager)(nil).WatchTransfer), opts, sink, from, to)
 }
 
@@ -405,7 +359,6 @@ func (m *MockISimpleTokenCalls) EXPECT() *MockISimpleTokenCallsMockRecorder {
 
 // Allowance mocks base method
 func (m *MockISimpleTokenCalls) Allowance(owner, spender common.Address) (*big.Int, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Allowance", owner, spender)
 	ret0, _ := ret[0].(*big.Int)
 	ret1, _ := ret[1].(error)
@@ -414,13 +367,11 @@ func (m *MockISimpleTokenCalls) Allowance(owner, spender common.Address) (*big.I
 
 // Allowance indicates an expected call of Allowance
 func (mr *MockISimpleTokenCallsMockRecorder) Allowance(owner, spender interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Allowance", reflect.TypeOf((*MockISimpleTokenCalls)(nil).Allowance), owner, spender)
 }
 
 // BalanceOf mocks base method
 func (m *MockISimpleTokenCalls) BalanceOf(account common.Address) (*big.Int, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "BalanceOf", account)
 	ret0, _ := ret[0].(*big.Int)
 	ret1, _ := ret[1].(error)
@@ -429,13 +380,11 @@ func (m *MockISimpleTokenCalls) BalanceOf(account common.Address) (*big.Int, err
 
 // BalanceOf indicates an expected call of BalanceOf
 func (mr *MockISimpleTokenCallsMockRecorder) BalanceOf(account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BalanceOf", reflect.TypeOf((*MockISimpleTokenCalls)(nil).BalanceOf), account)
 }
 
 // IsMinter mocks base method
 func (m *MockISimpleTokenCalls) IsMinter(account common.Address) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsMinter", account)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -444,13 +393,11 @@ func (m *MockISimpleTokenCalls) IsMinter(account common.Address) (bool, error) {
 
 // IsMinter indicates an expected call of IsMinter
 func (mr *MockISimpleTokenCallsMockRecorder) IsMinter(account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsMinter", reflect.TypeOf((*MockISimpleTokenCalls)(nil).IsMinter), account)
 }
 
 // TotalSupply mocks base method
 func (m *MockISimpleTokenCalls) TotalSupply() (*big.Int, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TotalSupply")
 	ret0, _ := ret[0].(*big.Int)
 	ret1, _ := ret[1].(error)
@@ -459,7 +406,6 @@ func (m *MockISimpleTokenCalls) TotalSupply() (*big.Int, error) {
 
 // TotalSupply indicates an expected call of TotalSupply
 func (mr *MockISimpleTokenCallsMockRecorder) TotalSupply() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TotalSupply", reflect.TypeOf((*MockISimpleTokenCalls)(nil).TotalSupply))
 }
 
@@ -488,7 +434,6 @@ func (m *MockISimpleTokenTransacts) EXPECT() *MockISimpleTokenTransactsMockRecor
 
 // AddMinter mocks base method
 func (m *MockISimpleTokenTransacts) AddMinter(ctx context.Context, account common.Address) (*types.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddMinter", ctx, account)
 	ret0, _ := ret[0].(*types.Receipt)
 	ret1, _ := ret[1].(error)
@@ -497,13 +442,11 @@ func (m *MockISimpleTokenTransacts) AddMinter(ctx context.Context, account commo
 
 // AddMinter indicates an expected call of AddMinter
 func (mr *MockISimpleTokenTransactsMockRecorder) AddMinter(ctx, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddMinter", reflect.TypeOf((*MockISimpleTokenTransacts)(nil).AddMinter), ctx, account)
 }
 
 // Approve mocks base method
 func (m *MockISimpleTokenTransacts) Approve(ctx context.Context, spender common.Address, value *big.Int) (*types.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Approve", ctx, spender, value)
 	ret0, _ := ret[0].(*types.Receipt)
 	ret1, _ := ret[1].(error)
@@ -512,13 +455,11 @@ func (m *MockISimpleTokenTransacts) Approve(ctx context.Context, spender common.
 
 // Approve indicates an expected call of Approve
 func (mr *MockISimpleTokenTransactsMockRecorder) Approve(ctx, spender, value interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Approve", reflect.TypeOf((*MockISimpleTokenTransacts)(nil).Approve), ctx, spender, value)
 }
 
 // DecreaseAllowance mocks base method
 func (m *MockISimpleTokenTransacts) DecreaseAllowance(ctx context.Context, spender common.Address, subtractedValue *big.Int) (*types.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DecreaseAllowance", ctx, spender, subtractedValue)
 	ret0, _ := ret[0].(*types.Receipt)
 	ret1, _ := ret[1].(error)
@@ -527,13 +468,11 @@ func (m *MockISimpleTokenTransacts) DecreaseAllowance(ctx context.Context, spend
 
 // DecreaseAllowance indicates an expected call of DecreaseAllowance
 func (mr *MockISimpleTokenTransactsMockRecorder) DecreaseAllowance(ctx, spender, subtractedValue interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DecreaseAllowance", reflect.TypeOf((*MockISimpleTokenTransacts)(nil).DecreaseAllowance), ctx, spender, subtractedValue)
 }
 
 // IncreaseAllowance mocks base method
 func (m *MockISimpleTokenTransacts) IncreaseAllowance(ctx context.Context, spender common.Address, addedValue *big.Int) (*types.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IncreaseAllowance", ctx, spender, addedValue)
 	ret0, _ := ret[0].(*types.Receipt)
 	ret1, _ := ret[1].(error)
@@ -542,13 +481,11 @@ func (m *MockISimpleTokenTransacts) IncreaseAllowance(ctx context.Context, spend
 
 // IncreaseAllowance indicates an expected call of IncreaseAllowance
 func (mr *MockISimpleTokenTransactsMockRecorder) IncreaseAllowance(ctx, spender, addedValue interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncreaseAllowance", reflect.TypeOf((*MockISimpleTokenTransacts)(nil).IncreaseAllowance), ctx, spender, addedValue)
 }
 
 // Mint mocks base method
 func (m *MockISimpleTokenTransacts) Mint(ctx context.Context, account common.Address, amount *big.Int) (*types.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Mint", ctx, account, amount)
 	ret0, _ := ret[0].(*types.Receipt)
 	ret1, _ := ret[1].(error)
@@ -557,13 +494,11 @@ func (m *MockISimpleTokenTransacts) Mint(ctx context.Context, account common.Add
 
 // Mint indicates an expected call of Mint
 func (mr *MockISimpleTokenTransactsMockRecorder) Mint(ctx, account, amount interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Mint", reflect.TypeOf((*MockISimpleTokenTransacts)(nil).Mint), ctx, account, amount)
 }
 
 // RenounceMinter mocks base method
 func (m *MockISimpleTokenTransacts) RenounceMinter(ctx context.Context) (*types.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RenounceMinter", ctx)
 	ret0, _ := ret[0].(*types.Receipt)
 	ret1, _ := ret[1].(error)
@@ -572,13 +507,11 @@ func (m *MockISimpleTokenTransacts) RenounceMinter(ctx context.Context) (*types.
 
 // RenounceMinter indicates an expected call of RenounceMinter
 func (mr *MockISimpleTokenTransactsMockRecorder) RenounceMinter(ctx interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RenounceMinter", reflect.TypeOf((*MockISimpleTokenTransacts)(nil).RenounceMinter), ctx)
 }
 
 // Transfer mocks base method
 func (m *MockISimpleTokenTransacts) Transfer(ctx context.Context, recipient common.Address, amount *big.Int) (*types.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Transfer", ctx, recipient, amount)
 	ret0, _ := ret[0].(*types.Receipt)
 	ret1, _ := ret[1].(error)
@@ -587,13 +520,11 @@ func (m *MockISimpleTokenTransacts) Transfer(ctx context.Context, recipient comm
 
 // Transfer indicates an expected call of Transfer
 func (mr *MockISimpleTokenTransactsMockRecorder) Transfer(ctx, recipient, amount interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Transfer", reflect.TypeOf((*MockISimpleTokenTransacts)(nil).Transfer), ctx, recipient, amount)
 }
 
 // TransferFrom mocks base method
 func (m *MockISimpleTokenTransacts) TransferFrom(ctx context.Context, sender, recipient common.Address, amount *big.Int) (*types.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TransferFrom", ctx, sender, recipient, amount)
 	ret0, _ := ret[0].(*types.Receipt)
 	ret1, _ := ret[1].(error)
@@ -602,7 +533,6 @@ func (m *MockISimpleTokenTransacts) TransferFrom(ctx context.Context, sender, re
 
 // TransferFrom indicates an expected call of TransferFrom
 func (mr *MockISimpleTokenTransactsMockRecorder) TransferFrom(ctx, sender, recipient, amount interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransferFrom", reflect.TypeOf((*MockISimpleTokenTransacts)(nil).TransferFrom), ctx, sender, recipient, amount)
 }
 
@@ -631,7 +561,6 @@ func (m *MockISimpleTokenEvents) EXPECT() *MockISimpleTokenEventsMockRecorder {
 
 // FilterApproval mocks base method
 func (m *MockISimpleTokenEvents) FilterApproval(opts *bind.FilterOpts, owner, spender []common.Address) (*adapter.SimpleTokenApprovalIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterApproval", opts, owner, spender)
 	ret0, _ := ret[0].(*adapter.SimpleTokenApprovalIterator)
 	ret1, _ := ret[1].(error)
@@ -640,13 +569,11 @@ func (m *MockISimpleTokenEvents) FilterApproval(opts *bind.FilterOpts, owner, sp
 
 // FilterApproval indicates an expected call of FilterApproval
 func (mr *MockISimpleTokenEventsMockRecorder) FilterApproval(opts, owner, spender interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterApproval", reflect.TypeOf((*MockISimpleTokenEvents)(nil).FilterApproval), opts, owner, spender)
 }
 
 // FilterMinterAdded mocks base method
 func (m *MockISimpleTokenEvents) FilterMinterAdded(opts *bind.FilterOpts, account []common.Address) (*adapter.SimpleTokenMinterAddedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterMinterAdded", opts, account)
 	ret0, _ := ret[0].(*adapter.SimpleTokenMinterAddedIterator)
 	ret1, _ := ret[1].(error)
@@ -655,13 +582,11 @@ func (m *MockISimpleTokenEvents) FilterMinterAdded(opts *bind.FilterOpts, accoun
 
 // FilterMinterAdded indicates an expected call of FilterMinterAdded
 func (mr *MockISimpleTokenEventsMockRecorder) FilterMinterAdded(opts, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterMinterAdded", reflect.TypeOf((*MockISimpleTokenEvents)(nil).FilterMinterAdded), opts, account)
 }
 
 // FilterMinterRemoved mocks base method
 func (m *MockISimpleTokenEvents) FilterMinterRemoved(opts *bind.FilterOpts, account []common.Address) (*adapter.SimpleTokenMinterRemovedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterMinterRemoved", opts, account)
 	ret0, _ := ret[0].(*adapter.SimpleTokenMinterRemovedIterator)
 	ret1, _ := ret[1].(error)
@@ -670,13 +595,11 @@ func (m *MockISimpleTokenEvents) FilterMinterRemoved(opts *bind.FilterOpts, acco
 
 // FilterMinterRemoved indicates an expected call of FilterMinterRemoved
 func (mr *MockISimpleTokenEventsMockRecorder) FilterMinterRemoved(opts, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterMinterRemoved", reflect.TypeOf((*MockISimpleTokenEvents)(nil).FilterMinterRemoved), opts, account)
 }
 
 // FilterTransfer mocks base method
 func (m *MockISimpleTokenEvents) FilterTransfer(opts *bind.FilterOpts, from, to []common.Address) (*adapter.SimpleTokenTransferIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterTransfer", opts, from, to)
 	ret0, _ := ret[0].(*adapter.SimpleTokenTransferIterator)
 	ret1, _ := ret[1].(error)
@@ -685,13 +608,11 @@ func (m *MockISimpleTokenEvents) FilterTransfer(opts *bind.FilterOpts, from, to 
 
 // FilterTransfer indicates an expected call of FilterTransfer
 func (mr *MockISimpleTokenEventsMockRecorder) FilterTransfer(opts, from, to interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterTransfer", reflect.TypeOf((*MockISimpleTokenEvents)(nil).FilterTransfer), opts, from, to)
 }
 
 // ParseApprovalFromReceipt mocks base method
 func (m *MockISimpleTokenEvents) ParseApprovalFromReceipt(receipt *types.Receipt) (*adapter.SimpleTokenApproval, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseApprovalFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.SimpleTokenApproval)
 	ret1, _ := ret[1].(error)
@@ -700,13 +621,11 @@ func (m *MockISimpleTokenEvents) ParseApprovalFromReceipt(receipt *types.Receipt
 
 // ParseApprovalFromReceipt indicates an expected call of ParseApprovalFromReceipt
 func (mr *MockISimpleTokenEventsMockRecorder) ParseApprovalFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseApprovalFromReceipt", reflect.TypeOf((*MockISimpleTokenEvents)(nil).ParseApprovalFromReceipt), receipt)
 }
 
 // ParseMinterAddedFromReceipt mocks base method
 func (m *MockISimpleTokenEvents) ParseMinterAddedFromReceipt(receipt *types.Receipt) (*adapter.SimpleTokenMinterAdded, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseMinterAddedFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.SimpleTokenMinterAdded)
 	ret1, _ := ret[1].(error)
@@ -715,13 +634,11 @@ func (m *MockISimpleTokenEvents) ParseMinterAddedFromReceipt(receipt *types.Rece
 
 // ParseMinterAddedFromReceipt indicates an expected call of ParseMinterAddedFromReceipt
 func (mr *MockISimpleTokenEventsMockRecorder) ParseMinterAddedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseMinterAddedFromReceipt", reflect.TypeOf((*MockISimpleTokenEvents)(nil).ParseMinterAddedFromReceipt), receipt)
 }
 
 // ParseMinterRemovedFromReceipt mocks base method
 func (m *MockISimpleTokenEvents) ParseMinterRemovedFromReceipt(receipt *types.Receipt) (*adapter.SimpleTokenMinterRemoved, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseMinterRemovedFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.SimpleTokenMinterRemoved)
 	ret1, _ := ret[1].(error)
@@ -730,13 +647,11 @@ func (m *MockISimpleTokenEvents) ParseMinterRemovedFromReceipt(receipt *types.Re
 
 // ParseMinterRemovedFromReceipt indicates an expected call of ParseMinterRemovedFromReceipt
 func (mr *MockISimpleTokenEventsMockRecorder) ParseMinterRemovedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseMinterRemovedFromReceipt", reflect.TypeOf((*MockISimpleTokenEvents)(nil).ParseMinterRemovedFromReceipt), receipt)
 }
 
 // ParseTransferFromReceipt mocks base method
 func (m *MockISimpleTokenEvents) ParseTransferFromReceipt(receipt *types.Receipt) (*adapter.SimpleTokenTransfer, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseTransferFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.SimpleTokenTransfer)
 	ret1, _ := ret[1].(error)
@@ -745,13 +660,11 @@ func (m *MockISimpleTokenEvents) ParseTransferFromReceipt(receipt *types.Receipt
 
 // ParseTransferFromReceipt indicates an expected call of ParseTransferFromReceipt
 func (mr *MockISimpleTokenEventsMockRecorder) ParseTransferFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseTransferFromReceipt", reflect.TypeOf((*MockISimpleTokenEvents)(nil).ParseTransferFromReceipt), receipt)
 }
 
 // WatchApproval mocks base method
 func (m *MockISimpleTokenEvents) WatchApproval(opts *bind.WatchOpts, sink chan<- *adapter.SimpleTokenApproval, owner, spender []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchApproval", opts, sink, owner, spender)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -760,13 +673,11 @@ func (m *MockISimpleTokenEvents) WatchApproval(opts *bind.WatchOpts, sink chan<-
 
 // WatchApproval indicates an expected call of WatchApproval
 func (mr *MockISimpleTokenEventsMockRecorder) WatchApproval(opts, sink, owner, spender interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchApproval", reflect.TypeOf((*MockISimpleTokenEvents)(nil).WatchApproval), opts, sink, owner, spender)
 }
 
 // WatchMinterAdded mocks base method
 func (m *MockISimpleTokenEvents) WatchMinterAdded(opts *bind.WatchOpts, sink chan<- *adapter.SimpleTokenMinterAdded, account []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchMinterAdded", opts, sink, account)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -775,13 +686,11 @@ func (m *MockISimpleTokenEvents) WatchMinterAdded(opts *bind.WatchOpts, sink cha
 
 // WatchMinterAdded indicates an expected call of WatchMinterAdded
 func (mr *MockISimpleTokenEventsMockRecorder) WatchMinterAdded(opts, sink, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchMinterAdded", reflect.TypeOf((*MockISimpleTokenEvents)(nil).WatchMinterAdded), opts, sink, account)
 }
 
 // WatchMinterRemoved mocks base method
 func (m *MockISimpleTokenEvents) WatchMinterRemoved(opts *bind.WatchOpts, sink chan<- *adapter.SimpleTokenMinterRemoved, account []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchMinterRemoved", opts, sink, account)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -790,13 +699,11 @@ func (m *MockISimpleTokenEvents) WatchMinterRemoved(opts *bind.WatchOpts, sink c
 
 // WatchMinterRemoved indicates an expected call of WatchMinterRemoved
 func (mr *MockISimpleTokenEventsMockRecorder) WatchMinterRemoved(opts, sink, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchMinterRemoved", reflect.TypeOf((*MockISimpleTokenEvents)(nil).WatchMinterRemoved), opts, sink, account)
 }
 
 // WatchTransfer mocks base method
 func (m *MockISimpleTokenEvents) WatchTransfer(opts *bind.WatchOpts, sink chan<- *adapter.SimpleTokenTransfer, from, to []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchTransfer", opts, sink, from, to)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -805,7 +712,6 @@ func (m *MockISimpleTokenEvents) WatchTransfer(opts *bind.WatchOpts, sink chan<-
 
 // WatchTransfer indicates an expected call of WatchTransfer
 func (mr *MockISimpleTokenEventsMockRecorder) WatchTransfer(opts, sink, from, to interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchTransfer", reflect.TypeOf((*MockISimpleTokenEvents)(nil).WatchTransfer), opts, sink, from, to)
 }
 
@@ -834,7 +740,6 @@ func (m *MockISimpleTokenFilterer) EXPECT() *MockISimpleTokenFiltererMockRecorde
 
 // FilterApproval mocks base method
 func (m *MockISimpleTokenFilterer) FilterApproval(opts *bind.FilterOpts, owner, spender []common.Address) (*adapter.SimpleTokenApprovalIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterApproval", opts, owner, spender)
 	ret0, _ := ret[0].(*adapter.SimpleTokenApprovalIterator)
 	ret1, _ := ret[1].(error)
@@ -843,13 +748,11 @@ func (m *MockISimpleTokenFilterer) FilterApproval(opts *bind.FilterOpts, owner, 
 
 // FilterApproval indicates an expected call of FilterApproval
 func (mr *MockISimpleTokenFiltererMockRecorder) FilterApproval(opts, owner, spender interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterApproval", reflect.TypeOf((*MockISimpleTokenFilterer)(nil).FilterApproval), opts, owner, spender)
 }
 
 // FilterMinterAdded mocks base method
 func (m *MockISimpleTokenFilterer) FilterMinterAdded(opts *bind.FilterOpts, account []common.Address) (*adapter.SimpleTokenMinterAddedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterMinterAdded", opts, account)
 	ret0, _ := ret[0].(*adapter.SimpleTokenMinterAddedIterator)
 	ret1, _ := ret[1].(error)
@@ -858,13 +761,11 @@ func (m *MockISimpleTokenFilterer) FilterMinterAdded(opts *bind.FilterOpts, acco
 
 // FilterMinterAdded indicates an expected call of FilterMinterAdded
 func (mr *MockISimpleTokenFiltererMockRecorder) FilterMinterAdded(opts, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterMinterAdded", reflect.TypeOf((*MockISimpleTokenFilterer)(nil).FilterMinterAdded), opts, account)
 }
 
 // FilterMinterRemoved mocks base method
 func (m *MockISimpleTokenFilterer) FilterMinterRemoved(opts *bind.FilterOpts, account []common.Address) (*adapter.SimpleTokenMinterRemovedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterMinterRemoved", opts, account)
 	ret0, _ := ret[0].(*adapter.SimpleTokenMinterRemovedIterator)
 	ret1, _ := ret[1].(error)
@@ -873,13 +774,11 @@ func (m *MockISimpleTokenFilterer) FilterMinterRemoved(opts *bind.FilterOpts, ac
 
 // FilterMinterRemoved indicates an expected call of FilterMinterRemoved
 func (mr *MockISimpleTokenFiltererMockRecorder) FilterMinterRemoved(opts, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterMinterRemoved", reflect.TypeOf((*MockISimpleTokenFilterer)(nil).FilterMinterRemoved), opts, account)
 }
 
 // FilterTransfer mocks base method
 func (m *MockISimpleTokenFilterer) FilterTransfer(opts *bind.FilterOpts, from, to []common.Address) (*adapter.SimpleTokenTransferIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterTransfer", opts, from, to)
 	ret0, _ := ret[0].(*adapter.SimpleTokenTransferIterator)
 	ret1, _ := ret[1].(error)
@@ -888,7 +787,6 @@ func (m *MockISimpleTokenFilterer) FilterTransfer(opts *bind.FilterOpts, from, t
 
 // FilterTransfer indicates an expected call of FilterTransfer
 func (mr *MockISimpleTokenFiltererMockRecorder) FilterTransfer(opts, from, to interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterTransfer", reflect.TypeOf((*MockISimpleTokenFilterer)(nil).FilterTransfer), opts, from, to)
 }
 
@@ -917,7 +815,6 @@ func (m *MockISimpleTokenParser) EXPECT() *MockISimpleTokenParserMockRecorder {
 
 // ParseApprovalFromReceipt mocks base method
 func (m *MockISimpleTokenParser) ParseApprovalFromReceipt(receipt *types.Receipt) (*adapter.SimpleTokenApproval, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseApprovalFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.SimpleTokenApproval)
 	ret1, _ := ret[1].(error)
@@ -926,13 +823,11 @@ func (m *MockISimpleTokenParser) ParseApprovalFromReceipt(receipt *types.Receipt
 
 // ParseApprovalFromReceipt indicates an expected call of ParseApprovalFromReceipt
 func (mr *MockISimpleTokenParserMockRecorder) ParseApprovalFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseApprovalFromReceipt", reflect.TypeOf((*MockISimpleTokenParser)(nil).ParseApprovalFromReceipt), receipt)
 }
 
 // ParseMinterAddedFromReceipt mocks base method
 func (m *MockISimpleTokenParser) ParseMinterAddedFromReceipt(receipt *types.Receipt) (*adapter.SimpleTokenMinterAdded, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseMinterAddedFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.SimpleTokenMinterAdded)
 	ret1, _ := ret[1].(error)
@@ -941,13 +836,11 @@ func (m *MockISimpleTokenParser) ParseMinterAddedFromReceipt(receipt *types.Rece
 
 // ParseMinterAddedFromReceipt indicates an expected call of ParseMinterAddedFromReceipt
 func (mr *MockISimpleTokenParserMockRecorder) ParseMinterAddedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseMinterAddedFromReceipt", reflect.TypeOf((*MockISimpleTokenParser)(nil).ParseMinterAddedFromReceipt), receipt)
 }
 
 // ParseMinterRemovedFromReceipt mocks base method
 func (m *MockISimpleTokenParser) ParseMinterRemovedFromReceipt(receipt *types.Receipt) (*adapter.SimpleTokenMinterRemoved, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseMinterRemovedFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.SimpleTokenMinterRemoved)
 	ret1, _ := ret[1].(error)
@@ -956,13 +849,11 @@ func (m *MockISimpleTokenParser) ParseMinterRemovedFromReceipt(receipt *types.Re
 
 // ParseMinterRemovedFromReceipt indicates an expected call of ParseMinterRemovedFromReceipt
 func (mr *MockISimpleTokenParserMockRecorder) ParseMinterRemovedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseMinterRemovedFromReceipt", reflect.TypeOf((*MockISimpleTokenParser)(nil).ParseMinterRemovedFromReceipt), receipt)
 }
 
 // ParseTransferFromReceipt mocks base method
 func (m *MockISimpleTokenParser) ParseTransferFromReceipt(receipt *types.Receipt) (*adapter.SimpleTokenTransfer, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseTransferFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.SimpleTokenTransfer)
 	ret1, _ := ret[1].(error)
@@ -971,7 +862,6 @@ func (m *MockISimpleTokenParser) ParseTransferFromReceipt(receipt *types.Receipt
 
 // ParseTransferFromReceipt indicates an expected call of ParseTransferFromReceipt
 func (mr *MockISimpleTokenParserMockRecorder) ParseTransferFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseTransferFromReceipt", reflect.TypeOf((*MockISimpleTokenParser)(nil).ParseTransferFromReceipt), receipt)
 }
 
@@ -1000,7 +890,6 @@ func (m *MockISimpleTokenWatcher) EXPECT() *MockISimpleTokenWatcherMockRecorder 
 
 // WatchApproval mocks base method
 func (m *MockISimpleTokenWatcher) WatchApproval(opts *bind.WatchOpts, sink chan<- *adapter.SimpleTokenApproval, owner, spender []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchApproval", opts, sink, owner, spender)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1009,13 +898,11 @@ func (m *MockISimpleTokenWatcher) WatchApproval(opts *bind.WatchOpts, sink chan<
 
 // WatchApproval indicates an expected call of WatchApproval
 func (mr *MockISimpleTokenWatcherMockRecorder) WatchApproval(opts, sink, owner, spender interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchApproval", reflect.TypeOf((*MockISimpleTokenWatcher)(nil).WatchApproval), opts, sink, owner, spender)
 }
 
 // WatchMinterAdded mocks base method
 func (m *MockISimpleTokenWatcher) WatchMinterAdded(opts *bind.WatchOpts, sink chan<- *adapter.SimpleTokenMinterAdded, account []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchMinterAdded", opts, sink, account)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1024,13 +911,11 @@ func (m *MockISimpleTokenWatcher) WatchMinterAdded(opts *bind.WatchOpts, sink ch
 
 // WatchMinterAdded indicates an expected call of WatchMinterAdded
 func (mr *MockISimpleTokenWatcherMockRecorder) WatchMinterAdded(opts, sink, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchMinterAdded", reflect.TypeOf((*MockISimpleTokenWatcher)(nil).WatchMinterAdded), opts, sink, account)
 }
 
 // WatchMinterRemoved mocks base method
 func (m *MockISimpleTokenWatcher) WatchMinterRemoved(opts *bind.WatchOpts, sink chan<- *adapter.SimpleTokenMinterRemoved, account []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchMinterRemoved", opts, sink, account)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1039,13 +924,11 @@ func (m *MockISimpleTokenWatcher) WatchMinterRemoved(opts *bind.WatchOpts, sink 
 
 // WatchMinterRemoved indicates an expected call of WatchMinterRemoved
 func (mr *MockISimpleTokenWatcherMockRecorder) WatchMinterRemoved(opts, sink, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchMinterRemoved", reflect.TypeOf((*MockISimpleTokenWatcher)(nil).WatchMinterRemoved), opts, sink, account)
 }
 
 // WatchTransfer mocks base method
 func (m *MockISimpleTokenWatcher) WatchTransfer(opts *bind.WatchOpts, sink chan<- *adapter.SimpleTokenTransfer, from, to []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchTransfer", opts, sink, from, to)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1054,7 +937,6 @@ func (m *MockISimpleTokenWatcher) WatchTransfer(opts *bind.WatchOpts, sink chan<
 
 // WatchTransfer indicates an expected call of WatchTransfer
 func (mr *MockISimpleTokenWatcherMockRecorder) WatchTransfer(opts, sink, from, to interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchTransfer", reflect.TypeOf((*MockISimpleTokenWatcher)(nil).WatchTransfer), opts, sink, from, to)
 }
 
@@ -1083,7 +965,6 @@ func (m *MockISimpleTokenContract) EXPECT() *MockISimpleTokenContractMockRecorde
 
 // Address mocks base method
 func (m *MockISimpleTokenContract) Address() common.Address {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
@@ -1091,13 +972,11 @@ func (m *MockISimpleTokenContract) Address() common.Address {
 
 // Address indicates an expected call of Address
 func (mr *MockISimpleTokenContractMockRecorder) Address() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockISimpleTokenContract)(nil).Address))
 }
 
 // TxHash mocks base method
 func (m *MockISimpleTokenContract) TxHash() common.Hash {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TxHash")
 	ret0, _ := ret[0].(common.Hash)
 	return ret0
@@ -1105,13 +984,11 @@ func (m *MockISimpleTokenContract) TxHash() common.Hash {
 
 // TxHash indicates an expected call of TxHash
 func (mr *MockISimpleTokenContractMockRecorder) TxHash() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockISimpleTokenContract)(nil).TxHash))
 }
 
 // CreatedAt mocks base method
 func (m *MockISimpleTokenContract) CreatedAt() *big.Int {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatedAt")
 	ret0, _ := ret[0].(*big.Int)
 	return ret0
@@ -1119,13 +996,11 @@ func (m *MockISimpleTokenContract) CreatedAt() *big.Int {
 
 // CreatedAt indicates an expected call of CreatedAt
 func (mr *MockISimpleTokenContractMockRecorder) CreatedAt() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockISimpleTokenContract)(nil).CreatedAt))
 }
 
 // Allowance mocks base method
 func (m *MockISimpleTokenContract) Allowance(owner, spender common.Address) (*big.Int, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Allowance", owner, spender)
 	ret0, _ := ret[0].(*big.Int)
 	ret1, _ := ret[1].(error)
@@ -1134,13 +1009,11 @@ func (m *MockISimpleTokenContract) Allowance(owner, spender common.Address) (*bi
 
 // Allowance indicates an expected call of Allowance
 func (mr *MockISimpleTokenContractMockRecorder) Allowance(owner, spender interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Allowance", reflect.TypeOf((*MockISimpleTokenContract)(nil).Allowance), owner, spender)
 }
 
 // BalanceOf mocks base method
 func (m *MockISimpleTokenContract) BalanceOf(account common.Address) (*big.Int, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "BalanceOf", account)
 	ret0, _ := ret[0].(*big.Int)
 	ret1, _ := ret[1].(error)
@@ -1149,13 +1022,11 @@ func (m *MockISimpleTokenContract) BalanceOf(account common.Address) (*big.Int, 
 
 // BalanceOf indicates an expected call of BalanceOf
 func (mr *MockISimpleTokenContractMockRecorder) BalanceOf(account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BalanceOf", reflect.TypeOf((*MockISimpleTokenContract)(nil).BalanceOf), account)
 }
 
 // IsMinter mocks base method
 func (m *MockISimpleTokenContract) IsMinter(account common.Address) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsMinter", account)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -1164,13 +1035,11 @@ func (m *MockISimpleTokenContract) IsMinter(account common.Address) (bool, error
 
 // IsMinter indicates an expected call of IsMinter
 func (mr *MockISimpleTokenContractMockRecorder) IsMinter(account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsMinter", reflect.TypeOf((*MockISimpleTokenContract)(nil).IsMinter), account)
 }
 
 // TotalSupply mocks base method
 func (m *MockISimpleTokenContract) TotalSupply() (*big.Int, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TotalSupply")
 	ret0, _ := ret[0].(*big.Int)
 	ret1, _ := ret[1].(error)
@@ -1179,13 +1048,11 @@ func (m *MockISimpleTokenContract) TotalSupply() (*big.Int, error) {
 
 // TotalSupply indicates an expected call of TotalSupply
 func (mr *MockISimpleTokenContractMockRecorder) TotalSupply() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TotalSupply", reflect.TypeOf((*MockISimpleTokenContract)(nil).TotalSupply))
 }
 
 // AddMinter mocks base method
 func (m *MockISimpleTokenContract) AddMinter(ctx context.Context, account common.Address) (*types.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddMinter", ctx, account)
 	ret0, _ := ret[0].(*types.Receipt)
 	ret1, _ := ret[1].(error)
@@ -1194,13 +1061,11 @@ func (m *MockISimpleTokenContract) AddMinter(ctx context.Context, account common
 
 // AddMinter indicates an expected call of AddMinter
 func (mr *MockISimpleTokenContractMockRecorder) AddMinter(ctx, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddMinter", reflect.TypeOf((*MockISimpleTokenContract)(nil).AddMinter), ctx, account)
 }
 
 // Approve mocks base method
 func (m *MockISimpleTokenContract) Approve(ctx context.Context, spender common.Address, value *big.Int) (*types.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Approve", ctx, spender, value)
 	ret0, _ := ret[0].(*types.Receipt)
 	ret1, _ := ret[1].(error)
@@ -1209,13 +1074,11 @@ func (m *MockISimpleTokenContract) Approve(ctx context.Context, spender common.A
 
 // Approve indicates an expected call of Approve
 func (mr *MockISimpleTokenContractMockRecorder) Approve(ctx, spender, value interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Approve", reflect.TypeOf((*MockISimpleTokenContract)(nil).Approve), ctx, spender, value)
 }
 
 // DecreaseAllowance mocks base method
 func (m *MockISimpleTokenContract) DecreaseAllowance(ctx context.Context, spender common.Address, subtractedValue *big.Int) (*types.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DecreaseAllowance", ctx, spender, subtractedValue)
 	ret0, _ := ret[0].(*types.Receipt)
 	ret1, _ := ret[1].(error)
@@ -1224,13 +1087,11 @@ func (m *MockISimpleTokenContract) DecreaseAllowance(ctx context.Context, spende
 
 // DecreaseAllowance indicates an expected call of DecreaseAllowance
 func (mr *MockISimpleTokenContractMockRecorder) DecreaseAllowance(ctx, spender, subtractedValue interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DecreaseAllowance", reflect.TypeOf((*MockISimpleTokenContract)(nil).DecreaseAllowance), ctx, spender, subtractedValue)
 }
 
 // IncreaseAllowance mocks base method
 func (m *MockISimpleTokenContract) IncreaseAllowance(ctx context.Context, spender common.Address, addedValue *big.Int) (*types.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IncreaseAllowance", ctx, spender, addedValue)
 	ret0, _ := ret[0].(*types.Receipt)
 	ret1, _ := ret[1].(error)
@@ -1239,13 +1100,11 @@ func (m *MockISimpleTokenContract) IncreaseAllowance(ctx context.Context, spende
 
 // IncreaseAllowance indicates an expected call of IncreaseAllowance
 func (mr *MockISimpleTokenContractMockRecorder) IncreaseAllowance(ctx, spender, addedValue interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IncreaseAllowance", reflect.TypeOf((*MockISimpleTokenContract)(nil).IncreaseAllowance), ctx, spender, addedValue)
 }
 
 // Mint mocks base method
 func (m *MockISimpleTokenContract) Mint(ctx context.Context, account common.Address, amount *big.Int) (*types.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Mint", ctx, account, amount)
 	ret0, _ := ret[0].(*types.Receipt)
 	ret1, _ := ret[1].(error)
@@ -1254,13 +1113,11 @@ func (m *MockISimpleTokenContract) Mint(ctx context.Context, account common.Addr
 
 // Mint indicates an expected call of Mint
 func (mr *MockISimpleTokenContractMockRecorder) Mint(ctx, account, amount interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Mint", reflect.TypeOf((*MockISimpleTokenContract)(nil).Mint), ctx, account, amount)
 }
 
 // RenounceMinter mocks base method
 func (m *MockISimpleTokenContract) RenounceMinter(ctx context.Context) (*types.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RenounceMinter", ctx)
 	ret0, _ := ret[0].(*types.Receipt)
 	ret1, _ := ret[1].(error)
@@ -1269,13 +1126,11 @@ func (m *MockISimpleTokenContract) RenounceMinter(ctx context.Context) (*types.R
 
 // RenounceMinter indicates an expected call of RenounceMinter
 func (mr *MockISimpleTokenContractMockRecorder) RenounceMinter(ctx interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RenounceMinter", reflect.TypeOf((*MockISimpleTokenContract)(nil).RenounceMinter), ctx)
 }
 
 // Transfer mocks base method
 func (m *MockISimpleTokenContract) Transfer(ctx context.Context, recipient common.Address, amount *big.Int) (*types.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Transfer", ctx, recipient, amount)
 	ret0, _ := ret[0].(*types.Receipt)
 	ret1, _ := ret[1].(error)
@@ -1284,13 +1139,11 @@ func (m *MockISimpleTokenContract) Transfer(ctx context.Context, recipient commo
 
 // Transfer indicates an expected call of Transfer
 func (mr *MockISimpleTokenContractMockRecorder) Transfer(ctx, recipient, amount interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Transfer", reflect.TypeOf((*MockISimpleTokenContract)(nil).Transfer), ctx, recipient, amount)
 }
 
 // TransferFrom mocks base method
 func (m *MockISimpleTokenContract) TransferFrom(ctx context.Context, sender, recipient common.Address, amount *big.Int) (*types.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TransferFrom", ctx, sender, recipient, amount)
 	ret0, _ := ret[0].(*types.Receipt)
 	ret1, _ := ret[1].(error)
@@ -1299,13 +1152,11 @@ func (m *MockISimpleTokenContract) TransferFrom(ctx context.Context, sender, rec
 
 // TransferFrom indicates an expected call of TransferFrom
 func (mr *MockISimpleTokenContractMockRecorder) TransferFrom(ctx, sender, recipient, amount interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransferFrom", reflect.TypeOf((*MockISimpleTokenContract)(nil).TransferFrom), ctx, sender, recipient, amount)
 }
 
 // FilterApproval mocks base method
 func (m *MockISimpleTokenContract) FilterApproval(opts *bind.FilterOpts, owner, spender []common.Address) (*adapter.SimpleTokenApprovalIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterApproval", opts, owner, spender)
 	ret0, _ := ret[0].(*adapter.SimpleTokenApprovalIterator)
 	ret1, _ := ret[1].(error)
@@ -1314,13 +1165,11 @@ func (m *MockISimpleTokenContract) FilterApproval(opts *bind.FilterOpts, owner, 
 
 // FilterApproval indicates an expected call of FilterApproval
 func (mr *MockISimpleTokenContractMockRecorder) FilterApproval(opts, owner, spender interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterApproval", reflect.TypeOf((*MockISimpleTokenContract)(nil).FilterApproval), opts, owner, spender)
 }
 
 // FilterMinterAdded mocks base method
 func (m *MockISimpleTokenContract) FilterMinterAdded(opts *bind.FilterOpts, account []common.Address) (*adapter.SimpleTokenMinterAddedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterMinterAdded", opts, account)
 	ret0, _ := ret[0].(*adapter.SimpleTokenMinterAddedIterator)
 	ret1, _ := ret[1].(error)
@@ -1329,13 +1178,11 @@ func (m *MockISimpleTokenContract) FilterMinterAdded(opts *bind.FilterOpts, acco
 
 // FilterMinterAdded indicates an expected call of FilterMinterAdded
 func (mr *MockISimpleTokenContractMockRecorder) FilterMinterAdded(opts, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterMinterAdded", reflect.TypeOf((*MockISimpleTokenContract)(nil).FilterMinterAdded), opts, account)
 }
 
 // FilterMinterRemoved mocks base method
 func (m *MockISimpleTokenContract) FilterMinterRemoved(opts *bind.FilterOpts, account []common.Address) (*adapter.SimpleTokenMinterRemovedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterMinterRemoved", opts, account)
 	ret0, _ := ret[0].(*adapter.SimpleTokenMinterRemovedIterator)
 	ret1, _ := ret[1].(error)
@@ -1344,13 +1191,11 @@ func (m *MockISimpleTokenContract) FilterMinterRemoved(opts *bind.FilterOpts, ac
 
 // FilterMinterRemoved indicates an expected call of FilterMinterRemoved
 func (mr *MockISimpleTokenContractMockRecorder) FilterMinterRemoved(opts, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterMinterRemoved", reflect.TypeOf((*MockISimpleTokenContract)(nil).FilterMinterRemoved), opts, account)
 }
 
 // FilterTransfer mocks base method
 func (m *MockISimpleTokenContract) FilterTransfer(opts *bind.FilterOpts, from, to []common.Address) (*adapter.SimpleTokenTransferIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterTransfer", opts, from, to)
 	ret0, _ := ret[0].(*adapter.SimpleTokenTransferIterator)
 	ret1, _ := ret[1].(error)
@@ -1359,13 +1204,11 @@ func (m *MockISimpleTokenContract) FilterTransfer(opts *bind.FilterOpts, from, t
 
 // FilterTransfer indicates an expected call of FilterTransfer
 func (mr *MockISimpleTokenContractMockRecorder) FilterTransfer(opts, from, to interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterTransfer", reflect.TypeOf((*MockISimpleTokenContract)(nil).FilterTransfer), opts, from, to)
 }
 
 // ParseApprovalFromReceipt mocks base method
 func (m *MockISimpleTokenContract) ParseApprovalFromReceipt(receipt *types.Receipt) (*adapter.SimpleTokenApproval, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseApprovalFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.SimpleTokenApproval)
 	ret1, _ := ret[1].(error)
@@ -1374,13 +1217,11 @@ func (m *MockISimpleTokenContract) ParseApprovalFromReceipt(receipt *types.Recei
 
 // ParseApprovalFromReceipt indicates an expected call of ParseApprovalFromReceipt
 func (mr *MockISimpleTokenContractMockRecorder) ParseApprovalFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseApprovalFromReceipt", reflect.TypeOf((*MockISimpleTokenContract)(nil).ParseApprovalFromReceipt), receipt)
 }
 
 // ParseMinterAddedFromReceipt mocks base method
 func (m *MockISimpleTokenContract) ParseMinterAddedFromReceipt(receipt *types.Receipt) (*adapter.SimpleTokenMinterAdded, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseMinterAddedFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.SimpleTokenMinterAdded)
 	ret1, _ := ret[1].(error)
@@ -1389,13 +1230,11 @@ func (m *MockISimpleTokenContract) ParseMinterAddedFromReceipt(receipt *types.Re
 
 // ParseMinterAddedFromReceipt indicates an expected call of ParseMinterAddedFromReceipt
 func (mr *MockISimpleTokenContractMockRecorder) ParseMinterAddedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseMinterAddedFromReceipt", reflect.TypeOf((*MockISimpleTokenContract)(nil).ParseMinterAddedFromReceipt), receipt)
 }
 
 // ParseMinterRemovedFromReceipt mocks base method
 func (m *MockISimpleTokenContract) ParseMinterRemovedFromReceipt(receipt *types.Receipt) (*adapter.SimpleTokenMinterRemoved, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseMinterRemovedFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.SimpleTokenMinterRemoved)
 	ret1, _ := ret[1].(error)
@@ -1404,13 +1243,11 @@ func (m *MockISimpleTokenContract) ParseMinterRemovedFromReceipt(receipt *types.
 
 // ParseMinterRemovedFromReceipt indicates an expected call of ParseMinterRemovedFromReceipt
 func (mr *MockISimpleTokenContractMockRecorder) ParseMinterRemovedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseMinterRemovedFromReceipt", reflect.TypeOf((*MockISimpleTokenContract)(nil).ParseMinterRemovedFromReceipt), receipt)
 }
 
 // ParseTransferFromReceipt mocks base method
 func (m *MockISimpleTokenContract) ParseTransferFromReceipt(receipt *types.Receipt) (*adapter.SimpleTokenTransfer, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseTransferFromReceipt", receipt)
 	ret0, _ := ret[0].(*adapter.SimpleTokenTransfer)
 	ret1, _ := ret[1].(error)
@@ -1419,13 +1256,11 @@ func (m *MockISimpleTokenContract) ParseTransferFromReceipt(receipt *types.Recei
 
 // ParseTransferFromReceipt indicates an expected call of ParseTransferFromReceipt
 func (mr *MockISimpleTokenContractMockRecorder) ParseTransferFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseTransferFromReceipt", reflect.TypeOf((*MockISimpleTokenContract)(nil).ParseTransferFromReceipt), receipt)
 }
 
 // WatchApproval mocks base method
 func (m *MockISimpleTokenContract) WatchApproval(opts *bind.WatchOpts, sink chan<- *adapter.SimpleTokenApproval, owner, spender []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchApproval", opts, sink, owner, spender)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1434,13 +1269,11 @@ func (m *MockISimpleTokenContract) WatchApproval(opts *bind.WatchOpts, sink chan
 
 // WatchApproval indicates an expected call of WatchApproval
 func (mr *MockISimpleTokenContractMockRecorder) WatchApproval(opts, sink, owner, spender interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchApproval", reflect.TypeOf((*MockISimpleTokenContract)(nil).WatchApproval), opts, sink, owner, spender)
 }
 
 // WatchMinterAdded mocks base method
 func (m *MockISimpleTokenContract) WatchMinterAdded(opts *bind.WatchOpts, sink chan<- *adapter.SimpleTokenMinterAdded, account []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchMinterAdded", opts, sink, account)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1449,13 +1282,11 @@ func (m *MockISimpleTokenContract) WatchMinterAdded(opts *bind.WatchOpts, sink c
 
 // WatchMinterAdded indicates an expected call of WatchMinterAdded
 func (mr *MockISimpleTokenContractMockRecorder) WatchMinterAdded(opts, sink, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchMinterAdded", reflect.TypeOf((*MockISimpleTokenContract)(nil).WatchMinterAdded), opts, sink, account)
 }
 
 // WatchMinterRemoved mocks base method
 func (m *MockISimpleTokenContract) WatchMinterRemoved(opts *bind.WatchOpts, sink chan<- *adapter.SimpleTokenMinterRemoved, account []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchMinterRemoved", opts, sink, account)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1464,13 +1295,11 @@ func (m *MockISimpleTokenContract) WatchMinterRemoved(opts *bind.WatchOpts, sink
 
 // WatchMinterRemoved indicates an expected call of WatchMinterRemoved
 func (mr *MockISimpleTokenContractMockRecorder) WatchMinterRemoved(opts, sink, account interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchMinterRemoved", reflect.TypeOf((*MockISimpleTokenContract)(nil).WatchMinterRemoved), opts, sink, account)
 }
 
 // WatchTransfer mocks base method
 func (m *MockISimpleTokenContract) WatchTransfer(opts *bind.WatchOpts, sink chan<- *adapter.SimpleTokenTransfer, from, to []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchTransfer", opts, sink, from, to)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1479,6 +1308,5 @@ func (m *MockISimpleTokenContract) WatchTransfer(opts *bind.WatchOpts, sink chan
 
 // WatchTransfer indicates an expected call of WatchTransfer
 func (mr *MockISimpleTokenContractMockRecorder) WatchTransfer(opts, sink, from, to interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchTransfer", reflect.TypeOf((*MockISimpleTokenContract)(nil).WatchTransfer), opts, sink, from, to)
 }

@@ -40,7 +40,6 @@ func (m *MockIERC20EscrowManager) EXPECT() *MockIERC20EscrowManagerMockRecorder 
 
 // Address mocks base method
 func (m *MockIERC20EscrowManager) Address() common.Address {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
@@ -48,13 +47,11 @@ func (m *MockIERC20EscrowManager) Address() common.Address {
 
 // Address indicates an expected call of Address
 func (mr *MockIERC20EscrowManagerMockRecorder) Address() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIERC20EscrowManager)(nil).Address))
 }
 
 // TxHash mocks base method
 func (m *MockIERC20EscrowManager) TxHash() common.Hash {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TxHash")
 	ret0, _ := ret[0].(common.Hash)
 	return ret0
@@ -62,13 +59,11 @@ func (m *MockIERC20EscrowManager) TxHash() common.Hash {
 
 // TxHash indicates an expected call of TxHash
 func (mr *MockIERC20EscrowManagerMockRecorder) TxHash() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockIERC20EscrowManager)(nil).TxHash))
 }
 
 // CreatedAt mocks base method
 func (m *MockIERC20EscrowManager) CreatedAt() *big.Int {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatedAt")
 	ret0, _ := ret[0].(*big.Int)
 	return ret0
@@ -76,13 +71,11 @@ func (m *MockIERC20EscrowManager) CreatedAt() *big.Int {
 
 // CreatedAt indicates an expected call of CreatedAt
 func (mr *MockIERC20EscrowManagerMockRecorder) CreatedAt() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIERC20EscrowManager)(nil).CreatedAt))
 }
 
 // Convert mocks base method
 func (m *MockIERC20EscrowManager) Convert(sign [4]byte, args []byte, offerId types.ID) ([]byte, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Convert", sign, args, offerId)
 	ret0, _ := ret[0].([]byte)
 	ret1, _ := ret[1].(error)
@@ -91,13 +84,11 @@ func (m *MockIERC20EscrowManager) Convert(sign [4]byte, args []byte, offerId typ
 
 // Convert indicates an expected call of Convert
 func (mr *MockIERC20EscrowManagerMockRecorder) Convert(sign, args, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Convert", reflect.TypeOf((*MockIERC20EscrowManager)(nil).Convert), sign, args, offerId)
 }
 
 // GetTransactSelector mocks base method
 func (m *MockIERC20EscrowManager) GetTransactSelector() ([4]byte, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTransactSelector")
 	ret0, _ := ret[0].([4]byte)
 	ret1, _ := ret[1].(error)
@@ -106,13 +97,11 @@ func (m *MockIERC20EscrowManager) GetTransactSelector() ([4]byte, error) {
 
 // GetTransactSelector indicates an expected call of GetTransactSelector
 func (mr *MockIERC20EscrowManagerMockRecorder) GetTransactSelector() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransactSelector", reflect.TypeOf((*MockIERC20EscrowManager)(nil).GetTransactSelector))
 }
 
 // Transact mocks base method
 func (m *MockIERC20EscrowManager) Transact(ctx context.Context, token common.Address, amount *big.Int, offerId types.ID) error {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Transact", ctx, token, amount, offerId)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -120,7 +109,6 @@ func (m *MockIERC20EscrowManager) Transact(ctx context.Context, token common.Add
 
 // Transact indicates an expected call of Transact
 func (mr *MockIERC20EscrowManagerMockRecorder) Transact(ctx, token, amount, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Transact", reflect.TypeOf((*MockIERC20EscrowManager)(nil).Transact), ctx, token, amount, offerId)
 }
 
@@ -149,7 +137,6 @@ func (m *MockIERC20EscrowCalls) EXPECT() *MockIERC20EscrowCallsMockRecorder {
 
 // Convert mocks base method
 func (m *MockIERC20EscrowCalls) Convert(sign [4]byte, args []byte, offerId types.ID) ([]byte, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Convert", sign, args, offerId)
 	ret0, _ := ret[0].([]byte)
 	ret1, _ := ret[1].(error)
@@ -158,13 +145,11 @@ func (m *MockIERC20EscrowCalls) Convert(sign [4]byte, args []byte, offerId types
 
 // Convert indicates an expected call of Convert
 func (mr *MockIERC20EscrowCallsMockRecorder) Convert(sign, args, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Convert", reflect.TypeOf((*MockIERC20EscrowCalls)(nil).Convert), sign, args, offerId)
 }
 
 // GetTransactSelector mocks base method
 func (m *MockIERC20EscrowCalls) GetTransactSelector() ([4]byte, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTransactSelector")
 	ret0, _ := ret[0].([4]byte)
 	ret1, _ := ret[1].(error)
@@ -173,7 +158,6 @@ func (m *MockIERC20EscrowCalls) GetTransactSelector() ([4]byte, error) {
 
 // GetTransactSelector indicates an expected call of GetTransactSelector
 func (mr *MockIERC20EscrowCallsMockRecorder) GetTransactSelector() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransactSelector", reflect.TypeOf((*MockIERC20EscrowCalls)(nil).GetTransactSelector))
 }
 
@@ -202,7 +186,6 @@ func (m *MockIERC20EscrowTransacts) EXPECT() *MockIERC20EscrowTransactsMockRecor
 
 // Transact mocks base method
 func (m *MockIERC20EscrowTransacts) Transact(ctx context.Context, token common.Address, amount *big.Int, offerId types.ID) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Transact", ctx, token, amount, offerId)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
@@ -211,7 +194,6 @@ func (m *MockIERC20EscrowTransacts) Transact(ctx context.Context, token common.A
 
 // Transact indicates an expected call of Transact
 func (mr *MockIERC20EscrowTransactsMockRecorder) Transact(ctx, token, amount, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Transact", reflect.TypeOf((*MockIERC20EscrowTransacts)(nil).Transact), ctx, token, amount, offerId)
 }
 
@@ -332,7 +314,6 @@ func (m *MockIERC20EscrowContract) EXPECT() *MockIERC20EscrowContractMockRecorde
 
 // Address mocks base method
 func (m *MockIERC20EscrowContract) Address() common.Address {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
@@ -340,13 +321,11 @@ func (m *MockIERC20EscrowContract) Address() common.Address {
 
 // Address indicates an expected call of Address
 func (mr *MockIERC20EscrowContractMockRecorder) Address() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIERC20EscrowContract)(nil).Address))
 }
 
 // TxHash mocks base method
 func (m *MockIERC20EscrowContract) TxHash() common.Hash {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TxHash")
 	ret0, _ := ret[0].(common.Hash)
 	return ret0
@@ -354,13 +333,11 @@ func (m *MockIERC20EscrowContract) TxHash() common.Hash {
 
 // TxHash indicates an expected call of TxHash
 func (mr *MockIERC20EscrowContractMockRecorder) TxHash() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockIERC20EscrowContract)(nil).TxHash))
 }
 
 // CreatedAt mocks base method
 func (m *MockIERC20EscrowContract) CreatedAt() *big.Int {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatedAt")
 	ret0, _ := ret[0].(*big.Int)
 	return ret0
@@ -368,13 +345,11 @@ func (m *MockIERC20EscrowContract) CreatedAt() *big.Int {
 
 // CreatedAt indicates an expected call of CreatedAt
 func (mr *MockIERC20EscrowContractMockRecorder) CreatedAt() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIERC20EscrowContract)(nil).CreatedAt))
 }
 
 // Convert mocks base method
 func (m *MockIERC20EscrowContract) Convert(sign [4]byte, args []byte, offerId types.ID) ([]byte, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Convert", sign, args, offerId)
 	ret0, _ := ret[0].([]byte)
 	ret1, _ := ret[1].(error)
@@ -383,13 +358,11 @@ func (m *MockIERC20EscrowContract) Convert(sign [4]byte, args []byte, offerId ty
 
 // Convert indicates an expected call of Convert
 func (mr *MockIERC20EscrowContractMockRecorder) Convert(sign, args, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Convert", reflect.TypeOf((*MockIERC20EscrowContract)(nil).Convert), sign, args, offerId)
 }
 
 // GetTransactSelector mocks base method
 func (m *MockIERC20EscrowContract) GetTransactSelector() ([4]byte, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTransactSelector")
 	ret0, _ := ret[0].([4]byte)
 	ret1, _ := ret[1].(error)
@@ -398,13 +371,11 @@ func (m *MockIERC20EscrowContract) GetTransactSelector() ([4]byte, error) {
 
 // GetTransactSelector indicates an expected call of GetTransactSelector
 func (mr *MockIERC20EscrowContractMockRecorder) GetTransactSelector() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransactSelector", reflect.TypeOf((*MockIERC20EscrowContract)(nil).GetTransactSelector))
 }
 
 // Transact mocks base method
 func (m *MockIERC20EscrowContract) Transact(ctx context.Context, token common.Address, amount *big.Int, offerId types.ID) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Transact", ctx, token, amount, offerId)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
@@ -413,6 +384,5 @@ func (m *MockIERC20EscrowContract) Transact(ctx context.Context, token common.Ad
 
 // Transact indicates an expected call of Transact
 func (mr *MockIERC20EscrowContractMockRecorder) Transact(ctx, token, amount, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Transact", reflect.TypeOf((*MockIERC20EscrowContract)(nil).Transact), ctx, token, amount, offerId)
 }

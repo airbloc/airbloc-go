@@ -182,12 +182,6 @@ func (service *service) createConsentHandler(allow bool) p2p.RPCHandler {
 			return nil, errors.Errorf("app does not exist. appName: %s", appName)
 		}
 
-		// action
-		action, actionExists := types.ConsentActionList[uint8(request.GetAction())]
-		if !actionExists {
-			return nil, errors.Errorf("action does not exist. action: %d", request.GetAction())
-		}
-
 		// dataType
 		if dataTypeExists, err := service.dataTypes.Exists(dataType); err != nil {
 			return nil, errors.Wrap(err, "failed to call dataTypeRegistry.Exists")
@@ -207,7 +201,7 @@ func (service *service) createConsentHandler(allow bool) p2p.RPCHandler {
 		}
 
 		consentData := types.ConsentData{
-			Action:   action,
+			Action:   uint8(request.GetAction()),
 			DataType: dataType,
 			Allow:    allow,
 		}
@@ -247,7 +241,7 @@ func (service *service) consentManyHandler(
 	consentData := make([]types.ConsentData, len(request.GetConsentData()))
 	for index, consentRawData := range request.GetConsentData() {
 		consentData[index] = types.ConsentData{
-			Action:   types.ConsentActionList[uint8(consentRawData.GetAction())],
+			Action:   uint8(consentRawData.GetAction()),
 			DataType: consentRawData.GetDataType(),
 			Allow:    consentRawData.GetAllow(),
 		}

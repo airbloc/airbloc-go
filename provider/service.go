@@ -16,6 +16,7 @@ var apis = []api.Constructor{
 	pAPI.NewExchangeAPI,
 	pAPI.NewWarehouseAPI,
 	pAPI.NewUserAPI,
+	pAPI.NewConsentsAPI,
 }
 
 type service struct {

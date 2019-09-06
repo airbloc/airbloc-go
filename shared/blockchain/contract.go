@@ -2,6 +2,7 @@ package blockchain
 
 import (
 	"io"
+	"log"
 	"math/big"
 	"net/http"
 	"os"
@@ -72,6 +73,40 @@ func (cm *contractManager) load(reader io.Reader) error {
 	for name, info := range contracts {
 		if _, ok := contractList[name]; !ok {
 			continue
+		}
+
+		if name == "Consents" {
+			methods := []abi.Method{
+				info.ABI.Methods["consent"],
+				info.ABI.Methods["consentMany"],
+				info.ABI.Methods["consentByController"],
+				info.ABI.Methods["consentManyByController"],
+				info.ABI.Methods["modifyConsentByController"],
+				info.ABI.Methods["modifyConsentManyByController"],
+			}
+
+			for _, method := range methods {
+				for index, input := range method.Inputs {
+					if input.Type.String() == "(uint8,string,bool)" {
+						typ, err := abi.NewType("tuple", []abi.ArgumentMarshaling{
+							{Name: "action", Type: "uint8"},
+							{Name: "dataType", Type: "string"},
+							{Name: "allowed", Type: "uint8"},
+						})
+						if err != nil {
+							return errors.Wrap(err, "contract manager: failed to setup consent")
+						}
+
+						method.Inputs[index] = abi.Argument{
+							Name: input.Name,
+							Type: typ,
+						}
+					}
+				}
+			}
+
+			d, _ := json.MarshalIndent(info.ABI.Methods["consent"].Inputs, "", "    ")
+			log.Println(string(d))
 		}
 
 		cm.addrToName[info.Address] = name

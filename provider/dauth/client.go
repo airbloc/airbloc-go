@@ -49,27 +49,33 @@ func (client *Client) SignIn(
 	controller common.Address,
 ) (types.ID, error) {
 	identityHash := hashIdentity(identity, common.Hash{})
-	accountId, err := client.accounts.IdentityHashToAccount(identityHash)
+	accountId, err := client.accounts.GetAccountIdByIdentityHash(identityHash)
 	if err != nil {
-		return types.ID{}, errors.Wrap(err, "unable to call Accounts.IdentityHashToAccount")
+		return types.ID{}, errors.Wrap(err, "unable to call Accounts.GetAccountByIdentityHash")
 	}
 
-	acc, err := client.accounts.GetAccount(accountId)
-	switch err := err.(type) {
-	case nil:
+	exists, err := client.accounts.Exists(accountId)
+	if err != nil {
+		return types.ID{}, errors.Wrap(err, "unable to call Accounts.Exists")
+	}
+
+	if exists {
+		acc, err := client.accounts.GetAccount(accountId)
+		if err != nil {
+			return types.ID{}, errors.Wrap(err, "unable to call Accounts.GetByIdentity")
+		}
+
 		client.log.Info("SignIn(\"%s\"): Already signed up.", identity, logger.Attrs{
 			"account-id": accountId.Hex(),
 			"status":     acc.Status,
 			"controller": acc.Controller.Hex(),
 		})
-	case adapter.ErrNoAccount:
-		client.log.Info("No account for %s. creating new one...", identity)
-		return client.SignUp(ctx, identity, controller)
-	default:
-		return types.ID{}, errors.Wrap(err, "unable to call Accounts.GetByIdentity")
+
+		return accountId, nil
 	}
 
-	return accountId, nil
+	client.log.Info("No account for %s. creating new one...", identity)
+	return client.SignUp(ctx, identity, controller)
 }
 
 // SignUp requests user delegate to create new temporary account using given identity data.
@@ -97,7 +103,7 @@ func (client *Client) Allow(
 	ctx context.Context,
 	accountId types.ID,
 	dataType string,
-	action types.ConsentActionTypes,
+	action uint8,
 	appName string,
 ) error {
 	return client.sendDauthRequest(ctx, appName, action, dataType, accountId, "allow")
@@ -108,7 +114,7 @@ func (client *Client) Deny(
 	ctx context.Context,
 	accountId types.ID,
 	dataType string,
-	action types.ConsentActionTypes,
+	action uint8,
 	appName string,
 ) error {
 	return client.sendDauthRequest(ctx, appName, action, dataType, accountId, "deny")
@@ -150,7 +156,7 @@ func (client *Client) Many(
 func (client *Client) sendDauthRequest(
 	ctx context.Context,
 	appName string,
-	action types.ConsentActionTypes,
+	action uint8,
 	dataType string,
 	accountId types.ID,
 	messageType string,

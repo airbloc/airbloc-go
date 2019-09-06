@@ -6,29 +6,19 @@ import (
 	"github.com/klaytn/klaytn/common"
 )
 
-// AccountStatus is bind of Accounts.Status
-type AccountStatus uint8
-
 const (
 	// AccountStatusNone is bind of Accounts.Status.None
-	AccountStatusNone = AccountStatus(iota)
+	AccountStatusNone uint8 = iota
 	// AccountStatusTemporary is bind of Accounts.Status.Temporary
 	AccountStatusTemporary
 	// AccountStatusCreated is bind of Accounts.Status.Created
 	AccountStatusCreated
 )
 
-// AccountStatusList is list of AccountStatus
-var AccountStatusList = map[uint8]AccountStatus{
-	uint8(AccountStatusNone):      AccountStatusNone,
-	uint8(AccountStatusTemporary): AccountStatusTemporary,
-	uint8(AccountStatusCreated):   AccountStatusCreated,
-}
-
 // Account is bind of Accounts.Account
 type Account struct {
 	Owner         common.Address
-	Status        AccountStatus
+	Status        uint8
 	Controller    common.Address
 	PasswordProof common.Address
 }
@@ -40,27 +30,33 @@ type App struct {
 	Addr  common.Address
 }
 
-// ConsentActionTypes is bind of Consents.ActionTypes
-type ConsentActionTypes uint8
-
 const (
 	// ConsentActionCollection is bind of Consents.ActionTypes.Collectionn
-	ConsentActionCollection = ConsentActionTypes(iota)
+	ConsentActionCollection uint8 = iota
 	// ConsentActionExchange is bind of Consents.ActionTypes.Exchange
 	ConsentActionExchange
 )
 
-// ConsentActionList is list of ConsentAction
-var ConsentActionList = map[uint8]ConsentActionTypes{
-	uint8(ConsentActionCollection): ConsentActionCollection,
-	uint8(ConsentActionExchange):   ConsentActionExchange,
-}
-
 // ConsentData is bind of Consents.ConsentData
 type ConsentData struct {
-	Action   ConsentActionTypes
+	Action   uint8
 	DataType string
 	Allow    bool
+}
+
+// ConsentRequestData is request struct for api
+type ConsentRequestData struct {
+	Action   uint8  `json:"action" binding:"required"`
+	DataType string `json:"data_type" binding:"required"`
+	Allow    bool   `json:"allow" binding:"required"`
+}
+
+func (data ConsentRequestData) ToConsentData() ConsentData {
+	return ConsentData{
+		Action:   data.Action,
+		DataType: data.DataType,
+		Allow:    data.Allow,
+	}
 }
 
 // DataController is bind of ControllerRegistry.DataController
@@ -76,6 +72,13 @@ type DataType struct {
 	SchemaHash common.Hash
 }
 
+// Escrow is bind of ExchangeLib.Escrow
+type Escrow struct {
+	Addr common.Address
+	Sign [4]byte
+	Args []byte
+}
+
 // Offer is bind of ExchangeLib.Offer
 type Offer struct {
 	Provider string
@@ -83,10 +86,6 @@ type Offer struct {
 	DataIds  []DataId
 	At       *big.Int
 	Until    *big.Int
-	Escrow   struct {
-		Addr common.Address
-		Sign [4]byte
-		Args []byte
-	}
-	Status uint8
+	Escrow   Escrow
+	Status   uint8
 }
