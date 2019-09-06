@@ -36,7 +36,7 @@ func (manager *appRegistryManager) Register(ctx context.Context, appName string)
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	manager.log.Info("App registered.", logger.Attrs{"name": evt.AppName})
+	manager.log.Info("App registered.", logger.Attrs{"name": evt[0].AppName})
 	return nil
 }
 
@@ -54,7 +54,7 @@ func (manager *appRegistryManager) Unregister(ctx context.Context, appName strin
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	manager.log.Info("App unregistered.", logger.Attrs{"name": evt.AppName})
+	manager.log.Info("App unregistered.", logger.Attrs{"name": evt[0].AppName})
 	return nil
 
 }
@@ -74,8 +74,8 @@ func (manager *appRegistryManager) TransferAppOwner(ctx context.Context, appName
 	}
 
 	manager.log.Info("App owner transfered.", logger.Attrs{
-		"prev-owner": evt.OldOwner.Hex(),
-		"new-owner":  evt.NewOwner.Hex(),
+		"prev-owner": evt[0].OldOwner.Hex(),
+		"new-owner":  evt[0].NewOwner.Hex(),
 	})
 	return nil
 }

@@ -10,13 +10,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-// ErrNoAccount is error implementation of "no account"
-type ErrNoAccount struct{}
-
-func (err ErrNoAccount) Error() string {
-	return "no account"
-}
-
 // accountsManager is contract wrapper struct
 type accountsManager struct {
 	IAccountsContract
@@ -48,10 +41,10 @@ func (manager *accountsManager) Create(ctx context.Context) (types.ID, error) {
 	}
 
 	manager.log.Info("Account created.", logger.Attrs{
-		"account_id": evt.AccountId.Hex(),
-		"owner":      evt.Owner.Hex(),
+		"account_id": evt[0].AccountId.Hex(),
+		"owner":      evt[0].Owner.Hex(),
 	})
-	return evt.AccountId, nil
+	return evt[0].AccountId, nil
 }
 
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
@@ -69,10 +62,10 @@ func (manager *accountsManager) CreateTemporary(ctx context.Context, identityHas
 	}
 
 	manager.log.Info("Temporary account created.", logger.Attrs{
-		"account_id": evt.AccountId.Hex(),
-		"proxy":      evt.Proxy.Hex(),
+		"account_id": evt[0].AccountId.Hex(),
+		"proxy":      evt[0].Proxy.Hex(),
 	})
-	return evt.AccountId, nil
+	return evt[0].AccountId, nil
 }
 
 // UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
@@ -95,8 +88,8 @@ func (manager *accountsManager) UnlockTemporary(
 	}
 
 	manager.log.Info("Temporary account unlocked.", logger.Attrs{
-		"account_id": evt.AccountId.Hex(),
-		"new_owner":  evt.NewOwner.Hex(),
+		"account_id": evt[0].AccountId.Hex(),
+		"new_owner":  evt[0].NewOwner.Hex(),
 	})
 	return nil
 }

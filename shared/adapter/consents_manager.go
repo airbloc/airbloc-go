@@ -37,10 +37,10 @@ func (manager *consentsManager) Consent(ctx context.Context, appName string, con
 	}
 
 	manager.log.Info("Consented to one data.", logger.Attrs{
-		"app-name":   evt.AppName,
-		"data-type":  evt.DataType,
-		"account-id": evt.UserId.Hex(),
-		"allowed":    evt.Allowed,
+		"app-name":   evt[0].AppName,
+		"data-type":  evt[0].DataType,
+		"account-id": evt[0].UserId.Hex(),
+		"allowed":    evt[0].Allowed,
 	})
 	return nil
 }
@@ -64,9 +64,9 @@ func (manager *consentsManager) ConsentMany(
 	}
 
 	manager.log.Info("Consented to many data.", logger.Attrs{
-		"app-name":   evt.AppName,
-		"account-id": evt.UserId.Hex(),
-		"data-count": len(receipt.Logs),
+		"app-name":   evt[0].AppName,
+		"account-id": evt[0].UserId.Hex(),
+		"data-count": len(evt),
 	})
 	return nil
 }
@@ -91,10 +91,10 @@ func (manager *consentsManager) ConsentByController(
 	}
 
 	manager.log.Info("Consented to one data by controller.", logger.Attrs{
-		"app-name":   evt.AppName,
-		"data-type":  evt.DataType,
-		"account-id": evt.UserId.Hex(),
-		"allowed":    evt.Allowed,
+		"app-name":   evt[0].AppName,
+		"data-type":  evt[0].DataType,
+		"account-id": evt[0].UserId.Hex(),
+		"allowed":    evt[0].Allowed,
 	})
 	return nil
 }
@@ -119,9 +119,9 @@ func (manager *consentsManager) ConsentManyByController(
 	}
 
 	manager.log.Info("Consented to many data by controller.", logger.Attrs{
-		"app-name":   evt.AppName,
-		"account-id": evt.UserId.Hex(),
-		"data-count": len(receipt.Logs),
+		"app-name":   evt[0].AppName,
+		"account-id": evt[0].UserId.Hex(),
+		"data-count": len(evt),
 	})
 	return nil
 }
@@ -147,10 +147,10 @@ func (manager *consentsManager) ModifyConsentByController(
 	}
 
 	manager.log.Info("Consent modified by controller.", logger.Attrs{
-		"app-name":   evt.AppName,
-		"data-type":  evt.DataType,
-		"account-id": evt.UserId.Hex(),
-		"allowed":    evt.Allowed,
+		"app-name":   evt[0].AppName,
+		"data-type":  evt[0].DataType,
+		"account-id": evt[0].UserId.Hex(),
+		"allowed":    evt[0].Allowed,
 	})
 	return nil
 }
@@ -176,10 +176,10 @@ func (manager *consentsManager) ModifyConsentManyByController(
 	}
 
 	manager.log.Info("Consent modified by controller.", logger.Attrs{
-		"app-name":   evt.AppName,
-		"data-type":  evt.DataType,
-		"account-id": evt.UserId.Hex(),
-		"data-count": len(receipt.Logs),
+		"app-name":   evt[0].AppName,
+		"data-type":  evt[0].DataType,
+		"account-id": evt[0].UserId.Hex(),
+		"data-count": len(evt),
 	})
 	return nil
 }

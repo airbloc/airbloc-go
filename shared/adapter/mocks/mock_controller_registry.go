@@ -43,7 +43,6 @@ func (m *MockIControllerRegistryManager) EXPECT() *MockIControllerRegistryManage
 
 // Address mocks base method
 func (m *MockIControllerRegistryManager) Address() common.Address {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
@@ -51,13 +50,11 @@ func (m *MockIControllerRegistryManager) Address() common.Address {
 
 // Address indicates an expected call of Address
 func (mr *MockIControllerRegistryManagerMockRecorder) Address() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIControllerRegistryManager)(nil).Address))
 }
 
 // TxHash mocks base method
 func (m *MockIControllerRegistryManager) TxHash() common.Hash {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TxHash")
 	ret0, _ := ret[0].(common.Hash)
 	return ret0
@@ -65,13 +62,11 @@ func (m *MockIControllerRegistryManager) TxHash() common.Hash {
 
 // TxHash indicates an expected call of TxHash
 func (mr *MockIControllerRegistryManagerMockRecorder) TxHash() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockIControllerRegistryManager)(nil).TxHash))
 }
 
 // CreatedAt mocks base method
 func (m *MockIControllerRegistryManager) CreatedAt() *big.Int {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatedAt")
 	ret0, _ := ret[0].(*big.Int)
 	return ret0
@@ -79,13 +74,11 @@ func (m *MockIControllerRegistryManager) CreatedAt() *big.Int {
 
 // CreatedAt indicates an expected call of CreatedAt
 func (mr *MockIControllerRegistryManagerMockRecorder) CreatedAt() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIControllerRegistryManager)(nil).CreatedAt))
 }
 
 // Exists mocks base method
 func (m *MockIControllerRegistryManager) Exists(controller common.Address) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Exists", controller)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -94,13 +87,11 @@ func (m *MockIControllerRegistryManager) Exists(controller common.Address) (bool
 
 // Exists indicates an expected call of Exists
 func (mr *MockIControllerRegistryManagerMockRecorder) Exists(controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exists", reflect.TypeOf((*MockIControllerRegistryManager)(nil).Exists), controller)
 }
 
 // Get mocks base method
 func (m *MockIControllerRegistryManager) Get(controller common.Address) (types.DataController, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", controller)
 	ret0, _ := ret[0].(types.DataController)
 	ret1, _ := ret[1].(error)
@@ -109,43 +100,11 @@ func (m *MockIControllerRegistryManager) Get(controller common.Address) (types.D
 
 // Get indicates an expected call of Get
 func (mr *MockIControllerRegistryManagerMockRecorder) Get(controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockIControllerRegistryManager)(nil).Get), controller)
-}
-
-// IsOwner mocks base method
-func (m *MockIControllerRegistryManager) IsOwner() (bool, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsOwner")
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// IsOwner indicates an expected call of IsOwner
-func (mr *MockIControllerRegistryManagerMockRecorder) IsOwner() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsOwner", reflect.TypeOf((*MockIControllerRegistryManager)(nil).IsOwner))
-}
-
-// Owner mocks base method
-func (m *MockIControllerRegistryManager) Owner() (common.Address, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Owner")
-	ret0, _ := ret[0].(common.Address)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Owner indicates an expected call of Owner
-func (mr *MockIControllerRegistryManagerMockRecorder) Owner() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Owner", reflect.TypeOf((*MockIControllerRegistryManager)(nil).Owner))
 }
 
 // Register mocks base method
 func (m *MockIControllerRegistryManager) Register(ctx context.Context, controllerAddr common.Address) error {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Register", ctx, controllerAddr)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -153,41 +112,11 @@ func (m *MockIControllerRegistryManager) Register(ctx context.Context, controlle
 
 // Register indicates an expected call of Register
 func (mr *MockIControllerRegistryManagerMockRecorder) Register(ctx, controllerAddr interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockIControllerRegistryManager)(nil).Register), ctx, controllerAddr)
-}
-
-// RenounceOwnership mocks base method
-func (m *MockIControllerRegistryManager) RenounceOwnership(ctx context.Context) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RenounceOwnership", ctx)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// RenounceOwnership indicates an expected call of RenounceOwnership
-func (mr *MockIControllerRegistryManagerMockRecorder) RenounceOwnership(ctx interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RenounceOwnership", reflect.TypeOf((*MockIControllerRegistryManager)(nil).RenounceOwnership), ctx)
-}
-
-// TransferOwnership mocks base method
-func (m *MockIControllerRegistryManager) TransferOwnership(ctx context.Context, newOwner common.Address) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "TransferOwnership", ctx, newOwner)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// TransferOwnership indicates an expected call of TransferOwnership
-func (mr *MockIControllerRegistryManagerMockRecorder) TransferOwnership(ctx, newOwner interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransferOwnership", reflect.TypeOf((*MockIControllerRegistryManager)(nil).TransferOwnership), ctx, newOwner)
 }
 
 // FilterOwnershipTransferred mocks base method
 func (m *MockIControllerRegistryManager) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner, newOwner []common.Address) (*adapter.ControllerRegistryOwnershipTransferredIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOwnershipTransferred", opts, previousOwner, newOwner)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryOwnershipTransferredIterator)
 	ret1, _ := ret[1].(error)
@@ -196,13 +125,11 @@ func (m *MockIControllerRegistryManager) FilterOwnershipTransferred(opts *bind.F
 
 // FilterOwnershipTransferred indicates an expected call of FilterOwnershipTransferred
 func (mr *MockIControllerRegistryManagerMockRecorder) FilterOwnershipTransferred(opts, previousOwner, newOwner interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOwnershipTransferred", reflect.TypeOf((*MockIControllerRegistryManager)(nil).FilterOwnershipTransferred), opts, previousOwner, newOwner)
 }
 
 // FilterRegistration mocks base method
 func (m *MockIControllerRegistryManager) FilterRegistration(opts *bind.FilterOpts, controller []common.Address) (*adapter.ControllerRegistryRegistrationIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterRegistration", opts, controller)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryRegistrationIterator)
 	ret1, _ := ret[1].(error)
@@ -211,13 +138,11 @@ func (m *MockIControllerRegistryManager) FilterRegistration(opts *bind.FilterOpt
 
 // FilterRegistration indicates an expected call of FilterRegistration
 func (mr *MockIControllerRegistryManagerMockRecorder) FilterRegistration(opts, controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterRegistration", reflect.TypeOf((*MockIControllerRegistryManager)(nil).FilterRegistration), opts, controller)
 }
 
 // FilterUnregistration mocks base method
 func (m *MockIControllerRegistryManager) FilterUnregistration(opts *bind.FilterOpts, controller []common.Address) (*adapter.ControllerRegistryUnregistrationIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterUnregistration", opts, controller)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryUnregistrationIterator)
 	ret1, _ := ret[1].(error)
@@ -226,13 +151,11 @@ func (m *MockIControllerRegistryManager) FilterUnregistration(opts *bind.FilterO
 
 // FilterUnregistration indicates an expected call of FilterUnregistration
 func (mr *MockIControllerRegistryManagerMockRecorder) FilterUnregistration(opts, controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterUnregistration", reflect.TypeOf((*MockIControllerRegistryManager)(nil).FilterUnregistration), opts, controller)
 }
 
 // WatchOwnershipTransferred mocks base method
 func (m *MockIControllerRegistryManager) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *adapter.ControllerRegistryOwnershipTransferred, previousOwner, newOwner []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOwnershipTransferred", opts, sink, previousOwner, newOwner)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -241,13 +164,11 @@ func (m *MockIControllerRegistryManager) WatchOwnershipTransferred(opts *bind.Wa
 
 // WatchOwnershipTransferred indicates an expected call of WatchOwnershipTransferred
 func (mr *MockIControllerRegistryManagerMockRecorder) WatchOwnershipTransferred(opts, sink, previousOwner, newOwner interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOwnershipTransferred", reflect.TypeOf((*MockIControllerRegistryManager)(nil).WatchOwnershipTransferred), opts, sink, previousOwner, newOwner)
 }
 
 // WatchRegistration mocks base method
 func (m *MockIControllerRegistryManager) WatchRegistration(opts *bind.WatchOpts, sink chan<- *adapter.ControllerRegistryRegistration, controller []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchRegistration", opts, sink, controller)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -256,13 +177,11 @@ func (m *MockIControllerRegistryManager) WatchRegistration(opts *bind.WatchOpts,
 
 // WatchRegistration indicates an expected call of WatchRegistration
 func (mr *MockIControllerRegistryManagerMockRecorder) WatchRegistration(opts, sink, controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchRegistration", reflect.TypeOf((*MockIControllerRegistryManager)(nil).WatchRegistration), opts, sink, controller)
 }
 
 // WatchUnregistration mocks base method
 func (m *MockIControllerRegistryManager) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *adapter.ControllerRegistryUnregistration, controller []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchUnregistration", opts, sink, controller)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -271,7 +190,6 @@ func (m *MockIControllerRegistryManager) WatchUnregistration(opts *bind.WatchOpt
 
 // WatchUnregistration indicates an expected call of WatchUnregistration
 func (mr *MockIControllerRegistryManagerMockRecorder) WatchUnregistration(opts, sink, controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchUnregistration", reflect.TypeOf((*MockIControllerRegistryManager)(nil).WatchUnregistration), opts, sink, controller)
 }
 
@@ -300,7 +218,6 @@ func (m *MockIControllerRegistryCalls) EXPECT() *MockIControllerRegistryCallsMoc
 
 // Exists mocks base method
 func (m *MockIControllerRegistryCalls) Exists(controller common.Address) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Exists", controller)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -309,13 +226,11 @@ func (m *MockIControllerRegistryCalls) Exists(controller common.Address) (bool, 
 
 // Exists indicates an expected call of Exists
 func (mr *MockIControllerRegistryCallsMockRecorder) Exists(controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exists", reflect.TypeOf((*MockIControllerRegistryCalls)(nil).Exists), controller)
 }
 
 // Get mocks base method
 func (m *MockIControllerRegistryCalls) Get(controller common.Address) (types.DataController, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", controller)
 	ret0, _ := ret[0].(types.DataController)
 	ret1, _ := ret[1].(error)
@@ -324,38 +239,7 @@ func (m *MockIControllerRegistryCalls) Get(controller common.Address) (types.Dat
 
 // Get indicates an expected call of Get
 func (mr *MockIControllerRegistryCallsMockRecorder) Get(controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockIControllerRegistryCalls)(nil).Get), controller)
-}
-
-// IsOwner mocks base method
-func (m *MockIControllerRegistryCalls) IsOwner() (bool, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsOwner")
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// IsOwner indicates an expected call of IsOwner
-func (mr *MockIControllerRegistryCallsMockRecorder) IsOwner() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsOwner", reflect.TypeOf((*MockIControllerRegistryCalls)(nil).IsOwner))
-}
-
-// Owner mocks base method
-func (m *MockIControllerRegistryCalls) Owner() (common.Address, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Owner")
-	ret0, _ := ret[0].(common.Address)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Owner indicates an expected call of Owner
-func (mr *MockIControllerRegistryCallsMockRecorder) Owner() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Owner", reflect.TypeOf((*MockIControllerRegistryCalls)(nil).Owner))
 }
 
 // MockIControllerRegistryTransacts is a mock of IControllerRegistryTransacts interface
@@ -383,7 +267,6 @@ func (m *MockIControllerRegistryTransacts) EXPECT() *MockIControllerRegistryTran
 
 // Register mocks base method
 func (m *MockIControllerRegistryTransacts) Register(ctx context.Context, controllerAddr common.Address) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Register", ctx, controllerAddr)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
@@ -392,38 +275,7 @@ func (m *MockIControllerRegistryTransacts) Register(ctx context.Context, control
 
 // Register indicates an expected call of Register
 func (mr *MockIControllerRegistryTransactsMockRecorder) Register(ctx, controllerAddr interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockIControllerRegistryTransacts)(nil).Register), ctx, controllerAddr)
-}
-
-// RenounceOwnership mocks base method
-func (m *MockIControllerRegistryTransacts) RenounceOwnership(ctx context.Context) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RenounceOwnership", ctx)
-	ret0, _ := ret[0].(*types0.Receipt)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// RenounceOwnership indicates an expected call of RenounceOwnership
-func (mr *MockIControllerRegistryTransactsMockRecorder) RenounceOwnership(ctx interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RenounceOwnership", reflect.TypeOf((*MockIControllerRegistryTransacts)(nil).RenounceOwnership), ctx)
-}
-
-// TransferOwnership mocks base method
-func (m *MockIControllerRegistryTransacts) TransferOwnership(ctx context.Context, newOwner common.Address) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "TransferOwnership", ctx, newOwner)
-	ret0, _ := ret[0].(*types0.Receipt)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// TransferOwnership indicates an expected call of TransferOwnership
-func (mr *MockIControllerRegistryTransactsMockRecorder) TransferOwnership(ctx, newOwner interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransferOwnership", reflect.TypeOf((*MockIControllerRegistryTransacts)(nil).TransferOwnership), ctx, newOwner)
 }
 
 // MockIControllerRegistryEvents is a mock of IControllerRegistryEvents interface
@@ -451,7 +303,6 @@ func (m *MockIControllerRegistryEvents) EXPECT() *MockIControllerRegistryEventsM
 
 // FilterOwnershipTransferred mocks base method
 func (m *MockIControllerRegistryEvents) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner, newOwner []common.Address) (*adapter.ControllerRegistryOwnershipTransferredIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOwnershipTransferred", opts, previousOwner, newOwner)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryOwnershipTransferredIterator)
 	ret1, _ := ret[1].(error)
@@ -460,13 +311,11 @@ func (m *MockIControllerRegistryEvents) FilterOwnershipTransferred(opts *bind.Fi
 
 // FilterOwnershipTransferred indicates an expected call of FilterOwnershipTransferred
 func (mr *MockIControllerRegistryEventsMockRecorder) FilterOwnershipTransferred(opts, previousOwner, newOwner interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOwnershipTransferred", reflect.TypeOf((*MockIControllerRegistryEvents)(nil).FilterOwnershipTransferred), opts, previousOwner, newOwner)
 }
 
 // FilterRegistration mocks base method
 func (m *MockIControllerRegistryEvents) FilterRegistration(opts *bind.FilterOpts, controller []common.Address) (*adapter.ControllerRegistryRegistrationIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterRegistration", opts, controller)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryRegistrationIterator)
 	ret1, _ := ret[1].(error)
@@ -475,13 +324,11 @@ func (m *MockIControllerRegistryEvents) FilterRegistration(opts *bind.FilterOpts
 
 // FilterRegistration indicates an expected call of FilterRegistration
 func (mr *MockIControllerRegistryEventsMockRecorder) FilterRegistration(opts, controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterRegistration", reflect.TypeOf((*MockIControllerRegistryEvents)(nil).FilterRegistration), opts, controller)
 }
 
 // FilterUnregistration mocks base method
 func (m *MockIControllerRegistryEvents) FilterUnregistration(opts *bind.FilterOpts, controller []common.Address) (*adapter.ControllerRegistryUnregistrationIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterUnregistration", opts, controller)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryUnregistrationIterator)
 	ret1, _ := ret[1].(error)
@@ -490,58 +337,89 @@ func (m *MockIControllerRegistryEvents) FilterUnregistration(opts *bind.FilterOp
 
 // FilterUnregistration indicates an expected call of FilterUnregistration
 func (mr *MockIControllerRegistryEventsMockRecorder) FilterUnregistration(opts, controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterUnregistration", reflect.TypeOf((*MockIControllerRegistryEvents)(nil).FilterUnregistration), opts, controller)
 }
 
-// ParseOwnershipTransferredFromReceipt mocks base method
-func (m *MockIControllerRegistryEvents) ParseOwnershipTransferredFromReceipt(receipt *types0.Receipt) (*adapter.ControllerRegistryOwnershipTransferred, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ParseOwnershipTransferredFromReceipt", receipt)
+// ParseOwnershipTransferred mocks base method
+func (m *MockIControllerRegistryEvents) ParseOwnershipTransferred(log types0.Log) (*adapter.ControllerRegistryOwnershipTransferred, error) {
+	ret := m.ctrl.Call(m, "ParseOwnershipTransferred", log)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryOwnershipTransferred)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ParseOwnershipTransferred indicates an expected call of ParseOwnershipTransferred
+func (mr *MockIControllerRegistryEventsMockRecorder) ParseOwnershipTransferred(log interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOwnershipTransferred", reflect.TypeOf((*MockIControllerRegistryEvents)(nil).ParseOwnershipTransferred), log)
+}
+
+// ParseOwnershipTransferredFromReceipt mocks base method
+func (m *MockIControllerRegistryEvents) ParseOwnershipTransferredFromReceipt(receipt *types0.Receipt) ([]*adapter.ControllerRegistryOwnershipTransferred, error) {
+	ret := m.ctrl.Call(m, "ParseOwnershipTransferredFromReceipt", receipt)
+	ret0, _ := ret[0].([]*adapter.ControllerRegistryOwnershipTransferred)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ParseOwnershipTransferredFromReceipt indicates an expected call of ParseOwnershipTransferredFromReceipt
 func (mr *MockIControllerRegistryEventsMockRecorder) ParseOwnershipTransferredFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOwnershipTransferredFromReceipt", reflect.TypeOf((*MockIControllerRegistryEvents)(nil).ParseOwnershipTransferredFromReceipt), receipt)
 }
 
-// ParseRegistrationFromReceipt mocks base method
-func (m *MockIControllerRegistryEvents) ParseRegistrationFromReceipt(receipt *types0.Receipt) (*adapter.ControllerRegistryRegistration, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ParseRegistrationFromReceipt", receipt)
+// ParseRegistration mocks base method
+func (m *MockIControllerRegistryEvents) ParseRegistration(log types0.Log) (*adapter.ControllerRegistryRegistration, error) {
+	ret := m.ctrl.Call(m, "ParseRegistration", log)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryRegistration)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ParseRegistration indicates an expected call of ParseRegistration
+func (mr *MockIControllerRegistryEventsMockRecorder) ParseRegistration(log interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseRegistration", reflect.TypeOf((*MockIControllerRegistryEvents)(nil).ParseRegistration), log)
+}
+
+// ParseRegistrationFromReceipt mocks base method
+func (m *MockIControllerRegistryEvents) ParseRegistrationFromReceipt(receipt *types0.Receipt) ([]*adapter.ControllerRegistryRegistration, error) {
+	ret := m.ctrl.Call(m, "ParseRegistrationFromReceipt", receipt)
+	ret0, _ := ret[0].([]*adapter.ControllerRegistryRegistration)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ParseRegistrationFromReceipt indicates an expected call of ParseRegistrationFromReceipt
 func (mr *MockIControllerRegistryEventsMockRecorder) ParseRegistrationFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseRegistrationFromReceipt", reflect.TypeOf((*MockIControllerRegistryEvents)(nil).ParseRegistrationFromReceipt), receipt)
 }
 
-// ParseUnregistrationFromReceipt mocks base method
-func (m *MockIControllerRegistryEvents) ParseUnregistrationFromReceipt(receipt *types0.Receipt) (*adapter.ControllerRegistryUnregistration, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ParseUnregistrationFromReceipt", receipt)
+// ParseUnregistration mocks base method
+func (m *MockIControllerRegistryEvents) ParseUnregistration(log types0.Log) (*adapter.ControllerRegistryUnregistration, error) {
+	ret := m.ctrl.Call(m, "ParseUnregistration", log)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryUnregistration)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ParseUnregistration indicates an expected call of ParseUnregistration
+func (mr *MockIControllerRegistryEventsMockRecorder) ParseUnregistration(log interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseUnregistration", reflect.TypeOf((*MockIControllerRegistryEvents)(nil).ParseUnregistration), log)
+}
+
+// ParseUnregistrationFromReceipt mocks base method
+func (m *MockIControllerRegistryEvents) ParseUnregistrationFromReceipt(receipt *types0.Receipt) ([]*adapter.ControllerRegistryUnregistration, error) {
+	ret := m.ctrl.Call(m, "ParseUnregistrationFromReceipt", receipt)
+	ret0, _ := ret[0].([]*adapter.ControllerRegistryUnregistration)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ParseUnregistrationFromReceipt indicates an expected call of ParseUnregistrationFromReceipt
 func (mr *MockIControllerRegistryEventsMockRecorder) ParseUnregistrationFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseUnregistrationFromReceipt", reflect.TypeOf((*MockIControllerRegistryEvents)(nil).ParseUnregistrationFromReceipt), receipt)
 }
 
 // WatchOwnershipTransferred mocks base method
 func (m *MockIControllerRegistryEvents) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *adapter.ControllerRegistryOwnershipTransferred, previousOwner, newOwner []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOwnershipTransferred", opts, sink, previousOwner, newOwner)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -550,13 +428,11 @@ func (m *MockIControllerRegistryEvents) WatchOwnershipTransferred(opts *bind.Wat
 
 // WatchOwnershipTransferred indicates an expected call of WatchOwnershipTransferred
 func (mr *MockIControllerRegistryEventsMockRecorder) WatchOwnershipTransferred(opts, sink, previousOwner, newOwner interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOwnershipTransferred", reflect.TypeOf((*MockIControllerRegistryEvents)(nil).WatchOwnershipTransferred), opts, sink, previousOwner, newOwner)
 }
 
 // WatchRegistration mocks base method
 func (m *MockIControllerRegistryEvents) WatchRegistration(opts *bind.WatchOpts, sink chan<- *adapter.ControllerRegistryRegistration, controller []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchRegistration", opts, sink, controller)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -565,13 +441,11 @@ func (m *MockIControllerRegistryEvents) WatchRegistration(opts *bind.WatchOpts, 
 
 // WatchRegistration indicates an expected call of WatchRegistration
 func (mr *MockIControllerRegistryEventsMockRecorder) WatchRegistration(opts, sink, controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchRegistration", reflect.TypeOf((*MockIControllerRegistryEvents)(nil).WatchRegistration), opts, sink, controller)
 }
 
 // WatchUnregistration mocks base method
 func (m *MockIControllerRegistryEvents) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *adapter.ControllerRegistryUnregistration, controller []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchUnregistration", opts, sink, controller)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -580,7 +454,6 @@ func (m *MockIControllerRegistryEvents) WatchUnregistration(opts *bind.WatchOpts
 
 // WatchUnregistration indicates an expected call of WatchUnregistration
 func (mr *MockIControllerRegistryEventsMockRecorder) WatchUnregistration(opts, sink, controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchUnregistration", reflect.TypeOf((*MockIControllerRegistryEvents)(nil).WatchUnregistration), opts, sink, controller)
 }
 
@@ -609,7 +482,6 @@ func (m *MockIControllerRegistryFilterer) EXPECT() *MockIControllerRegistryFilte
 
 // FilterOwnershipTransferred mocks base method
 func (m *MockIControllerRegistryFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner, newOwner []common.Address) (*adapter.ControllerRegistryOwnershipTransferredIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOwnershipTransferred", opts, previousOwner, newOwner)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryOwnershipTransferredIterator)
 	ret1, _ := ret[1].(error)
@@ -618,13 +490,11 @@ func (m *MockIControllerRegistryFilterer) FilterOwnershipTransferred(opts *bind.
 
 // FilterOwnershipTransferred indicates an expected call of FilterOwnershipTransferred
 func (mr *MockIControllerRegistryFiltererMockRecorder) FilterOwnershipTransferred(opts, previousOwner, newOwner interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOwnershipTransferred", reflect.TypeOf((*MockIControllerRegistryFilterer)(nil).FilterOwnershipTransferred), opts, previousOwner, newOwner)
 }
 
 // FilterRegistration mocks base method
 func (m *MockIControllerRegistryFilterer) FilterRegistration(opts *bind.FilterOpts, controller []common.Address) (*adapter.ControllerRegistryRegistrationIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterRegistration", opts, controller)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryRegistrationIterator)
 	ret1, _ := ret[1].(error)
@@ -633,13 +503,11 @@ func (m *MockIControllerRegistryFilterer) FilterRegistration(opts *bind.FilterOp
 
 // FilterRegistration indicates an expected call of FilterRegistration
 func (mr *MockIControllerRegistryFiltererMockRecorder) FilterRegistration(opts, controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterRegistration", reflect.TypeOf((*MockIControllerRegistryFilterer)(nil).FilterRegistration), opts, controller)
 }
 
 // FilterUnregistration mocks base method
 func (m *MockIControllerRegistryFilterer) FilterUnregistration(opts *bind.FilterOpts, controller []common.Address) (*adapter.ControllerRegistryUnregistrationIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterUnregistration", opts, controller)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryUnregistrationIterator)
 	ret1, _ := ret[1].(error)
@@ -648,7 +516,6 @@ func (m *MockIControllerRegistryFilterer) FilterUnregistration(opts *bind.Filter
 
 // FilterUnregistration indicates an expected call of FilterUnregistration
 func (mr *MockIControllerRegistryFiltererMockRecorder) FilterUnregistration(opts, controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterUnregistration", reflect.TypeOf((*MockIControllerRegistryFilterer)(nil).FilterUnregistration), opts, controller)
 }
 
@@ -675,48 +542,81 @@ func (m *MockIControllerRegistryParser) EXPECT() *MockIControllerRegistryParserM
 	return m.recorder
 }
 
-// ParseOwnershipTransferredFromReceipt mocks base method
-func (m *MockIControllerRegistryParser) ParseOwnershipTransferredFromReceipt(receipt *types0.Receipt) (*adapter.ControllerRegistryOwnershipTransferred, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ParseOwnershipTransferredFromReceipt", receipt)
+// ParseOwnershipTransferred mocks base method
+func (m *MockIControllerRegistryParser) ParseOwnershipTransferred(log types0.Log) (*adapter.ControllerRegistryOwnershipTransferred, error) {
+	ret := m.ctrl.Call(m, "ParseOwnershipTransferred", log)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryOwnershipTransferred)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ParseOwnershipTransferred indicates an expected call of ParseOwnershipTransferred
+func (mr *MockIControllerRegistryParserMockRecorder) ParseOwnershipTransferred(log interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOwnershipTransferred", reflect.TypeOf((*MockIControllerRegistryParser)(nil).ParseOwnershipTransferred), log)
+}
+
+// ParseOwnershipTransferredFromReceipt mocks base method
+func (m *MockIControllerRegistryParser) ParseOwnershipTransferredFromReceipt(receipt *types0.Receipt) ([]*adapter.ControllerRegistryOwnershipTransferred, error) {
+	ret := m.ctrl.Call(m, "ParseOwnershipTransferredFromReceipt", receipt)
+	ret0, _ := ret[0].([]*adapter.ControllerRegistryOwnershipTransferred)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ParseOwnershipTransferredFromReceipt indicates an expected call of ParseOwnershipTransferredFromReceipt
 func (mr *MockIControllerRegistryParserMockRecorder) ParseOwnershipTransferredFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOwnershipTransferredFromReceipt", reflect.TypeOf((*MockIControllerRegistryParser)(nil).ParseOwnershipTransferredFromReceipt), receipt)
 }
 
-// ParseRegistrationFromReceipt mocks base method
-func (m *MockIControllerRegistryParser) ParseRegistrationFromReceipt(receipt *types0.Receipt) (*adapter.ControllerRegistryRegistration, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ParseRegistrationFromReceipt", receipt)
+// ParseRegistration mocks base method
+func (m *MockIControllerRegistryParser) ParseRegistration(log types0.Log) (*adapter.ControllerRegistryRegistration, error) {
+	ret := m.ctrl.Call(m, "ParseRegistration", log)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryRegistration)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ParseRegistration indicates an expected call of ParseRegistration
+func (mr *MockIControllerRegistryParserMockRecorder) ParseRegistration(log interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseRegistration", reflect.TypeOf((*MockIControllerRegistryParser)(nil).ParseRegistration), log)
+}
+
+// ParseRegistrationFromReceipt mocks base method
+func (m *MockIControllerRegistryParser) ParseRegistrationFromReceipt(receipt *types0.Receipt) ([]*adapter.ControllerRegistryRegistration, error) {
+	ret := m.ctrl.Call(m, "ParseRegistrationFromReceipt", receipt)
+	ret0, _ := ret[0].([]*adapter.ControllerRegistryRegistration)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ParseRegistrationFromReceipt indicates an expected call of ParseRegistrationFromReceipt
 func (mr *MockIControllerRegistryParserMockRecorder) ParseRegistrationFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseRegistrationFromReceipt", reflect.TypeOf((*MockIControllerRegistryParser)(nil).ParseRegistrationFromReceipt), receipt)
 }
 
-// ParseUnregistrationFromReceipt mocks base method
-func (m *MockIControllerRegistryParser) ParseUnregistrationFromReceipt(receipt *types0.Receipt) (*adapter.ControllerRegistryUnregistration, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ParseUnregistrationFromReceipt", receipt)
+// ParseUnregistration mocks base method
+func (m *MockIControllerRegistryParser) ParseUnregistration(log types0.Log) (*adapter.ControllerRegistryUnregistration, error) {
+	ret := m.ctrl.Call(m, "ParseUnregistration", log)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryUnregistration)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ParseUnregistration indicates an expected call of ParseUnregistration
+func (mr *MockIControllerRegistryParserMockRecorder) ParseUnregistration(log interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseUnregistration", reflect.TypeOf((*MockIControllerRegistryParser)(nil).ParseUnregistration), log)
+}
+
+// ParseUnregistrationFromReceipt mocks base method
+func (m *MockIControllerRegistryParser) ParseUnregistrationFromReceipt(receipt *types0.Receipt) ([]*adapter.ControllerRegistryUnregistration, error) {
+	ret := m.ctrl.Call(m, "ParseUnregistrationFromReceipt", receipt)
+	ret0, _ := ret[0].([]*adapter.ControllerRegistryUnregistration)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ParseUnregistrationFromReceipt indicates an expected call of ParseUnregistrationFromReceipt
 func (mr *MockIControllerRegistryParserMockRecorder) ParseUnregistrationFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseUnregistrationFromReceipt", reflect.TypeOf((*MockIControllerRegistryParser)(nil).ParseUnregistrationFromReceipt), receipt)
 }
 
@@ -745,7 +645,6 @@ func (m *MockIControllerRegistryWatcher) EXPECT() *MockIControllerRegistryWatche
 
 // WatchOwnershipTransferred mocks base method
 func (m *MockIControllerRegistryWatcher) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *adapter.ControllerRegistryOwnershipTransferred, previousOwner, newOwner []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOwnershipTransferred", opts, sink, previousOwner, newOwner)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -754,13 +653,11 @@ func (m *MockIControllerRegistryWatcher) WatchOwnershipTransferred(opts *bind.Wa
 
 // WatchOwnershipTransferred indicates an expected call of WatchOwnershipTransferred
 func (mr *MockIControllerRegistryWatcherMockRecorder) WatchOwnershipTransferred(opts, sink, previousOwner, newOwner interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOwnershipTransferred", reflect.TypeOf((*MockIControllerRegistryWatcher)(nil).WatchOwnershipTransferred), opts, sink, previousOwner, newOwner)
 }
 
 // WatchRegistration mocks base method
 func (m *MockIControllerRegistryWatcher) WatchRegistration(opts *bind.WatchOpts, sink chan<- *adapter.ControllerRegistryRegistration, controller []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchRegistration", opts, sink, controller)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -769,13 +666,11 @@ func (m *MockIControllerRegistryWatcher) WatchRegistration(opts *bind.WatchOpts,
 
 // WatchRegistration indicates an expected call of WatchRegistration
 func (mr *MockIControllerRegistryWatcherMockRecorder) WatchRegistration(opts, sink, controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchRegistration", reflect.TypeOf((*MockIControllerRegistryWatcher)(nil).WatchRegistration), opts, sink, controller)
 }
 
 // WatchUnregistration mocks base method
 func (m *MockIControllerRegistryWatcher) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *adapter.ControllerRegistryUnregistration, controller []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchUnregistration", opts, sink, controller)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -784,7 +679,6 @@ func (m *MockIControllerRegistryWatcher) WatchUnregistration(opts *bind.WatchOpt
 
 // WatchUnregistration indicates an expected call of WatchUnregistration
 func (mr *MockIControllerRegistryWatcherMockRecorder) WatchUnregistration(opts, sink, controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchUnregistration", reflect.TypeOf((*MockIControllerRegistryWatcher)(nil).WatchUnregistration), opts, sink, controller)
 }
 
@@ -813,7 +707,6 @@ func (m *MockIControllerRegistryContract) EXPECT() *MockIControllerRegistryContr
 
 // Address mocks base method
 func (m *MockIControllerRegistryContract) Address() common.Address {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
@@ -821,13 +714,11 @@ func (m *MockIControllerRegistryContract) Address() common.Address {
 
 // Address indicates an expected call of Address
 func (mr *MockIControllerRegistryContractMockRecorder) Address() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIControllerRegistryContract)(nil).Address))
 }
 
 // TxHash mocks base method
 func (m *MockIControllerRegistryContract) TxHash() common.Hash {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TxHash")
 	ret0, _ := ret[0].(common.Hash)
 	return ret0
@@ -835,13 +726,11 @@ func (m *MockIControllerRegistryContract) TxHash() common.Hash {
 
 // TxHash indicates an expected call of TxHash
 func (mr *MockIControllerRegistryContractMockRecorder) TxHash() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockIControllerRegistryContract)(nil).TxHash))
 }
 
 // CreatedAt mocks base method
 func (m *MockIControllerRegistryContract) CreatedAt() *big.Int {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatedAt")
 	ret0, _ := ret[0].(*big.Int)
 	return ret0
@@ -849,13 +738,11 @@ func (m *MockIControllerRegistryContract) CreatedAt() *big.Int {
 
 // CreatedAt indicates an expected call of CreatedAt
 func (mr *MockIControllerRegistryContractMockRecorder) CreatedAt() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIControllerRegistryContract)(nil).CreatedAt))
 }
 
 // Exists mocks base method
 func (m *MockIControllerRegistryContract) Exists(controller common.Address) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Exists", controller)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -864,13 +751,11 @@ func (m *MockIControllerRegistryContract) Exists(controller common.Address) (boo
 
 // Exists indicates an expected call of Exists
 func (mr *MockIControllerRegistryContractMockRecorder) Exists(controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exists", reflect.TypeOf((*MockIControllerRegistryContract)(nil).Exists), controller)
 }
 
 // Get mocks base method
 func (m *MockIControllerRegistryContract) Get(controller common.Address) (types.DataController, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", controller)
 	ret0, _ := ret[0].(types.DataController)
 	ret1, _ := ret[1].(error)
@@ -879,43 +764,11 @@ func (m *MockIControllerRegistryContract) Get(controller common.Address) (types.
 
 // Get indicates an expected call of Get
 func (mr *MockIControllerRegistryContractMockRecorder) Get(controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockIControllerRegistryContract)(nil).Get), controller)
-}
-
-// IsOwner mocks base method
-func (m *MockIControllerRegistryContract) IsOwner() (bool, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsOwner")
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// IsOwner indicates an expected call of IsOwner
-func (mr *MockIControllerRegistryContractMockRecorder) IsOwner() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsOwner", reflect.TypeOf((*MockIControllerRegistryContract)(nil).IsOwner))
-}
-
-// Owner mocks base method
-func (m *MockIControllerRegistryContract) Owner() (common.Address, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Owner")
-	ret0, _ := ret[0].(common.Address)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Owner indicates an expected call of Owner
-func (mr *MockIControllerRegistryContractMockRecorder) Owner() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Owner", reflect.TypeOf((*MockIControllerRegistryContract)(nil).Owner))
 }
 
 // Register mocks base method
 func (m *MockIControllerRegistryContract) Register(ctx context.Context, controllerAddr common.Address) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Register", ctx, controllerAddr)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
@@ -924,43 +777,11 @@ func (m *MockIControllerRegistryContract) Register(ctx context.Context, controll
 
 // Register indicates an expected call of Register
 func (mr *MockIControllerRegistryContractMockRecorder) Register(ctx, controllerAddr interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockIControllerRegistryContract)(nil).Register), ctx, controllerAddr)
-}
-
-// RenounceOwnership mocks base method
-func (m *MockIControllerRegistryContract) RenounceOwnership(ctx context.Context) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RenounceOwnership", ctx)
-	ret0, _ := ret[0].(*types0.Receipt)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// RenounceOwnership indicates an expected call of RenounceOwnership
-func (mr *MockIControllerRegistryContractMockRecorder) RenounceOwnership(ctx interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RenounceOwnership", reflect.TypeOf((*MockIControllerRegistryContract)(nil).RenounceOwnership), ctx)
-}
-
-// TransferOwnership mocks base method
-func (m *MockIControllerRegistryContract) TransferOwnership(ctx context.Context, newOwner common.Address) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "TransferOwnership", ctx, newOwner)
-	ret0, _ := ret[0].(*types0.Receipt)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// TransferOwnership indicates an expected call of TransferOwnership
-func (mr *MockIControllerRegistryContractMockRecorder) TransferOwnership(ctx, newOwner interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransferOwnership", reflect.TypeOf((*MockIControllerRegistryContract)(nil).TransferOwnership), ctx, newOwner)
 }
 
 // FilterOwnershipTransferred mocks base method
 func (m *MockIControllerRegistryContract) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner, newOwner []common.Address) (*adapter.ControllerRegistryOwnershipTransferredIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOwnershipTransferred", opts, previousOwner, newOwner)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryOwnershipTransferredIterator)
 	ret1, _ := ret[1].(error)
@@ -969,13 +790,11 @@ func (m *MockIControllerRegistryContract) FilterOwnershipTransferred(opts *bind.
 
 // FilterOwnershipTransferred indicates an expected call of FilterOwnershipTransferred
 func (mr *MockIControllerRegistryContractMockRecorder) FilterOwnershipTransferred(opts, previousOwner, newOwner interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOwnershipTransferred", reflect.TypeOf((*MockIControllerRegistryContract)(nil).FilterOwnershipTransferred), opts, previousOwner, newOwner)
 }
 
 // FilterRegistration mocks base method
 func (m *MockIControllerRegistryContract) FilterRegistration(opts *bind.FilterOpts, controller []common.Address) (*adapter.ControllerRegistryRegistrationIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterRegistration", opts, controller)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryRegistrationIterator)
 	ret1, _ := ret[1].(error)
@@ -984,13 +803,11 @@ func (m *MockIControllerRegistryContract) FilterRegistration(opts *bind.FilterOp
 
 // FilterRegistration indicates an expected call of FilterRegistration
 func (mr *MockIControllerRegistryContractMockRecorder) FilterRegistration(opts, controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterRegistration", reflect.TypeOf((*MockIControllerRegistryContract)(nil).FilterRegistration), opts, controller)
 }
 
 // FilterUnregistration mocks base method
 func (m *MockIControllerRegistryContract) FilterUnregistration(opts *bind.FilterOpts, controller []common.Address) (*adapter.ControllerRegistryUnregistrationIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterUnregistration", opts, controller)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryUnregistrationIterator)
 	ret1, _ := ret[1].(error)
@@ -999,58 +816,89 @@ func (m *MockIControllerRegistryContract) FilterUnregistration(opts *bind.Filter
 
 // FilterUnregistration indicates an expected call of FilterUnregistration
 func (mr *MockIControllerRegistryContractMockRecorder) FilterUnregistration(opts, controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterUnregistration", reflect.TypeOf((*MockIControllerRegistryContract)(nil).FilterUnregistration), opts, controller)
 }
 
-// ParseOwnershipTransferredFromReceipt mocks base method
-func (m *MockIControllerRegistryContract) ParseOwnershipTransferredFromReceipt(receipt *types0.Receipt) (*adapter.ControllerRegistryOwnershipTransferred, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ParseOwnershipTransferredFromReceipt", receipt)
+// ParseOwnershipTransferred mocks base method
+func (m *MockIControllerRegistryContract) ParseOwnershipTransferred(log types0.Log) (*adapter.ControllerRegistryOwnershipTransferred, error) {
+	ret := m.ctrl.Call(m, "ParseOwnershipTransferred", log)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryOwnershipTransferred)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ParseOwnershipTransferred indicates an expected call of ParseOwnershipTransferred
+func (mr *MockIControllerRegistryContractMockRecorder) ParseOwnershipTransferred(log interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOwnershipTransferred", reflect.TypeOf((*MockIControllerRegistryContract)(nil).ParseOwnershipTransferred), log)
+}
+
+// ParseOwnershipTransferredFromReceipt mocks base method
+func (m *MockIControllerRegistryContract) ParseOwnershipTransferredFromReceipt(receipt *types0.Receipt) ([]*adapter.ControllerRegistryOwnershipTransferred, error) {
+	ret := m.ctrl.Call(m, "ParseOwnershipTransferredFromReceipt", receipt)
+	ret0, _ := ret[0].([]*adapter.ControllerRegistryOwnershipTransferred)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ParseOwnershipTransferredFromReceipt indicates an expected call of ParseOwnershipTransferredFromReceipt
 func (mr *MockIControllerRegistryContractMockRecorder) ParseOwnershipTransferredFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOwnershipTransferredFromReceipt", reflect.TypeOf((*MockIControllerRegistryContract)(nil).ParseOwnershipTransferredFromReceipt), receipt)
 }
 
-// ParseRegistrationFromReceipt mocks base method
-func (m *MockIControllerRegistryContract) ParseRegistrationFromReceipt(receipt *types0.Receipt) (*adapter.ControllerRegistryRegistration, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ParseRegistrationFromReceipt", receipt)
+// ParseRegistration mocks base method
+func (m *MockIControllerRegistryContract) ParseRegistration(log types0.Log) (*adapter.ControllerRegistryRegistration, error) {
+	ret := m.ctrl.Call(m, "ParseRegistration", log)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryRegistration)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ParseRegistration indicates an expected call of ParseRegistration
+func (mr *MockIControllerRegistryContractMockRecorder) ParseRegistration(log interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseRegistration", reflect.TypeOf((*MockIControllerRegistryContract)(nil).ParseRegistration), log)
+}
+
+// ParseRegistrationFromReceipt mocks base method
+func (m *MockIControllerRegistryContract) ParseRegistrationFromReceipt(receipt *types0.Receipt) ([]*adapter.ControllerRegistryRegistration, error) {
+	ret := m.ctrl.Call(m, "ParseRegistrationFromReceipt", receipt)
+	ret0, _ := ret[0].([]*adapter.ControllerRegistryRegistration)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ParseRegistrationFromReceipt indicates an expected call of ParseRegistrationFromReceipt
 func (mr *MockIControllerRegistryContractMockRecorder) ParseRegistrationFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseRegistrationFromReceipt", reflect.TypeOf((*MockIControllerRegistryContract)(nil).ParseRegistrationFromReceipt), receipt)
 }
 
-// ParseUnregistrationFromReceipt mocks base method
-func (m *MockIControllerRegistryContract) ParseUnregistrationFromReceipt(receipt *types0.Receipt) (*adapter.ControllerRegistryUnregistration, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ParseUnregistrationFromReceipt", receipt)
+// ParseUnregistration mocks base method
+func (m *MockIControllerRegistryContract) ParseUnregistration(log types0.Log) (*adapter.ControllerRegistryUnregistration, error) {
+	ret := m.ctrl.Call(m, "ParseUnregistration", log)
 	ret0, _ := ret[0].(*adapter.ControllerRegistryUnregistration)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ParseUnregistration indicates an expected call of ParseUnregistration
+func (mr *MockIControllerRegistryContractMockRecorder) ParseUnregistration(log interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseUnregistration", reflect.TypeOf((*MockIControllerRegistryContract)(nil).ParseUnregistration), log)
+}
+
+// ParseUnregistrationFromReceipt mocks base method
+func (m *MockIControllerRegistryContract) ParseUnregistrationFromReceipt(receipt *types0.Receipt) ([]*adapter.ControllerRegistryUnregistration, error) {
+	ret := m.ctrl.Call(m, "ParseUnregistrationFromReceipt", receipt)
+	ret0, _ := ret[0].([]*adapter.ControllerRegistryUnregistration)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ParseUnregistrationFromReceipt indicates an expected call of ParseUnregistrationFromReceipt
 func (mr *MockIControllerRegistryContractMockRecorder) ParseUnregistrationFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseUnregistrationFromReceipt", reflect.TypeOf((*MockIControllerRegistryContract)(nil).ParseUnregistrationFromReceipt), receipt)
 }
 
 // WatchOwnershipTransferred mocks base method
 func (m *MockIControllerRegistryContract) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *adapter.ControllerRegistryOwnershipTransferred, previousOwner, newOwner []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOwnershipTransferred", opts, sink, previousOwner, newOwner)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1059,13 +907,11 @@ func (m *MockIControllerRegistryContract) WatchOwnershipTransferred(opts *bind.W
 
 // WatchOwnershipTransferred indicates an expected call of WatchOwnershipTransferred
 func (mr *MockIControllerRegistryContractMockRecorder) WatchOwnershipTransferred(opts, sink, previousOwner, newOwner interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOwnershipTransferred", reflect.TypeOf((*MockIControllerRegistryContract)(nil).WatchOwnershipTransferred), opts, sink, previousOwner, newOwner)
 }
 
 // WatchRegistration mocks base method
 func (m *MockIControllerRegistryContract) WatchRegistration(opts *bind.WatchOpts, sink chan<- *adapter.ControllerRegistryRegistration, controller []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchRegistration", opts, sink, controller)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1074,13 +920,11 @@ func (m *MockIControllerRegistryContract) WatchRegistration(opts *bind.WatchOpts
 
 // WatchRegistration indicates an expected call of WatchRegistration
 func (mr *MockIControllerRegistryContractMockRecorder) WatchRegistration(opts, sink, controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchRegistration", reflect.TypeOf((*MockIControllerRegistryContract)(nil).WatchRegistration), opts, sink, controller)
 }
 
 // WatchUnregistration mocks base method
 func (m *MockIControllerRegistryContract) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *adapter.ControllerRegistryUnregistration, controller []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchUnregistration", opts, sink, controller)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1089,6 +933,5 @@ func (m *MockIControllerRegistryContract) WatchUnregistration(opts *bind.WatchOp
 
 // WatchUnregistration indicates an expected call of WatchUnregistration
 func (mr *MockIControllerRegistryContractMockRecorder) WatchUnregistration(opts, sink, controller interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchUnregistration", reflect.TypeOf((*MockIControllerRegistryContract)(nil).WatchUnregistration), opts, sink, controller)
 }

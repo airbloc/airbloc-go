@@ -7,13 +7,13 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/airbloc/airbloc-go/shared/blockchain"
-	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/klaytn/klaytn/accounts/abi"
-	"github.com/klaytn/klaytn/accounts/abi/bind"
-	klayTypes "github.com/klaytn/klaytn/blockchain/types"
-	"github.com/klaytn/klaytn/common"
-	"github.com/klaytn/klaytn/event"
+	blockchain "github.com/airbloc/airbloc-go/shared/blockchain"
+	types "github.com/airbloc/airbloc-go/shared/types"
+	abi "github.com/klaytn/klaytn/accounts/abi"
+	bind "github.com/klaytn/klaytn/accounts/abi/bind"
+	chainTypes "github.com/klaytn/klaytn/blockchain/types"
+	common "github.com/klaytn/klaytn/common"
+	event "github.com/klaytn/klaytn/event"
 )
 
 //go:generate mockgen -source accounts_wrapper.go -destination ./mocks/mock_accounts.go -package mocks IAccountsManager,IAccountsContract
@@ -26,10 +26,30 @@ type IAccountsManager interface {
 	IAccountsCalls
 
 	// Transact methods
-	Create(ctx context.Context) (types.ID, error)
-	CreateTemporary(ctx context.Context, identityHash common.Hash) (types.ID, error)
-	SetController(ctx context.Context, controller common.Address) error
-	UnlockTemporary(ctx context.Context, identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) error
+	Create(
+		ctx context.Context,
+	) (
+		types.ID,
+		error,
+	)
+	CreateTemporary(
+		ctx context.Context,
+		identityHash common.Hash,
+	) (
+		types.ID,
+		error,
+	)
+	SetController(
+		ctx context.Context,
+		controller common.Address,
+	) error
+
+	UnlockTemporary(
+		ctx context.Context,
+		identityPreimage common.Hash,
+		newOwner common.Address,
+		passwordSignature []byte,
+	) error
 
 	// Event methods
 	IAccountsFilterer
@@ -37,22 +57,76 @@ type IAccountsManager interface {
 }
 
 type IAccountsCalls interface {
-	Accounts(arg0 types.ID) (types.Account, error)
-	Exists(accountId types.ID) (bool, error)
-	GetAccount(accountId types.ID) (types.Account, error)
-	GetAccountId(sender common.Address) (types.ID, error)
-	GetAccountIdFromSignature(messageHash common.Hash, signature []byte) (types.ID, error)
-	IdentityHashToAccount(arg0 common.Hash) (types.ID, error)
-	IsControllerOf(sender common.Address, accountId types.ID) (bool, error)
-	IsTemporary(accountId types.ID) (bool, error)
-	NumberOfAccounts() (*big.Int, error)
+	Exists(
+		accountId types.ID,
+	) (
+		bool,
+		error,
+	)
+	GetAccount(
+		accountId types.ID,
+	) (
+		types.Account,
+		error,
+	)
+	GetAccountByIdentityHash(
+		identityHash common.Hash,
+	) (
+		types.Account,
+		error,
+	)
+	GetAccountId(
+		sender common.Address,
+	) (
+		types.ID,
+		error,
+	)
+	GetAccountIdByIdentityHash(
+		identityHash common.Hash,
+	) (
+		types.ID,
+		error,
+	)
+	GetAccountIdFromSignature(
+		messageHash common.Hash,
+		signature []byte,
+	) (
+		types.ID,
+		error,
+	)
+	IsControllerOf(
+		sender common.Address,
+		accountId types.ID,
+	) (
+		bool,
+		error,
+	)
+	IsTemporary(
+		accountId types.ID,
+	) (
+		bool,
+		error,
+	)
 }
 
 type IAccountsTransacts interface {
-	Create(ctx context.Context) (*klayTypes.Receipt, error)
-	CreateTemporary(ctx context.Context, identityHash common.Hash) (*klayTypes.Receipt, error)
-	SetController(ctx context.Context, controller common.Address) (*klayTypes.Receipt, error)
-	UnlockTemporary(ctx context.Context, identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) (*klayTypes.Receipt, error)
+	Create(
+		ctx context.Context,
+	) (*chainTypes.Receipt, error)
+	CreateTemporary(
+		ctx context.Context,
+		identityHash common.Hash,
+	) (*chainTypes.Receipt, error)
+	SetController(
+		ctx context.Context,
+		controller common.Address,
+	) (*chainTypes.Receipt, error)
+	UnlockTemporary(
+		ctx context.Context,
+		identityPreimage common.Hash,
+		newOwner common.Address,
+		passwordSignature []byte,
+	) (*chainTypes.Receipt, error)
 }
 
 type IAccountsEvents interface {
@@ -62,21 +136,55 @@ type IAccountsEvents interface {
 }
 
 type IAccountsFilterer interface {
-	FilterSignUp(opts *bind.FilterOpts, owner []common.Address) (*AccountsSignUpIterator, error)
-	FilterTemporaryCreated(opts *bind.FilterOpts, proxy []common.Address, identityHash []common.Hash) (*AccountsTemporaryCreatedIterator, error)
-	FilterUnlocked(opts *bind.FilterOpts, identityHash []common.Hash, accountId []types.ID) (*AccountsUnlockedIterator, error)
+	FilterSignUp(
+		opts *bind.FilterOpts,
+		owner []common.Address,
+
+	) (*AccountsSignUpIterator, error)
+	FilterTemporaryCreated(
+		opts *bind.FilterOpts,
+		proxy []common.Address,
+		identityHash []common.Hash,
+
+	) (*AccountsTemporaryCreatedIterator, error)
+	FilterUnlocked(
+		opts *bind.FilterOpts,
+		identityHash []common.Hash,
+		accountId []types.ID,
+
+	) (*AccountsUnlockedIterator, error)
 }
 
 type IAccountsParser interface {
-	ParseSignUpFromReceipt(receipt *klayTypes.Receipt) (*AccountsSignUp, error)
-	ParseTemporaryCreatedFromReceipt(receipt *klayTypes.Receipt) (*AccountsTemporaryCreated, error)
-	ParseUnlockedFromReceipt(receipt *klayTypes.Receipt) (*AccountsUnlocked, error)
+	ParseSignUp(log chainTypes.Log) (*AccountsSignUp, error)
+	ParseSignUpFromReceipt(receipt *chainTypes.Receipt) ([]*AccountsSignUp, error)
+	ParseTemporaryCreated(log chainTypes.Log) (*AccountsTemporaryCreated, error)
+	ParseTemporaryCreatedFromReceipt(receipt *chainTypes.Receipt) ([]*AccountsTemporaryCreated, error)
+	ParseUnlocked(log chainTypes.Log) (*AccountsUnlocked, error)
+	ParseUnlockedFromReceipt(receipt *chainTypes.Receipt) ([]*AccountsUnlocked, error)
 }
 
 type IAccountsWatcher interface {
-	WatchSignUp(opts *bind.WatchOpts, sink chan<- *AccountsSignUp, owner []common.Address) (event.Subscription, error)
-	WatchTemporaryCreated(opts *bind.WatchOpts, sink chan<- *AccountsTemporaryCreated, proxy []common.Address, identityHash []common.Hash) (event.Subscription, error)
-	WatchUnlocked(opts *bind.WatchOpts, sink chan<- *AccountsUnlocked, identityHash []common.Hash, accountId []types.ID) (event.Subscription, error)
+	WatchSignUp(
+		opts *bind.WatchOpts,
+		sink chan<- *AccountsSignUp,
+		owner []common.Address,
+
+	) (event.Subscription, error)
+	WatchTemporaryCreated(
+		opts *bind.WatchOpts,
+		sink chan<- *AccountsTemporaryCreated,
+		proxy []common.Address,
+		identityHash []common.Hash,
+
+	) (event.Subscription, error)
+	WatchUnlocked(
+		opts *bind.WatchOpts,
+		sink chan<- *AccountsUnlocked,
+		identityHash []common.Hash,
+		accountId []types.ID,
+
+	) (event.Subscription, error)
 }
 
 type IAccountsContract interface {
@@ -140,73 +248,118 @@ func init() {
 	blockchain.RegisterSelector("0x2299219d", "unlockTemporary(bytes32,address,bytes)")
 }
 
-// Accounts is a free data retrieval call binding the contract method 0xf4a3fad5.
-//
-// Solidity: function accounts(bytes8 ) constant returns(address owner, uint8 status, address controller, address passwordProof)
-func (c *AccountsContract) Accounts(arg0 types.ID) (types.Account, error) {
-	return c.AccountsCaller.Accounts(nil, arg0)
-}
-
 // Exists is a free data retrieval call binding the contract method 0x97e4fea7.
 //
 // Solidity: function exists(bytes8 accountId) constant returns(bool)
-func (c *AccountsContract) Exists(accountId types.ID) (bool, error) {
+func (c *AccountsContract) Exists(
+	accountId types.ID,
+) (
+
+	bool,
+	error,
+) {
 	return c.AccountsCaller.Exists(nil, accountId)
 }
 
 // GetAccount is a free data retrieval call binding the contract method 0xf9292ddb.
 //
 // Solidity: function getAccount(bytes8 accountId) constant returns((address,uint8,address,address))
-func (c *AccountsContract) GetAccount(accountId types.ID) (types.Account, error) {
+func (c *AccountsContract) GetAccount(
+	accountId types.ID,
+) (
+
+	types.Account,
+	error,
+) {
 	return c.AccountsCaller.GetAccount(nil, accountId)
+}
+
+// GetAccountByIdentityHash is a free data retrieval call binding the contract method 0xc75aeb7e.
+//
+// Solidity: function getAccountByIdentityHash(bytes32 identityHash) constant returns((address,uint8,address,address))
+func (c *AccountsContract) GetAccountByIdentityHash(
+	identityHash common.Hash,
+) (
+
+	types.Account,
+	error,
+) {
+	return c.AccountsCaller.GetAccountByIdentityHash(nil, identityHash)
 }
 
 // GetAccountId is a free data retrieval call binding the contract method 0xe0b490f7.
 //
 // Solidity: function getAccountId(address sender) constant returns(bytes8)
-func (c *AccountsContract) GetAccountId(sender common.Address) (types.ID, error) {
+func (c *AccountsContract) GetAccountId(
+	sender common.Address,
+) (
+
+	types.ID,
+	error,
+) {
 	return c.AccountsCaller.GetAccountId(nil, sender)
+}
+
+// GetAccountIdByIdentityHash is a free data retrieval call binding the contract method 0x793d5046.
+//
+// Solidity: function getAccountIdByIdentityHash(bytes32 identityHash) constant returns(bytes8)
+func (c *AccountsContract) GetAccountIdByIdentityHash(
+	identityHash common.Hash,
+) (
+
+	types.ID,
+	error,
+) {
+	return c.AccountsCaller.GetAccountIdByIdentityHash(nil, identityHash)
 }
 
 // GetAccountIdFromSignature is a free data retrieval call binding the contract method 0x23d0601d.
 //
 // Solidity: function getAccountIdFromSignature(bytes32 messageHash, bytes signature) constant returns(bytes8)
-func (c *AccountsContract) GetAccountIdFromSignature(messageHash common.Hash, signature []byte) (types.ID, error) {
-	return c.AccountsCaller.GetAccountIdFromSignature(nil, messageHash, signature)
-}
+func (c *AccountsContract) GetAccountIdFromSignature(
+	messageHash common.Hash,
+	signature []byte,
+) (
 
-// IdentityHashToAccount is a free data retrieval call binding the contract method 0x17aba2d3.
-//
-// Solidity: function identityHashToAccount(bytes32 ) constant returns(bytes8)
-func (c *AccountsContract) IdentityHashToAccount(arg0 common.Hash) (types.ID, error) {
-	return c.AccountsCaller.IdentityHashToAccount(nil, arg0)
+	types.ID,
+	error,
+) {
+	return c.AccountsCaller.GetAccountIdFromSignature(nil, messageHash, signature)
 }
 
 // IsControllerOf is a free data retrieval call binding the contract method 0xa83038e7.
 //
 // Solidity: function isControllerOf(address sender, bytes8 accountId) constant returns(bool)
-func (c *AccountsContract) IsControllerOf(sender common.Address, accountId types.ID) (bool, error) {
+func (c *AccountsContract) IsControllerOf(
+	sender common.Address,
+	accountId types.ID,
+) (
+
+	bool,
+	error,
+) {
 	return c.AccountsCaller.IsControllerOf(nil, sender, accountId)
 }
 
 // IsTemporary is a free data retrieval call binding the contract method 0x6b886888.
 //
 // Solidity: function isTemporary(bytes8 accountId) constant returns(bool)
-func (c *AccountsContract) IsTemporary(accountId types.ID) (bool, error) {
-	return c.AccountsCaller.IsTemporary(nil, accountId)
-}
+func (c *AccountsContract) IsTemporary(
+	accountId types.ID,
+) (
 
-// NumberOfAccounts is a free data retrieval call binding the contract method 0x0f03e4c3.
-//
-// Solidity: function numberOfAccounts() constant returns(uint256)
-func (c *AccountsContract) NumberOfAccounts() (*big.Int, error) {
-	return c.AccountsCaller.NumberOfAccounts(nil)
+	bool,
+	error,
+) {
+	return c.AccountsCaller.IsTemporary(nil, accountId)
 }
 
 // Create is a paid mutator transaction binding the contract method 0xefc81a8c.
 //
 // Solidity: function create() returns(bytes8)
-func (c *AccountsContract) Create(ctx context.Context) (*klayTypes.Receipt, error) {
+func (c *AccountsContract) Create(
+	ctx context.Context,
+) (*chainTypes.Receipt, error) {
 	tx, err := c.AccountsTransactor.Create(c.client.Account())
 	if err != nil {
 		return nil, err
@@ -217,7 +370,10 @@ func (c *AccountsContract) Create(ctx context.Context) (*klayTypes.Receipt, erro
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
 //
 // Solidity: function createTemporary(bytes32 identityHash) returns(bytes8)
-func (c *AccountsContract) CreateTemporary(ctx context.Context, identityHash common.Hash) (*klayTypes.Receipt, error) {
+func (c *AccountsContract) CreateTemporary(
+	ctx context.Context,
+	identityHash common.Hash,
+) (*chainTypes.Receipt, error) {
 	tx, err := c.AccountsTransactor.CreateTemporary(c.client.Account(), identityHash)
 	if err != nil {
 		return nil, err
@@ -228,7 +384,10 @@ func (c *AccountsContract) CreateTemporary(ctx context.Context, identityHash com
 // SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
 //
 // Solidity: function setController(address controller) returns()
-func (c *AccountsContract) SetController(ctx context.Context, controller common.Address) (*klayTypes.Receipt, error) {
+func (c *AccountsContract) SetController(
+	ctx context.Context,
+	controller common.Address,
+) (*chainTypes.Receipt, error) {
 	tx, err := c.AccountsTransactor.SetController(c.client.Account(), controller)
 	if err != nil {
 		return nil, err
@@ -239,7 +398,12 @@ func (c *AccountsContract) SetController(ctx context.Context, controller common.
 // UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
 //
 // Solidity: function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) returns()
-func (c *AccountsContract) UnlockTemporary(ctx context.Context, identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) (*klayTypes.Receipt, error) {
+func (c *AccountsContract) UnlockTemporary(
+	ctx context.Context,
+	identityPreimage common.Hash,
+	newOwner common.Address,
+	passwordSignature []byte,
+) (*chainTypes.Receipt, error) {
 	tx, err := c.AccountsTransactor.UnlockTemporary(c.client.Account(), identityPreimage, newOwner, passwordSignature)
 	if err != nil {
 		return nil, err

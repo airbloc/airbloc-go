@@ -53,8 +53,8 @@ func (manager *exchangeManager) Prepare(
 	}
 
 	manager.log.Info("Offer prepared.", logger.Attrs{
-		"offer-id":          evt.OfferId.Hex(),
-		"provider-app-name": evt.ProviderAppName,
+		"offer-id":          evt[0].OfferId.Hex(),
+		"provider-app-name": evt[0].ProviderAppName,
 	})
 
 	// then, splits ids into chunks which maximum length is 20.
@@ -68,13 +68,13 @@ func (manager *exchangeManager) Prepare(
 				end = l
 			}
 
-			err = manager.AddDataIds(ctx, evt.OfferId, dataIds[start:end])
+			err = manager.AddDataIds(ctx, evt[0].OfferId, dataIds[start:end])
 			if err != nil {
 				break
 			}
 		}
 	}
-	return evt.OfferId, nil
+	return evt[0].OfferId, nil
 }
 
 // AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
@@ -107,7 +107,7 @@ func (manager *exchangeManager) Order(ctx context.Context, offerId types.ID) err
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	manager.log.Info("Offer presented.", logger.Attrs{"offer-id": evt.OfferId.Hex()})
+	manager.log.Info("Offer presented.", logger.Attrs{"offer-id": evt[0].OfferId.Hex()})
 	return nil
 }
 
@@ -125,7 +125,7 @@ func (manager *exchangeManager) Cancel(ctx context.Context, offerId types.ID) er
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	manager.log.Info("Offer cancelled.", logger.Attrs{"offer-id": evt.OfferId.Hex()})
+	manager.log.Info("Offer cancelled.", logger.Attrs{"offer-id": evt[0].OfferId.Hex()})
 	return nil
 }
 
@@ -143,7 +143,7 @@ func (manager *exchangeManager) Settle(ctx context.Context, offerId types.ID) er
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	manager.log.Info("Offer settled", logger.Attrs{"offer-id": evt.OfferId.Hex()})
+	manager.log.Info("Offer settled", logger.Attrs{"offer-id": evt[0].OfferId.Hex()})
 	return nil
 }
 
@@ -161,6 +161,6 @@ func (manager *exchangeManager) Reject(ctx context.Context, offerId types.ID) er
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	manager.log.Info("Offer rejected", logger.Attrs{"offer-id": evt.OfferId.Hex()})
+	manager.log.Info("Offer rejected", logger.Attrs{"offer-id": evt[0].OfferId.Hex()})
 	return nil
 }

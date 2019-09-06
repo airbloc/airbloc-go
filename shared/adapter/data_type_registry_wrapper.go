@@ -7,13 +7,13 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/airbloc/airbloc-go/shared/blockchain"
-	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/klaytn/klaytn/accounts/abi"
-	"github.com/klaytn/klaytn/accounts/abi/bind"
-	klayTypes "github.com/klaytn/klaytn/blockchain/types"
-	"github.com/klaytn/klaytn/common"
-	"github.com/klaytn/klaytn/event"
+	blockchain "github.com/airbloc/airbloc-go/shared/blockchain"
+	types "github.com/airbloc/airbloc-go/shared/types"
+	abi "github.com/klaytn/klaytn/accounts/abi"
+	bind "github.com/klaytn/klaytn/accounts/abi/bind"
+	chainTypes "github.com/klaytn/klaytn/blockchain/types"
+	common "github.com/klaytn/klaytn/common"
+	event "github.com/klaytn/klaytn/event"
 )
 
 //go:generate mockgen -source data_type_registry_wrapper.go -destination ./mocks/mock_data_type_registry.go -package mocks IDataTypeRegistryManager,IDataTypeRegistryContract
@@ -26,8 +26,16 @@ type IDataTypeRegistryManager interface {
 	IDataTypeRegistryCalls
 
 	// Transact methods
-	Register(ctx context.Context, name string, schemaHash common.Hash) error
-	Unregister(ctx context.Context, name string) error
+	Register(
+		ctx context.Context,
+		name string,
+		schemaHash common.Hash,
+	) error
+
+	Unregister(
+		ctx context.Context,
+		name string,
+	) error
 
 	// Event methods
 	IDataTypeRegistryFilterer
@@ -35,14 +43,37 @@ type IDataTypeRegistryManager interface {
 }
 
 type IDataTypeRegistryCalls interface {
-	Exists(name string) (bool, error)
-	Get(name string) (types.DataType, error)
-	IsOwner(name string, owner common.Address) (bool, error)
+	Exists(
+		name string,
+	) (
+		bool,
+		error,
+	)
+	Get(
+		name string,
+	) (
+		types.DataType,
+		error,
+	)
+	IsOwner(
+		name string,
+		owner common.Address,
+	) (
+		bool,
+		error,
+	)
 }
 
 type IDataTypeRegistryTransacts interface {
-	Register(ctx context.Context, name string, schemaHash common.Hash) (*klayTypes.Receipt, error)
-	Unregister(ctx context.Context, name string) (*klayTypes.Receipt, error)
+	Register(
+		ctx context.Context,
+		name string,
+		schemaHash common.Hash,
+	) (*chainTypes.Receipt, error)
+	Unregister(
+		ctx context.Context,
+		name string,
+	) (*chainTypes.Receipt, error)
 }
 
 type IDataTypeRegistryEvents interface {
@@ -52,18 +83,34 @@ type IDataTypeRegistryEvents interface {
 }
 
 type IDataTypeRegistryFilterer interface {
-	FilterRegistration(opts *bind.FilterOpts) (*DataTypeRegistryRegistrationIterator, error)
-	FilterUnregistration(opts *bind.FilterOpts) (*DataTypeRegistryUnregistrationIterator, error)
+	FilterRegistration(
+		opts *bind.FilterOpts,
+
+	) (*DataTypeRegistryRegistrationIterator, error)
+	FilterUnregistration(
+		opts *bind.FilterOpts,
+
+	) (*DataTypeRegistryUnregistrationIterator, error)
 }
 
 type IDataTypeRegistryParser interface {
-	ParseRegistrationFromReceipt(receipt *klayTypes.Receipt) (*DataTypeRegistryRegistration, error)
-	ParseUnregistrationFromReceipt(receipt *klayTypes.Receipt) (*DataTypeRegistryUnregistration, error)
+	ParseRegistration(log chainTypes.Log) (*DataTypeRegistryRegistration, error)
+	ParseRegistrationFromReceipt(receipt *chainTypes.Receipt) ([]*DataTypeRegistryRegistration, error)
+	ParseUnregistration(log chainTypes.Log) (*DataTypeRegistryUnregistration, error)
+	ParseUnregistrationFromReceipt(receipt *chainTypes.Receipt) ([]*DataTypeRegistryUnregistration, error)
 }
 
 type IDataTypeRegistryWatcher interface {
-	WatchRegistration(opts *bind.WatchOpts, sink chan<- *DataTypeRegistryRegistration) (event.Subscription, error)
-	WatchUnregistration(opts *bind.WatchOpts, sink chan<- *DataTypeRegistryUnregistration) (event.Subscription, error)
+	WatchRegistration(
+		opts *bind.WatchOpts,
+		sink chan<- *DataTypeRegistryRegistration,
+
+	) (event.Subscription, error)
+	WatchUnregistration(
+		opts *bind.WatchOpts,
+		sink chan<- *DataTypeRegistryUnregistration,
+
+	) (event.Subscription, error)
 }
 
 type IDataTypeRegistryContract interface {
@@ -128,28 +175,51 @@ func init() {
 // Exists is a free data retrieval call binding the contract method 0x261a323e.
 //
 // Solidity: function exists(string name) constant returns(bool)
-func (c *DataTypeRegistryContract) Exists(name string) (bool, error) {
+func (c *DataTypeRegistryContract) Exists(
+	name string,
+) (
+
+	bool,
+	error,
+) {
 	return c.DataTypeRegistryCaller.Exists(nil, name)
 }
 
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
 // Solidity: function get(string name) constant returns((string,address,bytes32))
-func (c *DataTypeRegistryContract) Get(name string) (types.DataType, error) {
+func (c *DataTypeRegistryContract) Get(
+	name string,
+) (
+
+	types.DataType,
+	error,
+) {
 	return c.DataTypeRegistryCaller.Get(nil, name)
 }
 
 // IsOwner is a free data retrieval call binding the contract method 0xbde1eee7.
 //
 // Solidity: function isOwner(string name, address owner) constant returns(bool)
-func (c *DataTypeRegistryContract) IsOwner(name string, owner common.Address) (bool, error) {
+func (c *DataTypeRegistryContract) IsOwner(
+	name string,
+	owner common.Address,
+) (
+
+	bool,
+	error,
+) {
 	return c.DataTypeRegistryCaller.IsOwner(nil, name, owner)
 }
 
 // Register is a paid mutator transaction binding the contract method 0x656afdee.
 //
 // Solidity: function register(string name, bytes32 schemaHash) returns()
-func (c *DataTypeRegistryContract) Register(ctx context.Context, name string, schemaHash common.Hash) (*klayTypes.Receipt, error) {
+func (c *DataTypeRegistryContract) Register(
+	ctx context.Context,
+	name string,
+	schemaHash common.Hash,
+) (*chainTypes.Receipt, error) {
 	tx, err := c.DataTypeRegistryTransactor.Register(c.client.Account(), name, schemaHash)
 	if err != nil {
 		return nil, err
@@ -160,7 +230,10 @@ func (c *DataTypeRegistryContract) Register(ctx context.Context, name string, sc
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
 //
 // Solidity: function unregister(string name) returns()
-func (c *DataTypeRegistryContract) Unregister(ctx context.Context, name string) (*klayTypes.Receipt, error) {
+func (c *DataTypeRegistryContract) Unregister(
+	ctx context.Context,
+	name string,
+) (*chainTypes.Receipt, error) {
 	tx, err := c.DataTypeRegistryTransactor.Unregister(c.client.Account(), name)
 	if err != nil {
 		return nil, err

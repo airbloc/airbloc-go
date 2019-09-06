@@ -36,7 +36,7 @@ func (manager *dataTypeRegistryManager) Register(ctx context.Context, name strin
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	manager.log.Info("Data type registered.", logger.Attrs{"name": evt.Name})
+	manager.log.Info("Data type registered.", logger.Attrs{"name": evt[0].Name})
 	return nil
 }
 
@@ -54,6 +54,6 @@ func (manager *dataTypeRegistryManager) Unregister(ctx context.Context, name str
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	manager.log.Info("Data type unregistered.", logger.Attrs{"name": evt.Name})
+	manager.log.Info("Data type unregistered.", logger.Attrs{"name": evt[0].Name})
 	return nil
 }

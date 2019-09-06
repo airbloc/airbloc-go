@@ -26,7 +26,7 @@ func appNameToAddr(appName string) common.Address {
 
 func (manager *DAuthManager) Allow(
 	ctx context.Context,
-	action types.ConsentActionTypes,
+	action uint8,
 	appName, dataType string,
 ) error {
 	consentData := types.ConsentData{
@@ -39,7 +39,7 @@ func (manager *DAuthManager) Allow(
 
 func (manager *DAuthManager) AllowByController(
 	ctx context.Context,
-	action types.ConsentActionTypes,
+	action uint8,
 	userId types.ID,
 	appName, dataType string,
 	passwordSignature []byte,
@@ -47,7 +47,7 @@ func (manager *DAuthManager) AllowByController(
 	iter, err := manager.consents.FilterConsented(&bind.FilterOpts{
 		Context: ctx,
 		Start:   manager.consents.CreatedAt().Uint64(),
-	}, []uint8{uint8(action)}, []types.ID{userId}, []common.Address{appNameToAddr(appName)})
+	}, []uint8{action}, []types.ID{userId}, []common.Address{appNameToAddr(appName)})
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,7 @@ func (manager *DAuthManager) AllowByController(
 
 func (manager *DAuthManager) Deny(
 	ctx context.Context,
-	action types.ConsentActionTypes,
+	action uint8,
 	appName, dataType string,
 ) error {
 	consentData := types.ConsentData{
@@ -78,7 +78,7 @@ func (manager *DAuthManager) Deny(
 }
 
 func (manager *DAuthManager) DenyByController(ctx context.Context,
-	action types.ConsentActionTypes,
+	action uint8,
 	userId types.ID,
 	appName, dataType string,
 	passwordSignature []byte,
@@ -86,7 +86,7 @@ func (manager *DAuthManager) DenyByController(ctx context.Context,
 	iter, err := manager.consents.FilterConsented(&bind.FilterOpts{
 		Context: ctx,
 		Start:   manager.consents.CreatedAt().Uint64(),
-	}, []uint8{uint8(action)}, []types.ID{userId}, []common.Address{appNameToAddr(appName)})
+	}, []uint8{action}, []types.ID{userId}, []common.Address{appNameToAddr(appName)})
 	if err != nil {
 		return err
 	}

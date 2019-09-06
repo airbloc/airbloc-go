@@ -7,13 +7,13 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/airbloc/airbloc-go/shared/blockchain"
-	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/klaytn/klaytn/accounts/abi"
-	"github.com/klaytn/klaytn/accounts/abi/bind"
-	klayTypes "github.com/klaytn/klaytn/blockchain/types"
-	"github.com/klaytn/klaytn/common"
-	"github.com/klaytn/klaytn/event"
+	blockchain "github.com/airbloc/airbloc-go/shared/blockchain"
+	types "github.com/airbloc/airbloc-go/shared/types"
+	abi "github.com/klaytn/klaytn/accounts/abi"
+	bind "github.com/klaytn/klaytn/accounts/abi/bind"
+	chainTypes "github.com/klaytn/klaytn/blockchain/types"
+	common "github.com/klaytn/klaytn/common"
+	event "github.com/klaytn/klaytn/event"
 )
 
 //go:generate mockgen -source controller_registry_wrapper.go -destination ./mocks/mock_controller_registry.go -package mocks IControllerRegistryManager,IControllerRegistryContract
@@ -26,9 +26,10 @@ type IControllerRegistryManager interface {
 	IControllerRegistryCalls
 
 	// Transact methods
-	Register(ctx context.Context, controllerAddr common.Address) error
-	RenounceOwnership(ctx context.Context) error
-	TransferOwnership(ctx context.Context, newOwner common.Address) error
+	Register(
+		ctx context.Context,
+		controllerAddr common.Address,
+	) error
 
 	// Event methods
 	IControllerRegistryFilterer
@@ -36,16 +37,25 @@ type IControllerRegistryManager interface {
 }
 
 type IControllerRegistryCalls interface {
-	Exists(controller common.Address) (bool, error)
-	Get(controller common.Address) (types.DataController, error)
-	IsOwner() (bool, error)
-	Owner() (common.Address, error)
+	Exists(
+		controller common.Address,
+	) (
+		bool,
+		error,
+	)
+	Get(
+		controller common.Address,
+	) (
+		types.DataController,
+		error,
+	)
 }
 
 type IControllerRegistryTransacts interface {
-	Register(ctx context.Context, controllerAddr common.Address) (*klayTypes.Receipt, error)
-	RenounceOwnership(ctx context.Context) (*klayTypes.Receipt, error)
-	TransferOwnership(ctx context.Context, newOwner common.Address) (*klayTypes.Receipt, error)
+	Register(
+		ctx context.Context,
+		controllerAddr common.Address,
+	) (*chainTypes.Receipt, error)
 }
 
 type IControllerRegistryEvents interface {
@@ -55,21 +65,47 @@ type IControllerRegistryEvents interface {
 }
 
 type IControllerRegistryFilterer interface {
-	FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*ControllerRegistryOwnershipTransferredIterator, error)
-	FilterRegistration(opts *bind.FilterOpts, controller []common.Address) (*ControllerRegistryRegistrationIterator, error)
-	FilterUnregistration(opts *bind.FilterOpts, controller []common.Address) (*ControllerRegistryUnregistrationIterator, error)
+	FilterOwnershipTransferred(
+		opts *bind.FilterOpts,
+		previousOwner []common.Address,
+		newOwner []common.Address,
+	) (*ControllerRegistryOwnershipTransferredIterator, error)
+	FilterRegistration(
+		opts *bind.FilterOpts,
+		controller []common.Address,
+	) (*ControllerRegistryRegistrationIterator, error)
+	FilterUnregistration(
+		opts *bind.FilterOpts,
+		controller []common.Address,
+	) (*ControllerRegistryUnregistrationIterator, error)
 }
 
 type IControllerRegistryParser interface {
-	ParseOwnershipTransferredFromReceipt(receipt *klayTypes.Receipt) (*ControllerRegistryOwnershipTransferred, error)
-	ParseRegistrationFromReceipt(receipt *klayTypes.Receipt) (*ControllerRegistryRegistration, error)
-	ParseUnregistrationFromReceipt(receipt *klayTypes.Receipt) (*ControllerRegistryUnregistration, error)
+	ParseOwnershipTransferred(log chainTypes.Log) (*ControllerRegistryOwnershipTransferred, error)
+	ParseOwnershipTransferredFromReceipt(receipt *chainTypes.Receipt) ([]*ControllerRegistryOwnershipTransferred, error)
+	ParseRegistration(log chainTypes.Log) (*ControllerRegistryRegistration, error)
+	ParseRegistrationFromReceipt(receipt *chainTypes.Receipt) ([]*ControllerRegistryRegistration, error)
+	ParseUnregistration(log chainTypes.Log) (*ControllerRegistryUnregistration, error)
+	ParseUnregistrationFromReceipt(receipt *chainTypes.Receipt) ([]*ControllerRegistryUnregistration, error)
 }
 
 type IControllerRegistryWatcher interface {
-	WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *ControllerRegistryOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error)
-	WatchRegistration(opts *bind.WatchOpts, sink chan<- *ControllerRegistryRegistration, controller []common.Address) (event.Subscription, error)
-	WatchUnregistration(opts *bind.WatchOpts, sink chan<- *ControllerRegistryUnregistration, controller []common.Address) (event.Subscription, error)
+	WatchOwnershipTransferred(
+		opts *bind.WatchOpts,
+		sink chan<- *ControllerRegistryOwnershipTransferred,
+		previousOwner []common.Address,
+		newOwner []common.Address,
+	) (event.Subscription, error)
+	WatchRegistration(
+		opts *bind.WatchOpts,
+		sink chan<- *ControllerRegistryRegistration,
+		controller []common.Address,
+	) (event.Subscription, error)
+	WatchUnregistration(
+		opts *bind.WatchOpts,
+		sink chan<- *ControllerRegistryUnregistration,
+		controller []common.Address,
+	) (event.Subscription, error)
 }
 
 type IControllerRegistryContract interface {
@@ -128,65 +164,42 @@ func newControllerRegistryContract(address common.Address, txHash common.Hash, c
 func init() {
 	blockchain.AddContractConstructor("ControllerRegistry", newControllerRegistryContract)
 	blockchain.RegisterSelector("0x4420e486", "register(address)")
-	blockchain.RegisterSelector("0x715018a6", "renounceOwnership()")
-	blockchain.RegisterSelector("0xf2fde38b", "transferOwnership(address)")
 }
 
 // Exists is a free data retrieval call binding the contract method 0xf6a3d24e.
 //
 // Solidity: function exists(address controller) constant returns(bool)
-func (c *ControllerRegistryContract) Exists(controller common.Address) (bool, error) {
+func (c *ControllerRegistryContract) Exists(
+	controller common.Address,
+) (
+
+	bool,
+	error,
+) {
 	return c.ControllerRegistryCaller.Exists(nil, controller)
 }
 
 // Get is a free data retrieval call binding the contract method 0xc2bc2efc.
 //
 // Solidity: function get(address controller) constant returns((address,uint256))
-func (c *ControllerRegistryContract) Get(controller common.Address) (types.DataController, error) {
+func (c *ControllerRegistryContract) Get(
+	controller common.Address,
+) (
+
+	types.DataController,
+	error,
+) {
 	return c.ControllerRegistryCaller.Get(nil, controller)
-}
-
-// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
-//
-// Solidity: function isOwner() constant returns(bool)
-func (c *ControllerRegistryContract) IsOwner() (bool, error) {
-	return c.ControllerRegistryCaller.IsOwner(nil)
-}
-
-// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
-//
-// Solidity: function owner() constant returns(address)
-func (c *ControllerRegistryContract) Owner() (common.Address, error) {
-	return c.ControllerRegistryCaller.Owner(nil)
 }
 
 // Register is a paid mutator transaction binding the contract method 0x4420e486.
 //
 // Solidity: function register(address controllerAddr) returns()
-func (c *ControllerRegistryContract) Register(ctx context.Context, controllerAddr common.Address) (*klayTypes.Receipt, error) {
+func (c *ControllerRegistryContract) Register(
+	ctx context.Context,
+	controllerAddr common.Address,
+) (*chainTypes.Receipt, error) {
 	tx, err := c.ControllerRegistryTransactor.Register(c.client.Account(), controllerAddr)
-	if err != nil {
-		return nil, err
-	}
-	return c.client.WaitMined(ctx, tx)
-}
-
-// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
-//
-// Solidity: function renounceOwnership() returns()
-func (c *ControllerRegistryContract) RenounceOwnership(ctx context.Context) (*klayTypes.Receipt, error) {
-	tx, err := c.ControllerRegistryTransactor.RenounceOwnership(c.client.Account())
-	if err != nil {
-		return nil, err
-	}
-	return c.client.WaitMined(ctx, tx)
-}
-
-// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
-//
-// Solidity: function transferOwnership(address newOwner) returns()
-func (c *ControllerRegistryContract) TransferOwnership(ctx context.Context, newOwner common.Address) (*klayTypes.Receipt, error) {
-	tx, err := c.ControllerRegistryTransactor.TransferOwnership(c.client.Account(), newOwner)
 	if err != nil {
 		return nil, err
 	}
