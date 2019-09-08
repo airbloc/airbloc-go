@@ -5,384 +5,277 @@
 package mocks
 
 import (
-	context "context"
 	big "math/big"
 	reflect "reflect"
 
-	types "github.com/airbloc/airbloc-go/shared/types"
 	gomock "github.com/golang/mock/gomock"
-	types0 "github.com/klaytn/klaytn/blockchain/types"
 	common "github.com/klaytn/klaytn/common"
 )
 
-// MockIERC20EscrowManager is a mock of IERC20EscrowManager interface
-type MockIERC20EscrowManager struct {
+// MockIErc20EscrowManager is a mock of IErc20EscrowManager interface
+type MockIErc20EscrowManager struct {
 	ctrl     *gomock.Controller
-	recorder *MockIERC20EscrowManagerMockRecorder
+	recorder *MockIErc20EscrowManagerMockRecorder
 }
 
-// MockIERC20EscrowManagerMockRecorder is the mock recorder for MockIERC20EscrowManager
-type MockIERC20EscrowManagerMockRecorder struct {
-	mock *MockIERC20EscrowManager
+// MockIErc20EscrowManagerMockRecorder is the mock recorder for MockIErc20EscrowManager
+type MockIErc20EscrowManagerMockRecorder struct {
+	mock *MockIErc20EscrowManager
 }
 
-// NewMockIERC20EscrowManager creates a new mock instance
-func NewMockIERC20EscrowManager(ctrl *gomock.Controller) *MockIERC20EscrowManager {
-	mock := &MockIERC20EscrowManager{ctrl: ctrl}
-	mock.recorder = &MockIERC20EscrowManagerMockRecorder{mock}
+// NewMockIErc20EscrowManager creates a new mock instance
+func NewMockIErc20EscrowManager(ctrl *gomock.Controller) *MockIErc20EscrowManager {
+	mock := &MockIErc20EscrowManager{ctrl: ctrl}
+	mock.recorder = &MockIErc20EscrowManagerMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use
-func (m *MockIERC20EscrowManager) EXPECT() *MockIERC20EscrowManagerMockRecorder {
+func (m *MockIErc20EscrowManager) EXPECT() *MockIErc20EscrowManagerMockRecorder {
 	return m.recorder
 }
 
 // Address mocks base method
-func (m *MockIERC20EscrowManager) Address() common.Address {
+func (m *MockIErc20EscrowManager) Address() common.Address {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
 }
 
 // Address indicates an expected call of Address
-func (mr *MockIERC20EscrowManagerMockRecorder) Address() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIERC20EscrowManager)(nil).Address))
+func (mr *MockIErc20EscrowManagerMockRecorder) Address() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIErc20EscrowManager)(nil).Address))
 }
 
 // TxHash mocks base method
-func (m *MockIERC20EscrowManager) TxHash() common.Hash {
+func (m *MockIErc20EscrowManager) TxHash() common.Hash {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TxHash")
 	ret0, _ := ret[0].(common.Hash)
 	return ret0
 }
 
 // TxHash indicates an expected call of TxHash
-func (mr *MockIERC20EscrowManagerMockRecorder) TxHash() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockIERC20EscrowManager)(nil).TxHash))
+func (mr *MockIErc20EscrowManagerMockRecorder) TxHash() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockIErc20EscrowManager)(nil).TxHash))
 }
 
 // CreatedAt mocks base method
-func (m *MockIERC20EscrowManager) CreatedAt() *big.Int {
+func (m *MockIErc20EscrowManager) CreatedAt() *big.Int {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatedAt")
 	ret0, _ := ret[0].(*big.Int)
 	return ret0
 }
 
 // CreatedAt indicates an expected call of CreatedAt
-func (mr *MockIERC20EscrowManagerMockRecorder) CreatedAt() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIERC20EscrowManager)(nil).CreatedAt))
+func (mr *MockIErc20EscrowManagerMockRecorder) CreatedAt() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIErc20EscrowManager)(nil).CreatedAt))
 }
 
-// Convert mocks base method
-func (m *MockIERC20EscrowManager) Convert(sign [4]byte, args []byte, offerId types.ID) ([]byte, error) {
-	ret := m.ctrl.Call(m, "Convert", sign, args, offerId)
-	ret0, _ := ret[0].([]byte)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Convert indicates an expected call of Convert
-func (mr *MockIERC20EscrowManagerMockRecorder) Convert(sign, args, offerId interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Convert", reflect.TypeOf((*MockIERC20EscrowManager)(nil).Convert), sign, args, offerId)
-}
-
-// GetTransactSelector mocks base method
-func (m *MockIERC20EscrowManager) GetTransactSelector() ([4]byte, error) {
-	ret := m.ctrl.Call(m, "GetTransactSelector")
-	ret0, _ := ret[0].([4]byte)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetTransactSelector indicates an expected call of GetTransactSelector
-func (mr *MockIERC20EscrowManagerMockRecorder) GetTransactSelector() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransactSelector", reflect.TypeOf((*MockIERC20EscrowManager)(nil).GetTransactSelector))
-}
-
-// Transact mocks base method
-func (m *MockIERC20EscrowManager) Transact(ctx context.Context, token common.Address, amount *big.Int, offerId types.ID) error {
-	ret := m.ctrl.Call(m, "Transact", ctx, token, amount, offerId)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Transact indicates an expected call of Transact
-func (mr *MockIERC20EscrowManagerMockRecorder) Transact(ctx, token, amount, offerId interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Transact", reflect.TypeOf((*MockIERC20EscrowManager)(nil).Transact), ctx, token, amount, offerId)
-}
-
-// MockIERC20EscrowCalls is a mock of IERC20EscrowCalls interface
-type MockIERC20EscrowCalls struct {
+// MockIErc20EscrowCalls is a mock of IErc20EscrowCalls interface
+type MockIErc20EscrowCalls struct {
 	ctrl     *gomock.Controller
-	recorder *MockIERC20EscrowCallsMockRecorder
+	recorder *MockIErc20EscrowCallsMockRecorder
 }
 
-// MockIERC20EscrowCallsMockRecorder is the mock recorder for MockIERC20EscrowCalls
-type MockIERC20EscrowCallsMockRecorder struct {
-	mock *MockIERC20EscrowCalls
+// MockIErc20EscrowCallsMockRecorder is the mock recorder for MockIErc20EscrowCalls
+type MockIErc20EscrowCallsMockRecorder struct {
+	mock *MockIErc20EscrowCalls
 }
 
-// NewMockIERC20EscrowCalls creates a new mock instance
-func NewMockIERC20EscrowCalls(ctrl *gomock.Controller) *MockIERC20EscrowCalls {
-	mock := &MockIERC20EscrowCalls{ctrl: ctrl}
-	mock.recorder = &MockIERC20EscrowCallsMockRecorder{mock}
+// NewMockIErc20EscrowCalls creates a new mock instance
+func NewMockIErc20EscrowCalls(ctrl *gomock.Controller) *MockIErc20EscrowCalls {
+	mock := &MockIErc20EscrowCalls{ctrl: ctrl}
+	mock.recorder = &MockIErc20EscrowCallsMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use
-func (m *MockIERC20EscrowCalls) EXPECT() *MockIERC20EscrowCallsMockRecorder {
+func (m *MockIErc20EscrowCalls) EXPECT() *MockIErc20EscrowCallsMockRecorder {
 	return m.recorder
 }
 
-// Convert mocks base method
-func (m *MockIERC20EscrowCalls) Convert(sign [4]byte, args []byte, offerId types.ID) ([]byte, error) {
-	ret := m.ctrl.Call(m, "Convert", sign, args, offerId)
-	ret0, _ := ret[0].([]byte)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Convert indicates an expected call of Convert
-func (mr *MockIERC20EscrowCallsMockRecorder) Convert(sign, args, offerId interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Convert", reflect.TypeOf((*MockIERC20EscrowCalls)(nil).Convert), sign, args, offerId)
-}
-
-// GetTransactSelector mocks base method
-func (m *MockIERC20EscrowCalls) GetTransactSelector() ([4]byte, error) {
-	ret := m.ctrl.Call(m, "GetTransactSelector")
-	ret0, _ := ret[0].([4]byte)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetTransactSelector indicates an expected call of GetTransactSelector
-func (mr *MockIERC20EscrowCallsMockRecorder) GetTransactSelector() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransactSelector", reflect.TypeOf((*MockIERC20EscrowCalls)(nil).GetTransactSelector))
-}
-
-// MockIERC20EscrowTransacts is a mock of IERC20EscrowTransacts interface
-type MockIERC20EscrowTransacts struct {
+// MockIErc20EscrowTransacts is a mock of IErc20EscrowTransacts interface
+type MockIErc20EscrowTransacts struct {
 	ctrl     *gomock.Controller
-	recorder *MockIERC20EscrowTransactsMockRecorder
+	recorder *MockIErc20EscrowTransactsMockRecorder
 }
 
-// MockIERC20EscrowTransactsMockRecorder is the mock recorder for MockIERC20EscrowTransacts
-type MockIERC20EscrowTransactsMockRecorder struct {
-	mock *MockIERC20EscrowTransacts
+// MockIErc20EscrowTransactsMockRecorder is the mock recorder for MockIErc20EscrowTransacts
+type MockIErc20EscrowTransactsMockRecorder struct {
+	mock *MockIErc20EscrowTransacts
 }
 
-// NewMockIERC20EscrowTransacts creates a new mock instance
-func NewMockIERC20EscrowTransacts(ctrl *gomock.Controller) *MockIERC20EscrowTransacts {
-	mock := &MockIERC20EscrowTransacts{ctrl: ctrl}
-	mock.recorder = &MockIERC20EscrowTransactsMockRecorder{mock}
+// NewMockIErc20EscrowTransacts creates a new mock instance
+func NewMockIErc20EscrowTransacts(ctrl *gomock.Controller) *MockIErc20EscrowTransacts {
+	mock := &MockIErc20EscrowTransacts{ctrl: ctrl}
+	mock.recorder = &MockIErc20EscrowTransactsMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use
-func (m *MockIERC20EscrowTransacts) EXPECT() *MockIERC20EscrowTransactsMockRecorder {
+func (m *MockIErc20EscrowTransacts) EXPECT() *MockIErc20EscrowTransactsMockRecorder {
 	return m.recorder
 }
 
-// Transact mocks base method
-func (m *MockIERC20EscrowTransacts) Transact(ctx context.Context, token common.Address, amount *big.Int, offerId types.ID) (*types0.Receipt, error) {
-	ret := m.ctrl.Call(m, "Transact", ctx, token, amount, offerId)
-	ret0, _ := ret[0].(*types0.Receipt)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Transact indicates an expected call of Transact
-func (mr *MockIERC20EscrowTransactsMockRecorder) Transact(ctx, token, amount, offerId interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Transact", reflect.TypeOf((*MockIERC20EscrowTransacts)(nil).Transact), ctx, token, amount, offerId)
-}
-
-// MockIERC20EscrowEvents is a mock of IERC20EscrowEvents interface
-type MockIERC20EscrowEvents struct {
+// MockIErc20EscrowEvents is a mock of IErc20EscrowEvents interface
+type MockIErc20EscrowEvents struct {
 	ctrl     *gomock.Controller
-	recorder *MockIERC20EscrowEventsMockRecorder
+	recorder *MockIErc20EscrowEventsMockRecorder
 }
 
-// MockIERC20EscrowEventsMockRecorder is the mock recorder for MockIERC20EscrowEvents
-type MockIERC20EscrowEventsMockRecorder struct {
-	mock *MockIERC20EscrowEvents
+// MockIErc20EscrowEventsMockRecorder is the mock recorder for MockIErc20EscrowEvents
+type MockIErc20EscrowEventsMockRecorder struct {
+	mock *MockIErc20EscrowEvents
 }
 
-// NewMockIERC20EscrowEvents creates a new mock instance
-func NewMockIERC20EscrowEvents(ctrl *gomock.Controller) *MockIERC20EscrowEvents {
-	mock := &MockIERC20EscrowEvents{ctrl: ctrl}
-	mock.recorder = &MockIERC20EscrowEventsMockRecorder{mock}
+// NewMockIErc20EscrowEvents creates a new mock instance
+func NewMockIErc20EscrowEvents(ctrl *gomock.Controller) *MockIErc20EscrowEvents {
+	mock := &MockIErc20EscrowEvents{ctrl: ctrl}
+	mock.recorder = &MockIErc20EscrowEventsMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use
-func (m *MockIERC20EscrowEvents) EXPECT() *MockIERC20EscrowEventsMockRecorder {
+func (m *MockIErc20EscrowEvents) EXPECT() *MockIErc20EscrowEventsMockRecorder {
 	return m.recorder
 }
 
-// MockIERC20EscrowFilterer is a mock of IERC20EscrowFilterer interface
-type MockIERC20EscrowFilterer struct {
+// MockIErc20EscrowFilterer is a mock of IErc20EscrowFilterer interface
+type MockIErc20EscrowFilterer struct {
 	ctrl     *gomock.Controller
-	recorder *MockIERC20EscrowFiltererMockRecorder
+	recorder *MockIErc20EscrowFiltererMockRecorder
 }
 
-// MockIERC20EscrowFiltererMockRecorder is the mock recorder for MockIERC20EscrowFilterer
-type MockIERC20EscrowFiltererMockRecorder struct {
-	mock *MockIERC20EscrowFilterer
+// MockIErc20EscrowFiltererMockRecorder is the mock recorder for MockIErc20EscrowFilterer
+type MockIErc20EscrowFiltererMockRecorder struct {
+	mock *MockIErc20EscrowFilterer
 }
 
-// NewMockIERC20EscrowFilterer creates a new mock instance
-func NewMockIERC20EscrowFilterer(ctrl *gomock.Controller) *MockIERC20EscrowFilterer {
-	mock := &MockIERC20EscrowFilterer{ctrl: ctrl}
-	mock.recorder = &MockIERC20EscrowFiltererMockRecorder{mock}
+// NewMockIErc20EscrowFilterer creates a new mock instance
+func NewMockIErc20EscrowFilterer(ctrl *gomock.Controller) *MockIErc20EscrowFilterer {
+	mock := &MockIErc20EscrowFilterer{ctrl: ctrl}
+	mock.recorder = &MockIErc20EscrowFiltererMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use
-func (m *MockIERC20EscrowFilterer) EXPECT() *MockIERC20EscrowFiltererMockRecorder {
+func (m *MockIErc20EscrowFilterer) EXPECT() *MockIErc20EscrowFiltererMockRecorder {
 	return m.recorder
 }
 
-// MockIERC20EscrowParser is a mock of IERC20EscrowParser interface
-type MockIERC20EscrowParser struct {
+// MockIErc20EscrowParser is a mock of IErc20EscrowParser interface
+type MockIErc20EscrowParser struct {
 	ctrl     *gomock.Controller
-	recorder *MockIERC20EscrowParserMockRecorder
+	recorder *MockIErc20EscrowParserMockRecorder
 }
 
-// MockIERC20EscrowParserMockRecorder is the mock recorder for MockIERC20EscrowParser
-type MockIERC20EscrowParserMockRecorder struct {
-	mock *MockIERC20EscrowParser
+// MockIErc20EscrowParserMockRecorder is the mock recorder for MockIErc20EscrowParser
+type MockIErc20EscrowParserMockRecorder struct {
+	mock *MockIErc20EscrowParser
 }
 
-// NewMockIERC20EscrowParser creates a new mock instance
-func NewMockIERC20EscrowParser(ctrl *gomock.Controller) *MockIERC20EscrowParser {
-	mock := &MockIERC20EscrowParser{ctrl: ctrl}
-	mock.recorder = &MockIERC20EscrowParserMockRecorder{mock}
+// NewMockIErc20EscrowParser creates a new mock instance
+func NewMockIErc20EscrowParser(ctrl *gomock.Controller) *MockIErc20EscrowParser {
+	mock := &MockIErc20EscrowParser{ctrl: ctrl}
+	mock.recorder = &MockIErc20EscrowParserMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use
-func (m *MockIERC20EscrowParser) EXPECT() *MockIERC20EscrowParserMockRecorder {
+func (m *MockIErc20EscrowParser) EXPECT() *MockIErc20EscrowParserMockRecorder {
 	return m.recorder
 }
 
-// MockIERC20EscrowWatcher is a mock of IERC20EscrowWatcher interface
-type MockIERC20EscrowWatcher struct {
+// MockIErc20EscrowWatcher is a mock of IErc20EscrowWatcher interface
+type MockIErc20EscrowWatcher struct {
 	ctrl     *gomock.Controller
-	recorder *MockIERC20EscrowWatcherMockRecorder
+	recorder *MockIErc20EscrowWatcherMockRecorder
 }
 
-// MockIERC20EscrowWatcherMockRecorder is the mock recorder for MockIERC20EscrowWatcher
-type MockIERC20EscrowWatcherMockRecorder struct {
-	mock *MockIERC20EscrowWatcher
+// MockIErc20EscrowWatcherMockRecorder is the mock recorder for MockIErc20EscrowWatcher
+type MockIErc20EscrowWatcherMockRecorder struct {
+	mock *MockIErc20EscrowWatcher
 }
 
-// NewMockIERC20EscrowWatcher creates a new mock instance
-func NewMockIERC20EscrowWatcher(ctrl *gomock.Controller) *MockIERC20EscrowWatcher {
-	mock := &MockIERC20EscrowWatcher{ctrl: ctrl}
-	mock.recorder = &MockIERC20EscrowWatcherMockRecorder{mock}
+// NewMockIErc20EscrowWatcher creates a new mock instance
+func NewMockIErc20EscrowWatcher(ctrl *gomock.Controller) *MockIErc20EscrowWatcher {
+	mock := &MockIErc20EscrowWatcher{ctrl: ctrl}
+	mock.recorder = &MockIErc20EscrowWatcherMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use
-func (m *MockIERC20EscrowWatcher) EXPECT() *MockIERC20EscrowWatcherMockRecorder {
+func (m *MockIErc20EscrowWatcher) EXPECT() *MockIErc20EscrowWatcherMockRecorder {
 	return m.recorder
 }
 
-// MockIERC20EscrowContract is a mock of IERC20EscrowContract interface
-type MockIERC20EscrowContract struct {
+// MockIErc20EscrowContract is a mock of IErc20EscrowContract interface
+type MockIErc20EscrowContract struct {
 	ctrl     *gomock.Controller
-	recorder *MockIERC20EscrowContractMockRecorder
+	recorder *MockIErc20EscrowContractMockRecorder
 }
 
-// MockIERC20EscrowContractMockRecorder is the mock recorder for MockIERC20EscrowContract
-type MockIERC20EscrowContractMockRecorder struct {
-	mock *MockIERC20EscrowContract
+// MockIErc20EscrowContractMockRecorder is the mock recorder for MockIErc20EscrowContract
+type MockIErc20EscrowContractMockRecorder struct {
+	mock *MockIErc20EscrowContract
 }
 
-// NewMockIERC20EscrowContract creates a new mock instance
-func NewMockIERC20EscrowContract(ctrl *gomock.Controller) *MockIERC20EscrowContract {
-	mock := &MockIERC20EscrowContract{ctrl: ctrl}
-	mock.recorder = &MockIERC20EscrowContractMockRecorder{mock}
+// NewMockIErc20EscrowContract creates a new mock instance
+func NewMockIErc20EscrowContract(ctrl *gomock.Controller) *MockIErc20EscrowContract {
+	mock := &MockIErc20EscrowContract{ctrl: ctrl}
+	mock.recorder = &MockIErc20EscrowContractMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use
-func (m *MockIERC20EscrowContract) EXPECT() *MockIERC20EscrowContractMockRecorder {
+func (m *MockIErc20EscrowContract) EXPECT() *MockIErc20EscrowContractMockRecorder {
 	return m.recorder
 }
 
 // Address mocks base method
-func (m *MockIERC20EscrowContract) Address() common.Address {
+func (m *MockIErc20EscrowContract) Address() common.Address {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
 }
 
 // Address indicates an expected call of Address
-func (mr *MockIERC20EscrowContractMockRecorder) Address() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIERC20EscrowContract)(nil).Address))
+func (mr *MockIErc20EscrowContractMockRecorder) Address() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIErc20EscrowContract)(nil).Address))
 }
 
 // TxHash mocks base method
-func (m *MockIERC20EscrowContract) TxHash() common.Hash {
+func (m *MockIErc20EscrowContract) TxHash() common.Hash {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TxHash")
 	ret0, _ := ret[0].(common.Hash)
 	return ret0
 }
 
 // TxHash indicates an expected call of TxHash
-func (mr *MockIERC20EscrowContractMockRecorder) TxHash() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockIERC20EscrowContract)(nil).TxHash))
+func (mr *MockIErc20EscrowContractMockRecorder) TxHash() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockIErc20EscrowContract)(nil).TxHash))
 }
 
 // CreatedAt mocks base method
-func (m *MockIERC20EscrowContract) CreatedAt() *big.Int {
+func (m *MockIErc20EscrowContract) CreatedAt() *big.Int {
+	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatedAt")
 	ret0, _ := ret[0].(*big.Int)
 	return ret0
 }
 
 // CreatedAt indicates an expected call of CreatedAt
-func (mr *MockIERC20EscrowContractMockRecorder) CreatedAt() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIERC20EscrowContract)(nil).CreatedAt))
-}
-
-// Convert mocks base method
-func (m *MockIERC20EscrowContract) Convert(sign [4]byte, args []byte, offerId types.ID) ([]byte, error) {
-	ret := m.ctrl.Call(m, "Convert", sign, args, offerId)
-	ret0, _ := ret[0].([]byte)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Convert indicates an expected call of Convert
-func (mr *MockIERC20EscrowContractMockRecorder) Convert(sign, args, offerId interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Convert", reflect.TypeOf((*MockIERC20EscrowContract)(nil).Convert), sign, args, offerId)
-}
-
-// GetTransactSelector mocks base method
-func (m *MockIERC20EscrowContract) GetTransactSelector() ([4]byte, error) {
-	ret := m.ctrl.Call(m, "GetTransactSelector")
-	ret0, _ := ret[0].([4]byte)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetTransactSelector indicates an expected call of GetTransactSelector
-func (mr *MockIERC20EscrowContractMockRecorder) GetTransactSelector() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransactSelector", reflect.TypeOf((*MockIERC20EscrowContract)(nil).GetTransactSelector))
-}
-
-// Transact mocks base method
-func (m *MockIERC20EscrowContract) Transact(ctx context.Context, token common.Address, amount *big.Int, offerId types.ID) (*types0.Receipt, error) {
-	ret := m.ctrl.Call(m, "Transact", ctx, token, amount, offerId)
-	ret0, _ := ret[0].(*types0.Receipt)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Transact indicates an expected call of Transact
-func (mr *MockIERC20EscrowContractMockRecorder) Transact(ctx, token, amount, offerId interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Transact", reflect.TypeOf((*MockIERC20EscrowContract)(nil).Transact), ctx, token, amount, offerId)
+func (mr *MockIErc20EscrowContractMockRecorder) CreatedAt() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIErc20EscrowContract)(nil).CreatedAt))
 }
