@@ -136,7 +136,7 @@ func (client *Client) Many(
 		consentRawData[index] = &pb.DAuthManyRequest_ConsentData{
 			Action:   uint32(consent.Action),
 			DataType: consent.DataType,
-			Allow:    consent.Allow,
+			Allow:    consent.Allow != 0,
 		}
 	}
 

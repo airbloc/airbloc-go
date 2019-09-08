@@ -146,8 +146,8 @@ func (service *service) Start() error {
 
 	// register p2p RPC handlers
 	rpc := p2p.NewRPC(service.p2p)
-	rpc.Handle("dauth-allow", &pb.DAuthRequest{}, &pb.DAuthResponse{}, service.createConsentHandler(true))
-	rpc.Handle("dauth-deny", &pb.DAuthRequest{}, &pb.DAuthResponse{}, service.createConsentHandler(false))
+	rpc.Handle("dauth-allow", &pb.DAuthRequest{}, &pb.DAuthResponse{}, service.createConsentHandler(1))
+	rpc.Handle("dauth-deny", &pb.DAuthRequest{}, &pb.DAuthResponse{}, service.createConsentHandler(0))
 	rpc.Handle("dauth-many", &pb.DAuthManyRequest{}, &pb.DAuthResponse{}, service.consentManyHandler)
 	rpc.Handle("dauth-signup", &pb.DAuthSignUpRequest{}, &pb.DAuthSignUpResponse{}, service.signUpHandler)
 
@@ -157,7 +157,7 @@ func (service *service) Start() error {
 	return nil
 }
 
-func (service *service) createConsentHandler(allow bool) p2p.RPCHandler {
+func (service *service) createConsentHandler(allow uint8) p2p.RPCHandler {
 	return func(ctx context.Context, from p2p.SenderInfo, req proto.Message) (proto.Message, error) {
 		request, ok := req.(*pb.DAuthRequest)
 		if !ok {
@@ -240,10 +240,14 @@ func (service *service) consentManyHandler(
 
 	consentData := make([]types.ConsentData, len(request.GetConsentData()))
 	for index, consentRawData := range request.GetConsentData() {
+		allow := uint8(0)
+		if consentRawData.GetAllow() {
+			allow = 1
+		}
 		consentData[index] = types.ConsentData{
 			Action:   uint8(consentRawData.GetAction()),
 			DataType: consentRawData.GetDataType(),
-			Allow:    consentRawData.GetAllow(),
+			Allow:    allow,
 		}
 	}
 

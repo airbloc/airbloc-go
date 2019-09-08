@@ -41,7 +41,7 @@ const (
 type ConsentData struct {
 	Action   uint8
 	DataType string
-	Allow    bool
+	Allow    uint8
 }
 
 // ConsentRequestData is request struct for api
@@ -52,10 +52,14 @@ type ConsentRequestData struct {
 }
 
 func (data ConsentRequestData) ToConsentData() ConsentData {
+	b := uint8(0)
+	if data.Allow {
+		b = 1
+	}
 	return ConsentData{
 		Action:   data.Action,
 		DataType: data.DataType,
-		Allow:    data.Allow,
+		Allow:    b,
 	}
 }
 
