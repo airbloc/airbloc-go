@@ -32,7 +32,7 @@ func (manager *DAuthManager) Allow(
 	consentData := types.ConsentData{
 		Action:   action,
 		DataType: dataType,
-		Allow:    true,
+		Allow:    1,
 	}
 	return manager.consents.Consent(ctx, appName, consentData)
 }
@@ -55,7 +55,7 @@ func (manager *DAuthManager) AllowByController(
 	consentData := types.ConsentData{
 		Action:   action,
 		DataType: dataType,
-		Allow:    true,
+		Allow:    1,
 	}
 
 	if iter.Next() {
@@ -72,7 +72,7 @@ func (manager *DAuthManager) Deny(
 	consentData := types.ConsentData{
 		Action:   action,
 		DataType: dataType,
-		Allow:    false,
+		Allow:    0,
 	}
 	return manager.consents.Consent(ctx, appName, consentData)
 }
@@ -94,7 +94,7 @@ func (manager *DAuthManager) DenyByController(ctx context.Context,
 	consentData := types.ConsentData{
 		Action:   action,
 		DataType: dataType,
-		Allow:    false,
+		Allow:    0,
 	}
 
 	if iter.Next() {

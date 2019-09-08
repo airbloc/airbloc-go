@@ -18,7 +18,7 @@ type dataTypeRegistryManager struct {
 func NewDataTypeRegistryManager(client blockchain.TxClient) IDataTypeRegistryManager {
 	return &dataTypeRegistryManager{
 		IDataTypeRegistryContract: client.GetContract(&DataTypeRegistryContract{}).(*DataTypeRegistryContract),
-		log: logger.New("data-type-registry"),
+		log:                       logger.New("data-type-registry"),
 	}
 }
 

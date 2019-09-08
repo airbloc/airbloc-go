@@ -221,12 +221,12 @@ func newConsentsContract(address common.Address, txHash common.Hash, createdAt *
 // convenient hacks for blockchain.Client
 func init() {
 	blockchain.AddContractConstructor("Consents", newConsentsContract)
-	blockchain.RegisterSelector("0xcd4dc804", "consent(string,(uint8,string,bool))")
-	blockchain.RegisterSelector("0xf573f89a", "consentByController(bytes8,string,(uint8,string,bool))")
-	blockchain.RegisterSelector("0xdd43ad05", "consentMany(string,(uint8,string,bool)[])")
-	blockchain.RegisterSelector("0xae6d5034", "consentManyByController(bytes8,string,(uint8,string,bool)[])")
-	blockchain.RegisterSelector("0x0bfec389", "modifyConsentByController(bytes8,string,(uint8,string,bool),bytes)")
-	blockchain.RegisterSelector("0xe031b1cf", "modifyConsentManyByController(bytes8,string,(uint8,string,bool)[],bytes)")
+	blockchain.RegisterSelector("0xb838bdb7", "consent(string,(uint8,string,uint8))")
+	blockchain.RegisterSelector("0x503905ac", "consentByController(bytes8,string,(uint8,string,uint8))")
+	blockchain.RegisterSelector("0xbbbd8a0d", "consentMany(string,(uint8,string,uint8)[])")
+	blockchain.RegisterSelector("0x18b264e3", "consentManyByController(bytes8,string,(uint8,string,uint8)[])")
+	blockchain.RegisterSelector("0xe4f5477b", "modifyConsentByController(bytes8,string,(uint8,string,uint8),bytes)")
+	blockchain.RegisterSelector("0xba3bb255", "modifyConsentManyByController(bytes8,string,(uint8,string,uint8)[],bytes)")
 }
 
 // IsAllowed is a free data retrieval call binding the contract method 0x50615985.
@@ -262,9 +262,9 @@ func (c *ConsentsContract) IsAllowedAt(
 	return c.ConsentsCaller.IsAllowedAt(nil, userId, appName, action, dataType, blockNumber)
 }
 
-// Consent is a paid mutator transaction binding the contract method 0xcd4dc804.
+// Consent is a paid mutator transaction binding the contract method 0xb838bdb7.
 //
-// Solidity: function consent(string appName, (uint8,string,bool) consentData) returns()
+// Solidity: function consent(string appName, (uint8,string,uint8) consentData) returns()
 func (c *ConsentsContract) Consent(
 	ctx context.Context,
 	appName string,
@@ -277,9 +277,9 @@ func (c *ConsentsContract) Consent(
 	return c.client.WaitMined(ctx, tx)
 }
 
-// ConsentByController is a paid mutator transaction binding the contract method 0xf573f89a.
+// ConsentByController is a paid mutator transaction binding the contract method 0x503905ac.
 //
-// Solidity: function consentByController(bytes8 userId, string appName, (uint8,string,bool) consentData) returns()
+// Solidity: function consentByController(bytes8 userId, string appName, (uint8,string,uint8) consentData) returns()
 func (c *ConsentsContract) ConsentByController(
 	ctx context.Context,
 	userId types.ID,
@@ -293,9 +293,9 @@ func (c *ConsentsContract) ConsentByController(
 	return c.client.WaitMined(ctx, tx)
 }
 
-// ConsentMany is a paid mutator transaction binding the contract method 0xdd43ad05.
+// ConsentMany is a paid mutator transaction binding the contract method 0xbbbd8a0d.
 //
-// Solidity: function consentMany(string appName, (uint8,string,bool)[] consentData) returns()
+// Solidity: function consentMany(string appName, (uint8,string,uint8)[] consentData) returns()
 func (c *ConsentsContract) ConsentMany(
 	ctx context.Context,
 	appName string,
@@ -308,9 +308,9 @@ func (c *ConsentsContract) ConsentMany(
 	return c.client.WaitMined(ctx, tx)
 }
 
-// ConsentManyByController is a paid mutator transaction binding the contract method 0xae6d5034.
+// ConsentManyByController is a paid mutator transaction binding the contract method 0x18b264e3.
 //
-// Solidity: function consentManyByController(bytes8 userId, string appName, (uint8,string,bool)[] consentData) returns()
+// Solidity: function consentManyByController(bytes8 userId, string appName, (uint8,string,uint8)[] consentData) returns()
 func (c *ConsentsContract) ConsentManyByController(
 	ctx context.Context,
 	userId types.ID,
@@ -324,9 +324,9 @@ func (c *ConsentsContract) ConsentManyByController(
 	return c.client.WaitMined(ctx, tx)
 }
 
-// ModifyConsentByController is a paid mutator transaction binding the contract method 0x0bfec389.
+// ModifyConsentByController is a paid mutator transaction binding the contract method 0xe4f5477b.
 //
-// Solidity: function modifyConsentByController(bytes8 userId, string appName, (uint8,string,bool) consentData, bytes passwordSignature) returns()
+// Solidity: function modifyConsentByController(bytes8 userId, string appName, (uint8,string,uint8) consentData, bytes passwordSignature) returns()
 func (c *ConsentsContract) ModifyConsentByController(
 	ctx context.Context,
 	userId types.ID,
@@ -341,9 +341,9 @@ func (c *ConsentsContract) ModifyConsentByController(
 	return c.client.WaitMined(ctx, tx)
 }
 
-// ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xe031b1cf.
+// ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xba3bb255.
 //
-// Solidity: function modifyConsentManyByController(bytes8 userId, string appName, (uint8,string,bool)[] consentData, bytes passwordSignature) returns()
+// Solidity: function modifyConsentManyByController(bytes8 userId, string appName, (uint8,string,uint8)[] consentData, bytes passwordSignature) returns()
 func (c *ConsentsContract) ModifyConsentManyByController(
 	ctx context.Context,
 	userId types.ID,
