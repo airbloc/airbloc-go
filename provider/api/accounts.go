@@ -152,10 +152,14 @@ func (api *accountsAPI) getAccountId(c *gin.Context) {
 			MessageHash string `form:"message_hash" binding:"required"`
 			Signature   string `form:"signature" binding:"required"`
 		}
+		accountIdByIdentityRequest struct {
+			IdentityHash string `form:"identity_hash" binding:"required"`
+		}
 	)
 
 	isAccountId := c.ShouldBindWith(&accountIdRequest, binding.Query)
 	isAccountIdFromSig := c.ShouldBindWith(&accountIdFromSigRequest, binding.Query)
+	isAccountIdByIdentity := c.ShouldBindWith(&accountIdByIdentityRequest, binding.Query)
 
 	if isAccountId == nil {
 		owner := common.HexToAddress(accountIdRequest.Owner)
@@ -185,13 +189,18 @@ func (api *accountsAPI) getAccountId(c *gin.Context) {
 		return
 	}
 
-	accountId, err := api.accounts.GetAccountId(common.Address{})
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	if isAccountIdByIdentity == nil {
+		identityHash := common.HexToHash(accountIdByIdentityRequest.IdentityHash)
+		accountId, err := api.accounts.GetAccountIdByIdentityHash(identityHash)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
-	return
+
+	c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": "Cannot find account id"})
 }
 
 // AttachToAPI is a registrant of an api.
