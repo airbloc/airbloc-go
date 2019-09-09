@@ -3,8 +3,7 @@ services:
   provider:
     build: .
     entrypoint: >
-      airbloc server -c local/airbloc.yml --verbose
-    network_mode: "host"
+      airbloc server -c local/provider.yml --verbose
     ports:
       - "2471:2471"
       - "2473:2473"
@@ -13,7 +12,6 @@ services:
     build: .
     entrypoint: >
       airbloc controller -c local/controller.yml --verbose
-    network_mode: "host"
     ports:
       - "2472:2472"
       - "2474:2474"
