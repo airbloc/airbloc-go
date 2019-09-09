@@ -36,9 +36,12 @@ func NewService(backend service.Backend) (service.Service, error) {
 		)),
 	)
 
+	httpServer := gin.Default()
+	// TODO: add specific server options
+
 	svc := &Service{
 		GrpcServer: grpcServer,
-		HttpServer: gin.New(),
+		HttpServer: httpServer,
 		host:       config.Host,
 		port:       config.Port,
 		logger:     logger.New("apiservice"),

@@ -208,9 +208,9 @@ func (api *dAuthAPI) deny(c *gin.Context) {
 
 func (api *dAuthAPI) many(c *gin.Context) {
 	var req struct {
-		AccountId   string                     `json:"account_id" binding:"required"`
-		AppName     string                     `json:"app_name" binding:"required"`
-		ConsentData []types.ConsentRequestData `json:"consent_data" binding:"required"`
+		AccountId   string              `json:"account_id" binding:"required"`
+		AppName     string              `json:"app_name" binding:"required"`
+		ConsentData []types.ConsentData `json:"consent_data" binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
@@ -224,15 +224,10 @@ func (api *dAuthAPI) many(c *gin.Context) {
 		return
 	}
 
-	consentData := make([]types.ConsentData, len(req.ConsentData))
-	for index, data := range req.ConsentData {
-		consentData[index] = data.ToConsentData()
-	}
-
 	err = api.dauthClient.Many(
 		c, accountId,
 		req.AppName,
-		consentData,
+		req.ConsentData,
 	)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -249,4 +244,5 @@ func (api *dAuthAPI) AttachToAPI(service *api.Service) {
 	apiMux.POST("/signin", api.signUp)
 	apiMux.PUT("/allow", api.allow)
 	apiMux.PUT("/deny", api.deny)
+	apiMux.PUT("/many", api.many)
 }

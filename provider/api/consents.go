@@ -27,9 +27,9 @@ func NewConsentsAPI(backend service.Backend) (api.API, error) {
 }
 
 type consentRequest struct {
-	UserId            string                   `json:"user_id"`
-	ConsentData       types.ConsentRequestData `json:"consent_data" binding:"required"`
-	PasswordSignature string                   `json:"password_signature"`
+	UserId            string            `json:"user_id"`
+	ConsentData       types.ConsentData `json:"consent_data" binding:"required"`
+	PasswordSignature string            `json:"password_signature"`
 }
 
 func (api *consentsAPI) consentByController(c *gin.Context, appName string, req consentRequest) {
@@ -39,10 +39,7 @@ func (api *consentsAPI) consentByController(c *gin.Context, appName string, req 
 		return
 	}
 
-	if err = api.consents.ConsentByController(
-		c, userId, appName,
-		req.ConsentData.ToConsentData(),
-	); err != nil {
+	if err = api.consents.ConsentByController(c, userId, appName, req.ConsentData); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -63,11 +60,7 @@ func (api *consentsAPI) modifyConsentByController(c *gin.Context, appName string
 		return
 	}
 
-	if err = api.consents.ModifyConsentByController(
-		c, userId, appName,
-		req.ConsentData.ToConsentData(),
-		passwordSignature,
-	); err != nil {
+	if err = api.consents.ModifyConsentByController(c, userId, appName, req.ConsentData, passwordSignature); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -98,7 +91,7 @@ func (api *consentsAPI) consent(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid app name"})
 	}
 
-	if req.ConsentData == (types.ConsentRequestData{}) {
+	if req.ConsentData == (types.ConsentData{}) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid consent data"})
 		return
 	}
@@ -113,7 +106,7 @@ func (api *consentsAPI) consent(c *gin.Context) {
 		return
 	}
 
-	if err := api.consents.Consent(c, appName, req.ConsentData.ToConsentData()); err != nil {
+	if err := api.consents.Consent(c, appName, req.ConsentData); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -122,9 +115,9 @@ func (api *consentsAPI) consent(c *gin.Context) {
 }
 
 type consentManyRequest struct {
-	UserId            string                     `json:"user_id"`
-	ConsentData       []types.ConsentRequestData `json:"consent_data" binding:"required"`
-	PasswordSignature string                     `json:"password_signature"`
+	UserId            string              `json:"user_id"`
+	ConsentData       []types.ConsentData `json:"consent_data" binding:"required"`
+	PasswordSignature string              `json:"password_signature"`
 }
 
 func (api *consentsAPI) consentManyByController(c *gin.Context, appName string, consentData []types.ConsentData, req consentManyRequest) {
@@ -196,22 +189,17 @@ func (api *consentsAPI) consentMany(c *gin.Context) {
 		return
 	}
 
-	consentData := make([]types.ConsentData, len(req.ConsentData))
-	for index, data := range req.ConsentData {
-		consentData[index] = data.ToConsentData()
-	}
-
 	if req.PasswordSignature != "" {
-		api.modifyConsentManyByController(c, appName, consentData, req)
+		api.modifyConsentManyByController(c, appName, req.ConsentData, req)
 		return
 	}
 
 	if req.UserId != "" {
-		api.consentManyByController(c, appName, consentData, req)
+		api.consentManyByController(c, appName, req.ConsentData, req)
 		return
 	}
 
-	if err = api.consents.ConsentMany(c, appName, consentData); err != nil {
+	if err = api.consents.ConsentMany(c, appName, req.ConsentData); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

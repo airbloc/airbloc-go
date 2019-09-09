@@ -6,6 +6,8 @@ import (
 	"github.com/klaytn/klaytn/common"
 )
 
+// TODO: refactor type structure
+
 const (
 	// AccountStatusNone is bind of Accounts.Status.None
 	AccountStatusNone uint8 = iota
@@ -39,28 +41,9 @@ const (
 
 // ConsentData is bind of Consents.ConsentData
 type ConsentData struct {
-	Action   uint8
-	DataType string
-	Allow    uint8
-}
-
-// ConsentRequestData is request struct for api
-type ConsentRequestData struct {
 	Action   uint8  `json:"action" binding:"required"`
 	DataType string `json:"data_type" binding:"required"`
 	Allow    bool   `json:"allow" binding:"required"`
-}
-
-func (data ConsentRequestData) ToConsentData() ConsentData {
-	b := uint8(0)
-	if data.Allow {
-		b = 1
-	}
-	return ConsentData{
-		Action:   data.Action,
-		DataType: data.DataType,
-		Allow:    b,
-	}
 }
 
 // DataController is bind of ControllerRegistry.DataController
