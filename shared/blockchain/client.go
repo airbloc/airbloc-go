@@ -43,30 +43,30 @@ func NewClient(key *key.Key, rawurl string, cfg ClientOpt) (*Client, error) {
 	}
 
 	// try to connect to Ethereum
-	ethClient, err := client.DialContext(ctx, rawurl)
+	klayClient, err := client.DialContext(ctx, rawurl)
 	if err != nil {
 		return nil, err
 	}
-	cid, err := ethClient.NetworkID(ctx)
+	cid, err := klayClient.NetworkID(ctx)
 	if err != nil {
 		return nil, err
 	}
 	log.Info("Using {} network", getChainName(cid))
 
-	client := &Client{
-		Client: ethClient,
+	klayent := &Client{
+		Client: klayClient,
 		ctx:    context.TODO(),
 		cfg:    cfg,
 		logger: log,
 	}
 
-	cm := NewContractManager(client)
+	cm := NewContractManager(klayent)
 	if err := cm.Load(cfg.DeploymentPath); err != nil {
 		return nil, err
 	}
-	client.contracts = cm
-	client.SetAccount(key)
-	return client, nil
+	klayent.contracts = cm
+	klayent.SetAccount(key)
+	return klayent, nil
 }
 
 func (c Client) Account() *bind.TransactOpts {
@@ -83,6 +83,11 @@ func (c *Client) GetContract(contractType interface{}) interface{} {
 		panic("Contract not registered: " + reflect.ValueOf(contractType).Type().Name())
 	}
 	return contract
+}
+
+func (c *Client) SendTransaction(ctx context.Context, tx *types.Transaction) error {
+	// TODO: task-waiting action required
+	return c.Client.SendTransaction(ctx, tx)
 }
 
 func (c *Client) waitConfirmation(ctx context.Context) error {
