@@ -16,6 +16,7 @@ import (
 
 type dAuthAPI struct {
 	dauthClient *dauth.Client
+	apps        adapter.IAppRegistryManager
 	consents    adapter.IConsentsManager
 	dataTypes   adapter.IDataTypeRegistryManager
 }
@@ -25,6 +26,7 @@ func NewDAuthAPI(backend service.Backend) (api.API, error) {
 	dauthClient := dauth.NewProviderClient(backend.Kms(), backend.Client(), backend.P2P())
 	return &dAuthAPI{
 		dauthClient: dauthClient,
+		apps:        adapter.NewAppRegistryManager(backend.Client()),
 		consents:    adapter.NewConsentsManager(backend.Client()),
 		dataTypes:   adapter.NewDataTypeRegistryManager(backend.Client()),
 	}, nil
@@ -68,75 +70,52 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 		return
 	}
 
+	if exists, err := api.apps.Exists(req.AppName); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	} else if !exists {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": "Cannot find app information."})
+		return
+	}
+
+	app, err := api.apps.Get(req.AppName)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	var resp struct {
-		HasAuthorizedBefore bool
-		Authorizations      []struct {
-			Action     uint8
-			DataType   string
-			Authorized bool
-		}
+		HasAuthorizedBefore bool                `json:"has_authorized_before"`
+		Authorizations      []types.ConsentData `json:"authorizations"`
 	}
 
 	consentEventIter, err := api.consents.FilterConsented(&bind.FilterOpts{
-		Context: c,
 		Start:   api.consents.CreatedAt().Uint64(),
-	}, nil, []types.ID{accountId}, nil)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		return
-	}
-
-	if !consentEventIter.Next() {
-		resp.HasAuthorizedBefore = false
-		c.JSON(http.StatusOK, resp)
-		return
-	}
-
-	dataTypeEventIter, err := api.dataTypes.FilterRegistration(&bind.FilterOpts{
+		End:     nil,
 		Context: c,
-		Start:   api.consents.CreatedAt().Uint64(),
-	})
+	}, []uint8{0, 1}, []types.ID{accountId}, []common.Address{app.Addr})
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	var (
-		actions = []uint8{
-			types.ConsentActionCollection,
-			types.ConsentActionExchange,
-		}
-		dataTypeRegisterEvent *adapter.DataTypeRegistryRegistration
-	)
+	resp.Authorizations = []types.ConsentData{}
 
-	// data type
-	for ; dataTypeEventIter.Next(); dataTypeRegisterEvent = dataTypeEventIter.Event {
-		if dataTypeRegisterEvent == nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	for consentEventIter.Next() {
+		event := consentEventIter.Event
+		if event == nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Cannot parse event from data."})
 			return
 		}
 
-		// action
-		for _, action := range actions {
-			dataType := dataTypeRegisterEvent.Name
-			allowed, err := api.consents.IsAllowed(accountId, dataType, action, req.AppName)
-			if err != nil {
-				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-				return
-			}
-
-			resp.Authorizations = append(resp.Authorizations, struct {
-				Action     uint8
-				DataType   string
-				Authorized bool
-			}{
-				Action:     action,
-				DataType:   dataType,
-				Authorized: allowed,
-			})
-		}
+		resp.Authorizations = append(resp.Authorizations, types.ConsentData{
+			Action:   event.Action,
+			DataType: event.DataType,
+			Allow:    event.Allowed,
+		})
 	}
 
+	resp.HasAuthorizedBefore = len(resp.Authorizations) == 0
 	c.JSON(http.StatusOK, resp)
 }
 
