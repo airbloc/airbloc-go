@@ -4,15 +4,13 @@ go 1.12
 
 replace (
 	git.apache.org/thrift.git => github.com/apache/thrift v0.12.0
-	github.com/airbloc/airframe => github.com/frostornge/airframe v0.0.0-20190822082946-296a12f1f9f2
-	github.com/ethereum/go-ethereum/crypto => github.com/klaytn/klaytn v1.1.0
 	github.com/klaytn/klaytn => github.com/frostornge/klaytn v0.0.0-20190910071037-a8d9781f8cd6
 	gopkg.in/urfave/cli.v1 => github.com/urfave/cli v1.12.0
 )
 
 require (
 	cloud.google.com/go v0.37.1
-	github.com/airbloc/airframe v0.0.0-20190404074616-f11a21f025cf
+	github.com/airbloc/airframe v0.0.0-20190822094319-71d50205227c
 	github.com/airbloc/logger v1.1.3
 	github.com/aws/aws-sdk-go v1.19.7
 	github.com/dgraph-io/badger v1.5.5
