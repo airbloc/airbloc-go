@@ -3,7 +3,7 @@ vendor/github.com/ethereum/go-ethereum/crypto/secp256k1/libsecp256k1
 vendor/
 
 abi
-contracts/truffle-config.local.js
+**/contracts/
 config.json
 config-userdelegate.yml
 deployment.local.json

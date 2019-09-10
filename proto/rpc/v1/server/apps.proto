@@ -11,8 +11,8 @@ import "google/protobuf/empty.proto";
 service Apps {
     rpc Register (RegisterRequest) returns (RegisterResult);
     rpc Unregister (UnregisterRequest) returns (google.protobuf.Empty);
-    rpc NewOwner(NewOwnerRequest) returns (google.protobuf.Empty);
-    rpc CheckOwner(CheckOwnerRequest) returns (CheckOwnerResult);
+    rpc NewOwner (NewOwnerRequest) returns (google.protobuf.Empty);
+    rpc CheckOwner (CheckOwnerRequest) returns (CheckOwnerResult);
 }
 
 message NewOwnerRequest {

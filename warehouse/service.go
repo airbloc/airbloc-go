@@ -46,9 +46,6 @@ func NewService(backend service.Backend) (service.Service, error) {
 			return nil, err
 		}
 		defaultStorage = storage.NewS3Storage(config.S3.Bucket, config.S3.PathPrefix, sess)
-		if err != nil {
-			return nil, err
-		}
 	default:
 		return nil, errors.Errorf("unknown storage type: %s", config.DefaultStorage)
 	}

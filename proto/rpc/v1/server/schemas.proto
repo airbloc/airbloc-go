@@ -8,7 +8,7 @@ option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
  */
 service Schema {
     // Create creates JSON schema and registers it into the blockchain.
-    rpc Create(CreateSchemaRequest) returns (CreateSchemaResult);
+    rpc Create (CreateSchemaRequest) returns (CreateSchemaResult);
 }
 
 message CreateSchemaRequest {

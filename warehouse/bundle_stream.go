@@ -1,39 +1,37 @@
 package warehouse
 
 import (
-	"github.com/airbloc/airbloc-go/provider/collections"
+	"sync"
+
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/logger"
 	"github.com/pkg/errors"
-	"sync"
 )
 
 type BundleStream struct {
-	provider   types.ID
-	collection *collections.Collection
-	warehouse  *Manager
-	data       map[types.ID][]*types.EncryptedData
-	DataCount  int
+	provider  types.ID
+	warehouse *Manager
+	data      map[types.ID][]*types.EncryptedData
+	DataCount int
 
 	mu sync.Mutex
 }
 
-func newBundleStream(warehouse *Manager, provider types.ID, collection *collections.Collection) *BundleStream {
+func newBundleStream(warehouse *Manager, provider types.ID, collection interface{}) *BundleStream {
 	return &BundleStream{
-		provider:   provider,
-		collection: collection,
-		warehouse:  warehouse,
-		data:       map[types.ID][]*types.EncryptedData{},
-		DataCount:  0,
+		provider:  provider,
+		warehouse: warehouse,
+		data:      map[types.ID][]*types.EncryptedData{},
+		DataCount: 0,
 	}
 }
 
 func (stream *BundleStream) Add(data *types.Data) error {
-	err := stream.warehouse.validate(stream.collection, data)
+	err := stream.warehouse.validate(nil, data)
 	if errors.Cause(err) == errValidationFailed {
 		stream.warehouse.log.Info("warning: %s", err.Error(), logger.Attrs{
-			"collection": stream.collection.Id.Hex(),
-			"dataOwner":  data.UserId.Hex(),
+			//"collection": stream.collection.Id.Hex(),
+			"dataOwner": data.UserId.Hex(),
 		})
 		return err
 	}

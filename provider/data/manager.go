@@ -2,7 +2,8 @@ package data
 
 import (
 	"context"
-	"github.com/airbloc/airbloc-go/provider/collections"
+
+	"github.com/airbloc/airbloc-go/provider/data/batch"
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/database/localdb"
@@ -17,14 +18,14 @@ import (
 )
 
 type Manager struct {
-	kms         key.Manager
-	client      blockchain.TxClient
-	metadb      metadb.Database
-	p2p         p2p.Server
-	warehouse   *warehouse.Manager
-	registry    *adapter.DataRegistry
-	collections *collections.Manager
-	batches     *BatchManager
+	kms       key.Manager
+	client    blockchain.TxClient
+	metadb    metadb.Database
+	p2p       p2p.Server
+	warehouse *warehouse.Manager
+	//registry  *adapter.DataRegistry
+	dataTypes adapter.IDataTypeRegistryContract
+	batches   *batch.BatchManager
 }
 
 func NewManager(
@@ -35,22 +36,42 @@ func NewManager(
 	client blockchain.TxClient,
 	warehouse *warehouse.Manager,
 ) *Manager {
-	batches := NewBatchManager(localDB)
-	contract := client.GetContract(&adapter.DataRegistry{})
+	batches := batch.NewBatchManager(localDB)
+	//contract := client.GetContract(&adapter.DataRegistry{})
 	return &Manager{
-		kms:         kms,
-		client:      client,
-		p2p:         p2p,
-		warehouse:   warehouse,
-		registry:    contract.(*adapter.DataRegistry),
-		collections: collections.NewManager(client),
-		batches:     batches,
-		metadb:      metadb.NewModel(metaDB, "bundles"),
+		kms:       kms,
+		client:    client,
+		p2p:       p2p,
+		warehouse: warehouse,
+		//registry:  contract.(*adapter.DataRegistry),
+		dataTypes: adapter.NewDataTypeRegistryContract(client),
+		batches:   batches,
+		metadb:    metadb.NewModel(metaDB, "bundles"),
 	}
 }
 
-func (manager *Manager) Batches() *BatchManager {
+func (manager *Manager) Batches() *batch.BatchManager {
 	return manager.batches
+}
+
+func (manager *Manager) decrypt(bundleData *warehouse.Bundle, dataId types.DataId) (data, error) {
+	// prevent runtime error
+	if uint32(len(bundleData.Data[dataId.UserId()])) < dataId.RowId().Uint32() {
+		return data{}, errors.New("data does not exists")
+	}
+
+	encryptedData := bundleData.Data[dataId.UserId()][dataId.RowId().Uint32()]
+	d, err := manager.kms.DecryptData(encryptedData)
+	if err != nil {
+		return data{}, errors.Wrapf(err, "failed to decrypt data %s", dataId.String())
+	}
+
+	return data{
+		CollectionId: bundleData.Collection,
+		UserId:       d.UserId,
+		IngestedAt:   bundleData.IngestedAt,
+		Payload:      d.Payload,
+	}, nil
 }
 
 func (manager *Manager) encrypt(data *types.Data) (*types.EncryptedData, error) {
@@ -64,126 +85,65 @@ func (manager *Manager) encrypt(data *types.Data) (*types.EncryptedData, error) 
 	}, nil
 }
 
-type getDataResult struct {
-	CollectionId types.ID
-	UserId       types.ID
-	IngestedAt   types.Time
-	Payload      string
+func (manager *Manager) Get(dataId types.DataId) (data, error) {
+	bundleData, err := manager.warehouse.Get(dataId)
+	if err != nil {
+		return data{}, errors.Wrapf(err, "failed to retrieve bundle of data %s", dataId)
+	}
+	return manager.decrypt(bundleData, dataId)
 }
 
-func (manager *Manager) Get(rawDataId string) (*getDataResult, error) {
-	dataId, err := types.NewDataId(rawDataId)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to parse data ID %s", rawDataId)
-	}
+func (manager *Manager) GetBatch(batchInfo *batch.Batch) ([]data, error) {
+	var err error
 
-	bundle, err := manager.warehouse.Get(dataId)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to retrieve bundle of data %s", rawDataId)
-	}
-
-	// prevent runtime error
-	if uint32(len(bundle.Data[dataId.UserId])) <= dataId.RowId.Uint32() {
-		return nil, errors.New("data does not exists")
-	}
-
-	encryptedData := bundle.Data[dataId.UserId][dataId.RowId.Uint32()]
-	d, err := manager.kms.DecryptData(encryptedData)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to decrypt data %s", dataId.String())
-	}
-
-	return &getDataResult{
-		CollectionId: bundle.Collection,
-		UserId:       d.UserId,
-		IngestedAt:   bundle.IngestedAt,
-		Payload:      d.Payload,
-	}, nil
-}
-
-func (manager *Manager) GetBatch(batch *Batch) ([]*getDataResult, error) {
-	result := make([]*getDataResult, batch.Count)
-	bundles := make(map[types.ID]*warehouse.Bundle, batch.Count)
+	batchData := make([]data, batchInfo.Count)
+	bundles := make(map[types.ID]*warehouse.Bundle, batchInfo.Count)
 
 	index := 0
-	for dataId := range batch.Iterator() {
-		if _, alreadyFetched := bundles[dataId.BundleId]; !alreadyFetched {
-			b, err := manager.warehouse.Get(&dataId)
+	for dataId := range batchInfo.Iterator() {
+		bundleId := dataId.BundleId()
+
+		if _, alreadyFetched := bundles[bundleId]; !alreadyFetched {
+			bundles[bundleId], err = manager.warehouse.Get(dataId)
 			if err != nil {
 				return nil, errors.Wrapf(err, "failed to retrieve bundle of data %s", dataId.String())
 			}
-			bundles[dataId.BundleId] = b
 		}
 
-		bundle := bundles[dataId.BundleId]
-
-		// prevent runtime error
-		if uint32(len(bundle.Data[dataId.UserId])) < dataId.RowId.Uint32() {
-			return nil, errors.New("data does not exists")
-		}
-
-		encryptedData := bundle.Data[dataId.UserId][dataId.RowId.Uint32()]
-		d, err := manager.kms.DecryptData(encryptedData)
+		batchData[index], err = manager.decrypt(bundles[bundleId], dataId)
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to decrypt data %s", dataId.String())
-		}
-
-		result[index] = &getDataResult{
-			CollectionId: bundle.Collection,
-			UserId:       d.UserId,
-			IngestedAt:   bundle.IngestedAt,
-			Payload:      d.Payload,
+			return nil, err
 		}
 
 		// prevent runtime error
-		if batch.Count == index {
+		if batchInfo.Count == index {
 			break
 		}
 		index++
 	}
-	return result, nil
+	return batchData, nil
 }
 
-type bundleInfo struct {
-	Id         string   `json:"bundleId" mapstructure:"bundleId"`
-	Uri        string   `json:"uri" mapstructure:"uri"`
-	Provider   string   `json:"provider" mapstructure:"provider"`
-	Collection string   `json:"collection" mapstructure:"collection"`
-	IngestedAt int64    `json:"ingestedAt" mapstructure:"ingestedAt"`
-	DataIds    []string `json:"-" mapstructure:"-"`
-	RawDataIds []bson.D `json:"dataIds" mapstructure:"dataIds"`
-}
-
-func (manager *Manager) GetBundleInfo(ctx context.Context, id types.ID) (*bundleInfo, error) {
-	rawBundle, err := manager.metadb.Find(ctx, bson.M{"bundleId": id.Hex()}, nil)
+func (manager *Manager) GetBundle(ctx context.Context, bundleId types.ID) (*bundle, error) {
+	rawBundle, err := manager.metadb.Find(ctx, bson.M{"bundleId": bundleId.Hex()}, nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "retrieving bundle data")
+		return nil, errors.Wrap(err, "failed to retrieve bundle data")
 	}
 
-	// debug
-	//d, _ := json.MarshalIndent(rawBundle, "", "    ")
-	//log.Println(string(d))
-
-	bundleInfo := new(bundleInfo)
-	bundleInfo.Id = id.Hex()
-	if err := mapstructure.Decode(rawBundle, bundleInfo); err != nil {
-		return nil, errors.Wrap(err, "decoding document")
+	bundleData := &bundle{Id: bundleId.Hex()}
+	if err = mapstructure.Decode(rawBundle, bundleData); err != nil {
+		return nil, errors.Wrap(err, "failed to decode document")
 	}
 
-	bundleInfo.DataIds = make([]string, len(bundleInfo.RawDataIds))
-	for index, id := range bundleInfo.RawDataIds {
-		rawDataId := new(types.RawDataId)
-		if err := mapstructure.Decode(id.Map(), rawDataId); err != nil {
-			return nil, errors.Wrap(err, "decoding rawDataId")
-		}
-
-		dataId, err := rawDataId.Convert()
+	bundleData.DataIds = make([]string, len(bundleData.RawDataIds))
+	for index, id := range bundleData.RawDataIds {
+		dataId, _, err := types.RawIdToDataId(id)
 		if err != nil {
-			return nil, errors.Wrap(err, "converting dataId")
+			return nil, errors.Wrap(err, "failed to get dataId")
 		}
-		bundleInfo.DataIds[index] = dataId.Hex()
+		bundleData.DataIds[index] = dataId.String()
 	}
-	bundleInfo.RawDataIds = nil
+	bundleData.RawDataIds = nil
 
-	return bundleInfo, nil
+	return bundleData, nil
 }

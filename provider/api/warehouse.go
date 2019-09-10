@@ -2,6 +2,9 @@ package api
 
 import (
 	"context"
+	"io"
+	"sync"
+
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
@@ -11,8 +14,6 @@ import (
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"io"
-	"sync"
 )
 
 type WarehouseAPI struct {
@@ -152,7 +153,7 @@ func (api *WarehouseAPI) DeleteBundle(ctx context.Context, request *pb.DeleteBun
 func (api *WarehouseAPI) ListBundle(ctx context.Context, req *pb.ListBundleRequest) (*pb.ListBundleResult, error) {
 	providerId, err := types.HexToID(req.GetProviderId())
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid provider ID: %s", req.GetProviderId())
+		return nil, status.Errorf(codes.InvalidArgument, "invalid Provider ID: %s", req.GetProviderId())
 	}
 	bundles, err := api.warehouse.List(ctx, providerId)
 	if err != nil {

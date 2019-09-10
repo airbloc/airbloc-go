@@ -4,27 +4,25 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
-	"github.com/airbloc/airbloc-go/shared/database/resdb"
-	"github.com/airbloc/airframe/afclient"
-	"github.com/mitchellh/mapstructure"
 	"math/big"
 	"math/rand"
 	"net/url"
 	"time"
 
-	"github.com/airbloc/airbloc-go/provider/collections"
-	"github.com/airbloc/airbloc-go/provider/schemas"
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/database/localdb"
 	"github.com/airbloc/airbloc-go/shared/database/metadb"
-	"github.com/airbloc/airbloc-go/shared/dauth"
+	"github.com/airbloc/airbloc-go/shared/database/resdb"
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/airbloc-go/warehouse/protocol"
 	"github.com/airbloc/airbloc-go/warehouse/storage"
+	"github.com/airbloc/airbloc-go/warehouse/validator"
+	"github.com/airbloc/airframe/afclient"
 	"github.com/airbloc/logger"
+	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
 )
 
@@ -41,9 +39,7 @@ type Manager struct {
 	// for data registration
 	metaDatabase metadb.Database
 	ethclient    blockchain.TxClient
-	dataRegistry *adapter.DataRegistry
-	schemas      *schemas.Schemas
-	collections  *collections.Manager
+	//dataRegistry *adapter.DataRegistry
 
 	// data storage layer
 	protocols      map[string]protocol.Protocol
@@ -51,7 +47,7 @@ type Manager struct {
 	resourceDB     resdb.Model
 
 	// data validators
-	dauthValidator *dauth.Validator
+	dauthValidator *validator.Validator
 
 	config service.Config
 	log    *logger.Logger
@@ -82,10 +78,10 @@ func NewManager(
 			"BECAUSE IT CAN CAUSE A FINANCIAL LOSS OF YOUR STAKED COLLETRALS. " + "\033[0m")
 	}
 
-	dauthManager := dauth.NewManager(ethclient)
-	dauthValidator := dauth.NewValidator(dauthManager)
+	consentManager := adapter.NewConsentsManager(ethclient)
+	dauthValidator := validator.NewValidator(consentManager)
 
-	contract := ethclient.GetContract(&adapter.DataRegistry{})
+	//contract := ethclient.GetContract(&adapter.DataRegistry{})
 
 	resdbClient, err := afclient.Dial(config.ResourceDB.Endpoint, kms.NodeKey().PrivateKey)
 	if err != nil {
@@ -98,9 +94,7 @@ func NewManager(
 
 		metaDatabase: metadb.NewModel(metaDatabase, "bundles"),
 		ethclient:    ethclient,
-		dataRegistry: contract.(*adapter.DataRegistry),
-		collections:  collections.NewManager(ethclient),
-		schemas:      schemas.New(metaDatabase, ethclient),
+		//dataRegistry: contract.(*adapter.DataRegistry),
 
 		protocols:      protocols,
 		defaultStorage: defaultStorage,
@@ -112,32 +106,35 @@ func NewManager(
 	}, nil
 }
 
+// TODO
 func (dw *Manager) CreateBundle(ctx context.Context, collectionId types.ID) (*BundleStream, error) {
-	collection, err := dw.collections.Get(collectionId)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to retrieve a collection")
-	}
-	schema, err := dw.schemas.Get(ctx, collection.Schema.Id)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to retrieve a schema")
-	}
-	collection.Schema = *schema
-	return newBundleStream(dw, collection.AppId, collection), nil
+	return nil, nil
+	//collection, err := dw.collections.Get(collectionId)
+	//if err != nil {
+	//	return nil, errors.Wrap(err, "unable to retrieve a collection")
+	//}
+	//schema, err := dw.schemas.Get(ctx, collection.Schema.Id)
+	//if err != nil {
+	//	return nil, errors.Wrap(err, "unable to retrieve a schema")
+	//}
+	//collection.Schema = *schema
+	//return newBundleStream(dw, collection.AppId, collection), nil
 }
 
-func (dw *Manager) validate(collection *collections.Collection, data *types.Data) error {
-	if !dw.config.Warehouse.Debug.DisableUserAuthValidation && !dw.dauthValidator.IsCollectible(collection.Id, data) {
-		return errors.Wrap(errValidationFailed, "user hasn't been authorized the data collection")
-	}
-
-	if !dw.config.Warehouse.Debug.DisableSchemaValidation {
-		isValidFormat, err := collection.Schema.IsValidFormat(data)
-		if err != nil {
-			return err
-		} else if !isValidFormat {
-			return errors.Wrap(errValidationFailed, "wrong format")
-		}
-	}
+// TODO
+func (dw *Manager) validate(collection interface{}, data *types.Data) error {
+	//if !dw.config.Warehouse.Debug.DisableUserAuthValidation && !dw.dauthValidator.IsCollectible(collection.Id, data) {
+	//	return errors.Wrap(errValidationFailed, "user hasn't been authorized the data collection")
+	//}
+	//
+	//if !dw.config.Warehouse.Debug.DisableSchemaValidation {
+	//	isValidFormat, err := collection.Schema.IsValidFormat(data)
+	//	if err != nil {
+	//		return err
+	//	} else if !isValidFormat {
+	//		return errors.Wrap(errValidationFailed, "wrong format")
+	//	}
+	//}
 	return nil
 }
 
@@ -157,8 +154,8 @@ func (dw *Manager) Store(ctx context.Context, stream *BundleStream) (*Bundle, er
 	ingestedAt := types.Time{Time: time.Now()}
 
 	createdBundle := &Bundle{
-		Provider:   stream.provider,
-		Collection: stream.collection.Id,
+		Provider: stream.provider,
+		//Collection: stream.collection.Id,
 		DataCount:  stream.DataCount,
 		IngestedAt: ingestedAt,
 		Data:       stream.data,
@@ -227,62 +224,65 @@ func (dw *Manager) Store(ctx context.Context, stream *BundleStream) (*Bundle, er
 	return createdBundle, nil
 }
 
+// TODO
 func (dw *Manager) registerBundleOnChain(bundle *Bundle) (bundleId types.ID, _ error) {
-	bundleDataHash, err := bundle.Hash()
-	if err != nil {
-		return bundleId, errors.Wrap(err, "failed to get hash of the bundle data")
-	}
-
-	// for setup rowId
-	userMerkleRoot, err := bundle.SetupUserProof()
-	if err != nil {
-		return bundleId, errors.Wrap(err, "failed to setup SMT")
-	}
-
-	dw.log.Info("Bundle data", logger.Attrs{
-		"hash":       bundleDataHash.Hex(),
-		"merkleRoot": userMerkleRoot.Hex(),
-	})
-
-	tx, err := dw.dataRegistry.RegisterBundle(
-		dw.ethclient.Account(),
-		bundle.Collection,
-		userMerkleRoot,
-		bundleDataHash,
-		bundle.Uri)
-	if err != nil {
-		return bundleId, errors.Wrap(err, "failed to register a bundle to DataRegistry")
-	}
-
-	receipt, err := dw.ethclient.WaitMined(context.Background(), tx)
-	if err != nil {
-		return bundleId, errors.Wrap(err, "failed to wait for tx to be mined")
-	}
-
-	registerResult, err := dw.dataRegistry.ParseBundleRegisteredFromReceipt(receipt)
-	if err != nil {
-		return bundleId, errors.Wrap(err, "failed to parse a event from the receipt")
-	}
-
-	bundleId = types.ID(registerResult.BundleId)
+	//bundleDataHash, err := bundle.Hash()
+	//if err != nil {
+	//	return bundleId, errors.Wrap(err, "failed to get hash of the bundle data")
+	//}
+	//
+	//// for setup rowId
+	//userMerkleRoot, err := bundle.SetupUserProof()
+	//if err != nil {
+	//	return bundleId, errors.Wrap(err, "failed to setup SMT")
+	//}
+	//
+	//dw.log.Info("Bundle data", logger.Attrs{
+	//	"hash":       bundleDataHash.Hex(),
+	//	"merkleRoot": userMerkleRoot.Hex(),
+	//})
+	//
+	//tx, err := dw.dataRegistry.RegisterBundle(
+	//	dw.ethclient.Account(),
+	//	bundle.Collection,
+	//	userMerkleRoot,
+	//	bundleDataHash,
+	//	bundle.Uri)
+	//if err != nil {
+	//	return bundleId, errors.Wrap(err, "failed to register a bundle to DataRegistry")
+	//}
+	//
+	//receipt, err := dw.ethclient.WaitMined(context.Background(), tx)
+	//if err != nil {
+	//	return bundleId, errors.Wrap(err, "failed to wait for tx to be mined")
+	//}
+	//
+	//registerResult, err := dw.dataRegistry.ParseBundleRegisteredFromReceipt(receipt)
+	//if err != nil {
+	//	return bundleId, errors.Wrap(err, "failed to parse a event from the receipt")
+	//}
+	//
+	//bundleId = types.ID(registerResult.BundleId)
 	return
 }
 
-func (dw *Manager) Get(id *types.DataId) (*Bundle, error) {
-	bundle, err := dw.dataRegistry.Bundles(nil, id.BundleId)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get uri")
-	}
-
-	if bundle.Uri == "" {
-		return nil, errors.Wrap(err, "failed to get bundle info")
-	}
-
-	uri, err := url.Parse(bundle.Uri)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to get bundle data")
-	}
-	return dw.Fetch(uri)
+// TODO
+func (dw *Manager) Get(id types.DataId) (*Bundle, error) {
+	//bundle, err := dw.dataRegistry.Bundles(nil, id.BundleId)
+	//if err != nil {
+	//	return nil, errors.Wrap(err, "failed to get uri")
+	//}
+	//
+	//if bundle.Uri == "" {
+	//	return nil, errors.Wrap(err, "failed to get bundle info")
+	//}
+	//
+	//uri, err := url.Parse(bundle.Uri)
+	//if err != nil {
+	//	return nil, errors.Wrap(err, "failed to get bundle data")
+	//}
+	//return dw.Fetch(uri)
+	return nil, nil
 }
 
 func (dw *Manager) Fetch(uri *url.URL) (bundle *Bundle, _ error) {

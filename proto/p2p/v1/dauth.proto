@@ -16,9 +16,18 @@ message DAuthSignUpResponse {
  * DAuth (Data Collection Authentification) API.
  */
 message DAuthRequest {
-    string accountId = 1;
-    string collectionId = 2; // ID
-    bool allow = 3;
+    uint32 action = 1;
+    string accountId = 2;
+    string appName = 3;
+    string dataType = 4;
+}
+
+message DAuthModifyRequest {
+    uint32 action = 1;
+    string accountId = 2;
+    string appName = 3;
+    string dataType = 4;
+    string passwordSignature = 5;
 }
 
 message DAuthResponse {

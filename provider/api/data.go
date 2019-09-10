@@ -1,20 +1,18 @@
 package api
 
 import (
-	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
+	"net/http"
+
 	"github.com/airbloc/airbloc-go/provider/data"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/airbloc-go/warehouse"
-	"github.com/golang/protobuf/ptypes/empty"
-	"golang.org/x/net/context"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-	"log"
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
-type DataAPI struct {
+type dataAPI struct {
 	manager *data.Manager
 }
 
@@ -26,93 +24,179 @@ func NewDataAPI(backend service.Backend) (api.API, error) {
 		backend.LocalDatabase(),
 		backend.Client(),
 		backend.GetService("warehouse").(*warehouse.Service).GetManager())
-	return &DataAPI{manager}, nil
+	return &dataAPI{manager}, nil
 }
 
-func (api *DataAPI) AttachToAPI(service *api.Service) {
-	pb.RegisterDataServer(service.GrpcServer, api)
-}
-
-func (api *DataAPI) Get(ctx context.Context, dataId *pb.DataId) (*pb.DataResult, error) {
-	res, err := api.manager.Get(dataId.DataId)
-	if err != nil {
-		log.Println(err)
-		return nil, status.Errorf(codes.Internal, "Failed to get data %s", dataId.DataId)
+func (api *dataAPI) GetData(c *gin.Context) {
+	var req struct {
+		DataId string `form:"dataId" binding:"required"`
 	}
 
-	return &pb.DataResult{
-		CollectionId: res.CollectionId.Hex(),
-		UserId:       res.UserId.Hex(),
-		IngestedAt:   res.IngestedAt.Timestamp(),
-		Payload:      res.Payload,
-	}, nil
+	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	dataId, err := types.NewDataIdFromStr(req.DataId)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	res, err := api.manager.Get(dataId)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, res)
 }
 
-func (api *DataAPI) GetBatch(ctx context.Context, batchId *pb.BatchRequest) (*pb.GetBatchResult, error) {
+func (api *dataAPI) GetBatch(c *gin.Context) {
+	var req struct {
+		BatchId string `form:"batchId" binding:"required"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	batchManager := api.manager.Batches()
-	batchInfo, err := batchManager.Get(batchId.BatchId)
+	batchInfo, err := batchManager.Get(req.BatchId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get batchId from manager %s", batchId.BatchId)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 
 	res, err := api.manager.GetBatch(batchInfo)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get batch data from given batchInfo %s", batchId.BatchId)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
-
-	batchResult := make([]*pb.DataResult, len(res))
-	for i, data := range res {
-		batchResult[i] = &pb.DataResult{
-			CollectionId: data.CollectionId.Hex(),
-			UserId:       data.UserId.Hex(),
-			IngestedAt:   data.IngestedAt.Timestamp(),
-			Payload:      data.Payload,
-		}
-	}
-	return &pb.GetBatchResult{Data: batchResult}, nil
+	c.JSON(http.StatusOK, res)
 }
 
-func (api *DataAPI) GetBundleInfo(ctx context.Context, request *pb.BundleInfoRequest) (*pb.BundleInfoResponse, error) {
-	bundleId, err := types.HexToID(request.GetBundleId())
+func (api *dataAPI) GetBundle(c *gin.Context) {
+	var req struct {
+		BundleId string `form:"bundleId" binding:"required"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	bundleId, err := types.HexToID(req.BundleId)
 	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "failed to convert bundleId to common.ID format : %v", err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-	bundleInfo, err := api.manager.GetBundleInfo(ctx, bundleId)
+	res, err := api.manager.GetBundle(c, bundleId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to get bundle info : %v", err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+func (api *dataAPI) SetPermission(c *gin.Context) {
+	var req struct {
+		DataId     string `binding:"required"`
+		ConsumerId string `binding:"required"`
+		Allowed    bool   `binding:"required"`
 	}
 
-	return &pb.BundleInfoResponse{
-		BundleId:   bundleInfo.Id,
-		Uri:        bundleInfo.Uri,
-		Provider:   bundleInfo.Provider,
-		Collection: bundleInfo.Collection,
-		IngestedAt: bundleInfo.IngestedAt,
-		DataInfoes: bundleInfo.DataIds,
-	}, nil
+	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// TODO: implement SetPermission
+
+	c.AbortWithStatus(http.StatusNotImplemented)
 }
 
-func (api *DataAPI) SetPermission(ctx context.Context, req *pb.SetDataPermissionRequest) (*empty.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "unimplemented method")
+func (api *dataAPI) SetPermissionBatch(c *gin.Context) {
+	var req struct {
+		BatchId    string `binding:"required"`
+		ConsumerId string `binding:"required"`
+		Allowed    bool   `binding:"required"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// TODO: implement SetPermission
+
+	c.AbortWithStatus(http.StatusNotImplemented)
 }
 
-func (api *DataAPI) SetPermissionBatch(ctx context.Context, req *pb.SetBatchDataPermissionRequest) (*empty.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "unimplemented method")
+func (api *dataAPI) Delete(c *gin.Context) {
+	var req struct {
+		DataId string `form:"dataId" binding:"required"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	dataId, err := types.NewDataIdFromStr(req.DataId)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	_ = dataId
+	// TODO: implement Delete
+
+	c.AbortWithStatus(http.StatusNotImplemented)
 }
 
-func (api *DataAPI) Delete(ctx context.Context, dataId *pb.DataId) (*empty.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "unimplemented method")
+func (api *dataAPI) DeleteBatch(c *gin.Context) {
+	var req struct {
+		BatchId string `form:"batchId" binding:"required"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	batchManager := api.manager.Batches()
+	batchInfo, err := batchManager.Get(req.BatchId)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	_ = batchInfo
+	// TODO: implement DeleteBatch
+
+	c.AbortWithStatus(http.StatusNotImplemented)
 }
 
-func (api *DataAPI) DeleteBatch(ctx context.Context, batchId *pb.BatchRequest) (*empty.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "unimplemented method")
-}
+//func (api *dataAPI) Select(stream pb.Data_SelectServer) error {
+//	return status.Error(codes.Unimplemented, "unimplemented method")
+//}
+//
+//func (api *dataAPI) Release(c *gin.Context, batchId *pb.BatchRequest) (*empty.Empty, error) {
+//	return nil, status.Error(codes.Unimplemented, "unimplemented method")
+//}
 
-func (api *DataAPI) Select(stream pb.Data_SelectServer) error {
-	return status.Error(codes.Unimplemented, "unimplemented method")
-}
-
-func (api *DataAPI) Release(ctx context.Context, batchId *pb.BatchRequest) (*empty.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "unimplemented method")
+func (api *dataAPI) AttachToAPI(service *api.Service) {
+	apiMux := service.HttpServer.Group("/data")
+	apiMux.GET("/", api.GetData)
+	apiMux.GET("/batch", api.GetBatch)
+	apiMux.GET("/bundle", api.GetBundle)
+	apiMux.PUT("/permission", api.SetPermission)
+	apiMux.PUT("/permission/batch", api.SetPermissionBatch)
+	apiMux.DELETE("/", api.Delete)
+	apiMux.DELETE("/batch", api.DeleteBatch)
+	// TODO
+	// apiMux.[Method]([path], api.Select)
+	// apiMux.[Method]([path], api.Release)
 }

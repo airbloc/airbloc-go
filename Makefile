@@ -83,7 +83,7 @@ run: airbloc
 test: test-all
 
 test-all:
-	@$(GOTEST) -v `go list ./... | grep -v test/e2e`
+	@$(GOTEST) -v -count 1 `go list ./... | grep -v test/e2e`
 
 test-e2e:
-	@$(GOTEST) -v `go list ./test/e2e` $(FLAGS)
+	@$(GOTEST) -v -count 1 `go list ./test/e2e` $(FLAGS)

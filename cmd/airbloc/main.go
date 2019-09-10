@@ -3,6 +3,10 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
+	"log"
+	"os"
+	"strings"
+
 	"github.com/airbloc/airbloc-go/consumer"
 	"github.com/airbloc/airbloc-go/controller"
 	"github.com/airbloc/airbloc-go/provider"
@@ -12,15 +16,12 @@ import (
 	"github.com/airbloc/logger"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/jinzhu/configor"
-	"github.com/mitchellh/go-homedir"
+	home "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
-	log2 "log"
-	"os"
-	"strings"
 )
 
 var (
-	log    = logger.New(name)
+	ablLog = logger.New(name)
 	config = service.NewConfig()
 
 	rootCmd = &cobra.Command{
@@ -57,10 +58,10 @@ var (
 		//Run:   start("provider,consumer,warehouse"),
 	}
 
-	userDelegateCmd = &cobra.Command{
-		Use:   "userdelegate",
-		Short: "Start Airbloc user delegate daemon.",
-		Long:  "Start user delegate daemon, watching and supervising user's data event.",
+	dataControllerCmd = &cobra.Command{
+		Use:   "controller",
+		Short: "Start Airbloc data controller daemon.",
+		Long:  "Start data controller daemon, watching and supervising user's data event.",
 		Run:   start("warehouse,controller"),
 	}
 
@@ -86,7 +87,7 @@ var (
 )
 
 func init() {
-	log2.SetFlags(log2.Lshortfile)
+	log.SetFlags(log.Lshortfile)
 	cobra.OnInitialize(loadConfig)
 	rflags := rootCmd.PersistentFlags()
 
@@ -112,7 +113,7 @@ func init() {
 	rootCmd.AddCommand(
 		initCmd,
 		serverCmd,
-		userDelegateCmd,
+		dataControllerCmd,
 		versionCmd,
 	)
 }
@@ -124,18 +125,18 @@ func loadConfig() {
 	}
 
 	// get data directory
-	dataDir, err := homedir.Expand(rootFlags.dataDir)
+	dataDir, err := home.Expand(rootFlags.dataDir)
 	if err != nil {
-		log.Error("Error: failed to resolve data directory {}", err, rootFlags.dataDir)
+		ablLog.Error("Error: failed to resolve data directory {}", err, rootFlags.dataDir)
 	}
 	if err := os.MkdirAll(dataDir, os.ModePerm); err != nil {
-		log.Error("Error: failed to create data directory {}", err, rootFlags.dataDir)
+		ablLog.Error("Error: failed to create data directory {}", err, rootFlags.dataDir)
 	}
 
 	configPath := rootFlags.configPath
 	configPath = strings.Replace(configPath, "$DATADIR", dataDir, 1)
 	if err := configor.Load(config, configPath); err != nil {
-		log.Error("Error: failed to load config from {}", err, configPath)
+		ablLog.Error("Error: failed to load config from {}", err, configPath)
 		os.Exit(1)
 	}
 
@@ -151,7 +152,7 @@ func loadConfig() {
 		rootFlags.logLevel = "*"
 	}
 	logger.SetLogger(logger.NewStandardOutput(os.Stdout, rootFlags.logLevel, rootFlags.logFilter))
-	log2.SetOutput(os.Stderr)
+	log.SetOutput(os.Stderr)
 
 	if rootFlags.blockchainEndpoint != "" {
 		config.Blockchain.Endpoint = rootFlags.blockchainEndpoint
@@ -169,7 +170,7 @@ func loadConfig() {
 
 func main() {
 	if err := rootCmd.Execute(); err != nil {
-		log.Error("Error", err)
+		ablLog.Error("Error", err)
 		os.Exit(1)
 	}
 }
@@ -179,7 +180,7 @@ func start(serviceNames string) func(cmd *cobra.Command, args []string) {
 		nodeKey := loadNodeKey()
 		backend, err := service.NewAirblocBackend(nodeKey, config)
 		if err != nil {
-			log.Error("Error: init error", err)
+			ablLog.Error("Error: init error", err)
 			os.Exit(1)
 		}
 		defer backend.Stop()
@@ -189,7 +190,7 @@ func start(serviceNames string) func(cmd *cobra.Command, args []string) {
 		registerServices(backend, serviceNames)
 
 		if err := backend.Start(); err != nil {
-			log.Error("Error: failed to start airbloc", err)
+			ablLog.Error("Error: failed to start airbloc", err)
 			os.Exit(1)
 		}
 	}
@@ -199,24 +200,24 @@ func loadNodeKey() *key.Key {
 	if rootFlags.private != "" {
 		// load from command-line argument
 		if len(rootFlags.private) != 66 || !strings.HasPrefix(rootFlags.private, "0x") {
-			log.Error("Error: Invalid private key.")
+			ablLog.Error("Error: Invalid private key.")
 			os.Exit(1)
 		}
 		rawKey, err := hex.DecodeString(strings.TrimPrefix(rootFlags.private, "0x"))
 		if err != nil {
-			log.Error("Error: Failed to decode hex", err)
+			ablLog.Error("Error: Failed to decode hex", err)
 			os.Exit(1)
 		}
 		k, err := crypto.ToECDSA(rawKey)
 		if err != nil {
-			log.Error("Error: Invalid ECDSA key", err)
+			ablLog.Error("Error: Invalid ECDSA key", err)
 			os.Exit(1)
 		}
 		return key.FromECDSA(k)
 	} else {
 		k, err := key.Load(config.PrivateKeyPath)
 		if err != nil {
-			log.Error("Error: failed to load private key from the given path", err)
+			ablLog.Error("Error: failed to load private key from the given path", err)
 			os.Exit(1)
 		}
 		return k
@@ -227,13 +228,13 @@ func registerServices(backend service.Backend, serviceNames []string) {
 	for _, name := range serviceNames {
 		serviceConstructor, exists := AvailableServices[name]
 		if !exists {
-			log.Error("Error: service {} does not exist.", name)
+			ablLog.Error("Error: service {} does not exist.", name)
 			os.Exit(1)
 		}
 
 		svc, err := serviceConstructor(backend)
 		if err != nil {
-			log.Error("Error: failed to create service {}", err, name)
+			ablLog.Error("Error: failed to create service {}", err, name)
 			os.Exit(1)
 		}
 		backend.AttachService(name, svc)

@@ -40,7 +40,7 @@ func getSignatureFromTxData(txdata []byte) string {
 
 // GetTransactionDetails parses Ethereum transaction and
 // returns loggable, human-readable informations.
-func GetTransactionDetails(cm *ContractManager, tx *types.Transaction) (methodInfo string, attrs logger.Attrs) {
+func GetTransactionDetails(cm *contractManager, tx *types.Transaction) (methodInfo string, attrs logger.Attrs) {
 	if contractName, registered := cm.addrToName[*tx.To()]; registered {
 		// get
 		signature := getSignatureFromTxData(tx.Data())

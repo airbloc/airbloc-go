@@ -3,8 +3,7 @@ package user
 import (
 	"context"
 	"fmt"
-	"github.com/airbloc/airbloc-go/provider/collections"
-	"github.com/airbloc/airbloc-go/shared/blockchain"
+
 	"github.com/airbloc/airbloc-go/shared/database/metadb"
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/airbloc-go/shared/types"
@@ -16,36 +15,21 @@ import (
 )
 
 type Manager struct {
-	kms         key.Manager
-	metadb      metadb.Database
-	warehouse   *warehouse.Manager
-	collections *collections.Manager
+	kms       key.Manager
+	metadb    metadb.Database
+	warehouse *warehouse.Manager
 }
 
 func NewManager(
 	kms key.Manager,
 	metaDB metadb.Database,
-	client blockchain.TxClient,
 	warehouse *warehouse.Manager,
 ) *Manager {
 	return &Manager{
-		kms:         kms,
-		warehouse:   warehouse,
-		metadb:      metaDB,
-		collections: collections.NewManager(client),
+		kms:       kms,
+		warehouse: warehouse,
+		metadb:    metaDB,
 	}
-}
-
-type userData struct {
-	CollectionId string            `json:"collectionId"`
-	Data         []userDataPayload `json:"data" mapstructure:"-"`
-}
-
-type userDataPayload struct {
-	types.DataId
-	CollectedAt int64  `json:"collectedAt"`
-	IngestedAt  int64  `json:"ingestedAt"`
-	Payload     string `json:"payload"`
 }
 
 func (manager *Manager) GetData(ctx context.Context, id types.ID, from int64) ([]userData, error) {
@@ -88,24 +72,24 @@ func (manager *Manager) GetData(ctx context.Context, id types.ID, from int64) ([
 		}
 
 		for j, dataId := range info.DataIds {
-			bundle, err := manager.warehouse.Get(&dataId.DataId)
+			bundle, err := manager.warehouse.Get(dataId.DataId)
 			if err != nil {
 				return nil, errors.Wrap(err, "fetching bundle")
 			}
 
-			if _, ok := bundle.Data[dataId.UserId]; !ok {
-				return nil, errors.Errorf("cannot find user %s on given bundle", dataId.UserId)
+			if _, ok := bundle.Data[dataId.UserId()]; !ok {
+				return nil, errors.Errorf("cannot find user %s on given bundle", dataId.UserId().Hex())
 			}
 
-			if uint32(len(bundle.Data[dataId.UserId])) <= dataId.RowId.Uint32() {
+			if uint32(len(bundle.Data[dataId.UserId()])) <= dataId.RowId().Uint32() {
 				return nil, fmt.Errorf("cannot find row data at given userId")
 			}
 
-			encryptedData := bundle.Data[dataId.UserId][dataId.RowId.Uint32()]
-			if encryptedData.RowId.Uint32() != dataId.RowId.Uint32() {
+			encryptedData := bundle.Data[dataId.UserId()][dataId.RowId().Uint32()]
+			if encryptedData.RowId.Uint32() != dataId.RowId().Uint32() {
 				return nil, fmt.Errorf(
 					"rowId mismatching : expected %s, actual %s",
-					dataId.RowId.Hex(), encryptedData.RowId.Hex(),
+					dataId.RowId().Hex(), encryptedData.RowId.Hex(),
 				)
 			}
 
@@ -124,21 +108,6 @@ func (manager *Manager) GetData(ctx context.Context, id types.ID, from int64) ([
 	}
 
 	return usersData, nil
-}
-
-type userDataInfo struct {
-	CollectionId string `json:"collection" mapstructure:"collection"`
-	IngestedAt   int64  `json:"ingestedAt"`
-	DataIds      []struct {
-		types.DataId
-		CollectedAt int64 `json:"collectedAt"`
-	} `json:"dataIds" mapstructure:"-"`
-	RawDataIds []bson.D `json:"rawDataIds" mapstructure:"dataIds"`
-}
-
-type userDataInfoQueryResponse struct {
-	CollectionId string   `json:"collectionId" mapstructure:"_id"`
-	Collections  []bson.D `json:"collections" mapstructure:"collections"`
 }
 
 func (manager *Manager) getDataIds(ctx context.Context, id types.ID, cond ...bson.D) ([]userDataInfo, error) {
@@ -174,7 +143,10 @@ func (manager *Manager) getDataIds(ctx context.Context, id types.ID, cond ...bso
 
 	var infoes []userDataInfo
 	for _, doc := range rawRes {
-		var resp userDataInfoQueryResponse
+		var resp struct {
+			CollectionId string   `json:"collectionId" mapstructure:"_id"`
+			Collections  []bson.D `json:"collections" mapstructure:"collections"`
+		}
 		if err := mapstructure.Decode(doc, &resp); err != nil {
 			return nil, errors.Wrap(err, "decoding document")
 		}
@@ -192,17 +164,12 @@ func (manager *Manager) getDataIds(ctx context.Context, id types.ID, cond ...bso
 			}, len(collection.RawDataIds))
 
 			for i, idPack := range collection.RawDataIds {
-				var rawDataId types.RawDataId
-				if err := mapstructure.Decode(idPack.Map(), &rawDataId); err != nil {
-					return nil, errors.Wrap(err, "decoding dataId")
-				}
-
-				dataId, err := rawDataId.Convert()
+				dataId, collectedAt, err := types.RawIdToDataId(idPack)
 				if err != nil {
-					return nil, errors.Wrap(err, "failed to unmarshal data ID")
+					return nil, errors.Wrap(err, "failed to get dataId")
 				}
-				collection.DataIds[i].DataId = *dataId
-				collection.DataIds[i].CollectedAt = int64(rawDataId.CollectedAt)
+				collection.DataIds[i].DataId = dataId
+				collection.DataIds[i].CollectedAt = collectedAt
 			}
 			collection.RawDataIds = nil
 			infoes = append(infoes, collection)
@@ -212,7 +179,7 @@ func (manager *Manager) getDataIds(ctx context.Context, id types.ID, cond ...bso
 	return infoes, nil
 }
 
-// returns all of user's dataIds
+// GetDataIds returns all of user's dataIds
 func (manager *Manager) GetDataIds(ctx context.Context, id types.ID) ([]userDataInfo, error) {
 	return manager.getDataIds(ctx, id)
 }

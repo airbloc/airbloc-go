@@ -2,235 +2,206 @@ package api
 
 import (
 	"encoding/hex"
-	"log"
+	"net/http"
 
-	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/airbloc/airbloc-go/provider/exchange"
+	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/golang/protobuf/ptypes/empty"
-	"golang.org/x/net/context"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
-type ExchangeAPI struct {
-	manager *exchange.Manager
+// exchangeAPI is api wrapper of contract Exchange.sol
+type exchangeAPI struct {
+	manager adapter.IExchangeManager
 }
 
+// NewExchangeAPI makes new *exchangeAPI struct
 func NewExchangeAPI(backend service.Backend) (api.API, error) {
-	ex := exchange.NewManager(backend.Client())
-	return &ExchangeAPI{ex}, nil
+	ex := adapter.NewExchangeManager(backend.Client())
+	return &exchangeAPI{ex}, nil
 }
 
-func (api *ExchangeAPI) Prepare(ctx context.Context, req *pb.OrderRequest) (*pb.OfferId, error) {
-	contract := req.GetContract().GetSmartEscrow()
+// Prepare is a paid mutator transaction binding the contract method 0x77e61c33.
+//
+// Solidity: function prepare(string provider, address consumer, address escrow, bytes4 escrowSign, bytes escrowArgs, bytes20[] dataIds) returns(bytes8)
+func (api *exchangeAPI) prepare(c *gin.Context) {
+	var req struct {
+		Provider   string   `binding:"required"` // string
+		Consumer   string   `binding:"required"` // address
+		Escrow     string   `binding:"required"` // address
+		EscrowSign string   `binding:"required"` // bytes4
+		EscrowArgs string   `binding:"required"` // bytes
+		DataIds    []string `binding:"required"` // [][20]bytes
+	}
 
-	to := common.HexToAddress(req.GetTo())
-	escrowAddr := common.HexToAddress(req.GetContract().GetSmartEscrow().GetAddress())
+	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	consumer := common.HexToAddress(req.Consumer)
+	escrow := common.HexToAddress(req.Escrow)
 
 	var escrowSign [4]byte
-	copy(escrowSign[:], contract.GetEscrowSign())
+	if tmpBytes, err := hex.DecodeString(req.EscrowSign); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	} else {
+		copy(escrowSign[:], tmpBytes[:])
+	}
 
-	rawDataIds := req.GetDataIds()
-	dataIds := make([][20]byte, len(rawDataIds))
-	for i, idStr := range rawDataIds {
-		idBytes, err := hex.DecodeString(idStr)
+	escrowArgs, err := hex.DecodeString(req.EscrowArgs)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	dataIds := make([]types.DataId, len(req.DataIds))
+	for index, rawDataId := range req.DataIds {
+		dataIds[index], err = types.NewDataIdFromStr(rawDataId)
 		if err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "Failed to decode dataId")
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
-		if len(idBytes) != 20 {
-			return nil, status.Errorf(codes.InvalidArgument, "Wrong ID length (expected 20)")
-		}
-		copy(dataIds[i][:], idBytes)
 	}
 
 	offerId, err := api.manager.Prepare(
-		ctx, to, escrowAddr,
-		escrowSign, contract.GetEscrowArgs(),
-		dataIds...,
+		c, req.Provider, consumer,
+		escrow, escrowSign, escrowArgs, dataIds,
 	)
 	if err != nil {
-		log.Println(err)
-		return nil, status.Errorf(codes.Internal, "Failed to prepare order request")
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
-	return &pb.OfferId{OfferId: offerId.Hex()}, err
+
+	c.JSON(http.StatusOK, gin.H{"offerId": offerId})
 }
 
-func (api *ExchangeAPI) AddDataIds(ctx context.Context, req *pb.DataIds) (*empty.Empty, error) {
-	offerId, err := types.HexToID(req.GetOfferId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
+// AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
+//
+// Solidity: function addDataIds(bytes8 offerId, bytes20[] dataIds) returns()
+func (api *exchangeAPI) addDataIds(c *gin.Context) {
+	var req struct {
+		DataIds []string `binding:"required"`
+	}
+	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-	rawDataIds := req.GetDataIds()
-	dataIds := make([][20]byte, len(rawDataIds))
-	for i, idStr := range rawDataIds {
-		idBytes, err := hexutil.Decode(idStr)
+	rawOfferId := c.Param("offerId")
+	if rawOfferId == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+		return
+	}
+
+	offerId, err := types.HexToID(rawOfferId)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	dataIds := make([]types.DataId, len(req.DataIds))
+	for index, rawDataId := range req.DataIds {
+		dataIds[index], err = types.NewDataIdFromStr(rawDataId)
 		if err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "Failed to decode dataId")
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
-		if len(idBytes) != 20 {
-			return nil, status.Errorf(codes.InvalidArgument, "Wrong ID length (expected 20)")
-		}
-		copy(dataIds[i][:], idBytes)
 	}
 
-	err = api.manager.AddDataIds(ctx, offerId, dataIds)
+	err = api.manager.AddDataIds(c, offerId, dataIds)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to add data ids")
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
-	return &empty.Empty{}, nil
+
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
-func (api *ExchangeAPI) Order(ctx context.Context, req *pb.OfferId) (*empty.Empty, error) {
-	offerId, err := types.HexToID(req.GetOfferId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
+// Order is a paid mutator transaction binding the contract method 0x0cf833fb.
+//
+// Solidity: function order(bytes8 offerId) returns()
+func (api *exchangeAPI) order(c *gin.Context) {
+	rawOfferId := c.Param("offerId")
+	if rawOfferId == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+		return
 	}
 
-	err = api.manager.Order(ctx, offerId)
+	offerId, err := types.HexToID(rawOfferId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to order")
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	return &empty.Empty{}, nil
+
+	err = api.manager.Order(c, offerId)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
-func (api *ExchangeAPI) Settle(ctx context.Context, req *pb.OfferId) (*pb.Receipt, error) {
-	offerId, err := types.HexToID(req.GetOfferId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
+// Cancel is a paid mutator transaction binding the contract method 0xb2d9ba39.
+//
+// Solidity: function cancel(bytes8 offerId) returns()
+func (api *exchangeAPI) cancel(c *gin.Context) {
+	rawOfferId := c.Param("offerId")
+	if rawOfferId == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+		return
 	}
 
-	receipt, err := api.manager.Settle(ctx, offerId)
+	offerId, err := types.HexToID(rawOfferId)
 	if err != nil {
-		log.Println(err)
-		return nil, status.Errorf(codes.Internal, "Failed to settle")
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-	return &pb.Receipt{
-		OfferId: hex.EncodeToString(receipt.OfferId[:]),
-		From:    receipt.From.Hex(),
-		To:      receipt.To.Hex(),
-	}, nil
+	err = api.manager.Cancel(c, offerId)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
-func (api *ExchangeAPI) Reject(ctx context.Context, req *pb.OfferId) (*empty.Empty, error) {
-	offerId, err := types.HexToID(req.GetOfferId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
+// GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
+//
+// Solidity: function getOffer(bytes8 offerId) constant returns((string,address,bytes20[],uint256,uint256,(address,bytes4,bytes),uint8))
+func (api *exchangeAPI) getOffer(c *gin.Context) {
+	rawOfferId := c.Param("offerId")
+	if rawOfferId == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+		return
 	}
 
-	err = api.manager.Reject(ctx, offerId)
+	offerId, err := types.HexToID(rawOfferId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to reject")
-	}
-	return &empty.Empty{}, nil
-}
-
-func (api *ExchangeAPI) GetOffer(ctx context.Context, req *pb.OfferId) (*pb.Offer, error) {
-	offerId, err := types.HexToID(req.GetOfferId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	offer, err := api.manager.GetOffer(offerId)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get offer")
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
 	}
-	escrow := offer.Escrow
-
-	rawDataIds := make([]string, len(offer.DataIds))
-	for i, id := range offer.DataIds {
-		rawDataIds[i] = hexutil.Encode(id[:])
-	}
-
-	return &pb.Offer{
-		From:    offer.From.Hex(),
-		To:      offer.To.Hex(),
-		DataIds: rawDataIds,
-		Contract: &pb.Contract{
-			Type: pb.Contract_SMART,
-			SmartEscrow: &pb.SmartContract{
-				Address:    escrow.Addr.Hex(),
-				EscrowSign: escrow.Sign[:],
-				EscrowArgs: escrow.Args,
-			},
-		},
-		Status: pb.Status(offer.Status),
-	}, nil
+	c.JSON(http.StatusOK, offer)
 }
 
-func (api *ExchangeAPI) GetOfferCompact(ctx context.Context, req *pb.OfferId) (*pb.OfferCompact, error) {
-	offerId, err := types.HexToID(req.GetOfferId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Failed to decode offerId")
-	}
-
-	offer, err := api.manager.GetOfferCompact(offerId)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get offer")
-	}
-
-	return &pb.OfferCompact{
-		From:   offer.From.Hex(),
-		To:     offer.To.Hex(),
-		Escrow: offer.Escrow.Hex(),
-	}, nil
-}
-
-// TODO: ignored chainID
-func (api *ExchangeAPI) GetReceiptsByOfferor(ctx context.Context, req *pb.ReceiptRequest) (*pb.Offers, error) {
-	offeror := common.HexToAddress(req.GetAddress())
-
-	offers, err := api.manager.GetReceiptsByOfferor(offeror)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get receipts")
-	}
-
-	rawOffers := make([]string, len(offers))
-	for i, offer := range offers {
-		rawOffers[i] = hexutil.Encode(offer[:])
-	}
-
-	return &pb.Offers{OfferIds: rawOffers}, nil
-}
-
-func (api *ExchangeAPI) GetReceiptsByOfferee(ctx context.Context, req *pb.ReceiptRequest) (*pb.Offers, error) {
-	offeree := common.HexToAddress(req.GetAddress())
-
-	offers, err := api.manager.GetReceiptsByOfferee(offeree)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get receipts")
-	}
-
-	rawOffers := make([]string, len(offers))
-	for i, offer := range offers {
-		rawOffers[i] = hexutil.Encode(offer[:])
-	}
-
-	return &pb.Offers{OfferIds: rawOffers}, nil
-}
-
-func (api *ExchangeAPI) GetReceiptsByEscrow(ctx context.Context, req *pb.ReceiptRequest) (*pb.Offers, error) {
-	escrow := common.HexToAddress(req.GetAddress())
-
-	offers, err := api.manager.GetReceiptsByEscrow(escrow)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to get receipts")
-	}
-
-	rawOffers := make([]string, len(offers))
-	for i, offer := range offers {
-		rawOffers[i] = hexutil.Encode(offer[:])
-	}
-
-	return &pb.Offers{OfferIds: rawOffers}, nil
-}
-
-func (api *ExchangeAPI) AttachToAPI(service *api.Service) {
-	pb.RegisterExchangeServer(service.GrpcServer, api)
+// AttachToAPI is a registrant of an api.
+func (api *exchangeAPI) AttachToAPI(service *api.Service) {
+	apiMux := service.HttpServer.Group("/exchange")
+	apiMux.POST("/prepare", api.prepare)
+	apiMux.GET("/order/:offerId", api.getOffer)
+	apiMux.POST("/order/:offerId", api.order)
+	apiMux.PATCH("/order/:offerId", api.addDataIds)
+	apiMux.DELETE("/order/:offerId", api.cancel)
 }

@@ -1,80 +1,117 @@
 package api
 
 import (
-	"context"
+	"net/http"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
-	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
-	"github.com/airbloc/airbloc-go/provider/apps"
+	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
-	"github.com/airbloc/airbloc-go/shared/types"
-	ethCommon "github.com/ethereum/go-ethereum/common"
-	"github.com/golang/protobuf/ptypes/empty"
-	"github.com/pkg/errors"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
-type AppsAPI struct {
-	apps *apps.Manager
+// appRegistryAPI is api wrapper of contract AppRegistry.sol
+type appRegistryAPI struct {
+	apps adapter.IAppRegistryManager
 }
 
-func NewAppsAPI(backend service.Backend) (api.API, error) {
-	appsManager := apps.NewManager(backend.Client())
-	return &AppsAPI{appsManager}, nil
+// NewAppRegistryAPI makes new *appRegistryAPI struct
+func NewAppRegistryAPI(backend service.Backend) (api.API, error) {
+	ar := adapter.NewAppRegistryManager(backend.Client())
+	return &appRegistryAPI{ar}, nil
 }
 
-func (api *AppsAPI) NewOwner(ctx context.Context, req *pb.NewOwnerRequest) (*empty.Empty, error) {
-	appId, err := types.HexToID(req.GetAppId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Invalid app ID: %s", req.GetAppId())
+// Register is a paid mutator transaction binding the contract method 0xf2c298be.
+//
+// Solidity: function register(string appName) returns()
+func (api *appRegistryAPI) register(c *gin.Context) {
+	var req struct {
+		AppName string `json:"app_name" binding:"required"`
 	}
-	address := ethCommon.HexToAddress(req.GetOwner())
 
-	_, err = api.apps.TransferOwnership(ctx, appId, address)
-	if err != nil {
-		return nil, err
+	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	return &empty.Empty{}, nil
+
+	if err := api.apps.Register(c, req.AppName); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
-func (api *AppsAPI) CheckOwner(ctx context.Context, req *pb.CheckOwnerRequest) (*pb.CheckOwnerResult, error) {
-	appId, err := types.HexToID(req.GetAppId())
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "Invalid app ID: %s", req.GetAppId())
+// Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
+//
+// Solidity: function unregister(string appName) returns()
+func (api *appRegistryAPI) unregister(c *gin.Context) {
+	var req struct {
+		AppName string `json:"app_name" binding:"required"`
 	}
-	address := ethCommon.HexToAddress(req.GetOwner())
 
-	ok, err := api.apps.IsOwner(ctx, appId, address)
-	if err != nil {
-		return nil, err
+	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	return &pb.CheckOwnerResult{Ok: ok}, nil
+
+	if err := api.apps.Unregister(c, req.AppName); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }
 
-func (api *AppsAPI) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResult, error) {
-	appId, err := api.apps.Register(ctx, req.GetName())
-	if err != nil {
-		return nil, err
-	}
-	return &pb.RegisterResult{
-		AppId: appId.Hex(),
-	}, nil
-}
-func (api *AppsAPI) Unregister(ctx context.Context, req *pb.UnregisterRequest) (*empty.Empty, error) {
-	appId, err := types.HexToID(req.GetAppId())
-	if err != nil {
-		return nil, errors.Wrap(err, "api : invalid app ID")
+// Get is a free data retrieval call binding the contract method 0x693ec85e.
+//
+// Solidity: function get(string appName) constant returns((string,address,bytes32))
+func (api *appRegistryAPI) get(c *gin.Context) {
+	var req struct {
+		AppName string `form:"app_name" binding:"required"`
 	}
 
-	_, err = api.apps.Unregister(ctx, appId)
-	if err != nil {
-		return nil, err
+	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	return &empty.Empty{}, nil
+
+	app, err := api.apps.Get(req.AppName)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, app)
 }
 
-func (api *AppsAPI) AttachToAPI(service *api.Service) {
-	pb.RegisterAppsServer(service.GrpcServer, api)
+// TransferAppOwner is a paid mutator transaction binding the contract method 0x1a9dff9f.
+//
+// Solidity: function transferAppOwner(string appName, address newOwner) returns()
+func (api *appRegistryAPI) transferAppOwner(c *gin.Context) {
+	var req struct {
+		AppName  string `json:"app_name" binding:"required"`
+		NewOwner string `json:"new_owner" binding:"required"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := api.apps.TransferAppOwner(c, req.AppName, common.HexToAddress(req.NewOwner)); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
+}
+
+// AttachToAPI is a registrant of an api.
+func (api *appRegistryAPI) AttachToAPI(service *api.Service) {
+	apiMux := service.HttpServer.Group("/apps")
+	apiMux.GET("/", api.get)
+	apiMux.POST("/", api.register)
+	apiMux.PATCH("/", api.transferAppOwner)
+	apiMux.DELETE("/", api.unregister)
 }

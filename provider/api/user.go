@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+
 	pb "github.com/airbloc/airbloc-go/proto/rpc/v1/server"
 	"github.com/airbloc/airbloc-go/provider/user"
 	"github.com/airbloc/airbloc-go/shared/service"
@@ -20,7 +21,6 @@ func NewUserAPI(backend service.Backend) (api.API, error) {
 	manager := user.NewManager(
 		backend.Kms(),
 		backend.MetaDatabase(),
-		backend.Client(),
 		backend.GetService("warehouse").(*warehouse.Service).GetManager(),
 	)
 	return &UserAPI{manager}, nil
