@@ -6,7 +6,7 @@ replace (
 	git.apache.org/thrift.git => github.com/apache/thrift v0.12.0
 	github.com/airbloc/airframe => github.com/frostornge/airframe v0.0.0-20190822082946-296a12f1f9f2
 	github.com/ethereum/go-ethereum/crypto => github.com/klaytn/klaytn v1.1.0
-	github.com/klaytn/klaytn => github.com/frostornge/klaytn v0.0.0-20190825165342-de85be0ec1b7
+	github.com/klaytn/klaytn => github.com/frostornge/klaytn v0.0.0-20190910071037-a8d9781f8cd6
 	gopkg.in/urfave/cli.v1 => github.com/urfave/cli v1.12.0
 )
 
@@ -17,7 +17,7 @@ require (
 	github.com/aws/aws-sdk-go v1.19.7
 	github.com/dgraph-io/badger v1.5.5
 	github.com/gin-gonic/gin v1.3.0
-	github.com/golang/mock v1.2.0
+	github.com/golang/mock v1.3.1
 	github.com/golang/protobuf v1.3.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
 	github.com/ipfs/go-cid v0.0.1
@@ -52,7 +52,7 @@ require (
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
 	github.com/xdg/stringprep v1.0.0 // indirect
 	go.mongodb.org/mongo-driver v1.0.0
-	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
+	golang.org/x/crypto v0.0.0-20190909091759-094676da4a83
 	google.golang.org/api v0.2.0
 	google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55
 	google.golang.org/grpc v1.23.0
