@@ -25,7 +25,7 @@ func NewControllerRegistryAPI(backend service.Backend) (api.API, error) {
 //
 // Solidity: function register(address controllerAddr) returns()
 func (api *controllerRegistryAPI) register(c *gin.Context) {
-	controllerAddrHex := c.Param("controllerAddr")
+	controllerAddrHex := c.Param("controller_addr")
 	if controllerAddrHex == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
 		return
@@ -52,7 +52,7 @@ func (api *controllerRegistryAPI) register(c *gin.Context) {
 //
 // Solidity: function get(address controller) constant returns((address,uint256))
 func (api *controllerRegistryAPI) get(c *gin.Context) {
-	controllerAddr := c.Param("controllerAddr")
+	controllerAddr := c.Param("controller_addr")
 	if controllerAddr == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
 		return
@@ -69,6 +69,6 @@ func (api *controllerRegistryAPI) get(c *gin.Context) {
 // AttachToAPI is a registrant of an api.
 func (api *controllerRegistryAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.HttpServer.Group("/controllers")
-	apiMux.GET("/:controllerAddr", api.get)
-	apiMux.POST("/:controllerAddr", api.register)
+	apiMux.GET("/:controller_addr", api.get)
+	apiMux.POST("/:controller_addr", api.register)
 }

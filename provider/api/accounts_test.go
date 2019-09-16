@@ -37,7 +37,7 @@ func TestAccountsAPI_Create(t *testing.T) {
 	api := accountsAPI{mockManager}
 	api.create(c)
 
-	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, http.StatusCreated, w.Code)
 	assert.Equal(t, fmt.Sprintf(`{"account_id":"%s"}`, testAccountId), w.Body.String())
 }
 
@@ -74,7 +74,7 @@ func TestAccountsAPI_CreateTemporary(t *testing.T) {
 	api := accountsAPI{mockManager}
 	api.createTemporary(c)
 
-	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, http.StatusCreated, w.Code)
 	assert.Equal(t, fmt.Sprintf(`{"account_id":"%s"}`, testAccountId), w.Body.String())
 }
 

@@ -75,7 +75,7 @@ func (api *consentsAPI) consent(c *gin.Context) {
 		return
 	}
 
-	appName := c.Param("appName")
+	appName := c.Param("app_name")
 	if appName == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid app name"})
 		return
@@ -168,7 +168,7 @@ func (api *consentsAPI) consentMany(c *gin.Context) {
 		return
 	}
 
-	appName := c.Param("appName")
+	appName := c.Param("app_name")
 	if appName == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid app name"})
 		return
@@ -210,6 +210,6 @@ func (api *consentsAPI) consentMany(c *gin.Context) {
 // AttachToAPI is a registrant of an api.
 func (api *consentsAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.HttpServer.Group("/consents")
-	apiMux.PUT("/:appName", api.consent)
-	apiMux.PUT("/:appName/many", api.consentMany)
+	apiMux.PUT("/:app_name", api.consent)
+	apiMux.PUT("/:app_name/many", api.consentMany)
 }

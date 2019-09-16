@@ -26,11 +26,14 @@ func TestDataTypeRegistryAPI_Register(t *testing.T) {
 	defer mockController.Finish()
 
 	w, c := testutils.CreateTestRequest(t, gin.H{
-		"name":       testDataType,
-		"schemaHash": testSchemaHash,
+		"name":        testDataType,
+		"schema_hash": testSchemaHash,
 	}, binding.JSON)
 
 	mockManager := adapterMock.NewMockIDataTypeRegistryManager(mockController)
+	mockManager.EXPECT().
+		Exists(testDataType).
+		Return(false, nil)
 	mockManager.EXPECT().
 		Register(c, testDataType, common.HexToHash(testSchemaHash)).
 		Return(nil)
@@ -38,7 +41,7 @@ func TestDataTypeRegistryAPI_Register(t *testing.T) {
 	api := &dataTypeRegistryAPI{mockManager}
 	api.register(c)
 
-	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, http.StatusCreated, w.Code)
 	assert.Equal(t, testutils.TestSuccessStr, w.Body.String())
 }
 
@@ -62,11 +65,14 @@ func TestDataTypeRegistryAPI_Register_FailedToRegister(t *testing.T) {
 	defer mockController.Finish()
 
 	w, c := testutils.CreateTestRequest(t, gin.H{
-		"name":       testDataType,
-		"schemaHash": testSchemaHash,
+		"name":        testDataType,
+		"schema_hash": testSchemaHash,
 	}, binding.JSON)
 
 	mockManager := adapterMock.NewMockIDataTypeRegistryManager(mockController)
+	mockManager.EXPECT().
+		Exists(testDataType).
+		Return(false, nil)
 	mockManager.EXPECT().
 		Register(c, testDataType, common.HexToHash(testSchemaHash)).
 		Return(testutils.TestErr)

@@ -28,13 +28,16 @@ func TestAppRegistryAPI_Register(t *testing.T) {
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 	mockManager.EXPECT().
+		Exists(testAppName).
+		Return(false, nil)
+	mockManager.EXPECT().
 		Register(c, testAppName).
 		Return(nil)
 
 	api := &appRegistryAPI{mockManager}
 	api.register(c)
 
-	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, http.StatusCreated, w.Code)
 	assert.Equal(t, testutils.TestSuccessStr, w.Body.String())
 }
 
@@ -60,6 +63,9 @@ func TestAppRegistryAPI_Register_FailedToRegister(t *testing.T) {
 	w, c := testutils.CreateTestRequest(t, gin.H{"app_name": testAppName}, binding.JSON)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
+	mockManager.EXPECT().
+		Exists(testAppName).
+		Return(false, nil)
 	mockManager.EXPECT().
 		Register(c, testAppName).
 		Return(testutils.TestErr)
@@ -132,6 +138,9 @@ func TestAppRegistryAPI_Get(t *testing.T) {
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 	mockManager.EXPECT().
+		Exists(testAppName).
+		Return(true, nil)
+	mockManager.EXPECT().
 		Get(testAppName).
 		Return(types.App{}, nil)
 
@@ -165,6 +174,9 @@ func TestAppRegistryAPI_Get_FailedToGet(t *testing.T) {
 	w, c := testutils.CreateTestRequest(t, gin.H{"app_name": testAppName}, binding.Query)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
+	mockManager.EXPECT().
+		Exists(testAppName).
+		Return(true, nil)
 	mockManager.EXPECT().
 		Get(testAppName).
 		Return(types.App{}, testutils.TestErr)
