@@ -18,8 +18,7 @@ var (
 	TestErr              = errors.New("error")
 	TestErrStr           = `{"error":"error"}`
 	TestErrBadRequestStr = `{"error":"Bad Request"}`
-	TestIdHex            = "deadbeefdeadbeef"
-	TestSuccessStr       = `{"message":"success"}`
+	TestSuccessStr       = `{}`
 )
 
 // CreateTestRequest creates gin TestContext and inject request data in context and return.

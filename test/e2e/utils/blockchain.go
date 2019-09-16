@@ -7,7 +7,7 @@ import (
 
 const (
 	deploymentPath = "http://localhost:8500"
-	blockchainPath = "http://localhost:8545"
+	blockchainPath = "https://api.baobab.klaytn.net:8651"
 	testerKeyPath  = "../tester.key"
 )
 

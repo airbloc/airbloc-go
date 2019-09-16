@@ -10,7 +10,6 @@ import (
 	"github.com/klaytn/klaytn/accounts/abi"
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	"github.com/klaytn/klaytn/client"
-	"github.com/klaytn/klaytn/common"
 	"github.com/klaytn/klaytn/crypto"
 	"github.com/klaytn/klaytn/params"
 	"github.com/stretchr/testify/require"
@@ -22,8 +21,9 @@ func (t *T) prepareEscrow() *pb.Contract {
 	klient, err := client.DialContext(t.ctx, t.config.EthereumEndpoint)
 	require.NoError(t, err)
 
-	token, err := testAdapter.NewSimpleToken(t.config.DeployedContracts["ERC20Mintable"], common.Hash{}, big.NewInt(0), klient)
-	require.NoError(t, err)
+	//token, err := testAdapter.NewSimpleToken(t.config.DeployedContracts["ERC20Mintable"], common.Hash{}, big.NewInt(0), klient)
+	//require.NoError(t, err)
+	var token testAdapter.SimpleToken
 
 	// mint 10000 Tokens
 	tx, err := token.Mint(self, self.From, new(big.Int).Mul(big.NewInt(10000), big.NewInt(params.KLAY)))
@@ -45,7 +45,7 @@ func (t *T) prepareEscrow() *pb.Contract {
 		new(big.Float).SetInt(big.NewInt(params.KLAY))),
 		"tokens are minted now.")
 
-	simpleContract, err := abi.JSON(strings.NewReader(testAdapter.ERC20EscrowABI))
+	simpleContract, err := abi.JSON(strings.NewReader(testAdapter.Erc20EscrowABI))
 	require.NoError(t, err)
 
 	// prepare escrow condition details: SimpleContract.transact(ERC20Mintable.address, 100 Tokens)
