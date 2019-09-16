@@ -133,6 +133,168 @@ func (_SimpleToken *SimpleTokenTransactorRaw) Transact(opts *bind.TransactOpts, 
 	return _SimpleToken.Contract.contract.Transact(opts, method, params...)
 }
 
+// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
+//
+// Solidity: function allowance(address owner, address spender) constant returns(uint256)
+func (_SimpleToken *SimpleTokenCaller) Allowance(opts *bind.CallOpts, owner common.Address, spender common.Address) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _SimpleToken.contract.Call(opts, out, "allowance", owner, spender)
+	return *ret0, err
+}
+
+// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
+//
+// Solidity: function allowance(address owner, address spender) constant returns(uint256)
+func (_SimpleToken *SimpleTokenSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
+	return _SimpleToken.Contract.Allowance(&_SimpleToken.CallOpts, owner, spender)
+}
+
+// Allowance is a free data retrieval call binding the contract method 0xdd62ed3e.
+//
+// Solidity: function allowance(address owner, address spender) constant returns(uint256)
+func (_SimpleToken *SimpleTokenCallerSession) Allowance(owner common.Address, spender common.Address) (*big.Int, error) {
+	return _SimpleToken.Contract.Allowance(&_SimpleToken.CallOpts, owner, spender)
+}
+
+// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address account) constant returns(uint256)
+func (_SimpleToken *SimpleTokenCaller) BalanceOf(opts *bind.CallOpts, account common.Address) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _SimpleToken.contract.Call(opts, out, "balanceOf", account)
+	return *ret0, err
+}
+
+// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address account) constant returns(uint256)
+func (_SimpleToken *SimpleTokenSession) BalanceOf(account common.Address) (*big.Int, error) {
+	return _SimpleToken.Contract.BalanceOf(&_SimpleToken.CallOpts, account)
+}
+
+// BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
+//
+// Solidity: function balanceOf(address account) constant returns(uint256)
+func (_SimpleToken *SimpleTokenCallerSession) BalanceOf(account common.Address) (*big.Int, error) {
+	return _SimpleToken.Contract.BalanceOf(&_SimpleToken.CallOpts, account)
+}
+
+// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() constant returns(uint256)
+func (_SimpleToken *SimpleTokenCaller) TotalSupply(opts *bind.CallOpts) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _SimpleToken.contract.Call(opts, out, "totalSupply")
+	return *ret0, err
+}
+
+// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() constant returns(uint256)
+func (_SimpleToken *SimpleTokenSession) TotalSupply() (*big.Int, error) {
+	return _SimpleToken.Contract.TotalSupply(&_SimpleToken.CallOpts)
+}
+
+// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
+//
+// Solidity: function totalSupply() constant returns(uint256)
+func (_SimpleToken *SimpleTokenCallerSession) TotalSupply() (*big.Int, error) {
+	return _SimpleToken.Contract.TotalSupply(&_SimpleToken.CallOpts)
+}
+
+// Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
+//
+// Solidity: function approve(address spender, uint256 value) returns(bool)
+func (_SimpleToken *SimpleTokenTransactor) Approve(opts *bind.TransactOpts, spender common.Address, value *big.Int) (*chainTypes.Transaction, error) {
+	return _SimpleToken.contract.Transact(opts, "approve", spender, value)
+}
+
+// Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
+//
+// Solidity: function approve(address spender, uint256 value) returns(bool)
+func (_SimpleToken *SimpleTokenSession) Approve(spender common.Address, value *big.Int) (*chainTypes.Transaction, error) {
+	return _SimpleToken.Contract.Approve(&_SimpleToken.TransactOpts, spender, value)
+}
+
+// Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
+//
+// Solidity: function approve(address spender, uint256 value) returns(bool)
+func (_SimpleToken *SimpleTokenTransactorSession) Approve(spender common.Address, value *big.Int) (*chainTypes.Transaction, error) {
+	return _SimpleToken.Contract.Approve(&_SimpleToken.TransactOpts, spender, value)
+}
+
+// Mint is a paid mutator transaction binding the contract method 0x40c10f19.
+//
+// Solidity: function mint(address account, uint256 amount) returns(bool)
+func (_SimpleToken *SimpleTokenTransactor) Mint(opts *bind.TransactOpts, account common.Address, amount *big.Int) (*chainTypes.Transaction, error) {
+	return _SimpleToken.contract.Transact(opts, "mint", account, amount)
+}
+
+// Mint is a paid mutator transaction binding the contract method 0x40c10f19.
+//
+// Solidity: function mint(address account, uint256 amount) returns(bool)
+func (_SimpleToken *SimpleTokenSession) Mint(account common.Address, amount *big.Int) (*chainTypes.Transaction, error) {
+	return _SimpleToken.Contract.Mint(&_SimpleToken.TransactOpts, account, amount)
+}
+
+// Mint is a paid mutator transaction binding the contract method 0x40c10f19.
+//
+// Solidity: function mint(address account, uint256 amount) returns(bool)
+func (_SimpleToken *SimpleTokenTransactorSession) Mint(account common.Address, amount *big.Int) (*chainTypes.Transaction, error) {
+	return _SimpleToken.Contract.Mint(&_SimpleToken.TransactOpts, account, amount)
+}
+
+// Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
+//
+// Solidity: function transfer(address recipient, uint256 amount) returns(bool)
+func (_SimpleToken *SimpleTokenTransactor) Transfer(opts *bind.TransactOpts, recipient common.Address, amount *big.Int) (*chainTypes.Transaction, error) {
+	return _SimpleToken.contract.Transact(opts, "transfer", recipient, amount)
+}
+
+// Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
+//
+// Solidity: function transfer(address recipient, uint256 amount) returns(bool)
+func (_SimpleToken *SimpleTokenSession) Transfer(recipient common.Address, amount *big.Int) (*chainTypes.Transaction, error) {
+	return _SimpleToken.Contract.Transfer(&_SimpleToken.TransactOpts, recipient, amount)
+}
+
+// Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
+//
+// Solidity: function transfer(address recipient, uint256 amount) returns(bool)
+func (_SimpleToken *SimpleTokenTransactorSession) Transfer(recipient common.Address, amount *big.Int) (*chainTypes.Transaction, error) {
+	return _SimpleToken.Contract.Transfer(&_SimpleToken.TransactOpts, recipient, amount)
+}
+
+// TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
+//
+// Solidity: function transferFrom(address sender, address recipient, uint256 amount) returns(bool)
+func (_SimpleToken *SimpleTokenTransactor) TransferFrom(opts *bind.TransactOpts, sender common.Address, recipient common.Address, amount *big.Int) (*chainTypes.Transaction, error) {
+	return _SimpleToken.contract.Transact(opts, "transferFrom", sender, recipient, amount)
+}
+
+// TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
+//
+// Solidity: function transferFrom(address sender, address recipient, uint256 amount) returns(bool)
+func (_SimpleToken *SimpleTokenSession) TransferFrom(sender common.Address, recipient common.Address, amount *big.Int) (*chainTypes.Transaction, error) {
+	return _SimpleToken.Contract.TransferFrom(&_SimpleToken.TransactOpts, sender, recipient, amount)
+}
+
+// TransferFrom is a paid mutator transaction binding the contract method 0x23b872dd.
+//
+// Solidity: function transferFrom(address sender, address recipient, uint256 amount) returns(bool)
+func (_SimpleToken *SimpleTokenTransactorSession) TransferFrom(sender common.Address, recipient common.Address, amount *big.Int) (*chainTypes.Transaction, error) {
+	return _SimpleToken.Contract.TransferFrom(&_SimpleToken.TransactOpts, sender, recipient, amount)
+}
+
 // SimpleTokenApprovalIterator is returned from FilterApproval and is used to iterate over the raw logs and unpacked data for Approval events raised by the SimpleToken contract.
 type SimpleTokenApprovalIterator struct {
 	Event *SimpleTokenApproval // Event containing the contract specifics and raw log
