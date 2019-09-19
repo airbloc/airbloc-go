@@ -1,6 +1,6 @@
 module github.com/airbloc/airbloc-go
 
-go 1.12
+go 1.13
 
 replace (
 	git.apache.org/thrift.git => github.com/apache/thrift v0.12.0
