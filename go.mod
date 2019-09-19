@@ -12,6 +12,7 @@ require (
 	cloud.google.com/go v0.37.1
 	github.com/airbloc/airframe v0.0.0-20190822094319-71d50205227c
 	github.com/airbloc/logger v1.1.3
+	github.com/aristanetworks/goarista v0.0.0-20190912214011-b54698eaaca6 // indirect
 	github.com/aws/aws-sdk-go v1.19.7
 	github.com/dgraph-io/badger v1.5.5
 	github.com/gin-gonic/gin v1.3.0
@@ -37,8 +38,8 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/mapstructure v1.1.2
 	github.com/multiformats/go-multiaddr v0.0.2
-	github.com/onsi/ginkgo v1.9.0
-	github.com/onsi/gomega v1.6.0
+	github.com/onsi/ginkgo v1.10.1
+	github.com/onsi/gomega v1.7.0
 	github.com/pkg/errors v0.8.1
 	github.com/soheilhy/cmux v0.1.4
 	github.com/spf13/cobra v0.0.5
@@ -47,11 +48,10 @@ require (
 	github.com/tidwall/pretty v0.0.0-20180105212114-65a9db5fad51 // indirect
 	github.com/urfave/cli v1.21.0
 	github.com/valyala/fasthttp v1.4.0
-	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
-	github.com/xdg/stringprep v1.0.0 // indirect
 	go.mongodb.org/mongo-driver v1.0.0
 	golang.org/x/crypto v0.0.0-20190909091759-094676da4a83
+	golang.org/x/net v0.0.0-20190918130420-a8b05e9114ab // indirect
 	google.golang.org/api v0.2.0
 	google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55
-	google.golang.org/grpc v1.23.0
+	google.golang.org/grpc v1.23.1
 )
