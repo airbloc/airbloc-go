@@ -50,7 +50,7 @@ func (api *dAuthAPI) signUp(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"accountId": accountId.Hex()})
+	c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
 }
 
 func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
