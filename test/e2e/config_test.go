@@ -28,7 +28,7 @@ func (t *T) loadConfig() {
 		log.Fatalln("Unable to load service config from", ConfigFilePath)
 	}
 
-	privateKey, err := crypto.LoadECDSA("../../" + serverConfig.PrivateKeyPath)
+	privateKey, err := crypto.LoadECDSA("../../" + serverConfig.KeyPath)
 	require.NoError(t, err)
 
 	// load contract deployments
@@ -43,7 +43,7 @@ func (t *T) loadConfig() {
 		log.Fatalln("Unable to load user delegate config from", UserDelegateConfigPath)
 	}
 
-	udKey, err := crypto.LoadECDSA("../../" + userDelegateConfig.PrivateKeyPath)
+	udKey, err := crypto.LoadECDSA("../../" + userDelegateConfig.KeyPath)
 	require.NoError(t, err)
 
 	t.config = &testConfig{
