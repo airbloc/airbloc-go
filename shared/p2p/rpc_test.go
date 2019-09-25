@@ -2,12 +2,13 @@ package p2p
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"github.com/golang/protobuf/proto"
 	"github.com/klaytn/klaytn/common"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
-	"testing"
-	"time"
 )
 
 func setupTestRPC(t *testing.T) (aliceAddr, bobAddr common.Address, alice, bob RPC, teardown func()) {

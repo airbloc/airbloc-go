@@ -11,20 +11,20 @@ import (
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/logger"
 	"github.com/golang/protobuf/proto"
-	"github.com/ipfs/go-cid"
-	"github.com/ipfs/go-datastore"
+	id "github.com/ipfs/go-cid"
+	store "github.com/ipfs/go-datastore"
 	dsync "github.com/ipfs/go-datastore/sync"
-	"github.com/libp2p/go-libp2p"
-	"github.com/libp2p/go-libp2p-host"
+	p2p "github.com/libp2p/go-libp2p"
+	host "github.com/libp2p/go-libp2p-host"
 	kaddht "github.com/libp2p/go-libp2p-kad-dht"
 	kadopts "github.com/libp2p/go-libp2p-kad-dht/opts"
-	"github.com/libp2p/go-libp2p-net"
-	"github.com/libp2p/go-libp2p-peer"
-	"github.com/libp2p/go-libp2p-peerstore"
-	"github.com/libp2p/go-libp2p-protocol"
-	"github.com/libp2p/go-libp2p-pubsub"
-	"github.com/libp2p/go-libp2p/p2p/host/routed"
-	"github.com/multiformats/go-multiaddr"
+	net "github.com/libp2p/go-libp2p-net"
+	peer "github.com/libp2p/go-libp2p-peer"
+	peerstore "github.com/libp2p/go-libp2p-peerstore"
+	protocol "github.com/libp2p/go-libp2p-protocol"
+	pubsub "github.com/libp2p/go-libp2p-pubsub"
+	routedhost "github.com/libp2p/go-libp2p/p2p/host/routed"
+	ma "github.com/multiformats/go-multiaddr"
 	"github.com/pkg/errors"
 )
 
@@ -69,7 +69,7 @@ type AirblocServer struct {
 	cancel context.CancelFunc
 
 	// network
-	id        cid.Cid
+	id        id.Cid
 	host      host.Host
 	dht       *kaddht.IpfsDHT
 	nodekey   *key.Key
@@ -88,7 +88,7 @@ type AirblocServer struct {
 
 func NewAirblocServer(
 	nodekey *key.Key,
-	addr multiaddr.Multiaddr,
+	addr ma.Multiaddr,
 	bootinfos []peerstore.PeerInfo,
 	opts ...Options,
 ) (Server, error) {
@@ -112,18 +112,18 @@ func NewAirblocServer(
 		// log: logger.New("p2p"),
 	}
 
-	h, err := libp2p.New(
+	h, err := p2p.New(
 		ctx,
-		libp2p.Identity(privKey),
-		libp2p.ListenAddrs(addr),
-		libp2p.DisableRelay(),
+		p2p.Identity(privKey),
+		p2p.ListenAddrs(addr),
+		p2p.DisableRelay(),
 	)
 	if err != nil {
 		return nil, err
 	}
 	server.log = logger.New("p2p-" + h.ID().String())
 
-	ds := dsync.MutexWrap(datastore.NewMapDatastore())
+	ds := dsync.MutexWrap(store.NewMapDatastore())
 	server.dht, err = kaddht.New(ctx, h, kadopts.Datastore(ds))
 	if err != nil {
 		return nil, err
