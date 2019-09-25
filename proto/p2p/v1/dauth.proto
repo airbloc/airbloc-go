@@ -30,5 +30,17 @@ message DAuthModifyRequest {
     string passwordSignature = 5;
 }
 
+message DAuthManyRequest {
+    message ConsentData {
+        uint32 action = 1;
+        string dataType = 2;
+        bool allow = 3;
+    }
+
+    string appName = 1;
+    string accountId = 2;
+    repeated ConsentData consentData = 3;
+}
+
 message DAuthResponse {
 }
