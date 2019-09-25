@@ -77,7 +77,7 @@ func (api *exchangeAPI) prepare(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"offerId": offerId})
+	c.JSON(http.StatusOK, gin.H{"offer_id": offerId})
 }
 
 // AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
@@ -92,7 +92,7 @@ func (api *exchangeAPI) addDataIds(c *gin.Context) {
 		return
 	}
 
-	rawOfferId := c.Param("offerId")
+	rawOfferId := c.Param("offer_id")
 	if rawOfferId == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
 		return
@@ -126,7 +126,7 @@ func (api *exchangeAPI) addDataIds(c *gin.Context) {
 //
 // Solidity: function order(bytes8 offerId) returns()
 func (api *exchangeAPI) order(c *gin.Context) {
-	rawOfferId := c.Param("offerId")
+	rawOfferId := c.Param("offer_id")
 	if rawOfferId == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
 		return
@@ -151,7 +151,7 @@ func (api *exchangeAPI) order(c *gin.Context) {
 //
 // Solidity: function cancel(bytes8 offerId) returns()
 func (api *exchangeAPI) cancel(c *gin.Context) {
-	rawOfferId := c.Param("offerId")
+	rawOfferId := c.Param("offer_id")
 	if rawOfferId == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
 		return
@@ -176,7 +176,7 @@ func (api *exchangeAPI) cancel(c *gin.Context) {
 //
 // Solidity: function getOffer(bytes8 offerId) constant returns((string,address,bytes20[],uint256,uint256,(address,bytes4,bytes),uint8))
 func (api *exchangeAPI) getOffer(c *gin.Context) {
-	rawOfferId := c.Param("offerId")
+	rawOfferId := c.Param("offer_id")
 	if rawOfferId == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
 		return
@@ -200,8 +200,8 @@ func (api *exchangeAPI) getOffer(c *gin.Context) {
 func (api *exchangeAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.HttpServer.Group("/exchange")
 	apiMux.POST("/prepare", api.prepare)
-	apiMux.GET("/order/:offerId", api.getOffer)
-	apiMux.POST("/order/:offerId", api.order)
-	apiMux.PATCH("/order/:offerId", api.addDataIds)
-	apiMux.DELETE("/order/:offerId", api.cancel)
+	apiMux.GET("/order/:offer_id", api.getOffer)
+	apiMux.POST("/order/:offer_id", api.order)
+	apiMux.PATCH("/order/:offer_id", api.addDataIds)
+	apiMux.DELETE("/order/:offer_id", api.cancel)
 }

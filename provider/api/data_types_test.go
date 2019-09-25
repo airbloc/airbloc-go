@@ -88,7 +88,7 @@ func TestDataTypeRegistryAPI_Unregister(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"dataType": testDataType}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"data_type": testDataType}, nil)
 
 	mockManager := adapterMock.NewMockIDataTypeRegistryManager(mockController)
 	mockManager.EXPECT().
@@ -121,7 +121,7 @@ func TestDataTypeRegistryAPI_Unregister_FailedToUnregister(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"dataType": testDataType}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"data_type": testDataType}, nil)
 
 	mockManager := adapterMock.NewMockIDataTypeRegistryManager(mockController)
 	mockManager.EXPECT().
@@ -139,7 +139,7 @@ func TestDataTypeRegistryAPI_Get(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"dataType": testDataType}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"data_type": testDataType}, nil)
 
 	mockManager := adapterMock.NewMockIDataTypeRegistryManager(mockController)
 	mockManager.EXPECT().
@@ -173,7 +173,7 @@ func TestDataTypeRegistryAPI_Get_FailedToGet(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"dataType": testDataType}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"data_type": testDataType}, nil)
 
 	mockManager := adapterMock.NewMockIDataTypeRegistryManager(mockController)
 	mockManager.EXPECT().

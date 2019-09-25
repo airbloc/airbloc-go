@@ -60,7 +60,7 @@ func (api *dataTypeRegistryAPI) register(c *gin.Context) {
 //
 // Solidity: function unregister(string name) returns()
 func (api *dataTypeRegistryAPI) unregister(c *gin.Context) {
-	dataType := c.Param("dataType")
+	dataType := c.Param("data_type")
 	if dataType == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
 		return
@@ -77,7 +77,7 @@ func (api *dataTypeRegistryAPI) unregister(c *gin.Context) {
 //
 // Solidity: function get(string name) constant returns((string,address,bytes32))
 func (api *dataTypeRegistryAPI) get(c *gin.Context) {
-	dataType := c.Param("dataType")
+	dataType := c.Param("data_type")
 	if dataType == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
 		return
@@ -94,7 +94,7 @@ func (api *dataTypeRegistryAPI) get(c *gin.Context) {
 // AttachToAPI is a registrant of an api.
 func (api *dataTypeRegistryAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.HttpServer.Group("/data-types")
-	apiMux.GET("/:dataType", api.get)
+	apiMux.GET("/:data_type", api.get)
 	apiMux.POST("/", api.register)
-	apiMux.DELETE("/:dataType", api.unregister)
+	apiMux.DELETE("/:data_type", api.unregister)
 }
