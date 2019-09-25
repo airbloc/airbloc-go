@@ -79,7 +79,7 @@ func run(options *cli.Context) (err error) {
 	addrStr := fmt.Sprintf("/ip4/%s/tcp/%d", options.String("bind"), options.Int("port"))
 	addr, err := ma.NewMultiaddr(addrStr)
 	if err != nil {
-		return errors.Wrap(err, "failed to create ma")
+		return errors.Wrap(err, "failed to create multiaddr")
 	}
 
 	ctx, stop := context.WithCancel(context.Background())
