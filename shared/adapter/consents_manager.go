@@ -2,9 +2,6 @@ package adapter
 
 import (
 	"context"
-	"math/big"
-
-	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/types"
@@ -13,57 +10,65 @@ import (
 )
 
 type consentsManager struct {
-	ConsentsFilterer
-	contract IConsentsContract
-	log      *logger.Logger
-}
-
-// Address is getter method of Consents.address
-func (manager *consentsManager) Address() common.Address {
-	return manager.contract.Address()
-}
-
-// TxHash is getter method of Consents.txHash
-func (manager *consentsManager) TxHash() common.Hash {
-	return manager.contract.TxHash()
-}
-
-// CreatedAt is getter method of Consents.createdAt
-func (manager *consentsManager) CreatedAt() *big.Int {
-	return manager.contract.CreatedAt()
+	IConsentsContract
+	log *logger.Logger
 }
 
 // NewConsentsManager makes new *consentsManager struct
 func NewConsentsManager(client blockchain.TxClient) IConsentsManager {
-	contract := NewConsentsContract(client)
 	return &consentsManager{
-		ConsentsFilterer: contract.Filterer(),
-		contract:         contract,
-		log:              logger.New("consents"),
+		IConsentsContract: client.GetContract(&ConsentsContract{}).(*ConsentsContract),
+		log:               logger.New("consents"),
 	}
 }
 
 // Consent is a paid mutator transaction binding the contract method 0xbecae241.
 //
 // Solidity: function consent(uint8 action, string appName, string dataType, bool allowed) returns()
-func (manager *consentsManager) Consent(ctx context.Context, appName string, action uint8, dataType string, allowed bool) error {
-	receipt, err := manager.contract.Consent(ctx, appName, action, dataType, allowed)
+func (manager *consentsManager) Consent(ctx context.Context, appName string, consentData types.ConsentData) error {
+	receipt, err := manager.IConsentsContract.Consent(ctx, appName, consentData)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
 
-	evt, err := manager.contract.ParseConsentedFromReceipt(receipt)
+	evt, err := manager.IConsentsContract.ParseConsentedFromReceipt(receipt)
 	if err != nil {
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	manager.log.Info("Consented.", logger.Attrs{
-		"app-name":   evt.AppName,
-		"data-type":  evt.DataType,
-		"account-id": evt.UserId.Hex(),
-		"allowed":    evt.Allowed,
+	manager.log.Info("Consented to one data.", logger.Attrs{
+		"app-name":   evt[0].AppName,
+		"data-type":  evt[0].DataType,
+		"account-id": evt[0].UserId.Hex(),
+		"allowed":    evt[0].Allowed,
 	})
-	return err
+	return nil
+}
+
+// ConsentMany is a paid mutator transaction binding the contract method 0xdd43ad05.
+//
+// Solidity: function consentMany(string appName, (uint8,string,bool)[] consentData) returns()
+func (manager *consentsManager) ConsentMany(
+	ctx context.Context,
+	appName string,
+	consentData []types.ConsentData,
+) error {
+	receipt, err := manager.IConsentsContract.ConsentMany(ctx, appName, consentData)
+	if err != nil {
+		return errors.Wrap(err, "failed to transact")
+	}
+
+	evt, err := manager.IConsentsContract.ParseConsentedFromReceipt(receipt)
+	if err != nil {
+		return errors.Wrap(err, "failed to parse a event from the receipt")
+	}
+
+	manager.log.Info("Consented to many data.", logger.Attrs{
+		"app-name":   evt[0].AppName,
+		"account-id": evt[0].UserId.Hex(),
+		"data-count": len(evt),
+	})
+	return nil
 }
 
 // ConsentByController is a paid mutator transaction binding the contract method 0xf92519d8.
@@ -73,27 +78,52 @@ func (manager *consentsManager) ConsentByController(
 	ctx context.Context,
 	userId types.ID,
 	appName string,
-	action uint8,
-	dataType string,
-	allowed bool,
+	consentData types.ConsentData,
 ) error {
-	receipt, err := manager.contract.ConsentByController(ctx, userId, appName, action, dataType, allowed)
+	receipt, err := manager.IConsentsContract.ConsentByController(ctx, userId, appName, consentData)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
 
-	evt, err := manager.contract.ParseConsentedFromReceipt(receipt)
+	evt, err := manager.IConsentsContract.ParseConsentedFromReceipt(receipt)
 	if err != nil {
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	manager.log.Info("Consented by controller.", logger.Attrs{
-		"app-name":   evt.AppName,
-		"data-type":  evt.DataType,
-		"account-id": evt.UserId.Hex(),
-		"allowed":    evt.Allowed,
+	manager.log.Info("Consented to one data by controller.", logger.Attrs{
+		"app-name":   evt[0].AppName,
+		"data-type":  evt[0].DataType,
+		"account-id": evt[0].UserId.Hex(),
+		"allowed":    evt[0].Allowed,
 	})
-	return err
+	return nil
+}
+
+// ConsentManyByController is a paid mutator transaction binding the contract method 0xae6d5034.
+//
+// Solidity: function consentManyByController(bytes8 userId, string appName, (uint8,string,bool)[] consentData) returns()
+func (manager *consentsManager) ConsentManyByController(
+	ctx context.Context,
+	userId types.ID,
+	appName string,
+	consentData []types.ConsentData,
+) error {
+	receipt, err := manager.IConsentsContract.ConsentManyByController(ctx, userId, appName, consentData)
+	if err != nil {
+		return errors.Wrap(err, "failed to transact")
+	}
+
+	evt, err := manager.IConsentsContract.ParseConsentedFromReceipt(receipt)
+	if err != nil {
+		return errors.Wrap(err, "failed to parse a event from the receipt")
+	}
+
+	manager.log.Info("Consented to many data by controller.", logger.Attrs{
+		"app-name":   evt[0].AppName,
+		"account-id": evt[0].UserId.Hex(),
+		"data-count": len(evt),
+	})
+	return nil
 }
 
 // ModifyConsentByController is a paid mutator transaction binding the contract method 0xedf2ef20.
@@ -103,51 +133,53 @@ func (manager *consentsManager) ModifyConsentByController(
 	ctx context.Context,
 	userId types.ID,
 	appName string,
-	action uint8,
-	dataType string,
-	allowed bool,
+	consentData types.ConsentData,
 	passwordSignature []byte,
 ) error {
-	receipt, err := manager.contract.ModifyConsentByController(ctx, userId, appName, action, dataType, allowed, passwordSignature)
+	receipt, err := manager.IConsentsContract.ModifyConsentByController(ctx, userId, appName, consentData, passwordSignature)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
 
-	evt, err := manager.contract.ParseConsentedFromReceipt(receipt)
+	evt, err := manager.IConsentsContract.ParseConsentedFromReceipt(receipt)
 	if err != nil {
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
 	manager.log.Info("Consent modified by controller.", logger.Attrs{
-		"app-name":   evt.AppName,
-		"data-type":  evt.DataType,
-		"account-id": evt.UserId.Hex(),
-		"allowed":    evt.Allowed,
+		"app-name":   evt[0].AppName,
+		"data-type":  evt[0].DataType,
+		"account-id": evt[0].UserId.Hex(),
+		"allowed":    evt[0].Allowed,
 	})
-	return err
+	return nil
 }
 
-// IsAllowed is a free data retrieval call binding the contract method 0xa1d2bbf5.
+// ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xe031b1cf.
 //
-// Solidity: function isAllowed(uint8 action, bytes8 userId, string appName, string dataType) constant returns(bool)
-func (manager *consentsManager) IsAllowed(
+// Solidity: function modifyConsentManyByController(bytes8 userId, string appName, (uint8,string,bool)[] consentData, bytes passwordSignature) returns()
+func (manager *consentsManager) ModifyConsentManyByController(
+	ctx context.Context,
 	userId types.ID,
 	appName string,
-	action uint8,
-	dataType string,
-) (bool, error) {
-	return manager.contract.IsAllowed(userId, appName, action, dataType)
-}
+	consentData []types.ConsentData,
+	passwordSignature []byte,
+) error {
+	receipt, err := manager.IConsentsContract.ModifyConsentManyByController(ctx, userId, appName, consentData, passwordSignature)
+	if err != nil {
+		return errors.Wrap(err, "failed to transact")
+	}
 
-// IsAllowedAt is a free data retrieval call binding the contract method 0x118642e1.
-//
-// Solidity: function isAllowedAt(uint8 action, bytes8 userId, string appName, string dataType, uint256 blockNumber) constant returns(bool)
-func (manager *consentsManager) IsAllowedAt(
-	userId types.ID,
-	appName string,
-	action uint8,
-	dataType string,
-	blockNumber *big.Int,
-) (bool, error) {
-	return manager.contract.IsAllowedAt(userId, appName, action, dataType, blockNumber)
+	evt, err := manager.IConsentsContract.ParseConsentedFromReceipt(receipt)
+	if err != nil {
+		return errors.Wrap(err, "failed to parse a event from the receipt")
+	}
+
+	manager.log.Info("Consent modified by controller.", logger.Attrs{
+		"app-name":   evt[0].AppName,
+		"data-type":  evt[0].DataType,
+		"account-id": evt[0].UserId.Hex(),
+		"data-count": len(evt),
+	})
+	return nil
 }

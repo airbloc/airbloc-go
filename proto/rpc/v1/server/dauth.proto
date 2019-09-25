@@ -3,7 +3,6 @@ package airbloc.rpc.v1;
 
 option go_package = "github.com/airbloc/airbloc-go/proto/rpc/v1/server";
 
-import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
 /**
