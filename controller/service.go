@@ -51,7 +51,7 @@ type service struct {
 
 func NewService(backend serviceLib.Backend) (serviceLib.Service, error) {
 	var accountIds []types.ID
-	for _, accIdStr := range backend.Config().UserDelegate.AccountIds {
+	for _, accIdStr := range backend.Config().Controller.AccountIds {
 		accountId, err := types.HexToID(accIdStr)
 		if err != nil {
 			return nil, errors.Wrapf(err, "invalid account ID: %s", accIdStr)
