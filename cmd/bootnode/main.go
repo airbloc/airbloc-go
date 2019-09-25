@@ -4,17 +4,16 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"github.com/urfave/cli"
 	"os"
 	"os/signal"
 
-	"github.com/airbloc/logger"
-	"github.com/pkg/errors"
-
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/airbloc-go/shared/p2p"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/airbloc/logger"
+	"github.com/klaytn/klaytn/crypto"
 	"github.com/multiformats/go-multiaddr"
-	"gopkg.in/urfave/cli.v1"
+	"github.com/pkg/errors"
 )
 
 var log = logger.New("bootnode")

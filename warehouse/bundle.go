@@ -3,8 +3,8 @@ package warehouse
 import (
 	"github.com/airbloc/airbloc-go/shared/merkle"
 	"github.com/airbloc/airbloc-go/shared/types"
-	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/json-iterator/go"
+	"github.com/klaytn/klaytn/common"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/sha3"
 )
@@ -24,10 +24,10 @@ type Bundle struct {
 	tree *merkle.MainTree                    `json:"-"`
 }
 
-func (bundle *Bundle) Hash() (ethCommon.Hash, error) {
+func (bundle *Bundle) Hash() (common.Hash, error) {
 	bundleData, err := json.Marshal(bundle)
 	if err != nil {
-		return ethCommon.Hash{}, err
+		return common.Hash{}, err
 	}
 	return sha3.Sum256(bundleData), nil
 }
@@ -113,7 +113,7 @@ func (bundle *Bundle) generateSMT() (err error) {
 
 // SetupUserProof creates a root of 64-depth SMT (Sparse Merkle Tree),
 // which can be used as an accumulator of User IDs for the bundle.
-func (bundle *Bundle) SetupUserProof() (root ethCommon.Hash, _ error) {
+func (bundle *Bundle) SetupUserProof() (root common.Hash, _ error) {
 	if bundle.tree == nil {
 		if err := bundle.generateSMT(); err != nil {
 			return root, errors.Wrap(err, "setup user proof")

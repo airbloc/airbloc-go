@@ -2,12 +2,12 @@ package p2p
 
 import (
 	"context"
-	"github.com/airbloc/logger"
-	"github.com/ethereum/go-ethereum/log"
-	"github.com/libp2p/go-libp2p-host"
-	"github.com/libp2p/go-libp2p-peerstore"
-	mdns "github.com/libp2p/go-libp2p/p2p/discovery"
 	"time"
+
+	"github.com/airbloc/logger"
+	host "github.com/libp2p/go-libp2p-host"
+	store "github.com/libp2p/go-libp2p-peerstore"
+	mdns "github.com/libp2p/go-libp2p/p2p/discovery"
 )
 
 // Discovery interval for multicast DNS querying.
@@ -39,14 +39,14 @@ type discovery struct {
 }
 
 // HandlePeerFound registers the peer with the getHost.
-func (d *discovery) HandlePeerFound(pi peerstore.PeerInfo) {
-	d.host.Peerstore().AddAddrs(pi.ID, pi.Addrs, peerstore.PermanentAddrTTL)
+func (d *discovery) HandlePeerFound(pi store.PeerInfo) {
+	d.host.Peerstore().AddAddrs(pi.ID, pi.Addrs, store.PermanentAddrTTL)
 	if err := d.host.Connect(d.ctx, pi); err != nil {
 		d.log.Error("Warning: Failed to connect to new peer {id}", err, logger.Attrs{
 			"id": pi.ID.String(),
 		})
 	}
-	log.Debug("Peers are now {peerCount}", logger.Attrs{
+	d.log.Debug("Peers are now {peerCount}", logger.Attrs{
 		"peers": d.host.Peerstore().Peers(),
 	})
 }

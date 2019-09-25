@@ -11,8 +11,8 @@ import (
 	"github.com/airbloc/airbloc-go/shared/p2p"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/logger"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/crypto"
 	"github.com/pkg/errors"
 )
 

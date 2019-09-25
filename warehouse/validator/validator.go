@@ -23,8 +23,8 @@ func NewValidator(manager adapter.IConsentsManager) *Validator {
 
 // IsCollectible returns true if the owner of the given data
 // has authorized data collection of the given collection (data type).
-func (validator *Validator) IsCollectible(appName string, action types.ConsentActionTypes, dataType string, data *types.Data) bool {
-	allowed, err := validator.consents.IsAllowed(data.UserId, appName, uint8(action), dataType)
+func (validator *Validator) IsCollectible(appName string, action uint8, dataType string, data *types.Data) bool {
+	allowed, err := validator.consents.IsAllowed(data.UserId, appName, action, dataType)
 	if err != nil {
 		validator.log.Error("error: {} {}", err.Error(), logger.Attrs{
 			"app-name":  appName,

@@ -7,18 +7,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/logger"
-	ethbind "github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/klaytn/klaytn/accounts/abi/bind"
+	"github.com/klaytn/klaytn/blockchain/types"
+	"github.com/klaytn/klaytn/client"
+	"github.com/klaytn/klaytn/common"
 	"github.com/pkg/errors"
 )
 
 type Client struct {
-	*ethclient.Client
+	*client.Client
 	ctx        context.Context
 	cfg        ClientOpt
 	transactor *bind.TransactOpts
@@ -30,7 +29,7 @@ func NewClient(key *key.Key, rawurl string, cfg ClientOpt) (*Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	log := logger.New("ethereum")
+	log := logger.New("klaytn")
 
 	log.Debug(rawurl)
 	// URL validation
@@ -44,30 +43,30 @@ func NewClient(key *key.Key, rawurl string, cfg ClientOpt) (*Client, error) {
 	}
 
 	// try to connect to Ethereum
-	ethClient, err := ethclient.DialContext(ctx, rawurl)
+	klayClient, err := client.DialContext(ctx, rawurl)
 	if err != nil {
 		return nil, err
 	}
-	cid, err := ethClient.NetworkID(ctx)
+	cid, err := klayClient.NetworkID(ctx)
 	if err != nil {
 		return nil, err
 	}
 	log.Info("Using {} network", getChainName(cid))
 
-	client := &Client{
-		Client: ethClient,
+	klayent := &Client{
+		Client: klayClient,
 		ctx:    context.TODO(),
 		cfg:    cfg,
 		logger: log,
 	}
 
-	cm := NewContractManager(client)
+	cm := NewContractManager(klayent)
 	if err := cm.Load(cfg.DeploymentPath); err != nil {
 		return nil, err
 	}
-	client.contracts = cm
-	client.SetAccount(key)
-	return client, nil
+	klayent.contracts = cm
+	klayent.SetAccount(key)
+	return klayent, nil
 }
 
 func (c Client) Account() *bind.TransactOpts {
@@ -84,6 +83,11 @@ func (c *Client) GetContract(contractType interface{}) interface{} {
 		panic("Contract not registered: " + reflect.ValueOf(contractType).Type().Name())
 	}
 	return contract
+}
+
+func (c *Client) SendTransaction(ctx context.Context, tx *types.Transaction) error {
+	// TODO: task-waiting action required
+	return c.Client.SendTransaction(ctx, tx)
 }
 
 func (c *Client) waitConfirmation(ctx context.Context) error {
@@ -105,12 +109,12 @@ func (c *Client) waitConfirmation(ctx context.Context) error {
 	return err
 }
 
-// Wait Mined
+// WaitMined waits until transcaction created.
 func (c *Client) WaitMined(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
 	methodName, details := GetTransactionDetails(c.contracts, tx)
 	timer := c.logger.Timer()
 
-	receipt, err := ethbind.WaitMined(ctx, c, tx)
+	receipt, err := bind.WaitMined(ctx, c, tx)
 	if err != nil {
 		return nil, err
 	}
@@ -123,7 +127,7 @@ func (c *Client) WaitMined(ctx context.Context, tx *types.Transaction) (*types.R
 	return receipt, err
 }
 
-// Wait Deployed
+// WaitDeployed waits until contract created.
 func (c *Client) WaitDeployed(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
 	if tx.To() != nil {
 		return nil, ErrTxNoContract

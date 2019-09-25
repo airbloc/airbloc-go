@@ -6,9 +6,9 @@ import (
 	"net/http"
 
 	"github.com/airbloc/airbloc-go/shared/service"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/jinzhu/configor"
+	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/crypto"
 	"github.com/stretchr/testify/require"
 )
 

@@ -61,7 +61,7 @@ func (db *badgerDB) Put(key []byte, value []byte) error {
 	if err != nil {
 		return err
 	}
-	return txn.Commit()
+	return txn.Commit(nil)
 }
 
 func (db *badgerDB) Has(key []byte) (bool, error) {
@@ -99,7 +99,7 @@ func (db *badgerDB) Delete(key []byte) error {
 	if err != nil {
 		return err
 	}
-	return txn.Commit()
+	return txn.Commit(nil)
 }
 
 func (db *badgerDB) NewIterator() *badger.Iterator {
@@ -141,7 +141,7 @@ func (b *badgerBatch) Put(key, value []byte) error {
 }
 
 func (b *badgerBatch) Write() error {
-	return b.txn.Commit()
+	return b.txn.Commit(nil)
 }
 
 func (b *badgerBatch) ValueSize() int {

@@ -5,9 +5,9 @@ import (
 	"math/big"
 
 	"github.com/airbloc/logger"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/params"
+	"github.com/klaytn/klaytn/blockchain/types"
+	"github.com/klaytn/klaytn/common/hexutil"
+	"github.com/klaytn/klaytn/params"
 )
 
 var (
@@ -63,7 +63,7 @@ func GetTransactionDetails(cm *contractManager, tx *types.Transaction) (methodIn
 func WeiToEth(wei *big.Int) *big.Float {
 	return new(big.Float).Quo(
 		new(big.Float).SetInt(wei),
-		new(big.Float).SetInt64(params.Ether),
+		new(big.Float).SetInt64(params.KLAY),
 	)
 }
 

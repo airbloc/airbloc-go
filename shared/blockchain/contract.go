@@ -8,8 +8,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/json-iterator/go"
+	jsoniter "github.com/json-iterator/go"
+	"github.com/klaytn/klaytn/accounts/abi"
+	"github.com/klaytn/klaytn/common"
 	"github.com/pkg/errors"
 )
 
@@ -62,9 +63,10 @@ func (cm *contractManager) load(reader io.Reader) error {
 		Address   common.Address `json:"address"`
 		TxHash    common.Hash    `json:"tx_hash"`
 		CreatedAt *big.Int       `json:"created_at"`
+		ABI       abi.ABI        `json:"abi"`
 	})
 	if err := decoder.Decode(&contracts); err != nil {
-		return errors.Wrap(err, "contract maanger: failed to decode json")
+		return errors.Wrap(err, "contract manager: failed to decode json")
 	}
 
 	for name, info := range contracts {
@@ -72,12 +74,14 @@ func (cm *contractManager) load(reader io.Reader) error {
 			continue
 		}
 
-		contract, err := contractList[name](info.Address, info.TxHash, info.CreatedAt, cm.client)
-		if err != nil {
-			return errors.Wrap(err, "contract manager: failed to get contract")
-		}
 		cm.addrToName[info.Address] = name
-		cm.SetContract(contract)
+		cm.SetContract(contractList[name](
+			info.Address,
+			info.TxHash,
+			info.CreatedAt,
+			info.ABI,
+			cm.client,
+		))
 	}
 	return nil
 }

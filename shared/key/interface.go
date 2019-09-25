@@ -2,7 +2,7 @@ package key
 
 import (
 	"github.com/airbloc/airbloc-go/shared/types"
-	ethTypes "github.com/ethereum/go-ethereum/core/types"
+	klayTypes "github.com/klaytn/klaytn/blockchain/types"
 )
 
 type Manager interface {
@@ -11,5 +11,5 @@ type Manager interface {
 	DecryptData(*types.EncryptedData) (*types.Data, error)
 	Encrypt(string) ([]byte, error)
 	Decrypt([]byte) (string, error)
-	SignEthTx(*ethTypes.Transaction) (*ethTypes.Transaction, error)
+	SignEthTx(*klayTypes.Transaction) (*klayTypes.Transaction, error)
 }

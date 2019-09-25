@@ -8,9 +8,9 @@ import (
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/klaytn/klaytn/common"
 )
 
 // exchangeAPI is api wrapper of contract Exchange.sol
