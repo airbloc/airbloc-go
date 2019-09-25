@@ -81,14 +81,12 @@ func (api *consentsAPI) consent(c *gin.Context) {
 		return
 	}
 
-	exists, err := api.apps.Exists(appName)
-	if err != nil {
+	if exists, err := api.apps.Exists(appName); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "cannot find app information"})
 		return
-	}
-
-	if !exists {
+	} else if !exists {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid app name"})
+		return
 	}
 
 	if req.ConsentData == (types.ConsentData{}) {
