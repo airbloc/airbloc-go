@@ -2,15 +2,15 @@ package p2p
 
 import (
 	"bufio"
-	"github.com/golang/protobuf/proto"
-	"github.com/klaytn/klaytn/common"
-	"github.com/libp2p/go-libp2p-net"
 	"io"
 	"reflect"
 
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
+	"github.com/golang/protobuf/proto"
+	"github.com/klaytn/klaytn/common"
 	"github.com/klaytn/klaytn/crypto"
-	"github.com/libp2p/go-libp2p-peer"
+	net "github.com/libp2p/go-libp2p-net"
+	peer "github.com/libp2p/go-libp2p-peer"
 	"github.com/pkg/errors"
 )
 

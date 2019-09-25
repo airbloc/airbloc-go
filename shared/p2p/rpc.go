@@ -8,7 +8,7 @@ import (
 	"github.com/airbloc/logger"
 	"github.com/golang/protobuf/proto"
 	"github.com/klaytn/klaytn/common"
-	"github.com/libp2p/go-libp2p-peer"
+	peer "github.com/libp2p/go-libp2p-peer"
 	"github.com/pkg/errors"
 )
 

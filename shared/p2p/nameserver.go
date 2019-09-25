@@ -2,13 +2,13 @@ package p2p
 
 import (
 	"context"
-	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
-	"github.com/golang/protobuf/ptypes/empty"
 	"time"
 
+	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/airbloc/logger"
+	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/klaytn/klaytn/common"
-	"github.com/libp2p/go-libp2p-peer"
+	peer "github.com/libp2p/go-libp2p-peer"
 	"github.com/pkg/errors"
 )
 

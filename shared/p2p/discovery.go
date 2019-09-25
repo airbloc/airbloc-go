@@ -6,7 +6,7 @@ import (
 
 	"github.com/airbloc/logger"
 	host "github.com/libp2p/go-libp2p-host"
-	store "github.com/libp2p/go-libp2p-peerstore"
+	peerstore "github.com/libp2p/go-libp2p-peerstore"
 	mdns "github.com/libp2p/go-libp2p/p2p/discovery"
 )
 
@@ -39,8 +39,8 @@ type discovery struct {
 }
 
 // HandlePeerFound registers the peer with the getHost.
-func (d *discovery) HandlePeerFound(pi store.PeerInfo) {
-	d.host.Peerstore().AddAddrs(pi.ID, pi.Addrs, store.PermanentAddrTTL)
+func (d *discovery) HandlePeerFound(pi peerstore.PeerInfo) {
+	d.host.Peerstore().AddAddrs(pi.ID, pi.Addrs, peerstore.PermanentAddrTTL)
 	if err := d.host.Connect(d.ctx, pi); err != nil {
 		d.log.Error("Warning: Failed to connect to new peer {id}", err, logger.Attrs{
 			"id": pi.ID.String(),
