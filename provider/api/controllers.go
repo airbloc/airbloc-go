@@ -21,9 +21,6 @@ func NewControllerRegistryAPI(backend service.Backend) (api.API, error) {
 	return &controllerRegistryAPI{cr}, nil
 }
 
-// Register is a paid mutator transaction binding the contract method 0x4420e486.
-//
-// Solidity: function register(address controllerAddr) returns()
 func (api *controllerRegistryAPI) register(c *gin.Context) {
 	controllerAddrHex := c.Param("controller_addr")
 	if controllerAddrHex == "" {
@@ -48,9 +45,6 @@ func (api *controllerRegistryAPI) register(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{})
 }
 
-// Get is a free data retrieval call binding the contract method 0xc2bc2efc.
-//
-// Solidity: function get(address controller) constant returns((address,uint256))
 func (api *controllerRegistryAPI) get(c *gin.Context) {
 	controllerAddr := c.Param("controller_addr")
 	if controllerAddr == "" {
