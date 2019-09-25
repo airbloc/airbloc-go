@@ -2,9 +2,9 @@ package key
 
 import (
 	"crypto/ecdsa"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/crypto/ecies"
+	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/crypto"
+	"github.com/klaytn/klaytn/crypto/ecies"
 	libp2pCrypto "github.com/libp2p/go-libp2p-crypto"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ed25519"

@@ -5,17 +5,13 @@ import (
 	"net/http"
 	"testing"
 
+	adapterMock "github.com/airbloc/airbloc-go/shared/adapter/mocks"
 	"github.com/airbloc/airbloc-go/shared/types"
-
-	"github.com/stretchr/testify/assert"
-
-	"github.com/ethereum/go-ethereum/common"
-
 	testutils "github.com/airbloc/airbloc-go/test/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
-
-	adapterMock "github.com/airbloc/airbloc-go/shared/adapter/mocks"
+	"github.com/klaytn/klaytn/common"
+	"github.com/stretchr/testify/assert"
 )
 
 var (

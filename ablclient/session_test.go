@@ -5,8 +5,8 @@ import (
 
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/airbloc-go/shared/types"
-	common2 "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	common2 "github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/crypto"
 	"github.com/stretchr/testify/assert"
 )
 

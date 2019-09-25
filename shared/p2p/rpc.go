@@ -6,8 +6,8 @@ import (
 
 	pb "github.com/airbloc/airbloc-go/proto/p2p/v1"
 	"github.com/airbloc/logger"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/golang/protobuf/proto"
+	"github.com/klaytn/klaytn/common"
 	"github.com/libp2p/go-libp2p-peer"
 	"github.com/pkg/errors"
 )

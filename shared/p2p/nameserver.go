@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/airbloc/logger"
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/klaytn/klaytn/common"
 	"github.com/libp2p/go-libp2p-peer"
 	"github.com/pkg/errors"
 )

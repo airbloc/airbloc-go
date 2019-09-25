@@ -7,8 +7,8 @@ import (
 	"math/big"
 	"sort"
 
-	ethCommon "github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/crypto"
 )
 
 const (
@@ -18,15 +18,15 @@ const (
 
 type SubTree struct {
 	leaves [][4]byte
-	tree   [][]ethCommon.Hash
-	root   ethCommon.Hash
+	tree   [][]common.Hash
+	root   common.Hash
 }
 
 func (st *SubTree) Leaves() [][4]byte {
 	return st.leaves
 }
 
-func (st *SubTree) Root() ethCommon.Hash {
+func (st *SubTree) Root() common.Hash {
 	return st.root
 }
 
@@ -58,7 +58,7 @@ func (st *SubTree) GenerateProof(rowId [4]byte) ([]byte, error) {
 }
 
 func verifySubProof(rowId [4]byte, subRoot, proof []byte) bool {
-	root := ethCommon.BytesToHash(subRoot)
+	root := common.BytesToHash(subRoot)
 	base := crypto.Keccak256Hash(rowId[:])
 
 	for {
@@ -108,7 +108,7 @@ func NewSubTree(input [][4]byte) (*SubTree, error) {
 	})
 
 	// hashing
-	base := make([]ethCommon.Hash, len(input))
+	base := make([]common.Hash, len(input))
 	for index, elem := range input {
 		base[index] = crypto.Keccak256Hash(elem[:])
 	}
@@ -116,7 +116,7 @@ func NewSubTree(input [][4]byte) (*SubTree, error) {
 	// create tree structure
 	st := &SubTree{
 		leaves: input,
-		tree:   [][]ethCommon.Hash{base},
+		tree:   [][]common.Hash{base},
 	}
 
 	// generate tree
@@ -126,14 +126,14 @@ func NewSubTree(input [][4]byte) (*SubTree, error) {
 			break
 		}
 
-		var nextLvl []ethCommon.Hash
+		var nextLvl []common.Hash
 		for j := 0; j < len(st.tree[i]); j++ {
 			if j%2 != 0 {
 				continue
 			}
 
 			leaf := st.tree[i][j]
-			coleaf := ethCommon.Hash{}
+			coleaf := common.Hash{}
 
 			if len(st.tree[i]) == j+1 {
 				coleaf = leaf

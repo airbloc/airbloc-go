@@ -5,13 +5,13 @@ import (
 
 	"github.com/airbloc/airbloc-go/provider/dauth"
 	"github.com/airbloc/airbloc-go/shared/adapter"
-	"github.com/airbloc/airbloc-go/shared/blockchain/bind"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
-	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/klaytn/klaytn/accounts/abi/bind"
+	"github.com/klaytn/klaytn/common"
 )
 
 type dAuthAPI struct {
@@ -41,7 +41,7 @@ func (api *dAuthAPI) signIn(c *gin.Context) {
 		return
 	}
 
-	controller := ethCommon.HexToAddress(req.Controller)
+	controller := common.HexToAddress(req.Controller)
 	accountId, err := api.dauthClient.SignIn(c, req.Identity, controller)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -71,7 +71,7 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 	var resp struct {
 		HasAuthorizedBefore bool
 		Authorizations      []struct {
-			Action     types.ConsentActionTypes
+			Action     uint8
 			DataType   string
 			Authorized bool
 		}
@@ -102,7 +102,7 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 	}
 
 	var (
-		actions = []types.ConsentActionTypes{
+		actions = []uint8{
 			types.ConsentActionCollection,
 			types.ConsentActionExchange,
 		}
@@ -126,7 +126,7 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 			}
 
 			resp.Authorizations = append(resp.Authorizations, struct {
-				Action     types.ConsentActionTypes
+				Action     uint8
 				DataType   string
 				Authorized bool
 			}{
@@ -142,10 +142,10 @@ func (api *dAuthAPI) getAuthorizations(c *gin.Context) {
 
 func (api *dAuthAPI) allow(c *gin.Context) {
 	var req struct {
-		AccountId string                   `binding:"required"`
-		DataType  string                   `binding:"required"`
-		Action    types.ConsentActionTypes `binding:"required"`
-		AppName   string                   `binding:"required"`
+		AccountId string `binding:"required"`
+		DataType  string `binding:"required"`
+		Action    uint8  `binding:"required"`
+		AppName   string `binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
@@ -175,10 +175,10 @@ func (api *dAuthAPI) allow(c *gin.Context) {
 
 func (api *dAuthAPI) deny(c *gin.Context) {
 	var req struct {
-		AccountId string                   `binding:"required"`
-		DataType  string                   `binding:"required"`
-		Action    types.ConsentActionTypes `binding:"required"`
-		AppName   string                   `binding:"required"`
+		AccountId string `binding:"required"`
+		DataType  string `binding:"required"`
+		Action    uint8  `binding:"required"`
+		AppName   string `binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
