@@ -35,12 +35,8 @@ func NewService(backend service.Backend) (service.Service, error) {
 		}
 	case "s3":
 		sess, err := session.NewSession(&aws.Config{
-			Credentials: credentials.NewStaticCredentials(
-				config.S3.AccessKey,
-				config.S3.SecretKey,
-				config.S3.Token,
-			),
-			Region: aws.String(config.S3.Region),
+			Credentials: credentials.NewEnvCredentials(),
+			Region:      aws.String(config.S3.Region),
 		})
 		if err != nil {
 			return nil, err
