@@ -4,11 +4,10 @@ import (
 	"encoding/hex"
 	"net/http"
 
-	"github.com/airbloc/airbloc-go/shared/types"
-
 	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
+	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 )
