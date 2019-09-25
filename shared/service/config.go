@@ -3,7 +3,7 @@ package service
 import (
 	"time"
 
-	defaults "github.com/mcuadros/go-defaults"
+	defs "github.com/mcuadros/go-defaults"
 )
 
 type Config struct {
@@ -74,6 +74,6 @@ type Config struct {
 // NewConfig returns node configurations with default value.
 func NewConfig() *Config {
 	config := new(Config)
-	defaults.SetDefaults(config)
+	defs.SetDefaults(config)
 	return config
 }
