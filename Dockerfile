@@ -1,12 +1,8 @@
-FROM golang:1.12.9-alpine as base
+FROM golang:1.13-alpine AS base
 
 # Install build toolchain for alpine
 RUN apk add --no-cache make git g++ musl-dev linux-headers bash ca-certificates
 WORKDIR /airbloc
-
-# use go modules
-ENV GO111MODULE=on
-ENV GOPROXY=https://proxy.golang.org
 
 # 1. Fetch and cache go module dependencies
 COPY go.mod .
