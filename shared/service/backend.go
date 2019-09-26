@@ -13,7 +13,7 @@ import (
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/airbloc-go/shared/p2p"
 	peerstore "github.com/libp2p/go-libp2p-peerstore"
-	"github.com/multiformats/go-multiaddr"
+	ma "github.com/multiformats/go-multiaddr"
 	"github.com/pkg/errors"
 )
 
@@ -36,7 +36,7 @@ type Backend interface {
 // it composes all service used by Airbloc.
 type AirblocBackend struct {
 	kms           key.Manager
-	ethclient     *blockchain.Client
+	client        *blockchain.Client
 	metaDatabase  metadb.Database
 	localDatabase localdb.Database
 	config        *Config
@@ -65,9 +65,9 @@ func NewAirblocBackend(nodeKey *key.Key, config *Config) (Backend, error) {
 	// bootnode information should be given from config.
 	var bootInfos []peerstore.PeerInfo
 	for _, addr := range config.P2P.BootNodes {
-		m, err := multiaddr.NewMultiaddr(addr)
+		m, err := ma.NewMultiaddr(addr)
 		if err != nil {
-			return nil, errors.Wrapf(err, "invalid libp2p multiaddr: %s", addr)
+			return nil, errors.Wrapf(err, "invalid libp2p ma: %s", addr)
 		}
 		bootInfo, err := peerstore.InfoFromP2pAddr(m)
 		if err != nil {
@@ -76,7 +76,7 @@ func NewAirblocBackend(nodeKey *key.Key, config *Config) (Backend, error) {
 		bootInfos = append(bootInfos, *bootInfo)
 	}
 
-	addr, err := multiaddr.NewMultiaddr(config.P2P.ListenAddr)
+	addr, err := ma.NewMultiaddr(config.P2P.ListenAddr)
 	if err != nil {
 		return nil, errors.Wrapf(err, "invalid listen address: %s", config.P2P.ListenAddr)
 	}
@@ -90,15 +90,15 @@ func NewAirblocBackend(nodeKey *key.Key, config *Config) (Backend, error) {
 		Confirmation:   config.Blockchain.Options.MinConfirmations,
 		DeploymentPath: config.Blockchain.DeploymentPath,
 	}
-	ethclient, err := blockchain.NewClient(nodeKey, config.Blockchain.Endpoint, clientOpt)
+	client, err := blockchain.NewClient(nodeKey, config.Blockchain.Endpoint, clientOpt)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to initialize Ethereum client")
 	}
-	ethclient.SetAccount(nodeKey)
+	client.SetAccount(nodeKey)
 
 	return &AirblocBackend{
 		kms:           kms,
-		ethclient:     ethclient,
+		client:        client,
 		metaDatabase:  metaDatabase,
 		localDatabase: localDatabase,
 		config:        config,
@@ -112,7 +112,7 @@ func (airbloc *AirblocBackend) Kms() key.Manager {
 }
 
 func (airbloc *AirblocBackend) Client() *blockchain.Client {
-	return airbloc.ethclient
+	return airbloc.client
 }
 
 func (airbloc *AirblocBackend) MetaDatabase() metadb.Database {
@@ -160,7 +160,7 @@ func (airbloc *AirblocBackend) Stop() {
 		svc.Stop()
 	}
 	airbloc.p2pServer.Stop()
-	airbloc.ethclient.Close()
+	airbloc.client.Close()
 	airbloc.localDatabase.Close()
 	airbloc.metaDatabase.Close()
 }

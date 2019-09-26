@@ -3,17 +3,17 @@ package merkle
 import (
 	"bytes"
 	"encoding/binary"
-	"github.com/pkg/errors"
 	"math/big"
 	"sort"
 
 	"github.com/klaytn/klaytn/common"
 	"github.com/klaytn/klaytn/crypto"
+	"github.com/pkg/errors"
 )
 
 const (
-	Left  = 0x00
-	Right = 0x01
+	left  = 0x00
+	right = 0x01
 )
 
 type SubTree struct {
@@ -43,12 +43,12 @@ func (st *SubTree) GenerateProof(rowId [4]byte) ([]byte, error) {
 	buf := new(bytes.Buffer)
 	for _, lvl := range st.tree[:len(st.tree)-1] {
 		if index%2 != 0 { // left
-			buf.Write(append([]byte{Left}, lvl[index-1].Bytes()...))
+			buf.Write(append([]byte{left}, lvl[index-1].Bytes()...))
 		} else { // right
 			if len(lvl) == (index + 1) {
-				buf.Write(append([]byte{Right}, lvl[index].Bytes()...))
+				buf.Write(append([]byte{right}, lvl[index].Bytes()...))
 			} else {
-				buf.Write(append([]byte{Right}, lvl[index+1].Bytes()...))
+				buf.Write(append([]byte{right}, lvl[index+1].Bytes()...))
 			}
 		}
 
@@ -70,7 +70,7 @@ func verifySubProof(rowId [4]byte, subRoot, proof []byte) bool {
 		leaf, direction := leaf[1:], leaf[0]
 		proof = proof[SubProofLength:]
 
-		if direction == Left {
+		if direction == left {
 			base = crypto.Keccak256Hash(leaf, base.Bytes())
 		} else {
 			base = crypto.Keccak256Hash(base.Bytes(), leaf)

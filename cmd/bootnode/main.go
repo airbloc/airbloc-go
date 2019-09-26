@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	"github.com/urfave/cli"
 	"os"
 	"os/signal"
 
@@ -12,8 +11,9 @@ import (
 	"github.com/airbloc/airbloc-go/shared/p2p"
 	"github.com/airbloc/logger"
 	"github.com/klaytn/klaytn/crypto"
-	"github.com/multiformats/go-multiaddr"
+	ma "github.com/multiformats/go-multiaddr"
 	"github.com/pkg/errors"
+	"github.com/urfave/cli"
 )
 
 var log = logger.New("bootnode")
@@ -77,7 +77,7 @@ func run(options *cli.Context) (err error) {
 	log.Info("Node ID: {}", nodekey.EthereumAddress.Hex())
 
 	addrStr := fmt.Sprintf("/ip4/%s/tcp/%d", options.String("bind"), options.Int("port"))
-	addr, err := multiaddr.NewMultiaddr(addrStr)
+	addr, err := ma.NewMultiaddr(addrStr)
 	if err != nil {
 		return errors.Wrap(err, "failed to create multiaddr")
 	}
@@ -89,7 +89,7 @@ func run(options *cli.Context) (err error) {
 	}
 	defer stop()
 
-	log.Info("Address: {}", multiaddr.Join(bootInfo.Addrs...).String()+"/ipfs/"+bootInfo.ID.Pretty())
+	log.Info("Address: {}", ma.Join(bootInfo.Addrs...).String()+"/ipfs/"+bootInfo.ID.Pretty())
 	log.Info("You can put the address to p2p.bootNodes in config.yml.")
 
 	signalCh := make(chan os.Signal, 1)

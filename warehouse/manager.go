@@ -38,7 +38,7 @@ type Manager struct {
 
 	// for data registration
 	metaDatabase metadb.Database
-	ethclient    blockchain.TxClient
+	client       blockchain.TxClient
 	//dataRegistry *adapter.DataRegistry
 
 	// data storage layer
@@ -57,7 +57,7 @@ func NewManager(
 	kms key.Manager,
 	localDatabase localdb.Database,
 	metaDatabase metadb.Database,
-	ethclient blockchain.TxClient,
+	client blockchain.TxClient,
 	defaultStorage storage.Storage,
 	supportedProtocols []protocol.Protocol,
 	config service.Config,
@@ -78,10 +78,10 @@ func NewManager(
 			"BECAUSE IT CAN CAUSE A FINANCIAL LOSS OF YOUR STAKED COLLETRALS. " + "\033[0m")
 	}
 
-	consentManager := adapter.NewConsentsManager(ethclient)
+	consentManager := adapter.NewConsentsManager(client)
 	dauthValidator := validator.NewValidator(consentManager)
 
-	//contract := ethclient.GetContract(&adapter.DataRegistry{})
+	//contract := client.GetContract(&adapter.DataRegistry{})
 
 	resdbClient, err := afclient.Dial(config.ResourceDB.Endpoint, kms.NodeKey().PrivateKey)
 	if err != nil {
@@ -93,7 +93,7 @@ func NewManager(
 		localCache: localdb.NewModel(localDatabase, "bundle"),
 
 		metaDatabase: metadb.NewModel(metaDatabase, "bundles"),
-		ethclient:    ethclient,
+		client:       client,
 		//dataRegistry: contract.(*adapter.DataRegistry),
 
 		protocols:      protocols,
@@ -243,7 +243,7 @@ func (dw *Manager) registerBundleOnChain(bundle *Bundle) (bundleId types.ID, _ e
 	//})
 	//
 	//tx, err := dw.dataRegistry.RegisterBundle(
-	//	dw.ethclient.Account(),
+	//	dw.client.Account(),
 	//	bundle.Collection,
 	//	userMerkleRoot,
 	//	bundleDataHash,
@@ -252,7 +252,7 @@ func (dw *Manager) registerBundleOnChain(bundle *Bundle) (bundleId types.ID, _ e
 	//	return bundleId, errors.Wrap(err, "failed to register a bundle to DataRegistry")
 	//}
 	//
-	//receipt, err := dw.ethclient.WaitMined(context.Background(), tx)
+	//receipt, err := dw.client.WaitMined(context.Background(), tx)
 	//if err != nil {
 	//	return bundleId, errors.Wrap(err, "failed to wait for tx to be mined")
 	//}

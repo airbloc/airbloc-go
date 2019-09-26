@@ -22,9 +22,6 @@ func NewAppRegistryAPI(backend service.Backend) (api.API, error) {
 	return &appRegistryAPI{ar}, nil
 }
 
-// Register is a paid mutator transaction binding the contract method 0xf2c298be.
-//
-// Solidity: function register(string appName) returns()
 func (api *appRegistryAPI) register(c *gin.Context) {
 	var req struct {
 		AppName string `json:"app_name" binding:"required"`
@@ -35,16 +32,21 @@ func (api *appRegistryAPI) register(c *gin.Context) {
 		return
 	}
 
+	if exists, err := api.apps.Exists(req.AppName); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	} else if exists {
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{})
+		return
+	}
+
 	if err := api.apps.Register(c, req.AppName); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusCreated, gin.H{})
 }
 
-// Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
-//
-// Solidity: function unregister(string appName) returns()
 func (api *appRegistryAPI) unregister(c *gin.Context) {
 	var req struct {
 		AppName string `json:"app_name" binding:"required"`
@@ -60,12 +62,9 @@ func (api *appRegistryAPI) unregister(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
-// Get is a free data retrieval call binding the contract method 0x693ec85e.
-//
-// Solidity: function get(string appName) constant returns((string,address,bytes32))
 func (api *appRegistryAPI) get(c *gin.Context) {
 	var req struct {
 		AppName string `form:"app_name" binding:"required"`
@@ -73,6 +72,14 @@ func (api *appRegistryAPI) get(c *gin.Context) {
 
 	if err := c.ShouldBindWith(&req, binding.Query); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if exists, err := api.apps.Exists(req.AppName); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	} else if !exists {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": "cannot find app information"})
 		return
 	}
 
@@ -85,9 +92,6 @@ func (api *appRegistryAPI) get(c *gin.Context) {
 	c.JSON(http.StatusOK, app)
 }
 
-// TransferAppOwner is a paid mutator transaction binding the contract method 0x1a9dff9f.
-//
-// Solidity: function transferAppOwner(string appName, address newOwner) returns()
 func (api *appRegistryAPI) transferAppOwner(c *gin.Context) {
 	var req struct {
 		AppName  string `json:"app_name" binding:"required"`
@@ -104,7 +108,7 @@ func (api *appRegistryAPI) transferAppOwner(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
 // AttachToAPI is a registrant of an api.

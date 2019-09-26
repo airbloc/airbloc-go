@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/airbloc/airbloc-go/provider/data/batch"
+	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/database/localdb"
 	"github.com/airbloc/airbloc-go/shared/database/metadb"
@@ -23,8 +24,8 @@ type Manager struct {
 	p2p       p2p.Server
 	warehouse *warehouse.Manager
 	//registry  *adapter.DataRegistry
-	//dataTypes adapter.IDataTypeRegistryContract
-	batches *batch.BatchManager
+	dataTypes adapter.IDataTypeRegistryContract
+	batches   *batch.BatchManager
 }
 
 func NewManager(
@@ -43,9 +44,9 @@ func NewManager(
 		p2p:       p2p,
 		warehouse: warehouse,
 		//registry:  contract.(*adapter.DataRegistry),
-		//dataTypes: adapter.NewDataTypeRegistryContract(client),
-		batches: batches,
-		metadb:  metadb.NewModel(metaDB, "bundles"),
+		dataTypes: client.GetContract(&adapter.DataTypeRegistryContract{}).(*adapter.DataTypeRegistryContract),
+		batches:   batches,
+		metadb:    metadb.NewModel(metaDB, "bundles"),
 	}
 }
 

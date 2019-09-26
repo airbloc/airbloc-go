@@ -3,8 +3,9 @@ package key
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/klaytn/klaytn/crypto"
 	"github.com/stretchr/testify/assert"

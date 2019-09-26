@@ -1,12 +1,14 @@
 package service
 
 import (
-	"github.com/mcuadros/go-defaults"
 	"time"
+
+	defs "github.com/mcuadros/go-defaults"
 )
 
 type Config struct {
 	PrivateKeyPath string `default:"private.key" yaml:"privateKeyPath"`
+	Host           string `default:"localhost" yaml:"host"`
 	Port           int    `default:"9124" yaml:"port"`
 
 	P2P struct {
@@ -72,6 +74,6 @@ type Config struct {
 // NewConfig returns node configurations with default value.
 func NewConfig() *Config {
 	config := new(Config)
-	defaults.SetDefaults(config)
+	defs.SetDefaults(config)
 	return config
 }

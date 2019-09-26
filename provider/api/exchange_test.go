@@ -73,7 +73,7 @@ func TestExchangeAPI_Prepare(t *testing.T) {
 	api.prepare(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, fmt.Sprintf(`{"offerId":"%s"}`, testOfferId), w.Body.String())
+	assert.Equal(t, fmt.Sprintf(`{"offer_id":"%s"}`, testOfferId), w.Body.String())
 }
 
 func TestExchangeAPI_Prepare_InvalidJSON(t *testing.T) {
@@ -204,7 +204,7 @@ func TestExchangeAPI_AddDataIds(t *testing.T) {
 	defer mockController.Finish()
 
 	w, c := testutils.CreateTestRequest(t, gin.H{"dataIds": testDataIds}, binding.JSON)
-	c.Params = append(c.Params, gin.Param{Key: "offerId", Value: testOfferId})
+	c.Params = append(c.Params, gin.Param{Key: "offer_id", Value: testOfferId})
 
 	offerId, _ := types.HexToID(testOfferId)
 	dataIds := make([]types.DataId, len(testDataIds))
@@ -229,7 +229,7 @@ func TestExchangeAPI_Order(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"offerId": testOfferId}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"offer_id": testOfferId}, nil)
 
 	offerId, _ := types.HexToID(testOfferId)
 
@@ -250,7 +250,7 @@ func TestExchangeAPI_Cancel(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"offerId": testOfferId}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"offer_id": testOfferId}, nil)
 
 	offerId, _ := types.HexToID(testOfferId)
 

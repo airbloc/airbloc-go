@@ -3,7 +3,7 @@ package warehouse
 import (
 	"github.com/airbloc/airbloc-go/shared/merkle"
 	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/json-iterator/go"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/klaytn/klaytn/common"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/sha3"

@@ -66,7 +66,7 @@ var _ = Describe("Apps", func() {
 		t.Log("code", resp.StatusCode)
 		t.Log("body", string(body))
 
-		Ω(resp.StatusCode).Should(Equal(http.StatusOK))
+		Ω(resp.StatusCode).Should(Equal(http.StatusCreated))
 		Ω(string(body)).Should(Equal(testutils.TestSuccessStr))
 	})
 

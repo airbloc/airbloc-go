@@ -21,28 +21,32 @@ func NewControllerRegistryAPI(backend service.Backend) (api.API, error) {
 	return &controllerRegistryAPI{cr}, nil
 }
 
-// Register is a paid mutator transaction binding the contract method 0x4420e486.
-//
-// Solidity: function register(address controllerAddr) returns()
 func (api *controllerRegistryAPI) register(c *gin.Context) {
-	controllerAddr := c.Param("controllerAddr")
-	if controllerAddr == "" {
+	controllerAddrHex := c.Param("controller_addr")
+	if controllerAddrHex == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
 		return
 	}
 
-	if err := api.controllers.Register(c, common.HexToAddress(controllerAddr)); err != nil {
+	controllerAddr := common.HexToAddress(controllerAddrHex)
+
+	if exists, err := api.controllers.Exists(controllerAddr); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	} else if exists {
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{})
+		return
+	}
+
+	if err := api.controllers.Register(c, controllerAddr); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusCreated, gin.H{})
 }
 
-// Get is a free data retrieval call binding the contract method 0xc2bc2efc.
-//
-// Solidity: function get(address controller) constant returns((address,uint256))
 func (api *controllerRegistryAPI) get(c *gin.Context) {
-	controllerAddr := c.Param("controllerAddr")
+	controllerAddr := c.Param("controller_addr")
 	if controllerAddr == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
 		return
@@ -59,6 +63,6 @@ func (api *controllerRegistryAPI) get(c *gin.Context) {
 // AttachToAPI is a registrant of an api.
 func (api *controllerRegistryAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.HttpServer.Group("/controllers")
-	apiMux.GET("/:controllerAddr", api.get)
-	apiMux.POST("/:controllerAddr", api.register)
+	apiMux.GET("/:controller_addr", api.get)
+	apiMux.POST("/:controller_addr", api.register)
 }

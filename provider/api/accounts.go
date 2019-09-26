@@ -24,21 +24,15 @@ func NewAccountsAPI(backend service.Backend) (api.API, error) {
 	return &accountsAPI{ac}, nil
 }
 
-// Create is a paid mutator transaction binding the contract method 0xefc81a8c.
-//
-// Solidity: function create() returns()
 func (api *accountsAPI) create(c *gin.Context) {
 	accountId, err := api.accounts.Create(c)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
+	c.JSON(http.StatusCreated, gin.H{"account_id": accountId.Hex()})
 }
 
-// CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
-//
-// Solidity: function createTemporary(bytes32 identityHash) returns()
 func (api *accountsAPI) createTemporary(c *gin.Context) {
 	var req struct {
 		IdentityHash string `json:"identity_hash" binding:"required"`
@@ -55,12 +49,9 @@ func (api *accountsAPI) createTemporary(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
+	c.JSON(http.StatusCreated, gin.H{"account_id": accountId.Hex()})
 }
 
-// UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
-//
-// Solidity: function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) returns()
 func (api *accountsAPI) unlockTemporary(c *gin.Context) {
 	var req struct {
 		IdentityPreimage  string `json:"identity_preimage" binding:"required"`
@@ -87,12 +78,9 @@ func (api *accountsAPI) unlockTemporary(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
-// SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
-//
-// Solidity: function setController(address controller) returns()
 func (api *accountsAPI) setController(c *gin.Context) {
 	var req struct {
 		Controller string `json:"controller" binding:"required"`
@@ -108,12 +96,9 @@ func (api *accountsAPI) setController(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
-// GetAccount is a free data retrieval call binding the contract method 0xf9292ddb.
-//
-// Solidity: function getAccount(bytes8 accountId) constant returns((address,uint8,address,address))
 func (api *accountsAPI) getAccount(c *gin.Context) {
 	var req struct {
 		AccountId string `form:"account_id" binding:"required"`
@@ -138,11 +123,6 @@ func (api *accountsAPI) getAccount(c *gin.Context) {
 	c.JSON(http.StatusOK, account)
 }
 
-// GetAccountId is a free data retrieval call binding the contract method 0xe0b490f7.
-// GetAccountIdFromSignature is a free data retrieval call binding the contract method 0x23d0601d.
-//
-// Solidity: function getAccountId(address sender) constant returns(bytes8)
-// Solidity: function getAccountIdFromSignature(bytes32 messageHash, bytes signature) constant returns(bytes8)
 func (api *accountsAPI) getAccountId(c *gin.Context) {
 	var (
 		accountIdRequest struct {
@@ -152,10 +132,14 @@ func (api *accountsAPI) getAccountId(c *gin.Context) {
 			MessageHash string `form:"message_hash" binding:"required"`
 			Signature   string `form:"signature" binding:"required"`
 		}
+		accountIdByIdentityRequest struct {
+			IdentityHash string `form:"identity_hash" binding:"required"`
+		}
 	)
 
 	isAccountId := c.ShouldBindWith(&accountIdRequest, binding.Query)
 	isAccountIdFromSig := c.ShouldBindWith(&accountIdFromSigRequest, binding.Query)
+	isAccountIdByIdentity := c.ShouldBindWith(&accountIdByIdentityRequest, binding.Query)
 
 	if isAccountId == nil {
 		owner := common.HexToAddress(accountIdRequest.Owner)
@@ -185,13 +169,18 @@ func (api *accountsAPI) getAccountId(c *gin.Context) {
 		return
 	}
 
-	accountId, err := api.accounts.GetAccountId(common.Address{})
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	if isAccountIdByIdentity == nil {
+		identityHash := common.HexToHash(accountIdByIdentityRequest.IdentityHash)
+		accountId, err := api.accounts.GetAccountIdByIdentityHash(identityHash)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"account_id": accountId.Hex()})
-	return
+
+	c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": "Cannot find account id"})
 }
 
 // AttachToAPI is a registrant of an api.

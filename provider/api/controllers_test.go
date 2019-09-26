@@ -22,9 +22,12 @@ func TestControllerRegistryAPI_Register(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"controllerAddr": testControllerAddr}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"controller_addr": testControllerAddr}, nil)
 
 	mockManager := adapterMock.NewMockIControllerRegistryManager(mockController)
+	mockManager.EXPECT().
+		Exists(common.HexToAddress(testControllerAddr)).
+		Return(false, nil)
 	mockManager.EXPECT().
 		Register(c, common.HexToAddress(testControllerAddr)).
 		Return(nil)
@@ -32,7 +35,7 @@ func TestControllerRegistryAPI_Register(t *testing.T) {
 	api := &controllerRegistryAPI{mockManager}
 	api.register(c)
 
-	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, http.StatusCreated, w.Code)
 	assert.Equal(t, testutils.TestSuccessStr, w.Body.String())
 }
 
@@ -55,9 +58,12 @@ func TestControllerRegistryAPI_Register_FailedToRegister(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"controllerAddr": testControllerAddr}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"controller_addr": testControllerAddr}, nil)
 
 	mockManager := adapterMock.NewMockIControllerRegistryManager(mockController)
+	mockManager.EXPECT().
+		Exists(common.HexToAddress(testControllerAddr)).
+		Return(false, nil)
 	mockManager.EXPECT().
 		Register(c, common.HexToAddress(testControllerAddr)).
 		Return(testutils.TestErr)
@@ -73,7 +79,7 @@ func TestControllerRegistryAPI_Get(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"controllerAddr": testControllerAddr}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"controller_addr": testControllerAddr}, nil)
 
 	mockManager := adapterMock.NewMockIControllerRegistryManager(mockController)
 	mockManager.EXPECT().
@@ -107,7 +113,7 @@ func TestControllerRegistryAPI_Get_FailedToGet(t *testing.T) {
 	mockController := gomock.NewController(t)
 	defer mockController.Finish()
 
-	w, c := testutils.CreateTestRequest(t, gin.H{"controllerAddr": testControllerAddr}, nil)
+	w, c := testutils.CreateTestRequest(t, gin.H{"controller_addr": testControllerAddr}, nil)
 
 	mockManager := adapterMock.NewMockIControllerRegistryManager(mockController)
 	mockManager.EXPECT().

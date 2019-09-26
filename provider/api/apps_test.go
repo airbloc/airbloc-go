@@ -5,12 +5,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gin-gonic/gin/binding"
-
 	adapterMock "github.com/airbloc/airbloc-go/shared/adapter/mocks"
 	"github.com/airbloc/airbloc-go/shared/types"
 	testutils "github.com/airbloc/airbloc-go/test/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/gin-gonic/gin/json"
 	"github.com/golang/mock/gomock"
 	"github.com/klaytn/klaytn/common"
@@ -29,13 +28,16 @@ func TestAppRegistryAPI_Register(t *testing.T) {
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 	mockManager.EXPECT().
+		Exists(testAppName).
+		Return(false, nil)
+	mockManager.EXPECT().
 		Register(c, testAppName).
 		Return(nil)
 
 	api := &appRegistryAPI{mockManager}
 	api.register(c)
 
-	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, http.StatusCreated, w.Code)
 	assert.Equal(t, testutils.TestSuccessStr, w.Body.String())
 }
 
@@ -61,6 +63,9 @@ func TestAppRegistryAPI_Register_FailedToRegister(t *testing.T) {
 	w, c := testutils.CreateTestRequest(t, gin.H{"app_name": testAppName}, binding.JSON)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
+	mockManager.EXPECT().
+		Exists(testAppName).
+		Return(false, nil)
 	mockManager.EXPECT().
 		Register(c, testAppName).
 		Return(testutils.TestErr)
@@ -133,6 +138,9 @@ func TestAppRegistryAPI_Get(t *testing.T) {
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 	mockManager.EXPECT().
+		Exists(testAppName).
+		Return(true, nil)
+	mockManager.EXPECT().
 		Get(testAppName).
 		Return(types.App{}, nil)
 
@@ -166,6 +174,9 @@ func TestAppRegistryAPI_Get_FailedToGet(t *testing.T) {
 	w, c := testutils.CreateTestRequest(t, gin.H{"app_name": testAppName}, binding.Query)
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
+	mockManager.EXPECT().
+		Exists(testAppName).
+		Return(true, nil)
 	mockManager.EXPECT().
 		Get(testAppName).
 		Return(types.App{}, testutils.TestErr)

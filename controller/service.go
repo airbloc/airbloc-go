@@ -98,8 +98,7 @@ func (service *service) sync(ctx context.Context) (rerr error) {
 	}()
 
 	for events.Next() {
-		accountId := types.ID(events.Event.AccountId)
-		_ = service.addUser(accountId)
+		_ = service.addUser(events.Event.AccountId)
 	}
 	if events.Error() != nil {
 		return errors.Wrap(events.Error(), "failed to iterate over events in Accounts")
@@ -131,6 +130,7 @@ func (service *service) hasUser(accountId types.ID) bool {
 	return false
 }
 
+// Start controller service
 func (service *service) Start() error {
 	service.log.Info("Starting service...")
 
@@ -145,8 +145,9 @@ func (service *service) Start() error {
 
 	// register p2p RPC handlers
 	rpc := p2p.NewRPC(service.p2p)
-	rpc.Handle("dauth-allow", &pb.DAuthRequest{}, &pb.DAuthResponse{}, service.createDAuthHandler(true))
-	rpc.Handle("dauth-deny", &pb.DAuthRequest{}, &pb.DAuthResponse{}, service.createDAuthHandler(false))
+	rpc.Handle("dauth-allow", &pb.DAuthRequest{}, &pb.DAuthResponse{}, service.createConsentHandler(true))
+	rpc.Handle("dauth-deny", &pb.DAuthRequest{}, &pb.DAuthResponse{}, service.createConsentHandler(false))
+	rpc.Handle("dauth-many", &pb.DAuthManyRequest{}, &pb.DAuthResponse{}, service.consentManyHandler)
 	rpc.Handle("dauth-signup", &pb.DAuthSignUpRequest{}, &pb.DAuthSignUpResponse{}, service.signUpHandler)
 
 	service.isRunning = true
@@ -155,7 +156,7 @@ func (service *service) Start() error {
 	return nil
 }
 
-func (service *service) createDAuthHandler(allow bool) p2p.RPCHandler {
+func (service *service) createConsentHandler(allow bool) p2p.RPCHandler {
 	return func(ctx context.Context, from p2p.SenderInfo, req proto.Message) (proto.Message, error) {
 		request, ok := req.(*pb.DAuthRequest)
 		if !ok {
@@ -180,12 +181,6 @@ func (service *service) createDAuthHandler(allow bool) p2p.RPCHandler {
 			return nil, errors.Errorf("app does not exist. appName: %s", appName)
 		}
 
-		// action
-		action := uint8(request.GetAction())
-		if action == 0 {
-			return nil, errors.Errorf("action does not exist. action: %d", request.GetAction())
-		}
-
 		// dataType
 		if dataTypeExists, err := service.dataTypes.Exists(dataType); err != nil {
 			return nil, errors.Wrap(err, "failed to call dataTypeRegistry.Exists")
@@ -204,12 +199,58 @@ func (service *service) createDAuthHandler(allow bool) p2p.RPCHandler {
 			return nil, ErrDelegationNotAllowed
 		}
 
-		err = service.consents.ConsentByController(ctx, accountId, appName, uint8(action), dataType, allow)
+		consentData := types.ConsentData{
+			Action:   uint8(request.GetAction()),
+			DataType: dataType,
+			Allow:    allow,
+		}
+		err = service.consents.ConsentByController(ctx, accountId, appName, consentData)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to modify DAuth settings")
 		}
 		return &pb.DAuthResponse{}, nil
 	}
+}
+
+func (service *service) consentManyHandler(
+	ctx context.Context,
+	from p2p.SenderInfo,
+	req proto.Message,
+) (proto.Message, error) {
+	request, ok := req.(*pb.DAuthManyRequest)
+	if !ok {
+		return nil, &MessageTypeError{"invalid message type", reflect.TypeOf(req)}
+	}
+
+	appName := request.GetAppName()
+
+	// accountId
+	accountId, err := types.HexToID(request.GetAccountId())
+	if err != nil {
+		return nil, errors.Wrapf(err, "invalid account ID %s", request.GetAccountId())
+	}
+
+	// appName
+	if appExists, err := service.apps.Exists(appName); err != nil {
+		return nil, errors.Wrap(err, "failed to call appRegistry.Exists")
+	} else if !appExists {
+		return nil, errors.Errorf("app does not exist. appName: %s", appName)
+	}
+
+	consentData := make([]types.ConsentData, len(request.GetConsentData()))
+	for index, consentRawData := range request.GetConsentData() {
+		consentData[index] = types.ConsentData{
+			Action:   uint8(consentRawData.GetAction()),
+			DataType: consentRawData.GetDataType(),
+			Allow:    consentRawData.GetAllow(),
+		}
+	}
+
+	err = service.consents.ConsentManyByController(ctx, accountId, appName, consentData)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to modify DAuth settings")
+	}
+	return &pb.DAuthResponse{}, nil
 }
 
 func (service *service) signUpHandler(
@@ -243,6 +284,7 @@ func (service *service) signUpHandler(
 	}, nil
 }
 
+// Stop controller service
 func (service *service) Stop() {
 	service.log.Info("Stopping...")
 	service.isRunning = false

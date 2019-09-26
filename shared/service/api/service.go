@@ -18,8 +18,8 @@ import (
 type Service struct {
 	GrpcServer *grpc.Server
 	HttpServer *gin.Engine
-	Address    string
 
+	host     string
 	port     int
 	listener net.Listener
 
@@ -29,7 +29,6 @@ type Service struct {
 
 func NewService(backend service.Backend) (service.Service, error) {
 	config := backend.Config()
-	address := fmt.Sprintf("localhost:%d", config.Port)
 
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(middleware.ChainUnaryServer(
@@ -37,10 +36,13 @@ func NewService(backend service.Backend) (service.Service, error) {
 		)),
 	)
 
+	httpServer := gin.Default()
+	// TODO: add specific server options
+
 	svc := &Service{
 		GrpcServer: grpcServer,
-		HttpServer: gin.New(),
-		Address:    address,
+		HttpServer: httpServer,
+		host:       config.Host,
 		port:       config.Port,
 		logger:     logger.New("apiservice"),
 	}
@@ -53,7 +55,7 @@ func (service *Service) Attach(name string, api API) {
 
 // Start serves gRPC server and HTTP REST API Server on given TCP port.
 func (service *Service) Start() error {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", service.port))
+	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", service.host, service.port))
 	if err != nil {
 		return errors.Wrapf(err, "failed to listen to TCP port %d for RPC", service.port)
 	}
@@ -82,7 +84,7 @@ func (service *Service) Start() error {
 		}
 	}()
 
-	service.logger.Info("Server started at {}", service.Address)
+	service.logger.Info("Server started at {}", lis.Addr().String())
 	service.listener = lis
 
 	return m.Serve()

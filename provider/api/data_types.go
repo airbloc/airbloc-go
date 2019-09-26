@@ -22,13 +22,10 @@ func NewDataTypeRegistryAPI(backend service.Backend) (api.API, error) {
 	return &dataTypeRegistryAPI{dt}, nil
 }
 
-// Register is a paid mutator transaction binding the contract method 0x656afdee.
-//
-// Solidity: function register(string name, bytes32 schemaHash) returns()
 func (api *dataTypeRegistryAPI) register(c *gin.Context) {
 	var req struct {
-		Name       string `binding:"required"`
-		SchemaHash string `binding:"required"`
+		Name       string `json:"name" binding:"required"`
+		SchemaHash string `json:"schema_hash" binding:"required"`
 	}
 
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
@@ -40,18 +37,24 @@ func (api *dataTypeRegistryAPI) register(c *gin.Context) {
 		name       = req.Name
 		schemaHash = common.HexToHash(req.SchemaHash)
 	)
+
+	if exists, err := api.dataTypes.Exists(name); err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	} else if exists {
+		c.AbortWithStatusJSON(http.StatusConflict, gin.H{})
+		return
+	}
+
 	if err := api.dataTypes.Register(c, name, schemaHash); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusCreated, gin.H{})
 }
 
-// Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
-//
-// Solidity: function unregister(string name) returns()
 func (api *dataTypeRegistryAPI) unregister(c *gin.Context) {
-	dataType := c.Param("dataType")
+	dataType := c.Param("data_type")
 	if dataType == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
 		return
@@ -61,14 +64,11 @@ func (api *dataTypeRegistryAPI) unregister(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "success"})
+	c.JSON(http.StatusOK, gin.H{})
 }
 
-// Get is a free data retrieval call binding the contract method 0x693ec85e.
-//
-// Solidity: function get(string name) constant returns((string,address,bytes32))
 func (api *dataTypeRegistryAPI) get(c *gin.Context) {
-	dataType := c.Param("dataType")
+	dataType := c.Param("data_type")
 	if dataType == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
 		return
@@ -85,7 +85,7 @@ func (api *dataTypeRegistryAPI) get(c *gin.Context) {
 // AttachToAPI is a registrant of an api.
 func (api *dataTypeRegistryAPI) AttachToAPI(service *api.Service) {
 	apiMux := service.HttpServer.Group("/data-types")
-	apiMux.GET("/:dataType", api.get)
+	apiMux.GET("/:data_type", api.get)
 	apiMux.POST("/", api.register)
-	apiMux.DELETE("/:dataType", api.unregister)
+	apiMux.DELETE("/:data_type", api.unregister)
 }

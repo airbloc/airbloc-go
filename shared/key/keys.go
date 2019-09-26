@@ -2,6 +2,11 @@ package key
 
 import (
 	"crypto/ecdsa"
+	"io/ioutil"
+	"math/big"
+	"net/http"
+	"strings"
+
 	"github.com/klaytn/klaytn/common"
 	"github.com/klaytn/klaytn/crypto"
 	"github.com/klaytn/klaytn/crypto/ecies"
@@ -10,7 +15,6 @@ import (
 	"golang.org/x/crypto/ed25519"
 	"golang.org/x/crypto/pbkdf2"
 	"golang.org/x/crypto/sha3"
-	"math/big"
 )
 
 var (
@@ -74,6 +78,26 @@ func Generate() (*Key, error) {
 // Load loads a private key from the given file.
 // the file must contain a 32-byte hex-encoded ECDSA private key with SECP256k1 curve.
 func Load(path string) (*Key, error) {
+	if strings.HasPrefix(path, "http://") || strings.HasPrefix(path, "https://") {
+		resp, err := http.Get(path)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to load key from url")
+		}
+		defer resp.Body.Close()
+
+		hex, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to read body from response")
+		}
+
+		privateKey, err := crypto.HexToECDSA(string(hex))
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to parse privateKey from hex")
+		}
+
+		return FromECDSA(privateKey), nil
+	}
+
 	privateKey, err := crypto.LoadECDSA(path)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load ECDSA key.")
