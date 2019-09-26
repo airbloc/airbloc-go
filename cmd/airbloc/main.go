@@ -147,36 +147,40 @@ func loadConfig() {
 			ablLog.Error("Error: failed to unmarshal config data {}", err, configPath)
 			os.Exit(1)
 		}
-	} else {
-		// setup loggers
-		if rootFlags.verbose {
-			rootFlags.logLevel = "*"
-		}
+	}
+
+	// setup loggers
+	if rootFlags.verbose {
+		rootFlags.logLevel = "*"
+	}
+	if rootFlags.logLevel != "*" {
 		config.LogLevel = rootFlags.logLevel
+	}
+	if rootFlags.logFilter != "*" {
 		config.LogFilter = rootFlags.logFilter
+	}
 
-		// setup keypath
-		if rootFlags.keyPath != "" {
-			config.KeyPath = rootFlags.keyPath
-		} else {
-			config.KeyPath = strings.Replace(config.KeyPath, "$DATADIR", dataDir, 1)
-		}
+	// setup keypath
+	if rootFlags.keyPath != "" {
+		config.KeyPath = rootFlags.keyPath
+	} else {
+		config.KeyPath = strings.Replace(config.KeyPath, "$DATADIR", dataDir, 1)
+	}
 
-		if rootFlags.private != "" {
-			config.Key = rootFlags.private
-		}
-		if rootFlags.blockchainEndpoint != "" {
-			config.Blockchain.Endpoint = rootFlags.blockchainEndpoint
-		}
-		if rootFlags.deploymentPath != "" {
-			config.Blockchain.DeploymentPath = rootFlags.deploymentPath
-		}
-		if rootFlags.mongoEndpoint != "" {
-			config.MetaDB.MongoDBEndpoint = rootFlags.mongoEndpoint
-		}
-		if rootFlags.bootnodes != nil {
-			config.P2P.BootNodes = rootFlags.bootnodes
-		}
+	if rootFlags.private != "" {
+		config.Key = rootFlags.private
+	}
+	if rootFlags.blockchainEndpoint != "" {
+		config.Blockchain.Endpoint = rootFlags.blockchainEndpoint
+	}
+	if rootFlags.deploymentPath != "" {
+		config.Blockchain.DeploymentPath = rootFlags.deploymentPath
+	}
+	if rootFlags.mongoEndpoint != "" {
+		config.MetaDB.MongoDBEndpoint = rootFlags.mongoEndpoint
+	}
+	if rootFlags.bootnodes != nil {
+		config.P2P.BootNodes = rootFlags.bootnodes
 	}
 
 	logger.SetLogger(logger.NewStandardOutput(os.Stdout, config.LogLevel, config.LogFilter))
