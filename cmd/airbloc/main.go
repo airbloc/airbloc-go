@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -14,10 +15,10 @@ import (
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/warehouse"
 	"github.com/airbloc/logger"
-	"github.com/jinzhu/configor"
 	"github.com/klaytn/klaytn/crypto"
 	home "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -92,11 +93,11 @@ func init() {
 	rflags := rootCmd.PersistentFlags()
 
 	rflags.StringVarP(&rootFlags.dataDir, "datadir", "d", "~/.airbloc", "Data directory")
-	rflags.StringVarP(&rootFlags.configPath, "config", "c", "$DATADIR/config.yml", "Config file")
+	rflags.StringVarP(&rootFlags.configPath, "config", "c", "", "Config file")
 	rflags.StringVarP(&rootFlags.keyPath, "keystore", "k", "", "Keystore file for node (default is $DATADIR/private.key)")
 	rflags.StringVar(&rootFlags.private, "private", "", "Raw 32-byte private key with 0x prefix (Not Recommended)")
 
-	rflags.StringVar(&rootFlags.blockchainEndpoint, "ethereum", "", "Ethereum RPC endpoint")
+	rflags.StringVar(&rootFlags.blockchainEndpoint, "klaytn", "", "Klaytn RPC endpoint")
 	rflags.StringVar(&rootFlags.deploymentPath, "deployment", "", "Path or URL of deployment.json")
 	rflags.StringVar(&rootFlags.mongoEndpoint, "metadb", "", "Metadatabase endpoint")
 	rflags.StringSliceVar(&rootFlags.bootnodes, "bootnodes", nil, "Bootstrap Node multiaddr for P2P")
@@ -129,31 +130,46 @@ func loadConfig() {
 	if err != nil {
 		ablLog.Error("Error: failed to resolve data directory {}", err, rootFlags.dataDir)
 	}
-	if err := os.MkdirAll(dataDir, os.ModePerm); err != nil {
+	if err = os.MkdirAll(dataDir, os.ModePerm); err != nil {
 		ablLog.Error("Error: failed to create data directory {}", err, rootFlags.dataDir)
 	}
 
-	configPath := rootFlags.configPath
-	configPath = strings.Replace(configPath, "$DATADIR", dataDir, 1)
-	if err := configor.Load(config, configPath); err != nil {
-		ablLog.Error("Error: failed to load config from {}", err, configPath)
-		os.Exit(1)
-	}
-
-	// override key path
-	if rootFlags.keyPath != "" {
-		config.PrivateKeyPath = rootFlags.keyPath
-	} else {
-		config.PrivateKeyPath = strings.Replace(config.PrivateKeyPath, "$DATADIR", dataDir, 1)
+	// override config
+	if rootFlags.configPath != "" {
+		configPath := rootFlags.configPath
+		configPath = strings.Replace(configPath, "$DATADIR", dataDir, 1)
+		configData, err := ioutil.ReadFile(configPath)
+		if err != nil {
+			ablLog.Error("Error: failed to read config file {}", err, configPath)
+			os.Exit(1)
+		}
+		if err = yaml.Unmarshal(configData, config); err != nil {
+			ablLog.Error("Error: failed to unmarshal config data {}", err, configPath)
+			os.Exit(1)
+		}
 	}
 
 	// setup loggers
 	if rootFlags.verbose {
 		rootFlags.logLevel = "*"
 	}
-	logger.SetLogger(logger.NewStandardOutput(os.Stdout, rootFlags.logLevel, rootFlags.logFilter))
-	log.SetOutput(os.Stderr)
+	if rootFlags.logLevel != "*" {
+		config.LogLevel = rootFlags.logLevel
+	}
+	if rootFlags.logFilter != "*" {
+		config.LogFilter = rootFlags.logFilter
+	}
 
+	// setup keypath
+	if rootFlags.keyPath != "" {
+		config.KeyPath = rootFlags.keyPath
+	} else {
+		config.KeyPath = strings.Replace(config.KeyPath, "$DATADIR", dataDir, 1)
+	}
+
+	if rootFlags.private != "" {
+		config.Key = rootFlags.private
+	}
 	if rootFlags.blockchainEndpoint != "" {
 		config.Blockchain.Endpoint = rootFlags.blockchainEndpoint
 	}
@@ -166,6 +182,9 @@ func loadConfig() {
 	if rootFlags.bootnodes != nil {
 		config.P2P.BootNodes = rootFlags.bootnodes
 	}
+
+	logger.SetLogger(logger.NewStandardOutput(os.Stdout, config.LogLevel, config.LogFilter))
+	log.SetOutput(os.Stderr)
 }
 
 func main() {
@@ -197,8 +216,7 @@ func start(serviceNames string) func(cmd *cobra.Command, args []string) {
 }
 
 func loadNodeKey() *key.Key {
-	if rootFlags.private != "" {
-		// load from command-line argument
+	if config.Key != "" {
 		if len(rootFlags.private) != 66 || !strings.HasPrefix(rootFlags.private, "0x") {
 			ablLog.Error("Error: Invalid private key.")
 			os.Exit(1)
@@ -215,7 +233,7 @@ func loadNodeKey() *key.Key {
 		}
 		return key.FromECDSA(k)
 	} else {
-		k, err := key.Load(config.PrivateKeyPath)
+		k, err := key.Load(config.KeyPath)
 		if err != nil {
 			ablLog.Error("Error: failed to load private key from the given path", err)
 			os.Exit(1)
@@ -225,18 +243,18 @@ func loadNodeKey() *key.Key {
 }
 
 func registerServices(backend service.Backend, serviceNames []string) {
-	for _, name := range serviceNames {
-		serviceConstructor, exists := AvailableServices[name]
+	for _, serviceName := range serviceNames {
+		serviceConstructor, exists := AvailableServices[serviceName]
 		if !exists {
-			ablLog.Error("Error: service {} does not exist.", name)
+			ablLog.Error("Error: service {} does not exist.", serviceName)
 			os.Exit(1)
 		}
 
 		svc, err := serviceConstructor(backend)
 		if err != nil {
-			ablLog.Error("Error: failed to create service {}", err, name)
+			ablLog.Error("Error: failed to create service {}", err, serviceName)
 			os.Exit(1)
 		}
-		backend.AttachService(name, svc)
+		backend.AttachService(serviceName, svc)
 	}
 }
