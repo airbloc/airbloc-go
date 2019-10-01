@@ -7,6 +7,7 @@ import (
 	"errors"
 	"math/big"
 
+	blockchain "github.com/airbloc/airbloc-go/shared/blockchain"
 	types "github.com/airbloc/airbloc-go/shared/types"
 	platform "github.com/klaytn/klaytn"
 	bind "github.com/klaytn/klaytn/accounts/abi/bind"
@@ -46,25 +47,25 @@ func (_DataTypeRegistry *DataTypeRegistry) CreatedAt() *big.Int {
 
 // DataTypeRegistryCaller is an auto generated read-only Go binding around an Ethereum contract.
 type DataTypeRegistryCaller struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // DataTypeRegistryTransactor is an auto generated write-only Go binding around an Ethereum contract.
 type DataTypeRegistryTransactor struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // DataTypeRegistryFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
 type DataTypeRegistryFilterer struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // DataTypeRegistrySession is an auto generated Go binding around an Ethereum contract,
 // with pre-set call and transact options.
 type DataTypeRegistrySession struct {
-	Contract     *DataTypeRegistry // Generic contract binding to set the session for
-	CallOpts     bind.CallOpts     // Call options to use throughout this session
-	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+	Contract     *DataTypeRegistry       // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts           // Call options to use throughout this session
+	TransactOpts blockchain.TransactOpts // Transaction auth options to use throughout this session
 }
 
 // DataTypeRegistryCallerSession is an auto generated read-only Go binding around an Ethereum contract,
@@ -78,7 +79,7 @@ type DataTypeRegistryCallerSession struct {
 // with pre-set transact options.
 type DataTypeRegistryTransactorSession struct {
 	Contract     *DataTypeRegistryTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts           // Transaction auth options to use throughout this session
+	TransactOpts blockchain.TransactOpts     // Transaction auth options to use throughout this session
 }
 
 // DataTypeRegistryRaw is an auto generated low-level Go binding around an Ethereum contract.
@@ -96,12 +97,12 @@ func (_DataTypeRegistry *DataTypeRegistryRaw) Call(opts *bind.CallOpts, result i
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_DataTypeRegistry *DataTypeRegistryRaw) Transfer(opts *bind.TransactOpts) (*chainTypes.Transaction, error) {
+func (_DataTypeRegistry *DataTypeRegistryRaw) Transfer(opts *blockchain.TransactOpts) (*chainTypes.Transaction, error) {
 	return _DataTypeRegistry.Contract.DataTypeRegistryTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_DataTypeRegistry *DataTypeRegistryRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
+func (_DataTypeRegistry *DataTypeRegistryRaw) Transact(opts *blockchain.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
 	return _DataTypeRegistry.Contract.DataTypeRegistryTransactor.contract.Transact(opts, method, params...)
 }
 
@@ -125,12 +126,12 @@ type DataTypeRegistryTransactorRaw struct {
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_DataTypeRegistry *DataTypeRegistryTransactorRaw) Transfer(opts *bind.TransactOpts) (*chainTypes.Transaction, error) {
+func (_DataTypeRegistry *DataTypeRegistryTransactorRaw) Transfer(opts *blockchain.TransactOpts) (*chainTypes.Transaction, error) {
 	return _DataTypeRegistry.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_DataTypeRegistry *DataTypeRegistryTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
+func (_DataTypeRegistry *DataTypeRegistryTransactorRaw) Transact(opts *blockchain.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
 	return _DataTypeRegistry.Contract.contract.Transact(opts, method, params...)
 }
 
@@ -215,7 +216,7 @@ func (_DataTypeRegistry *DataTypeRegistryCallerSession) IsOwner(name string, own
 // Register is a paid mutator transaction binding the contract method 0x656afdee.
 //
 // Solidity: function register(string name, bytes32 schemaHash) returns()
-func (_DataTypeRegistry *DataTypeRegistryTransactor) Register(opts *bind.TransactOpts, name string, schemaHash common.Hash) (*chainTypes.Transaction, error) {
+func (_DataTypeRegistry *DataTypeRegistryTransactor) Register(opts *blockchain.TransactOpts, name string, schemaHash common.Hash) (*chainTypes.Transaction, error) {
 	return _DataTypeRegistry.contract.Transact(opts, "register", name, schemaHash)
 }
 
@@ -236,7 +237,7 @@ func (_DataTypeRegistry *DataTypeRegistryTransactorSession) Register(name string
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
 //
 // Solidity: function unregister(string name) returns()
-func (_DataTypeRegistry *DataTypeRegistryTransactor) Unregister(opts *bind.TransactOpts, name string) (*chainTypes.Transaction, error) {
+func (_DataTypeRegistry *DataTypeRegistryTransactor) Unregister(opts *blockchain.TransactOpts, name string) (*chainTypes.Transaction, error) {
 	return _DataTypeRegistry.contract.Transact(opts, "unregister", name)
 }
 
@@ -258,8 +259,8 @@ func (_DataTypeRegistry *DataTypeRegistryTransactorSession) Unregister(name stri
 type DataTypeRegistryRegistrationIterator struct {
 	Event *DataTypeRegistryRegistration // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination
@@ -412,8 +413,8 @@ func (_DataTypeRegistry *DataTypeRegistryFilterer) ParseRegistrationFromReceipt(
 type DataTypeRegistryUnregistrationIterator struct {
 	Event *DataTypeRegistryUnregistration // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination

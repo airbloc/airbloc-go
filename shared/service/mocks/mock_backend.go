@@ -41,7 +41,6 @@ func (m *MockBackend) EXPECT() *MockBackendMockRecorder {
 
 // Kms mocks base method
 func (m *MockBackend) Kms() key.Manager {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Kms")
 	ret0, _ := ret[0].(key.Manager)
 	return ret0
@@ -49,13 +48,11 @@ func (m *MockBackend) Kms() key.Manager {
 
 // Kms indicates an expected call of Kms
 func (mr *MockBackendMockRecorder) Kms() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Kms", reflect.TypeOf((*MockBackend)(nil).Kms))
 }
 
 // Client mocks base method
 func (m *MockBackend) Client() *blockchain.Client {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Client")
 	ret0, _ := ret[0].(*blockchain.Client)
 	return ret0
@@ -63,13 +60,11 @@ func (m *MockBackend) Client() *blockchain.Client {
 
 // Client indicates an expected call of Client
 func (mr *MockBackendMockRecorder) Client() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Client", reflect.TypeOf((*MockBackend)(nil).Client))
 }
 
 // MetaDatabase mocks base method
 func (m *MockBackend) MetaDatabase() metadb.Database {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MetaDatabase")
 	ret0, _ := ret[0].(metadb.Database)
 	return ret0
@@ -77,13 +72,11 @@ func (m *MockBackend) MetaDatabase() metadb.Database {
 
 // MetaDatabase indicates an expected call of MetaDatabase
 func (mr *MockBackendMockRecorder) MetaDatabase() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MetaDatabase", reflect.TypeOf((*MockBackend)(nil).MetaDatabase))
 }
 
 // LocalDatabase mocks base method
 func (m *MockBackend) LocalDatabase() localdb.Database {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "LocalDatabase")
 	ret0, _ := ret[0].(localdb.Database)
 	return ret0
@@ -91,13 +84,11 @@ func (m *MockBackend) LocalDatabase() localdb.Database {
 
 // LocalDatabase indicates an expected call of LocalDatabase
 func (mr *MockBackendMockRecorder) LocalDatabase() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LocalDatabase", reflect.TypeOf((*MockBackend)(nil).LocalDatabase))
 }
 
 // Config mocks base method
 func (m *MockBackend) Config() *service.Config {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Config")
 	ret0, _ := ret[0].(*service.Config)
 	return ret0
@@ -105,13 +96,11 @@ func (m *MockBackend) Config() *service.Config {
 
 // Config indicates an expected call of Config
 func (mr *MockBackendMockRecorder) Config() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Config", reflect.TypeOf((*MockBackend)(nil).Config))
 }
 
 // P2P mocks base method
 func (m *MockBackend) P2P() p2p.Server {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "P2P")
 	ret0, _ := ret[0].(p2p.Server)
 	return ret0
@@ -119,13 +108,11 @@ func (m *MockBackend) P2P() p2p.Server {
 
 // P2P indicates an expected call of P2P
 func (mr *MockBackendMockRecorder) P2P() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "P2P", reflect.TypeOf((*MockBackend)(nil).P2P))
 }
 
 // Start mocks base method
 func (m *MockBackend) Start() error {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Start")
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -133,25 +120,21 @@ func (m *MockBackend) Start() error {
 
 // Start indicates an expected call of Start
 func (mr *MockBackendMockRecorder) Start() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Start", reflect.TypeOf((*MockBackend)(nil).Start))
 }
 
 // Stop mocks base method
 func (m *MockBackend) Stop() {
-	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "Stop")
 }
 
 // Stop indicates an expected call of Stop
 func (mr *MockBackendMockRecorder) Stop() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Stop", reflect.TypeOf((*MockBackend)(nil).Stop))
 }
 
 // GetService mocks base method
 func (m *MockBackend) GetService(arg0 string) service.Service {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetService", arg0)
 	ret0, _ := ret[0].(service.Service)
 	return ret0
@@ -159,30 +142,25 @@ func (m *MockBackend) GetService(arg0 string) service.Service {
 
 // GetService indicates an expected call of GetService
 func (mr *MockBackendMockRecorder) GetService(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetService", reflect.TypeOf((*MockBackend)(nil).GetService), arg0)
 }
 
 // AttachService mocks base method
 func (m *MockBackend) AttachService(arg0 string, arg1 service.Service) {
-	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "AttachService", arg0, arg1)
 }
 
 // AttachService indicates an expected call of AttachService
 func (mr *MockBackendMockRecorder) AttachService(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AttachService", reflect.TypeOf((*MockBackend)(nil).AttachService), arg0, arg1)
 }
 
 // DetachService mocks base method
 func (m *MockBackend) DetachService(arg0 string) {
-	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "DetachService", arg0)
 }
 
 // DetachService indicates an expected call of DetachService
 func (mr *MockBackendMockRecorder) DetachService(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DetachService", reflect.TypeOf((*MockBackend)(nil).DetachService), arg0)
 }

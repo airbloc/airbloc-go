@@ -25,8 +25,8 @@ func NewAppRegistryManager(client blockchain.TxClient) IAppRegistryManager {
 // Register is a paid mutator transaction binding the contract method 0xf2c298be.
 //
 // Solidity: function register(string appName) returns()
-func (manager *appRegistryManager) Register(ctx context.Context, appName string) error {
-	receipt, err := manager.IAppRegistryContract.Register(ctx, appName)
+func (manager *appRegistryManager) Register(ctx context.Context, opts *blockchain.TransactOpts, appName string) error {
+	receipt, err := manager.IAppRegistryContract.Register(ctx, opts, appName)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
@@ -43,8 +43,8 @@ func (manager *appRegistryManager) Register(ctx context.Context, appName string)
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
 //
 // Solidity: function unregister(string appName) returns()
-func (manager *appRegistryManager) Unregister(ctx context.Context, appName string) error {
-	receipt, err := manager.IAppRegistryContract.Unregister(ctx, appName)
+func (manager *appRegistryManager) Unregister(ctx context.Context, opts *blockchain.TransactOpts, appName string) error {
+	receipt, err := manager.IAppRegistryContract.Unregister(ctx, opts, appName)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
@@ -62,8 +62,8 @@ func (manager *appRegistryManager) Unregister(ctx context.Context, appName strin
 // TransferAppOwner is a paid mutator transaction binding the contract method 0x1a9dff9f.
 //
 // Solidity: function transferAppOwner(string appName, address newOwner) returns()
-func (manager *appRegistryManager) TransferAppOwner(ctx context.Context, appName string, newOwner common.Address) error {
-	receipt, err := manager.IAppRegistryContract.TransferAppOwner(ctx, appName, newOwner)
+func (manager *appRegistryManager) TransferAppOwner(ctx context.Context, opts *blockchain.TransactOpts, appName string, newOwner common.Address) error {
+	receipt, err := manager.IAppRegistryContract.TransferAppOwner(ctx, opts, appName, newOwner)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}

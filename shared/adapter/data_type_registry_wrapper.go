@@ -28,12 +28,14 @@ type IDataTypeRegistryManager interface {
 	// Transact methods
 	Register(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		name string,
 		schemaHash common.Hash,
 	) error
 
 	Unregister(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		name string,
 	) error
 
@@ -67,11 +69,13 @@ type IDataTypeRegistryCalls interface {
 type IDataTypeRegistryTransacts interface {
 	Register(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		name string,
 		schemaHash common.Hash,
 	) (*chainTypes.Receipt, error)
 	Unregister(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		name string,
 	) (*chainTypes.Receipt, error)
 }
@@ -151,7 +155,7 @@ func (c *DataTypeRegistryContract) CreatedAt() *big.Int {
 }
 
 func newDataTypeRegistryContract(address common.Address, txHash common.Hash, createdAt *big.Int, parsedABI abi.ABI, backend bind.ContractBackend) interface{} {
-	contract := bind.NewBoundContract(address, parsedABI, backend, backend, backend)
+	contract := blockchain.NewBoundContract(address, parsedABI, backend, backend, backend)
 
 	return &DataTypeRegistryContract{
 		address:   address,
@@ -217,10 +221,11 @@ func (c *DataTypeRegistryContract) IsOwner(
 // Solidity: function register(string name, bytes32 schemaHash) returns()
 func (c *DataTypeRegistryContract) Register(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	name string,
 	schemaHash common.Hash,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.DataTypeRegistryTransactor.Register(c.client.Account(), name, schemaHash)
+	tx, err := c.DataTypeRegistryTransactor.Register(c.client.Account(ctx, opts), name, schemaHash)
 	if err != nil {
 		return nil, err
 	}
@@ -232,9 +237,10 @@ func (c *DataTypeRegistryContract) Register(
 // Solidity: function unregister(string name) returns()
 func (c *DataTypeRegistryContract) Unregister(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	name string,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.DataTypeRegistryTransactor.Unregister(c.client.Account(), name)
+	tx, err := c.DataTypeRegistryTransactor.Unregister(c.client.Account(ctx, opts), name)
 	if err != nil {
 		return nil, err
 	}

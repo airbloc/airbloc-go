@@ -28,12 +28,14 @@ type IConsentsManager interface {
 	// Transact methods
 	Consent(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		appName string,
 		consentData types.ConsentData,
 	) error
 
 	ConsentByController(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		userId types.ID,
 		appName string,
 		consentData types.ConsentData,
@@ -41,12 +43,14 @@ type IConsentsManager interface {
 
 	ConsentMany(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		appName string,
 		consentData []types.ConsentData,
 	) error
 
 	ConsentManyByController(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		userId types.ID,
 		appName string,
 		consentData []types.ConsentData,
@@ -54,6 +58,7 @@ type IConsentsManager interface {
 
 	ModifyConsentByController(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		userId types.ID,
 		appName string,
 		consentData types.ConsentData,
@@ -62,6 +67,7 @@ type IConsentsManager interface {
 
 	ModifyConsentManyByController(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		userId types.ID,
 		appName string,
 		consentData []types.ConsentData,
@@ -98,28 +104,33 @@ type IConsentsCalls interface {
 type IConsentsTransacts interface {
 	Consent(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		appName string,
 		consentData types.ConsentData,
 	) (*chainTypes.Receipt, error)
 	ConsentByController(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		userId types.ID,
 		appName string,
 		consentData types.ConsentData,
 	) (*chainTypes.Receipt, error)
 	ConsentMany(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		appName string,
 		consentData []types.ConsentData,
 	) (*chainTypes.Receipt, error)
 	ConsentManyByController(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		userId types.ID,
 		appName string,
 		consentData []types.ConsentData,
 	) (*chainTypes.Receipt, error)
 	ModifyConsentByController(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		userId types.ID,
 		appName string,
 		consentData types.ConsentData,
@@ -127,6 +138,7 @@ type IConsentsTransacts interface {
 	) (*chainTypes.Receipt, error)
 	ModifyConsentManyByController(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		userId types.ID,
 		appName string,
 		consentData []types.ConsentData,
@@ -204,7 +216,7 @@ func (c *ConsentsContract) CreatedAt() *big.Int {
 }
 
 func newConsentsContract(address common.Address, txHash common.Hash, createdAt *big.Int, parsedABI abi.ABI, backend bind.ContractBackend) interface{} {
-	contract := bind.NewBoundContract(address, parsedABI, backend, backend, backend)
+	contract := blockchain.NewBoundContract(address, parsedABI, backend, backend, backend)
 
 	return &ConsentsContract{
 		address:   address,
@@ -221,12 +233,12 @@ func newConsentsContract(address common.Address, txHash common.Hash, createdAt *
 // convenient hacks for blockchain.Client
 func init() {
 	blockchain.AddContractConstructor("Consents", newConsentsContract)
-	blockchain.RegisterSelector("0xb838bdb7", "consent(string,(uint8,string,uint8))")
-	blockchain.RegisterSelector("0x503905ac", "consentByController(bytes8,string,(uint8,string,uint8))")
-	blockchain.RegisterSelector("0xbbbd8a0d", "consentMany(string,(uint8,string,uint8)[])")
-	blockchain.RegisterSelector("0x18b264e3", "consentManyByController(bytes8,string,(uint8,string,uint8)[])")
-	blockchain.RegisterSelector("0xe4f5477b", "modifyConsentByController(bytes8,string,(uint8,string,uint8),bytes)")
-	blockchain.RegisterSelector("0xba3bb255", "modifyConsentManyByController(bytes8,string,(uint8,string,uint8)[],bytes)")
+	blockchain.RegisterSelector("0xcd4dc804", "consent(string,(uint8,string,bool))")
+	blockchain.RegisterSelector("0xf573f89a", "consentByController(bytes8,string,(uint8,string,bool))")
+	blockchain.RegisterSelector("0xdd43ad05", "consentMany(string,(uint8,string,bool)[])")
+	blockchain.RegisterSelector("0xae6d5034", "consentManyByController(bytes8,string,(uint8,string,bool)[])")
+	blockchain.RegisterSelector("0x0bfec389", "modifyConsentByController(bytes8,string,(uint8,string,bool),bytes)")
+	blockchain.RegisterSelector("0xe031b1cf", "modifyConsentManyByController(bytes8,string,(uint8,string,bool)[],bytes)")
 }
 
 // IsAllowed is a free data retrieval call binding the contract method 0x50615985.
@@ -262,96 +274,102 @@ func (c *ConsentsContract) IsAllowedAt(
 	return c.ConsentsCaller.IsAllowedAt(nil, userId, appName, action, dataType, blockNumber)
 }
 
-// Consent is a paid mutator transaction binding the contract method 0xb838bdb7.
+// Consent is a paid mutator transaction binding the contract method 0xcd4dc804.
 //
-// Solidity: function consent(string appName, (uint8,string,uint8) consentData) returns()
+// Solidity: function consent(string appName, (uint8,string,bool) consentData) returns()
 func (c *ConsentsContract) Consent(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	appName string,
 	consentData types.ConsentData,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.ConsentsTransactor.Consent(c.client.Account(), appName, consentData)
+	tx, err := c.ConsentsTransactor.Consent(c.client.Account(ctx, opts), appName, consentData)
 	if err != nil {
 		return nil, err
 	}
 	return c.client.WaitMined(ctx, tx)
 }
 
-// ConsentByController is a paid mutator transaction binding the contract method 0x503905ac.
+// ConsentByController is a paid mutator transaction binding the contract method 0xf573f89a.
 //
-// Solidity: function consentByController(bytes8 userId, string appName, (uint8,string,uint8) consentData) returns()
+// Solidity: function consentByController(bytes8 userId, string appName, (uint8,string,bool) consentData) returns()
 func (c *ConsentsContract) ConsentByController(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	userId types.ID,
 	appName string,
 	consentData types.ConsentData,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.ConsentsTransactor.ConsentByController(c.client.Account(), userId, appName, consentData)
+	tx, err := c.ConsentsTransactor.ConsentByController(c.client.Account(ctx, opts), userId, appName, consentData)
 	if err != nil {
 		return nil, err
 	}
 	return c.client.WaitMined(ctx, tx)
 }
 
-// ConsentMany is a paid mutator transaction binding the contract method 0xbbbd8a0d.
+// ConsentMany is a paid mutator transaction binding the contract method 0xdd43ad05.
 //
-// Solidity: function consentMany(string appName, (uint8,string,uint8)[] consentData) returns()
+// Solidity: function consentMany(string appName, (uint8,string,bool)[] consentData) returns()
 func (c *ConsentsContract) ConsentMany(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	appName string,
 	consentData []types.ConsentData,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.ConsentsTransactor.ConsentMany(c.client.Account(), appName, consentData)
+	tx, err := c.ConsentsTransactor.ConsentMany(c.client.Account(ctx, opts), appName, consentData)
 	if err != nil {
 		return nil, err
 	}
 	return c.client.WaitMined(ctx, tx)
 }
 
-// ConsentManyByController is a paid mutator transaction binding the contract method 0x18b264e3.
+// ConsentManyByController is a paid mutator transaction binding the contract method 0xae6d5034.
 //
-// Solidity: function consentManyByController(bytes8 userId, string appName, (uint8,string,uint8)[] consentData) returns()
+// Solidity: function consentManyByController(bytes8 userId, string appName, (uint8,string,bool)[] consentData) returns()
 func (c *ConsentsContract) ConsentManyByController(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	userId types.ID,
 	appName string,
 	consentData []types.ConsentData,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.ConsentsTransactor.ConsentManyByController(c.client.Account(), userId, appName, consentData)
+	tx, err := c.ConsentsTransactor.ConsentManyByController(c.client.Account(ctx, opts), userId, appName, consentData)
 	if err != nil {
 		return nil, err
 	}
 	return c.client.WaitMined(ctx, tx)
 }
 
-// ModifyConsentByController is a paid mutator transaction binding the contract method 0xe4f5477b.
+// ModifyConsentByController is a paid mutator transaction binding the contract method 0x0bfec389.
 //
-// Solidity: function modifyConsentByController(bytes8 userId, string appName, (uint8,string,uint8) consentData, bytes passwordSignature) returns()
+// Solidity: function modifyConsentByController(bytes8 userId, string appName, (uint8,string,bool) consentData, bytes passwordSignature) returns()
 func (c *ConsentsContract) ModifyConsentByController(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	userId types.ID,
 	appName string,
 	consentData types.ConsentData,
 	passwordSignature []byte,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.ConsentsTransactor.ModifyConsentByController(c.client.Account(), userId, appName, consentData, passwordSignature)
+	tx, err := c.ConsentsTransactor.ModifyConsentByController(c.client.Account(ctx, opts), userId, appName, consentData, passwordSignature)
 	if err != nil {
 		return nil, err
 	}
 	return c.client.WaitMined(ctx, tx)
 }
 
-// ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xba3bb255.
+// ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xe031b1cf.
 //
-// Solidity: function modifyConsentManyByController(bytes8 userId, string appName, (uint8,string,uint8)[] consentData, bytes passwordSignature) returns()
+// Solidity: function modifyConsentManyByController(bytes8 userId, string appName, (uint8,string,bool)[] consentData, bytes passwordSignature) returns()
 func (c *ConsentsContract) ModifyConsentManyByController(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	userId types.ID,
 	appName string,
 	consentData []types.ConsentData,
 	passwordSignature []byte,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.ConsentsTransactor.ModifyConsentManyByController(c.client.Account(), userId, appName, consentData, passwordSignature)
+	tx, err := c.ConsentsTransactor.ModifyConsentManyByController(c.client.Account(ctx, opts), userId, appName, consentData, passwordSignature)
 	if err != nil {
 		return nil, err
 	}

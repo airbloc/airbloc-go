@@ -29,8 +29,8 @@ func NewAccountsManager(client blockchain.TxClient) IAccountsManager {
 // Create is a paid mutator transaction binding the contract method 0xefc81a8c.
 //
 // Solidity: function create() returns()
-func (manager *accountsManager) Create(ctx context.Context) (types.ID, error) {
-	receipt, err := manager.IAccountsContract.Create(ctx)
+func (manager *accountsManager) Create(ctx context.Context, opts *blockchain.TransactOpts) (types.ID, error) {
+	receipt, err := manager.IAccountsContract.Create(ctx, opts)
 	if err != nil {
 		return types.ID{}, errors.Wrap(err, "failed to transact")
 	}
@@ -50,8 +50,8 @@ func (manager *accountsManager) Create(ctx context.Context) (types.ID, error) {
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
 //
 // Solidity: function createTemporary(bytes32 identityHash) returns()
-func (manager *accountsManager) CreateTemporary(ctx context.Context, identityHash common.Hash) (types.ID, error) {
-	receipt, err := manager.IAccountsContract.CreateTemporary(ctx, identityHash)
+func (manager *accountsManager) CreateTemporary(ctx context.Context, opts *blockchain.TransactOpts, identityHash common.Hash) (types.ID, error) {
+	receipt, err := manager.IAccountsContract.CreateTemporary(ctx, opts, identityHash)
 	if err != nil {
 		return types.ID{}, errors.Wrap(err, "failed to transact")
 	}
@@ -73,11 +73,12 @@ func (manager *accountsManager) CreateTemporary(ctx context.Context, identityHas
 // Solidity: function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) returns()
 func (manager *accountsManager) UnlockTemporary(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	identityPreimage common.Hash,
 	newOwner common.Address,
 	passwordSignature []byte,
 ) error {
-	receipt, err := manager.IAccountsContract.UnlockTemporary(ctx, identityPreimage, newOwner, passwordSignature)
+	receipt, err := manager.IAccountsContract.UnlockTemporary(ctx, opts, identityPreimage, newOwner, passwordSignature)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
@@ -97,8 +98,8 @@ func (manager *accountsManager) UnlockTemporary(
 // SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
 //
 // Solidity: function setController(address controller) returns()
-func (manager *accountsManager) SetController(ctx context.Context, controller common.Address) error {
-	_, err := manager.IAccountsContract.SetController(ctx, controller)
+func (manager *accountsManager) SetController(ctx context.Context, opts *blockchain.TransactOpts, controller common.Address) error {
+	_, err := manager.IAccountsContract.SetController(ctx, opts, controller)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
@@ -112,7 +113,7 @@ func (manager *accountsManager) SetController(ctx context.Context, controller co
 // Solidity: function getAccountId(address sender) constant returns(bytes8)
 func (manager *accountsManager) GetAccountId(owner common.Address) (types.ID, error) {
 	if owner == (common.Address{}) {
-		return manager.IAccountsContract.GetAccountId(manager.client.Account().From)
+		return manager.IAccountsContract.GetAccountId(manager.client.Account(context.Background()).From)
 	} else {
 		return manager.IAccountsContract.GetAccountId(owner)
 	}

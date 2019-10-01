@@ -28,12 +28,14 @@ type IAccountsManager interface {
 	// Transact methods
 	Create(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 	) (
 		types.ID,
 		error,
 	)
 	CreateTemporary(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		identityHash common.Hash,
 	) (
 		types.ID,
@@ -41,11 +43,13 @@ type IAccountsManager interface {
 	)
 	SetController(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		controller common.Address,
 	) error
 
 	UnlockTemporary(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		identityPreimage common.Hash,
 		newOwner common.Address,
 		passwordSignature []byte,
@@ -112,17 +116,21 @@ type IAccountsCalls interface {
 type IAccountsTransacts interface {
 	Create(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 	) (*chainTypes.Receipt, error)
 	CreateTemporary(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		identityHash common.Hash,
 	) (*chainTypes.Receipt, error)
 	SetController(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		controller common.Address,
 	) (*chainTypes.Receipt, error)
 	UnlockTemporary(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		identityPreimage common.Hash,
 		newOwner common.Address,
 		passwordSignature []byte,
@@ -225,7 +233,7 @@ func (c *AccountsContract) CreatedAt() *big.Int {
 }
 
 func newAccountsContract(address common.Address, txHash common.Hash, createdAt *big.Int, parsedABI abi.ABI, backend bind.ContractBackend) interface{} {
-	contract := bind.NewBoundContract(address, parsedABI, backend, backend, backend)
+	contract := blockchain.NewBoundContract(address, parsedABI, backend, backend, backend)
 
 	return &AccountsContract{
 		address:   address,
@@ -359,8 +367,9 @@ func (c *AccountsContract) IsTemporary(
 // Solidity: function create() returns(bytes8)
 func (c *AccountsContract) Create(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.AccountsTransactor.Create(c.client.Account())
+	tx, err := c.AccountsTransactor.Create(c.client.Account(ctx, opts))
 	if err != nil {
 		return nil, err
 	}
@@ -372,9 +381,10 @@ func (c *AccountsContract) Create(
 // Solidity: function createTemporary(bytes32 identityHash) returns(bytes8)
 func (c *AccountsContract) CreateTemporary(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	identityHash common.Hash,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.AccountsTransactor.CreateTemporary(c.client.Account(), identityHash)
+	tx, err := c.AccountsTransactor.CreateTemporary(c.client.Account(ctx, opts), identityHash)
 	if err != nil {
 		return nil, err
 	}
@@ -386,9 +396,10 @@ func (c *AccountsContract) CreateTemporary(
 // Solidity: function setController(address controller) returns()
 func (c *AccountsContract) SetController(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	controller common.Address,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.AccountsTransactor.SetController(c.client.Account(), controller)
+	tx, err := c.AccountsTransactor.SetController(c.client.Account(ctx, opts), controller)
 	if err != nil {
 		return nil, err
 	}
@@ -400,11 +411,12 @@ func (c *AccountsContract) SetController(
 // Solidity: function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) returns()
 func (c *AccountsContract) UnlockTemporary(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	identityPreimage common.Hash,
 	newOwner common.Address,
 	passwordSignature []byte,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.AccountsTransactor.UnlockTemporary(c.client.Account(), identityPreimage, newOwner, passwordSignature)
+	tx, err := c.AccountsTransactor.UnlockTemporary(c.client.Account(ctx, opts), identityPreimage, newOwner, passwordSignature)
 	if err != nil {
 		return nil, err
 	}

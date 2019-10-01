@@ -25,8 +25,8 @@ func NewDataTypeRegistryManager(client blockchain.TxClient) IDataTypeRegistryMan
 // Register is a paid mutator transaction binding the contract method 0x656afdee.
 //
 // Solidity: function register(string name, bytes32 schemaHash) returns()
-func (manager *dataTypeRegistryManager) Register(ctx context.Context, name string, schemaHash common.Hash) error {
-	receipt, err := manager.IDataTypeRegistryContract.Register(ctx, name, schemaHash)
+func (manager *dataTypeRegistryManager) Register(ctx context.Context, opts *blockchain.TransactOpts, name string, schemaHash common.Hash) error {
+	receipt, err := manager.IDataTypeRegistryContract.Register(ctx, opts, name, schemaHash)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
@@ -43,8 +43,8 @@ func (manager *dataTypeRegistryManager) Register(ctx context.Context, name strin
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
 //
 // Solidity: function unregister(string name) returns()
-func (manager *dataTypeRegistryManager) Unregister(ctx context.Context, name string) error {
-	receipt, err := manager.IDataTypeRegistryContract.Unregister(ctx, name)
+func (manager *dataTypeRegistryManager) Unregister(ctx context.Context, opts *blockchain.TransactOpts, name string) error {
+	receipt, err := manager.IDataTypeRegistryContract.Unregister(ctx, opts, name)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}

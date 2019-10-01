@@ -28,6 +28,7 @@ type IControllerRegistryManager interface {
 	// Transact methods
 	Register(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		controllerAddr common.Address,
 	) error
 
@@ -54,6 +55,7 @@ type IControllerRegistryCalls interface {
 type IControllerRegistryTransacts interface {
 	Register(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		controllerAddr common.Address,
 	) (*chainTypes.Receipt, error)
 }
@@ -146,7 +148,7 @@ func (c *ControllerRegistryContract) CreatedAt() *big.Int {
 }
 
 func newControllerRegistryContract(address common.Address, txHash common.Hash, createdAt *big.Int, parsedABI abi.ABI, backend bind.ContractBackend) interface{} {
-	contract := bind.NewBoundContract(address, parsedABI, backend, backend, backend)
+	contract := blockchain.NewBoundContract(address, parsedABI, backend, backend, backend)
 
 	return &ControllerRegistryContract{
 		address:   address,
@@ -197,9 +199,10 @@ func (c *ControllerRegistryContract) Get(
 // Solidity: function register(address controllerAddr) returns()
 func (c *ControllerRegistryContract) Register(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	controllerAddr common.Address,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.ControllerRegistryTransactor.Register(c.client.Account(), controllerAddr)
+	tx, err := c.ControllerRegistryTransactor.Register(c.client.Account(ctx, opts), controllerAddr)
 	if err != nil {
 		return nil, err
 	}

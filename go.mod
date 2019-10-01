@@ -12,7 +12,7 @@ require (
 	cloud.google.com/go v0.37.1
 	github.com/airbloc/airframe v0.0.0-20190822094319-71d50205227c
 	github.com/airbloc/logger v1.1.3
-	github.com/aristanetworks/goarista v0.0.0-20190912214011-b54698eaaca6 // indirect
+	github.com/aristanetworks/goarista v0.0.0-20190924011532-60b7b74727fd // indirect
 	github.com/aws/aws-sdk-go v1.19.7
 	github.com/dgraph-io/badger v1.5.5
 	github.com/gin-gonic/gin v1.3.0
@@ -52,8 +52,9 @@ require (
 	github.com/urfave/cli v1.21.0
 	github.com/valyala/fasthttp v1.4.0
 	go.mongodb.org/mongo-driver v1.0.0
+	go.uber.org/multierr v1.2.0 // indirect
 	golang.org/x/crypto v0.0.0-20190909091759-094676da4a83
-	golang.org/x/net v0.0.0-20190918130420-a8b05e9114ab // indirect
+	golang.org/x/net v0.0.0-20190930134127-c5a3c61f89f3 // indirect
 	golang.org/x/tools v0.0.0-20190925020647-22afafe3322a // indirect
 	google.golang.org/api v0.2.0
 	google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55

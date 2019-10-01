@@ -28,22 +28,26 @@ type IExchangeManager interface {
 	// Transact methods
 	AddDataIds(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		offerId types.ID,
 		dataIds []types.DataId,
 	) error
 
 	Cancel(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		offerId types.ID,
 	) error
 
 	Order(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		offerId types.ID,
 	) error
 
 	Prepare(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		provider string,
 		consumer common.Address,
 		escrow common.Address,
@@ -56,11 +60,13 @@ type IExchangeManager interface {
 	)
 	Reject(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		offerId types.ID,
 	) error
 
 	Settle(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		offerId types.ID,
 	) error
 
@@ -94,19 +100,23 @@ type IExchangeCalls interface {
 type IExchangeTransacts interface {
 	AddDataIds(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		offerId types.ID,
 		dataIds []types.DataId,
 	) (*chainTypes.Receipt, error)
 	Cancel(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		offerId types.ID,
 	) (*chainTypes.Receipt, error)
 	Order(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		offerId types.ID,
 	) (*chainTypes.Receipt, error)
 	Prepare(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		provider string,
 		consumer common.Address,
 		escrow common.Address,
@@ -116,10 +126,12 @@ type IExchangeTransacts interface {
 	) (*chainTypes.Receipt, error)
 	Reject(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		offerId types.ID,
 	) (*chainTypes.Receipt, error)
 	Settle(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		offerId types.ID,
 	) (*chainTypes.Receipt, error)
 }
@@ -270,7 +282,7 @@ func (c *ExchangeContract) CreatedAt() *big.Int {
 }
 
 func newExchangeContract(address common.Address, txHash common.Hash, createdAt *big.Int, parsedABI abi.ABI, backend bind.ContractBackend) interface{} {
-	contract := bind.NewBoundContract(address, parsedABI, backend, backend, backend)
+	contract := blockchain.NewBoundContract(address, parsedABI, backend, backend, backend)
 
 	return &ExchangeContract{
 		address:   address,
@@ -340,10 +352,11 @@ func (c *ExchangeContract) OfferExists(
 // Solidity: function addDataIds(bytes8 offerId, bytes20[] dataIds) returns()
 func (c *ExchangeContract) AddDataIds(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	offerId types.ID,
 	dataIds []types.DataId,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.ExchangeTransactor.AddDataIds(c.client.Account(), offerId, dataIds)
+	tx, err := c.ExchangeTransactor.AddDataIds(c.client.Account(ctx, opts), offerId, dataIds)
 	if err != nil {
 		return nil, err
 	}
@@ -355,9 +368,10 @@ func (c *ExchangeContract) AddDataIds(
 // Solidity: function cancel(bytes8 offerId) returns()
 func (c *ExchangeContract) Cancel(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	offerId types.ID,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.ExchangeTransactor.Cancel(c.client.Account(), offerId)
+	tx, err := c.ExchangeTransactor.Cancel(c.client.Account(ctx, opts), offerId)
 	if err != nil {
 		return nil, err
 	}
@@ -369,9 +383,10 @@ func (c *ExchangeContract) Cancel(
 // Solidity: function order(bytes8 offerId) returns()
 func (c *ExchangeContract) Order(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	offerId types.ID,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.ExchangeTransactor.Order(c.client.Account(), offerId)
+	tx, err := c.ExchangeTransactor.Order(c.client.Account(ctx, opts), offerId)
 	if err != nil {
 		return nil, err
 	}
@@ -383,6 +398,7 @@ func (c *ExchangeContract) Order(
 // Solidity: function prepare(string provider, address consumer, address escrow, bytes4 escrowSign, bytes escrowArgs, bytes20[] dataIds) returns(bytes8)
 func (c *ExchangeContract) Prepare(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	provider string,
 	consumer common.Address,
 	escrow common.Address,
@@ -390,7 +406,7 @@ func (c *ExchangeContract) Prepare(
 	escrowArgs []byte,
 	dataIds []types.DataId,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.ExchangeTransactor.Prepare(c.client.Account(), provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
+	tx, err := c.ExchangeTransactor.Prepare(c.client.Account(ctx, opts), provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
 	if err != nil {
 		return nil, err
 	}
@@ -402,9 +418,10 @@ func (c *ExchangeContract) Prepare(
 // Solidity: function reject(bytes8 offerId) returns()
 func (c *ExchangeContract) Reject(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	offerId types.ID,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.ExchangeTransactor.Reject(c.client.Account(), offerId)
+	tx, err := c.ExchangeTransactor.Reject(c.client.Account(ctx, opts), offerId)
 	if err != nil {
 		return nil, err
 	}
@@ -416,9 +433,10 @@ func (c *ExchangeContract) Reject(
 // Solidity: function settle(bytes8 offerId) returns()
 func (c *ExchangeContract) Settle(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	offerId types.ID,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.ExchangeTransactor.Settle(c.client.Account(), offerId)
+	tx, err := c.ExchangeTransactor.Settle(c.client.Account(ctx, opts), offerId)
 	if err != nil {
 		return nil, err
 	}
