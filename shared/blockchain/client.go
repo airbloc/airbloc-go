@@ -20,7 +20,7 @@ type Client struct {
 	*client.Client
 	ctx        context.Context
 	cfg        ClientOpt
-	transactor *bind.TransactOpts
+	transactor *TransactOpts
 	contracts  *contractManager
 	logger     *logger.Logger
 }
@@ -69,12 +69,32 @@ func NewClient(key *key.Key, rawurl string, cfg ClientOpt) (*Client, error) {
 	return klayent, nil
 }
 
-func (c Client) Account() *bind.TransactOpts {
-	return c.transactor
+func (c Client) Account(ctx context.Context, opts ...*TransactOpts) *TransactOpts {
+	mergedOpts := &TransactOpts{
+		TransactOpts: c.transactor.TransactOpts,
+		FeePayer:     c.transactor.FeePayer,
+		TxType:       c.transactor.TxType,
+	}
+	mergedOpts.Context = ctx
+	for _, opt := range opts {
+		if opt.TransactOpts != nil {
+			mergedOpts.TransactOpts = opt.TransactOpts
+		}
+		if opt.FeePayer != (common.Address{}) {
+			mergedOpts.FeePayer = opt.FeePayer
+		}
+		if opt.TxType != 0 {
+			mergedOpts.TxType = opt.TxType
+		}
+	}
+	return mergedOpts
 }
 
 func (c *Client) SetAccount(key *key.Key) {
-	c.transactor = bind.NewKeyedTransactor(key.PrivateKey)
+	c.transactor = &TransactOpts{
+		TransactOpts: bind.NewKeyedTransactor(key.PrivateKey),
+		TxType:       types.TxTypeValueTransfer,
+	}
 }
 
 func (c *Client) GetContract(contractType interface{}) interface{} {
