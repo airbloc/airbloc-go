@@ -28,7 +28,7 @@ func NewAccountsAPI(backend service.Backend) (api.API, error) {
 //
 // Solidity: function create() returns()
 func (api *accountsAPI) create(c *gin.Context) {
-	accountId, err := api.accounts.Create(c)
+	accountId, err := api.accounts.Create(c, nil)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -50,7 +50,7 @@ func (api *accountsAPI) createTemporary(c *gin.Context) {
 	}
 
 	identityHash := common.HexToHash(req.IdentityHash)
-	accountId, err := api.accounts.CreateTemporary(c, identityHash)
+	accountId, err := api.accounts.CreateTemporary(c, nil, identityHash)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -81,7 +81,7 @@ func (api *accountsAPI) unlockTemporary(c *gin.Context) {
 		return
 	}
 
-	err = api.accounts.UnlockTemporary(c, identityPreimage, newOwner, passwordSignature)
+	err = api.accounts.UnlockTemporary(c, nil, identityPreimage, newOwner, passwordSignature)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -104,7 +104,7 @@ func (api *accountsAPI) setController(c *gin.Context) {
 	}
 
 	controller := common.HexToAddress(req.Controller)
-	if err := api.accounts.SetController(c, controller); err != nil {
+	if err := api.accounts.SetController(c, nil, controller); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

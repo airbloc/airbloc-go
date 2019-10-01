@@ -204,7 +204,7 @@ func (service *service) createConsentHandler(allow bool) p2p.RPCHandler {
 			DataType: dataType,
 			Allow:    allow,
 		}
-		err = service.consents.ConsentByController(ctx, accountId, appName, consentData)
+		err = service.consents.ConsentByController(ctx, nil, accountId, appName, consentData)
 		if err != nil {
 			return nil, errors.Wrap(err, "failed to modify DAuth settings")
 		}
@@ -246,7 +246,7 @@ func (service *service) consentManyHandler(
 		}
 	}
 
-	err = service.consents.ConsentManyByController(ctx, accountId, appName, consentData)
+	err = service.consents.ConsentManyByController(ctx, nil, accountId, appName, consentData)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to modify DAuth settings")
 	}
@@ -264,7 +264,7 @@ func (service *service) signUpHandler(
 	}
 
 	identityHash := common.HexToHash(request.GetIdentityHash())
-	accountId, err := service.accounts.CreateTemporary(ctx, identityHash)
+	accountId, err := service.accounts.CreateTemporary(ctx, nil, identityHash)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create temporary account")
 	}

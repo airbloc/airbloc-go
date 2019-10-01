@@ -38,7 +38,7 @@ func (api *consentsAPI) consentByController(c *gin.Context, appName string, req 
 		return
 	}
 
-	if err = api.consents.ConsentByController(c, userId, appName, req.ConsentData); err != nil {
+	if err = api.consents.ConsentByController(c, nil, userId, appName, req.ConsentData); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -59,7 +59,7 @@ func (api *consentsAPI) modifyConsentByController(c *gin.Context, appName string
 		return
 	}
 
-	if err = api.consents.ModifyConsentByController(c, userId, appName, req.ConsentData, passwordSignature); err != nil {
+	if err = api.consents.ModifyConsentByController(c, nil, userId, appName, req.ConsentData, passwordSignature); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -103,7 +103,7 @@ func (api *consentsAPI) consent(c *gin.Context) {
 		return
 	}
 
-	if err := api.consents.Consent(c, appName, req.ConsentData); err != nil {
+	if err := api.consents.Consent(c, nil, appName, req.ConsentData); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -124,7 +124,7 @@ func (api *consentsAPI) consentManyByController(c *gin.Context, appName string, 
 		return
 	}
 
-	if err = api.consents.ConsentManyByController(c, userId, appName, consentData); err != nil {
+	if err = api.consents.ConsentManyByController(c, nil, userId, appName, consentData); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -146,7 +146,7 @@ func (api *consentsAPI) modifyConsentManyByController(c *gin.Context, appName st
 	}
 
 	if err = api.consents.ModifyConsentManyByController(
-		c, userId,
+		c, nil, userId,
 		appName,
 		consentData,
 		passwordSignature,
@@ -196,7 +196,7 @@ func (api *consentsAPI) consentMany(c *gin.Context) {
 		return
 	}
 
-	if err = api.consents.ConsentMany(c, appName, req.ConsentData); err != nil {
+	if err = api.consents.ConsentMany(c, nil, appName, req.ConsentData); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

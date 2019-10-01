@@ -43,7 +43,7 @@ func (api *appRegistryAPI) register(c *gin.Context) {
 		return
 	}
 
-	if err := api.apps.Register(c, req.AppName); err != nil {
+	if err := api.apps.Register(c, nil, req.AppName); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -63,7 +63,7 @@ func (api *appRegistryAPI) unregister(c *gin.Context) {
 		return
 	}
 
-	if err := api.apps.Unregister(c, req.AppName); err != nil {
+	if err := api.apps.Unregister(c, nil, req.AppName); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -115,7 +115,7 @@ func (api *appRegistryAPI) transferAppOwner(c *gin.Context) {
 		return
 	}
 
-	if err := api.apps.TransferAppOwner(c, req.AppName, common.HexToAddress(req.NewOwner)); err != nil {
+	if err := api.apps.TransferAppOwner(c, nil, req.AppName, common.HexToAddress(req.NewOwner)); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

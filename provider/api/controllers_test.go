@@ -29,7 +29,7 @@ func TestControllerRegistryAPI_Register(t *testing.T) {
 		Exists(common.HexToAddress(testControllerAddr)).
 		Return(false, nil)
 	mockManager.EXPECT().
-		Register(c, common.HexToAddress(testControllerAddr)).
+		Register(c, nil, common.HexToAddress(testControllerAddr)).
 		Return(nil)
 
 	api := &controllerRegistryAPI{mockManager}
@@ -65,7 +65,7 @@ func TestControllerRegistryAPI_Register_FailedToRegister(t *testing.T) {
 		Exists(common.HexToAddress(testControllerAddr)).
 		Return(false, nil)
 	mockManager.EXPECT().
-		Register(c, common.HexToAddress(testControllerAddr)).
+		Register(c, nil, common.HexToAddress(testControllerAddr)).
 		Return(testutils.TestErr)
 
 	api := &controllerRegistryAPI{mockManager}

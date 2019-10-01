@@ -27,7 +27,7 @@ func (api *ExchangeAPI) Settle(c *gin.Context) {
 		return
 	}
 
-	if err := api.manager.Settle(c, offerId); err != nil {
+	if err := api.manager.Settle(c, nil, offerId); err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
 		return
 	}
@@ -42,7 +42,7 @@ func (api *ExchangeAPI) Reject(c *gin.Context) {
 		return
 	}
 
-	if err := api.manager.Reject(c, offerId); err != nil {
+	if err := api.manager.Reject(c, nil, offerId); err != nil {
 		c.AbortWithStatusJSON(http.StatusConflict, gin.H{"message": err})
 		return
 	}

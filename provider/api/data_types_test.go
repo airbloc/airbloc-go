@@ -35,7 +35,7 @@ func TestDataTypeRegistryAPI_Register(t *testing.T) {
 		Exists(testDataType).
 		Return(false, nil)
 	mockManager.EXPECT().
-		Register(c, testDataType, common.HexToHash(testSchemaHash)).
+		Register(c, nil, testDataType, common.HexToHash(testSchemaHash)).
 		Return(nil)
 
 	api := &dataTypeRegistryAPI{mockManager}
@@ -74,7 +74,7 @@ func TestDataTypeRegistryAPI_Register_FailedToRegister(t *testing.T) {
 		Exists(testDataType).
 		Return(false, nil)
 	mockManager.EXPECT().
-		Register(c, testDataType, common.HexToHash(testSchemaHash)).
+		Register(c, nil, testDataType, common.HexToHash(testSchemaHash)).
 		Return(testutils.TestErr)
 
 	api := &dataTypeRegistryAPI{mockManager}
@@ -92,7 +92,7 @@ func TestDataTypeRegistryAPI_Unregister(t *testing.T) {
 
 	mockManager := adapterMock.NewMockIDataTypeRegistryManager(mockController)
 	mockManager.EXPECT().
-		Unregister(c, testDataType).
+		Unregister(c, nil, testDataType).
 		Return(nil)
 
 	api := &dataTypeRegistryAPI{mockManager}
@@ -125,7 +125,7 @@ func TestDataTypeRegistryAPI_Unregister_FailedToUnregister(t *testing.T) {
 
 	mockManager := adapterMock.NewMockIDataTypeRegistryManager(mockController)
 	mockManager.EXPECT().
-		Unregister(c, testDataType).
+		Unregister(c, nil, testDataType).
 		Return(testutils.TestErr)
 
 	api := &dataTypeRegistryAPI{mockManager}

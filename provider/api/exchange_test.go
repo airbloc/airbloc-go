@@ -60,7 +60,7 @@ func TestExchangeAPI_Prepare(t *testing.T) {
 
 	mockManager := adapterMock.NewMockIExchangeManager(mockController)
 	mockManager.EXPECT().
-		Prepare(c,
+		Prepare(c, nil,
 			testProvider,
 			common.HexToAddress(testConsumer),
 			common.HexToAddress(testEscrow),
@@ -182,7 +182,7 @@ func TestExchangeAPI_Prepare_FailedToPrepare(t *testing.T) {
 
 	mockManager := adapterMock.NewMockIExchangeManager(mockController)
 	mockManager.EXPECT().
-		Prepare(c,
+		Prepare(c, nil,
 			testProvider,
 			common.HexToAddress(testConsumer),
 			common.HexToAddress(testEscrow),
@@ -214,7 +214,7 @@ func TestExchangeAPI_AddDataIds(t *testing.T) {
 
 	mockManager := adapterMock.NewMockIExchangeManager(mockController)
 	mockManager.EXPECT().
-		AddDataIds(c, offerId, dataIds).
+		AddDataIds(c, nil, offerId, dataIds).
 		Return(nil)
 
 	api := &exchangeAPI{mockManager}
@@ -235,7 +235,7 @@ func TestExchangeAPI_Order(t *testing.T) {
 
 	mockManager := adapterMock.NewMockIExchangeManager(mockController)
 	mockManager.EXPECT().
-		Order(c, offerId).
+		Order(c, nil, offerId).
 		Return(nil)
 
 	api := &exchangeAPI{mockManager}
@@ -256,7 +256,7 @@ func TestExchangeAPI_Cancel(t *testing.T) {
 
 	mockManager := adapterMock.NewMockIExchangeManager(mockController)
 	mockManager.EXPECT().
-		Cancel(c, offerId).
+		Cancel(c, nil, offerId).
 		Return(nil)
 
 	api := &exchangeAPI{mockManager}

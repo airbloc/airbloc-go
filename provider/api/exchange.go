@@ -69,7 +69,7 @@ func (api *exchangeAPI) prepare(c *gin.Context) {
 	}
 
 	offerId, err := api.manager.Prepare(
-		c, req.Provider, consumer,
+		c, nil, req.Provider, consumer,
 		escrow, escrowSign, escrowArgs, dataIds,
 	)
 	if err != nil {
@@ -113,7 +113,7 @@ func (api *exchangeAPI) addDataIds(c *gin.Context) {
 		}
 	}
 
-	err = api.manager.AddDataIds(c, offerId, dataIds)
+	err = api.manager.AddDataIds(c, nil, offerId, dataIds)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -138,7 +138,7 @@ func (api *exchangeAPI) order(c *gin.Context) {
 		return
 	}
 
-	err = api.manager.Order(c, offerId)
+	err = api.manager.Order(c, nil, offerId)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -163,7 +163,7 @@ func (api *exchangeAPI) cancel(c *gin.Context) {
 		return
 	}
 
-	err = api.manager.Cancel(c, offerId)
+	err = api.manager.Cancel(c, nil, offerId)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

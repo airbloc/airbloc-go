@@ -41,7 +41,7 @@ func (api *controllerRegistryAPI) register(c *gin.Context) {
 		return
 	}
 
-	if err := api.controllers.Register(c, controllerAddr); err != nil {
+	if err := api.controllers.Register(c, nil, controllerAddr); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
