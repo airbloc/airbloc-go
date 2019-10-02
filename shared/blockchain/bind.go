@@ -6,15 +6,13 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/pkg/errors"
-
-	"github.com/klaytn/klaytn/crypto"
-
 	"github.com/klaytn/klaytn"
 	"github.com/klaytn/klaytn/accounts/abi"
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	"github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/crypto"
+	"github.com/pkg/errors"
 )
 
 var (
