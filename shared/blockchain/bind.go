@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"fmt"
-	"log"
 	"math/big"
 
 	"github.com/pkg/errors"
@@ -202,9 +201,5 @@ func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, i
 	if err = c.client.SendTransaction(opts.Context, signedTx); err != nil {
 		return nil, err
 	}
-
-	log.Println("tx type:", opts.TxType.String())
-	log.Println("tx hash:", signedTx.Hash().Hex())
-
 	return signedTx, nil
 }
