@@ -1,16 +1,21 @@
 package blockchain
 
 import (
-	"errors"
+	"context"
+	"crypto/ecdsa"
 	"fmt"
+	"log"
 	"math/big"
+
+	"github.com/pkg/errors"
+
+	"github.com/klaytn/klaytn/crypto"
 
 	"github.com/klaytn/klaytn"
 	"github.com/klaytn/klaytn/accounts/abi"
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	"github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/common"
-	"github.com/klaytn/klaytn/params"
 )
 
 var (
@@ -23,15 +28,34 @@ var (
 )
 
 type TransactOpts struct {
-	*bind.TransactOpts
+	From     common.Address
 	FeePayer common.Address
+	Signer   bind.SignerFn
+	Nonce    *big.Int
+	Value    *big.Int
+	GasPrice *big.Int
+	GasLimit uint64
 	TxType   types.TxType
+	Context  context.Context
+}
+
+func NewKeyedTransactor(key *ecdsa.PrivateKey) *TransactOpts {
+	keyAddr := crypto.PubkeyToAddress(key.PublicKey)
+	return &TransactOpts{
+		From: keyAddr,
+		Signer: func(signer types.Signer, addr common.Address, tx *types.Transaction) (*types.Transaction, error) {
+			if addr != keyAddr {
+				return nil, errors.New("unauthorized sign request")
+			}
+			return types.SignTx(tx, signer, key)
+		},
+	}
 }
 
 type BoundContract struct {
-	address    common.Address
-	abi        abi.ABI
-	transactor bind.ContractTransactor
+	address common.Address
+	abi     abi.ABI
+	client  TxClient
 	*bind.BoundContract
 }
 
@@ -43,9 +67,9 @@ func NewBoundContract(
 	filterer bind.ContractFilterer,
 ) *BoundContract {
 	return &BoundContract{
-		address:    address,
-		abi:        abi,
-		transactor: transactor,
+		address: address,
+		abi:     abi,
+		client:  transactor.(TxClient),
 		BoundContract: bind.NewBoundContract(
 			address,
 			abi,
@@ -74,6 +98,24 @@ func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, i
 		return nil, errors.New("nil transcatOpts")
 	}
 
+	if _, ok := supportTxTypes[opts.TxType]; !ok {
+		return nil, errors.New("unsupported transaction type")
+	}
+
+	delegated := opts.FeePayer != (common.Address{})
+	contractExec := input != nil
+
+	switch {
+	case contractExec && delegated:
+		opts.TxType = types.TxTypeFeeDelegatedSmartContractExecution
+	case !contractExec && delegated:
+		opts.TxType = types.TxTypeFeeDelegatedValueTransfer
+	case contractExec && !delegated:
+		opts.TxType = types.TxTypeSmartContractExecution
+	case !contractExec && !delegated:
+		opts.TxType = types.TxTypeValueTransfer
+	}
+
 	// value
 	value := opts.Value
 	if value == nil {
@@ -83,7 +125,7 @@ func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, i
 	// nonce
 	var nonce uint64
 	if opts.Nonce == nil {
-		nonce, err = c.transactor.PendingNonceAt(opts.Context, opts.From)
+		nonce, err = c.client.PendingNonceAt(opts.Context, opts.From)
 		if err != nil {
 			return nil, fmt.Errorf("failed to retrieve account nonce: %v", err)
 		}
@@ -94,7 +136,7 @@ func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, i
 	// gas price
 	gasPrice := opts.GasPrice
 	if gasPrice == nil {
-		gasPrice, err = c.transactor.SuggestGasPrice(opts.Context)
+		gasPrice, err = c.client.SuggestGasPrice(opts.Context)
 		if err != nil {
 			return nil, fmt.Errorf("failed to suggest gas price: %v", err)
 		}
@@ -104,44 +146,43 @@ func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, i
 	gasLimit := opts.GasLimit
 	if gasLimit == 0 {
 		if contract != nil {
-			if code, err := c.transactor.PendingCodeAt(opts.Context, c.address); err != nil {
+			if code, err := c.client.PendingCodeAt(opts.Context, c.address); err != nil {
 				return nil, err
 			} else if len(code) == 0 {
 				return nil, bind.ErrNoCode
 			}
 		}
 
-		msg := klaytn.CallMsg{From: opts.From, To: contract, Value: value, Data: input}
-		gasLimit, err = c.transactor.EstimateGas(opts.Context, msg)
+		gasLimit, err = c.client.EstimateGas(opts.Context, klaytn.CallMsg{
+			From:  opts.From,
+			To:    contract,
+			Value: value,
+			Data:  input,
+		})
 		if err != nil {
 			return nil, fmt.Errorf("failed to estimate gas needed: %v", err)
 		}
 	}
+	gasLimit, _ = new(big.Float).Mul(big.NewFloat(1.5), new(big.Float).SetUint64(gasLimit)).Uint64()
+
+	if contract == nil {
+		return nil, bind.ErrNoCode
+	}
 
 	values := map[types.TxValueKeyType]interface{}{
-		types.TxValueKeyTo:     contract,
-		types.TxValueKeyAmount: value,
-		types.TxValueKeyNonce:  nonce,
-		types.TxValueKeyGasPrice: new(big.Int).Add(
-			gasPrice, new(big.Int).Mul(
-				big.NewInt(5),
-				big.NewInt(params.Ston),
-			),
-		),
+		types.TxValueKeyNonce:    nonce,
+		types.TxValueKeyFrom:     opts.From,
+		types.TxValueKeyTo:       *contract,
+		types.TxValueKeyAmount:   value,
 		types.TxValueKeyGasLimit: gasLimit,
+		types.TxValueKeyGasPrice: gasPrice,
 	}
 
-	if _, ok := supportTxTypes[opts.TxType]; !ok {
-		return nil, errors.New("unsupported transaction type")
-	}
-
-	if opts.TxType == types.TxTypeFeeDelegatedValueTransfer ||
-		opts.TxType == types.TxTypeFeeDelegatedSmartContractExecution {
+	if delegated {
 		values[types.TxValueKeyFeePayer] = opts.FeePayer
 	}
 
-	if opts.TxType == types.TxTypeSmartContractExecution ||
-		opts.TxType == types.TxTypeFeeDelegatedSmartContractExecution {
+	if contractExec {
 		values[types.TxValueKeyData] = input
 	}
 
@@ -153,18 +194,17 @@ func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, i
 		return nil, errors.New("no signer to authorize the transaction with")
 	}
 
-	chainID, err := c.transactor.ChainID(opts.Context)
+	signedTx, err := c.client.SignTransaction(opts.Context, opts.Signer, rawTx)
 	if err != nil {
+		return nil, errors.Wrap(err, "failed to sign transaction")
+	}
+
+	if err = c.client.SendTransaction(opts.Context, signedTx); err != nil {
 		return nil, err
 	}
 
-	signer := types.NewEIP155Signer(chainID)
-	signedTx, err := opts.Signer(signer, opts.From, rawTx)
-	if err != nil {
-		return nil, err
-	}
-	if err := c.transactor.SendTransaction(opts.Context, signedTx); err != nil {
-		return nil, err
-	}
+	log.Println("tx type:", opts.TxType.String())
+	log.Println("tx hash:", signedTx.Hash().Hex())
+
 	return signedTx, nil
 }
