@@ -22,9 +22,6 @@ func NewDataTypeRegistryAPI(backend service.Backend) (api.API, error) {
 	return &dataTypeRegistryAPI{dt}, nil
 }
 
-// Register is a paid mutator transaction binding the contract method 0x656afdee.
-//
-// Solidity: function register(string name, bytes32 schemaHash) returns()
 func (api *dataTypeRegistryAPI) register(c *gin.Context) {
 	var req struct {
 		Name       string `json:"name" binding:"required"`
@@ -56,9 +53,6 @@ func (api *dataTypeRegistryAPI) register(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{})
 }
 
-// Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
-//
-// Solidity: function unregister(string name) returns()
 func (api *dataTypeRegistryAPI) unregister(c *gin.Context) {
 	dataType := c.Param("data_type")
 	if dataType == "" {
@@ -73,9 +67,6 @@ func (api *dataTypeRegistryAPI) unregister(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
-// Get is a free data retrieval call binding the contract method 0x693ec85e.
-//
-// Solidity: function get(string name) constant returns((string,address,bytes32))
 func (api *dataTypeRegistryAPI) get(c *gin.Context) {
 	dataType := c.Param("data_type")
 	if dataType == "" {
