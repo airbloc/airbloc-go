@@ -28,17 +28,20 @@ type IAppRegistryManager interface {
 	// Transact methods
 	Register(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		appName string,
 	) error
 
 	TransferAppOwner(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		appName string,
 		newOwner common.Address,
 	) error
 
 	Unregister(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		appName string,
 	) error
 
@@ -72,15 +75,18 @@ type IAppRegistryCalls interface {
 type IAppRegistryTransacts interface {
 	Register(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		appName string,
 	) (*chainTypes.Receipt, error)
 	TransferAppOwner(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		appName string,
 		newOwner common.Address,
 	) (*chainTypes.Receipt, error)
 	Unregister(
 		ctx context.Context,
+		opts *blockchain.TransactOpts,
 		appName string,
 	) (*chainTypes.Receipt, error)
 }
@@ -181,7 +187,7 @@ func (c *AppRegistryContract) CreatedAt() *big.Int {
 }
 
 func newAppRegistryContract(address common.Address, txHash common.Hash, createdAt *big.Int, parsedABI abi.ABI, backend bind.ContractBackend) interface{} {
-	contract := bind.NewBoundContract(address, parsedABI, backend, backend, backend)
+	contract := blockchain.NewBoundContract(address, parsedABI, backend, backend, backend)
 
 	return &AppRegistryContract{
 		address:   address,
@@ -248,9 +254,15 @@ func (c *AppRegistryContract) IsOwner(
 // Solidity: function register(string appName) returns()
 func (c *AppRegistryContract) Register(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	appName string,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.AppRegistryTransactor.Register(c.client.Account(), appName)
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
+	tx, err := c.AppRegistryTransactor.Register(c.client.Account(ctx, opts), appName)
+
 	if err != nil {
 		return nil, err
 	}
@@ -262,10 +274,16 @@ func (c *AppRegistryContract) Register(
 // Solidity: function transferAppOwner(string appName, address newOwner) returns()
 func (c *AppRegistryContract) TransferAppOwner(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	appName string,
 	newOwner common.Address,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.AppRegistryTransactor.TransferAppOwner(c.client.Account(), appName, newOwner)
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
+	tx, err := c.AppRegistryTransactor.TransferAppOwner(c.client.Account(ctx, opts), appName, newOwner)
+
 	if err != nil {
 		return nil, err
 	}
@@ -277,9 +295,15 @@ func (c *AppRegistryContract) TransferAppOwner(
 // Solidity: function unregister(string appName) returns()
 func (c *AppRegistryContract) Unregister(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	appName string,
 ) (*chainTypes.Receipt, error) {
-	tx, err := c.AppRegistryTransactor.Unregister(c.client.Account(), appName)
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
+	tx, err := c.AppRegistryTransactor.Unregister(c.client.Account(ctx, opts), appName)
+
 	if err != nil {
 		return nil, err
 	}

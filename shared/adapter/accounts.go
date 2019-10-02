@@ -7,6 +7,7 @@ import (
 	"errors"
 	"math/big"
 
+	blockchain "github.com/airbloc/airbloc-go/shared/blockchain"
 	types "github.com/airbloc/airbloc-go/shared/types"
 	platform "github.com/klaytn/klaytn"
 	bind "github.com/klaytn/klaytn/accounts/abi/bind"
@@ -46,25 +47,25 @@ func (_Accounts *Accounts) CreatedAt() *big.Int {
 
 // AccountsCaller is an auto generated read-only Go binding around an Ethereum contract.
 type AccountsCaller struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // AccountsTransactor is an auto generated write-only Go binding around an Ethereum contract.
 type AccountsTransactor struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // AccountsFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
 type AccountsFilterer struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // AccountsSession is an auto generated Go binding around an Ethereum contract,
 // with pre-set call and transact options.
 type AccountsSession struct {
-	Contract     *Accounts         // Generic contract binding to set the session for
-	CallOpts     bind.CallOpts     // Call options to use throughout this session
-	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+	Contract     *Accounts               // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts           // Call options to use throughout this session
+	TransactOpts blockchain.TransactOpts // Transaction auth options to use throughout this session
 }
 
 // AccountsCallerSession is an auto generated read-only Go binding around an Ethereum contract,
@@ -77,8 +78,8 @@ type AccountsCallerSession struct {
 // AccountsTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
 // with pre-set transact options.
 type AccountsTransactorSession struct {
-	Contract     *AccountsTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
+	Contract     *AccountsTransactor     // Generic contract transactor binding to set the session for
+	TransactOpts blockchain.TransactOpts // Transaction auth options to use throughout this session
 }
 
 // AccountsRaw is an auto generated low-level Go binding around an Ethereum contract.
@@ -96,12 +97,12 @@ func (_Accounts *AccountsRaw) Call(opts *bind.CallOpts, result interface{}, meth
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_Accounts *AccountsRaw) Transfer(opts *bind.TransactOpts) (*chainTypes.Transaction, error) {
+func (_Accounts *AccountsRaw) Transfer(opts *blockchain.TransactOpts) (*chainTypes.Transaction, error) {
 	return _Accounts.Contract.AccountsTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_Accounts *AccountsRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
+func (_Accounts *AccountsRaw) Transact(opts *blockchain.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
 	return _Accounts.Contract.AccountsTransactor.contract.Transact(opts, method, params...)
 }
 
@@ -125,12 +126,12 @@ type AccountsTransactorRaw struct {
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_Accounts *AccountsTransactorRaw) Transfer(opts *bind.TransactOpts) (*chainTypes.Transaction, error) {
+func (_Accounts *AccountsTransactorRaw) Transfer(opts *blockchain.TransactOpts) (*chainTypes.Transaction, error) {
 	return _Accounts.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_Accounts *AccountsTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
+func (_Accounts *AccountsTransactorRaw) Transact(opts *blockchain.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
 	return _Accounts.Contract.contract.Transact(opts, method, params...)
 }
 
@@ -345,7 +346,7 @@ func (_Accounts *AccountsCallerSession) IsTemporary(accountId types.ID) (bool, e
 // Create is a paid mutator transaction binding the contract method 0xefc81a8c.
 //
 // Solidity: function create() returns(bytes8)
-func (_Accounts *AccountsTransactor) Create(opts *bind.TransactOpts) (*chainTypes.Transaction, error) {
+func (_Accounts *AccountsTransactor) Create(opts *blockchain.TransactOpts) (*chainTypes.Transaction, error) {
 	return _Accounts.contract.Transact(opts, "create")
 }
 
@@ -366,7 +367,7 @@ func (_Accounts *AccountsTransactorSession) Create() (*chainTypes.Transaction, e
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
 //
 // Solidity: function createTemporary(bytes32 identityHash) returns(bytes8)
-func (_Accounts *AccountsTransactor) CreateTemporary(opts *bind.TransactOpts, identityHash common.Hash) (*chainTypes.Transaction, error) {
+func (_Accounts *AccountsTransactor) CreateTemporary(opts *blockchain.TransactOpts, identityHash common.Hash) (*chainTypes.Transaction, error) {
 	return _Accounts.contract.Transact(opts, "createTemporary", identityHash)
 }
 
@@ -387,7 +388,7 @@ func (_Accounts *AccountsTransactorSession) CreateTemporary(identityHash common.
 // SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
 //
 // Solidity: function setController(address controller) returns()
-func (_Accounts *AccountsTransactor) SetController(opts *bind.TransactOpts, controller common.Address) (*chainTypes.Transaction, error) {
+func (_Accounts *AccountsTransactor) SetController(opts *blockchain.TransactOpts, controller common.Address) (*chainTypes.Transaction, error) {
 	return _Accounts.contract.Transact(opts, "setController", controller)
 }
 
@@ -408,7 +409,7 @@ func (_Accounts *AccountsTransactorSession) SetController(controller common.Addr
 // UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
 //
 // Solidity: function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) returns()
-func (_Accounts *AccountsTransactor) UnlockTemporary(opts *bind.TransactOpts, identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) (*chainTypes.Transaction, error) {
+func (_Accounts *AccountsTransactor) UnlockTemporary(opts *blockchain.TransactOpts, identityPreimage common.Hash, newOwner common.Address, passwordSignature []byte) (*chainTypes.Transaction, error) {
 	return _Accounts.contract.Transact(opts, "unlockTemporary", identityPreimage, newOwner, passwordSignature)
 }
 
@@ -430,8 +431,8 @@ func (_Accounts *AccountsTransactorSession) UnlockTemporary(identityPreimage com
 type AccountsSignUpIterator struct {
 	Event *AccountsSignUp // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination
@@ -595,8 +596,8 @@ func (_Accounts *AccountsFilterer) ParseSignUpFromReceipt(receipt *chainTypes.Re
 type AccountsTemporaryCreatedIterator struct {
 	Event *AccountsTemporaryCreated // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination
@@ -769,8 +770,8 @@ func (_Accounts *AccountsFilterer) ParseTemporaryCreatedFromReceipt(receipt *cha
 type AccountsUnlockedIterator struct {
 	Event *AccountsUnlocked // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination

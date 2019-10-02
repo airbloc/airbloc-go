@@ -7,6 +7,7 @@ import (
 	"errors"
 	"math/big"
 
+	blockchain "github.com/airbloc/airbloc-go/shared/blockchain"
 	types "github.com/airbloc/airbloc-go/shared/types"
 	platform "github.com/klaytn/klaytn"
 	bind "github.com/klaytn/klaytn/accounts/abi/bind"
@@ -16,7 +17,7 @@ import (
 )
 
 // ConsentsABI is the input ABI used to generate the binding from.
-const ConsentsABI = "[{\"inputs\":[{\"name\":\"accountReg\",\"type\":\"address\"},{\"name\":\"appReg\",\"type\":\"address\"},{\"name\":\"controllerReg\",\"type\":\"address\"},{\"name\":\"dataTypeReg\",\"type\":\"address\"}],\"payable\":false,\"signature\":\"constructor\",\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"action\",\"type\":\"uint8\"},{\"indexed\":true,\"name\":\"userId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"appAddr\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"appName\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"dataType\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"allowed\",\"type\":\"bool\"}],\"name\":\"Consented\",\"signature\":\"0x8599a1c756b9cd519b80b172f29a03b19082bf7df728da8456cbcab9eeaba8e3\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allowed\",\"type\":\"uint8\"}],\"name\":\"consentData\",\"type\":\"tuple\"}],\"name\":\"consent\",\"outputs\":[],\"payable\":false,\"signature\":\"0xb838bdb7\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allowed\",\"type\":\"uint8\"}],\"name\":\"consentData\",\"type\":\"tuple[]\"}],\"name\":\"consentMany\",\"outputs\":[],\"payable\":false,\"signature\":\"0xbbbd8a0d\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allowed\",\"type\":\"uint8\"}],\"name\":\"consentData\",\"type\":\"tuple\"}],\"name\":\"consentByController\",\"outputs\":[],\"payable\":false,\"signature\":\"0x503905ac\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allowed\",\"type\":\"uint8\"}],\"name\":\"consentData\",\"type\":\"tuple[]\"}],\"name\":\"consentManyByController\",\"outputs\":[],\"payable\":false,\"signature\":\"0x18b264e3\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allowed\",\"type\":\"uint8\"}],\"name\":\"consentData\",\"type\":\"tuple\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"modifyConsentByController\",\"outputs\":[],\"payable\":false,\"signature\":\"0xe4f5477b\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allowed\",\"type\":\"uint8\"}],\"name\":\"consentData\",\"type\":\"tuple[]\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"modifyConsentManyByController\",\"outputs\":[],\"payable\":false,\"signature\":\"0xba3bb255\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"}],\"name\":\"isAllowed\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"signature\":\"0x50615985\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"isAllowedAt\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"signature\":\"0x7cdda67c\",\"stateMutability\":\"view\",\"type\":\"function\"}]"
+const ConsentsABI = "[{\"inputs\":[{\"name\":\"accountReg\",\"type\":\"address\"},{\"name\":\"appReg\",\"type\":\"address\"},{\"name\":\"controllerReg\",\"type\":\"address\"},{\"name\":\"dataTypeReg\",\"type\":\"address\"}],\"payable\":false,\"signature\":\"constructor\",\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"action\",\"type\":\"uint8\"},{\"indexed\":true,\"name\":\"userId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"appAddr\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"appName\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"dataType\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"allowed\",\"type\":\"bool\"}],\"name\":\"Consented\",\"signature\":\"0x8599a1c756b9cd519b80b172f29a03b19082bf7df728da8456cbcab9eeaba8e3\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allow\",\"type\":\"bool\"}],\"name\":\"consentData\",\"type\":\"tuple\"}],\"name\":\"consent\",\"outputs\":[],\"payable\":false,\"signature\":\"0xcd4dc804\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allow\",\"type\":\"bool\"}],\"name\":\"consentData\",\"type\":\"tuple[]\"}],\"name\":\"consentMany\",\"outputs\":[],\"payable\":false,\"signature\":\"0xdd43ad05\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allow\",\"type\":\"bool\"}],\"name\":\"consentData\",\"type\":\"tuple\"}],\"name\":\"consentByController\",\"outputs\":[],\"payable\":false,\"signature\":\"0xf573f89a\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allow\",\"type\":\"bool\"}],\"name\":\"consentData\",\"type\":\"tuple[]\"}],\"name\":\"consentManyByController\",\"outputs\":[],\"payable\":false,\"signature\":\"0xae6d5034\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allow\",\"type\":\"bool\"}],\"name\":\"consentData\",\"type\":\"tuple\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"modifyConsentByController\",\"outputs\":[],\"payable\":false,\"signature\":\"0x0bfec389\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allow\",\"type\":\"bool\"}],\"name\":\"consentData\",\"type\":\"tuple[]\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"modifyConsentManyByController\",\"outputs\":[],\"payable\":false,\"signature\":\"0xe031b1cf\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"}],\"name\":\"isAllowed\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"signature\":\"0x50615985\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"isAllowedAt\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"signature\":\"0x7cdda67c\",\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // Consents is an auto generated Go binding around an Ethereum contract.
 type Consents struct {
@@ -46,25 +47,25 @@ func (_Consents *Consents) CreatedAt() *big.Int {
 
 // ConsentsCaller is an auto generated read-only Go binding around an Ethereum contract.
 type ConsentsCaller struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // ConsentsTransactor is an auto generated write-only Go binding around an Ethereum contract.
 type ConsentsTransactor struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // ConsentsFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
 type ConsentsFilterer struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // ConsentsSession is an auto generated Go binding around an Ethereum contract,
 // with pre-set call and transact options.
 type ConsentsSession struct {
-	Contract     *Consents         // Generic contract binding to set the session for
-	CallOpts     bind.CallOpts     // Call options to use throughout this session
-	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+	Contract     *Consents               // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts           // Call options to use throughout this session
+	TransactOpts blockchain.TransactOpts // Transaction auth options to use throughout this session
 }
 
 // ConsentsCallerSession is an auto generated read-only Go binding around an Ethereum contract,
@@ -77,8 +78,8 @@ type ConsentsCallerSession struct {
 // ConsentsTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
 // with pre-set transact options.
 type ConsentsTransactorSession struct {
-	Contract     *ConsentsTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
+	Contract     *ConsentsTransactor     // Generic contract transactor binding to set the session for
+	TransactOpts blockchain.TransactOpts // Transaction auth options to use throughout this session
 }
 
 // ConsentsRaw is an auto generated low-level Go binding around an Ethereum contract.
@@ -96,12 +97,12 @@ func (_Consents *ConsentsRaw) Call(opts *bind.CallOpts, result interface{}, meth
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_Consents *ConsentsRaw) Transfer(opts *bind.TransactOpts) (*chainTypes.Transaction, error) {
+func (_Consents *ConsentsRaw) Transfer(opts *blockchain.TransactOpts) (*chainTypes.Transaction, error) {
 	return _Consents.Contract.ConsentsTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_Consents *ConsentsRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
+func (_Consents *ConsentsRaw) Transact(opts *blockchain.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
 	return _Consents.Contract.ConsentsTransactor.contract.Transact(opts, method, params...)
 }
 
@@ -125,12 +126,12 @@ type ConsentsTransactorRaw struct {
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_Consents *ConsentsTransactorRaw) Transfer(opts *bind.TransactOpts) (*chainTypes.Transaction, error) {
+func (_Consents *ConsentsTransactorRaw) Transfer(opts *blockchain.TransactOpts) (*chainTypes.Transaction, error) {
 	return _Consents.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_Consents *ConsentsTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
+func (_Consents *ConsentsTransactorRaw) Transact(opts *blockchain.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
 	return _Consents.Contract.contract.Transact(opts, method, params...)
 }
 
@@ -186,126 +187,126 @@ func (_Consents *ConsentsCallerSession) IsAllowedAt(userId types.ID, appName str
 	return _Consents.Contract.IsAllowedAt(&_Consents.CallOpts, userId, appName, action, dataType, blockNumber)
 }
 
-// Consent is a paid mutator transaction binding the contract method 0xb838bdb7.
+// Consent is a paid mutator transaction binding the contract method 0xcd4dc804.
 //
 // Solidity: function consent(string appName, types.ConsentData consentData) returns()
-func (_Consents *ConsentsTransactor) Consent(opts *bind.TransactOpts, appName string, consentData types.ConsentData) (*chainTypes.Transaction, error) {
+func (_Consents *ConsentsTransactor) Consent(opts *blockchain.TransactOpts, appName string, consentData types.ConsentData) (*chainTypes.Transaction, error) {
 	return _Consents.contract.Transact(opts, "consent", appName, consentData)
 }
 
-// Consent is a paid mutator transaction binding the contract method 0xb838bdb7.
+// Consent is a paid mutator transaction binding the contract method 0xcd4dc804.
 //
 // Solidity: function consent(string appName, types.ConsentData consentData) returns()
 func (_Consents *ConsentsSession) Consent(appName string, consentData types.ConsentData) (*chainTypes.Transaction, error) {
 	return _Consents.Contract.Consent(&_Consents.TransactOpts, appName, consentData)
 }
 
-// Consent is a paid mutator transaction binding the contract method 0xb838bdb7.
+// Consent is a paid mutator transaction binding the contract method 0xcd4dc804.
 //
 // Solidity: function consent(string appName, types.ConsentData consentData) returns()
 func (_Consents *ConsentsTransactorSession) Consent(appName string, consentData types.ConsentData) (*chainTypes.Transaction, error) {
 	return _Consents.Contract.Consent(&_Consents.TransactOpts, appName, consentData)
 }
 
-// ConsentByController is a paid mutator transaction binding the contract method 0x503905ac.
+// ConsentByController is a paid mutator transaction binding the contract method 0xf573f89a.
 //
 // Solidity: function consentByController(bytes8 userId, string appName, types.ConsentData consentData) returns()
-func (_Consents *ConsentsTransactor) ConsentByController(opts *bind.TransactOpts, userId types.ID, appName string, consentData types.ConsentData) (*chainTypes.Transaction, error) {
+func (_Consents *ConsentsTransactor) ConsentByController(opts *blockchain.TransactOpts, userId types.ID, appName string, consentData types.ConsentData) (*chainTypes.Transaction, error) {
 	return _Consents.contract.Transact(opts, "consentByController", userId, appName, consentData)
 }
 
-// ConsentByController is a paid mutator transaction binding the contract method 0x503905ac.
+// ConsentByController is a paid mutator transaction binding the contract method 0xf573f89a.
 //
 // Solidity: function consentByController(bytes8 userId, string appName, types.ConsentData consentData) returns()
 func (_Consents *ConsentsSession) ConsentByController(userId types.ID, appName string, consentData types.ConsentData) (*chainTypes.Transaction, error) {
 	return _Consents.Contract.ConsentByController(&_Consents.TransactOpts, userId, appName, consentData)
 }
 
-// ConsentByController is a paid mutator transaction binding the contract method 0x503905ac.
+// ConsentByController is a paid mutator transaction binding the contract method 0xf573f89a.
 //
 // Solidity: function consentByController(bytes8 userId, string appName, types.ConsentData consentData) returns()
 func (_Consents *ConsentsTransactorSession) ConsentByController(userId types.ID, appName string, consentData types.ConsentData) (*chainTypes.Transaction, error) {
 	return _Consents.Contract.ConsentByController(&_Consents.TransactOpts, userId, appName, consentData)
 }
 
-// ConsentMany is a paid mutator transaction binding the contract method 0xbbbd8a0d.
+// ConsentMany is a paid mutator transaction binding the contract method 0xdd43ad05.
 //
 // Solidity: function consentMany(string appName, []types.ConsentData consentData) returns()
-func (_Consents *ConsentsTransactor) ConsentMany(opts *bind.TransactOpts, appName string, consentData []types.ConsentData) (*chainTypes.Transaction, error) {
+func (_Consents *ConsentsTransactor) ConsentMany(opts *blockchain.TransactOpts, appName string, consentData []types.ConsentData) (*chainTypes.Transaction, error) {
 	return _Consents.contract.Transact(opts, "consentMany", appName, consentData)
 }
 
-// ConsentMany is a paid mutator transaction binding the contract method 0xbbbd8a0d.
+// ConsentMany is a paid mutator transaction binding the contract method 0xdd43ad05.
 //
 // Solidity: function consentMany(string appName, []types.ConsentData consentData) returns()
 func (_Consents *ConsentsSession) ConsentMany(appName string, consentData []types.ConsentData) (*chainTypes.Transaction, error) {
 	return _Consents.Contract.ConsentMany(&_Consents.TransactOpts, appName, consentData)
 }
 
-// ConsentMany is a paid mutator transaction binding the contract method 0xbbbd8a0d.
+// ConsentMany is a paid mutator transaction binding the contract method 0xdd43ad05.
 //
 // Solidity: function consentMany(string appName, []types.ConsentData consentData) returns()
 func (_Consents *ConsentsTransactorSession) ConsentMany(appName string, consentData []types.ConsentData) (*chainTypes.Transaction, error) {
 	return _Consents.Contract.ConsentMany(&_Consents.TransactOpts, appName, consentData)
 }
 
-// ConsentManyByController is a paid mutator transaction binding the contract method 0x18b264e3.
+// ConsentManyByController is a paid mutator transaction binding the contract method 0xae6d5034.
 //
 // Solidity: function consentManyByController(bytes8 userId, string appName, []types.ConsentData consentData) returns()
-func (_Consents *ConsentsTransactor) ConsentManyByController(opts *bind.TransactOpts, userId types.ID, appName string, consentData []types.ConsentData) (*chainTypes.Transaction, error) {
+func (_Consents *ConsentsTransactor) ConsentManyByController(opts *blockchain.TransactOpts, userId types.ID, appName string, consentData []types.ConsentData) (*chainTypes.Transaction, error) {
 	return _Consents.contract.Transact(opts, "consentManyByController", userId, appName, consentData)
 }
 
-// ConsentManyByController is a paid mutator transaction binding the contract method 0x18b264e3.
+// ConsentManyByController is a paid mutator transaction binding the contract method 0xae6d5034.
 //
 // Solidity: function consentManyByController(bytes8 userId, string appName, []types.ConsentData consentData) returns()
 func (_Consents *ConsentsSession) ConsentManyByController(userId types.ID, appName string, consentData []types.ConsentData) (*chainTypes.Transaction, error) {
 	return _Consents.Contract.ConsentManyByController(&_Consents.TransactOpts, userId, appName, consentData)
 }
 
-// ConsentManyByController is a paid mutator transaction binding the contract method 0x18b264e3.
+// ConsentManyByController is a paid mutator transaction binding the contract method 0xae6d5034.
 //
 // Solidity: function consentManyByController(bytes8 userId, string appName, []types.ConsentData consentData) returns()
 func (_Consents *ConsentsTransactorSession) ConsentManyByController(userId types.ID, appName string, consentData []types.ConsentData) (*chainTypes.Transaction, error) {
 	return _Consents.Contract.ConsentManyByController(&_Consents.TransactOpts, userId, appName, consentData)
 }
 
-// ModifyConsentByController is a paid mutator transaction binding the contract method 0xe4f5477b.
+// ModifyConsentByController is a paid mutator transaction binding the contract method 0x0bfec389.
 //
 // Solidity: function modifyConsentByController(bytes8 userId, string appName, types.ConsentData consentData, bytes passwordSignature) returns()
-func (_Consents *ConsentsTransactor) ModifyConsentByController(opts *bind.TransactOpts, userId types.ID, appName string, consentData types.ConsentData, passwordSignature []byte) (*chainTypes.Transaction, error) {
+func (_Consents *ConsentsTransactor) ModifyConsentByController(opts *blockchain.TransactOpts, userId types.ID, appName string, consentData types.ConsentData, passwordSignature []byte) (*chainTypes.Transaction, error) {
 	return _Consents.contract.Transact(opts, "modifyConsentByController", userId, appName, consentData, passwordSignature)
 }
 
-// ModifyConsentByController is a paid mutator transaction binding the contract method 0xe4f5477b.
+// ModifyConsentByController is a paid mutator transaction binding the contract method 0x0bfec389.
 //
 // Solidity: function modifyConsentByController(bytes8 userId, string appName, types.ConsentData consentData, bytes passwordSignature) returns()
 func (_Consents *ConsentsSession) ModifyConsentByController(userId types.ID, appName string, consentData types.ConsentData, passwordSignature []byte) (*chainTypes.Transaction, error) {
 	return _Consents.Contract.ModifyConsentByController(&_Consents.TransactOpts, userId, appName, consentData, passwordSignature)
 }
 
-// ModifyConsentByController is a paid mutator transaction binding the contract method 0xe4f5477b.
+// ModifyConsentByController is a paid mutator transaction binding the contract method 0x0bfec389.
 //
 // Solidity: function modifyConsentByController(bytes8 userId, string appName, types.ConsentData consentData, bytes passwordSignature) returns()
 func (_Consents *ConsentsTransactorSession) ModifyConsentByController(userId types.ID, appName string, consentData types.ConsentData, passwordSignature []byte) (*chainTypes.Transaction, error) {
 	return _Consents.Contract.ModifyConsentByController(&_Consents.TransactOpts, userId, appName, consentData, passwordSignature)
 }
 
-// ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xba3bb255.
+// ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xe031b1cf.
 //
 // Solidity: function modifyConsentManyByController(bytes8 userId, string appName, []types.ConsentData consentData, bytes passwordSignature) returns()
-func (_Consents *ConsentsTransactor) ModifyConsentManyByController(opts *bind.TransactOpts, userId types.ID, appName string, consentData []types.ConsentData, passwordSignature []byte) (*chainTypes.Transaction, error) {
+func (_Consents *ConsentsTransactor) ModifyConsentManyByController(opts *blockchain.TransactOpts, userId types.ID, appName string, consentData []types.ConsentData, passwordSignature []byte) (*chainTypes.Transaction, error) {
 	return _Consents.contract.Transact(opts, "modifyConsentManyByController", userId, appName, consentData, passwordSignature)
 }
 
-// ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xba3bb255.
+// ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xe031b1cf.
 //
 // Solidity: function modifyConsentManyByController(bytes8 userId, string appName, []types.ConsentData consentData, bytes passwordSignature) returns()
 func (_Consents *ConsentsSession) ModifyConsentManyByController(userId types.ID, appName string, consentData []types.ConsentData, passwordSignature []byte) (*chainTypes.Transaction, error) {
 	return _Consents.Contract.ModifyConsentManyByController(&_Consents.TransactOpts, userId, appName, consentData, passwordSignature)
 }
 
-// ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xba3bb255.
+// ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xe031b1cf.
 //
 // Solidity: function modifyConsentManyByController(bytes8 userId, string appName, []types.ConsentData consentData, bytes passwordSignature) returns()
 func (_Consents *ConsentsTransactorSession) ModifyConsentManyByController(userId types.ID, appName string, consentData []types.ConsentData, passwordSignature []byte) (*chainTypes.Transaction, error) {
@@ -316,8 +317,8 @@ func (_Consents *ConsentsTransactorSession) ModifyConsentManyByController(userId
 type ConsentsConsentedIterator struct {
 	Event *ConsentsConsented // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination

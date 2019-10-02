@@ -7,6 +7,7 @@ import (
 	"errors"
 	"math/big"
 
+	blockchain "github.com/airbloc/airbloc-go/shared/blockchain"
 	types "github.com/airbloc/airbloc-go/shared/types"
 	platform "github.com/klaytn/klaytn"
 	bind "github.com/klaytn/klaytn/accounts/abi/bind"
@@ -46,25 +47,25 @@ func (_AppRegistry *AppRegistry) CreatedAt() *big.Int {
 
 // AppRegistryCaller is an auto generated read-only Go binding around an Ethereum contract.
 type AppRegistryCaller struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // AppRegistryTransactor is an auto generated write-only Go binding around an Ethereum contract.
 type AppRegistryTransactor struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // AppRegistryFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
 type AppRegistryFilterer struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // AppRegistrySession is an auto generated Go binding around an Ethereum contract,
 // with pre-set call and transact options.
 type AppRegistrySession struct {
-	Contract     *AppRegistry      // Generic contract binding to set the session for
-	CallOpts     bind.CallOpts     // Call options to use throughout this session
-	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+	Contract     *AppRegistry            // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts           // Call options to use throughout this session
+	TransactOpts blockchain.TransactOpts // Transaction auth options to use throughout this session
 }
 
 // AppRegistryCallerSession is an auto generated read-only Go binding around an Ethereum contract,
@@ -77,8 +78,8 @@ type AppRegistryCallerSession struct {
 // AppRegistryTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
 // with pre-set transact options.
 type AppRegistryTransactorSession struct {
-	Contract     *AppRegistryTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts      // Transaction auth options to use throughout this session
+	Contract     *AppRegistryTransactor  // Generic contract transactor binding to set the session for
+	TransactOpts blockchain.TransactOpts // Transaction auth options to use throughout this session
 }
 
 // AppRegistryRaw is an auto generated low-level Go binding around an Ethereum contract.
@@ -96,12 +97,12 @@ func (_AppRegistry *AppRegistryRaw) Call(opts *bind.CallOpts, result interface{}
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_AppRegistry *AppRegistryRaw) Transfer(opts *bind.TransactOpts) (*chainTypes.Transaction, error) {
+func (_AppRegistry *AppRegistryRaw) Transfer(opts *blockchain.TransactOpts) (*chainTypes.Transaction, error) {
 	return _AppRegistry.Contract.AppRegistryTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_AppRegistry *AppRegistryRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
+func (_AppRegistry *AppRegistryRaw) Transact(opts *blockchain.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
 	return _AppRegistry.Contract.AppRegistryTransactor.contract.Transact(opts, method, params...)
 }
 
@@ -125,12 +126,12 @@ type AppRegistryTransactorRaw struct {
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_AppRegistry *AppRegistryTransactorRaw) Transfer(opts *bind.TransactOpts) (*chainTypes.Transaction, error) {
+func (_AppRegistry *AppRegistryTransactorRaw) Transfer(opts *blockchain.TransactOpts) (*chainTypes.Transaction, error) {
 	return _AppRegistry.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_AppRegistry *AppRegistryTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
+func (_AppRegistry *AppRegistryTransactorRaw) Transact(opts *blockchain.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
 	return _AppRegistry.Contract.contract.Transact(opts, method, params...)
 }
 
@@ -215,7 +216,7 @@ func (_AppRegistry *AppRegistryCallerSession) IsOwner(appName string, owner comm
 // Register is a paid mutator transaction binding the contract method 0xf2c298be.
 //
 // Solidity: function register(string appName) returns()
-func (_AppRegistry *AppRegistryTransactor) Register(opts *bind.TransactOpts, appName string) (*chainTypes.Transaction, error) {
+func (_AppRegistry *AppRegistryTransactor) Register(opts *blockchain.TransactOpts, appName string) (*chainTypes.Transaction, error) {
 	return _AppRegistry.contract.Transact(opts, "register", appName)
 }
 
@@ -236,7 +237,7 @@ func (_AppRegistry *AppRegistryTransactorSession) Register(appName string) (*cha
 // TransferAppOwner is a paid mutator transaction binding the contract method 0x1a9dff9f.
 //
 // Solidity: function transferAppOwner(string appName, address newOwner) returns()
-func (_AppRegistry *AppRegistryTransactor) TransferAppOwner(opts *bind.TransactOpts, appName string, newOwner common.Address) (*chainTypes.Transaction, error) {
+func (_AppRegistry *AppRegistryTransactor) TransferAppOwner(opts *blockchain.TransactOpts, appName string, newOwner common.Address) (*chainTypes.Transaction, error) {
 	return _AppRegistry.contract.Transact(opts, "transferAppOwner", appName, newOwner)
 }
 
@@ -257,7 +258,7 @@ func (_AppRegistry *AppRegistryTransactorSession) TransferAppOwner(appName strin
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
 //
 // Solidity: function unregister(string appName) returns()
-func (_AppRegistry *AppRegistryTransactor) Unregister(opts *bind.TransactOpts, appName string) (*chainTypes.Transaction, error) {
+func (_AppRegistry *AppRegistryTransactor) Unregister(opts *blockchain.TransactOpts, appName string) (*chainTypes.Transaction, error) {
 	return _AppRegistry.contract.Transact(opts, "unregister", appName)
 }
 
@@ -279,8 +280,8 @@ func (_AppRegistry *AppRegistryTransactorSession) Unregister(appName string) (*c
 type AppRegistryAppOwnerTransferredIterator struct {
 	Event *AppRegistryAppOwnerTransferred // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination
@@ -456,8 +457,8 @@ func (_AppRegistry *AppRegistryFilterer) ParseAppOwnerTransferredFromReceipt(rec
 type AppRegistryRegistrationIterator struct {
 	Event *AppRegistryRegistration // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination
@@ -621,8 +622,8 @@ func (_AppRegistry *AppRegistryFilterer) ParseRegistrationFromReceipt(receipt *c
 type AppRegistryUnregistrationIterator struct {
 	Event *AppRegistryUnregistration // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination

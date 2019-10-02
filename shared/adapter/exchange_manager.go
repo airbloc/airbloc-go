@@ -28,6 +28,7 @@ func NewExchangeManager(client blockchain.TxClient) IExchangeManager {
 // Solidity: function prepare(string provider, address consumer, address escrow, bytes4 escrowSign, bytes escrowArgs, bytes20[] dataIds) returns(bytes8)
 func (manager *exchangeManager) Prepare(
 	ctx context.Context,
+	opts *blockchain.TransactOpts,
 	provider string,
 	consumer common.Address,
 	escrow common.Address,
@@ -42,7 +43,7 @@ func (manager *exchangeManager) Prepare(
 	if len(dataIds) < 20 {
 		ids = dataIds
 	}
-	receipt, err := manager.IExchangeContract.Prepare(ctx, provider, consumer, escrow, escrowSign, escrowArgs, ids)
+	receipt, err := manager.IExchangeContract.Prepare(ctx, opts, provider, consumer, escrow, escrowSign, escrowArgs, ids)
 	if err != nil {
 		return types.ID{}, errors.Wrap(err, "failed to transact")
 	}
@@ -68,7 +69,7 @@ func (manager *exchangeManager) Prepare(
 				end = l
 			}
 
-			err = manager.AddDataIds(ctx, evt[0].OfferId, dataIds[start:end])
+			err = manager.AddDataIds(ctx, opts, evt[0].OfferId, dataIds[start:end])
 			if err != nil {
 				break
 			}
@@ -80,8 +81,8 @@ func (manager *exchangeManager) Prepare(
 // AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
 //
 // Solidity: function addDataIds(bytes8 offerId, bytes20[] dataIds) returns()
-func (manager *exchangeManager) AddDataIds(ctx context.Context, offerId types.ID, dataIds []types.DataId) error {
-	_, err := manager.IExchangeContract.AddDataIds(ctx, offerId, dataIds)
+func (manager *exchangeManager) AddDataIds(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID, dataIds []types.DataId) error {
+	_, err := manager.IExchangeContract.AddDataIds(ctx, opts, offerId, dataIds)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
@@ -96,8 +97,8 @@ func (manager *exchangeManager) AddDataIds(ctx context.Context, offerId types.ID
 // Order is a paid mutator transaction binding the contract method 0x0cf833fb.
 //
 // Solidity: function order(bytes8 offerId) returns()
-func (manager *exchangeManager) Order(ctx context.Context, offerId types.ID) error {
-	receipt, err := manager.IExchangeContract.Order(ctx, offerId)
+func (manager *exchangeManager) Order(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) error {
+	receipt, err := manager.IExchangeContract.Order(ctx, opts, offerId)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
@@ -114,8 +115,8 @@ func (manager *exchangeManager) Order(ctx context.Context, offerId types.ID) err
 // Cancel is a paid mutator transaction binding the contract method 0xb2d9ba39.
 //
 // Solidity: function cancel(bytes8 offerId) returns()
-func (manager *exchangeManager) Cancel(ctx context.Context, offerId types.ID) error {
-	receipt, err := manager.IExchangeContract.Cancel(ctx, offerId)
+func (manager *exchangeManager) Cancel(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) error {
+	receipt, err := manager.IExchangeContract.Cancel(ctx, opts, offerId)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
@@ -132,8 +133,8 @@ func (manager *exchangeManager) Cancel(ctx context.Context, offerId types.ID) er
 // Settle is a paid mutator transaction binding the contract method 0xa60d9b5f.
 //
 // Solidity: function settle(bytes8 offerId) returns()
-func (manager *exchangeManager) Settle(ctx context.Context, offerId types.ID) error {
-	receipt, err := manager.IExchangeContract.Settle(ctx, offerId)
+func (manager *exchangeManager) Settle(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) error {
+	receipt, err := manager.IExchangeContract.Settle(ctx, opts, offerId)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
@@ -150,8 +151,8 @@ func (manager *exchangeManager) Settle(ctx context.Context, offerId types.ID) er
 // Reject is a paid mutator transaction binding the contract method 0x6622e153.
 //
 // Solidity: function reject(bytes8 offerId) returns()
-func (manager *exchangeManager) Reject(ctx context.Context, offerId types.ID) error {
-	receipt, err := manager.IExchangeContract.Reject(ctx, offerId)
+func (manager *exchangeManager) Reject(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) error {
+	receipt, err := manager.IExchangeContract.Reject(ctx, opts, offerId)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}

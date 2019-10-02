@@ -10,6 +10,7 @@ import (
 	reflect "reflect"
 
 	adapter "github.com/airbloc/airbloc-go/shared/adapter"
+	blockchain "github.com/airbloc/airbloc-go/shared/blockchain"
 	types "github.com/airbloc/airbloc-go/shared/types"
 	gomock "github.com/golang/mock/gomock"
 	bind "github.com/klaytn/klaytn/accounts/abi/bind"
@@ -43,7 +44,6 @@ func (m *MockIExchangeManager) EXPECT() *MockIExchangeManagerMockRecorder {
 
 // Address mocks base method
 func (m *MockIExchangeManager) Address() common.Address {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
@@ -51,13 +51,11 @@ func (m *MockIExchangeManager) Address() common.Address {
 
 // Address indicates an expected call of Address
 func (mr *MockIExchangeManagerMockRecorder) Address() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIExchangeManager)(nil).Address))
 }
 
 // TxHash mocks base method
 func (m *MockIExchangeManager) TxHash() common.Hash {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TxHash")
 	ret0, _ := ret[0].(common.Hash)
 	return ret0
@@ -65,13 +63,11 @@ func (m *MockIExchangeManager) TxHash() common.Hash {
 
 // TxHash indicates an expected call of TxHash
 func (mr *MockIExchangeManagerMockRecorder) TxHash() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockIExchangeManager)(nil).TxHash))
 }
 
 // CreatedAt mocks base method
 func (m *MockIExchangeManager) CreatedAt() *big.Int {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatedAt")
 	ret0, _ := ret[0].(*big.Int)
 	return ret0
@@ -79,13 +75,11 @@ func (m *MockIExchangeManager) CreatedAt() *big.Int {
 
 // CreatedAt indicates an expected call of CreatedAt
 func (mr *MockIExchangeManagerMockRecorder) CreatedAt() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIExchangeManager)(nil).CreatedAt))
 }
 
 // GetOffer mocks base method
 func (m *MockIExchangeManager) GetOffer(offerId types.ID) (types.Offer, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOffer", offerId)
 	ret0, _ := ret[0].(types.Offer)
 	ret1, _ := ret[1].(error)
@@ -94,13 +88,11 @@ func (m *MockIExchangeManager) GetOffer(offerId types.ID) (types.Offer, error) {
 
 // GetOffer indicates an expected call of GetOffer
 func (mr *MockIExchangeManagerMockRecorder) GetOffer(offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOffer", reflect.TypeOf((*MockIExchangeManager)(nil).GetOffer), offerId)
 }
 
 // GetOfferMembers mocks base method
 func (m *MockIExchangeManager) GetOfferMembers(offerId types.ID) (common.Address, common.Address, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOfferMembers", offerId)
 	ret0, _ := ret[0].(common.Address)
 	ret1, _ := ret[1].(common.Address)
@@ -110,13 +102,11 @@ func (m *MockIExchangeManager) GetOfferMembers(offerId types.ID) (common.Address
 
 // GetOfferMembers indicates an expected call of GetOfferMembers
 func (mr *MockIExchangeManagerMockRecorder) GetOfferMembers(offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOfferMembers", reflect.TypeOf((*MockIExchangeManager)(nil).GetOfferMembers), offerId)
 }
 
 // OfferExists mocks base method
 func (m *MockIExchangeManager) OfferExists(offerId types.ID) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "OfferExists", offerId)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -125,98 +115,84 @@ func (m *MockIExchangeManager) OfferExists(offerId types.ID) (bool, error) {
 
 // OfferExists indicates an expected call of OfferExists
 func (mr *MockIExchangeManagerMockRecorder) OfferExists(offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OfferExists", reflect.TypeOf((*MockIExchangeManager)(nil).OfferExists), offerId)
 }
 
 // AddDataIds mocks base method
-func (m *MockIExchangeManager) AddDataIds(ctx context.Context, offerId types.ID, dataIds []types.DataId) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddDataIds", ctx, offerId, dataIds)
+func (m *MockIExchangeManager) AddDataIds(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID, dataIds []types.DataId) error {
+	ret := m.ctrl.Call(m, "AddDataIds", ctx, opts, offerId, dataIds)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // AddDataIds indicates an expected call of AddDataIds
-func (mr *MockIExchangeManagerMockRecorder) AddDataIds(ctx, offerId, dataIds interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddDataIds", reflect.TypeOf((*MockIExchangeManager)(nil).AddDataIds), ctx, offerId, dataIds)
+func (mr *MockIExchangeManagerMockRecorder) AddDataIds(ctx, opts, offerId, dataIds interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddDataIds", reflect.TypeOf((*MockIExchangeManager)(nil).AddDataIds), ctx, opts, offerId, dataIds)
 }
 
 // Cancel mocks base method
-func (m *MockIExchangeManager) Cancel(ctx context.Context, offerId types.ID) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Cancel", ctx, offerId)
+func (m *MockIExchangeManager) Cancel(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) error {
+	ret := m.ctrl.Call(m, "Cancel", ctx, opts, offerId)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Cancel indicates an expected call of Cancel
-func (mr *MockIExchangeManagerMockRecorder) Cancel(ctx, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Cancel", reflect.TypeOf((*MockIExchangeManager)(nil).Cancel), ctx, offerId)
+func (mr *MockIExchangeManagerMockRecorder) Cancel(ctx, opts, offerId interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Cancel", reflect.TypeOf((*MockIExchangeManager)(nil).Cancel), ctx, opts, offerId)
 }
 
 // Order mocks base method
-func (m *MockIExchangeManager) Order(ctx context.Context, offerId types.ID) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Order", ctx, offerId)
+func (m *MockIExchangeManager) Order(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) error {
+	ret := m.ctrl.Call(m, "Order", ctx, opts, offerId)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Order indicates an expected call of Order
-func (mr *MockIExchangeManagerMockRecorder) Order(ctx, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Order", reflect.TypeOf((*MockIExchangeManager)(nil).Order), ctx, offerId)
+func (mr *MockIExchangeManagerMockRecorder) Order(ctx, opts, offerId interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Order", reflect.TypeOf((*MockIExchangeManager)(nil).Order), ctx, opts, offerId)
 }
 
 // Prepare mocks base method
-func (m *MockIExchangeManager) Prepare(ctx context.Context, provider string, consumer, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds []types.DataId) (types.ID, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Prepare", ctx, provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
+func (m *MockIExchangeManager) Prepare(ctx context.Context, opts *blockchain.TransactOpts, provider string, consumer, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds []types.DataId) (types.ID, error) {
+	ret := m.ctrl.Call(m, "Prepare", ctx, opts, provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
 	ret0, _ := ret[0].(types.ID)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Prepare indicates an expected call of Prepare
-func (mr *MockIExchangeManagerMockRecorder) Prepare(ctx, provider, consumer, escrow, escrowSign, escrowArgs, dataIds interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Prepare", reflect.TypeOf((*MockIExchangeManager)(nil).Prepare), ctx, provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
+func (mr *MockIExchangeManagerMockRecorder) Prepare(ctx, opts, provider, consumer, escrow, escrowSign, escrowArgs, dataIds interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Prepare", reflect.TypeOf((*MockIExchangeManager)(nil).Prepare), ctx, opts, provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
 }
 
 // Reject mocks base method
-func (m *MockIExchangeManager) Reject(ctx context.Context, offerId types.ID) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Reject", ctx, offerId)
+func (m *MockIExchangeManager) Reject(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) error {
+	ret := m.ctrl.Call(m, "Reject", ctx, opts, offerId)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Reject indicates an expected call of Reject
-func (mr *MockIExchangeManagerMockRecorder) Reject(ctx, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reject", reflect.TypeOf((*MockIExchangeManager)(nil).Reject), ctx, offerId)
+func (mr *MockIExchangeManagerMockRecorder) Reject(ctx, opts, offerId interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reject", reflect.TypeOf((*MockIExchangeManager)(nil).Reject), ctx, opts, offerId)
 }
 
 // Settle mocks base method
-func (m *MockIExchangeManager) Settle(ctx context.Context, offerId types.ID) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Settle", ctx, offerId)
+func (m *MockIExchangeManager) Settle(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) error {
+	ret := m.ctrl.Call(m, "Settle", ctx, opts, offerId)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Settle indicates an expected call of Settle
-func (mr *MockIExchangeManagerMockRecorder) Settle(ctx, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Settle", reflect.TypeOf((*MockIExchangeManager)(nil).Settle), ctx, offerId)
+func (mr *MockIExchangeManagerMockRecorder) Settle(ctx, opts, offerId interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Settle", reflect.TypeOf((*MockIExchangeManager)(nil).Settle), ctx, opts, offerId)
 }
 
 // FilterEscrowExecutionFailed mocks base method
 func (m *MockIExchangeManager) FilterEscrowExecutionFailed(opts *bind.FilterOpts) (*adapter.ExchangeEscrowExecutionFailedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterEscrowExecutionFailed", opts)
 	ret0, _ := ret[0].(*adapter.ExchangeEscrowExecutionFailedIterator)
 	ret1, _ := ret[1].(error)
@@ -225,13 +201,11 @@ func (m *MockIExchangeManager) FilterEscrowExecutionFailed(opts *bind.FilterOpts
 
 // FilterEscrowExecutionFailed indicates an expected call of FilterEscrowExecutionFailed
 func (mr *MockIExchangeManagerMockRecorder) FilterEscrowExecutionFailed(opts interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterEscrowExecutionFailed", reflect.TypeOf((*MockIExchangeManager)(nil).FilterEscrowExecutionFailed), opts)
 }
 
 // FilterOfferCanceled mocks base method
 func (m *MockIExchangeManager) FilterOfferCanceled(opts *bind.FilterOpts, offerId []types.ID) (*adapter.ExchangeOfferCanceledIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferCanceled", opts, offerId)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferCanceledIterator)
 	ret1, _ := ret[1].(error)
@@ -240,13 +214,11 @@ func (m *MockIExchangeManager) FilterOfferCanceled(opts *bind.FilterOpts, offerI
 
 // FilterOfferCanceled indicates an expected call of FilterOfferCanceled
 func (mr *MockIExchangeManagerMockRecorder) FilterOfferCanceled(opts, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferCanceled", reflect.TypeOf((*MockIExchangeManager)(nil).FilterOfferCanceled), opts, offerId)
 }
 
 // FilterOfferPrepared mocks base method
 func (m *MockIExchangeManager) FilterOfferPrepared(opts *bind.FilterOpts, offerId []types.ID) (*adapter.ExchangeOfferPreparedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferPrepared", opts, offerId)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferPreparedIterator)
 	ret1, _ := ret[1].(error)
@@ -255,13 +227,11 @@ func (m *MockIExchangeManager) FilterOfferPrepared(opts *bind.FilterOpts, offerI
 
 // FilterOfferPrepared indicates an expected call of FilterOfferPrepared
 func (mr *MockIExchangeManagerMockRecorder) FilterOfferPrepared(opts, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferPrepared", reflect.TypeOf((*MockIExchangeManager)(nil).FilterOfferPrepared), opts, offerId)
 }
 
 // FilterOfferPresented mocks base method
 func (m *MockIExchangeManager) FilterOfferPresented(opts *bind.FilterOpts, offerId []types.ID) (*adapter.ExchangeOfferPresentedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferPresented", opts, offerId)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferPresentedIterator)
 	ret1, _ := ret[1].(error)
@@ -270,13 +240,11 @@ func (m *MockIExchangeManager) FilterOfferPresented(opts *bind.FilterOpts, offer
 
 // FilterOfferPresented indicates an expected call of FilterOfferPresented
 func (mr *MockIExchangeManagerMockRecorder) FilterOfferPresented(opts, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferPresented", reflect.TypeOf((*MockIExchangeManager)(nil).FilterOfferPresented), opts, offerId)
 }
 
 // FilterOfferReceipt mocks base method
 func (m *MockIExchangeManager) FilterOfferReceipt(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*adapter.ExchangeOfferReceiptIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferReceipt", opts, offerId, consumer)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferReceiptIterator)
 	ret1, _ := ret[1].(error)
@@ -285,13 +253,11 @@ func (m *MockIExchangeManager) FilterOfferReceipt(opts *bind.FilterOpts, offerId
 
 // FilterOfferReceipt indicates an expected call of FilterOfferReceipt
 func (mr *MockIExchangeManagerMockRecorder) FilterOfferReceipt(opts, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferReceipt", reflect.TypeOf((*MockIExchangeManager)(nil).FilterOfferReceipt), opts, offerId, consumer)
 }
 
 // FilterOfferRejected mocks base method
 func (m *MockIExchangeManager) FilterOfferRejected(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*adapter.ExchangeOfferRejectedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferRejected", opts, offerId, consumer)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferRejectedIterator)
 	ret1, _ := ret[1].(error)
@@ -300,13 +266,11 @@ func (m *MockIExchangeManager) FilterOfferRejected(opts *bind.FilterOpts, offerI
 
 // FilterOfferRejected indicates an expected call of FilterOfferRejected
 func (mr *MockIExchangeManagerMockRecorder) FilterOfferRejected(opts, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferRejected", reflect.TypeOf((*MockIExchangeManager)(nil).FilterOfferRejected), opts, offerId, consumer)
 }
 
 // FilterOfferSettled mocks base method
 func (m *MockIExchangeManager) FilterOfferSettled(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*adapter.ExchangeOfferSettledIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferSettled", opts, offerId, consumer)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferSettledIterator)
 	ret1, _ := ret[1].(error)
@@ -315,13 +279,11 @@ func (m *MockIExchangeManager) FilterOfferSettled(opts *bind.FilterOpts, offerId
 
 // FilterOfferSettled indicates an expected call of FilterOfferSettled
 func (mr *MockIExchangeManagerMockRecorder) FilterOfferSettled(opts, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferSettled", reflect.TypeOf((*MockIExchangeManager)(nil).FilterOfferSettled), opts, offerId, consumer)
 }
 
 // WatchEscrowExecutionFailed mocks base method
 func (m *MockIExchangeManager) WatchEscrowExecutionFailed(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeEscrowExecutionFailed) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchEscrowExecutionFailed", opts, sink)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -330,13 +292,11 @@ func (m *MockIExchangeManager) WatchEscrowExecutionFailed(opts *bind.WatchOpts, 
 
 // WatchEscrowExecutionFailed indicates an expected call of WatchEscrowExecutionFailed
 func (mr *MockIExchangeManagerMockRecorder) WatchEscrowExecutionFailed(opts, sink interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchEscrowExecutionFailed", reflect.TypeOf((*MockIExchangeManager)(nil).WatchEscrowExecutionFailed), opts, sink)
 }
 
 // WatchOfferCanceled mocks base method
 func (m *MockIExchangeManager) WatchOfferCanceled(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferCanceled, offerId []types.ID) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferCanceled", opts, sink, offerId)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -345,13 +305,11 @@ func (m *MockIExchangeManager) WatchOfferCanceled(opts *bind.WatchOpts, sink cha
 
 // WatchOfferCanceled indicates an expected call of WatchOfferCanceled
 func (mr *MockIExchangeManagerMockRecorder) WatchOfferCanceled(opts, sink, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferCanceled", reflect.TypeOf((*MockIExchangeManager)(nil).WatchOfferCanceled), opts, sink, offerId)
 }
 
 // WatchOfferPrepared mocks base method
 func (m *MockIExchangeManager) WatchOfferPrepared(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferPrepared, offerId []types.ID) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferPrepared", opts, sink, offerId)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -360,13 +318,11 @@ func (m *MockIExchangeManager) WatchOfferPrepared(opts *bind.WatchOpts, sink cha
 
 // WatchOfferPrepared indicates an expected call of WatchOfferPrepared
 func (mr *MockIExchangeManagerMockRecorder) WatchOfferPrepared(opts, sink, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferPrepared", reflect.TypeOf((*MockIExchangeManager)(nil).WatchOfferPrepared), opts, sink, offerId)
 }
 
 // WatchOfferPresented mocks base method
 func (m *MockIExchangeManager) WatchOfferPresented(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferPresented, offerId []types.ID) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferPresented", opts, sink, offerId)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -375,13 +331,11 @@ func (m *MockIExchangeManager) WatchOfferPresented(opts *bind.WatchOpts, sink ch
 
 // WatchOfferPresented indicates an expected call of WatchOfferPresented
 func (mr *MockIExchangeManagerMockRecorder) WatchOfferPresented(opts, sink, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferPresented", reflect.TypeOf((*MockIExchangeManager)(nil).WatchOfferPresented), opts, sink, offerId)
 }
 
 // WatchOfferReceipt mocks base method
 func (m *MockIExchangeManager) WatchOfferReceipt(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferReceipt, offerId []types.ID, consumer []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferReceipt", opts, sink, offerId, consumer)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -390,13 +344,11 @@ func (m *MockIExchangeManager) WatchOfferReceipt(opts *bind.WatchOpts, sink chan
 
 // WatchOfferReceipt indicates an expected call of WatchOfferReceipt
 func (mr *MockIExchangeManagerMockRecorder) WatchOfferReceipt(opts, sink, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferReceipt", reflect.TypeOf((*MockIExchangeManager)(nil).WatchOfferReceipt), opts, sink, offerId, consumer)
 }
 
 // WatchOfferRejected mocks base method
 func (m *MockIExchangeManager) WatchOfferRejected(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferRejected, offerId []types.ID, consumer []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferRejected", opts, sink, offerId, consumer)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -405,13 +357,11 @@ func (m *MockIExchangeManager) WatchOfferRejected(opts *bind.WatchOpts, sink cha
 
 // WatchOfferRejected indicates an expected call of WatchOfferRejected
 func (mr *MockIExchangeManagerMockRecorder) WatchOfferRejected(opts, sink, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferRejected", reflect.TypeOf((*MockIExchangeManager)(nil).WatchOfferRejected), opts, sink, offerId, consumer)
 }
 
 // WatchOfferSettled mocks base method
 func (m *MockIExchangeManager) WatchOfferSettled(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferSettled, offerId []types.ID, consumer []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferSettled", opts, sink, offerId, consumer)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -420,7 +370,6 @@ func (m *MockIExchangeManager) WatchOfferSettled(opts *bind.WatchOpts, sink chan
 
 // WatchOfferSettled indicates an expected call of WatchOfferSettled
 func (mr *MockIExchangeManagerMockRecorder) WatchOfferSettled(opts, sink, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferSettled", reflect.TypeOf((*MockIExchangeManager)(nil).WatchOfferSettled), opts, sink, offerId, consumer)
 }
 
@@ -449,7 +398,6 @@ func (m *MockIExchangeCalls) EXPECT() *MockIExchangeCallsMockRecorder {
 
 // GetOffer mocks base method
 func (m *MockIExchangeCalls) GetOffer(offerId types.ID) (types.Offer, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOffer", offerId)
 	ret0, _ := ret[0].(types.Offer)
 	ret1, _ := ret[1].(error)
@@ -458,13 +406,11 @@ func (m *MockIExchangeCalls) GetOffer(offerId types.ID) (types.Offer, error) {
 
 // GetOffer indicates an expected call of GetOffer
 func (mr *MockIExchangeCallsMockRecorder) GetOffer(offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOffer", reflect.TypeOf((*MockIExchangeCalls)(nil).GetOffer), offerId)
 }
 
 // GetOfferMembers mocks base method
 func (m *MockIExchangeCalls) GetOfferMembers(offerId types.ID) (common.Address, common.Address, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOfferMembers", offerId)
 	ret0, _ := ret[0].(common.Address)
 	ret1, _ := ret[1].(common.Address)
@@ -474,13 +420,11 @@ func (m *MockIExchangeCalls) GetOfferMembers(offerId types.ID) (common.Address, 
 
 // GetOfferMembers indicates an expected call of GetOfferMembers
 func (mr *MockIExchangeCallsMockRecorder) GetOfferMembers(offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOfferMembers", reflect.TypeOf((*MockIExchangeCalls)(nil).GetOfferMembers), offerId)
 }
 
 // OfferExists mocks base method
 func (m *MockIExchangeCalls) OfferExists(offerId types.ID) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "OfferExists", offerId)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -489,7 +433,6 @@ func (m *MockIExchangeCalls) OfferExists(offerId types.ID) (bool, error) {
 
 // OfferExists indicates an expected call of OfferExists
 func (mr *MockIExchangeCallsMockRecorder) OfferExists(offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OfferExists", reflect.TypeOf((*MockIExchangeCalls)(nil).OfferExists), offerId)
 }
 
@@ -517,93 +460,81 @@ func (m *MockIExchangeTransacts) EXPECT() *MockIExchangeTransactsMockRecorder {
 }
 
 // AddDataIds mocks base method
-func (m *MockIExchangeTransacts) AddDataIds(ctx context.Context, offerId types.ID, dataIds []types.DataId) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddDataIds", ctx, offerId, dataIds)
+func (m *MockIExchangeTransacts) AddDataIds(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID, dataIds []types.DataId) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "AddDataIds", ctx, opts, offerId, dataIds)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // AddDataIds indicates an expected call of AddDataIds
-func (mr *MockIExchangeTransactsMockRecorder) AddDataIds(ctx, offerId, dataIds interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddDataIds", reflect.TypeOf((*MockIExchangeTransacts)(nil).AddDataIds), ctx, offerId, dataIds)
+func (mr *MockIExchangeTransactsMockRecorder) AddDataIds(ctx, opts, offerId, dataIds interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddDataIds", reflect.TypeOf((*MockIExchangeTransacts)(nil).AddDataIds), ctx, opts, offerId, dataIds)
 }
 
 // Cancel mocks base method
-func (m *MockIExchangeTransacts) Cancel(ctx context.Context, offerId types.ID) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Cancel", ctx, offerId)
+func (m *MockIExchangeTransacts) Cancel(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "Cancel", ctx, opts, offerId)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Cancel indicates an expected call of Cancel
-func (mr *MockIExchangeTransactsMockRecorder) Cancel(ctx, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Cancel", reflect.TypeOf((*MockIExchangeTransacts)(nil).Cancel), ctx, offerId)
+func (mr *MockIExchangeTransactsMockRecorder) Cancel(ctx, opts, offerId interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Cancel", reflect.TypeOf((*MockIExchangeTransacts)(nil).Cancel), ctx, opts, offerId)
 }
 
 // Order mocks base method
-func (m *MockIExchangeTransacts) Order(ctx context.Context, offerId types.ID) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Order", ctx, offerId)
+func (m *MockIExchangeTransacts) Order(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "Order", ctx, opts, offerId)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Order indicates an expected call of Order
-func (mr *MockIExchangeTransactsMockRecorder) Order(ctx, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Order", reflect.TypeOf((*MockIExchangeTransacts)(nil).Order), ctx, offerId)
+func (mr *MockIExchangeTransactsMockRecorder) Order(ctx, opts, offerId interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Order", reflect.TypeOf((*MockIExchangeTransacts)(nil).Order), ctx, opts, offerId)
 }
 
 // Prepare mocks base method
-func (m *MockIExchangeTransacts) Prepare(ctx context.Context, provider string, consumer, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds []types.DataId) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Prepare", ctx, provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
+func (m *MockIExchangeTransacts) Prepare(ctx context.Context, opts *blockchain.TransactOpts, provider string, consumer, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds []types.DataId) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "Prepare", ctx, opts, provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Prepare indicates an expected call of Prepare
-func (mr *MockIExchangeTransactsMockRecorder) Prepare(ctx, provider, consumer, escrow, escrowSign, escrowArgs, dataIds interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Prepare", reflect.TypeOf((*MockIExchangeTransacts)(nil).Prepare), ctx, provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
+func (mr *MockIExchangeTransactsMockRecorder) Prepare(ctx, opts, provider, consumer, escrow, escrowSign, escrowArgs, dataIds interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Prepare", reflect.TypeOf((*MockIExchangeTransacts)(nil).Prepare), ctx, opts, provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
 }
 
 // Reject mocks base method
-func (m *MockIExchangeTransacts) Reject(ctx context.Context, offerId types.ID) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Reject", ctx, offerId)
+func (m *MockIExchangeTransacts) Reject(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "Reject", ctx, opts, offerId)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Reject indicates an expected call of Reject
-func (mr *MockIExchangeTransactsMockRecorder) Reject(ctx, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reject", reflect.TypeOf((*MockIExchangeTransacts)(nil).Reject), ctx, offerId)
+func (mr *MockIExchangeTransactsMockRecorder) Reject(ctx, opts, offerId interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reject", reflect.TypeOf((*MockIExchangeTransacts)(nil).Reject), ctx, opts, offerId)
 }
 
 // Settle mocks base method
-func (m *MockIExchangeTransacts) Settle(ctx context.Context, offerId types.ID) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Settle", ctx, offerId)
+func (m *MockIExchangeTransacts) Settle(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "Settle", ctx, opts, offerId)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Settle indicates an expected call of Settle
-func (mr *MockIExchangeTransactsMockRecorder) Settle(ctx, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Settle", reflect.TypeOf((*MockIExchangeTransacts)(nil).Settle), ctx, offerId)
+func (mr *MockIExchangeTransactsMockRecorder) Settle(ctx, opts, offerId interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Settle", reflect.TypeOf((*MockIExchangeTransacts)(nil).Settle), ctx, opts, offerId)
 }
 
 // MockIExchangeEvents is a mock of IExchangeEvents interface
@@ -631,7 +562,6 @@ func (m *MockIExchangeEvents) EXPECT() *MockIExchangeEventsMockRecorder {
 
 // FilterEscrowExecutionFailed mocks base method
 func (m *MockIExchangeEvents) FilterEscrowExecutionFailed(opts *bind.FilterOpts) (*adapter.ExchangeEscrowExecutionFailedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterEscrowExecutionFailed", opts)
 	ret0, _ := ret[0].(*adapter.ExchangeEscrowExecutionFailedIterator)
 	ret1, _ := ret[1].(error)
@@ -640,13 +570,11 @@ func (m *MockIExchangeEvents) FilterEscrowExecutionFailed(opts *bind.FilterOpts)
 
 // FilterEscrowExecutionFailed indicates an expected call of FilterEscrowExecutionFailed
 func (mr *MockIExchangeEventsMockRecorder) FilterEscrowExecutionFailed(opts interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterEscrowExecutionFailed", reflect.TypeOf((*MockIExchangeEvents)(nil).FilterEscrowExecutionFailed), opts)
 }
 
 // FilterOfferCanceled mocks base method
 func (m *MockIExchangeEvents) FilterOfferCanceled(opts *bind.FilterOpts, offerId []types.ID) (*adapter.ExchangeOfferCanceledIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferCanceled", opts, offerId)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferCanceledIterator)
 	ret1, _ := ret[1].(error)
@@ -655,13 +583,11 @@ func (m *MockIExchangeEvents) FilterOfferCanceled(opts *bind.FilterOpts, offerId
 
 // FilterOfferCanceled indicates an expected call of FilterOfferCanceled
 func (mr *MockIExchangeEventsMockRecorder) FilterOfferCanceled(opts, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferCanceled", reflect.TypeOf((*MockIExchangeEvents)(nil).FilterOfferCanceled), opts, offerId)
 }
 
 // FilterOfferPrepared mocks base method
 func (m *MockIExchangeEvents) FilterOfferPrepared(opts *bind.FilterOpts, offerId []types.ID) (*adapter.ExchangeOfferPreparedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferPrepared", opts, offerId)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferPreparedIterator)
 	ret1, _ := ret[1].(error)
@@ -670,13 +596,11 @@ func (m *MockIExchangeEvents) FilterOfferPrepared(opts *bind.FilterOpts, offerId
 
 // FilterOfferPrepared indicates an expected call of FilterOfferPrepared
 func (mr *MockIExchangeEventsMockRecorder) FilterOfferPrepared(opts, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferPrepared", reflect.TypeOf((*MockIExchangeEvents)(nil).FilterOfferPrepared), opts, offerId)
 }
 
 // FilterOfferPresented mocks base method
 func (m *MockIExchangeEvents) FilterOfferPresented(opts *bind.FilterOpts, offerId []types.ID) (*adapter.ExchangeOfferPresentedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferPresented", opts, offerId)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferPresentedIterator)
 	ret1, _ := ret[1].(error)
@@ -685,13 +609,11 @@ func (m *MockIExchangeEvents) FilterOfferPresented(opts *bind.FilterOpts, offerI
 
 // FilterOfferPresented indicates an expected call of FilterOfferPresented
 func (mr *MockIExchangeEventsMockRecorder) FilterOfferPresented(opts, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferPresented", reflect.TypeOf((*MockIExchangeEvents)(nil).FilterOfferPresented), opts, offerId)
 }
 
 // FilterOfferReceipt mocks base method
 func (m *MockIExchangeEvents) FilterOfferReceipt(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*adapter.ExchangeOfferReceiptIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferReceipt", opts, offerId, consumer)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferReceiptIterator)
 	ret1, _ := ret[1].(error)
@@ -700,13 +622,11 @@ func (m *MockIExchangeEvents) FilterOfferReceipt(opts *bind.FilterOpts, offerId 
 
 // FilterOfferReceipt indicates an expected call of FilterOfferReceipt
 func (mr *MockIExchangeEventsMockRecorder) FilterOfferReceipt(opts, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferReceipt", reflect.TypeOf((*MockIExchangeEvents)(nil).FilterOfferReceipt), opts, offerId, consumer)
 }
 
 // FilterOfferRejected mocks base method
 func (m *MockIExchangeEvents) FilterOfferRejected(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*adapter.ExchangeOfferRejectedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferRejected", opts, offerId, consumer)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferRejectedIterator)
 	ret1, _ := ret[1].(error)
@@ -715,13 +635,11 @@ func (m *MockIExchangeEvents) FilterOfferRejected(opts *bind.FilterOpts, offerId
 
 // FilterOfferRejected indicates an expected call of FilterOfferRejected
 func (mr *MockIExchangeEventsMockRecorder) FilterOfferRejected(opts, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferRejected", reflect.TypeOf((*MockIExchangeEvents)(nil).FilterOfferRejected), opts, offerId, consumer)
 }
 
 // FilterOfferSettled mocks base method
 func (m *MockIExchangeEvents) FilterOfferSettled(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*adapter.ExchangeOfferSettledIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferSettled", opts, offerId, consumer)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferSettledIterator)
 	ret1, _ := ret[1].(error)
@@ -730,13 +648,11 @@ func (m *MockIExchangeEvents) FilterOfferSettled(opts *bind.FilterOpts, offerId 
 
 // FilterOfferSettled indicates an expected call of FilterOfferSettled
 func (mr *MockIExchangeEventsMockRecorder) FilterOfferSettled(opts, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferSettled", reflect.TypeOf((*MockIExchangeEvents)(nil).FilterOfferSettled), opts, offerId, consumer)
 }
 
 // ParseEscrowExecutionFailed mocks base method
 func (m *MockIExchangeEvents) ParseEscrowExecutionFailed(log types0.Log) (*adapter.ExchangeEscrowExecutionFailed, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseEscrowExecutionFailed", log)
 	ret0, _ := ret[0].(*adapter.ExchangeEscrowExecutionFailed)
 	ret1, _ := ret[1].(error)
@@ -745,13 +661,11 @@ func (m *MockIExchangeEvents) ParseEscrowExecutionFailed(log types0.Log) (*adapt
 
 // ParseEscrowExecutionFailed indicates an expected call of ParseEscrowExecutionFailed
 func (mr *MockIExchangeEventsMockRecorder) ParseEscrowExecutionFailed(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseEscrowExecutionFailed", reflect.TypeOf((*MockIExchangeEvents)(nil).ParseEscrowExecutionFailed), log)
 }
 
 // ParseEscrowExecutionFailedFromReceipt mocks base method
 func (m *MockIExchangeEvents) ParseEscrowExecutionFailedFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeEscrowExecutionFailed, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseEscrowExecutionFailedFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeEscrowExecutionFailed)
 	ret1, _ := ret[1].(error)
@@ -760,13 +674,11 @@ func (m *MockIExchangeEvents) ParseEscrowExecutionFailedFromReceipt(receipt *typ
 
 // ParseEscrowExecutionFailedFromReceipt indicates an expected call of ParseEscrowExecutionFailedFromReceipt
 func (mr *MockIExchangeEventsMockRecorder) ParseEscrowExecutionFailedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseEscrowExecutionFailedFromReceipt", reflect.TypeOf((*MockIExchangeEvents)(nil).ParseEscrowExecutionFailedFromReceipt), receipt)
 }
 
 // ParseOfferCanceled mocks base method
 func (m *MockIExchangeEvents) ParseOfferCanceled(log types0.Log) (*adapter.ExchangeOfferCanceled, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferCanceled", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferCanceled)
 	ret1, _ := ret[1].(error)
@@ -775,13 +687,11 @@ func (m *MockIExchangeEvents) ParseOfferCanceled(log types0.Log) (*adapter.Excha
 
 // ParseOfferCanceled indicates an expected call of ParseOfferCanceled
 func (mr *MockIExchangeEventsMockRecorder) ParseOfferCanceled(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferCanceled", reflect.TypeOf((*MockIExchangeEvents)(nil).ParseOfferCanceled), log)
 }
 
 // ParseOfferCanceledFromReceipt mocks base method
 func (m *MockIExchangeEvents) ParseOfferCanceledFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferCanceled, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferCanceledFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferCanceled)
 	ret1, _ := ret[1].(error)
@@ -790,13 +700,11 @@ func (m *MockIExchangeEvents) ParseOfferCanceledFromReceipt(receipt *types0.Rece
 
 // ParseOfferCanceledFromReceipt indicates an expected call of ParseOfferCanceledFromReceipt
 func (mr *MockIExchangeEventsMockRecorder) ParseOfferCanceledFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferCanceledFromReceipt", reflect.TypeOf((*MockIExchangeEvents)(nil).ParseOfferCanceledFromReceipt), receipt)
 }
 
 // ParseOfferPrepared mocks base method
 func (m *MockIExchangeEvents) ParseOfferPrepared(log types0.Log) (*adapter.ExchangeOfferPrepared, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferPrepared", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferPrepared)
 	ret1, _ := ret[1].(error)
@@ -805,13 +713,11 @@ func (m *MockIExchangeEvents) ParseOfferPrepared(log types0.Log) (*adapter.Excha
 
 // ParseOfferPrepared indicates an expected call of ParseOfferPrepared
 func (mr *MockIExchangeEventsMockRecorder) ParseOfferPrepared(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferPrepared", reflect.TypeOf((*MockIExchangeEvents)(nil).ParseOfferPrepared), log)
 }
 
 // ParseOfferPreparedFromReceipt mocks base method
 func (m *MockIExchangeEvents) ParseOfferPreparedFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferPrepared, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferPreparedFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferPrepared)
 	ret1, _ := ret[1].(error)
@@ -820,13 +726,11 @@ func (m *MockIExchangeEvents) ParseOfferPreparedFromReceipt(receipt *types0.Rece
 
 // ParseOfferPreparedFromReceipt indicates an expected call of ParseOfferPreparedFromReceipt
 func (mr *MockIExchangeEventsMockRecorder) ParseOfferPreparedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferPreparedFromReceipt", reflect.TypeOf((*MockIExchangeEvents)(nil).ParseOfferPreparedFromReceipt), receipt)
 }
 
 // ParseOfferPresented mocks base method
 func (m *MockIExchangeEvents) ParseOfferPresented(log types0.Log) (*adapter.ExchangeOfferPresented, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferPresented", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferPresented)
 	ret1, _ := ret[1].(error)
@@ -835,13 +739,11 @@ func (m *MockIExchangeEvents) ParseOfferPresented(log types0.Log) (*adapter.Exch
 
 // ParseOfferPresented indicates an expected call of ParseOfferPresented
 func (mr *MockIExchangeEventsMockRecorder) ParseOfferPresented(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferPresented", reflect.TypeOf((*MockIExchangeEvents)(nil).ParseOfferPresented), log)
 }
 
 // ParseOfferPresentedFromReceipt mocks base method
 func (m *MockIExchangeEvents) ParseOfferPresentedFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferPresented, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferPresentedFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferPresented)
 	ret1, _ := ret[1].(error)
@@ -850,13 +752,11 @@ func (m *MockIExchangeEvents) ParseOfferPresentedFromReceipt(receipt *types0.Rec
 
 // ParseOfferPresentedFromReceipt indicates an expected call of ParseOfferPresentedFromReceipt
 func (mr *MockIExchangeEventsMockRecorder) ParseOfferPresentedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferPresentedFromReceipt", reflect.TypeOf((*MockIExchangeEvents)(nil).ParseOfferPresentedFromReceipt), receipt)
 }
 
 // ParseOfferReceipt mocks base method
 func (m *MockIExchangeEvents) ParseOfferReceipt(log types0.Log) (*adapter.ExchangeOfferReceipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferReceipt", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferReceipt)
 	ret1, _ := ret[1].(error)
@@ -865,13 +765,11 @@ func (m *MockIExchangeEvents) ParseOfferReceipt(log types0.Log) (*adapter.Exchan
 
 // ParseOfferReceipt indicates an expected call of ParseOfferReceipt
 func (mr *MockIExchangeEventsMockRecorder) ParseOfferReceipt(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferReceipt", reflect.TypeOf((*MockIExchangeEvents)(nil).ParseOfferReceipt), log)
 }
 
 // ParseOfferReceiptFromReceipt mocks base method
 func (m *MockIExchangeEvents) ParseOfferReceiptFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferReceipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferReceiptFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferReceipt)
 	ret1, _ := ret[1].(error)
@@ -880,13 +778,11 @@ func (m *MockIExchangeEvents) ParseOfferReceiptFromReceipt(receipt *types0.Recei
 
 // ParseOfferReceiptFromReceipt indicates an expected call of ParseOfferReceiptFromReceipt
 func (mr *MockIExchangeEventsMockRecorder) ParseOfferReceiptFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferReceiptFromReceipt", reflect.TypeOf((*MockIExchangeEvents)(nil).ParseOfferReceiptFromReceipt), receipt)
 }
 
 // ParseOfferRejected mocks base method
 func (m *MockIExchangeEvents) ParseOfferRejected(log types0.Log) (*adapter.ExchangeOfferRejected, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferRejected", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferRejected)
 	ret1, _ := ret[1].(error)
@@ -895,13 +791,11 @@ func (m *MockIExchangeEvents) ParseOfferRejected(log types0.Log) (*adapter.Excha
 
 // ParseOfferRejected indicates an expected call of ParseOfferRejected
 func (mr *MockIExchangeEventsMockRecorder) ParseOfferRejected(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferRejected", reflect.TypeOf((*MockIExchangeEvents)(nil).ParseOfferRejected), log)
 }
 
 // ParseOfferRejectedFromReceipt mocks base method
 func (m *MockIExchangeEvents) ParseOfferRejectedFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferRejected, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferRejectedFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferRejected)
 	ret1, _ := ret[1].(error)
@@ -910,13 +804,11 @@ func (m *MockIExchangeEvents) ParseOfferRejectedFromReceipt(receipt *types0.Rece
 
 // ParseOfferRejectedFromReceipt indicates an expected call of ParseOfferRejectedFromReceipt
 func (mr *MockIExchangeEventsMockRecorder) ParseOfferRejectedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferRejectedFromReceipt", reflect.TypeOf((*MockIExchangeEvents)(nil).ParseOfferRejectedFromReceipt), receipt)
 }
 
 // ParseOfferSettled mocks base method
 func (m *MockIExchangeEvents) ParseOfferSettled(log types0.Log) (*adapter.ExchangeOfferSettled, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferSettled", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferSettled)
 	ret1, _ := ret[1].(error)
@@ -925,13 +817,11 @@ func (m *MockIExchangeEvents) ParseOfferSettled(log types0.Log) (*adapter.Exchan
 
 // ParseOfferSettled indicates an expected call of ParseOfferSettled
 func (mr *MockIExchangeEventsMockRecorder) ParseOfferSettled(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferSettled", reflect.TypeOf((*MockIExchangeEvents)(nil).ParseOfferSettled), log)
 }
 
 // ParseOfferSettledFromReceipt mocks base method
 func (m *MockIExchangeEvents) ParseOfferSettledFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferSettled, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferSettledFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferSettled)
 	ret1, _ := ret[1].(error)
@@ -940,13 +830,11 @@ func (m *MockIExchangeEvents) ParseOfferSettledFromReceipt(receipt *types0.Recei
 
 // ParseOfferSettledFromReceipt indicates an expected call of ParseOfferSettledFromReceipt
 func (mr *MockIExchangeEventsMockRecorder) ParseOfferSettledFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferSettledFromReceipt", reflect.TypeOf((*MockIExchangeEvents)(nil).ParseOfferSettledFromReceipt), receipt)
 }
 
 // WatchEscrowExecutionFailed mocks base method
 func (m *MockIExchangeEvents) WatchEscrowExecutionFailed(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeEscrowExecutionFailed) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchEscrowExecutionFailed", opts, sink)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -955,13 +843,11 @@ func (m *MockIExchangeEvents) WatchEscrowExecutionFailed(opts *bind.WatchOpts, s
 
 // WatchEscrowExecutionFailed indicates an expected call of WatchEscrowExecutionFailed
 func (mr *MockIExchangeEventsMockRecorder) WatchEscrowExecutionFailed(opts, sink interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchEscrowExecutionFailed", reflect.TypeOf((*MockIExchangeEvents)(nil).WatchEscrowExecutionFailed), opts, sink)
 }
 
 // WatchOfferCanceled mocks base method
 func (m *MockIExchangeEvents) WatchOfferCanceled(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferCanceled, offerId []types.ID) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferCanceled", opts, sink, offerId)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -970,13 +856,11 @@ func (m *MockIExchangeEvents) WatchOfferCanceled(opts *bind.WatchOpts, sink chan
 
 // WatchOfferCanceled indicates an expected call of WatchOfferCanceled
 func (mr *MockIExchangeEventsMockRecorder) WatchOfferCanceled(opts, sink, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferCanceled", reflect.TypeOf((*MockIExchangeEvents)(nil).WatchOfferCanceled), opts, sink, offerId)
 }
 
 // WatchOfferPrepared mocks base method
 func (m *MockIExchangeEvents) WatchOfferPrepared(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferPrepared, offerId []types.ID) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferPrepared", opts, sink, offerId)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -985,13 +869,11 @@ func (m *MockIExchangeEvents) WatchOfferPrepared(opts *bind.WatchOpts, sink chan
 
 // WatchOfferPrepared indicates an expected call of WatchOfferPrepared
 func (mr *MockIExchangeEventsMockRecorder) WatchOfferPrepared(opts, sink, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferPrepared", reflect.TypeOf((*MockIExchangeEvents)(nil).WatchOfferPrepared), opts, sink, offerId)
 }
 
 // WatchOfferPresented mocks base method
 func (m *MockIExchangeEvents) WatchOfferPresented(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferPresented, offerId []types.ID) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferPresented", opts, sink, offerId)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1000,13 +882,11 @@ func (m *MockIExchangeEvents) WatchOfferPresented(opts *bind.WatchOpts, sink cha
 
 // WatchOfferPresented indicates an expected call of WatchOfferPresented
 func (mr *MockIExchangeEventsMockRecorder) WatchOfferPresented(opts, sink, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferPresented", reflect.TypeOf((*MockIExchangeEvents)(nil).WatchOfferPresented), opts, sink, offerId)
 }
 
 // WatchOfferReceipt mocks base method
 func (m *MockIExchangeEvents) WatchOfferReceipt(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferReceipt, offerId []types.ID, consumer []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferReceipt", opts, sink, offerId, consumer)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1015,13 +895,11 @@ func (m *MockIExchangeEvents) WatchOfferReceipt(opts *bind.WatchOpts, sink chan<
 
 // WatchOfferReceipt indicates an expected call of WatchOfferReceipt
 func (mr *MockIExchangeEventsMockRecorder) WatchOfferReceipt(opts, sink, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferReceipt", reflect.TypeOf((*MockIExchangeEvents)(nil).WatchOfferReceipt), opts, sink, offerId, consumer)
 }
 
 // WatchOfferRejected mocks base method
 func (m *MockIExchangeEvents) WatchOfferRejected(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferRejected, offerId []types.ID, consumer []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferRejected", opts, sink, offerId, consumer)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1030,13 +908,11 @@ func (m *MockIExchangeEvents) WatchOfferRejected(opts *bind.WatchOpts, sink chan
 
 // WatchOfferRejected indicates an expected call of WatchOfferRejected
 func (mr *MockIExchangeEventsMockRecorder) WatchOfferRejected(opts, sink, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferRejected", reflect.TypeOf((*MockIExchangeEvents)(nil).WatchOfferRejected), opts, sink, offerId, consumer)
 }
 
 // WatchOfferSettled mocks base method
 func (m *MockIExchangeEvents) WatchOfferSettled(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferSettled, offerId []types.ID, consumer []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferSettled", opts, sink, offerId, consumer)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1045,7 +921,6 @@ func (m *MockIExchangeEvents) WatchOfferSettled(opts *bind.WatchOpts, sink chan<
 
 // WatchOfferSettled indicates an expected call of WatchOfferSettled
 func (mr *MockIExchangeEventsMockRecorder) WatchOfferSettled(opts, sink, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferSettled", reflect.TypeOf((*MockIExchangeEvents)(nil).WatchOfferSettled), opts, sink, offerId, consumer)
 }
 
@@ -1074,7 +949,6 @@ func (m *MockIExchangeFilterer) EXPECT() *MockIExchangeFiltererMockRecorder {
 
 // FilterEscrowExecutionFailed mocks base method
 func (m *MockIExchangeFilterer) FilterEscrowExecutionFailed(opts *bind.FilterOpts) (*adapter.ExchangeEscrowExecutionFailedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterEscrowExecutionFailed", opts)
 	ret0, _ := ret[0].(*adapter.ExchangeEscrowExecutionFailedIterator)
 	ret1, _ := ret[1].(error)
@@ -1083,13 +957,11 @@ func (m *MockIExchangeFilterer) FilterEscrowExecutionFailed(opts *bind.FilterOpt
 
 // FilterEscrowExecutionFailed indicates an expected call of FilterEscrowExecutionFailed
 func (mr *MockIExchangeFiltererMockRecorder) FilterEscrowExecutionFailed(opts interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterEscrowExecutionFailed", reflect.TypeOf((*MockIExchangeFilterer)(nil).FilterEscrowExecutionFailed), opts)
 }
 
 // FilterOfferCanceled mocks base method
 func (m *MockIExchangeFilterer) FilterOfferCanceled(opts *bind.FilterOpts, offerId []types.ID) (*adapter.ExchangeOfferCanceledIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferCanceled", opts, offerId)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferCanceledIterator)
 	ret1, _ := ret[1].(error)
@@ -1098,13 +970,11 @@ func (m *MockIExchangeFilterer) FilterOfferCanceled(opts *bind.FilterOpts, offer
 
 // FilterOfferCanceled indicates an expected call of FilterOfferCanceled
 func (mr *MockIExchangeFiltererMockRecorder) FilterOfferCanceled(opts, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferCanceled", reflect.TypeOf((*MockIExchangeFilterer)(nil).FilterOfferCanceled), opts, offerId)
 }
 
 // FilterOfferPrepared mocks base method
 func (m *MockIExchangeFilterer) FilterOfferPrepared(opts *bind.FilterOpts, offerId []types.ID) (*adapter.ExchangeOfferPreparedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferPrepared", opts, offerId)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferPreparedIterator)
 	ret1, _ := ret[1].(error)
@@ -1113,13 +983,11 @@ func (m *MockIExchangeFilterer) FilterOfferPrepared(opts *bind.FilterOpts, offer
 
 // FilterOfferPrepared indicates an expected call of FilterOfferPrepared
 func (mr *MockIExchangeFiltererMockRecorder) FilterOfferPrepared(opts, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferPrepared", reflect.TypeOf((*MockIExchangeFilterer)(nil).FilterOfferPrepared), opts, offerId)
 }
 
 // FilterOfferPresented mocks base method
 func (m *MockIExchangeFilterer) FilterOfferPresented(opts *bind.FilterOpts, offerId []types.ID) (*adapter.ExchangeOfferPresentedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferPresented", opts, offerId)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferPresentedIterator)
 	ret1, _ := ret[1].(error)
@@ -1128,13 +996,11 @@ func (m *MockIExchangeFilterer) FilterOfferPresented(opts *bind.FilterOpts, offe
 
 // FilterOfferPresented indicates an expected call of FilterOfferPresented
 func (mr *MockIExchangeFiltererMockRecorder) FilterOfferPresented(opts, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferPresented", reflect.TypeOf((*MockIExchangeFilterer)(nil).FilterOfferPresented), opts, offerId)
 }
 
 // FilterOfferReceipt mocks base method
 func (m *MockIExchangeFilterer) FilterOfferReceipt(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*adapter.ExchangeOfferReceiptIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferReceipt", opts, offerId, consumer)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferReceiptIterator)
 	ret1, _ := ret[1].(error)
@@ -1143,13 +1009,11 @@ func (m *MockIExchangeFilterer) FilterOfferReceipt(opts *bind.FilterOpts, offerI
 
 // FilterOfferReceipt indicates an expected call of FilterOfferReceipt
 func (mr *MockIExchangeFiltererMockRecorder) FilterOfferReceipt(opts, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferReceipt", reflect.TypeOf((*MockIExchangeFilterer)(nil).FilterOfferReceipt), opts, offerId, consumer)
 }
 
 // FilterOfferRejected mocks base method
 func (m *MockIExchangeFilterer) FilterOfferRejected(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*adapter.ExchangeOfferRejectedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferRejected", opts, offerId, consumer)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferRejectedIterator)
 	ret1, _ := ret[1].(error)
@@ -1158,13 +1022,11 @@ func (m *MockIExchangeFilterer) FilterOfferRejected(opts *bind.FilterOpts, offer
 
 // FilterOfferRejected indicates an expected call of FilterOfferRejected
 func (mr *MockIExchangeFiltererMockRecorder) FilterOfferRejected(opts, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferRejected", reflect.TypeOf((*MockIExchangeFilterer)(nil).FilterOfferRejected), opts, offerId, consumer)
 }
 
 // FilterOfferSettled mocks base method
 func (m *MockIExchangeFilterer) FilterOfferSettled(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*adapter.ExchangeOfferSettledIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferSettled", opts, offerId, consumer)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferSettledIterator)
 	ret1, _ := ret[1].(error)
@@ -1173,7 +1035,6 @@ func (m *MockIExchangeFilterer) FilterOfferSettled(opts *bind.FilterOpts, offerI
 
 // FilterOfferSettled indicates an expected call of FilterOfferSettled
 func (mr *MockIExchangeFiltererMockRecorder) FilterOfferSettled(opts, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferSettled", reflect.TypeOf((*MockIExchangeFilterer)(nil).FilterOfferSettled), opts, offerId, consumer)
 }
 
@@ -1202,7 +1063,6 @@ func (m *MockIExchangeParser) EXPECT() *MockIExchangeParserMockRecorder {
 
 // ParseEscrowExecutionFailed mocks base method
 func (m *MockIExchangeParser) ParseEscrowExecutionFailed(log types0.Log) (*adapter.ExchangeEscrowExecutionFailed, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseEscrowExecutionFailed", log)
 	ret0, _ := ret[0].(*adapter.ExchangeEscrowExecutionFailed)
 	ret1, _ := ret[1].(error)
@@ -1211,13 +1071,11 @@ func (m *MockIExchangeParser) ParseEscrowExecutionFailed(log types0.Log) (*adapt
 
 // ParseEscrowExecutionFailed indicates an expected call of ParseEscrowExecutionFailed
 func (mr *MockIExchangeParserMockRecorder) ParseEscrowExecutionFailed(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseEscrowExecutionFailed", reflect.TypeOf((*MockIExchangeParser)(nil).ParseEscrowExecutionFailed), log)
 }
 
 // ParseEscrowExecutionFailedFromReceipt mocks base method
 func (m *MockIExchangeParser) ParseEscrowExecutionFailedFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeEscrowExecutionFailed, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseEscrowExecutionFailedFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeEscrowExecutionFailed)
 	ret1, _ := ret[1].(error)
@@ -1226,13 +1084,11 @@ func (m *MockIExchangeParser) ParseEscrowExecutionFailedFromReceipt(receipt *typ
 
 // ParseEscrowExecutionFailedFromReceipt indicates an expected call of ParseEscrowExecutionFailedFromReceipt
 func (mr *MockIExchangeParserMockRecorder) ParseEscrowExecutionFailedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseEscrowExecutionFailedFromReceipt", reflect.TypeOf((*MockIExchangeParser)(nil).ParseEscrowExecutionFailedFromReceipt), receipt)
 }
 
 // ParseOfferCanceled mocks base method
 func (m *MockIExchangeParser) ParseOfferCanceled(log types0.Log) (*adapter.ExchangeOfferCanceled, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferCanceled", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferCanceled)
 	ret1, _ := ret[1].(error)
@@ -1241,13 +1097,11 @@ func (m *MockIExchangeParser) ParseOfferCanceled(log types0.Log) (*adapter.Excha
 
 // ParseOfferCanceled indicates an expected call of ParseOfferCanceled
 func (mr *MockIExchangeParserMockRecorder) ParseOfferCanceled(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferCanceled", reflect.TypeOf((*MockIExchangeParser)(nil).ParseOfferCanceled), log)
 }
 
 // ParseOfferCanceledFromReceipt mocks base method
 func (m *MockIExchangeParser) ParseOfferCanceledFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferCanceled, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferCanceledFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferCanceled)
 	ret1, _ := ret[1].(error)
@@ -1256,13 +1110,11 @@ func (m *MockIExchangeParser) ParseOfferCanceledFromReceipt(receipt *types0.Rece
 
 // ParseOfferCanceledFromReceipt indicates an expected call of ParseOfferCanceledFromReceipt
 func (mr *MockIExchangeParserMockRecorder) ParseOfferCanceledFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferCanceledFromReceipt", reflect.TypeOf((*MockIExchangeParser)(nil).ParseOfferCanceledFromReceipt), receipt)
 }
 
 // ParseOfferPrepared mocks base method
 func (m *MockIExchangeParser) ParseOfferPrepared(log types0.Log) (*adapter.ExchangeOfferPrepared, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferPrepared", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferPrepared)
 	ret1, _ := ret[1].(error)
@@ -1271,13 +1123,11 @@ func (m *MockIExchangeParser) ParseOfferPrepared(log types0.Log) (*adapter.Excha
 
 // ParseOfferPrepared indicates an expected call of ParseOfferPrepared
 func (mr *MockIExchangeParserMockRecorder) ParseOfferPrepared(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferPrepared", reflect.TypeOf((*MockIExchangeParser)(nil).ParseOfferPrepared), log)
 }
 
 // ParseOfferPreparedFromReceipt mocks base method
 func (m *MockIExchangeParser) ParseOfferPreparedFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferPrepared, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferPreparedFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferPrepared)
 	ret1, _ := ret[1].(error)
@@ -1286,13 +1136,11 @@ func (m *MockIExchangeParser) ParseOfferPreparedFromReceipt(receipt *types0.Rece
 
 // ParseOfferPreparedFromReceipt indicates an expected call of ParseOfferPreparedFromReceipt
 func (mr *MockIExchangeParserMockRecorder) ParseOfferPreparedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferPreparedFromReceipt", reflect.TypeOf((*MockIExchangeParser)(nil).ParseOfferPreparedFromReceipt), receipt)
 }
 
 // ParseOfferPresented mocks base method
 func (m *MockIExchangeParser) ParseOfferPresented(log types0.Log) (*adapter.ExchangeOfferPresented, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferPresented", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferPresented)
 	ret1, _ := ret[1].(error)
@@ -1301,13 +1149,11 @@ func (m *MockIExchangeParser) ParseOfferPresented(log types0.Log) (*adapter.Exch
 
 // ParseOfferPresented indicates an expected call of ParseOfferPresented
 func (mr *MockIExchangeParserMockRecorder) ParseOfferPresented(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferPresented", reflect.TypeOf((*MockIExchangeParser)(nil).ParseOfferPresented), log)
 }
 
 // ParseOfferPresentedFromReceipt mocks base method
 func (m *MockIExchangeParser) ParseOfferPresentedFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferPresented, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferPresentedFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferPresented)
 	ret1, _ := ret[1].(error)
@@ -1316,13 +1162,11 @@ func (m *MockIExchangeParser) ParseOfferPresentedFromReceipt(receipt *types0.Rec
 
 // ParseOfferPresentedFromReceipt indicates an expected call of ParseOfferPresentedFromReceipt
 func (mr *MockIExchangeParserMockRecorder) ParseOfferPresentedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferPresentedFromReceipt", reflect.TypeOf((*MockIExchangeParser)(nil).ParseOfferPresentedFromReceipt), receipt)
 }
 
 // ParseOfferReceipt mocks base method
 func (m *MockIExchangeParser) ParseOfferReceipt(log types0.Log) (*adapter.ExchangeOfferReceipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferReceipt", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferReceipt)
 	ret1, _ := ret[1].(error)
@@ -1331,13 +1175,11 @@ func (m *MockIExchangeParser) ParseOfferReceipt(log types0.Log) (*adapter.Exchan
 
 // ParseOfferReceipt indicates an expected call of ParseOfferReceipt
 func (mr *MockIExchangeParserMockRecorder) ParseOfferReceipt(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferReceipt", reflect.TypeOf((*MockIExchangeParser)(nil).ParseOfferReceipt), log)
 }
 
 // ParseOfferReceiptFromReceipt mocks base method
 func (m *MockIExchangeParser) ParseOfferReceiptFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferReceipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferReceiptFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferReceipt)
 	ret1, _ := ret[1].(error)
@@ -1346,13 +1188,11 @@ func (m *MockIExchangeParser) ParseOfferReceiptFromReceipt(receipt *types0.Recei
 
 // ParseOfferReceiptFromReceipt indicates an expected call of ParseOfferReceiptFromReceipt
 func (mr *MockIExchangeParserMockRecorder) ParseOfferReceiptFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferReceiptFromReceipt", reflect.TypeOf((*MockIExchangeParser)(nil).ParseOfferReceiptFromReceipt), receipt)
 }
 
 // ParseOfferRejected mocks base method
 func (m *MockIExchangeParser) ParseOfferRejected(log types0.Log) (*adapter.ExchangeOfferRejected, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferRejected", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferRejected)
 	ret1, _ := ret[1].(error)
@@ -1361,13 +1201,11 @@ func (m *MockIExchangeParser) ParseOfferRejected(log types0.Log) (*adapter.Excha
 
 // ParseOfferRejected indicates an expected call of ParseOfferRejected
 func (mr *MockIExchangeParserMockRecorder) ParseOfferRejected(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferRejected", reflect.TypeOf((*MockIExchangeParser)(nil).ParseOfferRejected), log)
 }
 
 // ParseOfferRejectedFromReceipt mocks base method
 func (m *MockIExchangeParser) ParseOfferRejectedFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferRejected, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferRejectedFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferRejected)
 	ret1, _ := ret[1].(error)
@@ -1376,13 +1214,11 @@ func (m *MockIExchangeParser) ParseOfferRejectedFromReceipt(receipt *types0.Rece
 
 // ParseOfferRejectedFromReceipt indicates an expected call of ParseOfferRejectedFromReceipt
 func (mr *MockIExchangeParserMockRecorder) ParseOfferRejectedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferRejectedFromReceipt", reflect.TypeOf((*MockIExchangeParser)(nil).ParseOfferRejectedFromReceipt), receipt)
 }
 
 // ParseOfferSettled mocks base method
 func (m *MockIExchangeParser) ParseOfferSettled(log types0.Log) (*adapter.ExchangeOfferSettled, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferSettled", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferSettled)
 	ret1, _ := ret[1].(error)
@@ -1391,13 +1227,11 @@ func (m *MockIExchangeParser) ParseOfferSettled(log types0.Log) (*adapter.Exchan
 
 // ParseOfferSettled indicates an expected call of ParseOfferSettled
 func (mr *MockIExchangeParserMockRecorder) ParseOfferSettled(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferSettled", reflect.TypeOf((*MockIExchangeParser)(nil).ParseOfferSettled), log)
 }
 
 // ParseOfferSettledFromReceipt mocks base method
 func (m *MockIExchangeParser) ParseOfferSettledFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferSettled, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferSettledFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferSettled)
 	ret1, _ := ret[1].(error)
@@ -1406,7 +1240,6 @@ func (m *MockIExchangeParser) ParseOfferSettledFromReceipt(receipt *types0.Recei
 
 // ParseOfferSettledFromReceipt indicates an expected call of ParseOfferSettledFromReceipt
 func (mr *MockIExchangeParserMockRecorder) ParseOfferSettledFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferSettledFromReceipt", reflect.TypeOf((*MockIExchangeParser)(nil).ParseOfferSettledFromReceipt), receipt)
 }
 
@@ -1435,7 +1268,6 @@ func (m *MockIExchangeWatcher) EXPECT() *MockIExchangeWatcherMockRecorder {
 
 // WatchEscrowExecutionFailed mocks base method
 func (m *MockIExchangeWatcher) WatchEscrowExecutionFailed(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeEscrowExecutionFailed) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchEscrowExecutionFailed", opts, sink)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1444,13 +1276,11 @@ func (m *MockIExchangeWatcher) WatchEscrowExecutionFailed(opts *bind.WatchOpts, 
 
 // WatchEscrowExecutionFailed indicates an expected call of WatchEscrowExecutionFailed
 func (mr *MockIExchangeWatcherMockRecorder) WatchEscrowExecutionFailed(opts, sink interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchEscrowExecutionFailed", reflect.TypeOf((*MockIExchangeWatcher)(nil).WatchEscrowExecutionFailed), opts, sink)
 }
 
 // WatchOfferCanceled mocks base method
 func (m *MockIExchangeWatcher) WatchOfferCanceled(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferCanceled, offerId []types.ID) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferCanceled", opts, sink, offerId)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1459,13 +1289,11 @@ func (m *MockIExchangeWatcher) WatchOfferCanceled(opts *bind.WatchOpts, sink cha
 
 // WatchOfferCanceled indicates an expected call of WatchOfferCanceled
 func (mr *MockIExchangeWatcherMockRecorder) WatchOfferCanceled(opts, sink, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferCanceled", reflect.TypeOf((*MockIExchangeWatcher)(nil).WatchOfferCanceled), opts, sink, offerId)
 }
 
 // WatchOfferPrepared mocks base method
 func (m *MockIExchangeWatcher) WatchOfferPrepared(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferPrepared, offerId []types.ID) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferPrepared", opts, sink, offerId)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1474,13 +1302,11 @@ func (m *MockIExchangeWatcher) WatchOfferPrepared(opts *bind.WatchOpts, sink cha
 
 // WatchOfferPrepared indicates an expected call of WatchOfferPrepared
 func (mr *MockIExchangeWatcherMockRecorder) WatchOfferPrepared(opts, sink, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferPrepared", reflect.TypeOf((*MockIExchangeWatcher)(nil).WatchOfferPrepared), opts, sink, offerId)
 }
 
 // WatchOfferPresented mocks base method
 func (m *MockIExchangeWatcher) WatchOfferPresented(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferPresented, offerId []types.ID) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferPresented", opts, sink, offerId)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1489,13 +1315,11 @@ func (m *MockIExchangeWatcher) WatchOfferPresented(opts *bind.WatchOpts, sink ch
 
 // WatchOfferPresented indicates an expected call of WatchOfferPresented
 func (mr *MockIExchangeWatcherMockRecorder) WatchOfferPresented(opts, sink, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferPresented", reflect.TypeOf((*MockIExchangeWatcher)(nil).WatchOfferPresented), opts, sink, offerId)
 }
 
 // WatchOfferReceipt mocks base method
 func (m *MockIExchangeWatcher) WatchOfferReceipt(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferReceipt, offerId []types.ID, consumer []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferReceipt", opts, sink, offerId, consumer)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1504,13 +1328,11 @@ func (m *MockIExchangeWatcher) WatchOfferReceipt(opts *bind.WatchOpts, sink chan
 
 // WatchOfferReceipt indicates an expected call of WatchOfferReceipt
 func (mr *MockIExchangeWatcherMockRecorder) WatchOfferReceipt(opts, sink, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferReceipt", reflect.TypeOf((*MockIExchangeWatcher)(nil).WatchOfferReceipt), opts, sink, offerId, consumer)
 }
 
 // WatchOfferRejected mocks base method
 func (m *MockIExchangeWatcher) WatchOfferRejected(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferRejected, offerId []types.ID, consumer []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferRejected", opts, sink, offerId, consumer)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1519,13 +1341,11 @@ func (m *MockIExchangeWatcher) WatchOfferRejected(opts *bind.WatchOpts, sink cha
 
 // WatchOfferRejected indicates an expected call of WatchOfferRejected
 func (mr *MockIExchangeWatcherMockRecorder) WatchOfferRejected(opts, sink, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferRejected", reflect.TypeOf((*MockIExchangeWatcher)(nil).WatchOfferRejected), opts, sink, offerId, consumer)
 }
 
 // WatchOfferSettled mocks base method
 func (m *MockIExchangeWatcher) WatchOfferSettled(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferSettled, offerId []types.ID, consumer []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferSettled", opts, sink, offerId, consumer)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -1534,7 +1354,6 @@ func (m *MockIExchangeWatcher) WatchOfferSettled(opts *bind.WatchOpts, sink chan
 
 // WatchOfferSettled indicates an expected call of WatchOfferSettled
 func (mr *MockIExchangeWatcherMockRecorder) WatchOfferSettled(opts, sink, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferSettled", reflect.TypeOf((*MockIExchangeWatcher)(nil).WatchOfferSettled), opts, sink, offerId, consumer)
 }
 
@@ -1563,7 +1382,6 @@ func (m *MockIExchangeContract) EXPECT() *MockIExchangeContractMockRecorder {
 
 // Address mocks base method
 func (m *MockIExchangeContract) Address() common.Address {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
@@ -1571,13 +1389,11 @@ func (m *MockIExchangeContract) Address() common.Address {
 
 // Address indicates an expected call of Address
 func (mr *MockIExchangeContractMockRecorder) Address() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIExchangeContract)(nil).Address))
 }
 
 // TxHash mocks base method
 func (m *MockIExchangeContract) TxHash() common.Hash {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TxHash")
 	ret0, _ := ret[0].(common.Hash)
 	return ret0
@@ -1585,13 +1401,11 @@ func (m *MockIExchangeContract) TxHash() common.Hash {
 
 // TxHash indicates an expected call of TxHash
 func (mr *MockIExchangeContractMockRecorder) TxHash() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockIExchangeContract)(nil).TxHash))
 }
 
 // CreatedAt mocks base method
 func (m *MockIExchangeContract) CreatedAt() *big.Int {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatedAt")
 	ret0, _ := ret[0].(*big.Int)
 	return ret0
@@ -1599,13 +1413,11 @@ func (m *MockIExchangeContract) CreatedAt() *big.Int {
 
 // CreatedAt indicates an expected call of CreatedAt
 func (mr *MockIExchangeContractMockRecorder) CreatedAt() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIExchangeContract)(nil).CreatedAt))
 }
 
 // GetOffer mocks base method
 func (m *MockIExchangeContract) GetOffer(offerId types.ID) (types.Offer, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOffer", offerId)
 	ret0, _ := ret[0].(types.Offer)
 	ret1, _ := ret[1].(error)
@@ -1614,13 +1426,11 @@ func (m *MockIExchangeContract) GetOffer(offerId types.ID) (types.Offer, error) 
 
 // GetOffer indicates an expected call of GetOffer
 func (mr *MockIExchangeContractMockRecorder) GetOffer(offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOffer", reflect.TypeOf((*MockIExchangeContract)(nil).GetOffer), offerId)
 }
 
 // GetOfferMembers mocks base method
 func (m *MockIExchangeContract) GetOfferMembers(offerId types.ID) (common.Address, common.Address, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOfferMembers", offerId)
 	ret0, _ := ret[0].(common.Address)
 	ret1, _ := ret[1].(common.Address)
@@ -1630,13 +1440,11 @@ func (m *MockIExchangeContract) GetOfferMembers(offerId types.ID) (common.Addres
 
 // GetOfferMembers indicates an expected call of GetOfferMembers
 func (mr *MockIExchangeContractMockRecorder) GetOfferMembers(offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOfferMembers", reflect.TypeOf((*MockIExchangeContract)(nil).GetOfferMembers), offerId)
 }
 
 // OfferExists mocks base method
 func (m *MockIExchangeContract) OfferExists(offerId types.ID) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "OfferExists", offerId)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -1645,103 +1453,89 @@ func (m *MockIExchangeContract) OfferExists(offerId types.ID) (bool, error) {
 
 // OfferExists indicates an expected call of OfferExists
 func (mr *MockIExchangeContractMockRecorder) OfferExists(offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OfferExists", reflect.TypeOf((*MockIExchangeContract)(nil).OfferExists), offerId)
 }
 
 // AddDataIds mocks base method
-func (m *MockIExchangeContract) AddDataIds(ctx context.Context, offerId types.ID, dataIds []types.DataId) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddDataIds", ctx, offerId, dataIds)
+func (m *MockIExchangeContract) AddDataIds(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID, dataIds []types.DataId) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "AddDataIds", ctx, opts, offerId, dataIds)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // AddDataIds indicates an expected call of AddDataIds
-func (mr *MockIExchangeContractMockRecorder) AddDataIds(ctx, offerId, dataIds interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddDataIds", reflect.TypeOf((*MockIExchangeContract)(nil).AddDataIds), ctx, offerId, dataIds)
+func (mr *MockIExchangeContractMockRecorder) AddDataIds(ctx, opts, offerId, dataIds interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddDataIds", reflect.TypeOf((*MockIExchangeContract)(nil).AddDataIds), ctx, opts, offerId, dataIds)
 }
 
 // Cancel mocks base method
-func (m *MockIExchangeContract) Cancel(ctx context.Context, offerId types.ID) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Cancel", ctx, offerId)
+func (m *MockIExchangeContract) Cancel(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "Cancel", ctx, opts, offerId)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Cancel indicates an expected call of Cancel
-func (mr *MockIExchangeContractMockRecorder) Cancel(ctx, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Cancel", reflect.TypeOf((*MockIExchangeContract)(nil).Cancel), ctx, offerId)
+func (mr *MockIExchangeContractMockRecorder) Cancel(ctx, opts, offerId interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Cancel", reflect.TypeOf((*MockIExchangeContract)(nil).Cancel), ctx, opts, offerId)
 }
 
 // Order mocks base method
-func (m *MockIExchangeContract) Order(ctx context.Context, offerId types.ID) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Order", ctx, offerId)
+func (m *MockIExchangeContract) Order(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "Order", ctx, opts, offerId)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Order indicates an expected call of Order
-func (mr *MockIExchangeContractMockRecorder) Order(ctx, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Order", reflect.TypeOf((*MockIExchangeContract)(nil).Order), ctx, offerId)
+func (mr *MockIExchangeContractMockRecorder) Order(ctx, opts, offerId interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Order", reflect.TypeOf((*MockIExchangeContract)(nil).Order), ctx, opts, offerId)
 }
 
 // Prepare mocks base method
-func (m *MockIExchangeContract) Prepare(ctx context.Context, provider string, consumer, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds []types.DataId) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Prepare", ctx, provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
+func (m *MockIExchangeContract) Prepare(ctx context.Context, opts *blockchain.TransactOpts, provider string, consumer, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds []types.DataId) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "Prepare", ctx, opts, provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Prepare indicates an expected call of Prepare
-func (mr *MockIExchangeContractMockRecorder) Prepare(ctx, provider, consumer, escrow, escrowSign, escrowArgs, dataIds interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Prepare", reflect.TypeOf((*MockIExchangeContract)(nil).Prepare), ctx, provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
+func (mr *MockIExchangeContractMockRecorder) Prepare(ctx, opts, provider, consumer, escrow, escrowSign, escrowArgs, dataIds interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Prepare", reflect.TypeOf((*MockIExchangeContract)(nil).Prepare), ctx, opts, provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
 }
 
 // Reject mocks base method
-func (m *MockIExchangeContract) Reject(ctx context.Context, offerId types.ID) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Reject", ctx, offerId)
+func (m *MockIExchangeContract) Reject(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "Reject", ctx, opts, offerId)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Reject indicates an expected call of Reject
-func (mr *MockIExchangeContractMockRecorder) Reject(ctx, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reject", reflect.TypeOf((*MockIExchangeContract)(nil).Reject), ctx, offerId)
+func (mr *MockIExchangeContractMockRecorder) Reject(ctx, opts, offerId interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reject", reflect.TypeOf((*MockIExchangeContract)(nil).Reject), ctx, opts, offerId)
 }
 
 // Settle mocks base method
-func (m *MockIExchangeContract) Settle(ctx context.Context, offerId types.ID) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Settle", ctx, offerId)
+func (m *MockIExchangeContract) Settle(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "Settle", ctx, opts, offerId)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Settle indicates an expected call of Settle
-func (mr *MockIExchangeContractMockRecorder) Settle(ctx, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Settle", reflect.TypeOf((*MockIExchangeContract)(nil).Settle), ctx, offerId)
+func (mr *MockIExchangeContractMockRecorder) Settle(ctx, opts, offerId interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Settle", reflect.TypeOf((*MockIExchangeContract)(nil).Settle), ctx, opts, offerId)
 }
 
 // FilterEscrowExecutionFailed mocks base method
 func (m *MockIExchangeContract) FilterEscrowExecutionFailed(opts *bind.FilterOpts) (*adapter.ExchangeEscrowExecutionFailedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterEscrowExecutionFailed", opts)
 	ret0, _ := ret[0].(*adapter.ExchangeEscrowExecutionFailedIterator)
 	ret1, _ := ret[1].(error)
@@ -1750,13 +1544,11 @@ func (m *MockIExchangeContract) FilterEscrowExecutionFailed(opts *bind.FilterOpt
 
 // FilterEscrowExecutionFailed indicates an expected call of FilterEscrowExecutionFailed
 func (mr *MockIExchangeContractMockRecorder) FilterEscrowExecutionFailed(opts interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterEscrowExecutionFailed", reflect.TypeOf((*MockIExchangeContract)(nil).FilterEscrowExecutionFailed), opts)
 }
 
 // FilterOfferCanceled mocks base method
 func (m *MockIExchangeContract) FilterOfferCanceled(opts *bind.FilterOpts, offerId []types.ID) (*adapter.ExchangeOfferCanceledIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferCanceled", opts, offerId)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferCanceledIterator)
 	ret1, _ := ret[1].(error)
@@ -1765,13 +1557,11 @@ func (m *MockIExchangeContract) FilterOfferCanceled(opts *bind.FilterOpts, offer
 
 // FilterOfferCanceled indicates an expected call of FilterOfferCanceled
 func (mr *MockIExchangeContractMockRecorder) FilterOfferCanceled(opts, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferCanceled", reflect.TypeOf((*MockIExchangeContract)(nil).FilterOfferCanceled), opts, offerId)
 }
 
 // FilterOfferPrepared mocks base method
 func (m *MockIExchangeContract) FilterOfferPrepared(opts *bind.FilterOpts, offerId []types.ID) (*adapter.ExchangeOfferPreparedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferPrepared", opts, offerId)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferPreparedIterator)
 	ret1, _ := ret[1].(error)
@@ -1780,13 +1570,11 @@ func (m *MockIExchangeContract) FilterOfferPrepared(opts *bind.FilterOpts, offer
 
 // FilterOfferPrepared indicates an expected call of FilterOfferPrepared
 func (mr *MockIExchangeContractMockRecorder) FilterOfferPrepared(opts, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferPrepared", reflect.TypeOf((*MockIExchangeContract)(nil).FilterOfferPrepared), opts, offerId)
 }
 
 // FilterOfferPresented mocks base method
 func (m *MockIExchangeContract) FilterOfferPresented(opts *bind.FilterOpts, offerId []types.ID) (*adapter.ExchangeOfferPresentedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferPresented", opts, offerId)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferPresentedIterator)
 	ret1, _ := ret[1].(error)
@@ -1795,13 +1583,11 @@ func (m *MockIExchangeContract) FilterOfferPresented(opts *bind.FilterOpts, offe
 
 // FilterOfferPresented indicates an expected call of FilterOfferPresented
 func (mr *MockIExchangeContractMockRecorder) FilterOfferPresented(opts, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferPresented", reflect.TypeOf((*MockIExchangeContract)(nil).FilterOfferPresented), opts, offerId)
 }
 
 // FilterOfferReceipt mocks base method
 func (m *MockIExchangeContract) FilterOfferReceipt(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*adapter.ExchangeOfferReceiptIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferReceipt", opts, offerId, consumer)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferReceiptIterator)
 	ret1, _ := ret[1].(error)
@@ -1810,13 +1596,11 @@ func (m *MockIExchangeContract) FilterOfferReceipt(opts *bind.FilterOpts, offerI
 
 // FilterOfferReceipt indicates an expected call of FilterOfferReceipt
 func (mr *MockIExchangeContractMockRecorder) FilterOfferReceipt(opts, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferReceipt", reflect.TypeOf((*MockIExchangeContract)(nil).FilterOfferReceipt), opts, offerId, consumer)
 }
 
 // FilterOfferRejected mocks base method
 func (m *MockIExchangeContract) FilterOfferRejected(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*adapter.ExchangeOfferRejectedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferRejected", opts, offerId, consumer)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferRejectedIterator)
 	ret1, _ := ret[1].(error)
@@ -1825,13 +1609,11 @@ func (m *MockIExchangeContract) FilterOfferRejected(opts *bind.FilterOpts, offer
 
 // FilterOfferRejected indicates an expected call of FilterOfferRejected
 func (mr *MockIExchangeContractMockRecorder) FilterOfferRejected(opts, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferRejected", reflect.TypeOf((*MockIExchangeContract)(nil).FilterOfferRejected), opts, offerId, consumer)
 }
 
 // FilterOfferSettled mocks base method
 func (m *MockIExchangeContract) FilterOfferSettled(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (*adapter.ExchangeOfferSettledIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterOfferSettled", opts, offerId, consumer)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferSettledIterator)
 	ret1, _ := ret[1].(error)
@@ -1840,13 +1622,11 @@ func (m *MockIExchangeContract) FilterOfferSettled(opts *bind.FilterOpts, offerI
 
 // FilterOfferSettled indicates an expected call of FilterOfferSettled
 func (mr *MockIExchangeContractMockRecorder) FilterOfferSettled(opts, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterOfferSettled", reflect.TypeOf((*MockIExchangeContract)(nil).FilterOfferSettled), opts, offerId, consumer)
 }
 
 // ParseEscrowExecutionFailed mocks base method
 func (m *MockIExchangeContract) ParseEscrowExecutionFailed(log types0.Log) (*adapter.ExchangeEscrowExecutionFailed, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseEscrowExecutionFailed", log)
 	ret0, _ := ret[0].(*adapter.ExchangeEscrowExecutionFailed)
 	ret1, _ := ret[1].(error)
@@ -1855,13 +1635,11 @@ func (m *MockIExchangeContract) ParseEscrowExecutionFailed(log types0.Log) (*ada
 
 // ParseEscrowExecutionFailed indicates an expected call of ParseEscrowExecutionFailed
 func (mr *MockIExchangeContractMockRecorder) ParseEscrowExecutionFailed(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseEscrowExecutionFailed", reflect.TypeOf((*MockIExchangeContract)(nil).ParseEscrowExecutionFailed), log)
 }
 
 // ParseEscrowExecutionFailedFromReceipt mocks base method
 func (m *MockIExchangeContract) ParseEscrowExecutionFailedFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeEscrowExecutionFailed, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseEscrowExecutionFailedFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeEscrowExecutionFailed)
 	ret1, _ := ret[1].(error)
@@ -1870,13 +1648,11 @@ func (m *MockIExchangeContract) ParseEscrowExecutionFailedFromReceipt(receipt *t
 
 // ParseEscrowExecutionFailedFromReceipt indicates an expected call of ParseEscrowExecutionFailedFromReceipt
 func (mr *MockIExchangeContractMockRecorder) ParseEscrowExecutionFailedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseEscrowExecutionFailedFromReceipt", reflect.TypeOf((*MockIExchangeContract)(nil).ParseEscrowExecutionFailedFromReceipt), receipt)
 }
 
 // ParseOfferCanceled mocks base method
 func (m *MockIExchangeContract) ParseOfferCanceled(log types0.Log) (*adapter.ExchangeOfferCanceled, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferCanceled", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferCanceled)
 	ret1, _ := ret[1].(error)
@@ -1885,13 +1661,11 @@ func (m *MockIExchangeContract) ParseOfferCanceled(log types0.Log) (*adapter.Exc
 
 // ParseOfferCanceled indicates an expected call of ParseOfferCanceled
 func (mr *MockIExchangeContractMockRecorder) ParseOfferCanceled(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferCanceled", reflect.TypeOf((*MockIExchangeContract)(nil).ParseOfferCanceled), log)
 }
 
 // ParseOfferCanceledFromReceipt mocks base method
 func (m *MockIExchangeContract) ParseOfferCanceledFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferCanceled, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferCanceledFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferCanceled)
 	ret1, _ := ret[1].(error)
@@ -1900,13 +1674,11 @@ func (m *MockIExchangeContract) ParseOfferCanceledFromReceipt(receipt *types0.Re
 
 // ParseOfferCanceledFromReceipt indicates an expected call of ParseOfferCanceledFromReceipt
 func (mr *MockIExchangeContractMockRecorder) ParseOfferCanceledFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferCanceledFromReceipt", reflect.TypeOf((*MockIExchangeContract)(nil).ParseOfferCanceledFromReceipt), receipt)
 }
 
 // ParseOfferPrepared mocks base method
 func (m *MockIExchangeContract) ParseOfferPrepared(log types0.Log) (*adapter.ExchangeOfferPrepared, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferPrepared", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferPrepared)
 	ret1, _ := ret[1].(error)
@@ -1915,13 +1687,11 @@ func (m *MockIExchangeContract) ParseOfferPrepared(log types0.Log) (*adapter.Exc
 
 // ParseOfferPrepared indicates an expected call of ParseOfferPrepared
 func (mr *MockIExchangeContractMockRecorder) ParseOfferPrepared(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferPrepared", reflect.TypeOf((*MockIExchangeContract)(nil).ParseOfferPrepared), log)
 }
 
 // ParseOfferPreparedFromReceipt mocks base method
 func (m *MockIExchangeContract) ParseOfferPreparedFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferPrepared, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferPreparedFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferPrepared)
 	ret1, _ := ret[1].(error)
@@ -1930,13 +1700,11 @@ func (m *MockIExchangeContract) ParseOfferPreparedFromReceipt(receipt *types0.Re
 
 // ParseOfferPreparedFromReceipt indicates an expected call of ParseOfferPreparedFromReceipt
 func (mr *MockIExchangeContractMockRecorder) ParseOfferPreparedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferPreparedFromReceipt", reflect.TypeOf((*MockIExchangeContract)(nil).ParseOfferPreparedFromReceipt), receipt)
 }
 
 // ParseOfferPresented mocks base method
 func (m *MockIExchangeContract) ParseOfferPresented(log types0.Log) (*adapter.ExchangeOfferPresented, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferPresented", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferPresented)
 	ret1, _ := ret[1].(error)
@@ -1945,13 +1713,11 @@ func (m *MockIExchangeContract) ParseOfferPresented(log types0.Log) (*adapter.Ex
 
 // ParseOfferPresented indicates an expected call of ParseOfferPresented
 func (mr *MockIExchangeContractMockRecorder) ParseOfferPresented(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferPresented", reflect.TypeOf((*MockIExchangeContract)(nil).ParseOfferPresented), log)
 }
 
 // ParseOfferPresentedFromReceipt mocks base method
 func (m *MockIExchangeContract) ParseOfferPresentedFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferPresented, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferPresentedFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferPresented)
 	ret1, _ := ret[1].(error)
@@ -1960,13 +1726,11 @@ func (m *MockIExchangeContract) ParseOfferPresentedFromReceipt(receipt *types0.R
 
 // ParseOfferPresentedFromReceipt indicates an expected call of ParseOfferPresentedFromReceipt
 func (mr *MockIExchangeContractMockRecorder) ParseOfferPresentedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferPresentedFromReceipt", reflect.TypeOf((*MockIExchangeContract)(nil).ParseOfferPresentedFromReceipt), receipt)
 }
 
 // ParseOfferReceipt mocks base method
 func (m *MockIExchangeContract) ParseOfferReceipt(log types0.Log) (*adapter.ExchangeOfferReceipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferReceipt", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferReceipt)
 	ret1, _ := ret[1].(error)
@@ -1975,13 +1739,11 @@ func (m *MockIExchangeContract) ParseOfferReceipt(log types0.Log) (*adapter.Exch
 
 // ParseOfferReceipt indicates an expected call of ParseOfferReceipt
 func (mr *MockIExchangeContractMockRecorder) ParseOfferReceipt(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferReceipt", reflect.TypeOf((*MockIExchangeContract)(nil).ParseOfferReceipt), log)
 }
 
 // ParseOfferReceiptFromReceipt mocks base method
 func (m *MockIExchangeContract) ParseOfferReceiptFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferReceipt, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferReceiptFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferReceipt)
 	ret1, _ := ret[1].(error)
@@ -1990,13 +1752,11 @@ func (m *MockIExchangeContract) ParseOfferReceiptFromReceipt(receipt *types0.Rec
 
 // ParseOfferReceiptFromReceipt indicates an expected call of ParseOfferReceiptFromReceipt
 func (mr *MockIExchangeContractMockRecorder) ParseOfferReceiptFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferReceiptFromReceipt", reflect.TypeOf((*MockIExchangeContract)(nil).ParseOfferReceiptFromReceipt), receipt)
 }
 
 // ParseOfferRejected mocks base method
 func (m *MockIExchangeContract) ParseOfferRejected(log types0.Log) (*adapter.ExchangeOfferRejected, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferRejected", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferRejected)
 	ret1, _ := ret[1].(error)
@@ -2005,13 +1765,11 @@ func (m *MockIExchangeContract) ParseOfferRejected(log types0.Log) (*adapter.Exc
 
 // ParseOfferRejected indicates an expected call of ParseOfferRejected
 func (mr *MockIExchangeContractMockRecorder) ParseOfferRejected(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferRejected", reflect.TypeOf((*MockIExchangeContract)(nil).ParseOfferRejected), log)
 }
 
 // ParseOfferRejectedFromReceipt mocks base method
 func (m *MockIExchangeContract) ParseOfferRejectedFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferRejected, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferRejectedFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferRejected)
 	ret1, _ := ret[1].(error)
@@ -2020,13 +1778,11 @@ func (m *MockIExchangeContract) ParseOfferRejectedFromReceipt(receipt *types0.Re
 
 // ParseOfferRejectedFromReceipt indicates an expected call of ParseOfferRejectedFromReceipt
 func (mr *MockIExchangeContractMockRecorder) ParseOfferRejectedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferRejectedFromReceipt", reflect.TypeOf((*MockIExchangeContract)(nil).ParseOfferRejectedFromReceipt), receipt)
 }
 
 // ParseOfferSettled mocks base method
 func (m *MockIExchangeContract) ParseOfferSettled(log types0.Log) (*adapter.ExchangeOfferSettled, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferSettled", log)
 	ret0, _ := ret[0].(*adapter.ExchangeOfferSettled)
 	ret1, _ := ret[1].(error)
@@ -2035,13 +1791,11 @@ func (m *MockIExchangeContract) ParseOfferSettled(log types0.Log) (*adapter.Exch
 
 // ParseOfferSettled indicates an expected call of ParseOfferSettled
 func (mr *MockIExchangeContractMockRecorder) ParseOfferSettled(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferSettled", reflect.TypeOf((*MockIExchangeContract)(nil).ParseOfferSettled), log)
 }
 
 // ParseOfferSettledFromReceipt mocks base method
 func (m *MockIExchangeContract) ParseOfferSettledFromReceipt(receipt *types0.Receipt) ([]*adapter.ExchangeOfferSettled, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseOfferSettledFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ExchangeOfferSettled)
 	ret1, _ := ret[1].(error)
@@ -2050,13 +1804,11 @@ func (m *MockIExchangeContract) ParseOfferSettledFromReceipt(receipt *types0.Rec
 
 // ParseOfferSettledFromReceipt indicates an expected call of ParseOfferSettledFromReceipt
 func (mr *MockIExchangeContractMockRecorder) ParseOfferSettledFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseOfferSettledFromReceipt", reflect.TypeOf((*MockIExchangeContract)(nil).ParseOfferSettledFromReceipt), receipt)
 }
 
 // WatchEscrowExecutionFailed mocks base method
 func (m *MockIExchangeContract) WatchEscrowExecutionFailed(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeEscrowExecutionFailed) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchEscrowExecutionFailed", opts, sink)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -2065,13 +1817,11 @@ func (m *MockIExchangeContract) WatchEscrowExecutionFailed(opts *bind.WatchOpts,
 
 // WatchEscrowExecutionFailed indicates an expected call of WatchEscrowExecutionFailed
 func (mr *MockIExchangeContractMockRecorder) WatchEscrowExecutionFailed(opts, sink interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchEscrowExecutionFailed", reflect.TypeOf((*MockIExchangeContract)(nil).WatchEscrowExecutionFailed), opts, sink)
 }
 
 // WatchOfferCanceled mocks base method
 func (m *MockIExchangeContract) WatchOfferCanceled(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferCanceled, offerId []types.ID) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferCanceled", opts, sink, offerId)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -2080,13 +1830,11 @@ func (m *MockIExchangeContract) WatchOfferCanceled(opts *bind.WatchOpts, sink ch
 
 // WatchOfferCanceled indicates an expected call of WatchOfferCanceled
 func (mr *MockIExchangeContractMockRecorder) WatchOfferCanceled(opts, sink, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferCanceled", reflect.TypeOf((*MockIExchangeContract)(nil).WatchOfferCanceled), opts, sink, offerId)
 }
 
 // WatchOfferPrepared mocks base method
 func (m *MockIExchangeContract) WatchOfferPrepared(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferPrepared, offerId []types.ID) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferPrepared", opts, sink, offerId)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -2095,13 +1843,11 @@ func (m *MockIExchangeContract) WatchOfferPrepared(opts *bind.WatchOpts, sink ch
 
 // WatchOfferPrepared indicates an expected call of WatchOfferPrepared
 func (mr *MockIExchangeContractMockRecorder) WatchOfferPrepared(opts, sink, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferPrepared", reflect.TypeOf((*MockIExchangeContract)(nil).WatchOfferPrepared), opts, sink, offerId)
 }
 
 // WatchOfferPresented mocks base method
 func (m *MockIExchangeContract) WatchOfferPresented(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferPresented, offerId []types.ID) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferPresented", opts, sink, offerId)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -2110,13 +1856,11 @@ func (m *MockIExchangeContract) WatchOfferPresented(opts *bind.WatchOpts, sink c
 
 // WatchOfferPresented indicates an expected call of WatchOfferPresented
 func (mr *MockIExchangeContractMockRecorder) WatchOfferPresented(opts, sink, offerId interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferPresented", reflect.TypeOf((*MockIExchangeContract)(nil).WatchOfferPresented), opts, sink, offerId)
 }
 
 // WatchOfferReceipt mocks base method
 func (m *MockIExchangeContract) WatchOfferReceipt(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferReceipt, offerId []types.ID, consumer []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferReceipt", opts, sink, offerId, consumer)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -2125,13 +1869,11 @@ func (m *MockIExchangeContract) WatchOfferReceipt(opts *bind.WatchOpts, sink cha
 
 // WatchOfferReceipt indicates an expected call of WatchOfferReceipt
 func (mr *MockIExchangeContractMockRecorder) WatchOfferReceipt(opts, sink, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferReceipt", reflect.TypeOf((*MockIExchangeContract)(nil).WatchOfferReceipt), opts, sink, offerId, consumer)
 }
 
 // WatchOfferRejected mocks base method
 func (m *MockIExchangeContract) WatchOfferRejected(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferRejected, offerId []types.ID, consumer []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferRejected", opts, sink, offerId, consumer)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -2140,13 +1882,11 @@ func (m *MockIExchangeContract) WatchOfferRejected(opts *bind.WatchOpts, sink ch
 
 // WatchOfferRejected indicates an expected call of WatchOfferRejected
 func (mr *MockIExchangeContractMockRecorder) WatchOfferRejected(opts, sink, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferRejected", reflect.TypeOf((*MockIExchangeContract)(nil).WatchOfferRejected), opts, sink, offerId, consumer)
 }
 
 // WatchOfferSettled mocks base method
 func (m *MockIExchangeContract) WatchOfferSettled(opts *bind.WatchOpts, sink chan<- *adapter.ExchangeOfferSettled, offerId []types.ID, consumer []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchOfferSettled", opts, sink, offerId, consumer)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -2155,6 +1895,5 @@ func (m *MockIExchangeContract) WatchOfferSettled(opts *bind.WatchOpts, sink cha
 
 // WatchOfferSettled indicates an expected call of WatchOfferSettled
 func (mr *MockIExchangeContractMockRecorder) WatchOfferSettled(opts, sink, offerId, consumer interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchOfferSettled", reflect.TypeOf((*MockIExchangeContract)(nil).WatchOfferSettled), opts, sink, offerId, consumer)
 }
