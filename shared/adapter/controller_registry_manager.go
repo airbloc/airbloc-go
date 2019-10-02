@@ -25,8 +25,8 @@ func NewControllerRegistryManager(client blockchain.TxClient) IControllerRegistr
 // Register is a paid mutator transaction binding the contract method 0x4420e486.
 //
 // Solidity: function register(address controllerAddr) returns()
-func (manager *controllerRegistryManager) Register(ctx context.Context, controllerAddr common.Address) error {
-	receipt, err := manager.IControllerRegistryContract.Register(ctx, controllerAddr)
+func (manager *controllerRegistryManager) Register(ctx context.Context, opts *blockchain.TransactOpts, controllerAddr common.Address) error {
+	receipt, err := manager.IControllerRegistryContract.Register(ctx, opts, controllerAddr)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}

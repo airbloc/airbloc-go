@@ -10,6 +10,7 @@ import (
 	reflect "reflect"
 
 	adapter "github.com/airbloc/airbloc-go/shared/adapter"
+	blockchain "github.com/airbloc/airbloc-go/shared/blockchain"
 	types "github.com/airbloc/airbloc-go/shared/types"
 	gomock "github.com/golang/mock/gomock"
 	bind "github.com/klaytn/klaytn/accounts/abi/bind"
@@ -43,7 +44,6 @@ func (m *MockIConsentsManager) EXPECT() *MockIConsentsManagerMockRecorder {
 
 // Address mocks base method
 func (m *MockIConsentsManager) Address() common.Address {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
@@ -51,13 +51,11 @@ func (m *MockIConsentsManager) Address() common.Address {
 
 // Address indicates an expected call of Address
 func (mr *MockIConsentsManagerMockRecorder) Address() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIConsentsManager)(nil).Address))
 }
 
 // TxHash mocks base method
 func (m *MockIConsentsManager) TxHash() common.Hash {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TxHash")
 	ret0, _ := ret[0].(common.Hash)
 	return ret0
@@ -65,13 +63,11 @@ func (m *MockIConsentsManager) TxHash() common.Hash {
 
 // TxHash indicates an expected call of TxHash
 func (mr *MockIConsentsManagerMockRecorder) TxHash() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockIConsentsManager)(nil).TxHash))
 }
 
 // CreatedAt mocks base method
 func (m *MockIConsentsManager) CreatedAt() *big.Int {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatedAt")
 	ret0, _ := ret[0].(*big.Int)
 	return ret0
@@ -79,13 +75,11 @@ func (m *MockIConsentsManager) CreatedAt() *big.Int {
 
 // CreatedAt indicates an expected call of CreatedAt
 func (mr *MockIConsentsManagerMockRecorder) CreatedAt() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIConsentsManager)(nil).CreatedAt))
 }
 
 // IsAllowed mocks base method
 func (m *MockIConsentsManager) IsAllowed(userId types.ID, appName string, action uint8, dataType string) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsAllowed", userId, appName, action, dataType)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -94,13 +88,11 @@ func (m *MockIConsentsManager) IsAllowed(userId types.ID, appName string, action
 
 // IsAllowed indicates an expected call of IsAllowed
 func (mr *MockIConsentsManagerMockRecorder) IsAllowed(userId, appName, action, dataType interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowed", reflect.TypeOf((*MockIConsentsManager)(nil).IsAllowed), userId, appName, action, dataType)
 }
 
 // IsAllowedAt mocks base method
 func (m *MockIConsentsManager) IsAllowedAt(userId types.ID, appName string, action uint8, dataType string, blockNumber *big.Int) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsAllowedAt", userId, appName, action, dataType, blockNumber)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -109,97 +101,83 @@ func (m *MockIConsentsManager) IsAllowedAt(userId types.ID, appName string, acti
 
 // IsAllowedAt indicates an expected call of IsAllowedAt
 func (mr *MockIConsentsManagerMockRecorder) IsAllowedAt(userId, appName, action, dataType, blockNumber interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowedAt", reflect.TypeOf((*MockIConsentsManager)(nil).IsAllowedAt), userId, appName, action, dataType, blockNumber)
 }
 
 // Consent mocks base method
-func (m *MockIConsentsManager) Consent(ctx context.Context, appName string, consentData types.ConsentData) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Consent", ctx, appName, consentData)
+func (m *MockIConsentsManager) Consent(ctx context.Context, opts *blockchain.TransactOpts, appName string, consentData types.ConsentData) error {
+	ret := m.ctrl.Call(m, "Consent", ctx, opts, appName, consentData)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Consent indicates an expected call of Consent
-func (mr *MockIConsentsManagerMockRecorder) Consent(ctx, appName, consentData interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Consent", reflect.TypeOf((*MockIConsentsManager)(nil).Consent), ctx, appName, consentData)
+func (mr *MockIConsentsManagerMockRecorder) Consent(ctx, opts, appName, consentData interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Consent", reflect.TypeOf((*MockIConsentsManager)(nil).Consent), ctx, opts, appName, consentData)
 }
 
 // ConsentByController mocks base method
-func (m *MockIConsentsManager) ConsentByController(ctx context.Context, userId types.ID, appName string, consentData types.ConsentData) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ConsentByController", ctx, userId, appName, consentData)
+func (m *MockIConsentsManager) ConsentByController(ctx context.Context, opts *blockchain.TransactOpts, userId types.ID, appName string, consentData types.ConsentData) error {
+	ret := m.ctrl.Call(m, "ConsentByController", ctx, opts, userId, appName, consentData)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ConsentByController indicates an expected call of ConsentByController
-func (mr *MockIConsentsManagerMockRecorder) ConsentByController(ctx, userId, appName, consentData interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentByController", reflect.TypeOf((*MockIConsentsManager)(nil).ConsentByController), ctx, userId, appName, consentData)
+func (mr *MockIConsentsManagerMockRecorder) ConsentByController(ctx, opts, userId, appName, consentData interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentByController", reflect.TypeOf((*MockIConsentsManager)(nil).ConsentByController), ctx, opts, userId, appName, consentData)
 }
 
 // ConsentMany mocks base method
-func (m *MockIConsentsManager) ConsentMany(ctx context.Context, appName string, consentData []types.ConsentData) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ConsentMany", ctx, appName, consentData)
+func (m *MockIConsentsManager) ConsentMany(ctx context.Context, opts *blockchain.TransactOpts, appName string, consentData []types.ConsentData) error {
+	ret := m.ctrl.Call(m, "ConsentMany", ctx, opts, appName, consentData)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ConsentMany indicates an expected call of ConsentMany
-func (mr *MockIConsentsManagerMockRecorder) ConsentMany(ctx, appName, consentData interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentMany", reflect.TypeOf((*MockIConsentsManager)(nil).ConsentMany), ctx, appName, consentData)
+func (mr *MockIConsentsManagerMockRecorder) ConsentMany(ctx, opts, appName, consentData interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentMany", reflect.TypeOf((*MockIConsentsManager)(nil).ConsentMany), ctx, opts, appName, consentData)
 }
 
 // ConsentManyByController mocks base method
-func (m *MockIConsentsManager) ConsentManyByController(ctx context.Context, userId types.ID, appName string, consentData []types.ConsentData) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ConsentManyByController", ctx, userId, appName, consentData)
+func (m *MockIConsentsManager) ConsentManyByController(ctx context.Context, opts *blockchain.TransactOpts, userId types.ID, appName string, consentData []types.ConsentData) error {
+	ret := m.ctrl.Call(m, "ConsentManyByController", ctx, opts, userId, appName, consentData)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ConsentManyByController indicates an expected call of ConsentManyByController
-func (mr *MockIConsentsManagerMockRecorder) ConsentManyByController(ctx, userId, appName, consentData interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentManyByController", reflect.TypeOf((*MockIConsentsManager)(nil).ConsentManyByController), ctx, userId, appName, consentData)
+func (mr *MockIConsentsManagerMockRecorder) ConsentManyByController(ctx, opts, userId, appName, consentData interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentManyByController", reflect.TypeOf((*MockIConsentsManager)(nil).ConsentManyByController), ctx, opts, userId, appName, consentData)
 }
 
 // ModifyConsentByController mocks base method
-func (m *MockIConsentsManager) ModifyConsentByController(ctx context.Context, userId types.ID, appName string, consentData types.ConsentData, passwordSignature []byte) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ModifyConsentByController", ctx, userId, appName, consentData, passwordSignature)
+func (m *MockIConsentsManager) ModifyConsentByController(ctx context.Context, opts *blockchain.TransactOpts, userId types.ID, appName string, consentData types.ConsentData, passwordSignature []byte) error {
+	ret := m.ctrl.Call(m, "ModifyConsentByController", ctx, opts, userId, appName, consentData, passwordSignature)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ModifyConsentByController indicates an expected call of ModifyConsentByController
-func (mr *MockIConsentsManagerMockRecorder) ModifyConsentByController(ctx, userId, appName, consentData, passwordSignature interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentByController", reflect.TypeOf((*MockIConsentsManager)(nil).ModifyConsentByController), ctx, userId, appName, consentData, passwordSignature)
+func (mr *MockIConsentsManagerMockRecorder) ModifyConsentByController(ctx, opts, userId, appName, consentData, passwordSignature interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentByController", reflect.TypeOf((*MockIConsentsManager)(nil).ModifyConsentByController), ctx, opts, userId, appName, consentData, passwordSignature)
 }
 
 // ModifyConsentManyByController mocks base method
-func (m *MockIConsentsManager) ModifyConsentManyByController(ctx context.Context, userId types.ID, appName string, consentData []types.ConsentData, passwordSignature []byte) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ModifyConsentManyByController", ctx, userId, appName, consentData, passwordSignature)
+func (m *MockIConsentsManager) ModifyConsentManyByController(ctx context.Context, opts *blockchain.TransactOpts, userId types.ID, appName string, consentData []types.ConsentData, passwordSignature []byte) error {
+	ret := m.ctrl.Call(m, "ModifyConsentManyByController", ctx, opts, userId, appName, consentData, passwordSignature)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // ModifyConsentManyByController indicates an expected call of ModifyConsentManyByController
-func (mr *MockIConsentsManagerMockRecorder) ModifyConsentManyByController(ctx, userId, appName, consentData, passwordSignature interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentManyByController", reflect.TypeOf((*MockIConsentsManager)(nil).ModifyConsentManyByController), ctx, userId, appName, consentData, passwordSignature)
+func (mr *MockIConsentsManagerMockRecorder) ModifyConsentManyByController(ctx, opts, userId, appName, consentData, passwordSignature interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentManyByController", reflect.TypeOf((*MockIConsentsManager)(nil).ModifyConsentManyByController), ctx, opts, userId, appName, consentData, passwordSignature)
 }
 
 // FilterConsented mocks base method
 func (m *MockIConsentsManager) FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, appAddr []common.Address) (*adapter.ConsentsConsentedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterConsented", opts, action, userId, appAddr)
 	ret0, _ := ret[0].(*adapter.ConsentsConsentedIterator)
 	ret1, _ := ret[1].(error)
@@ -208,13 +186,11 @@ func (m *MockIConsentsManager) FilterConsented(opts *bind.FilterOpts, action []u
 
 // FilterConsented indicates an expected call of FilterConsented
 func (mr *MockIConsentsManagerMockRecorder) FilterConsented(opts, action, userId, appAddr interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterConsented", reflect.TypeOf((*MockIConsentsManager)(nil).FilterConsented), opts, action, userId, appAddr)
 }
 
 // WatchConsented mocks base method
 func (m *MockIConsentsManager) WatchConsented(opts *bind.WatchOpts, sink chan<- *adapter.ConsentsConsented, action []uint8, userId []types.ID, appAddr []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchConsented", opts, sink, action, userId, appAddr)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -223,7 +199,6 @@ func (m *MockIConsentsManager) WatchConsented(opts *bind.WatchOpts, sink chan<- 
 
 // WatchConsented indicates an expected call of WatchConsented
 func (mr *MockIConsentsManagerMockRecorder) WatchConsented(opts, sink, action, userId, appAddr interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchConsented", reflect.TypeOf((*MockIConsentsManager)(nil).WatchConsented), opts, sink, action, userId, appAddr)
 }
 
@@ -252,7 +227,6 @@ func (m *MockIConsentsCalls) EXPECT() *MockIConsentsCallsMockRecorder {
 
 // IsAllowed mocks base method
 func (m *MockIConsentsCalls) IsAllowed(userId types.ID, appName string, action uint8, dataType string) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsAllowed", userId, appName, action, dataType)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -261,13 +235,11 @@ func (m *MockIConsentsCalls) IsAllowed(userId types.ID, appName string, action u
 
 // IsAllowed indicates an expected call of IsAllowed
 func (mr *MockIConsentsCallsMockRecorder) IsAllowed(userId, appName, action, dataType interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowed", reflect.TypeOf((*MockIConsentsCalls)(nil).IsAllowed), userId, appName, action, dataType)
 }
 
 // IsAllowedAt mocks base method
 func (m *MockIConsentsCalls) IsAllowedAt(userId types.ID, appName string, action uint8, dataType string, blockNumber *big.Int) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsAllowedAt", userId, appName, action, dataType, blockNumber)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -276,7 +248,6 @@ func (m *MockIConsentsCalls) IsAllowedAt(userId types.ID, appName string, action
 
 // IsAllowedAt indicates an expected call of IsAllowedAt
 func (mr *MockIConsentsCallsMockRecorder) IsAllowedAt(userId, appName, action, dataType, blockNumber interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowedAt", reflect.TypeOf((*MockIConsentsCalls)(nil).IsAllowedAt), userId, appName, action, dataType, blockNumber)
 }
 
@@ -304,93 +275,81 @@ func (m *MockIConsentsTransacts) EXPECT() *MockIConsentsTransactsMockRecorder {
 }
 
 // Consent mocks base method
-func (m *MockIConsentsTransacts) Consent(ctx context.Context, appName string, consentData types.ConsentData) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Consent", ctx, appName, consentData)
+func (m *MockIConsentsTransacts) Consent(ctx context.Context, opts *blockchain.TransactOpts, appName string, consentData types.ConsentData) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "Consent", ctx, opts, appName, consentData)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Consent indicates an expected call of Consent
-func (mr *MockIConsentsTransactsMockRecorder) Consent(ctx, appName, consentData interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Consent", reflect.TypeOf((*MockIConsentsTransacts)(nil).Consent), ctx, appName, consentData)
+func (mr *MockIConsentsTransactsMockRecorder) Consent(ctx, opts, appName, consentData interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Consent", reflect.TypeOf((*MockIConsentsTransacts)(nil).Consent), ctx, opts, appName, consentData)
 }
 
 // ConsentByController mocks base method
-func (m *MockIConsentsTransacts) ConsentByController(ctx context.Context, userId types.ID, appName string, consentData types.ConsentData) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ConsentByController", ctx, userId, appName, consentData)
+func (m *MockIConsentsTransacts) ConsentByController(ctx context.Context, opts *blockchain.TransactOpts, userId types.ID, appName string, consentData types.ConsentData) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "ConsentByController", ctx, opts, userId, appName, consentData)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ConsentByController indicates an expected call of ConsentByController
-func (mr *MockIConsentsTransactsMockRecorder) ConsentByController(ctx, userId, appName, consentData interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentByController", reflect.TypeOf((*MockIConsentsTransacts)(nil).ConsentByController), ctx, userId, appName, consentData)
+func (mr *MockIConsentsTransactsMockRecorder) ConsentByController(ctx, opts, userId, appName, consentData interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentByController", reflect.TypeOf((*MockIConsentsTransacts)(nil).ConsentByController), ctx, opts, userId, appName, consentData)
 }
 
 // ConsentMany mocks base method
-func (m *MockIConsentsTransacts) ConsentMany(ctx context.Context, appName string, consentData []types.ConsentData) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ConsentMany", ctx, appName, consentData)
+func (m *MockIConsentsTransacts) ConsentMany(ctx context.Context, opts *blockchain.TransactOpts, appName string, consentData []types.ConsentData) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "ConsentMany", ctx, opts, appName, consentData)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ConsentMany indicates an expected call of ConsentMany
-func (mr *MockIConsentsTransactsMockRecorder) ConsentMany(ctx, appName, consentData interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentMany", reflect.TypeOf((*MockIConsentsTransacts)(nil).ConsentMany), ctx, appName, consentData)
+func (mr *MockIConsentsTransactsMockRecorder) ConsentMany(ctx, opts, appName, consentData interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentMany", reflect.TypeOf((*MockIConsentsTransacts)(nil).ConsentMany), ctx, opts, appName, consentData)
 }
 
 // ConsentManyByController mocks base method
-func (m *MockIConsentsTransacts) ConsentManyByController(ctx context.Context, userId types.ID, appName string, consentData []types.ConsentData) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ConsentManyByController", ctx, userId, appName, consentData)
+func (m *MockIConsentsTransacts) ConsentManyByController(ctx context.Context, opts *blockchain.TransactOpts, userId types.ID, appName string, consentData []types.ConsentData) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "ConsentManyByController", ctx, opts, userId, appName, consentData)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ConsentManyByController indicates an expected call of ConsentManyByController
-func (mr *MockIConsentsTransactsMockRecorder) ConsentManyByController(ctx, userId, appName, consentData interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentManyByController", reflect.TypeOf((*MockIConsentsTransacts)(nil).ConsentManyByController), ctx, userId, appName, consentData)
+func (mr *MockIConsentsTransactsMockRecorder) ConsentManyByController(ctx, opts, userId, appName, consentData interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentManyByController", reflect.TypeOf((*MockIConsentsTransacts)(nil).ConsentManyByController), ctx, opts, userId, appName, consentData)
 }
 
 // ModifyConsentByController mocks base method
-func (m *MockIConsentsTransacts) ModifyConsentByController(ctx context.Context, userId types.ID, appName string, consentData types.ConsentData, passwordSignature []byte) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ModifyConsentByController", ctx, userId, appName, consentData, passwordSignature)
+func (m *MockIConsentsTransacts) ModifyConsentByController(ctx context.Context, opts *blockchain.TransactOpts, userId types.ID, appName string, consentData types.ConsentData, passwordSignature []byte) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "ModifyConsentByController", ctx, opts, userId, appName, consentData, passwordSignature)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ModifyConsentByController indicates an expected call of ModifyConsentByController
-func (mr *MockIConsentsTransactsMockRecorder) ModifyConsentByController(ctx, userId, appName, consentData, passwordSignature interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentByController", reflect.TypeOf((*MockIConsentsTransacts)(nil).ModifyConsentByController), ctx, userId, appName, consentData, passwordSignature)
+func (mr *MockIConsentsTransactsMockRecorder) ModifyConsentByController(ctx, opts, userId, appName, consentData, passwordSignature interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentByController", reflect.TypeOf((*MockIConsentsTransacts)(nil).ModifyConsentByController), ctx, opts, userId, appName, consentData, passwordSignature)
 }
 
 // ModifyConsentManyByController mocks base method
-func (m *MockIConsentsTransacts) ModifyConsentManyByController(ctx context.Context, userId types.ID, appName string, consentData []types.ConsentData, passwordSignature []byte) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ModifyConsentManyByController", ctx, userId, appName, consentData, passwordSignature)
+func (m *MockIConsentsTransacts) ModifyConsentManyByController(ctx context.Context, opts *blockchain.TransactOpts, userId types.ID, appName string, consentData []types.ConsentData, passwordSignature []byte) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "ModifyConsentManyByController", ctx, opts, userId, appName, consentData, passwordSignature)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ModifyConsentManyByController indicates an expected call of ModifyConsentManyByController
-func (mr *MockIConsentsTransactsMockRecorder) ModifyConsentManyByController(ctx, userId, appName, consentData, passwordSignature interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentManyByController", reflect.TypeOf((*MockIConsentsTransacts)(nil).ModifyConsentManyByController), ctx, userId, appName, consentData, passwordSignature)
+func (mr *MockIConsentsTransactsMockRecorder) ModifyConsentManyByController(ctx, opts, userId, appName, consentData, passwordSignature interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentManyByController", reflect.TypeOf((*MockIConsentsTransacts)(nil).ModifyConsentManyByController), ctx, opts, userId, appName, consentData, passwordSignature)
 }
 
 // MockIConsentsEvents is a mock of IConsentsEvents interface
@@ -418,7 +377,6 @@ func (m *MockIConsentsEvents) EXPECT() *MockIConsentsEventsMockRecorder {
 
 // FilterConsented mocks base method
 func (m *MockIConsentsEvents) FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, appAddr []common.Address) (*adapter.ConsentsConsentedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterConsented", opts, action, userId, appAddr)
 	ret0, _ := ret[0].(*adapter.ConsentsConsentedIterator)
 	ret1, _ := ret[1].(error)
@@ -427,13 +385,11 @@ func (m *MockIConsentsEvents) FilterConsented(opts *bind.FilterOpts, action []ui
 
 // FilterConsented indicates an expected call of FilterConsented
 func (mr *MockIConsentsEventsMockRecorder) FilterConsented(opts, action, userId, appAddr interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterConsented", reflect.TypeOf((*MockIConsentsEvents)(nil).FilterConsented), opts, action, userId, appAddr)
 }
 
 // ParseConsented mocks base method
 func (m *MockIConsentsEvents) ParseConsented(log types0.Log) (*adapter.ConsentsConsented, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseConsented", log)
 	ret0, _ := ret[0].(*adapter.ConsentsConsented)
 	ret1, _ := ret[1].(error)
@@ -442,13 +398,11 @@ func (m *MockIConsentsEvents) ParseConsented(log types0.Log) (*adapter.ConsentsC
 
 // ParseConsented indicates an expected call of ParseConsented
 func (mr *MockIConsentsEventsMockRecorder) ParseConsented(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseConsented", reflect.TypeOf((*MockIConsentsEvents)(nil).ParseConsented), log)
 }
 
 // ParseConsentedFromReceipt mocks base method
 func (m *MockIConsentsEvents) ParseConsentedFromReceipt(receipt *types0.Receipt) ([]*adapter.ConsentsConsented, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseConsentedFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ConsentsConsented)
 	ret1, _ := ret[1].(error)
@@ -457,13 +411,11 @@ func (m *MockIConsentsEvents) ParseConsentedFromReceipt(receipt *types0.Receipt)
 
 // ParseConsentedFromReceipt indicates an expected call of ParseConsentedFromReceipt
 func (mr *MockIConsentsEventsMockRecorder) ParseConsentedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseConsentedFromReceipt", reflect.TypeOf((*MockIConsentsEvents)(nil).ParseConsentedFromReceipt), receipt)
 }
 
 // WatchConsented mocks base method
 func (m *MockIConsentsEvents) WatchConsented(opts *bind.WatchOpts, sink chan<- *adapter.ConsentsConsented, action []uint8, userId []types.ID, appAddr []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchConsented", opts, sink, action, userId, appAddr)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -472,7 +424,6 @@ func (m *MockIConsentsEvents) WatchConsented(opts *bind.WatchOpts, sink chan<- *
 
 // WatchConsented indicates an expected call of WatchConsented
 func (mr *MockIConsentsEventsMockRecorder) WatchConsented(opts, sink, action, userId, appAddr interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchConsented", reflect.TypeOf((*MockIConsentsEvents)(nil).WatchConsented), opts, sink, action, userId, appAddr)
 }
 
@@ -501,7 +452,6 @@ func (m *MockIConsentsFilterer) EXPECT() *MockIConsentsFiltererMockRecorder {
 
 // FilterConsented mocks base method
 func (m *MockIConsentsFilterer) FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, appAddr []common.Address) (*adapter.ConsentsConsentedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterConsented", opts, action, userId, appAddr)
 	ret0, _ := ret[0].(*adapter.ConsentsConsentedIterator)
 	ret1, _ := ret[1].(error)
@@ -510,7 +460,6 @@ func (m *MockIConsentsFilterer) FilterConsented(opts *bind.FilterOpts, action []
 
 // FilterConsented indicates an expected call of FilterConsented
 func (mr *MockIConsentsFiltererMockRecorder) FilterConsented(opts, action, userId, appAddr interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterConsented", reflect.TypeOf((*MockIConsentsFilterer)(nil).FilterConsented), opts, action, userId, appAddr)
 }
 
@@ -539,7 +488,6 @@ func (m *MockIConsentsParser) EXPECT() *MockIConsentsParserMockRecorder {
 
 // ParseConsented mocks base method
 func (m *MockIConsentsParser) ParseConsented(log types0.Log) (*adapter.ConsentsConsented, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseConsented", log)
 	ret0, _ := ret[0].(*adapter.ConsentsConsented)
 	ret1, _ := ret[1].(error)
@@ -548,13 +496,11 @@ func (m *MockIConsentsParser) ParseConsented(log types0.Log) (*adapter.ConsentsC
 
 // ParseConsented indicates an expected call of ParseConsented
 func (mr *MockIConsentsParserMockRecorder) ParseConsented(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseConsented", reflect.TypeOf((*MockIConsentsParser)(nil).ParseConsented), log)
 }
 
 // ParseConsentedFromReceipt mocks base method
 func (m *MockIConsentsParser) ParseConsentedFromReceipt(receipt *types0.Receipt) ([]*adapter.ConsentsConsented, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseConsentedFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ConsentsConsented)
 	ret1, _ := ret[1].(error)
@@ -563,7 +509,6 @@ func (m *MockIConsentsParser) ParseConsentedFromReceipt(receipt *types0.Receipt)
 
 // ParseConsentedFromReceipt indicates an expected call of ParseConsentedFromReceipt
 func (mr *MockIConsentsParserMockRecorder) ParseConsentedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseConsentedFromReceipt", reflect.TypeOf((*MockIConsentsParser)(nil).ParseConsentedFromReceipt), receipt)
 }
 
@@ -592,7 +537,6 @@ func (m *MockIConsentsWatcher) EXPECT() *MockIConsentsWatcherMockRecorder {
 
 // WatchConsented mocks base method
 func (m *MockIConsentsWatcher) WatchConsented(opts *bind.WatchOpts, sink chan<- *adapter.ConsentsConsented, action []uint8, userId []types.ID, appAddr []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchConsented", opts, sink, action, userId, appAddr)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -601,7 +545,6 @@ func (m *MockIConsentsWatcher) WatchConsented(opts *bind.WatchOpts, sink chan<- 
 
 // WatchConsented indicates an expected call of WatchConsented
 func (mr *MockIConsentsWatcherMockRecorder) WatchConsented(opts, sink, action, userId, appAddr interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchConsented", reflect.TypeOf((*MockIConsentsWatcher)(nil).WatchConsented), opts, sink, action, userId, appAddr)
 }
 
@@ -630,7 +573,6 @@ func (m *MockIConsentsContract) EXPECT() *MockIConsentsContractMockRecorder {
 
 // Address mocks base method
 func (m *MockIConsentsContract) Address() common.Address {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
@@ -638,13 +580,11 @@ func (m *MockIConsentsContract) Address() common.Address {
 
 // Address indicates an expected call of Address
 func (mr *MockIConsentsContractMockRecorder) Address() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIConsentsContract)(nil).Address))
 }
 
 // TxHash mocks base method
 func (m *MockIConsentsContract) TxHash() common.Hash {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TxHash")
 	ret0, _ := ret[0].(common.Hash)
 	return ret0
@@ -652,13 +592,11 @@ func (m *MockIConsentsContract) TxHash() common.Hash {
 
 // TxHash indicates an expected call of TxHash
 func (mr *MockIConsentsContractMockRecorder) TxHash() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockIConsentsContract)(nil).TxHash))
 }
 
 // CreatedAt mocks base method
 func (m *MockIConsentsContract) CreatedAt() *big.Int {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatedAt")
 	ret0, _ := ret[0].(*big.Int)
 	return ret0
@@ -666,13 +604,11 @@ func (m *MockIConsentsContract) CreatedAt() *big.Int {
 
 // CreatedAt indicates an expected call of CreatedAt
 func (mr *MockIConsentsContractMockRecorder) CreatedAt() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIConsentsContract)(nil).CreatedAt))
 }
 
 // IsAllowed mocks base method
 func (m *MockIConsentsContract) IsAllowed(userId types.ID, appName string, action uint8, dataType string) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsAllowed", userId, appName, action, dataType)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -681,13 +617,11 @@ func (m *MockIConsentsContract) IsAllowed(userId types.ID, appName string, actio
 
 // IsAllowed indicates an expected call of IsAllowed
 func (mr *MockIConsentsContractMockRecorder) IsAllowed(userId, appName, action, dataType interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowed", reflect.TypeOf((*MockIConsentsContract)(nil).IsAllowed), userId, appName, action, dataType)
 }
 
 // IsAllowedAt mocks base method
 func (m *MockIConsentsContract) IsAllowedAt(userId types.ID, appName string, action uint8, dataType string, blockNumber *big.Int) (bool, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsAllowedAt", userId, appName, action, dataType, blockNumber)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(error)
@@ -696,103 +630,89 @@ func (m *MockIConsentsContract) IsAllowedAt(userId types.ID, appName string, act
 
 // IsAllowedAt indicates an expected call of IsAllowedAt
 func (mr *MockIConsentsContractMockRecorder) IsAllowedAt(userId, appName, action, dataType, blockNumber interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsAllowedAt", reflect.TypeOf((*MockIConsentsContract)(nil).IsAllowedAt), userId, appName, action, dataType, blockNumber)
 }
 
 // Consent mocks base method
-func (m *MockIConsentsContract) Consent(ctx context.Context, appName string, consentData types.ConsentData) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Consent", ctx, appName, consentData)
+func (m *MockIConsentsContract) Consent(ctx context.Context, opts *blockchain.TransactOpts, appName string, consentData types.ConsentData) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "Consent", ctx, opts, appName, consentData)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Consent indicates an expected call of Consent
-func (mr *MockIConsentsContractMockRecorder) Consent(ctx, appName, consentData interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Consent", reflect.TypeOf((*MockIConsentsContract)(nil).Consent), ctx, appName, consentData)
+func (mr *MockIConsentsContractMockRecorder) Consent(ctx, opts, appName, consentData interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Consent", reflect.TypeOf((*MockIConsentsContract)(nil).Consent), ctx, opts, appName, consentData)
 }
 
 // ConsentByController mocks base method
-func (m *MockIConsentsContract) ConsentByController(ctx context.Context, userId types.ID, appName string, consentData types.ConsentData) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ConsentByController", ctx, userId, appName, consentData)
+func (m *MockIConsentsContract) ConsentByController(ctx context.Context, opts *blockchain.TransactOpts, userId types.ID, appName string, consentData types.ConsentData) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "ConsentByController", ctx, opts, userId, appName, consentData)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ConsentByController indicates an expected call of ConsentByController
-func (mr *MockIConsentsContractMockRecorder) ConsentByController(ctx, userId, appName, consentData interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentByController", reflect.TypeOf((*MockIConsentsContract)(nil).ConsentByController), ctx, userId, appName, consentData)
+func (mr *MockIConsentsContractMockRecorder) ConsentByController(ctx, opts, userId, appName, consentData interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentByController", reflect.TypeOf((*MockIConsentsContract)(nil).ConsentByController), ctx, opts, userId, appName, consentData)
 }
 
 // ConsentMany mocks base method
-func (m *MockIConsentsContract) ConsentMany(ctx context.Context, appName string, consentData []types.ConsentData) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ConsentMany", ctx, appName, consentData)
+func (m *MockIConsentsContract) ConsentMany(ctx context.Context, opts *blockchain.TransactOpts, appName string, consentData []types.ConsentData) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "ConsentMany", ctx, opts, appName, consentData)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ConsentMany indicates an expected call of ConsentMany
-func (mr *MockIConsentsContractMockRecorder) ConsentMany(ctx, appName, consentData interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentMany", reflect.TypeOf((*MockIConsentsContract)(nil).ConsentMany), ctx, appName, consentData)
+func (mr *MockIConsentsContractMockRecorder) ConsentMany(ctx, opts, appName, consentData interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentMany", reflect.TypeOf((*MockIConsentsContract)(nil).ConsentMany), ctx, opts, appName, consentData)
 }
 
 // ConsentManyByController mocks base method
-func (m *MockIConsentsContract) ConsentManyByController(ctx context.Context, userId types.ID, appName string, consentData []types.ConsentData) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ConsentManyByController", ctx, userId, appName, consentData)
+func (m *MockIConsentsContract) ConsentManyByController(ctx context.Context, opts *blockchain.TransactOpts, userId types.ID, appName string, consentData []types.ConsentData) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "ConsentManyByController", ctx, opts, userId, appName, consentData)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ConsentManyByController indicates an expected call of ConsentManyByController
-func (mr *MockIConsentsContractMockRecorder) ConsentManyByController(ctx, userId, appName, consentData interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentManyByController", reflect.TypeOf((*MockIConsentsContract)(nil).ConsentManyByController), ctx, userId, appName, consentData)
+func (mr *MockIConsentsContractMockRecorder) ConsentManyByController(ctx, opts, userId, appName, consentData interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConsentManyByController", reflect.TypeOf((*MockIConsentsContract)(nil).ConsentManyByController), ctx, opts, userId, appName, consentData)
 }
 
 // ModifyConsentByController mocks base method
-func (m *MockIConsentsContract) ModifyConsentByController(ctx context.Context, userId types.ID, appName string, consentData types.ConsentData, passwordSignature []byte) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ModifyConsentByController", ctx, userId, appName, consentData, passwordSignature)
+func (m *MockIConsentsContract) ModifyConsentByController(ctx context.Context, opts *blockchain.TransactOpts, userId types.ID, appName string, consentData types.ConsentData, passwordSignature []byte) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "ModifyConsentByController", ctx, opts, userId, appName, consentData, passwordSignature)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ModifyConsentByController indicates an expected call of ModifyConsentByController
-func (mr *MockIConsentsContractMockRecorder) ModifyConsentByController(ctx, userId, appName, consentData, passwordSignature interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentByController", reflect.TypeOf((*MockIConsentsContract)(nil).ModifyConsentByController), ctx, userId, appName, consentData, passwordSignature)
+func (mr *MockIConsentsContractMockRecorder) ModifyConsentByController(ctx, opts, userId, appName, consentData, passwordSignature interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentByController", reflect.TypeOf((*MockIConsentsContract)(nil).ModifyConsentByController), ctx, opts, userId, appName, consentData, passwordSignature)
 }
 
 // ModifyConsentManyByController mocks base method
-func (m *MockIConsentsContract) ModifyConsentManyByController(ctx context.Context, userId types.ID, appName string, consentData []types.ConsentData, passwordSignature []byte) (*types0.Receipt, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ModifyConsentManyByController", ctx, userId, appName, consentData, passwordSignature)
+func (m *MockIConsentsContract) ModifyConsentManyByController(ctx context.Context, opts *blockchain.TransactOpts, userId types.ID, appName string, consentData []types.ConsentData, passwordSignature []byte) (*types0.Receipt, error) {
+	ret := m.ctrl.Call(m, "ModifyConsentManyByController", ctx, opts, userId, appName, consentData, passwordSignature)
 	ret0, _ := ret[0].(*types0.Receipt)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ModifyConsentManyByController indicates an expected call of ModifyConsentManyByController
-func (mr *MockIConsentsContractMockRecorder) ModifyConsentManyByController(ctx, userId, appName, consentData, passwordSignature interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentManyByController", reflect.TypeOf((*MockIConsentsContract)(nil).ModifyConsentManyByController), ctx, userId, appName, consentData, passwordSignature)
+func (mr *MockIConsentsContractMockRecorder) ModifyConsentManyByController(ctx, opts, userId, appName, consentData, passwordSignature interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ModifyConsentManyByController", reflect.TypeOf((*MockIConsentsContract)(nil).ModifyConsentManyByController), ctx, opts, userId, appName, consentData, passwordSignature)
 }
 
 // FilterConsented mocks base method
 func (m *MockIConsentsContract) FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, appAddr []common.Address) (*adapter.ConsentsConsentedIterator, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FilterConsented", opts, action, userId, appAddr)
 	ret0, _ := ret[0].(*adapter.ConsentsConsentedIterator)
 	ret1, _ := ret[1].(error)
@@ -801,13 +721,11 @@ func (m *MockIConsentsContract) FilterConsented(opts *bind.FilterOpts, action []
 
 // FilterConsented indicates an expected call of FilterConsented
 func (mr *MockIConsentsContractMockRecorder) FilterConsented(opts, action, userId, appAddr interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FilterConsented", reflect.TypeOf((*MockIConsentsContract)(nil).FilterConsented), opts, action, userId, appAddr)
 }
 
 // ParseConsented mocks base method
 func (m *MockIConsentsContract) ParseConsented(log types0.Log) (*adapter.ConsentsConsented, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseConsented", log)
 	ret0, _ := ret[0].(*adapter.ConsentsConsented)
 	ret1, _ := ret[1].(error)
@@ -816,13 +734,11 @@ func (m *MockIConsentsContract) ParseConsented(log types0.Log) (*adapter.Consent
 
 // ParseConsented indicates an expected call of ParseConsented
 func (mr *MockIConsentsContractMockRecorder) ParseConsented(log interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseConsented", reflect.TypeOf((*MockIConsentsContract)(nil).ParseConsented), log)
 }
 
 // ParseConsentedFromReceipt mocks base method
 func (m *MockIConsentsContract) ParseConsentedFromReceipt(receipt *types0.Receipt) ([]*adapter.ConsentsConsented, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ParseConsentedFromReceipt", receipt)
 	ret0, _ := ret[0].([]*adapter.ConsentsConsented)
 	ret1, _ := ret[1].(error)
@@ -831,13 +747,11 @@ func (m *MockIConsentsContract) ParseConsentedFromReceipt(receipt *types0.Receip
 
 // ParseConsentedFromReceipt indicates an expected call of ParseConsentedFromReceipt
 func (mr *MockIConsentsContractMockRecorder) ParseConsentedFromReceipt(receipt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ParseConsentedFromReceipt", reflect.TypeOf((*MockIConsentsContract)(nil).ParseConsentedFromReceipt), receipt)
 }
 
 // WatchConsented mocks base method
 func (m *MockIConsentsContract) WatchConsented(opts *bind.WatchOpts, sink chan<- *adapter.ConsentsConsented, action []uint8, userId []types.ID, appAddr []common.Address) (event.Subscription, error) {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WatchConsented", opts, sink, action, userId, appAddr)
 	ret0, _ := ret[0].(event.Subscription)
 	ret1, _ := ret[1].(error)
@@ -846,6 +760,5 @@ func (m *MockIConsentsContract) WatchConsented(opts *bind.WatchOpts, sink chan<-
 
 // WatchConsented indicates an expected call of WatchConsented
 func (mr *MockIConsentsContractMockRecorder) WatchConsented(opts, sink, action, userId, appAddr interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WatchConsented", reflect.TypeOf((*MockIConsentsContract)(nil).WatchConsented), opts, sink, action, userId, appAddr)
 }

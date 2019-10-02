@@ -7,6 +7,7 @@ import (
 	"errors"
 	"math/big"
 
+	blockchain "github.com/airbloc/airbloc-go/shared/blockchain"
 	types "github.com/airbloc/airbloc-go/shared/types"
 	platform "github.com/klaytn/klaytn"
 	bind "github.com/klaytn/klaytn/accounts/abi/bind"
@@ -46,25 +47,25 @@ func (_ControllerRegistry *ControllerRegistry) CreatedAt() *big.Int {
 
 // ControllerRegistryCaller is an auto generated read-only Go binding around an Ethereum contract.
 type ControllerRegistryCaller struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // ControllerRegistryTransactor is an auto generated write-only Go binding around an Ethereum contract.
 type ControllerRegistryTransactor struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // ControllerRegistryFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
 type ControllerRegistryFilterer struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // ControllerRegistrySession is an auto generated Go binding around an Ethereum contract,
 // with pre-set call and transact options.
 type ControllerRegistrySession struct {
-	Contract     *ControllerRegistry // Generic contract binding to set the session for
-	CallOpts     bind.CallOpts       // Call options to use throughout this session
-	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
+	Contract     *ControllerRegistry     // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts           // Call options to use throughout this session
+	TransactOpts blockchain.TransactOpts // Transaction auth options to use throughout this session
 }
 
 // ControllerRegistryCallerSession is an auto generated read-only Go binding around an Ethereum contract,
@@ -78,7 +79,7 @@ type ControllerRegistryCallerSession struct {
 // with pre-set transact options.
 type ControllerRegistryTransactorSession struct {
 	Contract     *ControllerRegistryTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts             // Transaction auth options to use throughout this session
+	TransactOpts blockchain.TransactOpts       // Transaction auth options to use throughout this session
 }
 
 // ControllerRegistryRaw is an auto generated low-level Go binding around an Ethereum contract.
@@ -96,12 +97,12 @@ func (_ControllerRegistry *ControllerRegistryRaw) Call(opts *bind.CallOpts, resu
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_ControllerRegistry *ControllerRegistryRaw) Transfer(opts *bind.TransactOpts) (*chainTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistryRaw) Transfer(opts *blockchain.TransactOpts) (*chainTypes.Transaction, error) {
 	return _ControllerRegistry.Contract.ControllerRegistryTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_ControllerRegistry *ControllerRegistryRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistryRaw) Transact(opts *blockchain.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
 	return _ControllerRegistry.Contract.ControllerRegistryTransactor.contract.Transact(opts, method, params...)
 }
 
@@ -125,12 +126,12 @@ type ControllerRegistryTransactorRaw struct {
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_ControllerRegistry *ControllerRegistryTransactorRaw) Transfer(opts *bind.TransactOpts) (*chainTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistryTransactorRaw) Transfer(opts *blockchain.TransactOpts) (*chainTypes.Transaction, error) {
 	return _ControllerRegistry.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_ControllerRegistry *ControllerRegistryTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistryTransactorRaw) Transact(opts *blockchain.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
 	return _ControllerRegistry.Contract.contract.Transact(opts, method, params...)
 }
 
@@ -189,7 +190,7 @@ func (_ControllerRegistry *ControllerRegistryCallerSession) Get(controller commo
 // Register is a paid mutator transaction binding the contract method 0x4420e486.
 //
 // Solidity: function register(address controllerAddr) returns()
-func (_ControllerRegistry *ControllerRegistryTransactor) Register(opts *bind.TransactOpts, controllerAddr common.Address) (*chainTypes.Transaction, error) {
+func (_ControllerRegistry *ControllerRegistryTransactor) Register(opts *blockchain.TransactOpts, controllerAddr common.Address) (*chainTypes.Transaction, error) {
 	return _ControllerRegistry.contract.Transact(opts, "register", controllerAddr)
 }
 
@@ -211,8 +212,8 @@ func (_ControllerRegistry *ControllerRegistryTransactorSession) Register(control
 type ControllerRegistryOwnershipTransferredIterator struct {
 	Event *ControllerRegistryOwnershipTransferred // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination
@@ -384,8 +385,8 @@ func (_ControllerRegistry *ControllerRegistryFilterer) ParseOwnershipTransferred
 type ControllerRegistryRegistrationIterator struct {
 	Event *ControllerRegistryRegistration // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination
@@ -548,8 +549,8 @@ func (_ControllerRegistry *ControllerRegistryFilterer) ParseRegistrationFromRece
 type ControllerRegistryUnregistrationIterator struct {
 	Event *ControllerRegistryUnregistration // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination

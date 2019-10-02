@@ -7,6 +7,7 @@ import (
 	"errors"
 	"math/big"
 
+	blockchain "github.com/airbloc/airbloc-go/shared/blockchain"
 	types "github.com/airbloc/airbloc-go/shared/types"
 	platform "github.com/klaytn/klaytn"
 	bind "github.com/klaytn/klaytn/accounts/abi/bind"
@@ -46,25 +47,25 @@ func (_Exchange *Exchange) CreatedAt() *big.Int {
 
 // ExchangeCaller is an auto generated read-only Go binding around an Ethereum contract.
 type ExchangeCaller struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // ExchangeTransactor is an auto generated write-only Go binding around an Ethereum contract.
 type ExchangeTransactor struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // ExchangeFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
 type ExchangeFilterer struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *blockchain.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // ExchangeSession is an auto generated Go binding around an Ethereum contract,
 // with pre-set call and transact options.
 type ExchangeSession struct {
-	Contract     *Exchange         // Generic contract binding to set the session for
-	CallOpts     bind.CallOpts     // Call options to use throughout this session
-	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+	Contract     *Exchange               // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts           // Call options to use throughout this session
+	TransactOpts blockchain.TransactOpts // Transaction auth options to use throughout this session
 }
 
 // ExchangeCallerSession is an auto generated read-only Go binding around an Ethereum contract,
@@ -77,8 +78,8 @@ type ExchangeCallerSession struct {
 // ExchangeTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
 // with pre-set transact options.
 type ExchangeTransactorSession struct {
-	Contract     *ExchangeTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
+	Contract     *ExchangeTransactor     // Generic contract transactor binding to set the session for
+	TransactOpts blockchain.TransactOpts // Transaction auth options to use throughout this session
 }
 
 // ExchangeRaw is an auto generated low-level Go binding around an Ethereum contract.
@@ -96,12 +97,12 @@ func (_Exchange *ExchangeRaw) Call(opts *bind.CallOpts, result interface{}, meth
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_Exchange *ExchangeRaw) Transfer(opts *bind.TransactOpts) (*chainTypes.Transaction, error) {
+func (_Exchange *ExchangeRaw) Transfer(opts *blockchain.TransactOpts) (*chainTypes.Transaction, error) {
 	return _Exchange.Contract.ExchangeTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_Exchange *ExchangeRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
+func (_Exchange *ExchangeRaw) Transact(opts *blockchain.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
 	return _Exchange.Contract.ExchangeTransactor.contract.Transact(opts, method, params...)
 }
 
@@ -125,12 +126,12 @@ type ExchangeTransactorRaw struct {
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_Exchange *ExchangeTransactorRaw) Transfer(opts *bind.TransactOpts) (*chainTypes.Transaction, error) {
+func (_Exchange *ExchangeTransactorRaw) Transfer(opts *blockchain.TransactOpts) (*chainTypes.Transaction, error) {
 	return _Exchange.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_Exchange *ExchangeTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
+func (_Exchange *ExchangeTransactorRaw) Transact(opts *blockchain.TransactOpts, method string, params ...interface{}) (*chainTypes.Transaction, error) {
 	return _Exchange.Contract.contract.Transact(opts, method, params...)
 }
 
@@ -219,7 +220,7 @@ func (_Exchange *ExchangeCallerSession) OfferExists(offerId types.ID) (bool, err
 // AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
 //
 // Solidity: function addDataIds(bytes8 offerId, bytes20[] dataIds) returns()
-func (_Exchange *ExchangeTransactor) AddDataIds(opts *bind.TransactOpts, offerId types.ID, dataIds []types.DataId) (*chainTypes.Transaction, error) {
+func (_Exchange *ExchangeTransactor) AddDataIds(opts *blockchain.TransactOpts, offerId types.ID, dataIds []types.DataId) (*chainTypes.Transaction, error) {
 	return _Exchange.contract.Transact(opts, "addDataIds", offerId, dataIds)
 }
 
@@ -240,7 +241,7 @@ func (_Exchange *ExchangeTransactorSession) AddDataIds(offerId types.ID, dataIds
 // Cancel is a paid mutator transaction binding the contract method 0xb2d9ba39.
 //
 // Solidity: function cancel(bytes8 offerId) returns()
-func (_Exchange *ExchangeTransactor) Cancel(opts *bind.TransactOpts, offerId types.ID) (*chainTypes.Transaction, error) {
+func (_Exchange *ExchangeTransactor) Cancel(opts *blockchain.TransactOpts, offerId types.ID) (*chainTypes.Transaction, error) {
 	return _Exchange.contract.Transact(opts, "cancel", offerId)
 }
 
@@ -261,7 +262,7 @@ func (_Exchange *ExchangeTransactorSession) Cancel(offerId types.ID) (*chainType
 // Order is a paid mutator transaction binding the contract method 0x0cf833fb.
 //
 // Solidity: function order(bytes8 offerId) returns()
-func (_Exchange *ExchangeTransactor) Order(opts *bind.TransactOpts, offerId types.ID) (*chainTypes.Transaction, error) {
+func (_Exchange *ExchangeTransactor) Order(opts *blockchain.TransactOpts, offerId types.ID) (*chainTypes.Transaction, error) {
 	return _Exchange.contract.Transact(opts, "order", offerId)
 }
 
@@ -282,7 +283,7 @@ func (_Exchange *ExchangeTransactorSession) Order(offerId types.ID) (*chainTypes
 // Prepare is a paid mutator transaction binding the contract method 0x77e61c33.
 //
 // Solidity: function prepare(string provider, address consumer, address escrow, bytes4 escrowSign, bytes escrowArgs, bytes20[] dataIds) returns(bytes8)
-func (_Exchange *ExchangeTransactor) Prepare(opts *bind.TransactOpts, provider string, consumer common.Address, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds []types.DataId) (*chainTypes.Transaction, error) {
+func (_Exchange *ExchangeTransactor) Prepare(opts *blockchain.TransactOpts, provider string, consumer common.Address, escrow common.Address, escrowSign [4]byte, escrowArgs []byte, dataIds []types.DataId) (*chainTypes.Transaction, error) {
 	return _Exchange.contract.Transact(opts, "prepare", provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
 }
 
@@ -303,7 +304,7 @@ func (_Exchange *ExchangeTransactorSession) Prepare(provider string, consumer co
 // Reject is a paid mutator transaction binding the contract method 0x6622e153.
 //
 // Solidity: function reject(bytes8 offerId) returns()
-func (_Exchange *ExchangeTransactor) Reject(opts *bind.TransactOpts, offerId types.ID) (*chainTypes.Transaction, error) {
+func (_Exchange *ExchangeTransactor) Reject(opts *blockchain.TransactOpts, offerId types.ID) (*chainTypes.Transaction, error) {
 	return _Exchange.contract.Transact(opts, "reject", offerId)
 }
 
@@ -324,7 +325,7 @@ func (_Exchange *ExchangeTransactorSession) Reject(offerId types.ID) (*chainType
 // Settle is a paid mutator transaction binding the contract method 0xa60d9b5f.
 //
 // Solidity: function settle(bytes8 offerId) returns()
-func (_Exchange *ExchangeTransactor) Settle(opts *bind.TransactOpts, offerId types.ID) (*chainTypes.Transaction, error) {
+func (_Exchange *ExchangeTransactor) Settle(opts *blockchain.TransactOpts, offerId types.ID) (*chainTypes.Transaction, error) {
 	return _Exchange.contract.Transact(opts, "settle", offerId)
 }
 
@@ -346,8 +347,8 @@ func (_Exchange *ExchangeTransactorSession) Settle(offerId types.ID) (*chainType
 type ExchangeEscrowExecutionFailedIterator struct {
 	Event *ExchangeEscrowExecutionFailed // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination
@@ -500,8 +501,8 @@ func (_Exchange *ExchangeFilterer) ParseEscrowExecutionFailedFromReceipt(receipt
 type ExchangeOfferCanceledIterator struct {
 	Event *ExchangeOfferCanceled // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination
@@ -665,8 +666,8 @@ func (_Exchange *ExchangeFilterer) ParseOfferCanceledFromReceipt(receipt *chainT
 type ExchangeOfferPreparedIterator struct {
 	Event *ExchangeOfferPrepared // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination
@@ -830,8 +831,8 @@ func (_Exchange *ExchangeFilterer) ParseOfferPreparedFromReceipt(receipt *chainT
 type ExchangeOfferPresentedIterator struct {
 	Event *ExchangeOfferPresented // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination
@@ -995,8 +996,8 @@ func (_Exchange *ExchangeFilterer) ParseOfferPresentedFromReceipt(receipt *chain
 type ExchangeOfferReceiptIterator struct {
 	Event *ExchangeOfferReceipt // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination
@@ -1172,8 +1173,8 @@ func (_Exchange *ExchangeFilterer) ParseOfferReceiptFromReceipt(receipt *chainTy
 type ExchangeOfferRejectedIterator struct {
 	Event *ExchangeOfferRejected // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination
@@ -1345,8 +1346,8 @@ func (_Exchange *ExchangeFilterer) ParseOfferRejectedFromReceipt(receipt *chainT
 type ExchangeOfferSettledIterator struct {
 	Event *ExchangeOfferSettled // Event containing the contract specifics and raw log
 
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
+	contract *blockchain.BoundContract // Generic contract to use for unpacking event data
+	event    string                    // Event name to use for unpacking event data
 
 	logs chan chainTypes.Log   // Log channel receiving the found contract events
 	sub  platform.Subscription // Subscription for errors, completion and termination

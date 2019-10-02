@@ -37,7 +37,6 @@ func (m *MockIErc20EscrowManager) EXPECT() *MockIErc20EscrowManagerMockRecorder 
 
 // Address mocks base method
 func (m *MockIErc20EscrowManager) Address() common.Address {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
@@ -45,13 +44,11 @@ func (m *MockIErc20EscrowManager) Address() common.Address {
 
 // Address indicates an expected call of Address
 func (mr *MockIErc20EscrowManagerMockRecorder) Address() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIErc20EscrowManager)(nil).Address))
 }
 
 // TxHash mocks base method
 func (m *MockIErc20EscrowManager) TxHash() common.Hash {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TxHash")
 	ret0, _ := ret[0].(common.Hash)
 	return ret0
@@ -59,13 +56,11 @@ func (m *MockIErc20EscrowManager) TxHash() common.Hash {
 
 // TxHash indicates an expected call of TxHash
 func (mr *MockIErc20EscrowManagerMockRecorder) TxHash() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockIErc20EscrowManager)(nil).TxHash))
 }
 
 // CreatedAt mocks base method
 func (m *MockIErc20EscrowManager) CreatedAt() *big.Int {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatedAt")
 	ret0, _ := ret[0].(*big.Int)
 	return ret0
@@ -73,7 +68,6 @@ func (m *MockIErc20EscrowManager) CreatedAt() *big.Int {
 
 // CreatedAt indicates an expected call of CreatedAt
 func (mr *MockIErc20EscrowManagerMockRecorder) CreatedAt() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIErc20EscrowManager)(nil).CreatedAt))
 }
 
@@ -240,7 +234,6 @@ func (m *MockIErc20EscrowContract) EXPECT() *MockIErc20EscrowContractMockRecorde
 
 // Address mocks base method
 func (m *MockIErc20EscrowContract) Address() common.Address {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Address")
 	ret0, _ := ret[0].(common.Address)
 	return ret0
@@ -248,13 +241,11 @@ func (m *MockIErc20EscrowContract) Address() common.Address {
 
 // Address indicates an expected call of Address
 func (mr *MockIErc20EscrowContractMockRecorder) Address() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockIErc20EscrowContract)(nil).Address))
 }
 
 // TxHash mocks base method
 func (m *MockIErc20EscrowContract) TxHash() common.Hash {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TxHash")
 	ret0, _ := ret[0].(common.Hash)
 	return ret0
@@ -262,13 +253,11 @@ func (m *MockIErc20EscrowContract) TxHash() common.Hash {
 
 // TxHash indicates an expected call of TxHash
 func (mr *MockIErc20EscrowContractMockRecorder) TxHash() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TxHash", reflect.TypeOf((*MockIErc20EscrowContract)(nil).TxHash))
 }
 
 // CreatedAt mocks base method
 func (m *MockIErc20EscrowContract) CreatedAt() *big.Int {
-	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreatedAt")
 	ret0, _ := ret[0].(*big.Int)
 	return ret0
@@ -276,6 +265,5 @@ func (m *MockIErc20EscrowContract) CreatedAt() *big.Int {
 
 // CreatedAt indicates an expected call of CreatedAt
 func (mr *MockIErc20EscrowContractMockRecorder) CreatedAt() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatedAt", reflect.TypeOf((*MockIErc20EscrowContract)(nil).CreatedAt))
 }
