@@ -51,7 +51,7 @@ func GetTransactionDetails(cm *contractManager, tx *types.Transaction) (methodIn
 	}
 
 	attrs = make(logger.Attrs)
-	attrs["txid"] = tx.Hash().TerminalString()
+	attrs["txid"] = tx.Hash().Hex()
 	attrs["gas"] = tx.Gas()
 	if tx.Value().Int64() > 0 {
 		attrs["value"] = fmt.Sprintf("%s eth", WeiToEth(tx.Value()).Text('e', 2))
