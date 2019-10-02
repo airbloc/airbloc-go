@@ -369,7 +369,12 @@ func (c *AccountsContract) Create(
 	ctx context.Context,
 	opts *blockchain.TransactOpts,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.AccountsTransactor.Create(c.client.Account(ctx, opts))
+
 	if err != nil {
 		return nil, err
 	}
@@ -384,7 +389,12 @@ func (c *AccountsContract) CreateTemporary(
 	opts *blockchain.TransactOpts,
 	identityHash common.Hash,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.AccountsTransactor.CreateTemporary(c.client.Account(ctx, opts), identityHash)
+
 	if err != nil {
 		return nil, err
 	}
@@ -399,7 +409,12 @@ func (c *AccountsContract) SetController(
 	opts *blockchain.TransactOpts,
 	controller common.Address,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.AccountsTransactor.SetController(c.client.Account(ctx, opts), controller)
+
 	if err != nil {
 		return nil, err
 	}
@@ -416,7 +431,12 @@ func (c *AccountsContract) UnlockTemporary(
 	newOwner common.Address,
 	passwordSignature []byte,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.AccountsTransactor.UnlockTemporary(c.client.Account(ctx, opts), identityPreimage, newOwner, passwordSignature)
+
 	if err != nil {
 		return nil, err
 	}

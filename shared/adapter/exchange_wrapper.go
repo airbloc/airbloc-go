@@ -356,7 +356,12 @@ func (c *ExchangeContract) AddDataIds(
 	offerId types.ID,
 	dataIds []types.DataId,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.ExchangeTransactor.AddDataIds(c.client.Account(ctx, opts), offerId, dataIds)
+
 	if err != nil {
 		return nil, err
 	}
@@ -371,7 +376,12 @@ func (c *ExchangeContract) Cancel(
 	opts *blockchain.TransactOpts,
 	offerId types.ID,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.ExchangeTransactor.Cancel(c.client.Account(ctx, opts), offerId)
+
 	if err != nil {
 		return nil, err
 	}
@@ -386,7 +396,12 @@ func (c *ExchangeContract) Order(
 	opts *blockchain.TransactOpts,
 	offerId types.ID,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.ExchangeTransactor.Order(c.client.Account(ctx, opts), offerId)
+
 	if err != nil {
 		return nil, err
 	}
@@ -406,7 +421,12 @@ func (c *ExchangeContract) Prepare(
 	escrowArgs []byte,
 	dataIds []types.DataId,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.ExchangeTransactor.Prepare(c.client.Account(ctx, opts), provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
+
 	if err != nil {
 		return nil, err
 	}
@@ -421,7 +441,12 @@ func (c *ExchangeContract) Reject(
 	opts *blockchain.TransactOpts,
 	offerId types.ID,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.ExchangeTransactor.Reject(c.client.Account(ctx, opts), offerId)
+
 	if err != nil {
 		return nil, err
 	}
@@ -436,7 +461,12 @@ func (c *ExchangeContract) Settle(
 	opts *blockchain.TransactOpts,
 	offerId types.ID,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.ExchangeTransactor.Settle(c.client.Account(ctx, opts), offerId)
+
 	if err != nil {
 		return nil, err
 	}

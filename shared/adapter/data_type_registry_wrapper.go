@@ -225,7 +225,12 @@ func (c *DataTypeRegistryContract) Register(
 	name string,
 	schemaHash common.Hash,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.DataTypeRegistryTransactor.Register(c.client.Account(ctx, opts), name, schemaHash)
+
 	if err != nil {
 		return nil, err
 	}
@@ -240,7 +245,12 @@ func (c *DataTypeRegistryContract) Unregister(
 	opts *blockchain.TransactOpts,
 	name string,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.DataTypeRegistryTransactor.Unregister(c.client.Account(ctx, opts), name)
+
 	if err != nil {
 		return nil, err
 	}

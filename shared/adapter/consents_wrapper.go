@@ -283,7 +283,12 @@ func (c *ConsentsContract) Consent(
 	appName string,
 	consentData types.ConsentData,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.ConsentsTransactor.Consent(c.client.Account(ctx, opts), appName, consentData)
+
 	if err != nil {
 		return nil, err
 	}
@@ -300,7 +305,12 @@ func (c *ConsentsContract) ConsentByController(
 	appName string,
 	consentData types.ConsentData,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.ConsentsTransactor.ConsentByController(c.client.Account(ctx, opts), userId, appName, consentData)
+
 	if err != nil {
 		return nil, err
 	}
@@ -316,7 +326,12 @@ func (c *ConsentsContract) ConsentMany(
 	appName string,
 	consentData []types.ConsentData,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.ConsentsTransactor.ConsentMany(c.client.Account(ctx, opts), appName, consentData)
+
 	if err != nil {
 		return nil, err
 	}
@@ -333,7 +348,12 @@ func (c *ConsentsContract) ConsentManyByController(
 	appName string,
 	consentData []types.ConsentData,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.ConsentsTransactor.ConsentManyByController(c.client.Account(ctx, opts), userId, appName, consentData)
+
 	if err != nil {
 		return nil, err
 	}
@@ -351,7 +371,12 @@ func (c *ConsentsContract) ModifyConsentByController(
 	consentData types.ConsentData,
 	passwordSignature []byte,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.ConsentsTransactor.ModifyConsentByController(c.client.Account(ctx, opts), userId, appName, consentData, passwordSignature)
+
 	if err != nil {
 		return nil, err
 	}
@@ -369,7 +394,12 @@ func (c *ConsentsContract) ModifyConsentManyByController(
 	consentData []types.ConsentData,
 	passwordSignature []byte,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.ConsentsTransactor.ModifyConsentManyByController(c.client.Account(ctx, opts), userId, appName, consentData, passwordSignature)
+
 	if err != nil {
 		return nil, err
 	}

@@ -202,7 +202,12 @@ func (c *ControllerRegistryContract) Register(
 	opts *blockchain.TransactOpts,
 	controllerAddr common.Address,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.ControllerRegistryTransactor.Register(c.client.Account(ctx, opts), controllerAddr)
+
 	if err != nil {
 		return nil, err
 	}

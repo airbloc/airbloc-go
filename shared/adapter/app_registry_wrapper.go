@@ -257,7 +257,12 @@ func (c *AppRegistryContract) Register(
 	opts *blockchain.TransactOpts,
 	appName string,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.AppRegistryTransactor.Register(c.client.Account(ctx, opts), appName)
+
 	if err != nil {
 		return nil, err
 	}
@@ -273,7 +278,12 @@ func (c *AppRegistryContract) TransferAppOwner(
 	appName string,
 	newOwner common.Address,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.AppRegistryTransactor.TransferAppOwner(c.client.Account(ctx, opts), appName, newOwner)
+
 	if err != nil {
 		return nil, err
 	}
@@ -288,7 +298,12 @@ func (c *AppRegistryContract) Unregister(
 	opts *blockchain.TransactOpts,
 	appName string,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
+	}
+
 	tx, err := c.AppRegistryTransactor.Unregister(c.client.Account(ctx, opts), appName)
+
 	if err != nil {
 		return nil, err
 	}
