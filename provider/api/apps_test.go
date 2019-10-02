@@ -31,7 +31,7 @@ func TestAppRegistryAPI_Register(t *testing.T) {
 		Exists(testAppName).
 		Return(false, nil)
 	mockManager.EXPECT().
-		Register(c, testAppName).
+		Register(c, nil, testAppName).
 		Return(nil)
 
 	api := &appRegistryAPI{mockManager}
@@ -67,7 +67,7 @@ func TestAppRegistryAPI_Register_FailedToRegister(t *testing.T) {
 		Exists(testAppName).
 		Return(false, nil)
 	mockManager.EXPECT().
-		Register(c, testAppName).
+		Register(c, nil, testAppName).
 		Return(testutils.TestErr)
 
 	api := &appRegistryAPI{mockManager}
@@ -86,7 +86,7 @@ func TestAppRegistryAPI_Unregister(t *testing.T) {
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 	mockManager.EXPECT().
-		Unregister(c, testAppName).
+		Unregister(c, nil, testAppName).
 		Return(nil)
 
 	api := &appRegistryAPI{mockManager}
@@ -120,7 +120,7 @@ func TestAppRegistryAPI_Unregister_FailedToUnregister(t *testing.T) {
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 	mockManager.EXPECT().
-		Unregister(c, testAppName).
+		Unregister(c, nil, testAppName).
 		Return(testutils.TestErr)
 
 	api := &appRegistryAPI{mockManager}
@@ -196,7 +196,7 @@ func TestAppRegistryAPI_TransferAppOwner(t *testing.T) {
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 	mockManager.EXPECT().
-		TransferAppOwner(c, testAppName, common.HexToAddress(testAccountId)).
+		TransferAppOwner(c, nil, testAppName, common.HexToAddress(testAccountId)).
 		Return(nil)
 
 	api := &appRegistryAPI{mockManager}
@@ -244,7 +244,7 @@ func TestAppRegistryAPI_TransferAppOwner_FailedToTransferAppOwner(t *testing.T) 
 
 	mockManager := adapterMock.NewMockIAppRegistryManager(mockController)
 	mockManager.EXPECT().
-		TransferAppOwner(c, testAppName, common.HexToAddress(testAccountId)).
+		TransferAppOwner(c, nil, testAppName, common.HexToAddress(testAccountId)).
 		Return(testutils.TestErr)
 
 	api := &appRegistryAPI{mockManager}

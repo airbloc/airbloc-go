@@ -46,7 +46,7 @@ func (api *dataTypeRegistryAPI) register(c *gin.Context) {
 		return
 	}
 
-	if err := api.dataTypes.Register(c, name, schemaHash); err != nil {
+	if err := api.dataTypes.Register(c, nil, name, schemaHash); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -60,7 +60,7 @@ func (api *dataTypeRegistryAPI) unregister(c *gin.Context) {
 		return
 	}
 
-	if err := api.dataTypes.Unregister(c, dataType); err != nil {
+	if err := api.dataTypes.Unregister(c, nil, dataType); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

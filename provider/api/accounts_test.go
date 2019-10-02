@@ -31,7 +31,7 @@ func TestAccountsAPI_Create(t *testing.T) {
 
 	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 	mockManager.EXPECT().
-		Create(c).
+		Create(c, nil).
 		Return(types.HexToID(testAccountId))
 
 	api := accountsAPI{mockManager}
@@ -49,7 +49,7 @@ func TestAccountsAPI_Create_Conflict(t *testing.T) {
 
 	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 	mockManager.EXPECT().
-		Create(c).
+		Create(c, nil).
 		Return(types.ID{}, testutils.TestErr)
 
 	api := accountsAPI{mockManager}
@@ -68,7 +68,7 @@ func TestAccountsAPI_CreateTemporary(t *testing.T) {
 
 	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 	mockManager.EXPECT().
-		CreateTemporary(c, common.HexToHash(testAccountId)).
+		CreateTemporary(c, nil, common.HexToHash(testAccountId)).
 		Return(types.HexToID(testAccountId))
 
 	api := accountsAPI{mockManager}
@@ -101,7 +101,7 @@ func TestAccountsAPI_CreateTemporary_Conflict(t *testing.T) {
 
 	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 	mockManager.EXPECT().
-		CreateTemporary(c, common.HexToHash(testAccountId)).
+		CreateTemporary(c, nil, common.HexToHash(testAccountId)).
 		Return(types.ID{}, testutils.TestErr)
 
 	api := accountsAPI{mockManager}
@@ -126,7 +126,7 @@ func TestAccountsAPI_UnlockTemporary(t *testing.T) {
 	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 	mockManager.EXPECT().
 		UnlockTemporary(
-			c, common.HexToHash(testAccountId),
+			c, nil, common.HexToHash(testAccountId),
 			common.HexToAddress(testAccountId),
 			passSig,
 		).Return(nil)
@@ -186,7 +186,7 @@ func TestAccountsAPI_UnlockTemporary_Conflict(t *testing.T) {
 	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 	mockManager.EXPECT().
 		UnlockTemporary(
-			c, common.HexToHash(testAccountId),
+			c, nil, common.HexToHash(testAccountId),
 			common.HexToAddress(testAccountId),
 			passSig,
 		).Return(testutils.TestErr)
@@ -207,7 +207,7 @@ func TestAccountsAPI_SetController(t *testing.T) {
 
 	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 	mockManager.EXPECT().
-		SetController(c, common.HexToAddress(testAccountId)).
+		SetController(c, nil, common.HexToAddress(testAccountId)).
 		Return(nil)
 
 	api := accountsAPI{mockManager}
@@ -240,7 +240,7 @@ func TestAccountsAPI_SetController_Conflict(t *testing.T) {
 
 	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 	mockManager.EXPECT().
-		SetController(c, common.HexToAddress(testAccountId)).
+		SetController(c, nil, common.HexToAddress(testAccountId)).
 		Return(testutils.TestErr)
 
 	api := accountsAPI{mockManager}

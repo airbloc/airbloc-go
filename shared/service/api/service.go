@@ -37,6 +37,9 @@ func NewService(backend service.Backend) (service.Service, error) {
 	)
 
 	httpServer := gin.Default()
+	httpServer.NoRoute(func(context *gin.Context) {
+		context.JSON(http.StatusNotFound, gin.H{})
+	})
 	// TODO: add specific server options
 
 	svc := &Service{
