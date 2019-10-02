@@ -13,6 +13,7 @@ import (
 	"github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/client"
 	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/crypto"
 	"github.com/pkg/errors"
 )
 
@@ -20,6 +21,7 @@ type Client struct {
 	*client.Client
 	ctx        context.Context
 	cfg        ClientOpt
+	key        *key.Key
 	transactor *TransactOpts
 	contracts  *contractManager
 	logger     *logger.Logger
@@ -57,6 +59,7 @@ func NewClient(key *key.Key, rawurl string, cfg ClientOpt) (*Client, error) {
 		Client: klayClient,
 		ctx:    context.TODO(),
 		cfg:    cfg,
+		key:    key,
 		logger: log,
 	}
 
@@ -71,17 +74,37 @@ func NewClient(key *key.Key, rawurl string, cfg ClientOpt) (*Client, error) {
 
 func (c Client) Account(ctx context.Context, opts ...*TransactOpts) *TransactOpts {
 	mergedOpts := &TransactOpts{
-		TransactOpts: c.transactor.TransactOpts,
-		FeePayer:     c.transactor.FeePayer,
-		TxType:       c.transactor.TxType,
+		From:     c.transactor.From,
+		FeePayer: c.transactor.FeePayer,
+		Signer:   c.transactor.Signer,
+		Nonce:    c.transactor.Nonce,
+		Value:    c.transactor.Value,
+		GasPrice: c.transactor.GasPrice,
+		GasLimit: c.transactor.GasLimit,
+		TxType:   c.transactor.TxType,
 	}
 	mergedOpts.Context = ctx
 	for _, opt := range opts {
-		if opt.TransactOpts != nil {
-			mergedOpts.TransactOpts = opt.TransactOpts
+		if opt.From != (common.Address{}) {
+			mergedOpts.From = opt.From
 		}
 		if opt.FeePayer != (common.Address{}) {
 			mergedOpts.FeePayer = opt.FeePayer
+		}
+		if opt.Signer != nil {
+			mergedOpts.Signer = opt.Signer
+		}
+		if opt.Nonce != nil {
+			mergedOpts.Nonce = opt.Nonce
+		}
+		if opt.Value != nil {
+			mergedOpts.Value = opt.Value
+		}
+		if opt.GasPrice != nil {
+			mergedOpts.GasPrice = opt.GasPrice
+		}
+		if opt.GasLimit != 0 {
+			mergedOpts.GasLimit = opt.GasLimit
 		}
 		if opt.TxType != 0 {
 			mergedOpts.TxType = opt.TxType
@@ -91,10 +114,8 @@ func (c Client) Account(ctx context.Context, opts ...*TransactOpts) *TransactOpt
 }
 
 func (c *Client) SetAccount(key *key.Key) {
-	c.transactor = &TransactOpts{
-		TransactOpts: bind.NewKeyedTransactor(key.PrivateKey),
-		TxType:       types.TxTypeValueTransfer,
-	}
+	c.transactor = NewKeyedTransactor(key.PrivateKey)
+	c.transactor.TxType = types.TxTypeValueTransfer
 }
 
 func (c *Client) GetContract(contractType interface{}) interface{} {
@@ -105,9 +126,48 @@ func (c *Client) GetContract(contractType interface{}) interface{} {
 	return contract
 }
 
-func (c *Client) SendTransaction(ctx context.Context, tx *types.Transaction) error {
-	// TODO: task-waiting action required
-	return c.Client.SendTransaction(ctx, tx)
+func (c *Client) SignTransaction(
+	ctx context.Context,
+	signerFn bind.SignerFn,
+	tx *types.Transaction,
+) (*types.Transaction, error) {
+	chainID, err := c.ChainID(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get chain id")
+	}
+
+	signer := types.NewEIP155Signer(chainID)
+
+	from, err := tx.From()
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get sender from transaction")
+	}
+
+	signedTx, err := signerFn(signer, from, tx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to sign transaction with sender")
+	}
+
+	txType := tx.Type()
+	if txType == types.TxTypeFeeDelegatedValueTransfer ||
+		txType == types.TxTypeFeeDelegatedSmartContractExecution {
+		feePayer, err := tx.FeePayer()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get fee payer from transaction")
+		}
+		if from == c.transactor.From {
+			return nil, errors.Wrap(err, "sender and fee payer should not be same")
+		}
+		if feePayer != crypto.PubkeyToAddress(c.key.PublicKey) {
+			return nil, errors.Wrap(err, "fee payer is not the same with request")
+		}
+
+		if err = signedTx.SignFeePayer(signer, c.key.PrivateKey); err != nil {
+			return nil, errors.Wrap(err, "failed to sign transaction with fee payer")
+		}
+	}
+
+	return signedTx, nil
 }
 
 func (c *Client) waitConfirmation(ctx context.Context) error {

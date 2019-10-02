@@ -16,6 +16,7 @@ type TxClient interface {
 	bind.ContractBackend
 	Account(context.Context, ...*TransactOpts) *TransactOpts
 	GetContract(interface{}) interface{}
+	SignTransaction(context.Context, bind.SignerFn, *types.Transaction) (*types.Transaction, error)
 	WaitMined(context.Context, *types.Transaction) (*types.Receipt, error)
 	WaitDeployed(context.Context, *types.Transaction) (*types.Receipt, error)
 }
