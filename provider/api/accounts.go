@@ -24,9 +24,6 @@ func NewAccountsAPI(backend service.Backend) (api.API, error) {
 	return &accountsAPI{ac}, nil
 }
 
-// Create is a paid mutator transaction binding the contract method 0xefc81a8c.
-//
-// Solidity: function create() returns()
 func (api *accountsAPI) create(c *gin.Context) {
 	accountId, err := api.accounts.Create(c, nil)
 	if err != nil {
@@ -36,9 +33,6 @@ func (api *accountsAPI) create(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"account_id": accountId.Hex()})
 }
 
-// CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
-//
-// Solidity: function createTemporary(bytes32 identityHash) returns()
 func (api *accountsAPI) createTemporary(c *gin.Context) {
 	var req struct {
 		IdentityHash string `json:"identity_hash" binding:"required"`
@@ -58,9 +52,6 @@ func (api *accountsAPI) createTemporary(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"account_id": accountId.Hex()})
 }
 
-// UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
-//
-// Solidity: function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) returns()
 func (api *accountsAPI) unlockTemporary(c *gin.Context) {
 	var req struct {
 		IdentityPreimage  string `json:"identity_preimage" binding:"required"`
@@ -90,9 +81,6 @@ func (api *accountsAPI) unlockTemporary(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
-// SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
-//
-// Solidity: function setController(address controller) returns()
 func (api *accountsAPI) setController(c *gin.Context) {
 	var req struct {
 		Controller string `json:"controller" binding:"required"`
@@ -111,9 +99,6 @@ func (api *accountsAPI) setController(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
-// GetAccount is a free data retrieval call binding the contract method 0xf9292ddb.
-//
-// Solidity: function getAccount(bytes8 accountId) constant returns((address,uint8,address,address))
 func (api *accountsAPI) getAccount(c *gin.Context) {
 	var req struct {
 		AccountId string `form:"account_id" binding:"required"`
@@ -138,11 +123,6 @@ func (api *accountsAPI) getAccount(c *gin.Context) {
 	c.JSON(http.StatusOK, account)
 }
 
-// GetAccountId is a free data retrieval call binding the contract method 0xe0b490f7.
-// GetAccountIdFromSignature is a free data retrieval call binding the contract method 0x23d0601d.
-//
-// Solidity: function getAccountId(address sender) constant returns(bytes8)
-// Solidity: function getAccountIdFromSignature(bytes32 messageHash, bytes signature) constant returns(bytes8)
 func (api *accountsAPI) getAccountId(c *gin.Context) {
 	var (
 		accountIdRequest struct {
