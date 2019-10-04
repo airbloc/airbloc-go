@@ -4,7 +4,7 @@ go 1.13
 
 replace (
 	git.apache.org/thrift.git => github.com/apache/thrift v0.12.0
-	github.com/klaytn/klaytn => github.com/frostornge/klaytn v0.0.0-20190910071037-a8d9781f8cd6
+	github.com/klaytn/klaytn => github.com/airbloc/klaytn v1.1.1-0.20191001045213-4c5c6da28f1e
 	gopkg.in/urfave/cli.v1 => github.com/urfave/cli v1.12.0
 )
 
