@@ -5,31 +5,73 @@ import (
 	"net/http"
 
 	"github.com/airbloc/airbloc-go/shared/adapter"
+	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/crypto"
 )
 
 // accountsAPI is api wrapper of contract Accounts.sol
 type accountsAPI struct {
 	accounts adapter.IAccountsManager
+	feePayer common.Address
 }
 
 // NewAccountsAPI makes new *accountsAPI struct
 func NewAccountsAPI(backend service.Backend) (api.API, error) {
 	ac := adapter.NewAccountsManager(backend.Client())
-	return &accountsAPI{ac}, nil
+	ad := backend.Kms().NodeKey().EthereumAddress
+	return &accountsAPI{ac, ad}, nil
 }
 
 func (api *accountsAPI) create(c *gin.Context) {
-	accountId, err := api.accounts.Create(c, nil)
+	var req struct {
+		PrivateKey string `json:"private_key"`
+		Controller string `json:"controller"`
+	}
+
+	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var txOpts *blockchain.TransactOpts = nil
+	if req.PrivateKey != "" {
+		privateKeyData, err := hex.DecodeString(req.PrivateKey)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		key, err := crypto.ToECDSA(privateKeyData)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		txOpts = blockchain.NewKeyedTransactor(key)
+		txOpts.FeePayer = api.feePayer
+		txOpts.Context = c
+	}
+
+	accountId, err := api.accounts.Create(c, txOpts)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	if req.Controller != "" {
+		err = api.accounts.SetController(c, txOpts, common.HexToAddress(req.Controller))
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
 	c.JSON(http.StatusCreated, gin.H{"account_id": accountId.Hex()})
 }
 
@@ -190,6 +232,6 @@ func (api *accountsAPI) AttachToAPI(service *api.Service) {
 	apiMux.GET("/id", api.getAccountId)
 	apiMux.POST("/", api.create)
 	apiMux.POST("/temporary", api.createTemporary)
-	apiMux.PATCH("/controller", api.setController)
-	apiMux.PATCH("/temporary/unlock", api.unlockTemporary)
+	apiMux.PUT("/controller", api.setController)
+	apiMux.PUT("/temporary/unlock", api.unlockTemporary)
 }
