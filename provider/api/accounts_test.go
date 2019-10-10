@@ -34,7 +34,7 @@ func TestAccountsAPI_Create(t *testing.T) {
 		Create(c, nil).
 		Return(types.HexToID(testAccountId))
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.create(c)
 
 	assert.Equal(t, http.StatusCreated, w.Code)
@@ -52,7 +52,7 @@ func TestAccountsAPI_Create_Conflict(t *testing.T) {
 		Create(c, nil).
 		Return(types.ID{}, testutils.TestErr)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.create(c)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -71,7 +71,7 @@ func TestAccountsAPI_CreateTemporary(t *testing.T) {
 		CreateTemporary(c, nil, common.HexToHash(testAccountId)).
 		Return(types.HexToID(testAccountId))
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.createTemporary(c)
 
 	assert.Equal(t, http.StatusCreated, w.Code)
@@ -86,7 +86,7 @@ func TestAccountsAPI_CreateTemporary_InvalidJSON(t *testing.T) {
 
 	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.createTemporary(c)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -104,7 +104,7 @@ func TestAccountsAPI_CreateTemporary_Conflict(t *testing.T) {
 		CreateTemporary(c, nil, common.HexToHash(testAccountId)).
 		Return(types.ID{}, testutils.TestErr)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.createTemporary(c)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -131,7 +131,7 @@ func TestAccountsAPI_UnlockTemporary(t *testing.T) {
 			passSig,
 		).Return(nil)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.unlockTemporary(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -146,7 +146,7 @@ func TestAccountsAPI_UnlockTemporary_InvalidJSON(t *testing.T) {
 
 	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.unlockTemporary(c)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -165,7 +165,7 @@ func TestAccountsAPI_UnlockTemporary_InvalidPassordSignature(t *testing.T) {
 
 	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.unlockTemporary(c)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -191,7 +191,7 @@ func TestAccountsAPI_UnlockTemporary_Conflict(t *testing.T) {
 			passSig,
 		).Return(testutils.TestErr)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.unlockTemporary(c)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -210,7 +210,7 @@ func TestAccountsAPI_SetController(t *testing.T) {
 		SetController(c, nil, common.HexToAddress(testAccountId)).
 		Return(nil)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.setController(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -225,7 +225,7 @@ func TestAccountsAPI_SetController_InvalidJSON(t *testing.T) {
 
 	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.setController(c)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -243,7 +243,7 @@ func TestAccountsAPI_SetController_Conflict(t *testing.T) {
 		SetController(c, nil, common.HexToAddress(testAccountId)).
 		Return(testutils.TestErr)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.setController(c)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -263,7 +263,7 @@ func TestAccountsAPI_GetAccount(t *testing.T) {
 		GetAccount(accountId).
 		Return(types.Account{}, nil)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.getAccount(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -279,7 +279,7 @@ func TestAccountsAPI_GetAccount_InvalidParam(t *testing.T) {
 
 	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.getAccount(c)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -294,7 +294,7 @@ func TestAccountsAPI_GetAccount_InvalidAccountId(t *testing.T) {
 
 	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.getAccount(c)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -313,7 +313,7 @@ func TestAccountsAPI_GetAccount_FailedToGetAccount(t *testing.T) {
 		GetAccount(accountId).
 		Return(types.Account{}, testutils.TestErr)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.getAccount(c)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -332,7 +332,7 @@ func TestAccountsAPI_GetAccountId(t *testing.T) {
 		GetAccountId(common.HexToAddress(testAccountId)).
 		Return(types.HexToID(testAccountId))
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.getAccountId(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -350,7 +350,7 @@ func TestAccountsAPI_GetAccountId_FailedToGetAccountId(t *testing.T) {
 		GetAccountId(common.HexToAddress(testAccountId)).
 		Return(types.ID{}, testutils.TestErr)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.getAccountId(c)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -373,7 +373,7 @@ func TestAccountsAPI_GetAccountIdWithSignature(t *testing.T) {
 		GetAccountIdFromSignature(common.HexToHash(testAccountId), sig).
 		Return(types.HexToID(testAccountId))
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.getAccountId(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -391,7 +391,7 @@ func TestAccountsAPI_GetAccountIdWithSignature_InvalidSignature(t *testing.T) {
 
 	mockManager := adapterMocks.NewMockIAccountsManager(mockController)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.getAccountId(c)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -413,7 +413,7 @@ func TestAccountsAPI_GetAccountIdWithSignature_FailedToGetAccountIdFromSignature
 		GetAccountIdFromSignature(common.HexToHash(testAccountId), sig).
 		Return(types.ID{}, testutils.TestErr)
 
-	api := accountsAPI{mockManager}
+	api := accountsAPI{mockManager, common.Address{}}
 	api.getAccountId(c)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
