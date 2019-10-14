@@ -43,7 +43,7 @@ const (
 type ConsentData struct {
 	Action   uint8  `json:"action" binding:"required"`
 	DataType string `json:"data_type" binding:"required"`
-	Allow    bool   `json:"allow" binding:"required"`
+	Allow    bool   `json:"allow"`
 }
 
 // DataController is bind of ControllerRegistry.DataController
