@@ -4,18 +4,15 @@ import (
 	"encoding/hex"
 	"net/http"
 
-	"github.com/klaytn/klaytn/common"
-
-	"github.com/klaytn/klaytn/crypto"
-
-	"github.com/airbloc/airbloc-go/shared/blockchain"
-
 	"github.com/airbloc/airbloc-go/shared/adapter"
+	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/service"
 	"github.com/airbloc/airbloc-go/shared/service/api"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/crypto"
 )
 
 // consentsAPI is api wrapper of contract Consents.sol
@@ -37,7 +34,7 @@ func NewConsentsAPI(backend service.Backend) (api.API, error) {
 // 1. basic
 // 2. delegated
 // 2-1. use nodekey
-// 2-2.
+// 2-2. p2p request
 // 3. by controller
 // 3-1. initial consent (first time only)
 // 3-2. modify consent
