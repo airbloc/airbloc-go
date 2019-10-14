@@ -150,8 +150,13 @@ func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, i
 			}
 		}
 
+		from := opts.From
+		if delegated {
+			from = opts.FeePayer
+		}
+
 		gasLimit, err = c.client.EstimateGas(opts.Context, klaytn.CallMsg{
-			From:  opts.From,
+			From:  from,
 			To:    contract,
 			Value: value,
 			Data:  input,
