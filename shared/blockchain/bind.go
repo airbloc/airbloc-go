@@ -15,15 +15,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-var (
-	supportTxTypes = map[types.TxType]interface{}{
-		types.TxTypeValueTransfer:                      "",
-		types.TxTypeFeeDelegatedValueTransfer:          "",
-		types.TxTypeSmartContractExecution:             "",
-		types.TxTypeFeeDelegatedSmartContractExecution: "",
-	}
-)
-
 type TransactOpts struct {
 	From     common.Address
 	FeePayer common.Address
@@ -93,10 +84,6 @@ func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, i
 	var err error
 	if opts == nil {
 		return nil, errors.New("nil transcatOpts")
-	}
-
-	if _, ok := supportTxTypes[opts.TxType]; !ok {
-		return nil, errors.New("unsupported transaction type")
 	}
 
 	delegated := opts.FeePayer != (common.Address{})

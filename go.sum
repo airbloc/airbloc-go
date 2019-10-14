@@ -17,7 +17,6 @@ github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMx
 github.com/aead/siphash v1.0.1/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=
 github.com/airbloc/airframe v0.0.0-20190822094319-71d50205227c h1:uUaUWgycen6icXyBXt77V7DrpEJYNtdilaWScQrNIqs=
 github.com/airbloc/airframe v0.0.0-20190822094319-71d50205227c/go.mod h1:q+Bk9F+BRsMlvfJLZoiguc1/HxLC9gIBzz7IDGQvimI=
-github.com/airbloc/klaytn v0.0.0-20190910071037-a8d9781f8cd6/go.mod h1:gNO/UBVd1oZ9VvsHy8RmMAbofdW64PvctzAeMgcDSJI=
 github.com/airbloc/klaytn v1.1.1-0.20191001045213-4c5c6da28f1e h1:srdtHgg9fCoPcBy5uAfiQg+rvcyrg+S0b6BRO6mLH+s=
 github.com/airbloc/klaytn v1.1.1-0.20191001045213-4c5c6da28f1e/go.mod h1:KRco3MlkxIG0LIHYuzzTRbowcWhK7N1V5/xBLnq4NZ4=
 github.com/airbloc/logger v1.1.3 h1:XIqYVAiqmXAtuHWX+LQQQKKnettI2RO5uYcPRNIt+J0=
@@ -93,8 +92,6 @@ github.com/fd/go-nat v1.0.0/go.mod h1:BTBu/CKvMmOMUPkKVef1pngt2WFH/lg7E6yQnulfp6
 github.com/fjl/memsize v0.0.0-20190710130421-bcb5799ab5e5 h1:FtmdgXiUlNeRsoNMFlKLDt+S+6hbjVMEW6RGQ7aUf7c=
 github.com/fjl/memsize v0.0.0-20190710130421-bcb5799ab5e5/go.mod h1:VvhXpOYNQvB+uIk2RvXzuaQtkQJzzIx6lSBe1xv7hi0=
 github.com/flynn/go-shlex v0.0.0-20150515145356-3f9db97f8568/go.mod h1:xEzjJPgXI435gkrCt3MPfRiAkVrwSbHsst4LCFVfpJc=
-github.com/frostornge/klaytn v0.0.0-20190910071037-a8d9781f8cd6 h1:4ZMeGO+Wo0urJGkUVul2vTBOl9BJdjeVDAWqg03Zy04=
-github.com/frostornge/klaytn v0.0.0-20190910071037-a8d9781f8cd6/go.mod h1:gNO/UBVd1oZ9VvsHy8RmMAbofdW64PvctzAeMgcDSJI=
 github.com/fsnotify/fsnotify v1.4.7 h1:IXs+QLmnXW2CcXuY+8Mzv/fWEsPGWxqefPtCP5CnV9I=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/garyburd/redigo v1.6.0/go.mod h1:NR3MbYisc3/PwhQ00EMzDiPmrwpPxAn5GI05/YaO1SY=
