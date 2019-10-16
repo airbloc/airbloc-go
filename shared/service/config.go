@@ -14,7 +14,7 @@ type Config struct {
 	KeyPath string `default:"private.key" yaml:"keyPath" split_words:"true"`
 
 	// api/rpc listen address
-	Host string `default:"localhost" yaml:"host"`
+	Host string `default:"0.0.0.0" yaml:"host"`
 	Port int    `default:"2471" yaml:"port"`
 
 	// logger settings
