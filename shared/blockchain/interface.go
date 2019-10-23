@@ -20,3 +20,10 @@ type TxClient interface {
 	WaitMined(context.Context, *types.Transaction) (*types.Receipt, error)
 	WaitDeployed(context.Context, *types.Transaction) (*types.Receipt, error)
 }
+
+type EventIterator interface {
+	Next() bool
+	Event() interface{}
+	Error() error
+	Close() error
+}
