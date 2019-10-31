@@ -1,14 +1,13 @@
-// Code generated - DO NOT EDIT.
-// This file is a generated binding and any manual changes will be lost.
-
-package adapter
+package wrappers
 
 import (
 	"context"
 	"math/big"
+	"strings"
 
-	blockchain "github.com/airbloc/airbloc-go/shared/blockchain"
-	types "github.com/airbloc/airbloc-go/shared/types"
+	ablbind "github.com/airbloc/airbloc-go/shared/adapter"
+	contracts "github.com/airbloc/airbloc-go/shared/adapter/contracts"
+	types "github.com/airbloc/airbloc-go/shared/adapter/types"
 	abi "github.com/klaytn/klaytn/accounts/abi"
 	bind "github.com/klaytn/klaytn/accounts/abi/bind"
 	chainTypes "github.com/klaytn/klaytn/blockchain/types"
@@ -16,49 +15,7 @@ import (
 	event "github.com/klaytn/klaytn/event"
 )
 
-//go:generate mockgen -source accounts_wrapper.go -destination ./mocks/mock_accounts.go -package mocks IAccountsManager,IAccountsContract
-type IAccountsManager interface {
-	Address() common.Address
-	TxHash() common.Hash
-	CreatedAt() *big.Int
-
-	// Call methods
-	IAccountsCalls
-
-	// Transact methods
-	Create(
-		ctx context.Context,
-		opts *blockchain.TransactOpts,
-	) (
-		types.ID,
-		error,
-	)
-	CreateTemporary(
-		ctx context.Context,
-		opts *blockchain.TransactOpts,
-		identityHash common.Hash,
-	) (
-		types.ID,
-		error,
-	)
-	SetController(
-		ctx context.Context,
-		opts *blockchain.TransactOpts,
-		controller common.Address,
-	) error
-
-	UnlockTemporary(
-		ctx context.Context,
-		opts *blockchain.TransactOpts,
-		identityPreimage common.Hash,
-		newOwner common.Address,
-		passwordSignature []byte,
-	) error
-
-	// Event methods
-	IAccountsFilterer
-	IAccountsWatcher
-}
+//go:generate mockgen -source accounts.go -destination ./mocks/mock_accounts.go -package mocks IAccountsContract
 
 type IAccountsCalls interface {
 	Exists(
@@ -116,21 +73,21 @@ type IAccountsCalls interface {
 type IAccountsTransacts interface {
 	Create(
 		ctx context.Context,
-		opts *blockchain.TransactOpts,
+		opts *ablbind.TransactOpts,
 	) (*chainTypes.Receipt, error)
 	CreateTemporary(
 		ctx context.Context,
-		opts *blockchain.TransactOpts,
+		opts *ablbind.TransactOpts,
 		identityHash common.Hash,
 	) (*chainTypes.Receipt, error)
 	SetController(
 		ctx context.Context,
-		opts *blockchain.TransactOpts,
+		opts *ablbind.TransactOpts,
 		controller common.Address,
 	) (*chainTypes.Receipt, error)
 	UnlockTemporary(
 		ctx context.Context,
-		opts *blockchain.TransactOpts,
+		opts *ablbind.TransactOpts,
 		identityPreimage common.Hash,
 		newOwner common.Address,
 		passwordSignature []byte,
@@ -148,47 +105,47 @@ type IAccountsFilterer interface {
 		opts *bind.FilterOpts,
 		owner []common.Address,
 
-	) (*AccountsSignUpIterator, error)
+	) (ablbind.EventIterator, error)
 	FilterTemporaryCreated(
 		opts *bind.FilterOpts,
 		proxy []common.Address,
 		identityHash []common.Hash,
 
-	) (*AccountsTemporaryCreatedIterator, error)
+	) (ablbind.EventIterator, error)
 	FilterUnlocked(
 		opts *bind.FilterOpts,
 		identityHash []common.Hash,
 		accountId []types.ID,
 
-	) (*AccountsUnlockedIterator, error)
+	) (ablbind.EventIterator, error)
 }
 
 type IAccountsParser interface {
-	ParseSignUp(log chainTypes.Log) (*AccountsSignUp, error)
-	ParseSignUpFromReceipt(receipt *chainTypes.Receipt) ([]*AccountsSignUp, error)
-	ParseTemporaryCreated(log chainTypes.Log) (*AccountsTemporaryCreated, error)
-	ParseTemporaryCreatedFromReceipt(receipt *chainTypes.Receipt) ([]*AccountsTemporaryCreated, error)
-	ParseUnlocked(log chainTypes.Log) (*AccountsUnlocked, error)
-	ParseUnlockedFromReceipt(receipt *chainTypes.Receipt) ([]*AccountsUnlocked, error)
+	ParseSignUp(log chainTypes.Log) (*contracts.AccountsSignUp, error)
+	ParseSignUpFromReceipt(receipt *chainTypes.Receipt) ([]*contracts.AccountsSignUp, error)
+	ParseTemporaryCreated(log chainTypes.Log) (*contracts.AccountsTemporaryCreated, error)
+	ParseTemporaryCreatedFromReceipt(receipt *chainTypes.Receipt) ([]*contracts.AccountsTemporaryCreated, error)
+	ParseUnlocked(log chainTypes.Log) (*contracts.AccountsUnlocked, error)
+	ParseUnlockedFromReceipt(receipt *chainTypes.Receipt) ([]*contracts.AccountsUnlocked, error)
 }
 
 type IAccountsWatcher interface {
 	WatchSignUp(
 		opts *bind.WatchOpts,
-		sink chan<- *AccountsSignUp,
+		sink chan<- *contracts.AccountsSignUp,
 		owner []common.Address,
 
 	) (event.Subscription, error)
 	WatchTemporaryCreated(
 		opts *bind.WatchOpts,
-		sink chan<- *AccountsTemporaryCreated,
+		sink chan<- *contracts.AccountsTemporaryCreated,
 		proxy []common.Address,
 		identityHash []common.Hash,
 
 	) (event.Subscription, error)
 	WatchUnlocked(
 		opts *bind.WatchOpts,
-		sink chan<- *AccountsUnlocked,
+		sink chan<- *contracts.AccountsUnlocked,
 		identityHash []common.Hash,
 		accountId []types.ID,
 
@@ -207,53 +164,41 @@ type IAccountsContract interface {
 
 // Manager is contract wrapper struct
 type AccountsContract struct {
-	address   common.Address
-	txHash    common.Hash
-	createdAt *big.Int
-	client    blockchain.TxClient
+	ablbind.Deployment
+	client ablbind.ContractBackend
 
-	AccountsCaller
-	AccountsFilterer
-	AccountsTransactor
+	contracts.AccountsCaller
+	contracts.AccountsFilterer
+	contracts.AccountsTransactor
 }
 
-// Address is getter method of Accounts.address
-func (c *AccountsContract) Address() common.Address {
-	return c.address
-}
+func NewAccountsContract(deployment ablbind.Deployment, backend ablbind.ContractBackend) interface{} {
+	if deployment.Address() == (common.Address{}) {
+		evmABI, err := abi.JSON(strings.NewReader(contracts.AccountsABI))
+		if err != nil {
+			panic(err)
+		}
 
-// TxHash is getter method of Accounts.txHash
-func (c *AccountsContract) TxHash() common.Hash {
-	return c.txHash
-}
-
-// CreatedAt is getter method of Accounts.createdAt
-func (c *AccountsContract) CreatedAt() *big.Int {
-	return c.createdAt
-}
-
-func newAccountsContract(address common.Address, txHash common.Hash, createdAt *big.Int, parsedABI abi.ABI, backend bind.ContractBackend) interface{} {
-	contract := blockchain.NewBoundContract(address, parsedABI, backend, backend, backend)
-
-	return &AccountsContract{
-		address:   address,
-		txHash:    txHash,
-		createdAt: createdAt,
-		client:    backend.(blockchain.TxClient),
-
-		AccountsCaller:     AccountsCaller{contract: contract},
-		AccountsTransactor: AccountsTransactor{contract: contract},
-		AccountsFilterer:   AccountsFilterer{contract: contract},
+		deployment = ablbind.NewDeployment(
+			common.HexToAddress(contracts.AccountsAddress),
+			common.HexToHash(contracts.AccountsTxHash),
+			new(big.Int).SetBytes(common.HexToHash(contracts.AccountsCreatedAt).Bytes()),
+			evmABI,
+		)
 	}
-}
 
-// convenient hacks for blockchain.Client
-func init() {
-	blockchain.AddContractConstructor("Accounts", newAccountsContract)
-	blockchain.RegisterSelector("0xefc81a8c", "create()")
-	blockchain.RegisterSelector("0x56003f0f", "createTemporary(bytes32)")
-	blockchain.RegisterSelector("0x92eefe9b", "setController(address)")
-	blockchain.RegisterSelector("0x2299219d", "unlockTemporary(bytes32,address,bytes)")
+	base := ablbind.NewBoundContract(deployment.Address(), deployment.ParsedABI, backend)
+
+	contract := &AccountsContract{
+		Deployment: deployment,
+		client:     backend,
+
+		AccountsCaller:     contracts.NewAccountsCaller(base),
+		AccountsTransactor: contracts.NewAccountsTransactor(base),
+		AccountsFilterer:   contracts.NewAccountsFilterer(base),
+	}
+
+	return contract
 }
 
 // Exists is a free data retrieval call binding the contract method 0x97e4fea7.
@@ -367,14 +312,9 @@ func (c *AccountsContract) IsTemporary(
 // Solidity: function create() returns(bytes8)
 func (c *AccountsContract) Create(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 ) (*chainTypes.Receipt, error) {
-	if opts == nil {
-		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
-	}
-
-	tx, err := c.AccountsTransactor.Create(c.client.Account(ctx, opts))
-
+	tx, err := c.AccountsTransactor.Create(c.client.Transactor(ctx, opts))
 	if err != nil {
 		return nil, err
 	}
@@ -386,15 +326,10 @@ func (c *AccountsContract) Create(
 // Solidity: function createTemporary(bytes32 identityHash) returns(bytes8)
 func (c *AccountsContract) CreateTemporary(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 	identityHash common.Hash,
 ) (*chainTypes.Receipt, error) {
-	if opts == nil {
-		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
-	}
-
-	tx, err := c.AccountsTransactor.CreateTemporary(c.client.Account(ctx, opts), identityHash)
-
+	tx, err := c.AccountsTransactor.CreateTemporary(c.client.Transactor(ctx, opts), identityHash)
 	if err != nil {
 		return nil, err
 	}
@@ -406,15 +341,10 @@ func (c *AccountsContract) CreateTemporary(
 // Solidity: function setController(address controller) returns()
 func (c *AccountsContract) SetController(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 	controller common.Address,
 ) (*chainTypes.Receipt, error) {
-	if opts == nil {
-		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
-	}
-
-	tx, err := c.AccountsTransactor.SetController(c.client.Account(ctx, opts), controller)
-
+	tx, err := c.AccountsTransactor.SetController(c.client.Transactor(ctx, opts), controller)
 	if err != nil {
 		return nil, err
 	}
@@ -426,17 +356,12 @@ func (c *AccountsContract) SetController(
 // Solidity: function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) returns()
 func (c *AccountsContract) UnlockTemporary(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 	identityPreimage common.Hash,
 	newOwner common.Address,
 	passwordSignature []byte,
 ) (*chainTypes.Receipt, error) {
-	if opts == nil {
-		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
-	}
-
-	tx, err := c.AccountsTransactor.UnlockTemporary(c.client.Account(ctx, opts), identityPreimage, newOwner, passwordSignature)
-
+	tx, err := c.AccountsTransactor.UnlockTemporary(c.client.Transactor(ctx, opts), identityPreimage, newOwner, passwordSignature)
 	if err != nil {
 		return nil, err
 	}

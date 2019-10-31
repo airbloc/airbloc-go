@@ -1,24 +1,90 @@
-package adapter
+package managers
 
 import (
 	"context"
+	"math/big"
 
-	"github.com/airbloc/airbloc-go/shared/blockchain"
-	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/airbloc/logger"
-	"github.com/klaytn/klaytn/common"
 	"github.com/pkg/errors"
+
+	ablbind "github.com/airbloc/airbloc-go/shared/adapter"
+	types "github.com/airbloc/airbloc-go/shared/adapter/types"
+	wrappers "github.com/airbloc/airbloc-go/shared/adapter/wrappers"
+	logger "github.com/airbloc/logger"
+	common "github.com/klaytn/klaytn/common"
 )
 
-type exchangeManager struct {
-	IExchangeContract
-	log *logger.Logger
+//go:generate mockgen -source exchange.go -destination ./mocks/mock_exchange.go -package mocks IExchangeManager
+
+type IExchangeManager interface {
+	Address() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+
+	// Call methods
+	wrappers.IExchangeCalls
+
+	// Transact methods
+	AddDataIds(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		offerId types.ID,
+		dataIds []types.DataId,
+	) error
+
+	Cancel(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		offerId types.ID,
+	) error
+
+	Order(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		offerId types.ID,
+	) error
+
+	Prepare(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		provider string,
+		consumer common.Address,
+		escrow common.Address,
+		escrowSign [4]byte,
+		escrowArgs []byte,
+		dataIds []types.DataId,
+	) (
+		types.ID,
+		error,
+	)
+	Reject(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		offerId types.ID,
+	) error
+
+	Settle(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		offerId types.ID,
+	) error
+
+	// Event methods
+	wrappers.IExchangeFilterer
+	wrappers.IExchangeWatcher
 }
 
-// NewExchangeManager makes new *accountsManager struct
-func NewExchangeManager(client blockchain.TxClient) IExchangeManager {
+// exchangeManager is contract wrapper struct
+type exchangeManager struct {
+	wrappers.IExchangeContract
+	client ablbind.ContractBackend
+	log    *logger.Logger
+}
+
+// NewExchangeManager makes new *exchangeManager struct
+func NewExchangeManager(client ablbind.ContractBackend, contract interface{}) interface{} {
 	return &exchangeManager{
-		IExchangeContract: client.GetContract(&ExchangeContract{}).(*ExchangeContract),
+		IExchangeContract: contract.(*wrappers.ExchangeContract),
+		client:            client,
 		log:               logger.New("exchange"),
 	}
 }
@@ -28,7 +94,7 @@ func NewExchangeManager(client blockchain.TxClient) IExchangeManager {
 // Solidity: function prepare(string provider, address consumer, address escrow, bytes4 escrowSign, bytes escrowArgs, bytes20[] dataIds) returns(bytes8)
 func (manager *exchangeManager) Prepare(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 	provider string,
 	consumer common.Address,
 	escrow common.Address,
@@ -81,7 +147,7 @@ func (manager *exchangeManager) Prepare(
 // AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
 //
 // Solidity: function addDataIds(bytes8 offerId, bytes20[] dataIds) returns()
-func (manager *exchangeManager) AddDataIds(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID, dataIds []types.DataId) error {
+func (manager *exchangeManager) AddDataIds(ctx context.Context, opts *ablbind.TransactOpts, offerId types.ID, dataIds []types.DataId) error {
 	_, err := manager.IExchangeContract.AddDataIds(ctx, opts, offerId, dataIds)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
@@ -97,7 +163,7 @@ func (manager *exchangeManager) AddDataIds(ctx context.Context, opts *blockchain
 // Order is a paid mutator transaction binding the contract method 0x0cf833fb.
 //
 // Solidity: function order(bytes8 offerId) returns()
-func (manager *exchangeManager) Order(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) error {
+func (manager *exchangeManager) Order(ctx context.Context, opts *ablbind.TransactOpts, offerId types.ID) error {
 	receipt, err := manager.IExchangeContract.Order(ctx, opts, offerId)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
@@ -115,7 +181,7 @@ func (manager *exchangeManager) Order(ctx context.Context, opts *blockchain.Tran
 // Cancel is a paid mutator transaction binding the contract method 0xb2d9ba39.
 //
 // Solidity: function cancel(bytes8 offerId) returns()
-func (manager *exchangeManager) Cancel(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) error {
+func (manager *exchangeManager) Cancel(ctx context.Context, opts *ablbind.TransactOpts, offerId types.ID) error {
 	receipt, err := manager.IExchangeContract.Cancel(ctx, opts, offerId)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
@@ -133,7 +199,7 @@ func (manager *exchangeManager) Cancel(ctx context.Context, opts *blockchain.Tra
 // Settle is a paid mutator transaction binding the contract method 0xa60d9b5f.
 //
 // Solidity: function settle(bytes8 offerId) returns()
-func (manager *exchangeManager) Settle(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) error {
+func (manager *exchangeManager) Settle(ctx context.Context, opts *ablbind.TransactOpts, offerId types.ID) error {
 	receipt, err := manager.IExchangeContract.Settle(ctx, opts, offerId)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
@@ -151,7 +217,7 @@ func (manager *exchangeManager) Settle(ctx context.Context, opts *blockchain.Tra
 // Reject is a paid mutator transaction binding the contract method 0x6622e153.
 //
 // Solidity: function reject(bytes8 offerId) returns()
-func (manager *exchangeManager) Reject(ctx context.Context, opts *blockchain.TransactOpts, offerId types.ID) error {
+func (manager *exchangeManager) Reject(ctx context.Context, opts *ablbind.TransactOpts, offerId types.ID) error {
 	receipt, err := manager.IExchangeContract.Reject(ctx, opts, offerId)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")

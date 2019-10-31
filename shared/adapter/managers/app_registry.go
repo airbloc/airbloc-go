@@ -1,31 +1,72 @@
-package adapter
+package managers
 
 import (
 	"context"
+	"math/big"
 
-	"github.com/airbloc/airbloc-go/shared/blockchain"
-	"github.com/airbloc/logger"
-	"github.com/klaytn/klaytn/common"
 	"github.com/pkg/errors"
+
+	ablbind "github.com/airbloc/airbloc-go/shared/adapter"
+	wrappers "github.com/airbloc/airbloc-go/shared/adapter/wrappers"
+	logger "github.com/airbloc/logger"
+	common "github.com/klaytn/klaytn/common"
 )
 
-type appRegistryManager struct {
-	IAppRegistryContract
-	log *logger.Logger
+//go:generate mockgen -source app_registry.go -destination ./mocks/mock_app_registry.go -package mocks IAppRegistryManager
+
+type IAppRegistryManager interface {
+	Address() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+
+	// Call methods
+	wrappers.IAppRegistryCalls
+
+	// Transact methods
+	Register(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		appName string,
+	) error
+
+	TransferAppOwner(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		appName string,
+		newOwner common.Address,
+	) error
+
+	Unregister(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		appName string,
+	) error
+
+	// Event methods
+	wrappers.IAppRegistryFilterer
+	wrappers.IAppRegistryWatcher
 }
 
-// NewAppRegistryManager makes new *NewAppRegistryManager struct
-func NewAppRegistryManager(client blockchain.TxClient) IAppRegistryManager {
+// appRegistryManager is contract wrapper struct
+type appRegistryManager struct {
+	wrappers.IAppRegistryContract
+	client ablbind.ContractBackend
+	log    *logger.Logger
+}
+
+// NewAppRegistryManager makes new *appRegistryManager struct
+func NewAppRegistryManager(client ablbind.ContractBackend, contract interface{}) interface{} {
 	return &appRegistryManager{
-		IAppRegistryContract: client.GetContract(&AppRegistryContract{}).(*AppRegistryContract),
-		log:                  logger.New("app-registry"),
+		IAppRegistryContract: contract.(*wrappers.AppRegistryContract),
+		client:               client,
+		log:                  logger.New("appRegistry"),
 	}
 }
 
 // Register is a paid mutator transaction binding the contract method 0xf2c298be.
 //
 // Solidity: function register(string appName) returns()
-func (manager *appRegistryManager) Register(ctx context.Context, opts *blockchain.TransactOpts, appName string) error {
+func (manager *appRegistryManager) Register(ctx context.Context, opts *ablbind.TransactOpts, appName string) error {
 	receipt, err := manager.IAppRegistryContract.Register(ctx, opts, appName)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
@@ -43,7 +84,7 @@ func (manager *appRegistryManager) Register(ctx context.Context, opts *blockchai
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
 //
 // Solidity: function unregister(string appName) returns()
-func (manager *appRegistryManager) Unregister(ctx context.Context, opts *blockchain.TransactOpts, appName string) error {
+func (manager *appRegistryManager) Unregister(ctx context.Context, opts *ablbind.TransactOpts, appName string) error {
 	receipt, err := manager.IAppRegistryContract.Unregister(ctx, opts, appName)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
@@ -62,7 +103,7 @@ func (manager *appRegistryManager) Unregister(ctx context.Context, opts *blockch
 // TransferAppOwner is a paid mutator transaction binding the contract method 0x1a9dff9f.
 //
 // Solidity: function transferAppOwner(string appName, address newOwner) returns()
-func (manager *appRegistryManager) TransferAppOwner(ctx context.Context, opts *blockchain.TransactOpts, appName string, newOwner common.Address) error {
+func (manager *appRegistryManager) TransferAppOwner(ctx context.Context, opts *ablbind.TransactOpts, appName string, newOwner common.Address) error {
 	receipt, err := manager.IAppRegistryContract.TransferAppOwner(ctx, opts, appName, newOwner)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")

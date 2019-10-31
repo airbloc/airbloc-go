@@ -1,26 +1,74 @@
-package adapter
+package managers
 
 import (
 	"context"
+	"math/big"
 
-	"github.com/airbloc/airbloc-go/shared/blockchain"
-	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/airbloc/logger"
-	"github.com/klaytn/klaytn/common"
 	"github.com/pkg/errors"
+
+	ablbind "github.com/airbloc/airbloc-go/shared/adapter"
+	types "github.com/airbloc/airbloc-go/shared/adapter/types"
+	wrappers "github.com/airbloc/airbloc-go/shared/adapter/wrappers"
+	logger "github.com/airbloc/logger"
+	common "github.com/klaytn/klaytn/common"
 )
+
+//go:generate mockgen -source accounts.go -destination ./mocks/mock_accounts.go -package mocks IAccountsManager
+
+type IAccountsManager interface {
+	Address() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+
+	// Call methods
+	wrappers.IAccountsCalls
+
+	// Transact methods
+	Create(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+	) (
+		types.ID,
+		error,
+	)
+	CreateTemporary(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		identityHash common.Hash,
+	) (
+		types.ID,
+		error,
+	)
+	SetController(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		controller common.Address,
+	) error
+
+	UnlockTemporary(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		identityPreimage common.Hash,
+		newOwner common.Address,
+		passwordSignature []byte,
+	) error
+
+	// Event methods
+	wrappers.IAccountsFilterer
+	wrappers.IAccountsWatcher
+}
 
 // accountsManager is contract wrapper struct
 type accountsManager struct {
-	IAccountsContract
-	client blockchain.TxClient
+	wrappers.IAccountsContract
+	client ablbind.ContractBackend
 	log    *logger.Logger
 }
 
 // NewAccountsManager makes new *accountsManager struct
-func NewAccountsManager(client blockchain.TxClient) IAccountsManager {
+func NewAccountsManager(client ablbind.ContractBackend, contract interface{}) interface{} {
 	return &accountsManager{
-		IAccountsContract: client.GetContract(&AccountsContract{}).(*AccountsContract),
+		IAccountsContract: contract.(*wrappers.AccountsContract),
 		client:            client,
 		log:               logger.New("accounts"),
 	}
@@ -29,7 +77,7 @@ func NewAccountsManager(client blockchain.TxClient) IAccountsManager {
 // Create is a paid mutator transaction binding the contract method 0xefc81a8c.
 //
 // Solidity: function create() returns()
-func (manager *accountsManager) Create(ctx context.Context, opts *blockchain.TransactOpts) (types.ID, error) {
+func (manager *accountsManager) Create(ctx context.Context, opts *ablbind.TransactOpts) (types.ID, error) {
 	receipt, err := manager.IAccountsContract.Create(ctx, opts)
 	if err != nil {
 		return types.ID{}, errors.Wrap(err, "failed to transact")
@@ -50,7 +98,7 @@ func (manager *accountsManager) Create(ctx context.Context, opts *blockchain.Tra
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
 //
 // Solidity: function createTemporary(bytes32 identityHash) returns()
-func (manager *accountsManager) CreateTemporary(ctx context.Context, opts *blockchain.TransactOpts, identityHash common.Hash) (types.ID, error) {
+func (manager *accountsManager) CreateTemporary(ctx context.Context, opts *ablbind.TransactOpts, identityHash common.Hash) (types.ID, error) {
 	receipt, err := manager.IAccountsContract.CreateTemporary(ctx, opts, identityHash)
 	if err != nil {
 		return types.ID{}, errors.Wrap(err, "failed to transact")
@@ -73,7 +121,7 @@ func (manager *accountsManager) CreateTemporary(ctx context.Context, opts *block
 // Solidity: function unlockTemporary(bytes32 identityPreimage, address newOwner, bytes passwordSignature) returns()
 func (manager *accountsManager) UnlockTemporary(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 	identityPreimage common.Hash,
 	newOwner common.Address,
 	passwordSignature []byte,
@@ -98,7 +146,7 @@ func (manager *accountsManager) UnlockTemporary(
 // SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
 //
 // Solidity: function setController(address controller) returns()
-func (manager *accountsManager) SetController(ctx context.Context, opts *blockchain.TransactOpts, controller common.Address) error {
+func (manager *accountsManager) SetController(ctx context.Context, opts *ablbind.TransactOpts, controller common.Address) error {
 	_, err := manager.IAccountsContract.SetController(ctx, opts, controller)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
@@ -113,7 +161,7 @@ func (manager *accountsManager) SetController(ctx context.Context, opts *blockch
 // Solidity: function getAccountId(address sender) constant returns(bytes8)
 func (manager *accountsManager) GetAccountId(owner common.Address) (types.ID, error) {
 	if owner == (common.Address{}) {
-		return manager.IAccountsContract.GetAccountId(manager.client.Account(context.Background()).From)
+		return manager.IAccountsContract.GetAccountId(manager.client.Transactor(context.Background()).From)
 	} else {
 		return manager.IAccountsContract.GetAccountId(owner)
 	}

@@ -1,14 +1,13 @@
-// Code generated - DO NOT EDIT.
-// This file is a generated binding and any manual changes will be lost.
-
-package adapter
+package wrappers
 
 import (
 	"context"
 	"math/big"
+	"strings"
 
-	blockchain "github.com/airbloc/airbloc-go/shared/blockchain"
-	types "github.com/airbloc/airbloc-go/shared/types"
+	ablbind "github.com/airbloc/airbloc-go/shared/adapter"
+	contracts "github.com/airbloc/airbloc-go/shared/adapter/contracts"
+	types "github.com/airbloc/airbloc-go/shared/adapter/types"
 	abi "github.com/klaytn/klaytn/accounts/abi"
 	bind "github.com/klaytn/klaytn/accounts/abi/bind"
 	chainTypes "github.com/klaytn/klaytn/blockchain/types"
@@ -16,68 +15,7 @@ import (
 	event "github.com/klaytn/klaytn/event"
 )
 
-//go:generate mockgen -source consents_wrapper.go -destination ./mocks/mock_consents.go -package mocks IConsentsManager,IConsentsContract
-type IConsentsManager interface {
-	Address() common.Address
-	TxHash() common.Hash
-	CreatedAt() *big.Int
-
-	// Call methods
-	IConsentsCalls
-
-	// Transact methods
-	Consent(
-		ctx context.Context,
-		opts *blockchain.TransactOpts,
-		appName string,
-		consentData types.ConsentData,
-	) error
-
-	ConsentByController(
-		ctx context.Context,
-		opts *blockchain.TransactOpts,
-		userId types.ID,
-		appName string,
-		consentData types.ConsentData,
-	) error
-
-	ConsentMany(
-		ctx context.Context,
-		opts *blockchain.TransactOpts,
-		appName string,
-		consentData []types.ConsentData,
-	) error
-
-	ConsentManyByController(
-		ctx context.Context,
-		opts *blockchain.TransactOpts,
-		userId types.ID,
-		appName string,
-		consentData []types.ConsentData,
-	) error
-
-	ModifyConsentByController(
-		ctx context.Context,
-		opts *blockchain.TransactOpts,
-		userId types.ID,
-		appName string,
-		consentData types.ConsentData,
-		passwordSignature []byte,
-	) error
-
-	ModifyConsentManyByController(
-		ctx context.Context,
-		opts *blockchain.TransactOpts,
-		userId types.ID,
-		appName string,
-		consentData []types.ConsentData,
-		passwordSignature []byte,
-	) error
-
-	// Event methods
-	IConsentsFilterer
-	IConsentsWatcher
-}
+//go:generate mockgen -source consents.go -destination ./mocks/mock_consents.go -package mocks IConsentsContract
 
 type IConsentsCalls interface {
 	IsAllowed(
@@ -104,33 +42,33 @@ type IConsentsCalls interface {
 type IConsentsTransacts interface {
 	Consent(
 		ctx context.Context,
-		opts *blockchain.TransactOpts,
+		opts *ablbind.TransactOpts,
 		appName string,
 		consentData types.ConsentData,
 	) (*chainTypes.Receipt, error)
 	ConsentByController(
 		ctx context.Context,
-		opts *blockchain.TransactOpts,
+		opts *ablbind.TransactOpts,
 		userId types.ID,
 		appName string,
 		consentData types.ConsentData,
 	) (*chainTypes.Receipt, error)
 	ConsentMany(
 		ctx context.Context,
-		opts *blockchain.TransactOpts,
+		opts *ablbind.TransactOpts,
 		appName string,
 		consentData []types.ConsentData,
 	) (*chainTypes.Receipt, error)
 	ConsentManyByController(
 		ctx context.Context,
-		opts *blockchain.TransactOpts,
+		opts *ablbind.TransactOpts,
 		userId types.ID,
 		appName string,
 		consentData []types.ConsentData,
 	) (*chainTypes.Receipt, error)
 	ModifyConsentByController(
 		ctx context.Context,
-		opts *blockchain.TransactOpts,
+		opts *ablbind.TransactOpts,
 		userId types.ID,
 		appName string,
 		consentData types.ConsentData,
@@ -138,7 +76,7 @@ type IConsentsTransacts interface {
 	) (*chainTypes.Receipt, error)
 	ModifyConsentManyByController(
 		ctx context.Context,
-		opts *blockchain.TransactOpts,
+		opts *ablbind.TransactOpts,
 		userId types.ID,
 		appName string,
 		consentData []types.ConsentData,
@@ -159,18 +97,18 @@ type IConsentsFilterer interface {
 		userId []types.ID,
 		appAddr []common.Address,
 
-	) (*ConsentsConsentedIterator, error)
+	) (ablbind.EventIterator, error)
 }
 
 type IConsentsParser interface {
-	ParseConsented(log chainTypes.Log) (*ConsentsConsented, error)
-	ParseConsentedFromReceipt(receipt *chainTypes.Receipt) ([]*ConsentsConsented, error)
+	ParseConsented(log chainTypes.Log) (*contracts.ConsentsConsented, error)
+	ParseConsentedFromReceipt(receipt *chainTypes.Receipt) ([]*contracts.ConsentsConsented, error)
 }
 
 type IConsentsWatcher interface {
 	WatchConsented(
 		opts *bind.WatchOpts,
-		sink chan<- *ConsentsConsented,
+		sink chan<- *contracts.ConsentsConsented,
 		action []uint8,
 		userId []types.ID,
 		appAddr []common.Address,
@@ -190,55 +128,41 @@ type IConsentsContract interface {
 
 // Manager is contract wrapper struct
 type ConsentsContract struct {
-	address   common.Address
-	txHash    common.Hash
-	createdAt *big.Int
-	client    blockchain.TxClient
+	ablbind.Deployment
+	client ablbind.ContractBackend
 
-	ConsentsCaller
-	ConsentsFilterer
-	ConsentsTransactor
+	contracts.ConsentsCaller
+	contracts.ConsentsFilterer
+	contracts.ConsentsTransactor
 }
 
-// Address is getter method of Accounts.address
-func (c *ConsentsContract) Address() common.Address {
-	return c.address
-}
+func NewConsentsContract(deployment ablbind.Deployment, backend ablbind.ContractBackend) interface{} {
+	if deployment.Address() == (common.Address{}) {
+		evmABI, err := abi.JSON(strings.NewReader(contracts.ConsentsABI))
+		if err != nil {
+			panic(err)
+		}
 
-// TxHash is getter method of Accounts.txHash
-func (c *ConsentsContract) TxHash() common.Hash {
-	return c.txHash
-}
-
-// CreatedAt is getter method of Accounts.createdAt
-func (c *ConsentsContract) CreatedAt() *big.Int {
-	return c.createdAt
-}
-
-func newConsentsContract(address common.Address, txHash common.Hash, createdAt *big.Int, parsedABI abi.ABI, backend bind.ContractBackend) interface{} {
-	contract := blockchain.NewBoundContract(address, parsedABI, backend, backend, backend)
-
-	return &ConsentsContract{
-		address:   address,
-		txHash:    txHash,
-		createdAt: createdAt,
-		client:    backend.(blockchain.TxClient),
-
-		ConsentsCaller:     ConsentsCaller{contract: contract},
-		ConsentsTransactor: ConsentsTransactor{contract: contract},
-		ConsentsFilterer:   ConsentsFilterer{contract: contract},
+		deployment = ablbind.NewDeployment(
+			common.HexToAddress(contracts.ConsentsAddress),
+			common.HexToHash(contracts.ConsentsTxHash),
+			new(big.Int).SetBytes(common.HexToHash(contracts.ConsentsCreatedAt).Bytes()),
+			evmABI,
+		)
 	}
-}
 
-// convenient hacks for blockchain.Client
-func init() {
-	blockchain.AddContractConstructor("Consents", newConsentsContract)
-	blockchain.RegisterSelector("0xcd4dc804", "consent(string,(uint8,string,bool))")
-	blockchain.RegisterSelector("0xf573f89a", "consentByController(bytes8,string,(uint8,string,bool))")
-	blockchain.RegisterSelector("0xdd43ad05", "consentMany(string,(uint8,string,bool)[])")
-	blockchain.RegisterSelector("0xae6d5034", "consentManyByController(bytes8,string,(uint8,string,bool)[])")
-	blockchain.RegisterSelector("0x0bfec389", "modifyConsentByController(bytes8,string,(uint8,string,bool),bytes)")
-	blockchain.RegisterSelector("0xe031b1cf", "modifyConsentManyByController(bytes8,string,(uint8,string,bool)[],bytes)")
+	base := ablbind.NewBoundContract(deployment.Address(), deployment.ParsedABI, backend)
+
+	contract := &ConsentsContract{
+		Deployment: deployment,
+		client:     backend,
+
+		ConsentsCaller:     contracts.NewConsentsCaller(base),
+		ConsentsTransactor: contracts.NewConsentsTransactor(base),
+		ConsentsFilterer:   contracts.NewConsentsFilterer(base),
+	}
+
+	return contract
 }
 
 // IsAllowed is a free data retrieval call binding the contract method 0x50615985.
@@ -279,16 +203,11 @@ func (c *ConsentsContract) IsAllowedAt(
 // Solidity: function consent(string appName, (uint8,string,bool) consentData) returns()
 func (c *ConsentsContract) Consent(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 	appName string,
 	consentData types.ConsentData,
 ) (*chainTypes.Receipt, error) {
-	if opts == nil {
-		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
-	}
-
-	tx, err := c.ConsentsTransactor.Consent(c.client.Account(ctx, opts), appName, consentData)
-
+	tx, err := c.ConsentsTransactor.Consent(c.client.Transactor(ctx, opts), appName, consentData)
 	if err != nil {
 		return nil, err
 	}
@@ -300,17 +219,12 @@ func (c *ConsentsContract) Consent(
 // Solidity: function consentByController(bytes8 userId, string appName, (uint8,string,bool) consentData) returns()
 func (c *ConsentsContract) ConsentByController(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 	userId types.ID,
 	appName string,
 	consentData types.ConsentData,
 ) (*chainTypes.Receipt, error) {
-	if opts == nil {
-		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
-	}
-
-	tx, err := c.ConsentsTransactor.ConsentByController(c.client.Account(ctx, opts), userId, appName, consentData)
-
+	tx, err := c.ConsentsTransactor.ConsentByController(c.client.Transactor(ctx, opts), userId, appName, consentData)
 	if err != nil {
 		return nil, err
 	}
@@ -322,16 +236,11 @@ func (c *ConsentsContract) ConsentByController(
 // Solidity: function consentMany(string appName, (uint8,string,bool)[] consentData) returns()
 func (c *ConsentsContract) ConsentMany(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 	appName string,
 	consentData []types.ConsentData,
 ) (*chainTypes.Receipt, error) {
-	if opts == nil {
-		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
-	}
-
-	tx, err := c.ConsentsTransactor.ConsentMany(c.client.Account(ctx, opts), appName, consentData)
-
+	tx, err := c.ConsentsTransactor.ConsentMany(c.client.Transactor(ctx, opts), appName, consentData)
 	if err != nil {
 		return nil, err
 	}
@@ -343,17 +252,12 @@ func (c *ConsentsContract) ConsentMany(
 // Solidity: function consentManyByController(bytes8 userId, string appName, (uint8,string,bool)[] consentData) returns()
 func (c *ConsentsContract) ConsentManyByController(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 	userId types.ID,
 	appName string,
 	consentData []types.ConsentData,
 ) (*chainTypes.Receipt, error) {
-	if opts == nil {
-		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
-	}
-
-	tx, err := c.ConsentsTransactor.ConsentManyByController(c.client.Account(ctx, opts), userId, appName, consentData)
-
+	tx, err := c.ConsentsTransactor.ConsentManyByController(c.client.Transactor(ctx, opts), userId, appName, consentData)
 	if err != nil {
 		return nil, err
 	}
@@ -365,18 +269,13 @@ func (c *ConsentsContract) ConsentManyByController(
 // Solidity: function modifyConsentByController(bytes8 userId, string appName, (uint8,string,bool) consentData, bytes passwordSignature) returns()
 func (c *ConsentsContract) ModifyConsentByController(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 	userId types.ID,
 	appName string,
 	consentData types.ConsentData,
 	passwordSignature []byte,
 ) (*chainTypes.Receipt, error) {
-	if opts == nil {
-		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
-	}
-
-	tx, err := c.ConsentsTransactor.ModifyConsentByController(c.client.Account(ctx, opts), userId, appName, consentData, passwordSignature)
-
+	tx, err := c.ConsentsTransactor.ModifyConsentByController(c.client.Transactor(ctx, opts), userId, appName, consentData, passwordSignature)
 	if err != nil {
 		return nil, err
 	}
@@ -388,18 +287,13 @@ func (c *ConsentsContract) ModifyConsentByController(
 // Solidity: function modifyConsentManyByController(bytes8 userId, string appName, (uint8,string,bool)[] consentData, bytes passwordSignature) returns()
 func (c *ConsentsContract) ModifyConsentManyByController(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 	userId types.ID,
 	appName string,
 	consentData []types.ConsentData,
 	passwordSignature []byte,
 ) (*chainTypes.Receipt, error) {
-	if opts == nil {
-		opts = &blockchain.TransactOpts{TxType: chainTypes.TxTypeSmartContractExecution}
-	}
-
-	tx, err := c.ConsentsTransactor.ModifyConsentManyByController(c.client.Account(ctx, opts), userId, appName, consentData, passwordSignature)
-
+	tx, err := c.ConsentsTransactor.ModifyConsentManyByController(c.client.Transactor(ctx, opts), userId, appName, consentData, passwordSignature)
 	if err != nil {
 		return nil, err
 	}

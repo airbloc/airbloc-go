@@ -1,23 +1,94 @@
-package adapter
+package managers
 
 import (
 	"context"
+	"math/big"
 
-	"github.com/airbloc/airbloc-go/shared/blockchain"
-	"github.com/airbloc/airbloc-go/shared/types"
-	"github.com/airbloc/logger"
 	"github.com/pkg/errors"
+
+	ablbind "github.com/airbloc/airbloc-go/shared/adapter"
+	types "github.com/airbloc/airbloc-go/shared/adapter/types"
+	wrappers "github.com/airbloc/airbloc-go/shared/adapter/wrappers"
+	logger "github.com/airbloc/logger"
+	common "github.com/klaytn/klaytn/common"
 )
 
+//go:generate mockgen -source consents.go -destination ./mocks/mock_consents.go -package mocks IConsentsManager
+
+type IConsentsManager interface {
+	Address() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+
+	// Call methods
+	wrappers.IConsentsCalls
+
+	// Transact methods
+	Consent(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		appName string,
+		consentData types.ConsentData,
+	) error
+
+	ConsentByController(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		userId types.ID,
+		appName string,
+		consentData types.ConsentData,
+	) error
+
+	ConsentMany(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		appName string,
+		consentData []types.ConsentData,
+	) error
+
+	ConsentManyByController(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		userId types.ID,
+		appName string,
+		consentData []types.ConsentData,
+	) error
+
+	ModifyConsentByController(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		userId types.ID,
+		appName string,
+		consentData types.ConsentData,
+		passwordSignature []byte,
+	) error
+
+	ModifyConsentManyByController(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		userId types.ID,
+		appName string,
+		consentData []types.ConsentData,
+		passwordSignature []byte,
+	) error
+
+	// Event methods
+	wrappers.IConsentsFilterer
+	wrappers.IConsentsWatcher
+}
+
+// consentsManager is contract wrapper struct
 type consentsManager struct {
-	IConsentsContract
-	log *logger.Logger
+	wrappers.IConsentsContract
+	client ablbind.ContractBackend
+	log    *logger.Logger
 }
 
 // NewConsentsManager makes new *consentsManager struct
-func NewConsentsManager(client blockchain.TxClient) IConsentsManager {
+func NewConsentsManager(client ablbind.ContractBackend, contract interface{}) interface{} {
 	return &consentsManager{
-		IConsentsContract: client.GetContract(&ConsentsContract{}).(*ConsentsContract),
+		IConsentsContract: contract.(*wrappers.ConsentsContract),
+		client:            client,
 		log:               logger.New("consents"),
 	}
 }
@@ -25,7 +96,7 @@ func NewConsentsManager(client blockchain.TxClient) IConsentsManager {
 // Consent is a paid mutator transaction binding the contract method 0xbecae241.
 //
 // Solidity: function consent(uint8 action, string appName, string dataType, bool allowed) returns()
-func (manager *consentsManager) Consent(ctx context.Context, opts *blockchain.TransactOpts, appName string, consentData types.ConsentData) error {
+func (manager *consentsManager) Consent(ctx context.Context, opts *ablbind.TransactOpts, appName string, consentData types.ConsentData) error {
 	receipt, err := manager.IConsentsContract.Consent(ctx, opts, appName, consentData)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
@@ -50,7 +121,7 @@ func (manager *consentsManager) Consent(ctx context.Context, opts *blockchain.Tr
 // Solidity: function consentMany(string appName, (uint8,string,bool)[] consentData) returns()
 func (manager *consentsManager) ConsentMany(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 	appName string,
 	consentData []types.ConsentData,
 ) error {
@@ -77,7 +148,7 @@ func (manager *consentsManager) ConsentMany(
 // Solidity: function consentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed) returns()
 func (manager *consentsManager) ConsentByController(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 	userId types.ID,
 	appName string,
 	consentData types.ConsentData,
@@ -106,7 +177,7 @@ func (manager *consentsManager) ConsentByController(
 // Solidity: function consentManyByController(bytes8 userId, string appName, (uint8,string,bool)[] consentData) returns()
 func (manager *consentsManager) ConsentManyByController(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 	userId types.ID,
 	appName string,
 	consentData []types.ConsentData,
@@ -134,7 +205,7 @@ func (manager *consentsManager) ConsentManyByController(
 // Solidity: function modifyConsentByController(uint8 action, bytes8 userId, string appName, string dataType, bool allowed, bytes passwordSignature) returns()
 func (manager *consentsManager) ModifyConsentByController(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 	userId types.ID,
 	appName string,
 	consentData types.ConsentData,
@@ -164,7 +235,7 @@ func (manager *consentsManager) ModifyConsentByController(
 // Solidity: function modifyConsentManyByController(bytes8 userId, string appName, (uint8,string,bool)[] consentData, bytes passwordSignature) returns()
 func (manager *consentsManager) ModifyConsentManyByController(
 	ctx context.Context,
-	opts *blockchain.TransactOpts,
+	opts *ablbind.TransactOpts,
 	userId types.ID,
 	appName string,
 	consentData []types.ConsentData,
