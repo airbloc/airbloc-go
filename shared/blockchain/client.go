@@ -1,198 +1,198 @@
 package blockchain
 
 import (
+	"bytes"
 	"context"
+	"crypto/ecdsa"
+	"encoding/json"
+	"io/ioutil"
+	"net/http"
 	"net/url"
-	"reflect"
-	"strings"
 	"time"
 
-	"github.com/airbloc/airbloc-go/shared/key"
+	"github.com/airbloc/airbloc-go/shared/adapter"
 	"github.com/airbloc/logger"
+
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	"github.com/klaytn/klaytn/blockchain/types"
-	"github.com/klaytn/klaytn/client"
+	klayClient "github.com/klaytn/klaytn/client"
 	"github.com/klaytn/klaytn/common"
-	"github.com/klaytn/klaytn/crypto"
 	"github.com/pkg/errors"
 )
 
 type Client struct {
-	*client.Client
-	ctx        context.Context
-	cfg        ClientOpt
-	key        *key.Key
-	transactor *TransactOpts
-	contracts  *contractManager
-	logger     *logger.Logger
+	*klayClient.Client
+
+	transactor *adapter.TransactOpts
+	readOnly   bool
+
+	feePayer           common.Address
+	feePayerUrl        *url.URL
+	feePayerTransactor *adapter.TransactOpts
+	delegated          bool
+
+	log *logger.Logger
 }
 
-func NewClient(key *key.Key, rawurl string, cfg ClientOpt) (*Client, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
+func NewClient(ctx context.Context, opts Options) (*Client, error) {
 	log := logger.New("klaytn")
 
-	log.Debug(rawurl)
-	// URL validation
-	l, err := url.Parse(rawurl)
-	if err != nil {
-		return nil, errors.Wrapf(err, "invalid URL: %s", rawurl)
-	}
-	if l.Scheme != "ws" {
-		log.Error("Warning: You're using {} endpoint for Ethereum. Using WebSocket is recommended.",
-			strings.ToUpper(l.Scheme))
+	if _, err := url.Parse(opts.Endpoint); err != nil {
+		return nil, errors.Errorf("invalid URL: %s", opts.Endpoint)
 	}
 
 	// try to connect to Ethereum
-	klayClient, err := client.DialContext(ctx, rawurl)
+	c, err := klayClient.DialContext(ctx, opts.Endpoint)
 	if err != nil {
 		return nil, err
 	}
-	cid, err := klayClient.NetworkID(ctx)
+	cid, err := c.NetworkID(ctx)
 	if err != nil {
 		return nil, err
 	}
 	log.Info("Using {} network", getChainName(cid))
 
-	klayent := &Client{
-		Client: klayClient,
-		ctx:    context.TODO(),
-		cfg:    cfg,
-		key:    key,
-		logger: log,
+	client := &Client{
+		Client: c,
+		log:    log,
 	}
 
-	cm := NewContractManager(klayent)
-	if err := cm.Load(cfg.DeploymentPath); err != nil {
-		return nil, err
+	if opts.Key != nil {
+		client.SetTransactor(opts.Key)
 	}
-	klayent.contracts = cm
-	klayent.SetAccount(key)
-	return klayent, nil
+
+	if opts.FeePayerEndpoint != "" {
+		if err := client.SetFeePayerWithUrl(opts.FeePayerEndpoint); err != nil {
+			return nil, errors.Wrap(err, "initializing fee payer with endpoint")
+		}
+	}
+
+	if opts.FeePayerKey != nil {
+		client.SetFeePayerWithKey(opts.FeePayerKey)
+	}
+
+	return client, nil
 }
 
-func (c Client) Account(ctx context.Context, opts ...*TransactOpts) *TransactOpts {
-	mergedOpts := &TransactOpts{
-		From:     c.transactor.From,
-		FeePayer: c.transactor.FeePayer,
-		Signer:   c.transactor.Signer,
-		Nonce:    c.transactor.Nonce,
-		Value:    c.transactor.Value,
-		GasPrice: c.transactor.GasPrice,
-		GasLimit: c.transactor.GasLimit,
-		TxType:   c.transactor.TxType,
-	}
-	mergedOpts.Context = ctx
-	for _, opt := range opts {
-		if opt.From != (common.Address{}) {
-			mergedOpts.From = opt.From
-		}
-		if opt.FeePayer != (common.Address{}) {
-			mergedOpts.FeePayer = opt.FeePayer
-		}
-		if opt.Signer != nil {
-			mergedOpts.Signer = opt.Signer
-		}
-		if opt.Nonce != nil {
-			mergedOpts.Nonce = opt.Nonce
-		}
-		if opt.Value != nil {
-			mergedOpts.Value = opt.Value
-		}
-		if opt.GasPrice != nil {
-			mergedOpts.GasPrice = opt.GasPrice
-		}
-		if opt.GasLimit != 0 {
-			mergedOpts.GasLimit = opt.GasLimit
-		}
-		if opt.TxType != 0 {
-			mergedOpts.TxType = opt.TxType
-		}
-	}
-	return mergedOpts
+func (c Client) Transactor(ctx context.Context, opts ...*adapter.TransactOpts) *adapter.TransactOpts {
+	return adapter.MergeTxOpts(ctx, c.transactor, opts...)
 }
 
-func (c *Client) SetAccount(key *key.Key) {
-	c.transactor = NewKeyedTransactor(key.PrivateKey)
-	c.transactor.TxType = types.TxTypeValueTransfer
+func (c *Client) SetTransactor(key *ecdsa.PrivateKey) {
+	c.transactor = adapter.NewKeyedTransactor(key)
+	c.readOnly = key == nil
 }
 
-func (c *Client) GetContract(contractType interface{}) interface{} {
-	contract := c.contracts.GetContract(contractType)
-	if contract == nil {
-		panic("Contract not registered: " + reflect.ValueOf(contractType).Type().Name())
-	}
-	return contract
+func (c *Client) FeePayer() common.Address {
+	return c.feePayer
 }
 
-func (c *Client) SignTransaction(
-	ctx context.Context,
-	signerFn bind.SignerFn,
-	tx *types.Transaction,
-) (*types.Transaction, error) {
-	chainID, err := c.ChainID(ctx)
+func (c *Client) SetFeePayerWithKey(key *ecdsa.PrivateKey) {
+	c.feePayerTransactor = adapter.NewKeyedFeePayerTransactor(key)
+	c.feePayer = c.feePayerTransactor.From
+	c.delegated = c.feePayer != (common.Address{})
+}
+
+func (c *Client) SetFeePayerWithUrl(endpoint string) (err error) {
+	c.feePayerUrl, err = url.Parse(endpoint)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get chain id")
+		return errors.Errorf("invalid URL: %s", endpoint)
 	}
 
-	signer := types.NewEIP155Signer(chainID)
-
-	from, err := tx.From()
+	client := &http.Client{Timeout: time.Minute}
+	resp, err := client.Get(endpoint + "/address")
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get sender from transaction")
+		return errors.Wrap(err, "requesting fee payer address")
+	}
+	defer resp.Body.Close()
+
+	var addr struct {
+		Address common.Address `json:"address"`
 	}
 
-	signedTx, err := signerFn(signer, from, tx)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to sign transaction with sender")
+	if err := json.NewDecoder(resp.Body).Decode(&addr); err != nil {
+		return errors.Wrap(err, "decoding json response body")
 	}
 
-	txType := tx.Type()
-	if txType == types.TxTypeFeeDelegatedValueTransfer ||
-		txType == types.TxTypeFeeDelegatedSmartContractExecution {
-		feePayer, err := tx.FeePayer()
+	c.feePayer = addr.Address
+	c.delegated = c.feePayer != (common.Address{})
+	return nil
+}
+
+func (c *Client) sendTxToBlockchain(ctx context.Context, tx *types.Transaction) error {
+	return c.Client.SendTransaction(ctx, tx)
+}
+
+func (c *Client) sendTxToDelegate(ctx context.Context, tx *types.Transaction) error {
+	// check fee payer
+	feePayer, _ := tx.FeePayer()
+	if feePayer != c.feePayer {
+		return errors.New("fee payer mismatching")
+	}
+
+	// sign and send to blockchain
+	if c.feePayerTransactor != nil {
+		chainID, err := c.ChainID(ctx)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get fee payer from transaction")
-		}
-		if from == c.transactor.From {
-			return nil, errors.Wrap(err, "sender and fee payer should not be same")
-		}
-		if feePayer != crypto.PubkeyToAddress(c.key.PublicKey) {
-			return nil, errors.Wrap(err, "fee payer is not the same with request")
+			return errors.Wrap(err, "fetching chain id")
 		}
 
-		if err = signedTx.SignFeePayer(signer, c.key.PrivateKey); err != nil {
-			return nil, errors.Wrap(err, "failed to sign transaction with fee payer")
+		signer := types.NewEIP155Signer(chainID)
+		signedTx, err := c.feePayerTransactor.Signer(signer, c.feePayer, tx)
+		if err != nil {
+			return errors.Wrap(err, "signing tx")
+		}
+
+		return c.Client.SendTransaction(ctx, signedTx)
+	}
+
+	// request to fee payer worker
+	if c.feePayerUrl != nil {
+		rawTxData, err := tx.MarshalJSON()
+		if err != nil {
+			return errors.Wrap(err, "marshaling tx")
+		}
+
+		resp, err := http.Post(c.feePayerUrl.RequestURI(), "application/json", bytes.NewReader(rawTxData))
+		if err != nil {
+			return errors.Wrap(err, "sending tx to delegate")
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusCreated { // transaction created
+			d, _ := ioutil.ReadAll(resp.Body)
+			c.log.Error("Failed to request transaction", logger.Attrs{
+				"status-code": resp.StatusCode,
+				"message":     string(d),
+			})
+			return errors.New("request failed")
 		}
 	}
 
-	return signedTx, nil
+	return nil
 }
 
-func (c *Client) waitConfirmation(ctx context.Context) error {
-	ch := make(chan *types.Header)
-	sub, err := c.SubscribeNewHead(c.ctx, ch)
-	if err != nil {
-		return err
+func (c *Client) SendTransaction(ctx context.Context, tx *types.Transaction) error {
+	txType := tx.Type()
+	switch txType {
+	case types.TxTypeValueTransfer:
+		fallthrough
+	case types.TxTypeSmartContractExecution:
+		return c.sendTxToBlockchain(ctx, tx)
+	case types.TxTypeFeeDelegatedValueTransfer:
+		fallthrough
+	case types.TxTypeFeeDelegatedSmartContractDeploy:
+		return c.sendTxToDelegate(ctx, tx)
+	default:
+		return errors.New("unsupported transaction type")
 	}
-	defer sub.Unsubscribe()
-
-	for count := c.cfg.Confirmation; count > 0; {
-		select {
-		case <-ch:
-			count--
-		case <-ctx.Done():
-			return context.DeadlineExceeded
-		}
-	}
-	return err
 }
 
 // WaitMined waits until transcaction created.
 func (c *Client) WaitMined(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
-	methodName, details := GetTransactionDetails(c.contracts, tx)
-	timer := c.logger.Timer()
+	//methodName, details := GetTransactionDetails(c.contracts, tx)
+	methodName, details := "TODO: mocked method name", "TODO: mocked details"
+	timer := c.log.Timer()
 
 	receipt, err := bind.WaitMined(ctx, c, tx)
 	if err != nil {
@@ -200,17 +200,20 @@ func (c *Client) WaitMined(ctx context.Context, tx *types.Transaction) (*types.R
 	}
 	if receipt.Status == types.ReceiptStatusFailed {
 		timer.End("Transaction to {} failed", methodName, details)
-		return nil, ErrTxFailed
+		return nil, errors.New("tx failed")
 	}
 	timer.End("Transacted {}", methodName, details)
-	// err = c.waitConfirmation(ctx)
 	return receipt, err
 }
 
 // WaitDeployed waits until contract created.
 func (c *Client) WaitDeployed(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
-	if tx.To() != nil {
-		return nil, ErrTxNoContract
+	txType := tx.Type()
+
+	if txType != types.TxTypeSmartContractDeploy &&
+		txType != types.TxTypeFeeDelegatedSmartContractDeploy &&
+		txType != types.TxTypeFeeDelegatedSmartContractDeployWithRatio {
+		return nil, errors.New("tx is not contract creation")
 	}
 
 	receipt, err := c.WaitMined(ctx, tx)
@@ -218,13 +221,12 @@ func (c *Client) WaitDeployed(ctx context.Context, tx *types.Transaction) (*type
 		return nil, err
 	}
 	if receipt.ContractAddress == (common.Address{}) {
-		return nil, ErrZeroAddress
+		return nil, errors.New("zero address")
 	}
 
 	code, err := c.CodeAt(ctx, receipt.ContractAddress, nil)
 	if err == nil && len(code) == 0 {
 		err = bind.ErrNoCodeAfterDeploy
 	}
-	// err = c.waitConfirmation(ctx)
 	return receipt, err
 }
