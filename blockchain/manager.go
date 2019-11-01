@@ -3,6 +3,7 @@ package blockchain
 import (
 	"fmt"
 	"reflect"
+	"unicode"
 
 	"github.com/airbloc/airbloc-go/bind"
 	"github.com/airbloc/airbloc-go/bind/managers"
@@ -71,6 +72,11 @@ func NewContractManager(client bind.ContractBackend, deployments bind.Deployment
 
 		name := field.Name
 
+		// only exported field
+		if !unicode.IsTitle(rune(name[0])) {
+			continue
+		}
+
 		constructor, exist := constructors[name]
 		if !exist {
 			return ContractManager{}, errors.Errorf("constructor for %+v does not exist", name)
@@ -111,15 +117,17 @@ func (cm ContractManager) registerContract(c interface{}, name string) error {
 	if cm.addrToName == nil {
 		cm.addrToName = make(map[common.Address]string)
 	}
+	if cm.addrToSelectors == nil {
+		cm.addrToSelectors = make(map[common.Address]map[[4]byte]string)
+	}
+	if cm.addrToSelectors[addr] == nil {
+		cm.addrToSelectors[addr] = make(map[[4]byte]string)
+	}
 
 	cm.addrToName[addr] = name
 
 	// register to contract -> sign -> selector
-	if cm.addrToSelectors == nil {
-		cm.addrToSelectors = make(map[common.Address]map[[4]byte]string)
-	}
-
-	for selectorName, selectorHex := range selectors {
+	for selectorHex, selectorName := range selectors {
 		var selector [4]byte
 		byteSelector, err := hexutil.Decode(selectorHex)
 		if err != nil {
