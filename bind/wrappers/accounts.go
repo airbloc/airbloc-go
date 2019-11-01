@@ -201,6 +201,25 @@ func NewAccountsContract(deployment ablbind.Deployment, backend ablbind.Contract
 	return contract
 }
 
+func (c *AccountsContract) GetSelectors() map[string]string {
+	selectors := make(map[string]string)
+	selectors["0x97e4fea7"] = "exists(bytes8)"
+	selectors["0xf9292ddb"] = "getAccount(bytes8)"
+	selectors["0xc75aeb7e"] = "getAccountByIdentityHash(bytes32)"
+	selectors["0xe0b490f7"] = "getAccountId(address)"
+	selectors["0x793d5046"] = "getAccountIdByIdentityHash(bytes32)"
+	selectors["0x23d0601d"] = "getAccountIdFromSignature(bytes32,bytes)"
+	selectors["0xa83038e7"] = "isControllerOf(address,bytes8)"
+	selectors["0x6b886888"] = "isTemporary(bytes8)"
+
+	selectors["0xefc81a8c"] = "create()"
+	selectors["0x56003f0f"] = "createTemporary(bytes32)"
+	selectors["0x92eefe9b"] = "setController(address)"
+	selectors["0x2299219d"] = "unlockTemporary(bytes32,address,bytes)"
+
+	return selectors
+}
+
 // Exists is a free data retrieval call binding the contract method 0x97e4fea7.
 //
 // Solidity: function exists(bytes8 accountId) constant returns(bool)

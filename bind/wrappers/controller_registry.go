@@ -139,6 +139,16 @@ func NewControllerRegistryContract(deployment ablbind.Deployment, backend ablbin
 	return contract
 }
 
+func (c *ControllerRegistryContract) GetSelectors() map[string]string {
+	selectors := make(map[string]string)
+	selectors["0xf6a3d24e"] = "exists(address)"
+	selectors["0xc2bc2efc"] = "get(address)"
+
+	selectors["0x4420e486"] = "register(address)"
+
+	return selectors
+}
+
 // Exists is a free data retrieval call binding the contract method 0xf6a3d24e.
 //
 // Solidity: function exists(address controller) constant returns(bool)

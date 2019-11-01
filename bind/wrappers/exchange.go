@@ -235,6 +235,22 @@ func NewExchangeContract(deployment ablbind.Deployment, backend ablbind.Contract
 	return contract
 }
 
+func (c *ExchangeContract) GetSelectors() map[string]string {
+	selectors := make(map[string]string)
+	selectors["0x107f04b4"] = "getOffer(bytes8)"
+	selectors["0x72dfa465"] = "getOfferMembers(bytes8)"
+	selectors["0xc4a03da9"] = "offerExists(bytes8)"
+
+	selectors["0x367a9005"] = "addDataIds(bytes8,bytes20[])"
+	selectors["0xb2d9ba39"] = "cancel(bytes8)"
+	selectors["0x0cf833fb"] = "order(bytes8)"
+	selectors["0x77e61c33"] = "prepare(string,address,address,bytes4,bytes,bytes20[])"
+	selectors["0x6622e153"] = "reject(bytes8)"
+	selectors["0xa60d9b5f"] = "settle(bytes8)"
+
+	return selectors
+}
+
 // GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
 //
 // Solidity: function getOffer(bytes8 offerId) constant returns((string,address,bytes20[],uint256,uint256,(address,bytes4,bytes),uint8))

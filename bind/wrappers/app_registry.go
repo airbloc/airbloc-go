@@ -165,6 +165,19 @@ func NewAppRegistryContract(deployment ablbind.Deployment, backend ablbind.Contr
 	return contract
 }
 
+func (c *AppRegistryContract) GetSelectors() map[string]string {
+	selectors := make(map[string]string)
+	selectors["0x261a323e"] = "exists(string)"
+	selectors["0x693ec85e"] = "get(string)"
+	selectors["0xbde1eee7"] = "isOwner(string,address)"
+
+	selectors["0xf2c298be"] = "register(string)"
+	selectors["0x1a9dff9f"] = "transferAppOwner(string,address)"
+	selectors["0x6598a1ae"] = "unregister(string)"
+
+	return selectors
+}
+
 // Exists is a free data retrieval call binding the contract method 0x261a323e.
 //
 // Solidity: function exists(string appName) constant returns(bool)

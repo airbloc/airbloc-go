@@ -165,6 +165,21 @@ func NewConsentsContract(deployment ablbind.Deployment, backend ablbind.Contract
 	return contract
 }
 
+func (c *ConsentsContract) GetSelectors() map[string]string {
+	selectors := make(map[string]string)
+	selectors["0x50615985"] = "isAllowed(bytes8,string,uint8,string)"
+	selectors["0x7cdda67c"] = "isAllowedAt(bytes8,string,uint8,string,uint256)"
+
+	selectors["0xcd4dc804"] = "consent(string,(uint8,string,bool))"
+	selectors["0xf573f89a"] = "consentByController(bytes8,string,(uint8,string,bool))"
+	selectors["0xdd43ad05"] = "consentMany(string,(uint8,string,bool)[])"
+	selectors["0xae6d5034"] = "consentManyByController(bytes8,string,(uint8,string,bool)[])"
+	selectors["0x0bfec389"] = "modifyConsentByController(bytes8,string,(uint8,string,bool),bytes)"
+	selectors["0xe031b1cf"] = "modifyConsentManyByController(bytes8,string,(uint8,string,bool)[],bytes)"
+
+	return selectors
+}
+
 // IsAllowed is a free data retrieval call binding the contract method 0x50615985.
 //
 // Solidity: function isAllowed(bytes8 userId, string appName, uint8 action, string dataType) constant returns(bool)
