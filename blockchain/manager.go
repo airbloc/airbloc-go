@@ -62,10 +62,7 @@ type ContractManager struct {
 }
 
 func NewContractManager(client bind.ContractBackend, deployments bind.Deployments) (ContractManager, error) {
-	m := ContractManager{
-		addrToName:      make(map[common.Address]string),
-		addrToSelectors: make(map[common.Address]map[[4]byte]string),
-	}
+	m := ContractManager{}
 	t := reflect.TypeOf(m)
 	v := reflect.ValueOf(&m)
 
@@ -87,17 +84,52 @@ func NewContractManager(client bind.ContractBackend, deployments bind.Deployment
 		}
 
 		contract := constructor.contract(deployment, client)
-		if contractBase, ok := contract.(bind.ContractBase); ok {
-			manager := constructor.manager(client, contract)
-			if reflect.TypeOf(manager).Implements(field.Type) {
-				v.Elem().FieldByName(name).Set(reflect.ValueOf(manager))
-				m.addrToName[contractBase.Address()] = name
-				m.addrToSelectors[contractBase.Address()] = contractBase.GetSignatures()
+		manager := constructor.manager(client, contract)
+		if reflect.TypeOf(manager).Implements(field.Type) {
+			v.Elem().FieldByName(name).Set(reflect.ValueOf(manager))
+			if err := m.registerContract(contract, name); err != nil {
+				return ContractManager{}, errors.Wrap(err, "register contract")
 			}
 		}
 	}
 
 	return m, nil
+}
+
+func (cm ContractManager) registerContract(c interface{}, name string) error {
+	contract, ok := c.(bind.ContractBase)
+	if !ok {
+		return errors.New("given contract is not implementation of bind.ContractBase")
+	}
+
+	var (
+		addr      = contract.Address()
+		selectors = contract.GetSelectors()
+	)
+
+	// register to contract -> name
+	if cm.addrToName == nil {
+		cm.addrToName = make(map[common.Address]string)
+	}
+
+	cm.addrToName[addr] = name
+
+	// register to contract -> sign -> selector
+	if cm.addrToSelectors == nil {
+		cm.addrToSelectors = make(map[common.Address]map[[4]byte]string)
+	}
+
+	for selectorName, selectorHex := range selectors {
+		var selector [4]byte
+		byteSelector, err := hexutil.Decode(selectorHex)
+		if err != nil {
+			return errors.Wrap(err, "decoding selector")
+		}
+		copy(selector[:], byteSelector)
+
+		cm.addrToSelectors[addr][selector] = selectorName
+	}
+	return nil
 }
 
 func (cm ContractManager) getSignatureFromTxData(addr common.Address, txdata []byte) (string, error) {
