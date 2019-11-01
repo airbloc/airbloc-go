@@ -9,9 +9,9 @@ import (
 	big "math/big"
 	reflect "reflect"
 
-	bind "github.com/airbloc/airbloc-go/shared/adapter"
-	contracts "github.com/airbloc/airbloc-go/shared/adapter/contracts"
-	types "github.com/airbloc/airbloc-go/shared/adapter/types"
+	bind "github.com/airbloc/airbloc-go/bind"
+	contracts "github.com/airbloc/airbloc-go/bind/contracts"
+	types "github.com/airbloc/airbloc-go/bind/types"
 	gomock "github.com/golang/mock/gomock"
 	bind0 "github.com/klaytn/klaytn/accounts/abi/bind"
 	types0 "github.com/klaytn/klaytn/blockchain/types"

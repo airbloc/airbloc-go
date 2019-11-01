@@ -6,9 +6,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	ablbind "github.com/airbloc/airbloc-go/shared/adapter"
-	types "github.com/airbloc/airbloc-go/shared/adapter/types"
-	wrappers "github.com/airbloc/airbloc-go/shared/adapter/wrappers"
+	ablbind "github.com/airbloc/airbloc-go/bind"
+	types "github.com/airbloc/airbloc-go/bind/types"
+	wrappers "github.com/airbloc/airbloc-go/bind/wrappers"
 	logger "github.com/airbloc/logger"
 	common "github.com/klaytn/klaytn/common"
 )

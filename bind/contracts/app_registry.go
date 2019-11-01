@@ -3,8 +3,8 @@ package contracts
 import (
 	"errors"
 
-	ablbind "github.com/airbloc/airbloc-go/shared/adapter"
-	types "github.com/airbloc/airbloc-go/shared/adapter/types"
+	ablbind "github.com/airbloc/airbloc-go/bind"
+	types "github.com/airbloc/airbloc-go/bind/types"
 	platform "github.com/klaytn/klaytn"
 	bind "github.com/klaytn/klaytn/accounts/abi/bind"
 	chainTypes "github.com/klaytn/klaytn/blockchain/types"

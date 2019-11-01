@@ -5,9 +5,9 @@ import (
 	"math/big"
 	"strings"
 
-	ablbind "github.com/airbloc/airbloc-go/shared/adapter"
-	contracts "github.com/airbloc/airbloc-go/shared/adapter/contracts"
-	types "github.com/airbloc/airbloc-go/shared/adapter/types"
+	ablbind "github.com/airbloc/airbloc-go/bind"
+	contracts "github.com/airbloc/airbloc-go/bind/contracts"
+	types "github.com/airbloc/airbloc-go/bind/types"
 	abi "github.com/klaytn/klaytn/accounts/abi"
 	bind "github.com/klaytn/klaytn/accounts/abi/bind"
 	chainTypes "github.com/klaytn/klaytn/blockchain/types"
