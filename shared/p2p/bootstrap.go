@@ -2,15 +2,14 @@ package p2p
 
 import (
 	"context"
+	"sync"
+
 	"github.com/airbloc/airbloc-go/shared/key"
 	"github.com/airbloc/logger"
-	"github.com/libp2p/go-libp2p"
-	"github.com/libp2p/go-libp2p-host"
+	host "github.com/libp2p/go-libp2p-host"
 	kaddht "github.com/libp2p/go-libp2p-kad-dht"
-	"github.com/libp2p/go-libp2p-peerstore"
-	"github.com/multiformats/go-multiaddr"
+	peerstore "github.com/libp2p/go-libp2p-peerstore"
 	"github.com/pkg/errors"
-	"sync"
 )
 
 // StartBootstrapServer launches bootstrap node,

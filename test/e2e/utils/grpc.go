@@ -2,10 +2,11 @@ package e2eutils
 
 import (
 	"context"
-	. "github.com/onsi/gomega"
-	"google.golang.org/grpc"
 	"os"
 	"time"
+
+	. "github.com/onsi/gomega"
+	"google.golang.org/grpc"
 )
 
 func ConnectGRPC() *grpc.ClientConn {
