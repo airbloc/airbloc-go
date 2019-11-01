@@ -3,26 +3,17 @@ package airbloc
 import (
 	"context"
 	"crypto/ecdsa"
-	"net/url"
 
 	"github.com/airbloc/airbloc-go/bind"
 	"github.com/airbloc/airbloc-go/blockchain"
 	"github.com/airbloc/logger"
-
-	"github.com/klaytn/klaytn/common"
 )
 
 type airbloc struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 	client *blockchain.Client
-
-	defaultAccount *bind.TransactOpts
-	feePayer       common.Address
-	feePayerUrl    *url.URL
-
-	readOnly bool
-	logger   *logger.Logger
+	logger *logger.Logger
 
 	blockchain.ContractManager
 }
