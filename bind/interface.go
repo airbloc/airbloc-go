@@ -14,7 +14,7 @@ type ContractBase interface {
 	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
-	GetSignatures() map[[4]byte]string
+	GetSelectors() map[string]string
 }
 
 // ContractBackend is an interface that used by airbloc contracts
