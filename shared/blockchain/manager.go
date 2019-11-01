@@ -3,15 +3,15 @@ package blockchain
 import (
 	"reflect"
 
-	"github.com/airbloc/airbloc-go/shared/adapter"
-	"github.com/airbloc/airbloc-go/shared/adapter/managers"
-	"github.com/airbloc/airbloc-go/shared/adapter/wrappers"
+	"github.com/airbloc/airbloc-go/bind"
+	"github.com/airbloc/airbloc-go/bind/managers"
+	"github.com/airbloc/airbloc-go/bind/wrappers"
 
 	"github.com/pkg/errors"
 )
 
-type ManagerConstructor func(adapter.ContractBackend, interface{}) interface{}
-type ContractConstructor func(adapter.Deployment, adapter.ContractBackend) interface{}
+type ManagerConstructor func(bind.ContractBackend, interface{}) interface{}
+type ContractConstructor func(bind.Deployment, bind.ContractBackend) interface{}
 
 var (
 	contractConstructors = map[string]ContractConstructor{
@@ -41,7 +41,7 @@ type ContractManager struct {
 	Exchange           managers.IExchangeManager
 }
 
-func NewContractManager(client adapter.ContractBackend, deployments adapter.Deployments) (ContractManager, error) {
+func NewContractManager(client bind.ContractBackend, deployments bind.Deployments) (ContractManager, error) {
 	m := ContractManager{}
 	t := reflect.TypeOf(m)
 	v := reflect.ValueOf(&m)
@@ -61,7 +61,7 @@ func NewContractManager(client adapter.ContractBackend, deployments adapter.Depl
 			return ContractManager{}, errors.Errorf("constructor for %+v does not exist", name)
 		}
 
-		deployment := adapter.Deployment{}
+		deployment := bind.Deployment{}
 		if deployments != nil {
 			if d, ok := deployments.Get(name); ok {
 				deployment = d

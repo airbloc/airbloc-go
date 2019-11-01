@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/airbloc/airbloc-go/shared/adapter"
+	ablbind "github.com/airbloc/airbloc-go/bind"
 	"github.com/airbloc/logger"
 
 	"github.com/klaytn/klaytn/accounts/abi/bind"
@@ -23,12 +23,12 @@ import (
 type Client struct {
 	*klayClient.Client
 
-	transactor *adapter.TransactOpts
+	transactor *ablbind.TransactOpts
 	readOnly   bool
 
 	feePayer           common.Address
 	feePayerUrl        *url.URL
-	feePayerTransactor *adapter.TransactOpts
+	feePayerTransactor *ablbind.TransactOpts
 	delegated          bool
 
 	log *logger.Logger
@@ -74,12 +74,12 @@ func NewClient(ctx context.Context, opts Options) (*Client, error) {
 	return client, nil
 }
 
-func (c Client) Transactor(ctx context.Context, opts ...*adapter.TransactOpts) *adapter.TransactOpts {
-	return adapter.MergeTxOpts(ctx, c.transactor, opts...)
+func (c Client) Transactor(ctx context.Context, opts ...*ablbind.TransactOpts) *ablbind.TransactOpts {
+	return ablbind.MergeTxOpts(ctx, c.transactor, opts...)
 }
 
 func (c *Client) SetTransactor(key *ecdsa.PrivateKey) {
-	c.transactor = adapter.NewKeyedTransactor(key)
+	c.transactor = ablbind.NewKeyedTransactor(key)
 	c.readOnly = key == nil
 }
 
@@ -88,7 +88,7 @@ func (c *Client) FeePayer() common.Address {
 }
 
 func (c *Client) SetFeePayerWithKey(key *ecdsa.PrivateKey) {
-	c.feePayerTransactor = adapter.NewKeyedFeePayerTransactor(key)
+	c.feePayerTransactor = ablbind.NewKeyedFeePayerTransactor(key)
 	c.feePayer = c.feePayerTransactor.From
 	c.delegated = c.feePayer != (common.Address{})
 }

@@ -9,7 +9,8 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/airbloc/airbloc-go/shared/adapter"
+	"github.com/airbloc/airbloc-go/bind/managers"
+
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/airbloc-go/shared/database/localdb"
 	"github.com/airbloc/airbloc-go/shared/database/metadb"
@@ -78,7 +79,7 @@ func NewManager(
 			"BECAUSE IT CAN CAUSE A FINANCIAL LOSS OF YOUR STAKED COLLETRALS. " + "\033[0m")
 	}
 
-	consentManager := adapter.NewConsentsManager(client)
+	consentManager := managers.NewConsentsManager(client)
 	dauthValidator := validator.NewValidator(consentManager)
 
 	//contract := client.GetContract(&adapter.DataRegistry{})

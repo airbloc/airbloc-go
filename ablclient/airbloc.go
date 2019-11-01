@@ -5,7 +5,7 @@ import (
 	"crypto/ecdsa"
 	"net/url"
 
-	"github.com/airbloc/airbloc-go/shared/adapter"
+	"github.com/airbloc/airbloc-go/bind"
 	"github.com/airbloc/airbloc-go/shared/blockchain"
 	"github.com/airbloc/logger"
 
@@ -17,7 +17,7 @@ type airbloc struct {
 	cancel context.CancelFunc
 	client *blockchain.Client
 
-	defaultAccount *adapter.TransactOpts
+	defaultAccount *bind.TransactOpts
 	feePayer       common.Address
 	feePayerUrl    *url.URL
 
@@ -40,7 +40,7 @@ func NewAirblocWithOption(ctx context.Context, opt Options) (*airbloc, error) {
 		return nil, err
 	}
 
-	deployments, err := adapter.GetDeploymentsFrom(opt.DeploymentPath)
+	deployments, err := bind.GetDeploymentsFrom(opt.DeploymentPath)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (abl *airbloc) Client() *blockchain.Client {
 	return abl.client
 }
 
-func (abl *airbloc) GetTransactor(ctx context.Context, txOpts ...*adapter.TransactOpts) *adapter.TransactOpts {
+func (abl *airbloc) GetTransactor(ctx context.Context, txOpts ...*bind.TransactOpts) *bind.TransactOpts {
 	return abl.client.Transactor(ctx, txOpts...)
 }
 

@@ -1,7 +1,7 @@
 package validator
 
 import (
-	"github.com/airbloc/airbloc-go/shared/adapter"
+	"github.com/airbloc/airbloc-go/bind/managers"
 	"github.com/airbloc/airbloc-go/shared/types"
 	"github.com/airbloc/logger"
 )
@@ -9,12 +9,12 @@ import (
 // Validator ensures data providers to only register data to Airbloc
 // from users who have allowed collection of the data through DAuth.
 type Validator struct {
-	consents adapter.IConsentsManager
+	consents managers.IConsentsManager
 	log      *logger.Logger
 }
 
 // NewValidator creates validator instance.
-func NewValidator(manager adapter.IConsentsManager) *Validator {
+func NewValidator(manager managers.IConsentsManager) *Validator {
 	return &Validator{
 		consents: manager,
 		log:      logger.New("dauth-validator"),
