@@ -2,11 +2,22 @@ package bind
 
 import (
 	"context"
+	"math/big"
 
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	"github.com/klaytn/klaytn/blockchain/types"
+	"github.com/klaytn/klaytn/common"
 )
 
+// ContractBase is an interface that applies all airbloc contracts
+type ContractBase interface {
+	Address() common.Address
+	TxHash() common.Hash
+	CreatedAt() *big.Int
+	GetSignatures() map[[4]byte]string
+}
+
+// ContractBackend is an interface that used by airbloc contracts
 type ContractBackend interface {
 	bind.ContractBackend
 	Transactor(context.Context, ...*TransactOpts) *TransactOpts
@@ -14,6 +25,7 @@ type ContractBackend interface {
 	WaitDeployed(context.Context, *types.Transaction) (*types.Receipt, error)
 }
 
+// EventIterator is an interface for all return value of contract's filterer methods
 type EventIterator interface {
 	Next() bool
 	Event() interface{}
