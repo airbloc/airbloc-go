@@ -3,11 +3,10 @@ package key
 import (
 	"crypto/rand"
 
-	"github.com/airbloc/airbloc-go/shared/types"
-
+	"github.com/airbloc/airbloc-go/pkg/database/localdb"
+	"github.com/airbloc/airbloc-go/pkg/types"
 	"github.com/airbloc/logger"
 
-	"github.com/airbloc/airbloc-go/shared/database/localdb"
 	klayTypes "github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/crypto/ecies"
 )

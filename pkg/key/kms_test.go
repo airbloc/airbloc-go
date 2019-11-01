@@ -3,7 +3,8 @@ package key
 import (
 	"testing"
 
-	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/airbloc/airbloc-go/pkg/types"
+
 	"github.com/stretchr/testify/require"
 )
 

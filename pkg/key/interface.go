@@ -1,7 +1,7 @@
 package key
 
 import (
-	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/airbloc/airbloc-go/pkg/types"
 	klayTypes "github.com/klaytn/klaytn/blockchain/types"
 )
 
