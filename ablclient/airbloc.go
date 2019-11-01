@@ -6,7 +6,7 @@ import (
 	"net/url"
 
 	"github.com/airbloc/airbloc-go/bind"
-	"github.com/airbloc/airbloc-go/shared/blockchain"
+	"github.com/airbloc/airbloc-go/blockchain"
 	"github.com/airbloc/logger"
 
 	"github.com/klaytn/klaytn/common"

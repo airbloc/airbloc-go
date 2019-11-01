@@ -11,7 +11,7 @@ import (
 
 	"github.com/airbloc/airbloc-go/bind/managers"
 
-	"github.com/airbloc/airbloc-go/shared/blockchain"
+	"github.com/airbloc/airbloc-go/blockchain"
 	"github.com/airbloc/airbloc-go/shared/database/localdb"
 	"github.com/airbloc/airbloc-go/shared/database/metadb"
 	"github.com/airbloc/airbloc-go/shared/database/resdb"

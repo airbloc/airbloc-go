@@ -1,6 +1,6 @@
 package airbloc
 
-import "github.com/airbloc/airbloc-go/shared/blockchain"
+import "github.com/airbloc/airbloc-go/blockchain"
 
 type Options struct {
 	DeploymentPath string

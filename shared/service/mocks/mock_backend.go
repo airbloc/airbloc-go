@@ -7,7 +7,7 @@ package mocks
 import (
 	reflect "reflect"
 
-	blockchain "github.com/airbloc/airbloc-go/shared/blockchain"
+	blockchain "github.com/airbloc/airbloc-go/blockchain"
 	localdb "github.com/airbloc/airbloc-go/shared/database/localdb"
 	metadb "github.com/airbloc/airbloc-go/shared/database/metadb"
 	key "github.com/airbloc/airbloc-go/shared/key"
