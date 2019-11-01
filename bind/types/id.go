@@ -1,7 +1,7 @@
 package types
 
 import (
-	"github.com/airbloc/airbloc-go/shared/types"
+	"github.com/airbloc/airbloc-go/pkg/types"
 )
 
 // ID is bridge type between airbloc-go and contract bind
