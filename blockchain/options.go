@@ -12,4 +12,5 @@ type Options struct {
 	Key              *ecdsa.PrivateKey
 	FeePayerKey      *ecdsa.PrivateKey
 	FeePayerEndpoint string
+	DeploymentPath   string
 }

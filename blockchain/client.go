@@ -1,11 +1,9 @@
 package blockchain
 
 import (
-	"bytes"
 	"context"
 	"crypto/ecdsa"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"time"
@@ -22,6 +20,7 @@ import (
 
 type Client struct {
 	*klayClient.Client
+	deployments ablbind.Deployments
 
 	transactor *ablbind.TransactOpts
 	readOnly   bool
@@ -37,24 +36,30 @@ type Client struct {
 func NewClient(ctx context.Context, opts Options) (*Client, error) {
 	log := logger.New("klaytn")
 
-	if _, err := url.Parse(opts.Endpoint); err != nil {
-		return nil, errors.Errorf("invalid URL: %s", opts.Endpoint)
-	}
-
-	// try to connect to Ethereum
-	c, err := klayClient.DialContext(ctx, opts.Endpoint)
+	deployments, err := ablbind.GetDeploymentsFrom(opts.DeploymentPath)
 	if err != nil {
 		return nil, err
 	}
-	cid, err := c.NetworkID(ctx)
+
+	if _, err = url.Parse(opts.Endpoint); err != nil {
+		return nil, errors.Errorf("invalid URL: %s", opts.Endpoint)
+	}
+
+	// try to connect to Klaytn
+	blockchainClient, err := klayClient.DialContext(ctx, opts.Endpoint)
+	if err != nil {
+		return nil, err
+	}
+	cid, err := blockchainClient.NetworkID(ctx)
 	if err != nil {
 		return nil, err
 	}
 	log.Info("Using {} network", getChainName(cid))
 
 	client := &Client{
-		Client: c,
-		log:    log,
+		Client:      blockchainClient,
+		deployments: deployments,
+		log:         log,
 	}
 
 	if opts.Key != nil {
@@ -119,73 +124,8 @@ func (c *Client) SetFeePayerWithUrl(endpoint string) (err error) {
 	return nil
 }
 
-func (c *Client) sendTxToBlockchain(ctx context.Context, tx *types.Transaction) error {
-	return c.Client.SendTransaction(ctx, tx)
-}
-
-func (c *Client) sendTxToDelegate(ctx context.Context, tx *types.Transaction) error {
-	// check fee payer
-	feePayer, _ := tx.FeePayer()
-	if feePayer != c.feePayer {
-		return errors.New("fee payer mismatching")
-	}
-
-	// sign and send to blockchain
-	if c.feePayerTransactor != nil {
-		chainID, err := c.ChainID(ctx)
-		if err != nil {
-			return errors.Wrap(err, "fetching chain id")
-		}
-
-		signer := types.NewEIP155Signer(chainID)
-		signedTx, err := c.feePayerTransactor.Signer(signer, c.feePayer, tx)
-		if err != nil {
-			return errors.Wrap(err, "signing tx")
-		}
-
-		return c.Client.SendTransaction(ctx, signedTx)
-	}
-
-	// request to fee payer worker
-	if c.feePayerUrl != nil {
-		rawTxData, err := tx.MarshalJSON()
-		if err != nil {
-			return errors.Wrap(err, "marshaling tx")
-		}
-
-		resp, err := http.Post(c.feePayerUrl.RequestURI(), "application/json", bytes.NewReader(rawTxData))
-		if err != nil {
-			return errors.Wrap(err, "sending tx to delegate")
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusCreated { // transaction created
-			d, _ := ioutil.ReadAll(resp.Body)
-			c.log.Error("Failed to request transaction", logger.Attrs{
-				"status-code": resp.StatusCode,
-				"message":     string(d),
-			})
-			return errors.New("request failed")
-		}
-	}
-
-	return nil
-}
-
-func (c *Client) SendTransaction(ctx context.Context, tx *types.Transaction) error {
-	txType := tx.Type()
-	switch txType {
-	case types.TxTypeValueTransfer:
-		fallthrough
-	case types.TxTypeSmartContractExecution:
-		return c.sendTxToBlockchain(ctx, tx)
-	case types.TxTypeFeeDelegatedValueTransfer:
-		fallthrough
-	case types.TxTypeFeeDelegatedSmartContractDeploy:
-		return c.sendTxToDelegate(ctx, tx)
-	default:
-		return errors.New("unsupported transaction type")
-	}
+func (c *Client) GetDeployment(name string) (ablbind.Deployment, bool) {
+	return c.deployments.Get(name)
 }
 
 // WaitMined waits until transcaction created.
