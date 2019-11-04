@@ -23,6 +23,7 @@ type ContractBackend interface {
 	Transactor(context.Context, ...*TransactOpts) *TransactOpts
 	WaitMined(context.Context, *types.Transaction) (*types.Receipt, error)
 	WaitDeployed(context.Context, *types.Transaction) (*types.Receipt, error)
+	GetDeployment(string) (Deployment, bool)
 }
 
 // EventIterator is an interface for all return value of contract's filterer methods
