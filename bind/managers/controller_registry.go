@@ -4,62 +4,67 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/pkg/errors"
-
 	ablbind "github.com/airbloc/airbloc-go/bind"
-	wrappers "github.com/airbloc/airbloc-go/bind/wrappers"
+	"github.com/airbloc/airbloc-go/bind/contracts"
 	logger "github.com/airbloc/logger"
 	common "github.com/klaytn/klaytn/common"
+	"github.com/pkg/errors"
 )
 
 //go:generate mockgen -source controller_registry.go -destination ./mocks/mock_controller_registry.go -package mocks IControllerRegistryManager
 
-type IControllerRegistryManager interface {
+type ControllerRegistryManager interface {
 	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
 
-	// Call methods
-	wrappers.IControllerRegistryCalls
+	contracts.ControllerRegistryCaller
 
-	// Transact methods
 	Register(
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
 		controllerAddr common.Address,
 	) error
 
-	// Event methods
-	wrappers.IControllerRegistryFilterer
-	wrappers.IControllerRegistryWatcher
+	contracts.ControllerRegistryEventFilterer
+	contracts.ControllerRegistryEventWatcher
 }
 
 // controllerRegistryManager is contract wrapper struct
 type controllerRegistryManager struct {
-	wrappers.IControllerRegistryContract
+	*contracts.ControllerRegistryContract
 	client ablbind.ContractBackend
 	log    *logger.Logger
 }
 
 // NewControllerRegistryManager makes new *controllerRegistryManager struct
-func NewControllerRegistryManager(client ablbind.ContractBackend, contract interface{}) interface{} {
-	return &controllerRegistryManager{
-		IControllerRegistryContract: contract.(*wrappers.ControllerRegistryContract),
-		client: client,
-		log:    logger.New("controllerRegistry"),
+func NewControllerRegistryManager(backend ablbind.ContractBackend) (ControllerRegistryManager, error) {
+	contract, err := contracts.NewControllerRegistryContract(backend)
+	if err != nil {
+		return nil, err
 	}
+
+	return &controllerRegistryManager{
+		ControllerRegistryContract: contract,
+		client: backend,
+		log:    logger.New("controller_registry"),
+	}, nil
 }
 
 // Register is a paid mutator transaction binding the contract method 0x4420e486.
 //
 // Solidity: function register(address controllerAddr) returns()
-func (manager *controllerRegistryManager) Register(ctx context.Context, opts *ablbind.TransactOpts, controllerAddr common.Address) error {
-	receipt, err := manager.IControllerRegistryContract.Register(ctx, opts, controllerAddr)
+func (manager *controllerRegistryManager) Register(
+	ctx context.Context,
+	opts *ablbind.TransactOpts,
+	controllerAddr common.Address,
+) error {
+	receipt, err := manager.ControllerRegistryContract.Register(ctx, opts, controllerAddr)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
 
-	evt, err := manager.IControllerRegistryContract.ParseRegistrationFromReceipt(receipt)
+	evt, err := manager.ControllerRegistryContract.ParseRegistrationFromReceipt(receipt)
 	if err != nil {
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}

@@ -4,26 +4,23 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/pkg/errors"
-
 	ablbind "github.com/airbloc/airbloc-go/bind"
+	"github.com/airbloc/airbloc-go/bind/contracts"
 	types "github.com/airbloc/airbloc-go/bind/types"
-	wrappers "github.com/airbloc/airbloc-go/bind/wrappers"
 	logger "github.com/airbloc/logger"
 	common "github.com/klaytn/klaytn/common"
+	"github.com/pkg/errors"
 )
 
 //go:generate mockgen -source exchange.go -destination ./mocks/mock_exchange.go -package mocks IExchangeManager
 
-type IExchangeManager interface {
+type ExchangeManager interface {
 	Address() common.Address
 	TxHash() common.Hash
 	CreatedAt() *big.Int
 
-	// Call methods
-	wrappers.IExchangeCalls
+	contracts.ExchangeCaller
 
-	// Transact methods
 	AddDataIds(
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
@@ -68,25 +65,94 @@ type IExchangeManager interface {
 		offerId types.ID,
 	) error
 
-	// Event methods
-	wrappers.IExchangeFilterer
-	wrappers.IExchangeWatcher
+	contracts.ExchangeEventFilterer
+	contracts.ExchangeEventWatcher
 }
 
 // exchangeManager is contract wrapper struct
 type exchangeManager struct {
-	wrappers.IExchangeContract
+	*contracts.ExchangeContract
 	client ablbind.ContractBackend
 	log    *logger.Logger
 }
 
 // NewExchangeManager makes new *exchangeManager struct
-func NewExchangeManager(client ablbind.ContractBackend, contract interface{}) interface{} {
-	return &exchangeManager{
-		IExchangeContract: contract.(*wrappers.ExchangeContract),
-		client:            client,
-		log:               logger.New("exchange"),
+func NewExchangeManager(backend ablbind.ContractBackend) (ExchangeManager, error) {
+	contract, err := contracts.NewExchangeContract(backend)
+	if err != nil {
+		return nil, err
 	}
+
+	return &exchangeManager{
+		ExchangeContract: contract,
+		client:           backend,
+		log:              logger.New("exchange"),
+	}, nil
+}
+
+// AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
+//
+// Solidity: function addDataIds(bytes8 offerId, bytes20[] dataIds) returns()
+func (manager *exchangeManager) AddDataIds(
+	ctx context.Context,
+	opts *ablbind.TransactOpts,
+	offerId types.ID,
+	dataIds []types.DataId,
+) error {
+	_, err := manager.ExchangeContract.AddDataIds(ctx, opts, offerId, dataIds)
+	if err != nil {
+		return errors.Wrap(err, "failed to transact")
+	}
+
+	manager.log.Info("Offer updated.", logger.Attrs{
+		"offer-id":    offerId.Hex(),
+		"data-length": len(dataIds),
+	})
+	return nil
+}
+
+// Cancel is a paid mutator transaction binding the contract method 0xb2d9ba39.
+//
+// Solidity: function cancel(bytes8 offerId) returns()
+func (manager *exchangeManager) Cancel(
+	ctx context.Context,
+	opts *ablbind.TransactOpts,
+	offerId types.ID,
+) error {
+	receipt, err := manager.ExchangeContract.Cancel(ctx, opts, offerId)
+	if err != nil {
+		return errors.Wrap(err, "failed to transact")
+	}
+
+	evt, err := manager.ExchangeContract.ParseOfferCanceledFromReceipt(receipt)
+	if err != nil {
+		return errors.Wrap(err, "failed to parse a event from the receipt")
+	}
+
+	manager.log.Info("Offer cancelled.", logger.Attrs{"offer-id": evt[0].OfferId.Hex()})
+	return nil
+}
+
+// Order is a paid mutator transaction binding the contract method 0x0cf833fb.
+//
+// Solidity: function order(bytes8 offerId) returns()
+func (manager *exchangeManager) Order(
+	ctx context.Context,
+	opts *ablbind.TransactOpts,
+	offerId types.ID,
+) error {
+	receipt, err := manager.ExchangeContract.Order(ctx, opts, offerId)
+	if err != nil {
+		return errors.Wrap(err, "failed to transact")
+	}
+
+	evt, err := manager.ExchangeContract.ParseOfferPresentedFromReceipt(receipt)
+	if err != nil {
+		return errors.Wrap(err, "failed to parse a event from the receipt")
+	}
+
+	manager.log.Info("Offer presented.", logger.Attrs{"offer-id": evt[0].OfferId.Hex()})
+	return nil
 }
 
 // Prepare is a paid mutator transaction binding the contract method 0x77e61c33.
@@ -101,7 +167,10 @@ func (manager *exchangeManager) Prepare(
 	escrowSign [4]byte,
 	escrowArgs []byte,
 	dataIds []types.DataId,
-) (types.ID, error) {
+) (
+	types.ID,
+	error,
+) {
 	var err error
 	var ids []types.DataId
 	// if length of dataIds exceeds 20,
@@ -109,12 +178,12 @@ func (manager *exchangeManager) Prepare(
 	if len(dataIds) < 20 {
 		ids = dataIds
 	}
-	receipt, err := manager.IExchangeContract.Prepare(ctx, opts, provider, consumer, escrow, escrowSign, escrowArgs, ids)
+	receipt, err := manager.ExchangeContract.Prepare(ctx, opts, provider, consumer, escrow, escrowSign, escrowArgs, ids)
 	if err != nil {
 		return types.ID{}, errors.Wrap(err, "failed to transact")
 	}
 
-	evt, err := manager.IExchangeContract.ParseOfferPreparedFromReceipt(receipt)
+	evt, err := manager.ExchangeContract.ParseOfferPreparedFromReceipt(receipt)
 	if err != nil {
 		return types.ID{}, errors.Wrap(err, "failed to parse a event from the receipt")
 	}
@@ -144,90 +213,46 @@ func (manager *exchangeManager) Prepare(
 	return evt[0].OfferId, nil
 }
 
-// AddDataIds is a paid mutator transaction binding the contract method 0x367a9005.
+// Reject is a paid mutator transaction binding the contract method 0x6622e153.
 //
-// Solidity: function addDataIds(bytes8 offerId, bytes20[] dataIds) returns()
-func (manager *exchangeManager) AddDataIds(ctx context.Context, opts *ablbind.TransactOpts, offerId types.ID, dataIds []types.DataId) error {
-	_, err := manager.IExchangeContract.AddDataIds(ctx, opts, offerId, dataIds)
+// Solidity: function reject(bytes8 offerId) returns()
+func (manager *exchangeManager) Reject(
+	ctx context.Context,
+	opts *ablbind.TransactOpts,
+	offerId types.ID,
+) error {
+	receipt, err := manager.ExchangeContract.Reject(ctx, opts, offerId)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
 
-	manager.log.Info("Offer updated.", logger.Attrs{
-		"offer-id":    offerId.Hex(),
-		"data-length": len(dataIds),
-	})
-	return nil
-}
-
-// Order is a paid mutator transaction binding the contract method 0x0cf833fb.
-//
-// Solidity: function order(bytes8 offerId) returns()
-func (manager *exchangeManager) Order(ctx context.Context, opts *ablbind.TransactOpts, offerId types.ID) error {
-	receipt, err := manager.IExchangeContract.Order(ctx, opts, offerId)
-	if err != nil {
-		return errors.Wrap(err, "failed to transact")
-	}
-
-	evt, err := manager.IExchangeContract.ParseOfferPresentedFromReceipt(receipt)
+	evt, err := manager.ExchangeContract.ParseOfferRejectedFromReceipt(receipt)
 	if err != nil {
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	manager.log.Info("Offer presented.", logger.Attrs{"offer-id": evt[0].OfferId.Hex()})
-	return nil
-}
-
-// Cancel is a paid mutator transaction binding the contract method 0xb2d9ba39.
-//
-// Solidity: function cancel(bytes8 offerId) returns()
-func (manager *exchangeManager) Cancel(ctx context.Context, opts *ablbind.TransactOpts, offerId types.ID) error {
-	receipt, err := manager.IExchangeContract.Cancel(ctx, opts, offerId)
-	if err != nil {
-		return errors.Wrap(err, "failed to transact")
-	}
-
-	evt, err := manager.IExchangeContract.ParseOfferCanceledFromReceipt(receipt)
-	if err != nil {
-		return errors.Wrap(err, "failed to parse a event from the receipt")
-	}
-
-	manager.log.Info("Offer cancelled.", logger.Attrs{"offer-id": evt[0].OfferId.Hex()})
+	manager.log.Info("Offer rejected", logger.Attrs{"offer-id": evt[0].OfferId.Hex()})
 	return nil
 }
 
 // Settle is a paid mutator transaction binding the contract method 0xa60d9b5f.
 //
 // Solidity: function settle(bytes8 offerId) returns()
-func (manager *exchangeManager) Settle(ctx context.Context, opts *ablbind.TransactOpts, offerId types.ID) error {
-	receipt, err := manager.IExchangeContract.Settle(ctx, opts, offerId)
+func (manager *exchangeManager) Settle(
+	ctx context.Context,
+	opts *ablbind.TransactOpts,
+	offerId types.ID,
+) error {
+	receipt, err := manager.ExchangeContract.Settle(ctx, opts, offerId)
 	if err != nil {
 		return errors.Wrap(err, "failed to transact")
 	}
 
-	evt, err := manager.IExchangeContract.ParseOfferSettledFromReceipt(receipt)
+	evt, err := manager.ExchangeContract.ParseOfferSettledFromReceipt(receipt)
 	if err != nil {
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
 	manager.log.Info("Offer settled", logger.Attrs{"offer-id": evt[0].OfferId.Hex()})
-	return nil
-}
-
-// Reject is a paid mutator transaction binding the contract method 0x6622e153.
-//
-// Solidity: function reject(bytes8 offerId) returns()
-func (manager *exchangeManager) Reject(ctx context.Context, opts *ablbind.TransactOpts, offerId types.ID) error {
-	receipt, err := manager.IExchangeContract.Reject(ctx, opts, offerId)
-	if err != nil {
-		return errors.Wrap(err, "failed to transact")
-	}
-
-	evt, err := manager.IExchangeContract.ParseOfferRejectedFromReceipt(receipt)
-	if err != nil {
-		return errors.Wrap(err, "failed to parse a event from the receipt")
-	}
-
-	manager.log.Info("Offer rejected", logger.Attrs{"offer-id": evt[0].OfferId.Hex()})
 	return nil
 }
