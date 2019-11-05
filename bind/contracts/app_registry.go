@@ -765,7 +765,7 @@ type AppRegistryContract struct {
 }
 
 func NewAppRegistryContract(backend ablbind.ContractBackend) (*AppRegistryContract, error) {
-	deployment, exist := backend.GetDeployment("AppRegistry")
+	deployment, exist := backend.Deployment("AppRegistry")
 	if !exist {
 		evmABI, err := abi.JSON(strings.NewReader(AppRegistryABI))
 		if err != nil {

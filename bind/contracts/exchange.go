@@ -1592,7 +1592,7 @@ type ExchangeContract struct {
 }
 
 func NewExchangeContract(backend ablbind.ContractBackend) (*ExchangeContract, error) {
-	deployment, exist := backend.GetDeployment("Exchange")
+	deployment, exist := backend.Deployment("Exchange")
 	if !exist {
 		evmABI, err := abi.JSON(strings.NewReader(ExchangeABI))
 		if err != nil {

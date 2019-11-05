@@ -892,7 +892,7 @@ type AccountsContract struct {
 }
 
 func NewAccountsContract(backend ablbind.ContractBackend) (*AccountsContract, error) {
-	deployment, exist := backend.GetDeployment("Accounts")
+	deployment, exist := backend.Deployment("Accounts")
 	if !exist {
 		evmABI, err := abi.JSON(strings.NewReader(AccountsABI))
 		if err != nil {
