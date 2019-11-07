@@ -65,7 +65,9 @@ func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, i
 		opts = &TransactOpts{}
 	}
 
-	unsignedTx, err := opts.MakeTransaction(c, contract, input)
+	opts = c.client.Transactor(opts.Context, opts)
+
+	unsignedTx, err := c.client.MakeTransaction(opts, contract, input)
 	if err != nil {
 		return nil, err
 	}

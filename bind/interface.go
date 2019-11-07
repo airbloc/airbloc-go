@@ -5,6 +5,7 @@ import (
 
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	"github.com/klaytn/klaytn/blockchain/types"
+	"github.com/klaytn/klaytn/common"
 )
 
 // ContractBackend is an interface that used by airbloc contracts
@@ -12,6 +13,7 @@ type ContractBackend interface {
 	bind.ContractBackend
 	Deployment(string) (Deployment, bool)
 	Transactor(context.Context, ...*TransactOpts) *TransactOpts
+	MakeTransaction(*TransactOpts, *common.Address, []byte) (*types.Transaction, error)
 	WaitMined(context.Context, *types.Transaction) (*types.Receipt, error)
 	WaitDeployed(context.Context, *types.Transaction) (*types.Receipt, error)
 }
