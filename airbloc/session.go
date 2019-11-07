@@ -2,10 +2,12 @@ package airbloc
 
 import (
 	"context"
+	"fmt"
 
 	ablbind "github.com/airbloc/airbloc-go/bind"
 
 	"github.com/klaytn/klaytn/blockchain/types"
+	"github.com/klaytn/klaytn/common"
 	"github.com/pkg/errors"
 )
 
@@ -30,7 +32,7 @@ func (sess Session) Deployment(contract string) (ablbind.Deployment, bool) {
 }
 
 func (sess Session) Transactor(ctx context.Context, opts ...*ablbind.TransactOpts) *ablbind.TransactOpts {
-	return ablbind.MergeTxOpts(ctx, sess.account.account, opts...)
+	return ablbind.MergeTxOpts(ctx, sess.account.txOpts(), opts...)
 }
 
 func (sess Session) SendTransaction(ctx context.Context, tx *types.Transaction) error {
@@ -54,4 +56,35 @@ func (sess Session) SendTransaction(ctx context.Context, tx *types.Transaction) 
 		return sess.account.SendTransaction(ctx, tx)
 	}
 	return errors.New("invalid transaction type")
+}
+
+func (sess Session) MakeTransaction(opts *ablbind.TransactOpts, contract *common.Address, input []byte) (*types.Transaction, error) {
+	pTxType, txValues, err := opts.MakeTransactionData(sess, contract, input)
+	if err != nil {
+		return nil, err
+	}
+	if pTxType == nil {
+		return nil, errors.New("unsupported tx type")
+	}
+
+	txType := *pTxType
+
+	if sess.account.isDelegated() {
+		switch txType {
+		case types.TxTypeValueTransfer:
+			txType = types.TxTypeFeeDelegatedValueTransfer
+		case types.TxTypeSmartContractExecution:
+			txType = types.TxTypeFeeDelegatedSmartContractExecution
+		}
+		txValues[types.TxValueKeyFeePayer] = common.Address{}
+	}
+
+	rawTx, err := types.NewTransactionWithMap(txType, txValues)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create transaction: %v", err)
+	}
+	if opts.Signer == nil {
+		return nil, errors.New("no signer to authorize the transaction with")
+	}
+	return rawTx, nil
 }
