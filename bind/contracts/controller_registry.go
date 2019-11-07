@@ -94,6 +94,11 @@ func (_ControllerRegistry *controllerRegistryTransactor) Register(
 	opts *ablbind.TransactOpts,
 	controllerAddr common.Address,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _ControllerRegistry.contract.Transact(opts, "register", controllerAddr)
 	if err != nil {
 		return nil, err

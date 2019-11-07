@@ -139,6 +139,11 @@ func (_Consents *consentsTransactor) Consent(
 	appName string,
 	consentData types.ConsentData,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _Consents.contract.Transact(opts, "consent", appName, consentData)
 	if err != nil {
 		return nil, err
@@ -156,6 +161,11 @@ func (_Consents *consentsTransactor) ConsentByController(
 	appName string,
 	consentData types.ConsentData,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _Consents.contract.Transact(opts, "consentByController", userId, appName, consentData)
 	if err != nil {
 		return nil, err
@@ -172,6 +182,11 @@ func (_Consents *consentsTransactor) ConsentMany(
 	appName string,
 	consentData []types.ConsentData,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _Consents.contract.Transact(opts, "consentMany", appName, consentData)
 	if err != nil {
 		return nil, err
@@ -189,6 +204,11 @@ func (_Consents *consentsTransactor) ConsentManyByController(
 	appName string,
 	consentData []types.ConsentData,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _Consents.contract.Transact(opts, "consentManyByController", userId, appName, consentData)
 	if err != nil {
 		return nil, err
@@ -207,6 +227,11 @@ func (_Consents *consentsTransactor) ModifyConsentByController(
 	consentData types.ConsentData,
 	passwordSignature []byte,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _Consents.contract.Transact(opts, "modifyConsentByController", userId, appName, consentData, passwordSignature)
 	if err != nil {
 		return nil, err
@@ -225,6 +250,11 @@ func (_Consents *consentsTransactor) ModifyConsentManyByController(
 	consentData []types.ConsentData,
 	passwordSignature []byte,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _Consents.contract.Transact(opts, "modifyConsentManyByController", userId, appName, consentData, passwordSignature)
 	if err != nil {
 		return nil, err

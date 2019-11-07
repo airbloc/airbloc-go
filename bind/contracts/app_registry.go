@@ -126,6 +126,11 @@ func (_AppRegistry *appRegistryTransactor) Register(
 	opts *ablbind.TransactOpts,
 	appName string,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _AppRegistry.contract.Transact(opts, "register", appName)
 	if err != nil {
 		return nil, err
@@ -142,6 +147,11 @@ func (_AppRegistry *appRegistryTransactor) TransferAppOwner(
 	appName string,
 	newOwner common.Address,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _AppRegistry.contract.Transact(opts, "transferAppOwner", appName, newOwner)
 	if err != nil {
 		return nil, err
@@ -157,6 +167,11 @@ func (_AppRegistry *appRegistryTransactor) Unregister(
 	opts *ablbind.TransactOpts,
 	appName string,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _AppRegistry.contract.Transact(opts, "unregister", appName)
 	if err != nil {
 		return nil, err

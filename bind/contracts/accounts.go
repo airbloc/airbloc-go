@@ -231,6 +231,11 @@ func (_Accounts *accountsTransactor) Create(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _Accounts.contract.Transact(opts, "create")
 	if err != nil {
 		return nil, err
@@ -246,6 +251,11 @@ func (_Accounts *accountsTransactor) CreateTemporary(
 	opts *ablbind.TransactOpts,
 	identityHash common.Hash,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _Accounts.contract.Transact(opts, "createTemporary", identityHash)
 	if err != nil {
 		return nil, err
@@ -261,6 +271,11 @@ func (_Accounts *accountsTransactor) SetController(
 	opts *ablbind.TransactOpts,
 	controller common.Address,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _Accounts.contract.Transact(opts, "setController", controller)
 	if err != nil {
 		return nil, err
@@ -278,6 +293,11 @@ func (_Accounts *accountsTransactor) UnlockTemporary(
 	newOwner common.Address,
 	passwordSignature []byte,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _Accounts.contract.Transact(opts, "unlockTemporary", identityPreimage, newOwner, passwordSignature)
 	if err != nil {
 		return nil, err

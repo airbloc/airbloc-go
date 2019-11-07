@@ -151,6 +151,11 @@ func (_Exchange *exchangeTransactor) AddDataIds(
 	offerId types.ID,
 	dataIds []types.DataId,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _Exchange.contract.Transact(opts, "addDataIds", offerId, dataIds)
 	if err != nil {
 		return nil, err
@@ -166,6 +171,11 @@ func (_Exchange *exchangeTransactor) Cancel(
 	opts *ablbind.TransactOpts,
 	offerId types.ID,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _Exchange.contract.Transact(opts, "cancel", offerId)
 	if err != nil {
 		return nil, err
@@ -181,6 +191,11 @@ func (_Exchange *exchangeTransactor) Order(
 	opts *ablbind.TransactOpts,
 	offerId types.ID,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _Exchange.contract.Transact(opts, "order", offerId)
 	if err != nil {
 		return nil, err
@@ -201,6 +216,11 @@ func (_Exchange *exchangeTransactor) Prepare(
 	escrowArgs []byte,
 	dataIds []types.DataId,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _Exchange.contract.Transact(opts, "prepare", provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
 	if err != nil {
 		return nil, err
@@ -216,6 +236,11 @@ func (_Exchange *exchangeTransactor) Reject(
 	opts *ablbind.TransactOpts,
 	offerId types.ID,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _Exchange.contract.Transact(opts, "reject", offerId)
 	if err != nil {
 		return nil, err
@@ -231,6 +256,11 @@ func (_Exchange *exchangeTransactor) Settle(
 	opts *ablbind.TransactOpts,
 	offerId types.ID,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _Exchange.contract.Transact(opts, "settle", offerId)
 	if err != nil {
 		return nil, err

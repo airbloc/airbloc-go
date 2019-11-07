@@ -122,6 +122,11 @@ func (_DataTypeRegistry *dataTypeRegistryTransactor) Register(
 	name string,
 	schemaHash common.Hash,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _DataTypeRegistry.contract.Transact(opts, "register", name, schemaHash)
 	if err != nil {
 		return nil, err
@@ -137,6 +142,11 @@ func (_DataTypeRegistry *dataTypeRegistryTransactor) Unregister(
 	opts *ablbind.TransactOpts,
 	name string,
 ) (*chainTypes.Receipt, error) {
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
+	}
+	opts.Context = ctx
+
 	tx, err := _DataTypeRegistry.contract.Transact(opts, "unregister", name)
 	if err != nil {
 		return nil, err
