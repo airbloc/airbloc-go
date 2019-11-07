@@ -696,7 +696,7 @@ type ControllerRegistryContract struct {
 }
 
 func NewControllerRegistryContract(backend ablbind.ContractBackend) (*ControllerRegistryContract, error) {
-	deployment, exist := backend.GetDeployment("ControllerRegistry")
+	deployment, exist := backend.Deployment("ControllerRegistry")
 	if !exist {
 		evmABI, err := abi.JSON(strings.NewReader(ControllerRegistryABI))
 		if err != nil {

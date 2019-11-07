@@ -524,7 +524,7 @@ type DataTypeRegistryContract struct {
 }
 
 func NewDataTypeRegistryContract(backend ablbind.ContractBackend) (*DataTypeRegistryContract, error) {
-	deployment, exist := backend.GetDeployment("DataTypeRegistry")
+	deployment, exist := backend.Deployment("DataTypeRegistry")
 	if !exist {
 		evmABI, err := abi.JSON(strings.NewReader(DataTypeRegistryABI))
 		if err != nil {

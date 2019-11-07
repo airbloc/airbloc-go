@@ -467,7 +467,7 @@ type ConsentsContract struct {
 }
 
 func NewConsentsContract(backend ablbind.ContractBackend) (*ConsentsContract, error) {
-	deployment, exist := backend.GetDeployment("Consents")
+	deployment, exist := backend.Deployment("Consents")
 	if !exist {
 		evmABI, err := abi.JSON(strings.NewReader(ConsentsABI))
 		if err != nil {
