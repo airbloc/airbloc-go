@@ -5,6 +5,7 @@ import (
 	"math/big"
 	"net/url"
 
+	ablbind "github.com/airbloc/airbloc-go/bind"
 	"github.com/airbloc/logger"
 
 	"github.com/klaytn/klaytn/accounts/abi/bind"
@@ -61,6 +62,14 @@ func NewClient(ctx context.Context, endpoint string) (*Client, error) {
 	}, nil
 }
 
+func (c *Client) Deployment(string) (ablbind.Deployment, bool) {
+	return ablbind.Deployment{}, false // use default information (mainnet)
+}
+
+func (c *Client) Transactor(ctx context.Context, opts ...*ablbind.TransactOpts) *ablbind.TransactOpts {
+	return ablbind.MergeTxOpts(ctx, nil, opts...)
+}
+
 // WaitMined waits until transcaction created.
 func (c *Client) WaitMined(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
 	methodName, details := "TODO: mocked method name", "TODO: mocked details"
@@ -101,4 +110,8 @@ func (c *Client) WaitDeployed(ctx context.Context, tx *types.Transaction) (*type
 		err = bind.ErrNoCodeAfterDeploy
 	}
 	return receipt, err
+}
+
+func (c *Client) MakeTransaction(opts *ablbind.TransactOpts, contract *common.Address, input []byte) (*types.Transaction, error) {
+	return opts.MakeTransaction(c, contract, input)
 }
