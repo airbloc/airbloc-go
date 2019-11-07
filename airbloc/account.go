@@ -13,7 +13,7 @@ import (
 
 type Account struct {
 	account  *ablbind.TransactOpts
-	feePayer *feePayerClient
+	feePayer *FeePayerClient
 }
 
 func (acc Account) isReadOnly() bool {
@@ -24,12 +24,16 @@ func (acc Account) isDelegated() bool {
 	return acc.feePayer != nil
 }
 
+func (acc Account) txOpts() *ablbind.TransactOpts {
+	return acc.account
+}
+
 func (acc *Account) SetAccount(account *ablbind.TransactOpts) {
 	acc.account = account
 }
 
-func (acc *Account) SetFeePayer(ctx context.Context, feePayerUrl string) error {
-	return acc.feePayer.SetFeePayer(ctx, feePayerUrl)
+func (acc *Account) SetFeePayer(feePayerUrl string) error {
+	return acc.feePayer.SetEndpoint(feePayerUrl)
 }
 
 func (acc Account) SendTransaction(ctx context.Context, tx *types.Transaction) error {
@@ -44,19 +48,21 @@ func NewWalletAccount(account accounts.Account, wallet accounts.Wallet) Account 
 	return Account{account: ablbind.NewWalletTransactor(account, wallet, nil)}
 }
 
-func newAccountWithFeePayer(ctx context.Context, acc Account, rawFeePayerUrl string) (Account, error) {
-	client := &feePayerClient{client: http.DefaultClient}
-	if err := client.SetFeePayer(ctx, rawFeePayerUrl); err != nil {
+func newAccountWithFeePayer(acc Account, rawFeePayerUrl string) (Account, error) {
+	feePayerClient := &FeePayerClient{client: http.DefaultClient}
+	err := feePayerClient.SetEndpoint(rawFeePayerUrl)
+	if err != nil {
 		return Account{}, err
 	}
-	acc.feePayer = client
+
+	acc.feePayer = feePayerClient
 	return acc, nil
 }
 
-func NewKeyedAccountWithFeePayer(ctx context.Context, key *ecdsa.PrivateKey, feePayerUrl string) (Account, error) {
-	return newAccountWithFeePayer(ctx, NewKeyedAccount(key), feePayerUrl)
+func NewKeyedAccountWithFeePayer(key *ecdsa.PrivateKey, feePayerUrl string) (Account, error) {
+	return newAccountWithFeePayer(NewKeyedAccount(key), feePayerUrl)
 }
 
-func NewWalletAccountWithFeePayer(ctx context.Context, account accounts.Account, wallet accounts.Wallet, feePayerUrl string) (Account, error) {
-	return newAccountWithFeePayer(ctx, NewWalletAccount(account, wallet), feePayerUrl)
+func NewWalletAccountWithFeePayer(account accounts.Account, wallet accounts.Wallet, feePayerUrl string) (Account, error) {
+	return newAccountWithFeePayer(NewWalletAccount(account, wallet), feePayerUrl)
 }
