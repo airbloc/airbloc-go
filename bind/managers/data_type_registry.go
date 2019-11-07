@@ -53,7 +53,7 @@ func NewDataTypeRegistryManager(backend ablbind.ContractBackend) (DataTypeRegist
 
 	return &dataTypeRegistryManager{
 		DataTypeRegistryContract: contract,
-		client: client,
+		client: backend,
 		log:    logger.New("data_type_registry"),
 	}, nil
 }
