@@ -18,9 +18,9 @@ import (
 
 // ConsentsABI is the input ABI used to generate the binding from.
 const (
-	ConsentsAddress   = "0xcf2D255768b56F4c943839438C56baD8Ab92a443"
-	ConsentsTxHash    = "0xbe771a5c8263b5c5dd827c95f02f930c1baaa83910b576a76eb9b593845e6709"
-	ConsentsCreatedAt = "0x000000000000000000000000000000000000000000000000000000000063b9ef"
+	ConsentsAddress   = "0x98541077D2218414531129023dA6fCc6F9B1B32c"
+	ConsentsTxHash    = "0x98a8ab09db21e59af91a4257ec3b015d8fca34ec6ea02fb0a1e44df8bfd4ed4e"
+	ConsentsCreatedAt = "0x000000000000000000000000000000000000000000000000000000000082388a"
 	ConsentsABI       = "[{\"inputs\":[{\"name\":\"accountReg\",\"type\":\"address\"},{\"name\":\"appReg\",\"type\":\"address\"},{\"name\":\"controllerReg\",\"type\":\"address\"},{\"name\":\"dataTypeReg\",\"type\":\"address\"}],\"payable\":false,\"signature\":\"constructor\",\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"action\",\"type\":\"uint8\"},{\"indexed\":true,\"name\":\"userId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"appAddr\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"appName\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"dataType\",\"type\":\"string\"},{\"indexed\":false,\"name\":\"allowed\",\"type\":\"bool\"}],\"name\":\"Consented\",\"signature\":\"0x8599a1c756b9cd519b80b172f29a03b19082bf7df728da8456cbcab9eeaba8e3\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allow\",\"type\":\"bool\"}],\"name\":\"consentData\",\"type\":\"tuple\"}],\"name\":\"consent\",\"outputs\":[],\"payable\":false,\"signature\":\"0xcd4dc804\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allow\",\"type\":\"bool\"}],\"name\":\"consentData\",\"type\":\"tuple[]\"}],\"name\":\"consentMany\",\"outputs\":[],\"payable\":false,\"signature\":\"0xdd43ad05\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allow\",\"type\":\"bool\"}],\"name\":\"consentData\",\"type\":\"tuple\"}],\"name\":\"consentByController\",\"outputs\":[],\"payable\":false,\"signature\":\"0xf573f89a\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allow\",\"type\":\"bool\"}],\"name\":\"consentData\",\"type\":\"tuple[]\"}],\"name\":\"consentManyByController\",\"outputs\":[],\"payable\":false,\"signature\":\"0xae6d5034\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allow\",\"type\":\"bool\"}],\"name\":\"consentData\",\"type\":\"tuple\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"modifyConsentByController\",\"outputs\":[],\"payable\":false,\"signature\":\"0x0bfec389\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"components\":[{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"allow\",\"type\":\"bool\"}],\"name\":\"consentData\",\"type\":\"tuple[]\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"modifyConsentManyByController\",\"outputs\":[],\"payable\":false,\"signature\":\"0xe031b1cf\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"}],\"name\":\"isAllowed\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"signature\":\"0x50615985\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"userId\",\"type\":\"bytes8\"},{\"name\":\"appName\",\"type\":\"string\"},{\"name\":\"action\",\"type\":\"uint8\"},{\"name\":\"dataType\",\"type\":\"string\"},{\"name\":\"blockNumber\",\"type\":\"uint256\"}],\"name\":\"isAllowedAt\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"signature\":\"0x7cdda67c\",\"stateMutability\":\"view\",\"type\":\"function\"}]"
 )
 
@@ -139,7 +139,7 @@ func (_Consents *consentsTransactor) Consent(
 	appName string,
 	consentData types.ConsentData,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _Consents.contract.Transact(_Consents.backend.Transactor(ctx, opts), "consent", appName, consentData)
+	tx, err := _Consents.contract.Transact(opts, "consent", appName, consentData)
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +156,7 @@ func (_Consents *consentsTransactor) ConsentByController(
 	appName string,
 	consentData types.ConsentData,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _Consents.contract.Transact(_Consents.backend.Transactor(ctx, opts), "consentByController", userId, appName, consentData)
+	tx, err := _Consents.contract.Transact(opts, "consentByController", userId, appName, consentData)
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +172,7 @@ func (_Consents *consentsTransactor) ConsentMany(
 	appName string,
 	consentData []types.ConsentData,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _Consents.contract.Transact(_Consents.backend.Transactor(ctx, opts), "consentMany", appName, consentData)
+	tx, err := _Consents.contract.Transact(opts, "consentMany", appName, consentData)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +189,7 @@ func (_Consents *consentsTransactor) ConsentManyByController(
 	appName string,
 	consentData []types.ConsentData,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _Consents.contract.Transact(_Consents.backend.Transactor(ctx, opts), "consentManyByController", userId, appName, consentData)
+	tx, err := _Consents.contract.Transact(opts, "consentManyByController", userId, appName, consentData)
 	if err != nil {
 		return nil, err
 	}
@@ -207,7 +207,7 @@ func (_Consents *consentsTransactor) ModifyConsentByController(
 	consentData types.ConsentData,
 	passwordSignature []byte,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _Consents.contract.Transact(_Consents.backend.Transactor(ctx, opts), "modifyConsentByController", userId, appName, consentData, passwordSignature)
+	tx, err := _Consents.contract.Transact(opts, "modifyConsentByController", userId, appName, consentData, passwordSignature)
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +225,7 @@ func (_Consents *consentsTransactor) ModifyConsentManyByController(
 	consentData []types.ConsentData,
 	passwordSignature []byte,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _Consents.contract.Transact(_Consents.backend.Transactor(ctx, opts), "modifyConsentManyByController", userId, appName, consentData, passwordSignature)
+	tx, err := _Consents.contract.Transact(opts, "modifyConsentManyByController", userId, appName, consentData, passwordSignature)
 	if err != nil {
 		return nil, err
 	}
@@ -435,7 +435,7 @@ func (_Consents *consentsEvents) ParseConsented(log chainTypes.Log) (*ConsentsCo
 	return evt, nil
 }
 
-// FilterConsented parses the event from given transaction receipt.
+// ParseConsentedFromReceipt parses the event from given transaction receipt.
 //
 // Solidity: event Consented(uint8 indexed action, bytes8 indexed userId, address indexed appAddr, string appName, string dataType, bool allowed)
 func (_Consents *consentsEvents) ParseConsentedFromReceipt(receipt *chainTypes.Receipt) ([]*ConsentsConsented, error) {
@@ -467,7 +467,7 @@ type ConsentsContract struct {
 }
 
 func NewConsentsContract(backend ablbind.ContractBackend) (*ConsentsContract, error) {
-	deployment, exist := backend.Deployment("Consents")
+	deployment, exist := backend.GetDeployment("Consents")
 	if !exist {
 		evmABI, err := abi.JSON(strings.NewReader(ConsentsABI))
 		if err != nil {
