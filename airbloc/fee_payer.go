@@ -79,7 +79,9 @@ func (fpc feePayerClient) Address(ctx context.Context) (common.Address, error) {
 		return common.Address{}, nil
 	}
 
-	var resp feePayer
+	var resp struct {
+		Address common.Address `json:"address"`
+	}
 	if err = json.Unmarshal(body, &resp); err != nil {
 		return common.Address{}, errors.Wrap(err, "marshal response body")
 	}
