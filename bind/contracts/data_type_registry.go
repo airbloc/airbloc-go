@@ -1,11 +1,15 @@
 package contracts
 
 import (
+	"context"
 	"errors"
+	"math/big"
+	"strings"
 
-	ablbind "github.com/airbloc/airbloc-go/shared/adapter"
-	types "github.com/airbloc/airbloc-go/shared/adapter/types"
+	ablbind "github.com/airbloc/airbloc-go/bind"
+	types "github.com/airbloc/airbloc-go/bind/types"
 	platform "github.com/klaytn/klaytn"
+	abi "github.com/klaytn/klaytn/accounts/abi"
 	bind "github.com/klaytn/klaytn/accounts/abi/bind"
 	chainTypes "github.com/klaytn/klaytn/blockchain/types"
 	common "github.com/klaytn/klaytn/common"
@@ -21,80 +25,174 @@ const (
 )
 
 // DataTypeRegistryCaller is an auto generated read-only Go binding around an Ethereum contract.
-type DataTypeRegistryCaller struct {
+type DataTypeRegistryCaller interface {
+	Exists(
+		ctx context.Context,
+		name string,
+	) (
+		bool,
+		error,
+	)
+	Get(
+		ctx context.Context,
+		name string,
+	) (
+		types.DataType,
+		error,
+	)
+	IsOwner(
+		ctx context.Context,
+		name string,
+		owner common.Address,
+	) (
+		bool,
+		error,
+	)
+}
+
+type dataTypeRegistryCaller struct {
 	contract *ablbind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-func NewDataTypeRegistryCaller(contract *ablbind.BoundContract) DataTypeRegistryCaller {
-	return DataTypeRegistryCaller{contract: contract}
-}
-
-// DataTypeRegistryTransactor is an auto generated write-only Go binding around an Ethereum contract.
-type DataTypeRegistryTransactor struct {
-	contract *ablbind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-func NewDataTypeRegistryTransactor(contract *ablbind.BoundContract) DataTypeRegistryTransactor {
-	return DataTypeRegistryTransactor{contract: contract}
-}
-
-// DataTypeRegistryFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type DataTypeRegistryFilterer struct {
-	contract *ablbind.BoundContract // Generic contract wrapper for the low level calls
-}
-
-func NewDataTypeRegistryFilterer(contract *ablbind.BoundContract) DataTypeRegistryFilterer {
-	return DataTypeRegistryFilterer{contract: contract}
 }
 
 // Exists is a free data retrieval call binding the contract method 0x261a323e.
 //
 // Solidity: function exists(string name) constant returns(bool)
-func (_DataTypeRegistry *DataTypeRegistryCaller) Exists(opts *bind.CallOpts, name string) (bool, error) {
+func (_DataTypeRegistry *dataTypeRegistryCaller) Exists(ctx context.Context, name string) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
 	out := ret0
-	err := _DataTypeRegistry.contract.Call(opts, out, "exists", name)
+
+	err := _DataTypeRegistry.contract.Call(&bind.CallOpts{Context: ctx}, out, "exists", name)
 	return *ret0, err
 }
 
 // Get is a free data retrieval call binding the contract method 0x693ec85e.
 //
 // Solidity: function get(string name) constant returns(types.DataType)
-func (_DataTypeRegistry *DataTypeRegistryCaller) Get(opts *bind.CallOpts, name string) (types.DataType, error) {
+func (_DataTypeRegistry *dataTypeRegistryCaller) Get(ctx context.Context, name string) (types.DataType, error) {
 	var (
 		ret0 = new(types.DataType)
 	)
 	out := ret0
-	err := _DataTypeRegistry.contract.Call(opts, out, "get", name)
+
+	err := _DataTypeRegistry.contract.Call(&bind.CallOpts{Context: ctx}, out, "get", name)
 	return *ret0, err
 }
 
 // IsOwner is a free data retrieval call binding the contract method 0xbde1eee7.
 //
 // Solidity: function isOwner(string name, address owner) constant returns(bool)
-func (_DataTypeRegistry *DataTypeRegistryCaller) IsOwner(opts *bind.CallOpts, name string, owner common.Address) (bool, error) {
+func (_DataTypeRegistry *dataTypeRegistryCaller) IsOwner(ctx context.Context, name string, owner common.Address) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
 	out := ret0
-	err := _DataTypeRegistry.contract.Call(opts, out, "isOwner", name, owner)
+
+	err := _DataTypeRegistry.contract.Call(&bind.CallOpts{Context: ctx}, out, "isOwner", name, owner)
 	return *ret0, err
+}
+
+// DataTypeRegistryTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type DataTypeRegistryTransactor interface {
+	Register(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		name string,
+		schemaHash common.Hash,
+	) (*chainTypes.Receipt, error)
+	Unregister(
+		ctx context.Context,
+		opts *ablbind.TransactOpts,
+		name string,
+	) (*chainTypes.Receipt, error)
+}
+
+type dataTypeRegistryTransactor struct {
+	contract *ablbind.BoundContract // Generic contract wrapper for the low level calls
+	backend  ablbind.ContractBackend
 }
 
 // Register is a paid mutator transaction binding the contract method 0x656afdee.
 //
 // Solidity: function register(string name, bytes32 schemaHash) returns()
-func (_DataTypeRegistry *DataTypeRegistryTransactor) Register(opts *ablbind.TransactOpts, name string, schemaHash common.Hash) (*chainTypes.Transaction, error) {
-	return _DataTypeRegistry.contract.Transact(opts, "register", name, schemaHash)
+func (_DataTypeRegistry *dataTypeRegistryTransactor) Register(
+	ctx context.Context,
+	opts *ablbind.TransactOpts,
+	name string,
+	schemaHash common.Hash,
+) (*chainTypes.Receipt, error) {
+	tx, err := _DataTypeRegistry.contract.Transact(_DataTypeRegistry.backend.Transactor(ctx, opts), "register", name, schemaHash)
+	if err != nil {
+		return nil, err
+	}
+	return _DataTypeRegistry.backend.WaitMined(ctx, tx)
 }
 
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
 //
 // Solidity: function unregister(string name) returns()
-func (_DataTypeRegistry *DataTypeRegistryTransactor) Unregister(opts *ablbind.TransactOpts, name string) (*chainTypes.Transaction, error) {
-	return _DataTypeRegistry.contract.Transact(opts, "unregister", name)
+func (_DataTypeRegistry *dataTypeRegistryTransactor) Unregister(
+	ctx context.Context,
+	opts *ablbind.TransactOpts,
+	name string,
+) (*chainTypes.Receipt, error) {
+	tx, err := _DataTypeRegistry.contract.Transact(_DataTypeRegistry.backend.Transactor(ctx, opts), "unregister", name)
+	if err != nil {
+		return nil, err
+	}
+	return _DataTypeRegistry.backend.WaitMined(ctx, tx)
+}
+
+type DataTypeRegistryEvents interface {
+	DataTypeRegistryEventFilterer
+	DataTypeRegistryEventParser
+	DataTypeRegistryEventWatcher
+}
+
+// DataTypeRegistryFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type DataTypeRegistryEventFilterer interface {
+	// Filterer
+	FilterRegistration(
+		opts *bind.FilterOpts,
+
+	) (ablbind.EventIterator, error)
+
+	// Filterer
+	FilterUnregistration(
+		opts *bind.FilterOpts,
+
+	) (ablbind.EventIterator, error)
+}
+
+type DataTypeRegistryEventParser interface {
+	// Parser
+	ParseRegistration(log chainTypes.Log) (*DataTypeRegistryRegistration, error)
+	ParseRegistrationFromReceipt(receipt *chainTypes.Receipt) ([]*DataTypeRegistryRegistration, error)
+
+	// Parser
+	ParseUnregistration(log chainTypes.Log) (*DataTypeRegistryUnregistration, error)
+	ParseUnregistrationFromReceipt(receipt *chainTypes.Receipt) ([]*DataTypeRegistryUnregistration, error)
+}
+
+type DataTypeRegistryEventWatcher interface {
+	// Watcher
+	WatchRegistration(
+		opts *bind.WatchOpts,
+		sink chan<- *DataTypeRegistryRegistration,
+
+	) (event.Subscription, error)
+
+	// Watcher
+	WatchUnregistration(
+		opts *bind.WatchOpts,
+		sink chan<- *DataTypeRegistryUnregistration,
+
+	) (event.Subscription, error)
+}
+
+type dataTypeRegistryEvents struct {
+	contract *ablbind.BoundContract // Generic contract wrapper for the low level calls
 }
 
 // DataTypeRegistryRegistrationIterator is returned from FilterRegistration and is used to iterate over the raw logs and unpacked data for Registration events raised by the DataTypeRegistry contract.
@@ -178,7 +276,7 @@ type DataTypeRegistryRegistration struct {
 // FilterRegistration is a free log retrieval operation binding the contract event 0xd510136a132b28d5bccd27cc4dd52d556d9982ab168ba54b1e775d4d0f1ca948.
 //
 // Solidity: event Registration(string name)
-func (_DataTypeRegistry *DataTypeRegistryFilterer) FilterRegistration(opts *bind.FilterOpts) (ablbind.EventIterator, error) {
+func (_DataTypeRegistry *dataTypeRegistryEvents) FilterRegistration(opts *bind.FilterOpts) (ablbind.EventIterator, error) {
 
 	logs, sub, err := _DataTypeRegistry.contract.FilterLogs(opts, "Registration")
 	if err != nil {
@@ -190,7 +288,7 @@ func (_DataTypeRegistry *DataTypeRegistryFilterer) FilterRegistration(opts *bind
 // WatchRegistration is a free log subscription operation binding the contract event 0xd510136a132b28d5bccd27cc4dd52d556d9982ab168ba54b1e775d4d0f1ca948.
 //
 // Solidity: event Registration(string name)
-func (_DataTypeRegistry *DataTypeRegistryFilterer) WatchRegistration(opts *bind.WatchOpts, sink chan<- *DataTypeRegistryRegistration) (event.Subscription, error) {
+func (_DataTypeRegistry *dataTypeRegistryEvents) WatchRegistration(opts *bind.WatchOpts, sink chan<- *DataTypeRegistryRegistration) (event.Subscription, error) {
 
 	logs, sub, err := _DataTypeRegistry.contract.WatchLogs(opts, "Registration")
 	if err != nil {
@@ -227,7 +325,7 @@ func (_DataTypeRegistry *DataTypeRegistryFilterer) WatchRegistration(opts *bind.
 // ParseRegistration is a log parse operation binding the contract event 0xd510136a132b28d5bccd27cc4dd52d556d9982ab168ba54b1e775d4d0f1ca948.
 //
 // Solidity: event Registration(string name)
-func (_DataTypeRegistry *DataTypeRegistryFilterer) ParseRegistration(log chainTypes.Log) (*DataTypeRegistryRegistration, error) {
+func (_DataTypeRegistry *dataTypeRegistryEvents) ParseRegistration(log chainTypes.Log) (*DataTypeRegistryRegistration, error) {
 	evt := new(DataTypeRegistryRegistration)
 	if err := _DataTypeRegistry.contract.UnpackLog(evt, "Registration", log); err != nil {
 		return nil, err
@@ -238,7 +336,7 @@ func (_DataTypeRegistry *DataTypeRegistryFilterer) ParseRegistration(log chainTy
 // FilterRegistration parses the event from given transaction receipt.
 //
 // Solidity: event Registration(string name)
-func (_DataTypeRegistry *DataTypeRegistryFilterer) ParseRegistrationFromReceipt(receipt *chainTypes.Receipt) ([]*DataTypeRegistryRegistration, error) {
+func (_DataTypeRegistry *dataTypeRegistryEvents) ParseRegistrationFromReceipt(receipt *chainTypes.Receipt) ([]*DataTypeRegistryRegistration, error) {
 	var evts []*DataTypeRegistryRegistration
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0xd510136a132b28d5bccd27cc4dd52d556d9982ab168ba54b1e775d4d0f1ca948") {
@@ -337,7 +435,7 @@ type DataTypeRegistryUnregistration struct {
 // FilterUnregistration is a free log retrieval operation binding the contract event 0x2c7e9e18beb0594fa2ccaf8412bbe719d47f3c1efb1349e2ba03c1a3e4f64c83.
 //
 // Solidity: event Unregistration(string name)
-func (_DataTypeRegistry *DataTypeRegistryFilterer) FilterUnregistration(opts *bind.FilterOpts) (ablbind.EventIterator, error) {
+func (_DataTypeRegistry *dataTypeRegistryEvents) FilterUnregistration(opts *bind.FilterOpts) (ablbind.EventIterator, error) {
 
 	logs, sub, err := _DataTypeRegistry.contract.FilterLogs(opts, "Unregistration")
 	if err != nil {
@@ -349,7 +447,7 @@ func (_DataTypeRegistry *DataTypeRegistryFilterer) FilterUnregistration(opts *bi
 // WatchUnregistration is a free log subscription operation binding the contract event 0x2c7e9e18beb0594fa2ccaf8412bbe719d47f3c1efb1349e2ba03c1a3e4f64c83.
 //
 // Solidity: event Unregistration(string name)
-func (_DataTypeRegistry *DataTypeRegistryFilterer) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *DataTypeRegistryUnregistration) (event.Subscription, error) {
+func (_DataTypeRegistry *dataTypeRegistryEvents) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *DataTypeRegistryUnregistration) (event.Subscription, error) {
 
 	logs, sub, err := _DataTypeRegistry.contract.WatchLogs(opts, "Unregistration")
 	if err != nil {
@@ -386,7 +484,7 @@ func (_DataTypeRegistry *DataTypeRegistryFilterer) WatchUnregistration(opts *bin
 // ParseUnregistration is a log parse operation binding the contract event 0x2c7e9e18beb0594fa2ccaf8412bbe719d47f3c1efb1349e2ba03c1a3e4f64c83.
 //
 // Solidity: event Unregistration(string name)
-func (_DataTypeRegistry *DataTypeRegistryFilterer) ParseUnregistration(log chainTypes.Log) (*DataTypeRegistryUnregistration, error) {
+func (_DataTypeRegistry *dataTypeRegistryEvents) ParseUnregistration(log chainTypes.Log) (*DataTypeRegistryUnregistration, error) {
 	evt := new(DataTypeRegistryUnregistration)
 	if err := _DataTypeRegistry.contract.UnpackLog(evt, "Unregistration", log); err != nil {
 		return nil, err
@@ -397,7 +495,7 @@ func (_DataTypeRegistry *DataTypeRegistryFilterer) ParseUnregistration(log chain
 // FilterUnregistration parses the event from given transaction receipt.
 //
 // Solidity: event Unregistration(string name)
-func (_DataTypeRegistry *DataTypeRegistryFilterer) ParseUnregistrationFromReceipt(receipt *chainTypes.Receipt) ([]*DataTypeRegistryUnregistration, error) {
+func (_DataTypeRegistry *dataTypeRegistryEvents) ParseUnregistrationFromReceipt(receipt *chainTypes.Receipt) ([]*DataTypeRegistryUnregistration, error) {
 	var evts []*DataTypeRegistryUnregistration
 	for _, log := range receipt.Logs {
 		if log.Topics[0] == common.HexToHash("0x2c7e9e18beb0594fa2ccaf8412bbe719d47f3c1efb1349e2ba03c1a3e4f64c83") {
@@ -413,4 +511,44 @@ func (_DataTypeRegistry *DataTypeRegistryFilterer) ParseUnregistrationFromReceip
 		return nil, errors.New("Unregistration event not found")
 	}
 	return evts, nil
+}
+
+// Manager is contract wrapper struct
+type DataTypeRegistryContract struct {
+	ablbind.Deployment
+	client ablbind.ContractBackend
+
+	DataTypeRegistryCaller
+	DataTypeRegistryTransactor
+	DataTypeRegistryEvents
+}
+
+func NewDataTypeRegistryContract(backend ablbind.ContractBackend) (*DataTypeRegistryContract, error) {
+	deployment, exist := backend.Deployment("DataTypeRegistry")
+	if !exist {
+		evmABI, err := abi.JSON(strings.NewReader(DataTypeRegistryABI))
+		if err != nil {
+			return nil, err
+		}
+
+		deployment = ablbind.NewDeployment(
+			common.HexToAddress(DataTypeRegistryAddress),
+			common.HexToHash(DataTypeRegistryTxHash),
+			new(big.Int).SetBytes(common.HexToHash(DataTypeRegistryCreatedAt).Bytes()),
+			evmABI,
+		)
+	}
+
+	base := ablbind.NewBoundContract(deployment.Address(), deployment.ParsedABI, "DataTypeRegistry", backend)
+
+	contract := &DataTypeRegistryContract{
+		Deployment: deployment,
+		client:     backend,
+
+		DataTypeRegistryCaller:     &dataTypeRegistryCaller{base},
+		DataTypeRegistryTransactor: &dataTypeRegistryTransactor{base, backend},
+		DataTypeRegistryEvents:     &dataTypeRegistryEvents{base},
+	}
+
+	return contract, nil
 }

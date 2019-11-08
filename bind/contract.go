@@ -1,6 +1,7 @@
 package bind
 
 import (
+	"github.com/airbloc/logger"
 	"github.com/klaytn/klaytn/accounts/abi"
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	"github.com/klaytn/klaytn/blockchain/types"
@@ -12,23 +13,42 @@ type BoundContract struct {
 	address common.Address
 	abi     abi.ABI
 	client  ContractBackend
+	log     *logger.Logger
 	*bind.BoundContract
 }
 
 func NewBoundContract(
 	address common.Address,
 	abi abi.ABI,
+	name string,
 	backend ContractBackend,
 ) *BoundContract {
 	return &BoundContract{
 		address:       address,
 		abi:           abi,
 		client:        backend,
+		log:           logger.New(name),
 		BoundContract: bind.NewBoundContract(address, abi, backend, backend, backend),
 	}
 }
 
+func (c *BoundContract) logTx(method string, params ...interface{}) {
+	abiMethod := c.abi.Methods[method]
+
+	attrs := make(logger.Attrs)
+	for index := range abiMethod.Inputs {
+		attrs[abiMethod.Inputs[index].Name] = params[index]
+	}
+	c.log.Info(abiMethod.Sig(), attrs)
+}
+
+func (c *BoundContract) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	c.logTx(method, params...)
+	return c.BoundContract.Call(opts, result, method, params)
+}
+
 func (c *BoundContract) Transact(opts *TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	c.logTx(method, params...)
 	input, err := c.abi.Pack(method, params...)
 	if err != nil {
 		return nil, err
