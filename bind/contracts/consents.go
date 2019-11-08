@@ -144,11 +144,7 @@ func (_Consents *consentsTransactor) Consent(
 	}
 	opts.Context = ctx
 
-	tx, err := _Consents.contract.Transact(opts, "consent", appName, consentData)
-	if err != nil {
-		return nil, err
-	}
-	return _Consents.backend.WaitMined(ctx, tx)
+	return _Consents.contract.Transact(opts, "consent", appName, consentData)
 }
 
 // ConsentByController is a paid mutator transaction binding the contract method 0xf573f89a.
@@ -166,11 +162,7 @@ func (_Consents *consentsTransactor) ConsentByController(
 	}
 	opts.Context = ctx
 
-	tx, err := _Consents.contract.Transact(opts, "consentByController", userId, appName, consentData)
-	if err != nil {
-		return nil, err
-	}
-	return _Consents.backend.WaitMined(ctx, tx)
+	return _Consents.contract.Transact(opts, "consentByController", userId, appName, consentData)
 }
 
 // ConsentMany is a paid mutator transaction binding the contract method 0xdd43ad05.
@@ -187,11 +179,7 @@ func (_Consents *consentsTransactor) ConsentMany(
 	}
 	opts.Context = ctx
 
-	tx, err := _Consents.contract.Transact(opts, "consentMany", appName, consentData)
-	if err != nil {
-		return nil, err
-	}
-	return _Consents.backend.WaitMined(ctx, tx)
+	return _Consents.contract.Transact(opts, "consentMany", appName, consentData)
 }
 
 // ConsentManyByController is a paid mutator transaction binding the contract method 0xae6d5034.
@@ -209,11 +197,7 @@ func (_Consents *consentsTransactor) ConsentManyByController(
 	}
 	opts.Context = ctx
 
-	tx, err := _Consents.contract.Transact(opts, "consentManyByController", userId, appName, consentData)
-	if err != nil {
-		return nil, err
-	}
-	return _Consents.backend.WaitMined(ctx, tx)
+	return _Consents.contract.Transact(opts, "consentManyByController", userId, appName, consentData)
 }
 
 // ModifyConsentByController is a paid mutator transaction binding the contract method 0x0bfec389.
@@ -232,11 +216,7 @@ func (_Consents *consentsTransactor) ModifyConsentByController(
 	}
 	opts.Context = ctx
 
-	tx, err := _Consents.contract.Transact(opts, "modifyConsentByController", userId, appName, consentData, passwordSignature)
-	if err != nil {
-		return nil, err
-	}
-	return _Consents.backend.WaitMined(ctx, tx)
+	return _Consents.contract.Transact(opts, "modifyConsentByController", userId, appName, consentData, passwordSignature)
 }
 
 // ModifyConsentManyByController is a paid mutator transaction binding the contract method 0xe031b1cf.
@@ -255,11 +235,7 @@ func (_Consents *consentsTransactor) ModifyConsentManyByController(
 	}
 	opts.Context = ctx
 
-	tx, err := _Consents.contract.Transact(opts, "modifyConsentManyByController", userId, appName, consentData, passwordSignature)
-	if err != nil {
-		return nil, err
-	}
-	return _Consents.backend.WaitMined(ctx, tx)
+	return _Consents.contract.Transact(opts, "modifyConsentManyByController", userId, appName, consentData, passwordSignature)
 }
 
 type ConsentsEvents interface {

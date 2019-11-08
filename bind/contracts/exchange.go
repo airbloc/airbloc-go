@@ -156,11 +156,7 @@ func (_Exchange *exchangeTransactor) AddDataIds(
 	}
 	opts.Context = ctx
 
-	tx, err := _Exchange.contract.Transact(opts, "addDataIds", offerId, dataIds)
-	if err != nil {
-		return nil, err
-	}
-	return _Exchange.backend.WaitMined(ctx, tx)
+	return _Exchange.contract.Transact(opts, "addDataIds", offerId, dataIds)
 }
 
 // Cancel is a paid mutator transaction binding the contract method 0xb2d9ba39.
@@ -176,11 +172,7 @@ func (_Exchange *exchangeTransactor) Cancel(
 	}
 	opts.Context = ctx
 
-	tx, err := _Exchange.contract.Transact(opts, "cancel", offerId)
-	if err != nil {
-		return nil, err
-	}
-	return _Exchange.backend.WaitMined(ctx, tx)
+	return _Exchange.contract.Transact(opts, "cancel", offerId)
 }
 
 // Order is a paid mutator transaction binding the contract method 0x0cf833fb.
@@ -196,11 +188,7 @@ func (_Exchange *exchangeTransactor) Order(
 	}
 	opts.Context = ctx
 
-	tx, err := _Exchange.contract.Transact(opts, "order", offerId)
-	if err != nil {
-		return nil, err
-	}
-	return _Exchange.backend.WaitMined(ctx, tx)
+	return _Exchange.contract.Transact(opts, "order", offerId)
 }
 
 // Prepare is a paid mutator transaction binding the contract method 0x77e61c33.
@@ -221,11 +209,7 @@ func (_Exchange *exchangeTransactor) Prepare(
 	}
 	opts.Context = ctx
 
-	tx, err := _Exchange.contract.Transact(opts, "prepare", provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
-	if err != nil {
-		return nil, err
-	}
-	return _Exchange.backend.WaitMined(ctx, tx)
+	return _Exchange.contract.Transact(opts, "prepare", provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
 }
 
 // Reject is a paid mutator transaction binding the contract method 0x6622e153.
@@ -241,11 +225,7 @@ func (_Exchange *exchangeTransactor) Reject(
 	}
 	opts.Context = ctx
 
-	tx, err := _Exchange.contract.Transact(opts, "reject", offerId)
-	if err != nil {
-		return nil, err
-	}
-	return _Exchange.backend.WaitMined(ctx, tx)
+	return _Exchange.contract.Transact(opts, "reject", offerId)
 }
 
 // Settle is a paid mutator transaction binding the contract method 0xa60d9b5f.
@@ -261,11 +241,7 @@ func (_Exchange *exchangeTransactor) Settle(
 	}
 	opts.Context = ctx
 
-	tx, err := _Exchange.contract.Transact(opts, "settle", offerId)
-	if err != nil {
-		return nil, err
-	}
-	return _Exchange.backend.WaitMined(ctx, tx)
+	return _Exchange.contract.Transact(opts, "settle", offerId)
 }
 
 type ExchangeEvents interface {

@@ -2,6 +2,7 @@ package bind
 
 import (
 	"github.com/airbloc/logger"
+
 	"github.com/klaytn/klaytn/accounts/abi"
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	"github.com/klaytn/klaytn/blockchain/types"
@@ -28,7 +29,7 @@ func NewBoundContract(
 		abi:           abi,
 		client:        backend,
 		log:           logger.New(name),
-		BoundContract: bind.NewBoundContract(address, abi, backend, backend, backend),
+		BoundContract: bind.NewBoundContract(address, abi, backend, backend.Client(), backend),
 	}
 }
 
@@ -47,7 +48,7 @@ func (c *BoundContract) Call(opts *bind.CallOpts, result interface{}, method str
 	return c.BoundContract.Call(opts, result, method, params)
 }
 
-func (c *BoundContract) Transact(opts *TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+func (c *BoundContract) Transact(opts *TransactOpts, method string, params ...interface{}) (*types.Receipt, error) {
 	c.logTx(method, params...)
 	input, err := c.abi.Pack(method, params...)
 	if err != nil {
@@ -56,11 +57,11 @@ func (c *BoundContract) Transact(opts *TransactOpts, method string, params ...in
 	return c.transact(opts, &c.address, input)
 }
 
-func (c *BoundContract) Transfer(opts *TransactOpts) (*types.Transaction, error) {
+func (c *BoundContract) Transfer(opts *TransactOpts) (*types.Receipt, error) {
 	return c.transact(opts, &c.address, nil)
 }
 
-func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, input []byte) (*types.Transaction, error) {
+func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, input []byte) (*types.Receipt, error) {
 	if opts == nil {
 		opts = &TransactOpts{}
 	}
@@ -82,8 +83,5 @@ func (c *BoundContract) transact(opts *TransactOpts, contract *common.Address, i
 		return nil, errors.Wrap(err, "signing transaction")
 	}
 
-	if err = c.client.SendTransaction(opts.Context, signedTx); err != nil {
-		return nil, err
-	}
-	return signedTx, nil
+	return c.client.SendTransaction(opts.Context, signedTx)
 }

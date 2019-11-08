@@ -131,11 +131,7 @@ func (_AppRegistry *appRegistryTransactor) Register(
 	}
 	opts.Context = ctx
 
-	tx, err := _AppRegistry.contract.Transact(opts, "register", appName)
-	if err != nil {
-		return nil, err
-	}
-	return _AppRegistry.backend.WaitMined(ctx, tx)
+	return _AppRegistry.contract.Transact(opts, "register", appName)
 }
 
 // TransferAppOwner is a paid mutator transaction binding the contract method 0x1a9dff9f.
@@ -152,11 +148,7 @@ func (_AppRegistry *appRegistryTransactor) TransferAppOwner(
 	}
 	opts.Context = ctx
 
-	tx, err := _AppRegistry.contract.Transact(opts, "transferAppOwner", appName, newOwner)
-	if err != nil {
-		return nil, err
-	}
-	return _AppRegistry.backend.WaitMined(ctx, tx)
+	return _AppRegistry.contract.Transact(opts, "transferAppOwner", appName, newOwner)
 }
 
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
@@ -172,11 +164,7 @@ func (_AppRegistry *appRegistryTransactor) Unregister(
 	}
 	opts.Context = ctx
 
-	tx, err := _AppRegistry.contract.Transact(opts, "unregister", appName)
-	if err != nil {
-		return nil, err
-	}
-	return _AppRegistry.backend.WaitMined(ctx, tx)
+	return _AppRegistry.contract.Transact(opts, "unregister", appName)
 }
 
 type AppRegistryEvents interface {

@@ -27,11 +27,8 @@ type TransactOpts struct {
 	Context  context.Context
 }
 
-func (opts *TransactOpts) MakeTransactionData(client ContractBackend, contract *common.Address, input []byte) (*types.TxType, map[types.TxValueKeyType]interface{}, error) {
+func (opts *TransactOpts) MakeTransactionData(client ContractBackend, contract *common.Address, input []byte) (types.TxType, map[types.TxValueKeyType]interface{}, error) {
 	var err error
-	if opts == nil {
-		return nil, nil, errors.New("nil transcatOpts")
-	}
 
 	delegated := opts.FeePayer != (common.Address{})
 	contractExec := input != nil
@@ -56,7 +53,7 @@ func (opts *TransactOpts) MakeTransactionData(client ContractBackend, contract *
 	// nonce
 	nonce, err := client.PendingNonceAt(opts.Context, opts.From)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to retrieve account nonce: %v", err)
+		return types.TxType(0), nil, fmt.Errorf("failed to retrieve account nonce: %v", err)
 	}
 
 	// gas price
@@ -64,16 +61,16 @@ func (opts *TransactOpts) MakeTransactionData(client ContractBackend, contract *
 	if gasPrice == nil {
 		gasPrice, err = client.SuggestGasPrice(opts.Context)
 		if err != nil {
-			return nil, nil, fmt.Errorf("failed to suggest gas price: %v", err)
+			return types.TxType(0), nil, fmt.Errorf("failed to suggest gas price: %v", err)
 		}
 	}
 
 	// gas limit
 	if contract != nil {
 		if code, err := client.PendingCodeAt(opts.Context, *contract); err != nil {
-			return nil, nil, err
+			return types.TxType(0), nil, err
 		} else if len(code) == 0 {
-			return nil, nil, bind.ErrNoCode
+			return types.TxType(0), nil, bind.ErrNoCode
 		}
 	}
 
@@ -84,12 +81,12 @@ func (opts *TransactOpts) MakeTransactionData(client ContractBackend, contract *
 		Data:  input,
 	})
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed to estimate gas needed: %v", err)
+		return types.TxType(0), nil, fmt.Errorf("failed to estimate gas needed: %v", err)
 	}
 	gasLimit, _ = new(big.Float).Mul(big.NewFloat(1.5), new(big.Float).SetUint64(gasLimit)).Uint64()
 
 	if contract == nil {
-		return nil, nil, bind.ErrNoCode
+		return types.TxType(0), nil, bind.ErrNoCode
 	}
 
 	values := map[types.TxValueKeyType]interface{}{
@@ -109,19 +106,15 @@ func (opts *TransactOpts) MakeTransactionData(client ContractBackend, contract *
 		values[types.TxValueKeyData] = input
 	}
 
-	return &opts.TxType, values, nil
+	return opts.TxType, values, nil
 }
 
 func (opts *TransactOpts) MakeTransaction(client ContractBackend, contract *common.Address, input []byte) (*types.Transaction, error) {
-	pTxType, txValues, err := opts.MakeTransactionData(client, contract, input)
+	txType, txValues, err := opts.MakeTransactionData(client, contract, input)
 	if err != nil {
 		return nil, err
 	}
-	if pTxType == nil {
-		return nil, errors.New("unsupported tx type")
-	}
 
-	txType := *pTxType
 	rawTx, err := types.NewTransactionWithMap(txType, txValues)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create transaction: %v", err)

@@ -99,11 +99,7 @@ func (_ControllerRegistry *controllerRegistryTransactor) Register(
 	}
 	opts.Context = ctx
 
-	tx, err := _ControllerRegistry.contract.Transact(opts, "register", controllerAddr)
-	if err != nil {
-		return nil, err
-	}
-	return _ControllerRegistry.backend.WaitMined(ctx, tx)
+	return _ControllerRegistry.contract.Transact(opts, "register", controllerAddr)
 }
 
 type ControllerRegistryEvents interface {

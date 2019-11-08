@@ -236,11 +236,7 @@ func (_Accounts *accountsTransactor) Create(
 	}
 	opts.Context = ctx
 
-	tx, err := _Accounts.contract.Transact(opts, "create")
-	if err != nil {
-		return nil, err
-	}
-	return _Accounts.backend.WaitMined(ctx, tx)
+	return _Accounts.contract.Transact(opts, "create")
 }
 
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
@@ -256,11 +252,7 @@ func (_Accounts *accountsTransactor) CreateTemporary(
 	}
 	opts.Context = ctx
 
-	tx, err := _Accounts.contract.Transact(opts, "createTemporary", identityHash)
-	if err != nil {
-		return nil, err
-	}
-	return _Accounts.backend.WaitMined(ctx, tx)
+	return _Accounts.contract.Transact(opts, "createTemporary", identityHash)
 }
 
 // SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
@@ -276,11 +268,7 @@ func (_Accounts *accountsTransactor) SetController(
 	}
 	opts.Context = ctx
 
-	tx, err := _Accounts.contract.Transact(opts, "setController", controller)
-	if err != nil {
-		return nil, err
-	}
-	return _Accounts.backend.WaitMined(ctx, tx)
+	return _Accounts.contract.Transact(opts, "setController", controller)
 }
 
 // UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
@@ -298,11 +286,7 @@ func (_Accounts *accountsTransactor) UnlockTemporary(
 	}
 	opts.Context = ctx
 
-	tx, err := _Accounts.contract.Transact(opts, "unlockTemporary", identityPreimage, newOwner, passwordSignature)
-	if err != nil {
-		return nil, err
-	}
-	return _Accounts.backend.WaitMined(ctx, tx)
+	return _Accounts.contract.Transact(opts, "unlockTemporary", identityPreimage, newOwner, passwordSignature)
 }
 
 type AccountsEvents interface {

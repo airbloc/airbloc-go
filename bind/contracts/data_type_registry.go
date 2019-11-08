@@ -127,11 +127,7 @@ func (_DataTypeRegistry *dataTypeRegistryTransactor) Register(
 	}
 	opts.Context = ctx
 
-	tx, err := _DataTypeRegistry.contract.Transact(opts, "register", name, schemaHash)
-	if err != nil {
-		return nil, err
-	}
-	return _DataTypeRegistry.backend.WaitMined(ctx, tx)
+	return _DataTypeRegistry.contract.Transact(opts, "register", name, schemaHash)
 }
 
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
@@ -147,11 +143,7 @@ func (_DataTypeRegistry *dataTypeRegistryTransactor) Unregister(
 	}
 	opts.Context = ctx
 
-	tx, err := _DataTypeRegistry.contract.Transact(opts, "unregister", name)
-	if err != nil {
-		return nil, err
-	}
-	return _DataTypeRegistry.backend.WaitMined(ctx, tx)
+	return _DataTypeRegistry.contract.Transact(opts, "unregister", name)
 }
 
 type DataTypeRegistryEvents interface {
