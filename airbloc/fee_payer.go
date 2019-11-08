@@ -83,17 +83,24 @@ func (fpc FeePayerClient) Address(ctx context.Context) (common.Address, error) {
 	return resp.Address, nil
 }
 
-func (fpc FeePayerClient) Transact(ctx context.Context, tx *types.Transaction) error {
+func (fpc FeePayerClient) Transact(ctx context.Context, tx *types.Transaction) (common.Hash, error) {
 	rawTxData, err := tx.MarshalJSON()
 	if err != nil {
-		return errors.Wrap(err, "marshal tx")
+		return common.Hash{}, errors.Wrap(err, "marshal tx")
 	}
 
-	_, err = fpc.request(ctx, http.MethodPost, "transact", bytes.NewReader(rawTxData))
+	body, err := fpc.request(ctx, http.MethodPost, "transact", bytes.NewReader(rawTxData))
 	if err != nil {
-		return err
+		return common.Hash{}, err
 	}
-	return nil
+
+	var resp struct {
+		TxHash common.Hash `json:"tx_hash"`
+	}
+	if err = json.Unmarshal(body, &resp); err != nil {
+		return common.Hash{}, errors.Wrap(err, "marshal response body")
+	}
+	return resp.TxHash, nil
 }
 
 func (fpc *FeePayerClient) SetEndpoint(rawurl string) error {

@@ -9,6 +9,7 @@ import (
 
 	"github.com/klaytn/klaytn/accounts"
 	"github.com/klaytn/klaytn/blockchain/types"
+	"github.com/klaytn/klaytn/common"
 )
 
 type Account struct {
@@ -36,7 +37,7 @@ func (acc *Account) SetFeePayer(feePayerUrl string) error {
 	return acc.feePayer.SetEndpoint(feePayerUrl)
 }
 
-func (acc Account) SendTransaction(ctx context.Context, tx *types.Transaction) error {
+func (acc Account) SendTransaction(ctx context.Context, tx *types.Transaction) (common.Hash, error) {
 	return acc.feePayer.Transact(ctx, tx)
 }
 
