@@ -4,6 +4,7 @@ import (
 	"context"
 	"math/big"
 	"net/url"
+	"time"
 
 	ablbind "github.com/airbloc/airbloc-go/bind"
 	"github.com/airbloc/logger"
@@ -34,8 +35,12 @@ func getChainName(cid *big.Int) string {
 	return "EVM Private"
 }
 
-type Client struct {
+type clientData struct {
 	*klayClient.Client
+}
+
+type Client struct {
+	clientData
 	log *logger.Logger
 }
 
@@ -57,9 +62,13 @@ func NewClient(ctx context.Context, endpoint string) (*Client, error) {
 	log.Info("Using {} network", getChainName(cid))
 
 	return &Client{
-		Client: client,
-		log:    log,
+		clientData: clientData{client},
+		log:        log,
 	}, nil
+}
+
+func (c *Client) Client() *klayClient.Client {
+	return c.clientData.Client
 }
 
 func (c *Client) Deployment(string) (ablbind.Deployment, bool) {
@@ -70,20 +79,42 @@ func (c *Client) Transactor(ctx context.Context, opts ...*ablbind.TransactOpts) 
 	return ablbind.MergeTxOpts(ctx, nil, opts...)
 }
 
+func (c *Client) waitMined(ctx context.Context, hash common.Hash) (*types.Receipt, error) {
+	queryTicker := time.NewTicker(time.Second)
+	defer queryTicker.Stop()
+
+	for {
+		receipt, err := c.TransactionReceipt(ctx, hash)
+		if receipt != nil {
+			return receipt, nil
+		}
+		if err != nil {
+			c.log.Debug("Receipt retrieval failed", "err", err)
+		} else {
+			c.log.Debug("Transaction not yet mined")
+		}
+		// Wait for the next round.
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		case <-queryTicker.C:
+		}
+	}
+}
+
 // WaitMined waits until transcaction created.
 func (c *Client) WaitMined(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
-	methodName, details := "TODO: mocked method name", "TODO: mocked details"
-	timer := c.log.Timer()
+	return c.WaitMinedWithHash(ctx, tx.Hash())
+}
 
-	receipt, err := bind.WaitMined(ctx, c, tx)
+func (c *Client) WaitMinedWithHash(ctx context.Context, hash common.Hash) (*types.Receipt, error) {
+	receipt, err := c.waitMined(ctx, hash)
 	if err != nil {
 		return nil, err
 	}
 	if receipt.Status == types.ReceiptStatusFailed {
-		timer.End("Transaction to {} failed", methodName, details)
 		return nil, errors.New("tx failed")
 	}
-	timer.End("Transacted {}", methodName, details)
 	return receipt, err
 }
 
@@ -110,6 +141,14 @@ func (c *Client) WaitDeployed(ctx context.Context, tx *types.Transaction) (*type
 		err = bind.ErrNoCodeAfterDeploy
 	}
 	return receipt, err
+}
+
+func (c *Client) SendTransaction(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
+	hash, err := c.SendRawTransaction(ctx, tx)
+	if err != nil {
+		return nil, err
+	}
+	return c.WaitMinedWithHash(ctx, hash)
 }
 
 func (c *Client) MakeTransaction(opts *ablbind.TransactOpts, contract *common.Address, input []byte) (*types.Transaction, error) {
