@@ -1,11 +1,11 @@
-package airbloc
+package account
 
 import (
 	"context"
 	"crypto/ecdsa"
-	"net/http"
 
 	ablbind "github.com/airbloc/airbloc-go/bind"
+	"github.com/airbloc/airbloc-go/fee_payer"
 
 	"github.com/klaytn/klaytn/accounts"
 	"github.com/klaytn/klaytn/blockchain/types"
@@ -14,27 +14,19 @@ import (
 
 type Account struct {
 	account  *ablbind.TransactOpts
-	feePayer *FeePayerClient
+	feePayer *fee_payer.FeePayer
 }
 
-func (acc Account) isReadOnly() bool {
+func (acc Account) IsReadOnly() bool {
 	return acc.account == nil
 }
 
-func (acc Account) isDelegated() bool {
+func (acc Account) IsDelegated() bool {
 	return acc.feePayer != nil
 }
 
-func (acc Account) txOpts() *ablbind.TransactOpts {
+func (acc Account) TxOpts() *ablbind.TransactOpts {
 	return acc.account
-}
-
-func (acc *Account) SetAccount(account *ablbind.TransactOpts) {
-	acc.account = account
-}
-
-func (acc *Account) SetFeePayer(feePayerUrl string) error {
-	return acc.feePayer.SetEndpoint(feePayerUrl)
 }
 
 func (acc Account) SendTransaction(ctx context.Context, tx *types.Transaction) (common.Hash, error) {
@@ -50,13 +42,12 @@ func NewWalletAccount(account accounts.Account, wallet accounts.Wallet) Account 
 }
 
 func newAccountWithFeePayer(acc Account, rawFeePayerUrl string) (Account, error) {
-	feePayerClient := &FeePayerClient{client: http.DefaultClient}
-	err := feePayerClient.SetEndpoint(rawFeePayerUrl)
+	feePayer, err := fee_payer.NewFeePayer(nil, rawFeePayerUrl)
 	if err != nil {
 		return Account{}, err
 	}
 
-	acc.feePayer = feePayerClient
+	acc.feePayer = feePayer
 	return acc, nil
 }
 

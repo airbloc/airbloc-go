@@ -1,8 +1,11 @@
-package airbloc
+package session
 
 import (
 	"context"
 	"fmt"
+
+	"github.com/airbloc/airbloc-go/account"
+	"github.com/airbloc/airbloc-go/blockchain"
 
 	ablbind "github.com/airbloc/airbloc-go/bind"
 
@@ -12,11 +15,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-type sessionData struct{ *Client }
+type sessionData struct{ *blockchain.Client }
 type Session struct {
 	sessionData
 
-	account     Account
+	account     account.Account
 	deployments ablbind.Deployments
 }
 
@@ -30,7 +33,7 @@ func NewSession(cfg Config) (Session, error) {
 }
 
 func (sess Session) Client() *klayClient.Client {
-	return sess.sessionData.clientData.Client
+	return sess.sessionData.Client.Client()
 }
 
 func (sess Session) Deployment(contract string) (ablbind.Deployment, bool) {
@@ -38,11 +41,11 @@ func (sess Session) Deployment(contract string) (ablbind.Deployment, bool) {
 }
 
 func (sess Session) Transactor(ctx context.Context, opts ...*ablbind.TransactOpts) *ablbind.TransactOpts {
-	return ablbind.MergeTxOpts(ctx, sess.account.txOpts(), opts...)
+	return ablbind.MergeTxOpts(ctx, sess.account.TxOpts(), opts...)
 }
 
 func (sess Session) SendTransaction(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
-	if sess.account.isReadOnly() {
+	if sess.account.IsReadOnly() {
 		return nil, errors.New("session is on read-only mode")
 	}
 
@@ -57,7 +60,7 @@ func (sess Session) SendTransaction(ctx context.Context, tx *types.Transaction) 
 		return sess.WaitMinedWithHash(ctx, hash)
 	}
 
-	if !sess.account.isDelegated() {
+	if !sess.account.IsDelegated() {
 		return nil, errors.New("session is non-delegate mode")
 	}
 
@@ -78,7 +81,7 @@ func (sess Session) MakeTransaction(opts *ablbind.TransactOpts, contract *common
 		return nil, err
 	}
 
-	if sess.account.isDelegated() {
+	if sess.account.IsDelegated() {
 		switch txType {
 		case types.TxTypeValueTransfer:
 			txType = types.TxTypeFeeDelegatedValueTransfer

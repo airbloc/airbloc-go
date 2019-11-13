@@ -1,4 +1,4 @@
-package airbloc
+package blockchain
 
 import (
 	"context"

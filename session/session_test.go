@@ -1,4 +1,4 @@
-package airbloc
+package session
 
 import (
 	"context"
@@ -6,8 +6,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/airbloc/airbloc-go/account"
 	"github.com/airbloc/airbloc-go/bind"
 	"github.com/airbloc/airbloc-go/bind/managers"
+	"github.com/airbloc/airbloc-go/blockchain"
 
 	"github.com/klaytn/klaytn/crypto"
 	. "github.com/smartystreets/goconvey/convey"
@@ -20,19 +22,24 @@ const (
 	blockchainEndpoint     = "https://api.baobab.klaytn.net:8651"
 )
 
-func newBasicAccount(t *testing.T, key *ecdsa.PrivateKey) Account {
+func newBasicAccount(t *testing.T, key *ecdsa.PrivateKey) account.Account {
 	if key == nil {
 		var err error
 		key, err = crypto.GenerateKey()
 		require.NoError(t, err)
 	}
-	return NewKeyedAccount(key)
+	return account.NewKeyedAccount(key)
 }
 
-func newFeePayedAccount(t *testing.T, key *ecdsa.PrivateKey, feePayerUrl string) Account {
-	account, err := newAccountWithFeePayer(newBasicAccount(t, key), feePayerUrl)
+func newFeePayedAccount(t *testing.T, key *ecdsa.PrivateKey, feePayerUrl string) account.Account {
+	if key == nil {
+		var err error
+		key, err = crypto.GenerateKey()
+		require.NoError(t, err)
+	}
+	acc, err := account.NewKeyedAccountWithFeePayer(key, feePayerUrl)
 	require.NoError(t, err)
-	return account
+	return acc
 }
 
 func newDeployments(t *testing.T, endpoint string) bind.Deployments {
@@ -48,7 +55,7 @@ func TestNewSession(t *testing.T) {
 	pctx, cancelParentCtx := context.WithCancel(context.Background())
 	defer cancelParentCtx()
 
-	testClient, err := NewClient(pctx, blockchainEndpoint)
+	testClient, err := blockchain.NewClient(pctx, blockchainEndpoint)
 	require.NoError(t, err)
 	defer testClient.Close()
 
@@ -73,8 +80,8 @@ func TestNewSession(t *testing.T) {
 
 		err = dataTypeRegistryManager.Register(
 			ctx, nil,
-			testAccount.account.From.Hex(),
-			testAccount.account.From.Hash(),
+			testAccount.TxOpts().From.Hex(),
+			testAccount.TxOpts().From.Hash(),
 		)
 		c.So(err, ShouldBeNil)
 	})
