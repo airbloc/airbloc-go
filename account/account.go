@@ -5,7 +5,6 @@ import (
 	"crypto/ecdsa"
 
 	ablbind "github.com/airbloc/airbloc-go/bind"
-	"github.com/airbloc/airbloc-go/fee_payer"
 
 	"github.com/klaytn/klaytn/accounts"
 	"github.com/klaytn/klaytn/blockchain/types"
@@ -14,7 +13,7 @@ import (
 
 type Account struct {
 	account  *ablbind.TransactOpts
-	feePayer *fee_payer.FeePayer
+	feePayer *FeePayer
 }
 
 func (acc Account) IsReadOnly() bool {
@@ -42,7 +41,7 @@ func NewWalletAccount(account accounts.Account, wallet accounts.Wallet) Account 
 }
 
 func newAccountWithFeePayer(acc Account, rawFeePayerUrl string) (Account, error) {
-	feePayer, err := fee_payer.NewFeePayer(nil, rawFeePayerUrl)
+	feePayer, err := NewFeePayer(nil, rawFeePayerUrl)
 	if err != nil {
 		return Account{}, err
 	}

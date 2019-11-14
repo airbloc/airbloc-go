@@ -1,4 +1,4 @@
-package fee_payer
+package account
 
 import (
 	"bytes"
@@ -32,7 +32,7 @@ func (fpc FeePayer) request(
 		expectCodes = []int{http.StatusOK}
 	}
 
-	endpoint = fmt.Sprintf("%s/%s/%s", fpc.endpoint.String(), feePayerAPIVersion, endpoint)
+	endpoint = fmt.Sprintf("%s/%s%s", fpc.endpoint.String(), feePayerAPIVersion, endpoint)
 	req, err := http.NewRequest(method, endpoint, body)
 	if err != nil {
 		return nil, errors.Wrap(err, "make new request")
@@ -69,7 +69,7 @@ func (fpc FeePayer) request(
 }
 
 func (fpc FeePayer) Address(ctx context.Context) (common.Address, error) {
-	body, err := fpc.request(ctx, http.MethodGet, "address", nil)
+	body, err := fpc.request(ctx, http.MethodGet, "/address", nil)
 	if err != nil {
 		return common.Address{}, nil
 	}
@@ -80,6 +80,9 @@ func (fpc FeePayer) Address(ctx context.Context) (common.Address, error) {
 	if err = json.Unmarshal(body, &resp); err != nil {
 		return common.Address{}, errors.Wrap(err, "marshal response body")
 	}
+	if resp.Address == (common.Address{}) {
+		return common.Address{}, errors.New("received fee payer address is empty")
+	}
 	return resp.Address, nil
 }
 
@@ -89,7 +92,7 @@ func (fpc FeePayer) Transact(ctx context.Context, tx *types.Transaction) (common
 		return common.Hash{}, errors.Wrap(err, "marshal tx")
 	}
 
-	body, err := fpc.request(ctx, http.MethodPost, "transact", bytes.NewReader(rawTxData))
+	body, err := fpc.request(ctx, http.MethodPost, "/transact", bytes.NewReader(rawTxData))
 	if err != nil {
 		return common.Hash{}, err
 	}
@@ -99,6 +102,9 @@ func (fpc FeePayer) Transact(ctx context.Context, tx *types.Transaction) (common
 	}
 	if err = json.Unmarshal(body, &resp); err != nil {
 		return common.Hash{}, errors.Wrap(err, "marshal response body")
+	}
+	if resp.TxHash == (common.Hash{}) {
+		return common.Hash{}, errors.New("received transaction hash is empty")
 	}
 	return resp.TxHash, nil
 }
