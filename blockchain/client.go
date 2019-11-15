@@ -35,10 +35,7 @@ func getChainName(cid *big.Int) string {
 	return "EVM Private"
 }
 
-type clientData struct {
-	*klayClient.Client
-}
-
+type clientData struct{ *klayClient.Client }
 type Client struct {
 	clientData
 	log *logger.Logger
@@ -48,16 +45,16 @@ func NewClient(ctx context.Context, endpoint string) (*Client, error) {
 	log := logger.New("klaytn")
 
 	if _, err := url.Parse(endpoint); err != nil {
-		return nil, errors.Errorf("invalid URL: %s", endpoint)
+		return nil, errors.Wrapf(err, "invalid URL: %s", endpoint)
 	}
 
 	client, err := klayClient.Dial(endpoint)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "dial klaytn api")
 	}
 	cid, err := client.NetworkID(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "fetch network id")
 	}
 	log.Info("Using {} network", getChainName(cid))
 
@@ -86,7 +83,7 @@ func (c *Client) waitMined(ctx context.Context, hash common.Hash) (*types.Receip
 	for {
 		receipt, err := c.TransactionReceipt(ctx, hash)
 		if receipt != nil {
-			return receipt, nil
+			return receipt, err
 		}
 		if err != nil {
 			c.log.Debug("Receipt retrieval failed", "err", err)
@@ -102,11 +99,6 @@ func (c *Client) waitMined(ctx context.Context, hash common.Hash) (*types.Receip
 	}
 }
 
-// WaitMined waits until transcaction created.
-func (c *Client) WaitMined(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
-	return c.WaitMinedWithHash(ctx, tx.Hash())
-}
-
 func (c *Client) WaitMinedWithHash(ctx context.Context, hash common.Hash) (*types.Receipt, error) {
 	receipt, err := c.waitMined(ctx, hash)
 	if err != nil {
@@ -116,6 +108,11 @@ func (c *Client) WaitMinedWithHash(ctx context.Context, hash common.Hash) (*type
 		return nil, errors.New("tx failed")
 	}
 	return receipt, err
+}
+
+// WaitMined waits until transcaction created.
+func (c *Client) WaitMined(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
+	return c.WaitMinedWithHash(ctx, tx.Hash())
 }
 
 // WaitDeployed waits until contract created.
