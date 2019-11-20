@@ -18,9 +18,9 @@ import (
 
 // AppRegistryABI is the input ABI used to generate the binding from.
 const (
-	AppRegistryAddress   = "0xc0BF273F73fB1fea4Fc7ee8deC66BA6529968121"
-	AppRegistryTxHash    = "0x7e17fa91626637b976f793e25db6aba837bdcc5c310dd80a02a63e1dd16625a8"
-	AppRegistryCreatedAt = "0x000000000000000000000000000000000000000000000000000000000063b9e2"
+	AppRegistryAddress   = "0x719c7110898438a78d7f74Ce6Cc90DD69Fa320a0"
+	AppRegistryTxHash    = "0x428fc7085318656f9f56bc2deadaf6b1065726e55cabfd9662c432dce3b092b3"
+	AppRegistryCreatedAt = "0x0000000000000000000000000000000000000000000000000000000000823872"
 	AppRegistryABI       = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"appAddr\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"appName\",\"type\":\"string\"}],\"name\":\"Registration\",\"signature\":\"0x0d8d636375a5c89a44d886dc1bd7257c82dbf9d475396c77cdbf443158ecf4e8\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"appAddr\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"appName\",\"type\":\"string\"}],\"name\":\"Unregistration\",\"signature\":\"0x03adf6d1cf18f8d8f64f7dbe8bde608e0d3fbca9079aa3cb3498715ef807bde9\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"appAddr\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"appName\",\"type\":\"string\"},{\"indexed\":true,\"name\":\"oldOwner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"AppOwnerTransferred\",\"signature\":\"0xbf3f214e451e16a835d0833b12209f2928a822c65ee68cce51eb31338747e3df\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"appName\",\"type\":\"string\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"signature\":\"0xf2c298be\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"appName\",\"type\":\"string\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"signature\":\"0x6598a1ae\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"appName\",\"type\":\"string\"}],\"name\":\"get\",\"outputs\":[{\"components\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"\",\"type\":\"tuple\"}],\"payable\":false,\"signature\":\"0x693ec85e\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"appName\",\"type\":\"string\"}],\"name\":\"exists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"signature\":\"0x261a323e\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"appName\",\"type\":\"string\"},{\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"signature\":\"0xbde1eee7\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"appName\",\"type\":\"string\"},{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferAppOwner\",\"outputs\":[],\"payable\":false,\"signature\":\"0x1a9dff9f\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 )
 
@@ -126,11 +126,12 @@ func (_AppRegistry *appRegistryTransactor) Register(
 	opts *ablbind.TransactOpts,
 	appName string,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _AppRegistry.contract.Transact(_AppRegistry.backend.Transactor(ctx, opts), "register", appName)
-	if err != nil {
-		return nil, err
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
 	}
-	return _AppRegistry.backend.WaitMined(ctx, tx)
+	opts.Context = ctx
+
+	return _AppRegistry.contract.Transact(opts, "register", appName)
 }
 
 // TransferAppOwner is a paid mutator transaction binding the contract method 0x1a9dff9f.
@@ -142,11 +143,12 @@ func (_AppRegistry *appRegistryTransactor) TransferAppOwner(
 	appName string,
 	newOwner common.Address,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _AppRegistry.contract.Transact(_AppRegistry.backend.Transactor(ctx, opts), "transferAppOwner", appName, newOwner)
-	if err != nil {
-		return nil, err
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
 	}
-	return _AppRegistry.backend.WaitMined(ctx, tx)
+	opts.Context = ctx
+
+	return _AppRegistry.contract.Transact(opts, "transferAppOwner", appName, newOwner)
 }
 
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
@@ -157,11 +159,12 @@ func (_AppRegistry *appRegistryTransactor) Unregister(
 	opts *ablbind.TransactOpts,
 	appName string,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _AppRegistry.contract.Transact(_AppRegistry.backend.Transactor(ctx, opts), "unregister", appName)
-	if err != nil {
-		return nil, err
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
 	}
-	return _AppRegistry.backend.WaitMined(ctx, tx)
+	opts.Context = ctx
+
+	return _AppRegistry.contract.Transact(opts, "unregister", appName)
 }
 
 type AppRegistryEvents interface {
@@ -393,7 +396,7 @@ func (_AppRegistry *appRegistryEvents) ParseAppOwnerTransferred(log chainTypes.L
 	return evt, nil
 }
 
-// FilterAppOwnerTransferred parses the event from given transaction receipt.
+// ParseAppOwnerTransferredFromReceipt parses the event from given transaction receipt.
 //
 // Solidity: event AppOwnerTransferred(address indexed appAddr, string appName, address indexed oldOwner, address newOwner)
 func (_AppRegistry *appRegistryEvents) ParseAppOwnerTransferredFromReceipt(receipt *chainTypes.Receipt) ([]*AppRegistryAppOwnerTransferred, error) {
@@ -563,7 +566,7 @@ func (_AppRegistry *appRegistryEvents) ParseRegistration(log chainTypes.Log) (*A
 	return evt, nil
 }
 
-// FilterRegistration parses the event from given transaction receipt.
+// ParseRegistrationFromReceipt parses the event from given transaction receipt.
 //
 // Solidity: event Registration(address indexed appAddr, string appName)
 func (_AppRegistry *appRegistryEvents) ParseRegistrationFromReceipt(receipt *chainTypes.Receipt) ([]*AppRegistryRegistration, error) {
@@ -733,7 +736,7 @@ func (_AppRegistry *appRegistryEvents) ParseUnregistration(log chainTypes.Log) (
 	return evt, nil
 }
 
-// FilterUnregistration parses the event from given transaction receipt.
+// ParseUnregistrationFromReceipt parses the event from given transaction receipt.
 //
 // Solidity: event Unregistration(address indexed appAddr, string appName)
 func (_AppRegistry *appRegistryEvents) ParseUnregistrationFromReceipt(receipt *chainTypes.Receipt) ([]*AppRegistryUnregistration, error) {

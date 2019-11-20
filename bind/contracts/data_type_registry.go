@@ -18,9 +18,9 @@ import (
 
 // DataTypeRegistryABI is the input ABI used to generate the binding from.
 const (
-	DataTypeRegistryAddress   = "0x3E6536e6355B760c59d9f7e48f2A06d4dA8E2AC9"
-	DataTypeRegistryTxHash    = "0x6963c52a27251fde0305b5f21446d5fdb3e66b878d732f2b0393f97c9c391fe9"
-	DataTypeRegistryCreatedAt = "0x000000000000000000000000000000000000000000000000000000000063b9e7"
+	DataTypeRegistryAddress   = "0x6663Bff98B50d84a8e93FaA7D9B72A5Ae541b4eb"
+	DataTypeRegistryTxHash    = "0x49c067bb33cf8d5ef426cc627042a408e46f9a60caa5219505549000ff12880d"
+	DataTypeRegistryCreatedAt = "0x000000000000000000000000000000000000000000000000000000000082387d"
 	DataTypeRegistryABI       = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"name\",\"type\":\"string\"}],\"name\":\"Registration\",\"signature\":\"0xd510136a132b28d5bccd27cc4dd52d556d9982ab168ba54b1e775d4d0f1ca948\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"name\",\"type\":\"string\"}],\"name\":\"Unregistration\",\"signature\":\"0x2c7e9e18beb0594fa2ccaf8412bbe719d47f3c1efb1349e2ba03c1a3e4f64c83\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"schemaHash\",\"type\":\"bytes32\"}],\"name\":\"register\",\"outputs\":[],\"payable\":false,\"signature\":\"0x656afdee\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"name\",\"type\":\"string\"}],\"name\":\"get\",\"outputs\":[{\"components\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"schemaHash\",\"type\":\"bytes32\"}],\"name\":\"\",\"type\":\"tuple\"}],\"payable\":false,\"signature\":\"0x693ec85e\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"name\",\"type\":\"string\"}],\"name\":\"exists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"signature\":\"0x261a323e\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"signature\":\"0xbde1eee7\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"name\",\"type\":\"string\"}],\"name\":\"unregister\",\"outputs\":[],\"payable\":false,\"signature\":\"0x6598a1ae\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 )
 
@@ -122,11 +122,12 @@ func (_DataTypeRegistry *dataTypeRegistryTransactor) Register(
 	name string,
 	schemaHash common.Hash,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _DataTypeRegistry.contract.Transact(_DataTypeRegistry.backend.Transactor(ctx, opts), "register", name, schemaHash)
-	if err != nil {
-		return nil, err
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
 	}
-	return _DataTypeRegistry.backend.WaitMined(ctx, tx)
+	opts.Context = ctx
+
+	return _DataTypeRegistry.contract.Transact(opts, "register", name, schemaHash)
 }
 
 // Unregister is a paid mutator transaction binding the contract method 0x6598a1ae.
@@ -137,11 +138,12 @@ func (_DataTypeRegistry *dataTypeRegistryTransactor) Unregister(
 	opts *ablbind.TransactOpts,
 	name string,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _DataTypeRegistry.contract.Transact(_DataTypeRegistry.backend.Transactor(ctx, opts), "unregister", name)
-	if err != nil {
-		return nil, err
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
 	}
-	return _DataTypeRegistry.backend.WaitMined(ctx, tx)
+	opts.Context = ctx
+
+	return _DataTypeRegistry.contract.Transact(opts, "unregister", name)
 }
 
 type DataTypeRegistryEvents interface {
@@ -333,7 +335,7 @@ func (_DataTypeRegistry *dataTypeRegistryEvents) ParseRegistration(log chainType
 	return evt, nil
 }
 
-// FilterRegistration parses the event from given transaction receipt.
+// ParseRegistrationFromReceipt parses the event from given transaction receipt.
 //
 // Solidity: event Registration(string name)
 func (_DataTypeRegistry *dataTypeRegistryEvents) ParseRegistrationFromReceipt(receipt *chainTypes.Receipt) ([]*DataTypeRegistryRegistration, error) {
@@ -492,7 +494,7 @@ func (_DataTypeRegistry *dataTypeRegistryEvents) ParseUnregistration(log chainTy
 	return evt, nil
 }
 
-// FilterUnregistration parses the event from given transaction receipt.
+// ParseUnregistrationFromReceipt parses the event from given transaction receipt.
 //
 // Solidity: event Unregistration(string name)
 func (_DataTypeRegistry *dataTypeRegistryEvents) ParseUnregistrationFromReceipt(receipt *chainTypes.Receipt) ([]*DataTypeRegistryUnregistration, error) {

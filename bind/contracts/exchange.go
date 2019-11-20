@@ -18,9 +18,9 @@ import (
 
 // ExchangeABI is the input ABI used to generate the binding from.
 const (
-	ExchangeAddress   = "0x5A7E1B30627D09901981168EA001A1d9c80F8fcA"
-	ExchangeTxHash    = "0x5adc6c14bb6dcafb3e4095db425cc8ab22a3f237132f7ea5cac50717b2daab89"
-	ExchangeCreatedAt = "0x000000000000000000000000000000000000000000000000000000000063b9f6"
+	ExchangeAddress   = "0x15F00823c5f9a0fc42081E472bdFdA277ff464A6"
+	ExchangeTxHash    = "0x16b3052c0f5423673d3303ef26f87d0ba99d4db8129cce286aee61fd7a1c79f2"
+	ExchangeCreatedAt = "0x0000000000000000000000000000000000000000000000000000000000823892"
 	ExchangeABI       = "[{\"inputs\":[{\"name\":\"appReg\",\"type\":\"address\"}],\"payable\":false,\"signature\":\"constructor\",\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"offerId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"providerAppName\",\"type\":\"string\"}],\"name\":\"OfferPrepared\",\"signature\":\"0x821d45f3b8db50a4777ad807928db085f0c986433cf51c2afdc8c6af90d1aef5\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"offerId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"providerAppName\",\"type\":\"string\"}],\"name\":\"OfferPresented\",\"signature\":\"0x198eb5e3b4b2cd8cca381c07c5696b7caffe2c775d93f75d0053073e36a865fa\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"offerId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"providerAppName\",\"type\":\"string\"}],\"name\":\"OfferCanceled\",\"signature\":\"0x05b47b0f8bd37a836f7a5c080cb883841c1282c69dd1874a46d4fafc7e8aa27a\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"offerId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"consumer\",\"type\":\"address\"}],\"name\":\"OfferSettled\",\"signature\":\"0xb37cb3a83f4f40ee469256bdfc4a2881c9ce188960c87bf11359151a461b723e\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"offerId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"providerAppName\",\"type\":\"string\"},{\"indexed\":true,\"name\":\"consumer\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"result\",\"type\":\"bytes\"}],\"name\":\"OfferReceipt\",\"signature\":\"0x7a2b40d55d10a35fd97231e1d36fc9df7c48361f16299086103e0712135c59fa\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"offerId\",\"type\":\"bytes8\"},{\"indexed\":true,\"name\":\"consumer\",\"type\":\"address\"}],\"name\":\"OfferRejected\",\"signature\":\"0x94c89cb0104a1fa8726bf8a9e9151423d67ff6f8eb09ed7392386649655c6843\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"reason\",\"type\":\"bytes\"}],\"name\":\"EscrowExecutionFailed\",\"signature\":\"0x40e7fa7728ad0189a69a1f7d9b3b202f751810b2be48db0b9224d7f81cd232f7\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"name\":\"provider\",\"type\":\"string\"},{\"name\":\"consumer\",\"type\":\"address\"},{\"name\":\"escrow\",\"type\":\"address\"},{\"name\":\"escrowSign\",\"type\":\"bytes4\"},{\"name\":\"escrowArgs\",\"type\":\"bytes\"},{\"name\":\"dataIds\",\"type\":\"bytes20[]\"}],\"name\":\"prepare\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"signature\":\"0x77e61c33\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"offerId\",\"type\":\"bytes8\"},{\"name\":\"dataIds\",\"type\":\"bytes20[]\"}],\"name\":\"addDataIds\",\"outputs\":[],\"payable\":false,\"signature\":\"0x367a9005\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"offerId\",\"type\":\"bytes8\"}],\"name\":\"order\",\"outputs\":[],\"payable\":false,\"signature\":\"0x0cf833fb\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"offerId\",\"type\":\"bytes8\"}],\"name\":\"cancel\",\"outputs\":[],\"payable\":false,\"signature\":\"0xb2d9ba39\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"offerId\",\"type\":\"bytes8\"}],\"name\":\"settle\",\"outputs\":[],\"payable\":false,\"signature\":\"0xa60d9b5f\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"offerId\",\"type\":\"bytes8\"}],\"name\":\"reject\",\"outputs\":[],\"payable\":false,\"signature\":\"0x6622e153\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"offerId\",\"type\":\"bytes8\"}],\"name\":\"offerExists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"signature\":\"0xc4a03da9\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"offerId\",\"type\":\"bytes8\"}],\"name\":\"getOffer\",\"outputs\":[{\"components\":[{\"name\":\"provider\",\"type\":\"string\"},{\"name\":\"consumer\",\"type\":\"address\"},{\"name\":\"dataIds\",\"type\":\"bytes20[]\"},{\"name\":\"at\",\"type\":\"uint256\"},{\"name\":\"until\",\"type\":\"uint256\"},{\"components\":[{\"name\":\"addr\",\"type\":\"address\"},{\"name\":\"sign\",\"type\":\"bytes4\"},{\"name\":\"args\",\"type\":\"bytes\"}],\"name\":\"escrow\",\"type\":\"tuple\"},{\"name\":\"status\",\"type\":\"uint8\"}],\"name\":\"\",\"type\":\"tuple\"}],\"payable\":false,\"signature\":\"0x107f04b4\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"offerId\",\"type\":\"bytes8\"}],\"name\":\"getOfferMembers\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"},{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"signature\":\"0x72dfa465\",\"stateMutability\":\"view\",\"type\":\"function\"}]"
 )
 
@@ -151,11 +151,12 @@ func (_Exchange *exchangeTransactor) AddDataIds(
 	offerId types.ID,
 	dataIds []types.DataId,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _Exchange.contract.Transact(_Exchange.backend.Transactor(ctx, opts), "addDataIds", offerId, dataIds)
-	if err != nil {
-		return nil, err
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
 	}
-	return _Exchange.backend.WaitMined(ctx, tx)
+	opts.Context = ctx
+
+	return _Exchange.contract.Transact(opts, "addDataIds", offerId, dataIds)
 }
 
 // Cancel is a paid mutator transaction binding the contract method 0xb2d9ba39.
@@ -166,11 +167,12 @@ func (_Exchange *exchangeTransactor) Cancel(
 	opts *ablbind.TransactOpts,
 	offerId types.ID,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _Exchange.contract.Transact(_Exchange.backend.Transactor(ctx, opts), "cancel", offerId)
-	if err != nil {
-		return nil, err
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
 	}
-	return _Exchange.backend.WaitMined(ctx, tx)
+	opts.Context = ctx
+
+	return _Exchange.contract.Transact(opts, "cancel", offerId)
 }
 
 // Order is a paid mutator transaction binding the contract method 0x0cf833fb.
@@ -181,11 +183,12 @@ func (_Exchange *exchangeTransactor) Order(
 	opts *ablbind.TransactOpts,
 	offerId types.ID,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _Exchange.contract.Transact(_Exchange.backend.Transactor(ctx, opts), "order", offerId)
-	if err != nil {
-		return nil, err
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
 	}
-	return _Exchange.backend.WaitMined(ctx, tx)
+	opts.Context = ctx
+
+	return _Exchange.contract.Transact(opts, "order", offerId)
 }
 
 // Prepare is a paid mutator transaction binding the contract method 0x77e61c33.
@@ -201,11 +204,12 @@ func (_Exchange *exchangeTransactor) Prepare(
 	escrowArgs []byte,
 	dataIds []types.DataId,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _Exchange.contract.Transact(_Exchange.backend.Transactor(ctx, opts), "prepare", provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
-	if err != nil {
-		return nil, err
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
 	}
-	return _Exchange.backend.WaitMined(ctx, tx)
+	opts.Context = ctx
+
+	return _Exchange.contract.Transact(opts, "prepare", provider, consumer, escrow, escrowSign, escrowArgs, dataIds)
 }
 
 // Reject is a paid mutator transaction binding the contract method 0x6622e153.
@@ -216,11 +220,12 @@ func (_Exchange *exchangeTransactor) Reject(
 	opts *ablbind.TransactOpts,
 	offerId types.ID,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _Exchange.contract.Transact(_Exchange.backend.Transactor(ctx, opts), "reject", offerId)
-	if err != nil {
-		return nil, err
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
 	}
-	return _Exchange.backend.WaitMined(ctx, tx)
+	opts.Context = ctx
+
+	return _Exchange.contract.Transact(opts, "reject", offerId)
 }
 
 // Settle is a paid mutator transaction binding the contract method 0xa60d9b5f.
@@ -231,11 +236,12 @@ func (_Exchange *exchangeTransactor) Settle(
 	opts *ablbind.TransactOpts,
 	offerId types.ID,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _Exchange.contract.Transact(_Exchange.backend.Transactor(ctx, opts), "settle", offerId)
-	if err != nil {
-		return nil, err
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
 	}
-	return _Exchange.backend.WaitMined(ctx, tx)
+	opts.Context = ctx
+
+	return _Exchange.contract.Transact(opts, "settle", offerId)
 }
 
 type ExchangeEvents interface {
@@ -512,7 +518,7 @@ func (_Exchange *exchangeEvents) ParseEscrowExecutionFailed(log chainTypes.Log) 
 	return evt, nil
 }
 
-// FilterEscrowExecutionFailed parses the event from given transaction receipt.
+// ParseEscrowExecutionFailedFromReceipt parses the event from given transaction receipt.
 //
 // Solidity: event EscrowExecutionFailed(bytes reason)
 func (_Exchange *exchangeEvents) ParseEscrowExecutionFailedFromReceipt(receipt *chainTypes.Receipt) ([]*ExchangeEscrowExecutionFailed, error) {
@@ -682,7 +688,7 @@ func (_Exchange *exchangeEvents) ParseOfferCanceled(log chainTypes.Log) (*Exchan
 	return evt, nil
 }
 
-// FilterOfferCanceled parses the event from given transaction receipt.
+// ParseOfferCanceledFromReceipt parses the event from given transaction receipt.
 //
 // Solidity: event OfferCanceled(bytes8 indexed offerId, string providerAppName)
 func (_Exchange *exchangeEvents) ParseOfferCanceledFromReceipt(receipt *chainTypes.Receipt) ([]*ExchangeOfferCanceled, error) {
@@ -852,7 +858,7 @@ func (_Exchange *exchangeEvents) ParseOfferPrepared(log chainTypes.Log) (*Exchan
 	return evt, nil
 }
 
-// FilterOfferPrepared parses the event from given transaction receipt.
+// ParseOfferPreparedFromReceipt parses the event from given transaction receipt.
 //
 // Solidity: event OfferPrepared(bytes8 indexed offerId, string providerAppName)
 func (_Exchange *exchangeEvents) ParseOfferPreparedFromReceipt(receipt *chainTypes.Receipt) ([]*ExchangeOfferPrepared, error) {
@@ -1022,7 +1028,7 @@ func (_Exchange *exchangeEvents) ParseOfferPresented(log chainTypes.Log) (*Excha
 	return evt, nil
 }
 
-// FilterOfferPresented parses the event from given transaction receipt.
+// ParseOfferPresentedFromReceipt parses the event from given transaction receipt.
 //
 // Solidity: event OfferPresented(bytes8 indexed offerId, string providerAppName)
 func (_Exchange *exchangeEvents) ParseOfferPresentedFromReceipt(receipt *chainTypes.Receipt) ([]*ExchangeOfferPresented, error) {
@@ -1204,7 +1210,7 @@ func (_Exchange *exchangeEvents) ParseOfferReceipt(log chainTypes.Log) (*Exchang
 	return evt, nil
 }
 
-// FilterOfferReceipt parses the event from given transaction receipt.
+// ParseOfferReceiptFromReceipt parses the event from given transaction receipt.
 //
 // Solidity: event OfferReceipt(bytes8 indexed offerId, string providerAppName, address indexed consumer, bytes result)
 func (_Exchange *exchangeEvents) ParseOfferReceiptFromReceipt(receipt *chainTypes.Receipt) ([]*ExchangeOfferReceipt, error) {
@@ -1382,7 +1388,7 @@ func (_Exchange *exchangeEvents) ParseOfferRejected(log chainTypes.Log) (*Exchan
 	return evt, nil
 }
 
-// FilterOfferRejected parses the event from given transaction receipt.
+// ParseOfferRejectedFromReceipt parses the event from given transaction receipt.
 //
 // Solidity: event OfferRejected(bytes8 indexed offerId, address indexed consumer)
 func (_Exchange *exchangeEvents) ParseOfferRejectedFromReceipt(receipt *chainTypes.Receipt) ([]*ExchangeOfferRejected, error) {
@@ -1560,7 +1566,7 @@ func (_Exchange *exchangeEvents) ParseOfferSettled(log chainTypes.Log) (*Exchang
 	return evt, nil
 }
 
-// FilterOfferSettled parses the event from given transaction receipt.
+// ParseOfferSettledFromReceipt parses the event from given transaction receipt.
 //
 // Solidity: event OfferSettled(bytes8 indexed offerId, address indexed consumer)
 func (_Exchange *exchangeEvents) ParseOfferSettledFromReceipt(receipt *chainTypes.Receipt) ([]*ExchangeOfferSettled, error) {

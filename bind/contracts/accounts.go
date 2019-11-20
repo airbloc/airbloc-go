@@ -18,9 +18,9 @@ import (
 
 // AccountsABI is the input ABI used to generate the binding from.
 const (
-	AccountsAddress   = "0xdFe31bb8C440F4b0C6319Fe95378E1418A240e2F"
-	AccountsTxHash    = "0xe391330246621ef3702bce179b1865268940dc56dbb1429fd1f5567dc3044dce"
-	AccountsCreatedAt = "0x000000000000000000000000000000000000000000000000000000000063b9ea"
+	AccountsAddress   = "0x4E48E6356EB97BF9869EbCd7568780E3b9f1DB57"
+	AccountsTxHash    = "0xd6b0456617b9c3c994ccddc9dc6d8ab71dfdd033978b51bc1f63c35cc6afa0df"
+	AccountsCreatedAt = "0x0000000000000000000000000000000000000000000000000000000000823881"
 	AccountsABI       = "[{\"constant\":true,\"inputs\":[],\"name\":\"numberOfAccounts\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"signature\":\"0x0f03e4c3\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"identityHashToAccount\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"signature\":\"0x17aba2d3\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"name\":\"accounts\",\"outputs\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"status\",\"type\":\"uint8\"},{\"name\":\"controller\",\"type\":\"address\"},{\"name\":\"passwordProof\",\"type\":\"address\"}],\"payable\":false,\"signature\":\"0xf4a3fad5\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"controllerReg\",\"type\":\"address\"}],\"payable\":false,\"signature\":\"constructor\",\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"SignUp\",\"signature\":\"0xb98ae0923087f0b489e49e611630c8accd44d415c9fcbd5d59c6511877754ec4\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"proxy\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"identityHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"TemporaryCreated\",\"signature\":\"0x7f475d23ee7af49ec9e9b689d8eddd76ab367e3d326ba1658216174b5adbf52e\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"identityHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"name\":\"accountId\",\"type\":\"bytes8\"},{\"indexed\":false,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"Unlocked\",\"signature\":\"0x97e37defaf20fab5209164d8e3b54fdb1bd84d7ec6def1886c587be543d41bc0\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[],\"name\":\"create\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"signature\":\"0xefc81a8c\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"identityHash\",\"type\":\"bytes32\"}],\"name\":\"createTemporary\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"signature\":\"0x56003f0f\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"identityPreimage\",\"type\":\"bytes32\"},{\"name\":\"newOwner\",\"type\":\"address\"},{\"name\":\"passwordSignature\",\"type\":\"bytes\"}],\"name\":\"unlockTemporary\",\"outputs\":[],\"payable\":false,\"signature\":\"0x2299219d\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"controller\",\"type\":\"address\"}],\"name\":\"setController\",\"outputs\":[],\"payable\":false,\"signature\":\"0x92eefe9b\",\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"getAccount\",\"outputs\":[{\"components\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"status\",\"type\":\"uint8\"},{\"name\":\"controller\",\"type\":\"address\"},{\"name\":\"passwordProof\",\"type\":\"address\"}],\"name\":\"\",\"type\":\"tuple\"}],\"payable\":false,\"signature\":\"0xf9292ddb\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"identityHash\",\"type\":\"bytes32\"}],\"name\":\"getAccountByIdentityHash\",\"outputs\":[{\"components\":[{\"name\":\"owner\",\"type\":\"address\"},{\"name\":\"status\",\"type\":\"uint8\"},{\"name\":\"controller\",\"type\":\"address\"},{\"name\":\"passwordProof\",\"type\":\"address\"}],\"name\":\"\",\"type\":\"tuple\"}],\"payable\":false,\"signature\":\"0xc75aeb7e\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"getAccountId\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"signature\":\"0xe0b490f7\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"identityHash\",\"type\":\"bytes32\"}],\"name\":\"getAccountIdByIdentityHash\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"signature\":\"0x793d5046\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"messageHash\",\"type\":\"bytes32\"},{\"name\":\"signature\",\"type\":\"bytes\"}],\"name\":\"getAccountIdFromSignature\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes8\"}],\"payable\":false,\"signature\":\"0x23d0601d\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"isTemporary\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"signature\":\"0x6b886888\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"sender\",\"type\":\"address\"},{\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"isControllerOf\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"signature\":\"0xa83038e7\",\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"accountId\",\"type\":\"bytes8\"}],\"name\":\"exists\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"signature\":\"0x97e4fea7\",\"stateMutability\":\"view\",\"type\":\"function\"}]"
 )
 
@@ -231,11 +231,12 @@ func (_Accounts *accountsTransactor) Create(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _Accounts.contract.Transact(_Accounts.backend.Transactor(ctx, opts), "create")
-	if err != nil {
-		return nil, err
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
 	}
-	return _Accounts.backend.WaitMined(ctx, tx)
+	opts.Context = ctx
+
+	return _Accounts.contract.Transact(opts, "create")
 }
 
 // CreateTemporary is a paid mutator transaction binding the contract method 0x56003f0f.
@@ -246,11 +247,12 @@ func (_Accounts *accountsTransactor) CreateTemporary(
 	opts *ablbind.TransactOpts,
 	identityHash common.Hash,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _Accounts.contract.Transact(_Accounts.backend.Transactor(ctx, opts), "createTemporary", identityHash)
-	if err != nil {
-		return nil, err
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
 	}
-	return _Accounts.backend.WaitMined(ctx, tx)
+	opts.Context = ctx
+
+	return _Accounts.contract.Transact(opts, "createTemporary", identityHash)
 }
 
 // SetController is a paid mutator transaction binding the contract method 0x92eefe9b.
@@ -261,11 +263,12 @@ func (_Accounts *accountsTransactor) SetController(
 	opts *ablbind.TransactOpts,
 	controller common.Address,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _Accounts.contract.Transact(_Accounts.backend.Transactor(ctx, opts), "setController", controller)
-	if err != nil {
-		return nil, err
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
 	}
-	return _Accounts.backend.WaitMined(ctx, tx)
+	opts.Context = ctx
+
+	return _Accounts.contract.Transact(opts, "setController", controller)
 }
 
 // UnlockTemporary is a paid mutator transaction binding the contract method 0x2299219d.
@@ -278,11 +281,12 @@ func (_Accounts *accountsTransactor) UnlockTemporary(
 	newOwner common.Address,
 	passwordSignature []byte,
 ) (*chainTypes.Receipt, error) {
-	tx, err := _Accounts.contract.Transact(_Accounts.backend.Transactor(ctx, opts), "unlockTemporary", identityPreimage, newOwner, passwordSignature)
-	if err != nil {
-		return nil, err
+	if opts == nil {
+		opts = &ablbind.TransactOpts{}
 	}
-	return _Accounts.backend.WaitMined(ctx, tx)
+	opts.Context = ctx
+
+	return _Accounts.contract.Transact(opts, "unlockTemporary", identityPreimage, newOwner, passwordSignature)
 }
 
 type AccountsEvents interface {
@@ -502,7 +506,7 @@ func (_Accounts *accountsEvents) ParseSignUp(log chainTypes.Log) (*AccountsSignU
 	return evt, nil
 }
 
-// FilterSignUp parses the event from given transaction receipt.
+// ParseSignUpFromReceipt parses the event from given transaction receipt.
 //
 // Solidity: event SignUp(address indexed owner, bytes8 accountId)
 func (_Accounts *accountsEvents) ParseSignUpFromReceipt(receipt *chainTypes.Receipt) ([]*AccountsSignUp, error) {
@@ -681,7 +685,7 @@ func (_Accounts *accountsEvents) ParseTemporaryCreated(log chainTypes.Log) (*Acc
 	return evt, nil
 }
 
-// FilterTemporaryCreated parses the event from given transaction receipt.
+// ParseTemporaryCreatedFromReceipt parses the event from given transaction receipt.
 //
 // Solidity: event TemporaryCreated(address indexed proxy, bytes32 indexed identityHash, bytes8 accountId)
 func (_Accounts *accountsEvents) ParseTemporaryCreatedFromReceipt(receipt *chainTypes.Receipt) ([]*AccountsTemporaryCreated, error) {
@@ -860,7 +864,7 @@ func (_Accounts *accountsEvents) ParseUnlocked(log chainTypes.Log) (*AccountsUnl
 	return evt, nil
 }
 
-// FilterUnlocked parses the event from given transaction receipt.
+// ParseUnlockedFromReceipt parses the event from given transaction receipt.
 //
 // Solidity: event Unlocked(bytes32 indexed identityHash, bytes8 indexed accountId, address newOwner)
 func (_Accounts *accountsEvents) ParseUnlockedFromReceipt(receipt *chainTypes.Receipt) ([]*AccountsUnlocked, error) {

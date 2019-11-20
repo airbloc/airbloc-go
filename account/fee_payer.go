@@ -1,14 +1,14 @@
-package airbloc
+package account
 
 import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"path"
 
 	"github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/common"
@@ -17,17 +17,12 @@ import (
 
 const feePayerAPIVersion = "v1"
 
-type feePayer struct {
-	Address common.Address `json:"address"`
-	URL     *url.URL       `json:"-"`
-}
-
-type feePayerClient struct {
+type FeePayer struct {
 	client   *http.Client
-	feePayer *feePayer
+	endpoint *url.URL `json:"-"`
 }
 
-func (fpc feePayerClient) request(
+func (fpc FeePayer) request(
 	ctx context.Context,
 	method, endpoint string,
 	body io.Reader,
@@ -37,7 +32,7 @@ func (fpc feePayerClient) request(
 		expectCodes = []int{http.StatusOK}
 	}
 
-	endpoint = path.Join(fpc.feePayer.URL.Host, feePayerAPIVersion, endpoint)
+	endpoint = fmt.Sprintf("%s/%s%s", fpc.endpoint.String(), feePayerAPIVersion, endpoint)
 	req, err := http.NewRequest(method, endpoint, body)
 	if err != nil {
 		return nil, errors.Wrap(err, "make new request")
@@ -73,8 +68,8 @@ func (fpc feePayerClient) request(
 	return respBody, nil
 }
 
-func (fpc feePayerClient) Address(ctx context.Context) (common.Address, error) {
-	body, err := fpc.request(ctx, http.MethodGet, "address", nil)
+func (fpc FeePayer) Address(ctx context.Context) (common.Address, error) {
+	body, err := fpc.request(ctx, http.MethodGet, "/address", nil)
 	if err != nil {
 		return common.Address{}, nil
 	}
@@ -85,40 +80,44 @@ func (fpc feePayerClient) Address(ctx context.Context) (common.Address, error) {
 	if err = json.Unmarshal(body, &resp); err != nil {
 		return common.Address{}, errors.Wrap(err, "marshal response body")
 	}
+	if resp.Address == (common.Address{}) {
+		return common.Address{}, errors.New("received fee payer address is empty")
+	}
 	return resp.Address, nil
 }
 
-func (fpc feePayerClient) Transact(ctx context.Context, tx *types.Transaction) error {
+func (fpc FeePayer) Transact(ctx context.Context, tx *types.Transaction) (common.Hash, error) {
 	rawTxData, err := tx.MarshalJSON()
 	if err != nil {
-		return errors.Wrap(err, "marshal tx")
+		return common.Hash{}, errors.Wrap(err, "marshal tx")
 	}
 
-	_, err = fpc.request(ctx, http.MethodPost, "transact", bytes.NewReader(rawTxData))
+	body, err := fpc.request(ctx, http.MethodPost, "/transact", bytes.NewReader(rawTxData))
 	if err != nil {
-		return err
+		return common.Hash{}, err
 	}
-	return nil
+
+	var resp struct {
+		TxHash common.Hash `json:"tx_hash"`
+	}
+	if err = json.Unmarshal(body, &resp); err != nil {
+		return common.Hash{}, errors.Wrap(err, "marshal response body")
+	}
+	if resp.TxHash == (common.Hash{}) {
+		return common.Hash{}, errors.New("received transaction hash is empty")
+	}
+	return resp.TxHash, nil
 }
 
-func (fpc feePayerClient) FeePayer() feePayer {
-	return *fpc.feePayer
-}
-
-func (fpc *feePayerClient) SetFeePayer(ctx context.Context, rawurl string) error {
-	// fee payer url
-	feePayerUrl, err := url.Parse(rawurl)
-	if err != nil {
-		return errors.Wrapf(err, "invalid fee payer url %s", rawurl)
+func NewFeePayer(client *http.Client, rawurl string) (*FeePayer, error) {
+	if client == nil {
+		client = http.DefaultClient
 	}
-	fpc.feePayer.URL = feePayerUrl
 
-	// fee payer address
-	feePayerAddress, err := fpc.Address(ctx)
+	endpoint, err := url.Parse(rawurl)
 	if err != nil {
-		return errors.Wrap(err, "fetch fee payer address")
+		return nil, errors.Wrapf(err, "invalid fee payer url %s", rawurl)
 	}
-	fpc.feePayer.Address = feePayerAddress
 
-	return nil
+	return &FeePayer{client: client, endpoint: endpoint}, nil
 }
