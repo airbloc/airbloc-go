@@ -23,6 +23,7 @@ type TransactOpts struct {
 	Signer   bind.SignerFn
 	Value    *big.Int
 	GasPrice *big.Int
+	GasLimit uint64
 	TxType   types.TxType
 	Context  context.Context
 }
@@ -74,16 +75,19 @@ func (opts *TransactOpts) MakeTransactionData(client ContractBackend, contract *
 		}
 	}
 
-	gasLimit, err := client.EstimateGas(opts.Context, klaytn.CallMsg{
-		From:  opts.From,
-		To:    contract,
-		Value: value,
-		Data:  input,
-	})
-	if err != nil {
-		return types.TxType(0), nil, fmt.Errorf("failed to estimate gas needed: %v", err)
+	gasLimit := opts.GasLimit
+	if gasLimit == 0 {
+		gasLimit, err = client.EstimateGas(opts.Context, klaytn.CallMsg{
+			From:  opts.From,
+			To:    contract,
+			Value: value,
+			Data:  input,
+		})
+		if err != nil {
+			return types.TxType(0), nil, fmt.Errorf("failed to estimate gas needed: %v", err)
+		}
+		gasLimit, _ = new(big.Float).Mul(big.NewFloat(1.5), new(big.Float).SetUint64(gasLimit)).Uint64()
 	}
-	gasLimit, _ = new(big.Float).Mul(big.NewFloat(1.5), new(big.Float).SetUint64(gasLimit)).Uint64()
 
 	if contract == nil {
 		return types.TxType(0), nil, bind.ErrNoCode

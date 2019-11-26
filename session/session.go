@@ -5,8 +5,6 @@ import (
 	"fmt"
 
 	"github.com/airbloc/airbloc-go/account"
-	"github.com/airbloc/airbloc-go/blockchain"
-
 	ablbind "github.com/airbloc/airbloc-go/bind"
 
 	"github.com/klaytn/klaytn/blockchain/types"
@@ -15,9 +13,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-type sessionData struct{ *blockchain.Client }
 type Session struct {
-	sessionData
+	ablbind.ContractBackend
 
 	account     account.Account
 	deployments ablbind.Deployments
@@ -25,15 +22,15 @@ type Session struct {
 
 func NewSession(cfg Config) (Session, error) {
 	sess := Session{
-		sessionData: sessionData{cfg.Client},
-		account:     cfg.Account,
-		deployments: cfg.Deployments,
+		ContractBackend: cfg.Client,
+		account:         cfg.Account,
+		deployments:     cfg.Deployments,
 	}
 	return sess, nil
 }
 
 func (sess Session) Client() *klayClient.Client {
-	return sess.sessionData.Client.Client()
+	return sess.ContractBackend.Client()
 }
 
 func (sess Session) Deployment(contract string) (ablbind.Deployment, bool) {
@@ -45,34 +42,34 @@ func (sess Session) Transactor(ctx context.Context, opts ...*ablbind.TransactOpt
 }
 
 func (sess Session) SendTransaction(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
+	hash, err := sess.sendTransaction(ctx, tx)
+	if err != nil {
+		return nil, err
+	}
+	return sess.WaitMinedWithHash(ctx, hash)
+}
+
+func (sess Session) sendTransaction(ctx context.Context, tx *types.Transaction) (common.Hash, error) {
 	if sess.account.IsReadOnly() {
-		return nil, errors.New("session is on read-only mode")
+		return common.Hash{}, errors.New("session is on read-only mode")
 	}
 
 	txType := tx.Type()
 
 	if txType == types.TxTypeValueTransfer ||
 		txType == types.TxTypeSmartContractExecution {
-		hash, err := sess.SendRawTransaction(ctx, tx)
-		if err != nil {
-			return nil, err
-		}
-		return sess.WaitMinedWithHash(ctx, hash)
+		return sess.Client().SendRawTransaction(ctx, tx)
 	}
 
 	if !sess.account.IsDelegated() {
-		return nil, errors.New("session is non-delegate mode")
+		return common.Hash{}, errors.New("session is non-delegate mode")
 	}
 
 	if txType == types.TxTypeFeeDelegatedValueTransfer ||
 		txType == types.TxTypeFeeDelegatedSmartContractExecution {
-		hash, err := sess.account.SendTransaction(ctx, tx)
-		if err != nil {
-			return nil, err
-		}
-		return sess.WaitMinedWithHash(ctx, hash)
+		return sess.account.SendTransaction(ctx, tx)
 	}
-	return nil, errors.New("invalid transaction type")
+	return common.Hash{}, errors.New("invalid transaction type")
 }
 
 func (sess Session) MakeTransaction(opts *ablbind.TransactOpts, contract *common.Address, input []byte) (*types.Transaction, error) {
