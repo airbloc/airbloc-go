@@ -192,6 +192,9 @@ func MergeTxOpts(ctx context.Context, origin *TransactOpts, opts ...*TransactOpt
 		if opt.GasPrice != nil {
 			mergedOpts.GasPrice = opt.GasPrice
 		}
+		if opt.GasLimit != 0 {
+			mergedOpts.GasLimit = opt.GasLimit
+		}
 		if opt.TxType != 0 {
 			mergedOpts.TxType = opt.TxType
 		}
