@@ -8,8 +8,8 @@ import (
 
 	"github.com/airbloc/airbloc-go/account"
 	"github.com/airbloc/airbloc-go/bind"
-	"github.com/airbloc/airbloc-go/bind/managers"
 	"github.com/airbloc/airbloc-go/blockchain"
+	"github.com/airbloc/airbloc-go/managers"
 
 	"github.com/klaytn/klaytn/crypto"
 	. "github.com/smartystreets/goconvey/convey"
