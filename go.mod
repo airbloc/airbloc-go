@@ -18,6 +18,7 @@ require (
 	github.com/perlin-network/noise v1.1.1-0.20190219190757-3c13535b725d
 	github.com/pkg/errors v0.8.1
 	github.com/rs/zerolog v1.17.2 // indirect
+	github.com/satori/go.uuid v1.2.0
 	github.com/smartystreets/assertions v1.0.1 // indirect
 	github.com/smartystreets/goconvey v0.0.0-20190731233626-505e41936337
 	github.com/stretchr/testify v1.4.0
