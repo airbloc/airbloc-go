@@ -1,6 +1,7 @@
 package p2p
 
 import (
+	"log"
 	"reflect"
 
 	"github.com/airbloc/logger"
@@ -50,10 +51,10 @@ func (handler nodeEventHandler) onPeerInitHandler() noise.OnPeerInitCallback {
 	return func(node *noise.Node, peer *noise.Peer) error {
 		registerPeerEventHandler(handler.node, peer)
 
-		//aggregatedMessages := make(chan noise.Message)
-		//for _, opcode := range message.Opcodes {
-		//
-		//}
+		go func() {
+			peerAddress := GetPeerAddress(peer)
+			log.Println(peerAddress.Hex())
+		}()
 
 		return nil
 	}
