@@ -2,7 +2,9 @@ package p2p
 
 import (
 	"context"
+	"crypto/rand"
 	"log"
+	"sync"
 	"testing"
 	"time"
 
@@ -13,8 +15,6 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/pkg/errors"
-
-	perlinLog "github.com/perlin-network/noise/log"
 
 	"github.com/stretchr/testify/require"
 
@@ -62,7 +62,7 @@ func newAirblocNodes(count int, initializer func(nodes []Node, index int, node N
 }
 
 func TestAirblocNode(t *testing.T) {
-	perlinLog.Disable()
+	//perlinLog.Disable()
 	log.SetFlags(log.Llongfile)
 
 	testContext, cancel := context.WithCancel(context.Background())
@@ -77,22 +77,45 @@ func TestAirblocNode(t *testing.T) {
 		node.Start(testContext)
 		return nil
 	}
-	bootstrapNodes, err := newAirblocNodes(5, bootstrapNodeInitializer)
+	bootstrapNodes, err := newAirblocNodes(2, bootstrapNodeInitializer)
 	require.NoError(t, err)
 	for index, node := range bootstrapNodes {
 		err = node.Bootstrap(bootstrapNodes[index+1:].Addresses()...)
 		require.NoError(t, err)
 	}
 
-	nodes, err := newAirblocNodes(24, nil)
+	nodes, err := newAirblocNodes(7, nil)
 	require.NoError(t, err)
 
+	nodeWaitGroup := new(sync.WaitGroup)
 	for _, node := range nodes {
-		err = node.StartWithInitialNodes(testContext, bootstrapNodes.Addresses()...)
-		assert.NoError(t, err)
+		nodeWaitGroup.Add(1)
+		go func(node Node) {
+			defer nodeWaitGroup.Done()
+			err = node.StartWithInitialNodes(testContext, bootstrapNodes.Addresses()...)
+			assert.NoError(t, err)
+		}(node)
 	}
+	nodeWaitGroup.Wait()
 
 	skademlia.Broadcast(nodes[0].node, users.SignUpRequest{
 		IdentityHash: common.HexToHash("0xdeadbeefdeadbeef"),
 	})
+}
+
+func TestSignature(t *testing.T) {
+	privKey, err := crypto.GenerateKey()
+	require.NoError(t, err)
+
+	var payload []byte
+	_, err = rand.Read(payload)
+	require.NoError(t, err)
+
+	sig, err := crypto.Sign(payload, privKey)
+	assert.NoError(t, err)
+
+	pubKey, err := crypto.SigToPub(payload, sig)
+	assert.NoError(t, err)
+	_ = pubKey
+	//crypto.VerifySignature(pubKey)
 }
