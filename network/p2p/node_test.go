@@ -8,10 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/airbloc/airbloc-go/network/p2p/message/users"
-	"github.com/klaytn/klaytn/common"
-	"github.com/perlin-network/noise/skademlia"
-
+	perlinLog "github.com/perlin-network/noise/log"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/pkg/errors"
@@ -62,7 +59,7 @@ func newAirblocNodes(count int, initializer func(nodes []Node, index int, node N
 }
 
 func TestAirblocNode(t *testing.T) {
-	//perlinLog.Disable()
+	perlinLog.Disable()
 	log.SetFlags(log.Llongfile)
 
 	testContext, cancel := context.WithCancel(context.Background())
@@ -97,10 +94,6 @@ func TestAirblocNode(t *testing.T) {
 		}(node)
 	}
 	nodeWaitGroup.Wait()
-
-	skademlia.Broadcast(nodes[0].node, users.SignUpRequest{
-		IdentityHash: common.HexToHash("0xdeadbeefdeadbeef"),
-	})
 }
 
 func TestSignature(t *testing.T) {
