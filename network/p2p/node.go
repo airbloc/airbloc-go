@@ -4,6 +4,11 @@ import (
 	"context"
 	"encoding/hex"
 
+	"github.com/airbloc/airbloc-go/network/p2p/handshake/identity"
+
+	"github.com/perlin-network/noise/cipher/aead"
+	"github.com/perlin-network/noise/handshake/ecdh"
+
 	"github.com/airbloc/airbloc-go/account"
 	"github.com/airbloc/logger"
 
@@ -13,6 +18,8 @@ import (
 	"github.com/perlin-network/noise/transport"
 	"github.com/pkg/errors"
 )
+
+const ecdhHandshakeMessage = ".airbloc_node_handshake"
 
 type Node struct {
 	context contextGroup
@@ -40,7 +47,6 @@ func newNode(host string, port uint16, tp transport.Layer) (*noise.Node, error) 
 	if err != nil {
 		return nil, errors.Wrap(err, "new node")
 	}
-	enforceProtocol(node)
 	return node, nil
 }
 
@@ -49,6 +55,16 @@ func NewNode(host string, port uint16, tp transport.Layer, account account.Accou
 	if err != nil {
 		return Node{}, err
 	}
+
+	ecdhBlock := ecdh.New()
+	ecdhBlock.WithHandshakeMessage(ecdhHandshakeMessage)
+
+	p := protocol.New()
+	p.Register(ecdhBlock)
+	p.Register(aead.New())
+	p.Register(skademlia.New())
+	p.Register(identity.New(account))
+	p.Enforce(node)
 
 	airblocNode := Node{
 		node: node,
