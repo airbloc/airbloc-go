@@ -14,16 +14,6 @@ var (
 	OpcodeConsentsConsentRequest  = noise.RegisterMessage(noise.NextAvailableOpcode(), (*consents.ConsentRequest)(nil))
 	OpcodeConsentsConsentResponse = noise.RegisterMessage(noise.NextAvailableOpcode(), (*consents.ConsentResponse)(nil))
 
-	// OpcodeMap is opcode to message string list for logging & debugging
-	OpcodeMap = map[noise.Opcode]string{
-		OpcodeUsersSignUpRequest:      "Message_Users_SignUp_Request",
-		OpcodeUsersSignUpResponse:     "Message_Users_SignUp_Response",
-		OpcodeUsersUnlockRequest:      "Message_Users_Unlock_Request",
-		OpcodeUsersUnlockResponse:     "Message_Users_Unlock_Response",
-		OpcodeConsentsConsentRequest:  "Message_Consents_Consent_Request",
-		OpcodeConsentsConsentResponse: "Message_Consents_Consent_Response",
-	}
-
 	RequestOpcodes = []noise.Opcode{
 		OpcodeUsersSignUpRequest,
 		OpcodeUsersUnlockRequest,
