@@ -22,6 +22,10 @@ type Account struct {
 	feePayer *FeePayer
 }
 
+func (acc Account) Address() common.Address {
+	return acc.account.From
+}
+
 func (acc Account) IsReadOnly() bool {
 	return acc.account == nil
 }
