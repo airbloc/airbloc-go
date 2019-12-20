@@ -1,8 +1,12 @@
 package p2p
 
 import (
-	"log"
+	"context"
 	"reflect"
+	"strings"
+	"sync"
+
+	"github.com/pkg/errors"
 
 	"github.com/airbloc/logger"
 	"github.com/perlin-network/noise"
@@ -27,7 +31,7 @@ func (handler peerEventHandler) OnConnErrorHandler() noise.OnPeerErrorCallback {
 type nodeEventHandler struct{ node Node }
 
 func registerNodeEventHandler(node Node) {
-	nodeEventHandler{node}.register(node.node)
+	nodeEventHandler{node}.register(node.Node)
 }
 
 func (handler nodeEventHandler) register(node *noise.Node) {
@@ -38,9 +42,13 @@ func (handler nodeEventHandler) register(node *noise.Node) {
 
 func (handler nodeEventHandler) onListenerErrorHandler() noise.OnErrorCallback {
 	return func(_ *noise.Node, err error) error {
+		if strings.Contains(err.Error(), "use of closed network connection") {
+			return nil
+		}
+
 		node := handler.node
-		node.log.Error("Listener error occurred", logger.Attrs{
-			"type":    reflect.TypeOf(err).String(),
+		node.logger().Error("Listener error occurred", logger.Attrs{
+			"type":    reflect.TypeOf(errors.Cause(err)).String(),
 			"message": err.Error(),
 		})
 		return err
@@ -48,20 +56,49 @@ func (handler nodeEventHandler) onListenerErrorHandler() noise.OnErrorCallback {
 }
 
 func (handler nodeEventHandler) onPeerInitHandler() noise.OnPeerInitCallback {
-	return func(node *noise.Node, peer *noise.Peer) error {
-		registerPeerEventHandler(handler.node, peer)
+	return func(node *noise.Node, p *noise.Peer) error {
+		peer := Peer{p}
+		peer.Set(KeyPeerAggregatedMessageChannel, make(chan aggregatedMessage))
+		peer.Set(KeyPeerContext, newContext(context.WithCancel(context.Background())))
+		peer.Set(KeyPeerWaitGroupMessageWorker, new(sync.WaitGroup))
+		peer.Set(KeyPeerWaitGroupMessageAggregator, new(sync.WaitGroup))
 
-		go func() {
-			peerAddress := GetPeerAddress(peer)
-			log.Println(peerAddress.Hex())
-		}()
+		registerPeerEventHandler(handler.node, peer.Peer)
+
+		peerAddress, err := peer.GetAddress()
+		if err != nil {
+			peer.Disconnect()
+			return err
+		}
+		exist := handler.node.RegisterPeer(peerAddress, p)
+		if exist {
+			peer.Disconnect()
+			return nil
+		}
+
+		RunMessageAggregator(handler.node, peer)
+		RunMessageWorker(handler.node, peer)
 
 		return nil
 	}
 }
 
 func (handler nodeEventHandler) onPeerDisconnectedHandler() noise.OnPeerDisconnectCallback {
-	return func(node *noise.Node, peer *noise.Peer) error {
+	return func(node *noise.Node, p *noise.Peer) error {
+		peer := Peer{p}
+		peer.context().Cancel()
+
+		// wait for message aggregator
+		peer.messageAggregatorWaitGroup().Wait()
+		close(peer.aggregatedMessageChannnel())
+
+		// wait for message worker
+		peer.messageWorkerWaitGroup().Wait()
+
+		peerAddress, err := peer.GetAddress()
+		if err == nil {
+			handler.node.UnregisterPeer(peerAddress)
+		}
 		return nil
 	}
 }
