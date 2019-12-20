@@ -9,6 +9,11 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+var (
+	_ noise.Message = (*ConsentRequest)(nil)
+	_ noise.Message = (*ConsentResponse)(nil)
+)
+
 type ConsentRequest struct {
 	MessageID   uuid.UUID
 	ConsentData []ablTypes.ConsentData

@@ -10,6 +10,11 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+var (
+	_ noise.Message = (*SignUpRequest)(nil)
+	_ noise.Message = (*SignUpResponse)(nil)
+)
+
 type SignUpRequest struct {
 	MessageID    uuid.UUID   `json:"message_id"` // Ignore when write message
 	IdentityHash common.Hash `json:"identity_hash"`

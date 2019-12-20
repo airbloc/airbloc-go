@@ -8,6 +8,11 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+var (
+	_ noise.Message = (*UnlockRequest)(nil)
+	_ noise.Message = (*UnlockResponse)(nil)
+)
+
 type UnlockRequest struct {
 	MessageID        uuid.UUID // Ignore when write message
 	IdentityPreimage common.Hash
