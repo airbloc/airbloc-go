@@ -1,64 +1,29 @@
 package identity
 
 import (
-	"crypto/ecdsa"
+	"github.com/klaytn/klaytn/common"
 
-	"github.com/klaytn/klaytn/crypto"
 	"github.com/perlin-network/noise"
 	"github.com/perlin-network/noise/payload"
 	"github.com/pkg/errors"
 )
 
 var (
-	_ noise.Message = (*HandshakeRequest)(nil)
-	_ noise.Message = (*HandshakeResponse)(nil)
+	_ noise.Message = (*Ping)(nil)
 )
 
-type HandshakeRequest struct {
-	Payload []byte
+type Ping struct {
+	Address common.Address
 }
 
-func (HandshakeRequest) Read(reader payload.Reader) (noise.Message, error) {
-	verifyPayload, err := reader.ReadBytes()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to read payload")
-	}
-	return HandshakeRequest{Payload: verifyPayload}, nil
-}
-
-func (m HandshakeRequest) Write() []byte {
-	return payload.NewWriter(nil).WriteBytes(m.Payload).Bytes()
-}
-
-type HandshakeResponse struct {
-	PubKey    *ecdsa.PublicKey
-	Signature []byte
-}
-
-func (HandshakeResponse) Read(reader payload.Reader) (noise.Message, error) {
-	pubKeyBytes, err := reader.ReadBytes()
+func (Ping) Read(reader payload.Reader) (noise.Message, error) {
+	address, err := reader.ReadBytes()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to read address")
 	}
-
-	pubKey, err := crypto.UnmarshalPubkey(pubKeyBytes)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to unmarshal pubkey")
-	}
-
-	signature, err := reader.ReadBytes()
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to read signature")
-	}
-
-	return HandshakeResponse{
-		PubKey:    pubKey,
-		Signature: signature,
-	}, nil
+	return Ping{Address: common.BytesToAddress(address)}, nil
 }
 
-func (m HandshakeResponse) Write() []byte {
-	return payload.NewWriter(nil).
-		WriteBytes(crypto.FromECDSAPub(m.PubKey)).
-		WriteBytes(m.Signature).Bytes()
+func (p Ping) Write() []byte {
+	return payload.NewWriter(nil).WriteBytes(p.Address.Bytes()).Bytes()
 }
