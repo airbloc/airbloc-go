@@ -3,10 +3,11 @@ package users
 import (
 	"encoding/json"
 
-	klayTypes "github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/common/hexutil"
 	"github.com/perlin-network/noise"
 	"github.com/perlin-network/noise/payload"
+	"github.com/pkg/errors"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -22,8 +23,9 @@ type SignUpRequest struct {
 
 func (SignUpRequest) Read(reader payload.Reader) (noise.Message, error) {
 	var req SignUpRequest
-	if err := json.NewDecoder(reader).Decode(&req); err != nil {
-		return nil, err
+	err := json.NewDecoder(reader).Decode(&req)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode signup request message")
 	}
 	return req, nil
 }
@@ -35,22 +37,21 @@ func (req SignUpRequest) Write() []byte {
 }
 
 type SignUpResponse struct {
-	MessageID uuid.UUID `json:"message_id"`
-	Tx        struct {
-		Hash    common.Hash        `json:"hash"`
-		Receipt *klayTypes.Receipt `json:"receipt"`
-	} `json:"tx"`
+	MessageID uuid.UUID     `json:"message_id"`
+	TxHash    common.Hash   `json:"tx_hash"`
+	Signature hexutil.Bytes `json:"signature"`
 }
 
 func (SignUpResponse) Read(reader payload.Reader) (noise.Message, error) {
-	var req SignUpResponse
-	if err := json.NewDecoder(reader).Decode(&req); err != nil {
-		return nil, err
+	var resp SignUpResponse
+	err := json.NewDecoder(reader).Decode(&resp)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode signup response message")
 	}
-	return req, nil
+	return resp, nil
 }
 
 func (resp SignUpResponse) Write() []byte {
-	reqBytes, _ := json.Marshal(resp)
-	return reqBytes
+	respBytes, _ := json.Marshal(resp)
+	return respBytes
 }
