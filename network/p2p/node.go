@@ -5,19 +5,15 @@ import (
 	"encoding/hex"
 	"sync"
 
-	"github.com/airbloc/airbloc-go/network/p2p/message"
-
-	"github.com/klaytn/klaytn/common"
-
-	"github.com/airbloc/airbloc-go/network/p2p/handshake/identity"
-
-	"github.com/perlin-network/noise/cipher/aead"
-	"github.com/perlin-network/noise/handshake/ecdh"
-
 	"github.com/airbloc/airbloc-go/account"
+	"github.com/airbloc/airbloc-go/network/p2p/handshake/identity"
+	"github.com/airbloc/airbloc-go/network/p2p/message"
 	"github.com/airbloc/logger"
 
+	"github.com/klaytn/klaytn/common"
 	"github.com/perlin-network/noise"
+	"github.com/perlin-network/noise/cipher/aead"
+	"github.com/perlin-network/noise/handshake/ecdh"
 	"github.com/perlin-network/noise/protocol"
 	"github.com/perlin-network/noise/skademlia"
 	"github.com/perlin-network/noise/transport"
@@ -146,12 +142,12 @@ func (n Node) Start() {
 	// start killer
 	go func() {
 		<-n.context().Done()
+		n.logger().Info("Node service closing...")
 		n.peerstore().Range(func(key, value interface{}) bool {
 			value.(*noise.Peer).Disconnect()
 			return true
 		})
 		n.Kill()
-		n.logger().Info("Node service closing...")
 	}()
 	n.logger().Info("Node listening at {}", n.ExternalAddress())
 }
