@@ -7,24 +7,17 @@ import (
 	"testing"
 	"time"
 
-	"github.com/klaytn/klaytn/blockchain/types"
-
+	"github.com/airbloc/airbloc-go/account"
 	"github.com/airbloc/airbloc-go/network/p2p/message"
 	"github.com/airbloc/airbloc-go/network/p2p/message/users"
-	"github.com/klaytn/klaytn/common"
-	"github.com/perlin-network/noise/skademlia"
 
-	"github.com/perlin-network/noise"
-
-	perlinLog "github.com/perlin-network/noise/log"
-	"github.com/stretchr/testify/assert"
-
-	"github.com/pkg/errors"
-
-	"github.com/stretchr/testify/require"
-
-	"github.com/airbloc/airbloc-go/account"
 	"github.com/klaytn/klaytn/crypto"
+	"github.com/perlin-network/noise"
+	perlinLog "github.com/perlin-network/noise/log"
+	"github.com/perlin-network/noise/skademlia"
+	"github.com/pkg/errors"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var _ = perlinLog.Error()
@@ -104,15 +97,36 @@ func TestAirblocNode(t *testing.T) {
 
 	nodeInitializer := func(nodes []Node, index int, node Node) error {
 		node.RegisterHandler(message.OpcodeUsersSignUpRequest, func(context context.Context, message noise.Message, peer *noise.Peer) error {
-			node.logger().Debug("Request received from {}!!, sending response", (<-Peer{peer}.GetAddressAsync()).Hex())
-			//return peer.SendMessage(users.SignUpRequest{
-			//	IdentityHash: common.HexToHash("0xdeadbeefdeadbeef"),
-			//})
-			return nil
+			peerAddr := <-Peer{peer}.GetAddressAsync()
+
+			reqMsg := message.(users.SignUpRequest)
+			node.logger().Info("Request received from: {}, v: {}", peerAddr.Hex(), reqMsg)
+
+			signature, err := node.account().SignMessage(reqMsg.IdentityHash.Bytes())
+			if err != nil {
+				return errors.Wrap(err, "failed to sign response message")
+			}
+
+			return peer.SendMessage(users.SignUpResponse{
+				MessageID: reqMsg.MessageID,
+				TxHash:    reqMsg.IdentityHash,
+				Signature: signature,
+			})
 		})
 		node.RegisterHandler(message.OpcodeUsersSignUpResponse, func(context context.Context, message noise.Message, peer *noise.Peer) error {
-			resp := message.(users.SignUpResponse)
-			node.logger().Debug("Response received from {}!! value: {}", (<-Peer{peer}.GetAddressAsync()).Hex(), resp.Tx.Hash.Hex())
+			peerAddr := <-Peer{peer}.GetAddressAsync()
+
+			respMsg := message.(users.SignUpResponse)
+			node.logger().Info("Response received from: {}, v: {}", peerAddr.Hex(), respMsg)
+
+			pubKey, err := crypto.SigToPub(respMsg.TxHash.Bytes(), respMsg.Signature)
+			if err != nil {
+				return errors.Wrap(err, "failed to derive pubkey from signature")
+			}
+			if crypto.PubkeyToAddress(*pubKey) != peerAddr {
+				return errors.Wrap(err, "failed to validate response")
+			}
+
 			return nil
 		})
 		return nil
@@ -122,7 +136,7 @@ func TestAirblocNode(t *testing.T) {
 	require.NoError(t, err)
 
 	for _, node := range nodes {
-		node.StartWithInitialNodes(bootstrapNodes.Addresses()...)
+		require.NoError(t, node.StartWithInitialNodes(bootstrapNodes.Addresses()...))
 	}
 
 	time.Sleep(1 * time.Second)
@@ -133,20 +147,7 @@ func TestAirblocNode(t *testing.T) {
 	log.Println("==================================================")
 
 	skademlia.Broadcast(nodes[0].Node, users.SignUpRequest{
-		IdentityHash: common.HexToHash("0xdeadbeefdeadbeef"),
-	})
-
-	time.Sleep(1 * time.Second)
-	log.Println("==================================================")
-
-	skademlia.Broadcast(nodes[1].Node, users.SignUpResponse{
-		Tx: struct {
-			Hash    common.Hash    `json:"hash"`
-			Receipt *types.Receipt `json:"receipt"`
-		}{
-			Hash:    common.HexToHash("0xbeefdeadbeefdead"),
-			Receipt: types.NewReceipt(1, common.HexToHash("0xbeefdeadbeefdead"), 1612),
-		},
+		IdentityHash: nodes[0].account().Address().Hash(),
 	})
 }
 
