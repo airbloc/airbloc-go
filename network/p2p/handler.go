@@ -6,10 +6,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/pkg/errors"
-
 	"github.com/airbloc/logger"
+
 	"github.com/perlin-network/noise"
+	"github.com/pkg/errors"
 )
 
 type peerEventHandler struct{ node Node }
@@ -58,7 +58,7 @@ func (handler nodeEventHandler) onListenerErrorHandler() noise.OnErrorCallback {
 func (handler nodeEventHandler) onPeerInitHandler() noise.OnPeerInitCallback {
 	return func(node *noise.Node, p *noise.Peer) error {
 		peer := Peer{p}
-		peer.Set(KeyPeerAggregatedMessageChannel, make(chan aggregatedMessage))
+		peer.Set(KeyPeerAggregatedMessageChannel, make(chan aggregatedMessage, 5))
 		peer.Set(KeyPeerContext, newContext(context.WithCancel(context.Background())))
 		peer.Set(KeyPeerWaitGroupMessageWorker, new(sync.WaitGroup))
 		peer.Set(KeyPeerWaitGroupMessageAggregator, new(sync.WaitGroup))
@@ -76,8 +76,8 @@ func (handler nodeEventHandler) onPeerInitHandler() noise.OnPeerInitCallback {
 			return nil
 		}
 
-		RunMessageAggregator(handler.node, peer)
-		RunMessageWorker(handler.node, peer)
+		go MessageAggregator(handler.node, peer)
+		go MessageHandleWorker(handler.node, peer)()
 
 		return nil
 	}
