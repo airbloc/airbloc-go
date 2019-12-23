@@ -4,15 +4,13 @@ import (
 	"context"
 	"crypto/ecdsa"
 
-	"github.com/klaytn/klaytn/crypto"
-
-	"github.com/pkg/errors"
-
 	ablbind "github.com/airbloc/airbloc-go/bind"
 
 	"github.com/klaytn/klaytn/accounts"
 	"github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/common"
+	"github.com/klaytn/klaytn/crypto"
+	"github.com/pkg/errors"
 )
 
 type Account struct {
