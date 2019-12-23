@@ -6,19 +6,17 @@ import (
 	"github.com/klaytn/klaytn/common"
 )
 
-// Account is bind of Accounts.Account
-type Account struct {
-	Owner         common.Address
-	Status        uint8
-	Controller    common.Address
-	PasswordProof common.Address
+// User is bind of Users.User
+type User struct {
+	Owner      common.Address
+	Controller common.Address
+	Status     uint8
 }
 
 // App is bind of AppRegistry.App
 type App struct {
 	Name  string
 	Owner common.Address
-	Addr  common.Address
 }
 
 // ConsentData is bind of Consents.ConsentData
@@ -26,12 +24,6 @@ type ConsentData struct {
 	Action   uint8
 	DataType string
 	Allow    bool
-}
-
-// DataController is bind of ControllerRegistry.DataController
-type DataController struct {
-	Controller common.Address
-	UsersCount *big.Int
 }
 
 // DataType is bind of DataTypeRegistry.DataType

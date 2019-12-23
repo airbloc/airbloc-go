@@ -5,7 +5,7 @@ import (
 	"math/big"
 
 	ablbind "github.com/airbloc/airbloc-go/bind"
-	"github.com/airbloc/airbloc-go/bind/contracts"
+	"github.com/airbloc/airbloc-go/contracts"
 	logger "github.com/airbloc/logger"
 	common "github.com/klaytn/klaytn/common"
 	"github.com/pkg/errors"
