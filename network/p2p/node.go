@@ -54,7 +54,6 @@ func newNode(host string, port uint16, tp transport.Layer) (*noise.Node, error) 
 }
 
 func NewNode(
-	parentContext context.Context,
 	host string, port uint16, tp transport.Layer,
 	account account.Account,
 ) (Node, error) {
@@ -75,7 +74,6 @@ func NewNode(
 	p.Enforce(node.Node)
 
 	node.Set(KeyNodeAccount, account)
-	node.Set(KeyNodeContext, newContext(context.WithCancel(parentContext)))
 	node.Set(KeyNodeHandlers, new(sync.Map))
 	// TODO - remove postfix address <- for debug perpose
 	node.Set(KeyNodeLogger, logger.New("abl-p2p"+"/"+account.Address().Hex()))
@@ -86,19 +84,22 @@ func NewNode(
 	return node, nil
 }
 
+//======== account
 func (n Node) account() account.Account {
 	return n.Get(KeyNodeAccount).(account.Account)
 }
 
+//======== handlers
 func (n Node) context() Context {
 	return n.Get(KeyNodeContext).(Context)
 }
 
+//======== handlers
 func (n Node) handlers() *sync.Map {
 	return n.Get(KeyNodeHandlers).(*sync.Map)
 }
 
-func (n Node) handle(opcode noise.Opcode, msg noise.Message, peer *noise.Peer) error {
+func (n Node) handle(opcode noise.Opcode, msg message.Message, peer *noise.Peer) error {
 	handler, exist := n.handlers().Load(opcode)
 	if !exist {
 		return errors.New("handler that matches given opcode does not registered")
@@ -110,10 +111,12 @@ func (n Node) RegisterHandler(opcode noise.Opcode, handler message.HandlerFunc) 
 	n.handlers().Store(opcode, handler)
 }
 
+//======== logger
 func (n Node) logger() *logger.Logger {
 	return n.Get(KeyNodeLogger).(*logger.Logger)
 }
 
+//======== peerstore
 func (n Node) peerstore() *sync.Map {
 	return n.Get(KeyNodePeerStore).(*sync.Map)
 }
@@ -135,7 +138,9 @@ func (n Node) unregisterPeer(address common.Address) {
 	}
 }
 
-func (n Node) Start() {
+func (n Node) Start(parentContext context.Context) {
+	n.Set(KeyNodeContext, newContext(context.WithCancel(parentContext)))
+
 	// listen
 	go n.Listen()
 
@@ -171,8 +176,8 @@ func (n Node) Bootstrap(nodeAddresses ...string) error {
 	return nil
 }
 
-func (n Node) StartWithInitialNodes(nodeAddresses ...string) error {
-	n.Start()
+func (n Node) StartWithInitialNodes(parentContext context.Context, nodeAddresses ...string) error {
+	n.Start(parentContext)
 	return n.Bootstrap(nodeAddresses...)
 }
 

@@ -35,12 +35,12 @@ func MessageAggregator(node Node, peer Peer) {
 						logger.Attrs{"peer-address": (<-peer.GetAddressAsync()).Hex()})
 					return
 				case receivedMessage := <-peer.Receive(opcode):
-					if _, ok := receivedMessage.(message.Message); ok {
+					if msg, ok := receivedMessage.(message.Message); ok {
 						aggregatedMessageChan <- struct {
 							message message.Message
 							opcode  noise.Opcode
 						}{
-							message: receivedMessage,
+							message: msg,
 							opcode:  opcode,
 						}
 					}
