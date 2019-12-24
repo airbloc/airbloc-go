@@ -2,7 +2,6 @@ package p2p
 
 import (
 	"context"
-	"crypto/rand"
 	"log"
 	"testing"
 	"time"
@@ -16,7 +15,6 @@ import (
 	perlinLog "github.com/perlin-network/noise/log"
 	"github.com/perlin-network/noise/skademlia"
 	"github.com/pkg/errors"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -149,21 +147,4 @@ func TestAirblocNode(t *testing.T) {
 	skademlia.Broadcast(nodes[0].Node, users.SignUpRequest{
 		IdentityHash: nodes[0].account().Address().Hash(),
 	})
-}
-
-func TestSignature(t *testing.T) {
-	privKey, err := crypto.GenerateKey()
-	require.NoError(t, err)
-
-	var payload []byte
-	_, err = rand.Read(payload)
-	require.NoError(t, err)
-
-	sig, err := crypto.Sign(payload, privKey)
-	assert.NoError(t, err)
-
-	pubKey, err := crypto.SigToPub(payload, sig)
-	assert.NoError(t, err)
-	_ = pubKey
-	//crypto.VerifySignature(pubKey)
 }
