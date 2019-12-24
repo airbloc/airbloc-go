@@ -77,7 +77,7 @@ func NewNode(
 	node.Set(KeyNodeAccount, account)
 	node.Set(KeyNodeContext, newContext(context.WithCancel(parentContext)))
 	node.Set(KeyNodeHandlers, new(sync.Map))
-	// TODO - remove postfix address
+	// TODO - remove postfix address <- for debug perpose
 	node.Set(KeyNodeLogger, logger.New("abl-p2p"+"/"+account.Address().Hex()))
 	node.Set(KeyNodePeerStore, new(sync.Map))
 
@@ -98,6 +98,18 @@ func (n Node) handlers() *sync.Map {
 	return n.Get(KeyNodeHandlers).(*sync.Map)
 }
 
+func (n Node) handle(opcode noise.Opcode, msg noise.Message, peer *noise.Peer) error {
+	handler, exist := n.handlers().Load(opcode)
+	if !exist {
+		return errors.New("handler that matches given opcode does not registered")
+	}
+	return handler.(message.HandlerFunc)(n.context(), msg, peer)
+}
+
+func (n Node) RegisterHandler(opcode noise.Opcode, handler message.HandlerFunc) {
+	n.handlers().Store(opcode, handler)
+}
+
 func (n Node) logger() *logger.Logger {
 	return n.Get(KeyNodeLogger).(*logger.Logger)
 }
@@ -106,19 +118,7 @@ func (n Node) peerstore() *sync.Map {
 	return n.Get(KeyNodePeerStore).(*sync.Map)
 }
 
-func (n Node) RegisterHandler(opcode noise.Opcode, handler message.HandlerFunc) {
-	n.handlers().Store(opcode, handler)
-}
-
-func (n Node) GetHandler(opcode noise.Opcode) (message.HandlerFunc, error) {
-	handler, exist := n.handlers().Load(opcode)
-	if !exist {
-		return nil, errors.New("handler that matches given opcode does not registered")
-	}
-	return handler.(message.HandlerFunc), nil
-}
-
-func (n Node) RegisterPeer(address common.Address, peer *noise.Peer) (exist bool) {
+func (n Node) registerPeer(address common.Address, peer *noise.Peer) (exist bool) {
 	_, exist = n.peerstore().LoadOrStore(address, peer)
 	if !exist {
 		n.logger().Debug("Peer registered, address is {}", address.Hex())
@@ -128,7 +128,7 @@ func (n Node) RegisterPeer(address common.Address, peer *noise.Peer) (exist bool
 	return
 }
 
-func (n Node) UnregisterPeer(address common.Address) {
+func (n Node) unregisterPeer(address common.Address) {
 	if _, exist := n.peerstore().Load(address); exist {
 		n.peerstore().Delete(address)
 		n.logger().Debug("Peer unregistered, address is {}", address.Hex())
