@@ -1,8 +1,7 @@
 package users
 
 import (
-	"encoding/json"
-
+	json "github.com/json-iterator/go"
 	"github.com/klaytn/klaytn/common"
 	"github.com/klaytn/klaytn/common/hexutil"
 	"github.com/perlin-network/noise"

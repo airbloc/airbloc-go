@@ -1,10 +1,9 @@
 package consents
 
 import (
-	"encoding/json"
-
 	ablTypes "github.com/airbloc/airbloc-go/bind/types"
 
+	json "github.com/json-iterator/go"
 	"github.com/klaytn/klaytn/common"
 	"github.com/klaytn/klaytn/common/hexutil"
 	"github.com/perlin-network/noise"
