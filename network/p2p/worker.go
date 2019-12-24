@@ -10,6 +10,11 @@ import (
 	"github.com/pkg/errors"
 )
 
+type aggregatedMessage struct {
+	message noise.Message
+	opcode  noise.Opcode
+}
+
 func MessageAggregator(node Node, peer Peer) {
 	var (
 		aggregatorWaitGroup                            = peer.messageAggregatorWaitGroup()

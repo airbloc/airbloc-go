@@ -22,11 +22,6 @@ type Peer struct {
 	*noise.Peer
 }
 
-type aggregatedMessage struct {
-	message noise.Message
-	opcode  noise.Opcode
-}
-
 func (peer Peer) Context() Context {
 	return peer.Get(KeyPeerContext).(Context)
 }
