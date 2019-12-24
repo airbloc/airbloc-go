@@ -12,11 +12,6 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-var (
-	_ noise.Message = (*ConsentRequest)(nil)
-	_ noise.Message = (*ConsentResponse)(nil)
-)
-
 type ConsentRequest struct {
 	MessageID   uuid.UUID              `json:"message_id"`
 	ConsentData []ablTypes.ConsentData `json:"consent_data"`
@@ -34,6 +29,10 @@ func (ConsentRequest) Read(reader payload.Reader) (noise.Message, error) {
 func (req ConsentRequest) Write() []byte {
 	reqBytes, _ := json.Marshal(req)
 	return reqBytes
+}
+
+func (req ConsentRequest) ID() uuid.UUID {
+	return req.MessageID
 }
 
 type ConsentResponse struct {
@@ -54,4 +53,8 @@ func (ConsentResponse) Read(reader payload.Reader) (noise.Message, error) {
 func (resp ConsentResponse) Write() []byte {
 	respBytes, _ := json.Marshal(resp)
 	return respBytes
+}
+
+func (resp ConsentResponse) ID() uuid.UUID {
+	return resp.MessageID
 }

@@ -11,7 +11,7 @@ import (
 )
 
 type aggregatedMessage struct {
-	message noise.Message
+	message message.Message
 	opcode  noise.Opcode
 }
 
@@ -35,12 +35,14 @@ func MessageAggregator(node Node, peer Peer) {
 						logger.Attrs{"peer-address": (<-peer.GetAddressAsync()).Hex()})
 					return
 				case receivedMessage := <-peer.Receive(opcode):
-					aggregatedMessageChan <- struct {
-						message noise.Message
-						opcode  noise.Opcode
-					}{
-						message: receivedMessage,
-						opcode:  opcode,
+					if _, ok := receivedMessage.(message.Message); ok {
+						aggregatedMessageChan <- struct {
+							message message.Message
+							opcode  noise.Opcode
+						}{
+							message: receivedMessage,
+							opcode:  opcode,
+						}
 					}
 				}
 			}

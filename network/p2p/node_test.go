@@ -94,7 +94,7 @@ func TestAirblocNode(t *testing.T) {
 	log.Println("==================================================")
 
 	nodeInitializer := func(nodes []Node, index int, node Node) error {
-		node.RegisterHandler(message.OpcodeUsersSignUpRequest, func(context context.Context, message noise.Message, peer *noise.Peer) error {
+		node.RegisterHandler(message.OpcodeUsersSignUpRequest, func(context context.Context, message message.Message, peer *noise.Peer) error {
 			peerAddr := <-Peer{peer}.GetAddressAsync()
 
 			reqMsg := message.(users.SignUpRequest)
@@ -111,7 +111,7 @@ func TestAirblocNode(t *testing.T) {
 				Signature: signature,
 			})
 		})
-		node.RegisterHandler(message.OpcodeUsersSignUpResponse, func(context context.Context, message noise.Message, peer *noise.Peer) error {
+		node.RegisterHandler(message.OpcodeUsersSignUpResponse, func(context context.Context, message message.Message, peer *noise.Peer) error {
 			peerAddr := <-Peer{peer}.GetAddressAsync()
 
 			respMsg := message.(users.SignUpResponse)

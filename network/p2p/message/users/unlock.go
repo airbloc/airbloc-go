@@ -35,6 +35,10 @@ func (req UnlockRequest) Write() []byte {
 	return reqBytes
 }
 
+func (req UnlockRequest) ID() uuid.UUID {
+	return req.MessageID
+}
+
 type UnlockResponse struct {
 	MessageID uuid.UUID     `json:"message_id"`
 	TxHash    common.Hash   `json:"tx_hash"`
@@ -53,4 +57,8 @@ func (UnlockResponse) Read(reader payload.Reader) (noise.Message, error) {
 func (resp UnlockResponse) Write() []byte {
 	respBytes, _ := json.Marshal(resp)
 	return respBytes
+}
+
+func (resp UnlockResponse) ID() uuid.UUID {
+	return resp.MessageID
 }

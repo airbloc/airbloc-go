@@ -34,6 +34,10 @@ func (req SignUpRequest) Write() []byte {
 	return reqBytes
 }
 
+func (req SignUpRequest) ID() uuid.UUID {
+	return req.MessageID
+}
+
 type SignUpResponse struct {
 	MessageID uuid.UUID     `json:"message_id"`
 	TxHash    common.Hash   `json:"tx_hash"`
@@ -52,4 +56,8 @@ func (SignUpResponse) Read(reader payload.Reader) (noise.Message, error) {
 func (resp SignUpResponse) Write() []byte {
 	respBytes, _ := json.Marshal(resp)
 	return respBytes
+}
+
+func (resp SignUpResponse) ID() uuid.UUID {
+	return resp.MessageID
 }

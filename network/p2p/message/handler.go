@@ -6,4 +6,4 @@ import (
 	"github.com/perlin-network/noise"
 )
 
-type HandlerFunc func(context context.Context, message noise.Message, peer *noise.Peer) error
+type HandlerFunc func(context context.Context, message Message, peer *noise.Peer) error
