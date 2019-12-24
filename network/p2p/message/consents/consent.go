@@ -32,7 +32,6 @@ func (ConsentRequest) Read(reader payload.Reader) (noise.Message, error) {
 }
 
 func (req ConsentRequest) Write() []byte {
-	req.MessageID = uuid.NewV4()
 	reqBytes, _ := json.Marshal(req)
 	return reqBytes
 }

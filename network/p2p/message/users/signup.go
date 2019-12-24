@@ -30,7 +30,6 @@ func (SignUpRequest) Read(reader payload.Reader) (noise.Message, error) {
 }
 
 func (req SignUpRequest) Write() []byte {
-	req.MessageID = uuid.NewV4()
 	reqBytes, _ := json.Marshal(req)
 	return reqBytes
 }
