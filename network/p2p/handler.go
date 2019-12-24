@@ -77,7 +77,7 @@ func (handler nodeEventHandler) onPeerInitHandler() noise.OnPeerInitCallback {
 		}
 
 		go MessageAggregator(handler.node, peer)
-		go MessageHandler(handler.node, peer)()
+		go MessageHandler(handler.node, peer)
 
 		return nil
 	}
