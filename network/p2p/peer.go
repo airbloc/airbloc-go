@@ -27,7 +27,7 @@ type aggregatedMessage struct {
 	opcode  noise.Opcode
 }
 
-func (peer Peer) context() Context {
+func (peer Peer) Context() Context {
 	return peer.Get(KeyPeerContext).(Context)
 }
 

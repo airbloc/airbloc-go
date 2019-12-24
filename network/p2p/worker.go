@@ -22,7 +22,7 @@ func MessageAggregator(node Node, peer Peer) {
 			defer aggregatorWaitGroup.Done()
 			for {
 				select {
-				case <-peer.context().Done():
+				case <-peer.Context().Done():
 					msg, _ := noise.MessageFromOpcode(opcode) // must not be nil
 					node.logger().Debug(
 						"Message aggregator for message {} stopped",
@@ -55,7 +55,7 @@ func MessageHandler(node Node, peer Peer) func() {
 
 		for {
 			select {
-			case <-peer.context().Done():
+			case <-peer.Context().Done():
 				node.logger().Debug("Message handle worker stopped")
 				return
 			case receivedMessage := <-aggregatedMessageChan:
@@ -67,19 +67,8 @@ func MessageHandler(node Node, peer Peer) func() {
 					"opcode": uint8(receivedMessage.opcode),
 					"type":   reflect.TypeOf(receivedMessage.message).String(),
 				})
-				handler, err := node.GetHandler(receivedMessage.opcode)
-				if err != nil {
-					node.logger().Error("Cannot get handler", logger.Attrs{
-						"error": logger.Attrs{
-							"type":    reflect.TypeOf(errors.Cause(err)).String(),
-							"message": err.Error(),
-						},
-						"message": reflect.TypeOf(receivedMessage.message).String(),
-					})
-					continue
-				}
 
-				err = handler(node.context(), receivedMessage.message, peer.Peer)
+				err := node.handle(receivedMessage.opcode, receivedMessage.message, peer.Peer)
 				if err != nil {
 					node.logger().Error("Handler error occurred", logger.Attrs{
 						"error": logger.Attrs{

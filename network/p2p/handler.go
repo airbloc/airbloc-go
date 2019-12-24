@@ -70,7 +70,7 @@ func (handler nodeEventHandler) onPeerInitHandler() noise.OnPeerInitCallback {
 			peer.Disconnect()
 			return err
 		}
-		exist := handler.node.RegisterPeer(peerAddress, p)
+		exist := handler.node.registerPeer(peerAddress, p)
 		if exist {
 			peer.Disconnect()
 			return nil
@@ -86,7 +86,7 @@ func (handler nodeEventHandler) onPeerInitHandler() noise.OnPeerInitCallback {
 func (handler nodeEventHandler) onPeerDisconnectedHandler() noise.OnPeerDisconnectCallback {
 	return func(node *noise.Node, p *noise.Peer) error {
 		peer := Peer{p}
-		peer.context().Cancel()
+		peer.Context().Cancel()
 
 		// wait for message aggregator
 		peer.messageAggregatorWaitGroup().Wait()
@@ -97,7 +97,7 @@ func (handler nodeEventHandler) onPeerDisconnectedHandler() noise.OnPeerDisconne
 
 		peerAddress, err := peer.GetAddress()
 		if err == nil {
-			handler.node.UnregisterPeer(peerAddress)
+			handler.node.unregisterPeer(peerAddress)
 		}
 		return nil
 	}
