@@ -10,7 +10,7 @@ import (
 type Message interface {
 	noise.Message
 	ID() uuid.UUID
-	SetID(uuid.UUID)
+	SetID(id uuid.UUID)
 }
 
 var (
