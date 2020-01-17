@@ -181,6 +181,34 @@ func (n Node) StartWithInitialNodes(parentContext context.Context, nodeAddresses
 	return n.Bootstrap(nodeAddresses...)
 }
 
+// Broadcast broadcasts message to other nodes and returns all peer count, succeeded message count, error
+func (n Node) Broadcast(message message.Message) (peerCount int, errs []error) {
+	var (
+		errChans []<-chan error
+
+		nodeTbl = skademlia.Table(n.Node)
+		nodeID  = protocol.NodeID(n.Node).Hash()
+	)
+	for _, peerID := range skademlia.FindClosestPeers(nodeTbl, nodeID, skademlia.BucketSize()) {
+		peer := protocol.Peer(n.Node, peerID)
+
+		if peer == nil {
+			continue
+		}
+
+		peerCount += 1
+		errChans = append(errChans, peer.SendMessageAsync(message))
+	}
+
+	for _, ch := range errChans {
+		err := <-ch
+		if err != nil {
+			errs = append(errs, err)
+		}
+	}
+	return
+}
+
 func (n Node) Stop() {
 	n.context().Cancel()
 }
