@@ -182,7 +182,7 @@ func (n Node) StartWithInitialNodes(parentContext context.Context, nodeAddresses
 }
 
 // Broadcast broadcasts message to other nodes and returns all peer count, succeeded message count, error
-func (n Node) Broadcast(message message.Message) (int, error) {
+func (n Node) Broadcast(ctx context.Context, message message.Message) (int, error) {
 	var (
 		errChans     []<-chan error
 		successCount = 0
@@ -207,9 +207,13 @@ func (n Node) Broadcast(message message.Message) (int, error) {
 	}
 
 	for _, ch := range errChans {
-		err := <-ch
-		if err == nil {
-			successCount += 1
+		select {
+		case <-ctx.Done():
+			return successCount, ctx.Err()
+		case err := <-ch:
+			if err == nil {
+				successCount += 1
+			}
 		}
 	}
 	return successCount, nil
