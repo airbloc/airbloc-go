@@ -35,6 +35,10 @@ func (req ConsentRequest) ID() uuid.UUID {
 	return req.MessageID
 }
 
+func (req *ConsentRequest) SetID(id uuid.UUID) {
+	req.MessageID = id
+}
+
 type ConsentResponse struct {
 	MessageID uuid.UUID     `json:"message_id"`
 	TxHash    common.Hash   `json:"tx_hash"`
@@ -57,4 +61,8 @@ func (resp ConsentResponse) Write() []byte {
 
 func (resp ConsentResponse) ID() uuid.UUID {
 	return resp.MessageID
+}
+
+func (resp *ConsentResponse) SetID(id uuid.UUID) {
+	resp.MessageID = id
 }

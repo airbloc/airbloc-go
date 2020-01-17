@@ -38,6 +38,10 @@ func (req SignUpRequest) ID() uuid.UUID {
 	return req.MessageID
 }
 
+func (req *SignUpRequest) SetID(id uuid.UUID) {
+	req.MessageID = id
+}
+
 type SignUpResponse struct {
 	MessageID uuid.UUID     `json:"message_id"`
 	TxHash    common.Hash   `json:"tx_hash"`
@@ -60,4 +64,8 @@ func (resp SignUpResponse) Write() []byte {
 
 func (resp SignUpResponse) ID() uuid.UUID {
 	return resp.MessageID
+}
+
+func (resp *SignUpResponse) SetID(id uuid.UUID) {
+	resp.MessageID = id
 }

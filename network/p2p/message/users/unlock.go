@@ -39,6 +39,10 @@ func (req UnlockRequest) ID() uuid.UUID {
 	return req.MessageID
 }
 
+func (req *UnlockRequest) SetID(id uuid.UUID) {
+	req.MessageID = id
+}
+
 type UnlockResponse struct {
 	MessageID uuid.UUID     `json:"message_id"`
 	TxHash    common.Hash   `json:"tx_hash"`
@@ -61,4 +65,8 @@ func (resp UnlockResponse) Write() []byte {
 
 func (resp UnlockResponse) ID() uuid.UUID {
 	return resp.MessageID
+}
+
+func (resp *UnlockResponse) SetID(id uuid.UUID) {
+	resp.MessageID = id
 }
