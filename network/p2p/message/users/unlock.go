@@ -55,7 +55,7 @@ func (UnlockResponse) Read(reader payload.Reader) (noise.Message, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to decode unlock response message")
 	}
-	return nil, nil
+	return resp, nil
 }
 
 func (resp UnlockResponse) Write() []byte {
