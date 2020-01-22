@@ -97,7 +97,7 @@ func TestAirblocNode(t *testing.T) {
 		node.RegisterHandler(message.OpcodeUsersSignUpRequest, func(context context.Context, message message.Message, peer *noise.Peer) error {
 			peerAddr := <-Peer{peer}.GetAddressAsync()
 
-			reqMsg := message.(users.SignUpRequest)
+			reqMsg := message.(*users.SignUpRequest)
 			node.logger().Info("Request received from: {}, v: {}", peerAddr.Hex(), reqMsg)
 
 			signature, err := node.account().SignMessage(reqMsg.IdentityHash.Bytes())
@@ -114,7 +114,7 @@ func TestAirblocNode(t *testing.T) {
 		node.RegisterHandler(message.OpcodeUsersSignUpResponse, func(context context.Context, message message.Message, peer *noise.Peer) error {
 			peerAddr := <-Peer{peer}.GetAddressAsync()
 
-			respMsg := message.(users.SignUpResponse)
+			respMsg := message.(*users.SignUpResponse)
 			node.logger().Info("Response received from: {}, v: {}", peerAddr.Hex(), respMsg)
 
 			pubKey, err := crypto.SigToPub(respMsg.TxHash.Bytes(), respMsg.Signature)
