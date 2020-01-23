@@ -9,6 +9,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/airbloc/logger"
+
 	"github.com/gin-gonic/gin"
 	"github.com/klaytn/klaytn/accounts/abi/bind"
 	"github.com/klaytn/klaytn/blockchain/types"
@@ -110,8 +112,14 @@ func NewTestRPCServer(handlers ...rpcHandler) *httptest.Server {
 	return httptest.NewServer(mux)
 }
 
+type l struct{}
+
+func (l) Init()             {}
+func (l) Write(*logger.Log) {}
+
 func TestClient(t *testing.T) {
 	gin.SetMode(gin.TestMode)
+	logger.SetLogger(l{})
 
 	rootContext, cancelRootContext := context.WithCancel(context.Background())
 	defer cancelRootContext()
