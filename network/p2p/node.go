@@ -104,10 +104,10 @@ func (n Node) handle(opcode noise.Opcode, msg message.Message, peer *noise.Peer)
 	if !exist {
 		return errors.New("handler that matches given opcode does not registered")
 	}
-	return handler.(message.HandlerFunc)(n.context(), msg, peer)
+	return handler.(HandlerFunc)(n.context(), msg, peer)
 }
 
-func (n Node) RegisterHandler(opcode noise.Opcode, handler message.HandlerFunc) {
+func (n Node) RegisterHandler(opcode noise.Opcode, handler HandlerFunc) {
 	n.handlers().Store(opcode, handler)
 }
 
