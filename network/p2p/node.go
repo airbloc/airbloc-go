@@ -6,8 +6,8 @@ import (
 	"sync"
 
 	"github.com/airbloc/airbloc-go/account"
-	"github.com/airbloc/airbloc-go/network/p2p/handshake/identity"
 	"github.com/airbloc/airbloc-go/network/p2p/message"
+	"github.com/airbloc/airbloc-go/network/p2p/protocol/identity"
 	"github.com/airbloc/logger"
 
 	"github.com/klaytn/klaytn/common"
