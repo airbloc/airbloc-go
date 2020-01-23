@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/airbloc/airbloc-go/network/p2p/handshake/identity"
+	"github.com/airbloc/airbloc-go/network/p2p/protocol/identity"
 
 	"github.com/klaytn/klaytn/common"
 	"github.com/perlin-network/noise"
