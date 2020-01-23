@@ -75,7 +75,7 @@ func TestConsentMessages(t *testing.T) {
 				So(msg, ShouldHaveSameTypeAs, ConsentResponse{})
 				So(msg.(ConsentResponse).MessageID, ShouldEqual, testData["message_id"])
 				So(msg.(ConsentResponse).TxHash, ShouldEqual, testData["tx_hash"])
-				So(msg.(ConsentResponse).Signature, ShouldResemble, testData["signature"])
+				So(msg.(ConsentResponse).Sign, ShouldResemble, testData["signature"])
 			})
 			Convey("#Write", func() {
 				testBytes, err := json.Marshal(testData)
@@ -84,22 +84,30 @@ func TestConsentMessages(t *testing.T) {
 				msg := ConsentResponse{
 					MessageID: testData["message_id"].(uuid.UUID),
 					TxHash:    testData["tx_hash"].(common.Hash),
-					Signature: testData["signature"].(hexutil.Bytes),
+					Sign:      testData["signature"].(hexutil.Bytes),
 				}
 				bytes := msg.Write()
 				So(bytes, ShouldResemble, testBytes)
 			})
 			Convey("#ID", func() {
-				id := uuid.NewV4()
-				msg := ConsentResponse{MessageID: id}
-				So(msg.ID(), ShouldEqual, id)
+				msg := ConsentResponse{MessageID: testData["message_id"].(uuid.UUID)}
+				So(msg.ID(), ShouldEqual, testData["message_id"].(uuid.UUID))
 			})
 			Convey("#SetID", func() {
-				id := uuid.NewV4()
 				msg := ConsentResponse{}
 				So(msg.ID(), ShouldEqual, uuid.UUID{})
-				msg.SetID(id)
-				So(msg.ID(), ShouldEqual, id)
+				msg.SetID(testData["message_id"].(uuid.UUID))
+				So(msg.ID(), ShouldEqual, testData["message_id"].(uuid.UUID))
+			})
+			Convey("#Signature", func() {
+				msg := ConsentResponse{Sign: testData["signature"].(hexutil.Bytes)}
+				So(msg.Signature(), ShouldResemble, testData["signature"].(hexutil.Bytes))
+			})
+			Convey("#SetSignature", func() {
+				msg := ConsentResponse{}
+				So(msg.Signature(), ShouldResemble, hexutil.Bytes(nil))
+				msg.SetSignature(testData["signature"].(hexutil.Bytes))
+				So(msg.Signature(), ShouldResemble, testData["signature"].(hexutil.Bytes))
 			})
 		})
 	})

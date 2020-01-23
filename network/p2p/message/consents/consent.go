@@ -42,7 +42,7 @@ func (req *ConsentRequest) SetID(id uuid.UUID) {
 type ConsentResponse struct {
 	MessageID uuid.UUID     `json:"message_id"`
 	TxHash    common.Hash   `json:"tx_hash"`
-	Signature hexutil.Bytes `json:"signature"`
+	Sign      hexutil.Bytes `json:"signature"`
 }
 
 func (ConsentResponse) Read(reader payload.Reader) (noise.Message, error) {
@@ -65,4 +65,12 @@ func (resp ConsentResponse) ID() uuid.UUID {
 
 func (resp *ConsentResponse) SetID(id uuid.UUID) {
 	resp.MessageID = id
+}
+
+func (resp ConsentResponse) Signature() hexutil.Bytes {
+	return resp.Sign
+}
+
+func (resp *ConsentResponse) SetSignature(sign hexutil.Bytes) {
+	resp.Sign = sign
 }

@@ -69,7 +69,7 @@ func TestSignUpMessages(t *testing.T) {
 				So(msg, ShouldHaveSameTypeAs, SignUpResponse{})
 				So(msg.(SignUpResponse).MessageID, ShouldEqual, testData["message_id"])
 				So(msg.(SignUpResponse).TxHash, ShouldEqual, testData["tx_hash"])
-				So(msg.(SignUpResponse).Signature, ShouldResemble, testData["signature"])
+				So(msg.(SignUpResponse).Sign, ShouldResemble, testData["signature"])
 			})
 			Convey("#Write", func() {
 				testBytes, err := json.Marshal(testData)
@@ -78,7 +78,7 @@ func TestSignUpMessages(t *testing.T) {
 				msg := SignUpResponse{
 					MessageID: testData["message_id"].(uuid.UUID),
 					TxHash:    testData["tx_hash"].(common.Hash),
-					Signature: testData["signature"].(hexutil.Bytes),
+					Sign:      testData["signature"].(hexutil.Bytes),
 				}
 				bytes := msg.Write()
 				So(bytes, ShouldResemble, testBytes)
@@ -94,6 +94,16 @@ func TestSignUpMessages(t *testing.T) {
 				So(msg.ID(), ShouldEqual, uuid.UUID{})
 				msg.SetID(id)
 				So(msg.ID(), ShouldEqual, id)
+			})
+			Convey("#Signature", func() {
+				msg := SignUpResponse{Sign: testData["signature"].(hexutil.Bytes)}
+				So(msg.Signature(), ShouldResemble, testData["signature"].(hexutil.Bytes))
+			})
+			Convey("#SetSignature", func() {
+				msg := SignUpResponse{}
+				So(msg.Signature(), ShouldResemble, hexutil.Bytes(nil))
+				msg.SetSignature(testData["signature"].(hexutil.Bytes))
+				So(msg.Signature(), ShouldResemble, testData["signature"].(hexutil.Bytes))
 			})
 		})
 	})
