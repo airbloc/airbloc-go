@@ -6,8 +6,8 @@ import (
 	"sync"
 
 	"github.com/airbloc/airbloc-go/account"
-	"github.com/airbloc/airbloc-go/network/p2p/handshake/identity"
 	"github.com/airbloc/airbloc-go/network/p2p/message"
+	"github.com/airbloc/airbloc-go/network/p2p/protocol/identity"
 	"github.com/airbloc/logger"
 
 	"github.com/klaytn/klaytn/common"
@@ -76,7 +76,7 @@ func NewNode(
 	node.Set(KeyNodeAccount, account)
 	node.Set(KeyNodeHandlers, new(sync.Map))
 	// TODO - remove postfix address <- for debug perpose
-	node.Set(KeyNodeLogger, logger.New("abl-p2p"+"/"+account.Address().Hex()))
+	node.Set(KeyNodeLogger, logger.New("abl-p2p"))
 	node.Set(KeyNodePeerStore, new(sync.Map))
 
 	registerNodeEventHandler(node)
@@ -104,10 +104,10 @@ func (n Node) handle(opcode noise.Opcode, msg message.Message, peer *noise.Peer)
 	if !exist {
 		return errors.New("handler that matches given opcode does not registered")
 	}
-	return handler.(message.HandlerFunc)(n.context(), msg, peer)
+	return handler.(HandlerFunc)(n.context(), msg, peer)
 }
 
-func (n Node) RegisterHandler(opcode noise.Opcode, handler message.HandlerFunc) {
+func (n Node) RegisterHandler(opcode noise.Opcode, handler HandlerFunc) {
 	n.handlers().Store(opcode, handler)
 }
 
@@ -179,6 +179,44 @@ func (n Node) Bootstrap(nodeAddresses ...string) error {
 func (n Node) StartWithInitialNodes(parentContext context.Context, nodeAddresses ...string) error {
 	n.Start(parentContext)
 	return n.Bootstrap(nodeAddresses...)
+}
+
+// Broadcast broadcasts message to other nodes and returns all peer count, succeeded message count, error
+func (n Node) Broadcast(ctx context.Context, message message.Message) (int, error) {
+	var (
+		errChans     []<-chan error
+		successCount = 0
+
+		nodeTbl = skademlia.Table(n.Node)
+		nodeID  = protocol.NodeID(n.Node).Hash()
+	)
+
+	closestPeers := skademlia.FindClosestPeers(nodeTbl, nodeID, skademlia.BucketSize())
+	if len(closestPeers) == 0 {
+		return 0, errors.New("there are no peers in network")
+	}
+
+	for _, peerID := range closestPeers {
+		peer := protocol.Peer(n.Node, peerID)
+
+		if peer == nil {
+			continue
+		}
+
+		errChans = append(errChans, peer.SendMessageAsync(message))
+	}
+
+	for _, ch := range errChans {
+		select {
+		case <-ctx.Done():
+			return successCount, ctx.Err()
+		case err := <-ch:
+			if err == nil {
+				successCount += 1
+			}
+		}
+	}
+	return successCount, nil
 }
 
 func (n Node) Stop() {

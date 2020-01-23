@@ -39,10 +39,14 @@ func (req UnlockRequest) ID() uuid.UUID {
 	return req.MessageID
 }
 
+func (req *UnlockRequest) SetID(id uuid.UUID) {
+	req.MessageID = id
+}
+
 type UnlockResponse struct {
 	MessageID uuid.UUID     `json:"message_id"`
 	TxHash    common.Hash   `json:"tx_hash"`
-	Signature hexutil.Bytes `json:"signature"`
+	Sign      hexutil.Bytes `json:"signature"`
 }
 
 func (UnlockResponse) Read(reader payload.Reader) (noise.Message, error) {
@@ -51,7 +55,7 @@ func (UnlockResponse) Read(reader payload.Reader) (noise.Message, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to decode unlock response message")
 	}
-	return nil, nil
+	return resp, nil
 }
 
 func (resp UnlockResponse) Write() []byte {
@@ -61,4 +65,16 @@ func (resp UnlockResponse) Write() []byte {
 
 func (resp UnlockResponse) ID() uuid.UUID {
 	return resp.MessageID
+}
+
+func (resp *UnlockResponse) SetID(id uuid.UUID) {
+	resp.MessageID = id
+}
+
+func (resp UnlockResponse) Signature() hexutil.Bytes {
+	return resp.Sign
+}
+
+func (resp *UnlockResponse) SetSignature(sign hexutil.Bytes) {
+	resp.Sign = sign
 }

@@ -6,11 +6,14 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/airbloc/airbloc-go/network/p2p/message"
 	"github.com/airbloc/logger"
 
 	"github.com/perlin-network/noise"
 	"github.com/pkg/errors"
 )
+
+type HandlerFunc func(context context.Context, message message.Message, peer *noise.Peer) error
 
 type peerEventHandler struct{ node Node }
 
@@ -77,7 +80,7 @@ func (handler nodeEventHandler) onPeerInitHandler() noise.OnPeerInitCallback {
 		}
 
 		go MessageAggregator(handler.node, peer)
-		go MessageHandler(handler.node, peer)
+		go MessageMultiplexer(handler.node, peer)
 
 		return nil
 	}

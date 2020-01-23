@@ -38,10 +38,14 @@ func (req SignUpRequest) ID() uuid.UUID {
 	return req.MessageID
 }
 
+func (req *SignUpRequest) SetID(id uuid.UUID) {
+	req.MessageID = id
+}
+
 type SignUpResponse struct {
 	MessageID uuid.UUID     `json:"message_id"`
 	TxHash    common.Hash   `json:"tx_hash"`
-	Signature hexutil.Bytes `json:"signature"`
+	Sign      hexutil.Bytes `json:"signature"`
 }
 
 func (SignUpResponse) Read(reader payload.Reader) (noise.Message, error) {
@@ -60,4 +64,16 @@ func (resp SignUpResponse) Write() []byte {
 
 func (resp SignUpResponse) ID() uuid.UUID {
 	return resp.MessageID
+}
+
+func (resp *SignUpResponse) SetID(id uuid.UUID) {
+	resp.MessageID = id
+}
+
+func (resp SignUpResponse) Signature() hexutil.Bytes {
+	return resp.Sign
+}
+
+func (resp *SignUpResponse) SetSignature(sign hexutil.Bytes) {
+	resp.Sign = sign
 }

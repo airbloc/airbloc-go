@@ -210,7 +210,6 @@ github.com/pborman/uuid v0.0.0-20170612153648-e790cca94e6c/go.mod h1:VyrYX9gd7ir
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
 github.com/perlin-network/noise v1.1.1-0.20190219190757-3c13535b725d h1:HrUOBJaLGeK73SGhysed+zM8uOVFRffmw7A/DR+Qs+I=
 github.com/perlin-network/noise v1.1.1-0.20190219190757-3c13535b725d/go.mod h1:1fxN8YGP4+w4qNtZLQSmcX3bTwQeJMgQ7cu1z6Qh3gE=
-github.com/perlin-network/noise v1.1.1-0.20190305094204-f9c1f15b7d8d/go.mod h1:1fxN8YGP4+w4qNtZLQSmcX3bTwQeJMgQ7cu1z6Qh3gE=
 github.com/peterh/liner v1.0.1-0.20180504030148-80ce870644db/go.mod h1:xIteQHvHuaLYG9IFj6mSxM0fCKrs34IrEQUhOYuGPHc=
 github.com/pierrec/lz4 v0.0.0-20190327172049-315a67e90e41/go.mod h1:3/3N9NVKO0jef7pBehbT1qWhCMrIgbYNnFAZCqQ5LRc=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=

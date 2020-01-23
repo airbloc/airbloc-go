@@ -50,7 +50,7 @@ func MessageAggregator(node Node, peer Peer) {
 	}
 }
 
-func MessageHandler(node Node, peer Peer) {
+func MessageMultiplexer(node Node, peer Peer) {
 	var (
 		workerWaitgroup                                = peer.messageWorkerWaitGroup()
 		aggregatedMessageChan <-chan aggregatedMessage = peer.aggregatedMessageChannnel()
