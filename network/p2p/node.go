@@ -76,7 +76,7 @@ func NewNode(
 	node.Set(KeyNodeAccount, account)
 	node.Set(KeyNodeHandlers, new(sync.Map))
 	// TODO - remove postfix address <- for debug perpose
-	node.Set(KeyNodeLogger, logger.New("abl-p2p"+"/"+account.Address().Hex()))
+	node.Set(KeyNodeLogger, logger.New("abl-p2p"))
 	node.Set(KeyNodePeerStore, new(sync.Map))
 
 	registerNodeEventHandler(node)

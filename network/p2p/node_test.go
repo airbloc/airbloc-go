@@ -2,13 +2,13 @@ package p2p
 
 import (
 	"context"
-	"log"
 	"testing"
 	"time"
 
 	"github.com/airbloc/airbloc-go/account"
 	"github.com/airbloc/airbloc-go/network/p2p/message"
 	"github.com/airbloc/airbloc-go/network/p2p/message/users"
+	"github.com/airbloc/logger"
 
 	"github.com/klaytn/klaytn/crypto"
 	"github.com/perlin-network/noise"
@@ -47,6 +47,11 @@ func (nodes Nodes) Close() {
 	}
 }
 
+type l struct{}
+
+func (l) Init()             {}
+func (l) Write(*logger.Log) {}
+
 func newAirblocNodes(count int, initializer func(nodes []Node, index int, node Node) error) (Nodes, error) {
 	nodes := make([]Node, count)
 	for i := 0; i < count; i += 1 {
@@ -67,17 +72,10 @@ func newAirblocNodes(count int, initializer func(nodes []Node, index int, node N
 
 func TestAirblocNode(t *testing.T) {
 	perlinLog.Disable()
-	log.SetFlags(log.Lshortfile)
+	logger.SetLogger(l{})
 
 	testContext, cancel := context.WithCancel(context.Background())
-	defer func() {
-		time.Sleep(1 * time.Second)
-		log.Println("closing ==================================================")
-		cancel()
-		time.Sleep(1 * time.Second)
-	}()
-
-	log.Println("==================================================")
+	defer func() { cancel() }()
 
 	bootstrapNodeInitializer := func(nodes []Node, index int, node Node) error {
 		node.Start(testContext)
@@ -91,14 +89,11 @@ func TestAirblocNode(t *testing.T) {
 	}
 
 	time.Sleep(1 * time.Second)
-	log.Println("==================================================")
 
 	nodeInitializer := func(nodes []Node, index int, node Node) error {
+		node.Set(KeyNodeLogger, logger.New("abl-p2p"+"/"+node.account().Address().Hex()))
 		node.RegisterHandler(message.OpcodeUsersSignUpRequest, func(context context.Context, message message.Message, peer *noise.Peer) error {
-			peerAddr := <-Peer{peer}.GetAddressAsync()
-
 			reqMsg := message.(*users.SignUpRequest)
-			node.logger().Info("Request received from: {}, v: {}", peerAddr.Hex(), reqMsg)
 
 			signature, err := node.account().SignMessage(reqMsg.IdentityHash.Bytes())
 			if err != nil {
@@ -108,16 +103,14 @@ func TestAirblocNode(t *testing.T) {
 			return peer.SendMessage(users.SignUpResponse{
 				MessageID: reqMsg.MessageID,
 				TxHash:    reqMsg.IdentityHash,
-				Signature: signature,
+				Sign:      signature,
 			})
 		})
 		node.RegisterHandler(message.OpcodeUsersSignUpResponse, func(context context.Context, message message.Message, peer *noise.Peer) error {
 			peerAddr := <-Peer{peer}.GetAddressAsync()
-
 			respMsg := message.(*users.SignUpResponse)
-			node.logger().Info("Response received from: {}, v: {}", peerAddr.Hex(), respMsg)
 
-			pubKey, err := crypto.SigToPub(respMsg.TxHash.Bytes(), respMsg.Signature)
+			pubKey, err := crypto.SigToPub(respMsg.TxHash.Bytes(), respMsg.Sign)
 			if err != nil {
 				return errors.Wrap(err, "failed to derive pubkey from signature")
 			}
@@ -136,15 +129,7 @@ func TestAirblocNode(t *testing.T) {
 	for _, node := range nodes {
 		require.NoError(t, node.StartWithInitialNodes(testContext, bootstrapNodes.Addresses()...))
 	}
-
 	time.Sleep(1 * time.Second)
-	log.Println("==================================================")
 
-	noise.DebugOpcodes()
-
-	log.Println("==================================================")
-
-	skademlia.Broadcast(nodes[0].Node, users.SignUpRequest{
-		IdentityHash: nodes[0].account().Address().Hash(),
-	})
+	skademlia.Broadcast(nodes[0].Node, users.SignUpRequest{IdentityHash: nodes[0].account().Address().Hash()})
 }
