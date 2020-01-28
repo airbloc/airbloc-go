@@ -14,6 +14,8 @@ import (
 
 type ConsentRequest struct {
 	MessageID   uuid.UUID              `json:"message_id"`
+	AppName     string                 `json:"app_name"`
+	UserId      ablTypes.ID            `json:"user_id"`
 	ConsentData []ablTypes.ConsentData `json:"consent_data"`
 }
 
