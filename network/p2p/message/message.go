@@ -1,6 +1,7 @@
 package message
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/airbloc/airbloc-go/network/p2p/message/consents"
@@ -34,6 +35,10 @@ func (n NoResponse) Write() []byte {
 }
 func (n NoResponse) ID() uuid.UUID      { return n.id }
 func (n NoResponse) SetID(id uuid.UUID) { n.id = id }
+
+func NoResponseHandler(_ context.Context, _ Message, peer *noise.Peer) error {
+	return peer.SendMessage(NoResponse{})
+}
 
 var (
 	// assertion
