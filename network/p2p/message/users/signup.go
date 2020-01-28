@@ -16,7 +16,7 @@ var (
 )
 
 type SignUpRequest struct {
-	MessageID    uuid.UUID   `json:"message_id"` // Ignore when write message
+	MessageId    uuid.UUID   `json:"message_id"` // Ignore when write message
 	IdentityHash common.Hash `json:"identity_hash"`
 }
 
@@ -35,16 +35,15 @@ func (req SignUpRequest) Write() []byte {
 }
 
 func (req SignUpRequest) ID() uuid.UUID {
-	return req.MessageID
+	return req.MessageId
 }
 
 func (req *SignUpRequest) SetID(id uuid.UUID) {
-	req.MessageID = id
+	req.MessageId = id
 }
 
 type SignUpResponse struct {
-	MessageID uuid.UUID     `json:"message_id"`
-	TxHash    common.Hash   `json:"tx_hash"`
+	MessageId uuid.UUID     `json:"message_id"`
 	Sign      hexutil.Bytes `json:"signature"`
 }
 
@@ -63,11 +62,11 @@ func (resp SignUpResponse) Write() []byte {
 }
 
 func (resp SignUpResponse) ID() uuid.UUID {
-	return resp.MessageID
+	return resp.MessageId
 }
 
 func (resp *SignUpResponse) SetID(id uuid.UUID) {
-	resp.MessageID = id
+	resp.MessageId = id
 }
 
 func (resp SignUpResponse) Signature() hexutil.Bytes {

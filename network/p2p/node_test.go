@@ -101,7 +101,7 @@ func TestAirblocNode(t *testing.T) {
 			}
 
 			return peer.SendMessage(users.SignUpResponse{
-				MessageID: reqMsg.MessageID,
+				MessageId: reqMsg.MessageId,
 				TxHash:    reqMsg.IdentityHash,
 				Sign:      signature,
 			})
