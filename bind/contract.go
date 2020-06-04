@@ -45,7 +45,7 @@ func (c *BoundContract) logTx(method string, params ...interface{}) {
 
 func (c *BoundContract) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
 	c.logTx(method, params...)
-	return c.BoundContract.Call(opts, result, method, params)
+	return c.BoundContract.Call(opts, result, method, params...)
 }
 
 func (c *BoundContract) Transact(opts *TransactOpts, method string, params ...interface{}) (*types.Receipt, error) {
