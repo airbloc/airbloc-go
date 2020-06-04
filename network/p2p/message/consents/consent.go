@@ -13,7 +13,9 @@ import (
 )
 
 type ConsentRequest struct {
-	MessageID   uuid.UUID              `json:"message_id"`
+	MessageId   uuid.UUID              `json:"message_id"`
+	AppName     string                 `json:"app_name"`
+	UserId      ablTypes.ID            `json:"user_id"`
 	ConsentData []ablTypes.ConsentData `json:"consent_data"`
 }
 
@@ -32,15 +34,15 @@ func (req ConsentRequest) Write() []byte {
 }
 
 func (req ConsentRequest) ID() uuid.UUID {
-	return req.MessageID
+	return req.MessageId
 }
 
 func (req *ConsentRequest) SetID(id uuid.UUID) {
-	req.MessageID = id
+	req.MessageId = id
 }
 
 type ConsentResponse struct {
-	MessageID uuid.UUID     `json:"message_id"`
+	MessageId uuid.UUID     `json:"message_id"`
 	TxHash    common.Hash   `json:"tx_hash"`
 	Sign      hexutil.Bytes `json:"signature"`
 }
@@ -60,11 +62,11 @@ func (resp ConsentResponse) Write() []byte {
 }
 
 func (resp ConsentResponse) ID() uuid.UUID {
-	return resp.MessageID
+	return resp.MessageId
 }
 
 func (resp *ConsentResponse) SetID(id uuid.UUID) {
-	resp.MessageID = id
+	resp.MessageId = id
 }
 
 func (resp ConsentResponse) Signature() hexutil.Bytes {

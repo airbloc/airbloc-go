@@ -16,7 +16,7 @@ var (
 )
 
 type UnlockRequest struct {
-	MessageID        uuid.UUID      `json:"message_id"` // Ignore when write message
+	MessageId        uuid.UUID      `json:"message_id"` // Ignore when write message
 	IdentityPreimage common.Hash    `json:"identity_preimage"`
 	NewOwner         common.Address `json:"new_owner"`
 }
@@ -36,15 +36,15 @@ func (req UnlockRequest) Write() []byte {
 }
 
 func (req UnlockRequest) ID() uuid.UUID {
-	return req.MessageID
+	return req.MessageId
 }
 
 func (req *UnlockRequest) SetID(id uuid.UUID) {
-	req.MessageID = id
+	req.MessageId = id
 }
 
 type UnlockResponse struct {
-	MessageID uuid.UUID     `json:"message_id"`
+	MessageId uuid.UUID     `json:"message_id"`
 	TxHash    common.Hash   `json:"tx_hash"`
 	Sign      hexutil.Bytes `json:"signature"`
 }
@@ -64,11 +64,11 @@ func (resp UnlockResponse) Write() []byte {
 }
 
 func (resp UnlockResponse) ID() uuid.UUID {
-	return resp.MessageID
+	return resp.MessageId
 }
 
 func (resp *UnlockResponse) SetID(id uuid.UUID) {
-	resp.MessageID = id
+	resp.MessageId = id
 }
 
 func (resp UnlockResponse) Signature() hexutil.Bytes {

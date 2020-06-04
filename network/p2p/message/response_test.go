@@ -17,14 +17,14 @@ import (
 var _ Message = (*TestResponse)(nil)
 
 type TestResponse struct {
-	MessageID uuid.UUID
+	MessageId uuid.UUID
 	Sign      hexutil.Bytes
 }
 
 func (resp TestResponse) Read(payload.Reader) (noise.Message, error) { return nil, nil }
 func (resp TestResponse) Write() []byte                              { return nil }
-func (resp TestResponse) ID() uuid.UUID                              { return resp.MessageID }
-func (resp *TestResponse) SetID(id uuid.UUID)                        { resp.MessageID = id }
+func (resp TestResponse) ID() uuid.UUID                              { return resp.MessageId }
+func (resp *TestResponse) SetID(id uuid.UUID)                        { resp.MessageId = id }
 func (resp TestResponse) Signature() hexutil.Bytes                   { return resp.Sign }
 func (resp *TestResponse) SetSignature(sign hexutil.Bytes)           { resp.Sign = sign }
 
@@ -36,7 +36,7 @@ func TestResponseMessageUtils(t *testing.T) {
 
 		Convey("#SignResponseMessage", func() {
 			Convey("Should done correctly", func() {
-				msg := &TestResponse{MessageID: uuid.NewV4()}
+				msg := &TestResponse{MessageId: uuid.NewV4()}
 				err = SignResponseMessage(msg, acc)
 				So(err, ShouldBeNil)
 				So(msg.Sign, ShouldNotEqual, (hexutil.Bytes)(nil))
@@ -54,7 +54,7 @@ func TestResponseMessageUtils(t *testing.T) {
 		})
 		Convey("#VerifyResponseMessage", func() {
 			Convey("Should done correctly", func() {
-				msg := &TestResponse{MessageID: uuid.NewV4()}
+				msg := &TestResponse{MessageId: uuid.NewV4()}
 
 				var id [32]byte
 				copy(id[:], msg.ID().Bytes())
@@ -82,7 +82,7 @@ func TestResponseMessageUtils(t *testing.T) {
 			})
 			Convey("Should fail when ecrecover fails", func() {
 				ok, err := VerifyResponseMessage(&TestResponse{
-					MessageID: uuid.NewV4(),
+					MessageId: uuid.NewV4(),
 					Sign:      []byte{0xde, 0xed, 0xbe, 0xef, 0xde, 0xed, 0xbe, 0xef},
 				}, common.Address{})
 				So(ok, ShouldBeFalse)

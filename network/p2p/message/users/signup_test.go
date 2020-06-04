@@ -26,7 +26,7 @@ func TestSignUpMessages(t *testing.T) {
 				msg, err := SignUpRequest{}.Read(payload.NewReader(testBytes))
 				So(err, ShouldBeNil)
 				So(msg, ShouldHaveSameTypeAs, SignUpRequest{})
-				So(msg.(SignUpRequest).MessageID, ShouldEqual, testData["message_id"])
+				So(msg.(SignUpRequest).MessageId, ShouldEqual, testData["message_id"])
 				So(msg.(SignUpRequest).IdentityHash, ShouldEqual, testData["identity_hash"])
 			})
 			Convey("#Write", func() {
@@ -34,7 +34,7 @@ func TestSignUpMessages(t *testing.T) {
 				So(err, ShouldBeNil)
 
 				msg := SignUpRequest{
-					MessageID:    testData["message_id"].(uuid.UUID),
+					MessageId:    testData["message_id"].(uuid.UUID),
 					IdentityHash: testData["identity_hash"].(common.Hash),
 				}
 				bytes := msg.Write()
@@ -42,7 +42,7 @@ func TestSignUpMessages(t *testing.T) {
 			})
 			Convey("#ID", func() {
 				id := uuid.NewV4()
-				msg := SignUpRequest{MessageID: id}
+				msg := SignUpRequest{MessageId: id}
 				So(msg.ID(), ShouldEqual, id)
 			})
 			Convey("#SetID", func() {
@@ -67,7 +67,7 @@ func TestSignUpMessages(t *testing.T) {
 				msg, err := SignUpResponse{}.Read(payload.NewReader(testBytes))
 				So(err, ShouldBeNil)
 				So(msg, ShouldHaveSameTypeAs, SignUpResponse{})
-				So(msg.(SignUpResponse).MessageID, ShouldEqual, testData["message_id"])
+				So(msg.(SignUpResponse).MessageId, ShouldEqual, testData["message_id"])
 				So(msg.(SignUpResponse).TxHash, ShouldEqual, testData["tx_hash"])
 				So(msg.(SignUpResponse).Sign, ShouldResemble, testData["signature"])
 			})
@@ -76,7 +76,7 @@ func TestSignUpMessages(t *testing.T) {
 				So(err, ShouldBeNil)
 
 				msg := SignUpResponse{
-					MessageID: testData["message_id"].(uuid.UUID),
+					MessageId: testData["message_id"].(uuid.UUID),
 					TxHash:    testData["tx_hash"].(common.Hash),
 					Sign:      testData["signature"].(hexutil.Bytes),
 				}
@@ -85,7 +85,7 @@ func TestSignUpMessages(t *testing.T) {
 			})
 			Convey("#ID", func() {
 				id := uuid.NewV4()
-				msg := SignUpResponse{MessageID: id}
+				msg := SignUpResponse{MessageId: id}
 				So(msg.ID(), ShouldEqual, id)
 			})
 			Convey("#SetID", func() {

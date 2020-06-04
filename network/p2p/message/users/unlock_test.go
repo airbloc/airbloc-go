@@ -27,7 +27,7 @@ func TestUnlockMessages(t *testing.T) {
 				msg, err := UnlockRequest{}.Read(payload.NewReader(testBytes))
 				So(err, ShouldBeNil)
 				So(msg, ShouldHaveSameTypeAs, UnlockRequest{})
-				So(msg.(UnlockRequest).MessageID, ShouldEqual, testData["message_id"])
+				So(msg.(UnlockRequest).MessageId, ShouldEqual, testData["message_id"])
 				So(msg.(UnlockRequest).IdentityPreimage, ShouldEqual, testData["identity_preimage"])
 				So(msg.(UnlockRequest).NewOwner, ShouldEqual, testData["new_owner"])
 			})
@@ -36,7 +36,7 @@ func TestUnlockMessages(t *testing.T) {
 				So(err, ShouldBeNil)
 
 				msg := UnlockRequest{
-					MessageID:        testData["message_id"].(uuid.UUID),
+					MessageId:        testData["message_id"].(uuid.UUID),
 					IdentityPreimage: testData["identity_preimage"].(common.Hash),
 					NewOwner:         testData["new_owner"].(common.Address),
 				}
@@ -45,7 +45,7 @@ func TestUnlockMessages(t *testing.T) {
 			})
 			Convey("#ID", func() {
 				id := uuid.NewV4()
-				msg := UnlockRequest{MessageID: id}
+				msg := UnlockRequest{MessageId: id}
 				So(msg.ID(), ShouldEqual, id)
 			})
 			Convey("#SetID", func() {
@@ -70,7 +70,7 @@ func TestUnlockMessages(t *testing.T) {
 				msg, err := UnlockResponse{}.Read(payload.NewReader(testBytes))
 				So(err, ShouldBeNil)
 				So(msg, ShouldHaveSameTypeAs, UnlockResponse{})
-				So(msg.(UnlockResponse).MessageID, ShouldEqual, testData["message_id"])
+				So(msg.(UnlockResponse).MessageId, ShouldEqual, testData["message_id"])
 				So(msg.(UnlockResponse).TxHash, ShouldEqual, testData["tx_hash"])
 				So(msg.(UnlockResponse).Sign, ShouldResemble, testData["signature"])
 			})
@@ -79,7 +79,7 @@ func TestUnlockMessages(t *testing.T) {
 				So(err, ShouldBeNil)
 
 				msg := UnlockResponse{
-					MessageID: testData["message_id"].(uuid.UUID),
+					MessageId: testData["message_id"].(uuid.UUID),
 					TxHash:    testData["tx_hash"].(common.Hash),
 					Sign:      testData["signature"].(hexutil.Bytes),
 				}
@@ -88,7 +88,7 @@ func TestUnlockMessages(t *testing.T) {
 			})
 			Convey("#ID", func() {
 				id := uuid.NewV4()
-				msg := UnlockResponse{MessageID: id}
+				msg := UnlockResponse{MessageId: id}
 				So(msg.ID(), ShouldEqual, id)
 			})
 			Convey("#SetID", func() {

@@ -32,7 +32,7 @@ func TestConsentMessages(t *testing.T) {
 				msg, err := ConsentRequest{}.Read(payload.NewReader(testBytes))
 				So(err, ShouldBeNil)
 				So(msg, ShouldHaveSameTypeAs, ConsentRequest{})
-				So(msg.(ConsentRequest).MessageID, ShouldEqual, testData["message_id"])
+				So(msg.(ConsentRequest).MessageId, ShouldEqual, testData["message_id"])
 				So(msg.(ConsentRequest).ConsentData, ShouldResemble, testData["consent_data"])
 			})
 			Convey("#Write", func() {
@@ -40,7 +40,7 @@ func TestConsentMessages(t *testing.T) {
 				So(err, ShouldBeNil)
 
 				msg := ConsentRequest{
-					MessageID:   testData["message_id"].(uuid.UUID),
+					MessageId:   testData["message_id"].(uuid.UUID),
 					ConsentData: testData["consent_data"].([]ablTypes.ConsentData),
 				}
 				bytes := msg.Write()
@@ -48,7 +48,7 @@ func TestConsentMessages(t *testing.T) {
 			})
 			Convey("#ID", func() {
 				id := uuid.NewV4()
-				msg := ConsentRequest{MessageID: id}
+				msg := ConsentRequest{MessageId: id}
 				So(msg.ID(), ShouldEqual, id)
 			})
 			Convey("#SetID", func() {
@@ -73,7 +73,7 @@ func TestConsentMessages(t *testing.T) {
 				msg, err := ConsentResponse{}.Read(payload.NewReader(testBytes))
 				So(err, ShouldBeNil)
 				So(msg, ShouldHaveSameTypeAs, ConsentResponse{})
-				So(msg.(ConsentResponse).MessageID, ShouldEqual, testData["message_id"])
+				So(msg.(ConsentResponse).MessageId, ShouldEqual, testData["message_id"])
 				So(msg.(ConsentResponse).TxHash, ShouldEqual, testData["tx_hash"])
 				So(msg.(ConsentResponse).Sign, ShouldResemble, testData["signature"])
 			})
@@ -82,7 +82,7 @@ func TestConsentMessages(t *testing.T) {
 				So(err, ShouldBeNil)
 
 				msg := ConsentResponse{
-					MessageID: testData["message_id"].(uuid.UUID),
+					MessageId: testData["message_id"].(uuid.UUID),
 					TxHash:    testData["tx_hash"].(common.Hash),
 					Sign:      testData["signature"].(hexutil.Bytes),
 				}
@@ -90,7 +90,7 @@ func TestConsentMessages(t *testing.T) {
 				So(bytes, ShouldResemble, testBytes)
 			})
 			Convey("#ID", func() {
-				msg := ConsentResponse{MessageID: testData["message_id"].(uuid.UUID)}
+				msg := ConsentResponse{MessageId: testData["message_id"].(uuid.UUID)}
 				So(msg.ID(), ShouldEqual, testData["message_id"].(uuid.UUID))
 			})
 			Convey("#SetID", func() {
