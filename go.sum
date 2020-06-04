@@ -15,6 +15,8 @@ github.com/airbloc/airframe v0.0.0-20190822094319-71d50205227c h1:uUaUWgycen6icX
 github.com/airbloc/airframe v0.0.0-20190822094319-71d50205227c/go.mod h1:q+Bk9F+BRsMlvfJLZoiguc1/HxLC9gIBzz7IDGQvimI=
 github.com/airbloc/klaytn v1.1.1-0.20191108080408-b619a41d5235 h1:9tjOsqaXaB9/lmdotdPc1jgVtOZJ2jWBkU+qg8Rj3cg=
 github.com/airbloc/klaytn v1.1.1-0.20191108080408-b619a41d5235/go.mod h1:GoCCr85as7qsCWLr0a1MEjMCwhEVUgH25YLtuL52UaQ=
+github.com/airbloc/klaytn v1.1.1-0.20200604113302-a846e75ccf75 h1:0wwSdiKotBf/GMTmM2BDeYckPUZ0tzuwPV+lOXSJ1Fk=
+github.com/airbloc/klaytn v1.1.1-0.20200604113302-a846e75ccf75/go.mod h1:KVyZsU0Q25yMEBwwR8CJ8NJ3QAp5V0oqO6qwaDWleVs=
 github.com/airbloc/logger v1.1.3 h1:XIqYVAiqmXAtuHWX+LQQQKKnettI2RO5uYcPRNIt+J0=
 github.com/airbloc/logger v1.1.3/go.mod h1:5Qiq970cB1PAfGnVTjOTUNKmUK3Q4cjSSOIKeyaaGj4=
 github.com/airbloc/logger v1.4.5 h1:WfDoJtsjTZK6FSaxI+x1z2EBvGwjhKaJgI0gHYt2UKE=

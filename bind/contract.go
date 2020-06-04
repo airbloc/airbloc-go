@@ -40,7 +40,7 @@ func (c *BoundContract) logTx(method string, params ...interface{}) {
 	for index := range abiMethod.Inputs {
 		attrs[abiMethod.Inputs[index].Name] = params[index]
 	}
-	c.log.Info(abiMethod.Sig(), attrs)
+	c.log.Info(abiMethod.Sig, attrs)
 }
 
 func (c *BoundContract) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
