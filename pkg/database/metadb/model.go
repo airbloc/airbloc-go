@@ -18,7 +18,7 @@ import (
 type Model struct {
 	database Database
 	Name     string
-	log      *logger.Logger
+	log      logger.Logger
 }
 
 // NewModel creates a collection for given metadatabase

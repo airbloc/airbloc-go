@@ -13,7 +13,7 @@ import (
 type Mongo struct {
 	db  *mongo.Database
 	col string
-	log *logger.Logger
+	log logger.Logger
 }
 
 func NewMongoDB(ctx context.Context, url, col string) (_ Database, err error) {

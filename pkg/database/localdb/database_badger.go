@@ -24,14 +24,11 @@ func NewBadgerDatabase(path string, version int) (Database, error) {
 		}
 	}
 
-	opts := badger.DefaultOptions
-	opts.Dir = path
-	opts.ValueDir = path
-	// optional options
-	opts.NumMemtables = 5
-	opts.SyncWrites = false
-	opts.NumCompactors = 3
-	opts.ReadOnly = false
+	opts := badger.DefaultOptions(path)
+	opts.WithNumMemtables(5)
+	opts.WithSyncWrites(false)
+	opts.WithNumCompactors(3)
+	opts.WithReadOnly(false)
 
 	db, err := badger.Open(opts)
 	if err != nil {
@@ -61,7 +58,7 @@ func (db *badgerDB) Put(key []byte, value []byte) error {
 	if err != nil {
 		return err
 	}
-	return txn.Commit(nil)
+	return txn.Commit()
 }
 
 func (db *badgerDB) Has(key []byte) (bool, error) {
@@ -99,7 +96,7 @@ func (db *badgerDB) Delete(key []byte) error {
 	if err != nil {
 		return err
 	}
-	return txn.Commit(nil)
+	return txn.Commit()
 }
 
 func (db *badgerDB) NewIterator() *badger.Iterator {
@@ -141,7 +138,7 @@ func (b *badgerBatch) Put(key, value []byte) error {
 }
 
 func (b *badgerBatch) Write() error {
-	return b.txn.Commit(nil)
+	return b.txn.Commit()
 }
 
 func (b *badgerBatch) ValueSize() int {
