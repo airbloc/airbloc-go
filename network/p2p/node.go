@@ -112,8 +112,8 @@ func (n Node) RegisterHandler(opcode noise.Opcode, handler HandlerFunc) {
 }
 
 //======== logger
-func (n Node) logger() *logger.Logger {
-	return n.Get(KeyNodeLogger).(*logger.Logger)
+func (n Node) logger() logger.Logger {
+	return n.Get(KeyNodeLogger).(logger.Logger)
 }
 
 //======== peerstore

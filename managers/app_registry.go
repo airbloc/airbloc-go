@@ -47,7 +47,7 @@ type AppRegistryManager interface {
 type appRegistryManager struct {
 	*contracts.AppRegistryContract
 	client ablbind.ContractBackend
-	log    *logger.Logger
+	log    logger.Logger
 }
 
 // NewAppRegistryManager makes new *appRegistryManager struct

@@ -14,7 +14,7 @@ type BoundContract struct {
 	address common.Address
 	abi     abi.ABI
 	client  ContractBackend
-	log     *logger.Logger
+	log     logger.Logger
 	*bind.BoundContract
 }
 

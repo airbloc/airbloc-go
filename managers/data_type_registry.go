@@ -41,7 +41,7 @@ type DataTypeRegistryManager interface {
 type dataTypeRegistryManager struct {
 	*contracts.DataTypeRegistryContract
 	client ablbind.ContractBackend
-	log    *logger.Logger
+	log    logger.Logger
 }
 
 // NewDataTypeRegistryManager makes new *dataTypeRegistryManager struct

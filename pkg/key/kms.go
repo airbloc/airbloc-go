@@ -16,7 +16,7 @@ import (
 type manager struct {
 	ownerKey      *Key
 	localDatabase localdb.Database
-	log           *logger.Logger
+	log           logger.Logger
 }
 
 func NewKeyManager(ownerKey *Key, localDatabase localdb.Database) Manager {

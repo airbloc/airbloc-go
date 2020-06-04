@@ -58,7 +58,7 @@ type UsersManager interface {
 type usersManager struct {
 	*contracts.UsersContract
 	client ablbind.ContractBackend
-	log    *logger.Logger
+	log    logger.Logger
 }
 
 // NewUsersManager makes new *usersManager struct

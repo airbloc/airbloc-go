@@ -38,7 +38,7 @@ func getChainName(cid *big.Int) string {
 type clientData struct{ *klayClient.Client }
 type Client struct {
 	clientData
-	log *logger.Logger
+	log logger.Logger
 }
 
 func NewClient(ctx context.Context, endpoint string) (*Client, error) {

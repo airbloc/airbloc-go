@@ -73,7 +73,7 @@ type ExchangeManager interface {
 type exchangeManager struct {
 	*contracts.ExchangeContract
 	client ablbind.ContractBackend
-	log    *logger.Logger
+	log    logger.Logger
 }
 
 // NewExchangeManager makes new *exchangeManager struct

@@ -45,7 +45,7 @@ type ConsentsManager interface {
 type consentsManager struct {
 	*contracts.ConsentsContract
 	client ablbind.ContractBackend
-	log    *logger.Logger
+	log    logger.Logger
 }
 
 // NewConsentsManager makes new *consentsManager struct

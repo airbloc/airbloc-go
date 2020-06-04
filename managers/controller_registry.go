@@ -34,7 +34,7 @@ type ControllerRegistryManager interface {
 type controllerRegistryManager struct {
 	*contracts.ControllerRegistryContract
 	client ablbind.ContractBackend
-	log    *logger.Logger
+	log    logger.Logger
 }
 
 // NewControllerRegistryManager makes new *controllerRegistryManager struct
