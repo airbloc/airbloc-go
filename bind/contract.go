@@ -1,6 +1,8 @@
 package bind
 
 import (
+	"encoding/json"
+
 	"github.com/airbloc/logger"
 
 	"github.com/klaytn/klaytn/accounts/abi"
@@ -36,11 +38,17 @@ func NewBoundContract(
 func (c *BoundContract) logTx(method string, params ...interface{}) {
 	abiMethod := c.abi.Methods[method]
 
-	attrs := make(logger.Attrs)
+	attr := make(map[string]interface{})
 	for index := range abiMethod.Inputs {
-		attrs[abiMethod.Inputs[index].Name] = params[index]
+		attr[abiMethod.Inputs[index].Name] = params[index]
 	}
-	c.log.Info(abiMethod.Sig, attrs)
+	d, err := json.Marshal(attr)
+	if err != nil {
+		c.log.Error("failed to log tx. err={}", err)
+		return
+	}
+
+	c.log.Info(abiMethod.Sig+" input={}", string(d))
 }
 
 func (c *BoundContract) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
