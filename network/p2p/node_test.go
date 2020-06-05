@@ -102,7 +102,6 @@ func TestAirblocNode(t *testing.T) {
 
 			return peer.SendMessage(users.SignUpResponse{
 				MessageId: reqMsg.MessageId,
-				TxHash:    reqMsg.IdentityHash,
 				Sign:      signature,
 			})
 		})
@@ -110,7 +109,7 @@ func TestAirblocNode(t *testing.T) {
 			peerAddr := <-Peer{peer}.GetAddressAsync()
 			respMsg := message.(*users.SignUpResponse)
 
-			pubKey, err := crypto.SigToPub(respMsg.TxHash.Bytes(), respMsg.Sign)
+			pubKey, err := crypto.SigToPub(respMsg.Signature(), respMsg.Sign)
 			if err != nil {
 				return errors.Wrap(err, "failed to derive pubkey from signature")
 			}
