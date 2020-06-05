@@ -17,6 +17,8 @@ github.com/airbloc/klaytn v1.1.1-0.20191108080408-b619a41d5235 h1:9tjOsqaXaB9/lm
 github.com/airbloc/klaytn v1.1.1-0.20191108080408-b619a41d5235/go.mod h1:GoCCr85as7qsCWLr0a1MEjMCwhEVUgH25YLtuL52UaQ=
 github.com/airbloc/klaytn v1.1.1-0.20200604113302-a846e75ccf75 h1:0wwSdiKotBf/GMTmM2BDeYckPUZ0tzuwPV+lOXSJ1Fk=
 github.com/airbloc/klaytn v1.1.1-0.20200604113302-a846e75ccf75/go.mod h1:KVyZsU0Q25yMEBwwR8CJ8NJ3QAp5V0oqO6qwaDWleVs=
+github.com/airbloc/klaytn v1.1.1-0.20200605045046-86eb6e0e4869 h1:DqaDyWt/88hY7vNYElDwS/CStwD5dKfnozM4AJtNro8=
+github.com/airbloc/klaytn v1.1.1-0.20200605045046-86eb6e0e4869/go.mod h1:KVyZsU0Q25yMEBwwR8CJ8NJ3QAp5V0oqO6qwaDWleVs=
 github.com/airbloc/logger v1.1.3 h1:XIqYVAiqmXAtuHWX+LQQQKKnettI2RO5uYcPRNIt+J0=
 github.com/airbloc/logger v1.1.3/go.mod h1:5Qiq970cB1PAfGnVTjOTUNKmUK3Q4cjSSOIKeyaaGj4=
 github.com/airbloc/logger v1.4.5 h1:WfDoJtsjTZK6FSaxI+x1z2EBvGwjhKaJgI0gHYt2UKE=
@@ -339,6 +341,7 @@ github.com/smartystreets/assertions v1.0.1 h1:voD4ITNjPL5jjBfgR/r8fPIIBrliWrWHei
 github.com/smartystreets/assertions v1.0.1/go.mod h1:kHHU4qYBaI3q23Pp3VPrmWhuIUrLW/7eUrw0BU5VaoM=
 github.com/smartystreets/goconvey v0.0.0-20190731233626-505e41936337 h1:WN9BUFbdyOsSH/XohnWpXOlq9NBD5sGAB2FciQMUEe8=
 github.com/smartystreets/goconvey v0.0.0-20190731233626-505e41936337/go.mod h1:syvi0/a8iFYH4r/RixwvyeAJjdLS9QV7WQ/tjFTllLA=
+github.com/smartystreets/goconvey v1.6.4 h1:fv0U8FUIMPNf1L9lnHLvLhgicrIVChEkdzIKYqbNC9s=
 github.com/smartystreets/goconvey v1.6.4/go.mod h1:syvi0/a8iFYH4r/RixwvyeAJjdLS9QV7WQ/tjFTllLA=
 github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72/go.mod h1:JwIasOWyU6f++ZhiEuf87xNszmSA2myDM2Kzu9HwQUA=
 github.com/spf13/afero v1.1.2/go.mod h1:j4pytiNVoe2o6bmDsKpLACNPDBIoEAkihy7loJ1B0CQ=
@@ -355,6 +358,7 @@ github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXf
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJyk=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
+github.com/stretchr/testify v1.5.1 h1:nOGnQDM7FYENwehXlg/kFVnos3rEvtKTjRvOWSzb6H4=
 github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
 github.com/syndtr/goleveldb v1.0.1-0.20190318030020-c3a204f8e965 h1:1oFLiOyVl+W7bnBzGhf7BbIv9loSFQcieWWYIjLqcAw=
 github.com/syndtr/goleveldb v1.0.1-0.20190318030020-c3a204f8e965/go.mod h1:9OrXJhf154huy1nPWmuSrkgjPUtUNhA+Zmy+6AESzuA=

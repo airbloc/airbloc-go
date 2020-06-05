@@ -2,7 +2,7 @@ module github.com/airbloc/airbloc-go
 
 go 1.14
 
-replace github.com/klaytn/klaytn v1.4.2 => github.com/airbloc/klaytn v1.1.1-0.20200604113302-a846e75ccf75
+replace github.com/klaytn/klaytn v1.4.2 => github.com/airbloc/klaytn v1.1.1-0.20200605045046-86eb6e0e4869
 
 require (
 	github.com/airbloc/airframe v0.0.0-20190822094319-71d50205227c
