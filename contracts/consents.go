@@ -28,7 +28,7 @@ const (
 type ConsentsCaller interface {
 	IsAllowed(
 		ctx context.Context,
-		userId types.ID,
+		userId [8]byte,
 		appName string,
 		action uint8,
 		dataType string,
@@ -38,7 +38,7 @@ type ConsentsCaller interface {
 	)
 	IsAllowedAt(
 		ctx context.Context,
-		userId types.ID,
+		userId [8]byte,
 		appName string,
 		action uint8,
 		dataType string,
@@ -56,7 +56,7 @@ type consentsCaller struct {
 // IsAllowed is a free data retrieval call binding the contract method 0x50615985.
 //
 // Solidity: function isAllowed(bytes8 userId, string appName, uint8 action, string dataType) constant returns(bool)
-func (_Consents *consentsCaller) IsAllowed(ctx context.Context, userId types.ID, appName string, action uint8, dataType string) (bool, error) {
+func (_Consents *consentsCaller) IsAllowed(ctx context.Context, userId [8]byte, appName string, action uint8, dataType string) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
@@ -69,7 +69,7 @@ func (_Consents *consentsCaller) IsAllowed(ctx context.Context, userId types.ID,
 // IsAllowedAt is a free data retrieval call binding the contract method 0x7cdda67c.
 //
 // Solidity: function isAllowedAt(bytes8 userId, string appName, uint8 action, string dataType, uint256 blockNumber) constant returns(bool)
-func (_Consents *consentsCaller) IsAllowedAt(ctx context.Context, userId types.ID, appName string, action uint8, dataType string, blockNumber *big.Int) (bool, error) {
+func (_Consents *consentsCaller) IsAllowedAt(ctx context.Context, userId [8]byte, appName string, action uint8, dataType string, blockNumber *big.Int) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
@@ -84,14 +84,14 @@ type ConsentsTransactor interface {
 	Consent(
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
-		userId types.ID,
+		userId [8]byte,
 		appName string,
 		consentData types.ConsentData,
 	) (*chainTypes.Receipt, error)
 	ConsentMany(
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
-		userId types.ID,
+		userId [8]byte,
 		appName string,
 		consentData []types.ConsentData,
 	) (*chainTypes.Receipt, error)
@@ -108,7 +108,7 @@ type consentsTransactor struct {
 func (_Consents *consentsTransactor) Consent(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
-	userId types.ID,
+	userId [8]byte,
 	appName string,
 	consentData types.ConsentData,
 ) (*chainTypes.Receipt, error) {
@@ -126,7 +126,7 @@ func (_Consents *consentsTransactor) Consent(
 func (_Consents *consentsTransactor) ConsentMany(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
-	userId types.ID,
+	userId [8]byte,
 	appName string,
 	consentData []types.ConsentData,
 ) (*chainTypes.Receipt, error) {
@@ -149,7 +149,7 @@ type ConsentsEventFilterer interface {
 	// Filterer
 	FilterConsented(
 		opts *bind.FilterOpts,
-		action []uint8, userId []types.ID, appId []types.ID,
+		action []uint8, userId [][8]byte, appId [][8]byte,
 	) (ablbind.EventIterator, error)
 }
 
@@ -164,7 +164,7 @@ type ConsentsEventWatcher interface {
 	WatchConsented(
 		opts *bind.WatchOpts,
 		sink chan<- *ConsentsConsented,
-		action []uint8, userId []types.ID, appId []types.ID,
+		action []uint8, userId [][8]byte, appId [][8]byte,
 	) (event.Subscription, error)
 }
 
@@ -247,8 +247,8 @@ func (it *ConsentsConsentedIterator) Close() error {
 // ConsentsConsented represents a Consented event raised by the Consents contract.
 type ConsentsConsented struct {
 	Action   uint8
-	UserId   types.ID
-	AppId    types.ID
+	UserId   [8]byte
+	AppId    [8]byte
 	AppName  string
 	DataType string
 	Allowed  bool
@@ -258,7 +258,7 @@ type ConsentsConsented struct {
 // FilterConsented is a free log retrieval operation binding the contract event 0x30eae66e1c1ac9fa8cbc19b0340774f536960bfdd4c8bdf58f89b0b7a50a47c6.
 //
 // Solidity: event Consented(uint8 indexed action, bytes8 indexed userId, bytes8 indexed appId, string appName, string dataType, bool allowed)
-func (_Consents *consentsEvents) FilterConsented(opts *bind.FilterOpts, action []uint8, userId []types.ID, appId []types.ID) (ablbind.EventIterator, error) {
+func (_Consents *consentsEvents) FilterConsented(opts *bind.FilterOpts, action []uint8, userId [][8]byte, appId [][8]byte) (ablbind.EventIterator, error) {
 
 	var actionRule []interface{}
 	for _, actionItem := range action {
@@ -283,7 +283,7 @@ func (_Consents *consentsEvents) FilterConsented(opts *bind.FilterOpts, action [
 // WatchConsented is a free log subscription operation binding the contract event 0x30eae66e1c1ac9fa8cbc19b0340774f536960bfdd4c8bdf58f89b0b7a50a47c6.
 //
 // Solidity: event Consented(uint8 indexed action, bytes8 indexed userId, bytes8 indexed appId, string appName, string dataType, bool allowed)
-func (_Consents *consentsEvents) WatchConsented(opts *bind.WatchOpts, sink chan<- *ConsentsConsented, action []uint8, userId []types.ID, appId []types.ID) (event.Subscription, error) {
+func (_Consents *consentsEvents) WatchConsented(opts *bind.WatchOpts, sink chan<- *ConsentsConsented, action []uint8, userId [][8]byte, appId [][8]byte) (event.Subscription, error) {
 
 	var actionRule []interface{}
 	for _, actionItem := range action {

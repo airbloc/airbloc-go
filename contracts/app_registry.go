@@ -44,7 +44,7 @@ type AppRegistryCaller interface {
 		ctx context.Context,
 		appName string,
 	) (
-		types.ID,
+		[8]byte,
 		error,
 	)
 	IsOwner(
@@ -90,9 +90,9 @@ func (_AppRegistry *appRegistryCaller) Get(ctx context.Context, appName string) 
 // GetId is a free data retrieval call binding the contract method 0xbee51f3b.
 //
 // Solidity: function getId(string appName) constant returns(bytes8)
-func (_AppRegistry *appRegistryCaller) GetId(ctx context.Context, appName string) (types.ID, error) {
+func (_AppRegistry *appRegistryCaller) GetId(ctx context.Context, appName string) ([8]byte, error) {
 	var (
-		ret0 = new(types.ID)
+		ret0 = new([8]byte)
 	)
 	out := ret0
 
@@ -198,55 +198,55 @@ type AppRegistryEventFilterer interface {
 	// Filterer
 	FilterActionGranted(
 		opts *bind.FilterOpts,
-		resourceId []types.ID,
+		resourceId [][8]byte,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterActionRevoked(
 		opts *bind.FilterOpts,
-		resourceId []types.ID,
+		resourceId [][8]byte,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterAppOwnerTransferred(
 		opts *bind.FilterOpts,
-		appId []types.ID, oldOwner []common.Address,
+		appId [][8]byte, oldOwner []common.Address,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterRegistration(
 		opts *bind.FilterOpts,
-		appId []types.ID,
+		appId [][8]byte,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterRoleBound(
 		opts *bind.FilterOpts,
-		resourceId []types.ID, subject []common.Address,
+		resourceId [][8]byte, subject []common.Address,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterRoleCreation(
 		opts *bind.FilterOpts,
-		resourceId []types.ID,
+		resourceId [][8]byte,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterRoleRemoval(
 		opts *bind.FilterOpts,
-		resourceId []types.ID,
+		resourceId [][8]byte,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterRoleUnbound(
 		opts *bind.FilterOpts,
-		resourceId []types.ID, subject []common.Address,
+		resourceId [][8]byte, subject []common.Address,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterUnregistration(
 		opts *bind.FilterOpts,
-		appId []types.ID,
+		appId [][8]byte,
 	) (ablbind.EventIterator, error)
 }
 
@@ -293,63 +293,63 @@ type AppRegistryEventWatcher interface {
 	WatchActionGranted(
 		opts *bind.WatchOpts,
 		sink chan<- *AppRegistryActionGranted,
-		resourceId []types.ID,
+		resourceId [][8]byte,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchActionRevoked(
 		opts *bind.WatchOpts,
 		sink chan<- *AppRegistryActionRevoked,
-		resourceId []types.ID,
+		resourceId [][8]byte,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchAppOwnerTransferred(
 		opts *bind.WatchOpts,
 		sink chan<- *AppRegistryAppOwnerTransferred,
-		appId []types.ID, oldOwner []common.Address,
+		appId [][8]byte, oldOwner []common.Address,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchRegistration(
 		opts *bind.WatchOpts,
 		sink chan<- *AppRegistryRegistration,
-		appId []types.ID,
+		appId [][8]byte,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchRoleBound(
 		opts *bind.WatchOpts,
 		sink chan<- *AppRegistryRoleBound,
-		resourceId []types.ID, subject []common.Address,
+		resourceId [][8]byte, subject []common.Address,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchRoleCreation(
 		opts *bind.WatchOpts,
 		sink chan<- *AppRegistryRoleCreation,
-		resourceId []types.ID,
+		resourceId [][8]byte,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchRoleRemoval(
 		opts *bind.WatchOpts,
 		sink chan<- *AppRegistryRoleRemoval,
-		resourceId []types.ID,
+		resourceId [][8]byte,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchRoleUnbound(
 		opts *bind.WatchOpts,
 		sink chan<- *AppRegistryRoleUnbound,
-		resourceId []types.ID, subject []common.Address,
+		resourceId [][8]byte, subject []common.Address,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchUnregistration(
 		opts *bind.WatchOpts,
 		sink chan<- *AppRegistryUnregistration,
-		appId []types.ID,
+		appId [][8]byte,
 	) (event.Subscription, error)
 }
 
@@ -431,7 +431,7 @@ func (it *AppRegistryActionGrantedIterator) Close() error {
 
 // AppRegistryActionGranted represents a ActionGranted event raised by the AppRegistry contract.
 type AppRegistryActionGranted struct {
-	ResourceId types.ID
+	ResourceId [8]byte
 	RoleName   string
 	ActionName string
 	Raw        chainTypes.Log // Blockchain specific contextual infos
@@ -440,7 +440,7 @@ type AppRegistryActionGranted struct {
 // FilterActionGranted is a free log retrieval operation binding the contract event 0xe03e108285a5925f590b2999b168b964f1fe8f10e0081058fe0c01c38b7e3bd9.
 //
 // Solidity: event ActionGranted(bytes8 indexed resourceId, string roleName, string actionName)
-func (_AppRegistry *appRegistryEvents) FilterActionGranted(opts *bind.FilterOpts, resourceId []types.ID) (ablbind.EventIterator, error) {
+func (_AppRegistry *appRegistryEvents) FilterActionGranted(opts *bind.FilterOpts, resourceId [][8]byte) (ablbind.EventIterator, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -457,7 +457,7 @@ func (_AppRegistry *appRegistryEvents) FilterActionGranted(opts *bind.FilterOpts
 // WatchActionGranted is a free log subscription operation binding the contract event 0xe03e108285a5925f590b2999b168b964f1fe8f10e0081058fe0c01c38b7e3bd9.
 //
 // Solidity: event ActionGranted(bytes8 indexed resourceId, string roleName, string actionName)
-func (_AppRegistry *appRegistryEvents) WatchActionGranted(opts *bind.WatchOpts, sink chan<- *AppRegistryActionGranted, resourceId []types.ID) (event.Subscription, error) {
+func (_AppRegistry *appRegistryEvents) WatchActionGranted(opts *bind.WatchOpts, sink chan<- *AppRegistryActionGranted, resourceId [][8]byte) (event.Subscription, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -602,7 +602,7 @@ func (it *AppRegistryActionRevokedIterator) Close() error {
 
 // AppRegistryActionRevoked represents a ActionRevoked event raised by the AppRegistry contract.
 type AppRegistryActionRevoked struct {
-	ResourceId types.ID
+	ResourceId [8]byte
 	RoleName   string
 	ActionName string
 	Raw        chainTypes.Log // Blockchain specific contextual infos
@@ -611,7 +611,7 @@ type AppRegistryActionRevoked struct {
 // FilterActionRevoked is a free log retrieval operation binding the contract event 0x853537b9aa72341c9043ddf56d5bc062180a8f122964f92d899c2734aad5f430.
 //
 // Solidity: event ActionRevoked(bytes8 indexed resourceId, string roleName, string actionName)
-func (_AppRegistry *appRegistryEvents) FilterActionRevoked(opts *bind.FilterOpts, resourceId []types.ID) (ablbind.EventIterator, error) {
+func (_AppRegistry *appRegistryEvents) FilterActionRevoked(opts *bind.FilterOpts, resourceId [][8]byte) (ablbind.EventIterator, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -628,7 +628,7 @@ func (_AppRegistry *appRegistryEvents) FilterActionRevoked(opts *bind.FilterOpts
 // WatchActionRevoked is a free log subscription operation binding the contract event 0x853537b9aa72341c9043ddf56d5bc062180a8f122964f92d899c2734aad5f430.
 //
 // Solidity: event ActionRevoked(bytes8 indexed resourceId, string roleName, string actionName)
-func (_AppRegistry *appRegistryEvents) WatchActionRevoked(opts *bind.WatchOpts, sink chan<- *AppRegistryActionRevoked, resourceId []types.ID) (event.Subscription, error) {
+func (_AppRegistry *appRegistryEvents) WatchActionRevoked(opts *bind.WatchOpts, sink chan<- *AppRegistryActionRevoked, resourceId [][8]byte) (event.Subscription, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -773,7 +773,7 @@ func (it *AppRegistryAppOwnerTransferredIterator) Close() error {
 
 // AppRegistryAppOwnerTransferred represents a AppOwnerTransferred event raised by the AppRegistry contract.
 type AppRegistryAppOwnerTransferred struct {
-	AppId    types.ID
+	AppId    [8]byte
 	AppName  string
 	OldOwner common.Address
 	NewOwner common.Address
@@ -783,7 +783,7 @@ type AppRegistryAppOwnerTransferred struct {
 // FilterAppOwnerTransferred is a free log retrieval operation binding the contract event 0xd862515a389f54c6adf72b970712257c420c06e58830f73050bc0b9aca86f96d.
 //
 // Solidity: event AppOwnerTransferred(bytes8 indexed appId, string appName, address indexed oldOwner, address newOwner)
-func (_AppRegistry *appRegistryEvents) FilterAppOwnerTransferred(opts *bind.FilterOpts, appId []types.ID, oldOwner []common.Address) (ablbind.EventIterator, error) {
+func (_AppRegistry *appRegistryEvents) FilterAppOwnerTransferred(opts *bind.FilterOpts, appId [][8]byte, oldOwner []common.Address) (ablbind.EventIterator, error) {
 
 	var appIdRule []interface{}
 	for _, appIdItem := range appId {
@@ -805,7 +805,7 @@ func (_AppRegistry *appRegistryEvents) FilterAppOwnerTransferred(opts *bind.Filt
 // WatchAppOwnerTransferred is a free log subscription operation binding the contract event 0xd862515a389f54c6adf72b970712257c420c06e58830f73050bc0b9aca86f96d.
 //
 // Solidity: event AppOwnerTransferred(bytes8 indexed appId, string appName, address indexed oldOwner, address newOwner)
-func (_AppRegistry *appRegistryEvents) WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *AppRegistryAppOwnerTransferred, appId []types.ID, oldOwner []common.Address) (event.Subscription, error) {
+func (_AppRegistry *appRegistryEvents) WatchAppOwnerTransferred(opts *bind.WatchOpts, sink chan<- *AppRegistryAppOwnerTransferred, appId [][8]byte, oldOwner []common.Address) (event.Subscription, error) {
 
 	var appIdRule []interface{}
 	for _, appIdItem := range appId {
@@ -955,7 +955,7 @@ func (it *AppRegistryRegistrationIterator) Close() error {
 
 // AppRegistryRegistration represents a Registration event raised by the AppRegistry contract.
 type AppRegistryRegistration struct {
-	AppId   types.ID
+	AppId   [8]byte
 	AppName string
 	Raw     chainTypes.Log // Blockchain specific contextual infos
 }
@@ -963,7 +963,7 @@ type AppRegistryRegistration struct {
 // FilterRegistration is a free log retrieval operation binding the contract event 0xf5ef63b2a629619cbea83fa4979a52fa156e638837dd66bc4683dd7fbb8f4709.
 //
 // Solidity: event Registration(bytes8 indexed appId, string appName)
-func (_AppRegistry *appRegistryEvents) FilterRegistration(opts *bind.FilterOpts, appId []types.ID) (ablbind.EventIterator, error) {
+func (_AppRegistry *appRegistryEvents) FilterRegistration(opts *bind.FilterOpts, appId [][8]byte) (ablbind.EventIterator, error) {
 
 	var appIdRule []interface{}
 	for _, appIdItem := range appId {
@@ -980,7 +980,7 @@ func (_AppRegistry *appRegistryEvents) FilterRegistration(opts *bind.FilterOpts,
 // WatchRegistration is a free log subscription operation binding the contract event 0xf5ef63b2a629619cbea83fa4979a52fa156e638837dd66bc4683dd7fbb8f4709.
 //
 // Solidity: event Registration(bytes8 indexed appId, string appName)
-func (_AppRegistry *appRegistryEvents) WatchRegistration(opts *bind.WatchOpts, sink chan<- *AppRegistryRegistration, appId []types.ID) (event.Subscription, error) {
+func (_AppRegistry *appRegistryEvents) WatchRegistration(opts *bind.WatchOpts, sink chan<- *AppRegistryRegistration, appId [][8]byte) (event.Subscription, error) {
 
 	var appIdRule []interface{}
 	for _, appIdItem := range appId {
@@ -1125,7 +1125,7 @@ func (it *AppRegistryRoleBoundIterator) Close() error {
 
 // AppRegistryRoleBound represents a RoleBound event raised by the AppRegistry contract.
 type AppRegistryRoleBound struct {
-	ResourceId types.ID
+	ResourceId [8]byte
 	Subject    common.Address
 	RoleName   string
 	Raw        chainTypes.Log // Blockchain specific contextual infos
@@ -1134,7 +1134,7 @@ type AppRegistryRoleBound struct {
 // FilterRoleBound is a free log retrieval operation binding the contract event 0xf1292e948ea47db3c62a8d29d6c7d2272d236bc10fa66fddb7b2e1570b1b1372.
 //
 // Solidity: event RoleBound(bytes8 indexed resourceId, address indexed subject, string roleName)
-func (_AppRegistry *appRegistryEvents) FilterRoleBound(opts *bind.FilterOpts, resourceId []types.ID, subject []common.Address) (ablbind.EventIterator, error) {
+func (_AppRegistry *appRegistryEvents) FilterRoleBound(opts *bind.FilterOpts, resourceId [][8]byte, subject []common.Address) (ablbind.EventIterator, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -1155,7 +1155,7 @@ func (_AppRegistry *appRegistryEvents) FilterRoleBound(opts *bind.FilterOpts, re
 // WatchRoleBound is a free log subscription operation binding the contract event 0xf1292e948ea47db3c62a8d29d6c7d2272d236bc10fa66fddb7b2e1570b1b1372.
 //
 // Solidity: event RoleBound(bytes8 indexed resourceId, address indexed subject, string roleName)
-func (_AppRegistry *appRegistryEvents) WatchRoleBound(opts *bind.WatchOpts, sink chan<- *AppRegistryRoleBound, resourceId []types.ID, subject []common.Address) (event.Subscription, error) {
+func (_AppRegistry *appRegistryEvents) WatchRoleBound(opts *bind.WatchOpts, sink chan<- *AppRegistryRoleBound, resourceId [][8]byte, subject []common.Address) (event.Subscription, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -1304,7 +1304,7 @@ func (it *AppRegistryRoleCreationIterator) Close() error {
 
 // AppRegistryRoleCreation represents a RoleCreation event raised by the AppRegistry contract.
 type AppRegistryRoleCreation struct {
-	ResourceId types.ID
+	ResourceId [8]byte
 	RoleName   string
 	Raw        chainTypes.Log // Blockchain specific contextual infos
 }
@@ -1312,7 +1312,7 @@ type AppRegistryRoleCreation struct {
 // FilterRoleCreation is a free log retrieval operation binding the contract event 0xc2b6ee9f52b3de3bb61425ddae45ae6d999023b01a3950ee19667b235ed8b23a.
 //
 // Solidity: event RoleCreation(bytes8 indexed resourceId, string roleName)
-func (_AppRegistry *appRegistryEvents) FilterRoleCreation(opts *bind.FilterOpts, resourceId []types.ID) (ablbind.EventIterator, error) {
+func (_AppRegistry *appRegistryEvents) FilterRoleCreation(opts *bind.FilterOpts, resourceId [][8]byte) (ablbind.EventIterator, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -1329,7 +1329,7 @@ func (_AppRegistry *appRegistryEvents) FilterRoleCreation(opts *bind.FilterOpts,
 // WatchRoleCreation is a free log subscription operation binding the contract event 0xc2b6ee9f52b3de3bb61425ddae45ae6d999023b01a3950ee19667b235ed8b23a.
 //
 // Solidity: event RoleCreation(bytes8 indexed resourceId, string roleName)
-func (_AppRegistry *appRegistryEvents) WatchRoleCreation(opts *bind.WatchOpts, sink chan<- *AppRegistryRoleCreation, resourceId []types.ID) (event.Subscription, error) {
+func (_AppRegistry *appRegistryEvents) WatchRoleCreation(opts *bind.WatchOpts, sink chan<- *AppRegistryRoleCreation, resourceId [][8]byte) (event.Subscription, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -1474,7 +1474,7 @@ func (it *AppRegistryRoleRemovalIterator) Close() error {
 
 // AppRegistryRoleRemoval represents a RoleRemoval event raised by the AppRegistry contract.
 type AppRegistryRoleRemoval struct {
-	ResourceId types.ID
+	ResourceId [8]byte
 	RoleName   string
 	Raw        chainTypes.Log // Blockchain specific contextual infos
 }
@@ -1482,7 +1482,7 @@ type AppRegistryRoleRemoval struct {
 // FilterRoleRemoval is a free log retrieval operation binding the contract event 0xf62cd9d9e6db5c8c5690d7f9adf2224040edc6e63b93e00db8ad092ab6923c08.
 //
 // Solidity: event RoleRemoval(bytes8 indexed resourceId, string roleName)
-func (_AppRegistry *appRegistryEvents) FilterRoleRemoval(opts *bind.FilterOpts, resourceId []types.ID) (ablbind.EventIterator, error) {
+func (_AppRegistry *appRegistryEvents) FilterRoleRemoval(opts *bind.FilterOpts, resourceId [][8]byte) (ablbind.EventIterator, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -1499,7 +1499,7 @@ func (_AppRegistry *appRegistryEvents) FilterRoleRemoval(opts *bind.FilterOpts, 
 // WatchRoleRemoval is a free log subscription operation binding the contract event 0xf62cd9d9e6db5c8c5690d7f9adf2224040edc6e63b93e00db8ad092ab6923c08.
 //
 // Solidity: event RoleRemoval(bytes8 indexed resourceId, string roleName)
-func (_AppRegistry *appRegistryEvents) WatchRoleRemoval(opts *bind.WatchOpts, sink chan<- *AppRegistryRoleRemoval, resourceId []types.ID) (event.Subscription, error) {
+func (_AppRegistry *appRegistryEvents) WatchRoleRemoval(opts *bind.WatchOpts, sink chan<- *AppRegistryRoleRemoval, resourceId [][8]byte) (event.Subscription, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -1644,7 +1644,7 @@ func (it *AppRegistryRoleUnboundIterator) Close() error {
 
 // AppRegistryRoleUnbound represents a RoleUnbound event raised by the AppRegistry contract.
 type AppRegistryRoleUnbound struct {
-	ResourceId types.ID
+	ResourceId [8]byte
 	Subject    common.Address
 	RoleName   string
 	Raw        chainTypes.Log // Blockchain specific contextual infos
@@ -1653,7 +1653,7 @@ type AppRegistryRoleUnbound struct {
 // FilterRoleUnbound is a free log retrieval operation binding the contract event 0xe3ee4a62256915250287945244f05e6f185e5b0be4c5f0e85f29e3044f120ce3.
 //
 // Solidity: event RoleUnbound(bytes8 indexed resourceId, address indexed subject, string roleName)
-func (_AppRegistry *appRegistryEvents) FilterRoleUnbound(opts *bind.FilterOpts, resourceId []types.ID, subject []common.Address) (ablbind.EventIterator, error) {
+func (_AppRegistry *appRegistryEvents) FilterRoleUnbound(opts *bind.FilterOpts, resourceId [][8]byte, subject []common.Address) (ablbind.EventIterator, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -1674,7 +1674,7 @@ func (_AppRegistry *appRegistryEvents) FilterRoleUnbound(opts *bind.FilterOpts, 
 // WatchRoleUnbound is a free log subscription operation binding the contract event 0xe3ee4a62256915250287945244f05e6f185e5b0be4c5f0e85f29e3044f120ce3.
 //
 // Solidity: event RoleUnbound(bytes8 indexed resourceId, address indexed subject, string roleName)
-func (_AppRegistry *appRegistryEvents) WatchRoleUnbound(opts *bind.WatchOpts, sink chan<- *AppRegistryRoleUnbound, resourceId []types.ID, subject []common.Address) (event.Subscription, error) {
+func (_AppRegistry *appRegistryEvents) WatchRoleUnbound(opts *bind.WatchOpts, sink chan<- *AppRegistryRoleUnbound, resourceId [][8]byte, subject []common.Address) (event.Subscription, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -1823,7 +1823,7 @@ func (it *AppRegistryUnregistrationIterator) Close() error {
 
 // AppRegistryUnregistration represents a Unregistration event raised by the AppRegistry contract.
 type AppRegistryUnregistration struct {
-	AppId   types.ID
+	AppId   [8]byte
 	AppName string
 	Raw     chainTypes.Log // Blockchain specific contextual infos
 }
@@ -1831,7 +1831,7 @@ type AppRegistryUnregistration struct {
 // FilterUnregistration is a free log retrieval operation binding the contract event 0xfe4087afbde6adacfa58b7ae569b654c6445bdf8781edab97394ea74d2a5f85e.
 //
 // Solidity: event Unregistration(bytes8 indexed appId, string appName)
-func (_AppRegistry *appRegistryEvents) FilterUnregistration(opts *bind.FilterOpts, appId []types.ID) (ablbind.EventIterator, error) {
+func (_AppRegistry *appRegistryEvents) FilterUnregistration(opts *bind.FilterOpts, appId [][8]byte) (ablbind.EventIterator, error) {
 
 	var appIdRule []interface{}
 	for _, appIdItem := range appId {
@@ -1848,7 +1848,7 @@ func (_AppRegistry *appRegistryEvents) FilterUnregistration(opts *bind.FilterOpt
 // WatchUnregistration is a free log subscription operation binding the contract event 0xfe4087afbde6adacfa58b7ae569b654c6445bdf8781edab97394ea74d2a5f85e.
 //
 // Solidity: event Unregistration(bytes8 indexed appId, string appName)
-func (_AppRegistry *appRegistryEvents) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *AppRegistryUnregistration, appId []types.ID) (event.Subscription, error) {
+func (_AppRegistry *appRegistryEvents) WatchUnregistration(opts *bind.WatchOpts, sink chan<- *AppRegistryUnregistration, appId [][8]byte) (event.Subscription, error) {
 
 	var appIdRule []interface{}
 	for _, appIdItem := range appId {

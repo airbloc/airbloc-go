@@ -28,14 +28,14 @@ const (
 type UsersCaller interface {
 	Exists(
 		ctx context.Context,
-		userId types.ID,
+		userId [8]byte,
 	) (
 		bool,
 		error,
 	)
 	Get(
 		ctx context.Context,
-		userId types.ID,
+		userId [8]byte,
 	) (
 		types.User,
 		error,
@@ -51,27 +51,27 @@ type UsersCaller interface {
 		ctx context.Context,
 		owner common.Address,
 	) (
-		types.ID,
+		[8]byte,
 		error,
 	)
 	GetIdByIdentityHash(
 		ctx context.Context,
 		identityHash common.Hash,
 	) (
-		types.ID,
+		[8]byte,
 		error,
 	)
 	IsControllerOf(
 		ctx context.Context,
 		controller common.Address,
-		userId types.ID,
+		userId [8]byte,
 	) (
 		bool,
 		error,
 	)
 	IsTemporary(
 		ctx context.Context,
-		userId types.ID,
+		userId [8]byte,
 	) (
 		bool,
 		error,
@@ -85,7 +85,7 @@ type usersCaller struct {
 // Exists is a free data retrieval call binding the contract method 0x97e4fea7.
 //
 // Solidity: function exists(bytes8 userId) constant returns(bool)
-func (_Users *usersCaller) Exists(ctx context.Context, userId types.ID) (bool, error) {
+func (_Users *usersCaller) Exists(ctx context.Context, userId [8]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
@@ -98,7 +98,7 @@ func (_Users *usersCaller) Exists(ctx context.Context, userId types.ID) (bool, e
 // Get is a free data retrieval call binding the contract method 0x47ba65d2.
 //
 // Solidity: function get(bytes8 userId) constant returns(types.User)
-func (_Users *usersCaller) Get(ctx context.Context, userId types.ID) (types.User, error) {
+func (_Users *usersCaller) Get(ctx context.Context, userId [8]byte) (types.User, error) {
 	var (
 		ret0 = new(types.User)
 	)
@@ -124,9 +124,9 @@ func (_Users *usersCaller) GetByIdentityHash(ctx context.Context, identityHash c
 // GetId is a free data retrieval call binding the contract method 0x65f68c89.
 //
 // Solidity: function getId(address owner) constant returns(bytes8)
-func (_Users *usersCaller) GetId(ctx context.Context, owner common.Address) (types.ID, error) {
+func (_Users *usersCaller) GetId(ctx context.Context, owner common.Address) ([8]byte, error) {
 	var (
-		ret0 = new(types.ID)
+		ret0 = new([8]byte)
 	)
 	out := ret0
 
@@ -137,9 +137,9 @@ func (_Users *usersCaller) GetId(ctx context.Context, owner common.Address) (typ
 // GetIdByIdentityHash is a free data retrieval call binding the contract method 0x93f9c90e.
 //
 // Solidity: function getIdByIdentityHash(bytes32 identityHash) constant returns(bytes8)
-func (_Users *usersCaller) GetIdByIdentityHash(ctx context.Context, identityHash common.Hash) (types.ID, error) {
+func (_Users *usersCaller) GetIdByIdentityHash(ctx context.Context, identityHash common.Hash) ([8]byte, error) {
 	var (
-		ret0 = new(types.ID)
+		ret0 = new([8]byte)
 	)
 	out := ret0
 
@@ -150,7 +150,7 @@ func (_Users *usersCaller) GetIdByIdentityHash(ctx context.Context, identityHash
 // IsControllerOf is a free data retrieval call binding the contract method 0xa83038e7.
 //
 // Solidity: function isControllerOf(address controller, bytes8 userId) constant returns(bool)
-func (_Users *usersCaller) IsControllerOf(ctx context.Context, controller common.Address, userId types.ID) (bool, error) {
+func (_Users *usersCaller) IsControllerOf(ctx context.Context, controller common.Address, userId [8]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
@@ -163,7 +163,7 @@ func (_Users *usersCaller) IsControllerOf(ctx context.Context, controller common
 // IsTemporary is a free data retrieval call binding the contract method 0x6b886888.
 //
 // Solidity: function isTemporary(bytes8 userId) constant returns(bool)
-func (_Users *usersCaller) IsTemporary(ctx context.Context, userId types.ID) (bool, error) {
+func (_Users *usersCaller) IsTemporary(ctx context.Context, userId [8]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
@@ -277,43 +277,43 @@ type UsersEventFilterer interface {
 	// Filterer
 	FilterActionGranted(
 		opts *bind.FilterOpts,
-		resourceId []types.ID,
+		resourceId [][8]byte,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterActionRevoked(
 		opts *bind.FilterOpts,
-		resourceId []types.ID,
+		resourceId [][8]byte,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterControllerChanged(
 		opts *bind.FilterOpts,
-		userId []types.ID,
+		userId [][8]byte,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterRoleBound(
 		opts *bind.FilterOpts,
-		resourceId []types.ID, subject []common.Address,
+		resourceId [][8]byte, subject []common.Address,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterRoleCreation(
 		opts *bind.FilterOpts,
-		resourceId []types.ID,
+		resourceId [][8]byte,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterRoleRemoval(
 		opts *bind.FilterOpts,
-		resourceId []types.ID,
+		resourceId [][8]byte,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterRoleUnbound(
 		opts *bind.FilterOpts,
-		resourceId []types.ID, subject []common.Address,
+		resourceId [][8]byte, subject []common.Address,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
@@ -331,7 +331,7 @@ type UsersEventFilterer interface {
 	// Filterer
 	FilterTemporaryUnlocked(
 		opts *bind.FilterOpts,
-		identityHash []common.Hash, userId []types.ID,
+		identityHash []common.Hash, userId [][8]byte,
 	) (ablbind.EventIterator, error)
 }
 
@@ -382,49 +382,49 @@ type UsersEventWatcher interface {
 	WatchActionGranted(
 		opts *bind.WatchOpts,
 		sink chan<- *UsersActionGranted,
-		resourceId []types.ID,
+		resourceId [][8]byte,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchActionRevoked(
 		opts *bind.WatchOpts,
 		sink chan<- *UsersActionRevoked,
-		resourceId []types.ID,
+		resourceId [][8]byte,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchControllerChanged(
 		opts *bind.WatchOpts,
 		sink chan<- *UsersControllerChanged,
-		userId []types.ID,
+		userId [][8]byte,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchRoleBound(
 		opts *bind.WatchOpts,
 		sink chan<- *UsersRoleBound,
-		resourceId []types.ID, subject []common.Address,
+		resourceId [][8]byte, subject []common.Address,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchRoleCreation(
 		opts *bind.WatchOpts,
 		sink chan<- *UsersRoleCreation,
-		resourceId []types.ID,
+		resourceId [][8]byte,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchRoleRemoval(
 		opts *bind.WatchOpts,
 		sink chan<- *UsersRoleRemoval,
-		resourceId []types.ID,
+		resourceId [][8]byte,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchRoleUnbound(
 		opts *bind.WatchOpts,
 		sink chan<- *UsersRoleUnbound,
-		resourceId []types.ID, subject []common.Address,
+		resourceId [][8]byte, subject []common.Address,
 	) (event.Subscription, error)
 
 	// Watcher
@@ -445,7 +445,7 @@ type UsersEventWatcher interface {
 	WatchTemporaryUnlocked(
 		opts *bind.WatchOpts,
 		sink chan<- *UsersTemporaryUnlocked,
-		identityHash []common.Hash, userId []types.ID,
+		identityHash []common.Hash, userId [][8]byte,
 	) (event.Subscription, error)
 }
 
@@ -527,7 +527,7 @@ func (it *UsersActionGrantedIterator) Close() error {
 
 // UsersActionGranted represents a ActionGranted event raised by the Users contract.
 type UsersActionGranted struct {
-	ResourceId types.ID
+	ResourceId [8]byte
 	RoleName   string
 	ActionName string
 	Raw        chainTypes.Log // Blockchain specific contextual infos
@@ -536,7 +536,7 @@ type UsersActionGranted struct {
 // FilterActionGranted is a free log retrieval operation binding the contract event 0xe03e108285a5925f590b2999b168b964f1fe8f10e0081058fe0c01c38b7e3bd9.
 //
 // Solidity: event ActionGranted(bytes8 indexed resourceId, string roleName, string actionName)
-func (_Users *usersEvents) FilterActionGranted(opts *bind.FilterOpts, resourceId []types.ID) (ablbind.EventIterator, error) {
+func (_Users *usersEvents) FilterActionGranted(opts *bind.FilterOpts, resourceId [][8]byte) (ablbind.EventIterator, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -553,7 +553,7 @@ func (_Users *usersEvents) FilterActionGranted(opts *bind.FilterOpts, resourceId
 // WatchActionGranted is a free log subscription operation binding the contract event 0xe03e108285a5925f590b2999b168b964f1fe8f10e0081058fe0c01c38b7e3bd9.
 //
 // Solidity: event ActionGranted(bytes8 indexed resourceId, string roleName, string actionName)
-func (_Users *usersEvents) WatchActionGranted(opts *bind.WatchOpts, sink chan<- *UsersActionGranted, resourceId []types.ID) (event.Subscription, error) {
+func (_Users *usersEvents) WatchActionGranted(opts *bind.WatchOpts, sink chan<- *UsersActionGranted, resourceId [][8]byte) (event.Subscription, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -698,7 +698,7 @@ func (it *UsersActionRevokedIterator) Close() error {
 
 // UsersActionRevoked represents a ActionRevoked event raised by the Users contract.
 type UsersActionRevoked struct {
-	ResourceId types.ID
+	ResourceId [8]byte
 	RoleName   string
 	ActionName string
 	Raw        chainTypes.Log // Blockchain specific contextual infos
@@ -707,7 +707,7 @@ type UsersActionRevoked struct {
 // FilterActionRevoked is a free log retrieval operation binding the contract event 0x853537b9aa72341c9043ddf56d5bc062180a8f122964f92d899c2734aad5f430.
 //
 // Solidity: event ActionRevoked(bytes8 indexed resourceId, string roleName, string actionName)
-func (_Users *usersEvents) FilterActionRevoked(opts *bind.FilterOpts, resourceId []types.ID) (ablbind.EventIterator, error) {
+func (_Users *usersEvents) FilterActionRevoked(opts *bind.FilterOpts, resourceId [][8]byte) (ablbind.EventIterator, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -724,7 +724,7 @@ func (_Users *usersEvents) FilterActionRevoked(opts *bind.FilterOpts, resourceId
 // WatchActionRevoked is a free log subscription operation binding the contract event 0x853537b9aa72341c9043ddf56d5bc062180a8f122964f92d899c2734aad5f430.
 //
 // Solidity: event ActionRevoked(bytes8 indexed resourceId, string roleName, string actionName)
-func (_Users *usersEvents) WatchActionRevoked(opts *bind.WatchOpts, sink chan<- *UsersActionRevoked, resourceId []types.ID) (event.Subscription, error) {
+func (_Users *usersEvents) WatchActionRevoked(opts *bind.WatchOpts, sink chan<- *UsersActionRevoked, resourceId [][8]byte) (event.Subscription, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -869,7 +869,7 @@ func (it *UsersControllerChangedIterator) Close() error {
 
 // UsersControllerChanged represents a ControllerChanged event raised by the Users contract.
 type UsersControllerChanged struct {
-	UserId        types.ID
+	UserId        [8]byte
 	OldController common.Address
 	NewController common.Address
 	Raw           chainTypes.Log // Blockchain specific contextual infos
@@ -878,7 +878,7 @@ type UsersControllerChanged struct {
 // FilterControllerChanged is a free log retrieval operation binding the contract event 0xf2fe27b4381d3faea12791cd499b21e10627d1cd2f09101c2c33547ecf711fa1.
 //
 // Solidity: event ControllerChanged(bytes8 indexed userId, address oldController, address newController)
-func (_Users *usersEvents) FilterControllerChanged(opts *bind.FilterOpts, userId []types.ID) (ablbind.EventIterator, error) {
+func (_Users *usersEvents) FilterControllerChanged(opts *bind.FilterOpts, userId [][8]byte) (ablbind.EventIterator, error) {
 
 	var userIdRule []interface{}
 	for _, userIdItem := range userId {
@@ -895,7 +895,7 @@ func (_Users *usersEvents) FilterControllerChanged(opts *bind.FilterOpts, userId
 // WatchControllerChanged is a free log subscription operation binding the contract event 0xf2fe27b4381d3faea12791cd499b21e10627d1cd2f09101c2c33547ecf711fa1.
 //
 // Solidity: event ControllerChanged(bytes8 indexed userId, address oldController, address newController)
-func (_Users *usersEvents) WatchControllerChanged(opts *bind.WatchOpts, sink chan<- *UsersControllerChanged, userId []types.ID) (event.Subscription, error) {
+func (_Users *usersEvents) WatchControllerChanged(opts *bind.WatchOpts, sink chan<- *UsersControllerChanged, userId [][8]byte) (event.Subscription, error) {
 
 	var userIdRule []interface{}
 	for _, userIdItem := range userId {
@@ -1040,7 +1040,7 @@ func (it *UsersRoleBoundIterator) Close() error {
 
 // UsersRoleBound represents a RoleBound event raised by the Users contract.
 type UsersRoleBound struct {
-	ResourceId types.ID
+	ResourceId [8]byte
 	Subject    common.Address
 	RoleName   string
 	Raw        chainTypes.Log // Blockchain specific contextual infos
@@ -1049,7 +1049,7 @@ type UsersRoleBound struct {
 // FilterRoleBound is a free log retrieval operation binding the contract event 0xf1292e948ea47db3c62a8d29d6c7d2272d236bc10fa66fddb7b2e1570b1b1372.
 //
 // Solidity: event RoleBound(bytes8 indexed resourceId, address indexed subject, string roleName)
-func (_Users *usersEvents) FilterRoleBound(opts *bind.FilterOpts, resourceId []types.ID, subject []common.Address) (ablbind.EventIterator, error) {
+func (_Users *usersEvents) FilterRoleBound(opts *bind.FilterOpts, resourceId [][8]byte, subject []common.Address) (ablbind.EventIterator, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -1070,7 +1070,7 @@ func (_Users *usersEvents) FilterRoleBound(opts *bind.FilterOpts, resourceId []t
 // WatchRoleBound is a free log subscription operation binding the contract event 0xf1292e948ea47db3c62a8d29d6c7d2272d236bc10fa66fddb7b2e1570b1b1372.
 //
 // Solidity: event RoleBound(bytes8 indexed resourceId, address indexed subject, string roleName)
-func (_Users *usersEvents) WatchRoleBound(opts *bind.WatchOpts, sink chan<- *UsersRoleBound, resourceId []types.ID, subject []common.Address) (event.Subscription, error) {
+func (_Users *usersEvents) WatchRoleBound(opts *bind.WatchOpts, sink chan<- *UsersRoleBound, resourceId [][8]byte, subject []common.Address) (event.Subscription, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -1219,7 +1219,7 @@ func (it *UsersRoleCreationIterator) Close() error {
 
 // UsersRoleCreation represents a RoleCreation event raised by the Users contract.
 type UsersRoleCreation struct {
-	ResourceId types.ID
+	ResourceId [8]byte
 	RoleName   string
 	Raw        chainTypes.Log // Blockchain specific contextual infos
 }
@@ -1227,7 +1227,7 @@ type UsersRoleCreation struct {
 // FilterRoleCreation is a free log retrieval operation binding the contract event 0xc2b6ee9f52b3de3bb61425ddae45ae6d999023b01a3950ee19667b235ed8b23a.
 //
 // Solidity: event RoleCreation(bytes8 indexed resourceId, string roleName)
-func (_Users *usersEvents) FilterRoleCreation(opts *bind.FilterOpts, resourceId []types.ID) (ablbind.EventIterator, error) {
+func (_Users *usersEvents) FilterRoleCreation(opts *bind.FilterOpts, resourceId [][8]byte) (ablbind.EventIterator, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -1244,7 +1244,7 @@ func (_Users *usersEvents) FilterRoleCreation(opts *bind.FilterOpts, resourceId 
 // WatchRoleCreation is a free log subscription operation binding the contract event 0xc2b6ee9f52b3de3bb61425ddae45ae6d999023b01a3950ee19667b235ed8b23a.
 //
 // Solidity: event RoleCreation(bytes8 indexed resourceId, string roleName)
-func (_Users *usersEvents) WatchRoleCreation(opts *bind.WatchOpts, sink chan<- *UsersRoleCreation, resourceId []types.ID) (event.Subscription, error) {
+func (_Users *usersEvents) WatchRoleCreation(opts *bind.WatchOpts, sink chan<- *UsersRoleCreation, resourceId [][8]byte) (event.Subscription, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -1389,7 +1389,7 @@ func (it *UsersRoleRemovalIterator) Close() error {
 
 // UsersRoleRemoval represents a RoleRemoval event raised by the Users contract.
 type UsersRoleRemoval struct {
-	ResourceId types.ID
+	ResourceId [8]byte
 	RoleName   string
 	Raw        chainTypes.Log // Blockchain specific contextual infos
 }
@@ -1397,7 +1397,7 @@ type UsersRoleRemoval struct {
 // FilterRoleRemoval is a free log retrieval operation binding the contract event 0xf62cd9d9e6db5c8c5690d7f9adf2224040edc6e63b93e00db8ad092ab6923c08.
 //
 // Solidity: event RoleRemoval(bytes8 indexed resourceId, string roleName)
-func (_Users *usersEvents) FilterRoleRemoval(opts *bind.FilterOpts, resourceId []types.ID) (ablbind.EventIterator, error) {
+func (_Users *usersEvents) FilterRoleRemoval(opts *bind.FilterOpts, resourceId [][8]byte) (ablbind.EventIterator, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -1414,7 +1414,7 @@ func (_Users *usersEvents) FilterRoleRemoval(opts *bind.FilterOpts, resourceId [
 // WatchRoleRemoval is a free log subscription operation binding the contract event 0xf62cd9d9e6db5c8c5690d7f9adf2224040edc6e63b93e00db8ad092ab6923c08.
 //
 // Solidity: event RoleRemoval(bytes8 indexed resourceId, string roleName)
-func (_Users *usersEvents) WatchRoleRemoval(opts *bind.WatchOpts, sink chan<- *UsersRoleRemoval, resourceId []types.ID) (event.Subscription, error) {
+func (_Users *usersEvents) WatchRoleRemoval(opts *bind.WatchOpts, sink chan<- *UsersRoleRemoval, resourceId [][8]byte) (event.Subscription, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -1559,7 +1559,7 @@ func (it *UsersRoleUnboundIterator) Close() error {
 
 // UsersRoleUnbound represents a RoleUnbound event raised by the Users contract.
 type UsersRoleUnbound struct {
-	ResourceId types.ID
+	ResourceId [8]byte
 	Subject    common.Address
 	RoleName   string
 	Raw        chainTypes.Log // Blockchain specific contextual infos
@@ -1568,7 +1568,7 @@ type UsersRoleUnbound struct {
 // FilterRoleUnbound is a free log retrieval operation binding the contract event 0xe3ee4a62256915250287945244f05e6f185e5b0be4c5f0e85f29e3044f120ce3.
 //
 // Solidity: event RoleUnbound(bytes8 indexed resourceId, address indexed subject, string roleName)
-func (_Users *usersEvents) FilterRoleUnbound(opts *bind.FilterOpts, resourceId []types.ID, subject []common.Address) (ablbind.EventIterator, error) {
+func (_Users *usersEvents) FilterRoleUnbound(opts *bind.FilterOpts, resourceId [][8]byte, subject []common.Address) (ablbind.EventIterator, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -1589,7 +1589,7 @@ func (_Users *usersEvents) FilterRoleUnbound(opts *bind.FilterOpts, resourceId [
 // WatchRoleUnbound is a free log subscription operation binding the contract event 0xe3ee4a62256915250287945244f05e6f185e5b0be4c5f0e85f29e3044f120ce3.
 //
 // Solidity: event RoleUnbound(bytes8 indexed resourceId, address indexed subject, string roleName)
-func (_Users *usersEvents) WatchRoleUnbound(opts *bind.WatchOpts, sink chan<- *UsersRoleUnbound, resourceId []types.ID, subject []common.Address) (event.Subscription, error) {
+func (_Users *usersEvents) WatchRoleUnbound(opts *bind.WatchOpts, sink chan<- *UsersRoleUnbound, resourceId [][8]byte, subject []common.Address) (event.Subscription, error) {
 
 	var resourceIdRule []interface{}
 	for _, resourceIdItem := range resourceId {
@@ -1739,7 +1739,7 @@ func (it *UsersSignedUpIterator) Close() error {
 // UsersSignedUp represents a SignedUp event raised by the Users contract.
 type UsersSignedUp struct {
 	Owner  common.Address
-	UserId types.ID
+	UserId [8]byte
 	Raw    chainTypes.Log // Blockchain specific contextual infos
 }
 
@@ -1911,7 +1911,7 @@ type UsersTemporaryCreated struct {
 	Proxy        common.Address
 	FeePayer     common.Address
 	IdentityHash common.Hash
-	UserId       types.ID
+	UserId       [8]byte
 	Raw          chainTypes.Log // Blockchain specific contextual infos
 }
 
@@ -2097,7 +2097,7 @@ func (it *UsersTemporaryUnlockedIterator) Close() error {
 // UsersTemporaryUnlocked represents a TemporaryUnlocked event raised by the Users contract.
 type UsersTemporaryUnlocked struct {
 	IdentityHash common.Hash
-	UserId       types.ID
+	UserId       [8]byte
 	NewOwner     common.Address
 	Raw          chainTypes.Log // Blockchain specific contextual infos
 }
@@ -2105,7 +2105,7 @@ type UsersTemporaryUnlocked struct {
 // FilterTemporaryUnlocked is a free log retrieval operation binding the contract event 0xbd9af3a42cb6d433090684c1dd3af90f4ef6f0ae87fb219c7b38d388385c9be7.
 //
 // Solidity: event TemporaryUnlocked(bytes32 indexed identityHash, bytes8 indexed userId, address newOwner)
-func (_Users *usersEvents) FilterTemporaryUnlocked(opts *bind.FilterOpts, identityHash []common.Hash, userId []types.ID) (ablbind.EventIterator, error) {
+func (_Users *usersEvents) FilterTemporaryUnlocked(opts *bind.FilterOpts, identityHash []common.Hash, userId [][8]byte) (ablbind.EventIterator, error) {
 
 	var identityHashRule []interface{}
 	for _, identityHashItem := range identityHash {
@@ -2126,7 +2126,7 @@ func (_Users *usersEvents) FilterTemporaryUnlocked(opts *bind.FilterOpts, identi
 // WatchTemporaryUnlocked is a free log subscription operation binding the contract event 0xbd9af3a42cb6d433090684c1dd3af90f4ef6f0ae87fb219c7b38d388385c9be7.
 //
 // Solidity: event TemporaryUnlocked(bytes32 indexed identityHash, bytes8 indexed userId, address newOwner)
-func (_Users *usersEvents) WatchTemporaryUnlocked(opts *bind.WatchOpts, sink chan<- *UsersTemporaryUnlocked, identityHash []common.Hash, userId []types.ID) (event.Subscription, error) {
+func (_Users *usersEvents) WatchTemporaryUnlocked(opts *bind.WatchOpts, sink chan<- *UsersTemporaryUnlocked, identityHash []common.Hash, userId [][8]byte) (event.Subscription, error) {
 
 	var identityHashRule []interface{}
 	for _, identityHashItem := range identityHash {

@@ -28,14 +28,14 @@ const (
 type ExchangeCaller interface {
 	GetOffer(
 		ctx context.Context,
-		offerId types.ID,
+		offerId [8]byte,
 	) (
 		types.Offer,
 		error,
 	)
 	GetOfferMembers(
 		ctx context.Context,
-		offerId types.ID,
+		offerId [8]byte,
 	) (
 		common.Address,
 		common.Address,
@@ -43,7 +43,7 @@ type ExchangeCaller interface {
 	)
 	OfferExists(
 		ctx context.Context,
-		offerId types.ID,
+		offerId [8]byte,
 	) (
 		bool,
 		error,
@@ -57,7 +57,7 @@ type exchangeCaller struct {
 // GetOffer is a free data retrieval call binding the contract method 0x107f04b4.
 //
 // Solidity: function getOffer(bytes8 offerId) constant returns(types.Offer)
-func (_Exchange *exchangeCaller) GetOffer(ctx context.Context, offerId types.ID) (types.Offer, error) {
+func (_Exchange *exchangeCaller) GetOffer(ctx context.Context, offerId [8]byte) (types.Offer, error) {
 	var (
 		ret0 = new(types.Offer)
 	)
@@ -70,7 +70,7 @@ func (_Exchange *exchangeCaller) GetOffer(ctx context.Context, offerId types.ID)
 // GetOfferMembers is a free data retrieval call binding the contract method 0x72dfa465.
 //
 // Solidity: function getOfferMembers(bytes8 offerId) constant returns(address, address)
-func (_Exchange *exchangeCaller) GetOfferMembers(ctx context.Context, offerId types.ID) (common.Address, common.Address, error) {
+func (_Exchange *exchangeCaller) GetOfferMembers(ctx context.Context, offerId [8]byte) (common.Address, common.Address, error) {
 	var (
 		ret0 = new(common.Address)
 		ret1 = new(common.Address)
@@ -87,7 +87,7 @@ func (_Exchange *exchangeCaller) GetOfferMembers(ctx context.Context, offerId ty
 // OfferExists is a free data retrieval call binding the contract method 0xc4a03da9.
 //
 // Solidity: function offerExists(bytes8 offerId) constant returns(bool)
-func (_Exchange *exchangeCaller) OfferExists(ctx context.Context, offerId types.ID) (bool, error) {
+func (_Exchange *exchangeCaller) OfferExists(ctx context.Context, offerId [8]byte) (bool, error) {
 	var (
 		ret0 = new(bool)
 	)
@@ -102,18 +102,18 @@ type ExchangeTransactor interface {
 	AddDataIds(
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
-		offerId types.ID,
+		offerId [8]byte,
 		dataIds []types.DataId,
 	) (*chainTypes.Receipt, error)
 	Cancel(
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
-		offerId types.ID,
+		offerId [8]byte,
 	) (*chainTypes.Receipt, error)
 	Order(
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
-		offerId types.ID,
+		offerId [8]byte,
 	) (*chainTypes.Receipt, error)
 	Prepare(
 		ctx context.Context,
@@ -128,12 +128,12 @@ type ExchangeTransactor interface {
 	Reject(
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
-		offerId types.ID,
+		offerId [8]byte,
 	) (*chainTypes.Receipt, error)
 	Settle(
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
-		offerId types.ID,
+		offerId [8]byte,
 	) (*chainTypes.Receipt, error)
 }
 
@@ -148,7 +148,7 @@ type exchangeTransactor struct {
 func (_Exchange *exchangeTransactor) AddDataIds(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
-	offerId types.ID,
+	offerId [8]byte,
 	dataIds []types.DataId,
 ) (*chainTypes.Receipt, error) {
 	if opts == nil {
@@ -165,7 +165,7 @@ func (_Exchange *exchangeTransactor) AddDataIds(
 func (_Exchange *exchangeTransactor) Cancel(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
-	offerId types.ID,
+	offerId [8]byte,
 ) (*chainTypes.Receipt, error) {
 	if opts == nil {
 		opts = &ablbind.TransactOpts{}
@@ -181,7 +181,7 @@ func (_Exchange *exchangeTransactor) Cancel(
 func (_Exchange *exchangeTransactor) Order(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
-	offerId types.ID,
+	offerId [8]byte,
 ) (*chainTypes.Receipt, error) {
 	if opts == nil {
 		opts = &ablbind.TransactOpts{}
@@ -218,7 +218,7 @@ func (_Exchange *exchangeTransactor) Prepare(
 func (_Exchange *exchangeTransactor) Reject(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
-	offerId types.ID,
+	offerId [8]byte,
 ) (*chainTypes.Receipt, error) {
 	if opts == nil {
 		opts = &ablbind.TransactOpts{}
@@ -234,7 +234,7 @@ func (_Exchange *exchangeTransactor) Reject(
 func (_Exchange *exchangeTransactor) Settle(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
-	offerId types.ID,
+	offerId [8]byte,
 ) (*chainTypes.Receipt, error) {
 	if opts == nil {
 		opts = &ablbind.TransactOpts{}
@@ -261,37 +261,37 @@ type ExchangeEventFilterer interface {
 	// Filterer
 	FilterOfferCanceled(
 		opts *bind.FilterOpts,
-		offerId []types.ID,
+		offerId [][8]byte,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterOfferPrepared(
 		opts *bind.FilterOpts,
-		offerId []types.ID,
+		offerId [][8]byte,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterOfferPresented(
 		opts *bind.FilterOpts,
-		offerId []types.ID,
+		offerId [][8]byte,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterOfferReceipt(
 		opts *bind.FilterOpts,
-		offerId []types.ID, consumer []common.Address,
+		offerId [][8]byte, consumer []common.Address,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterOfferRejected(
 		opts *bind.FilterOpts,
-		offerId []types.ID, consumer []common.Address,
+		offerId [][8]byte, consumer []common.Address,
 	) (ablbind.EventIterator, error)
 
 	// Filterer
 	FilterOfferSettled(
 		opts *bind.FilterOpts,
-		offerId []types.ID, consumer []common.Address,
+		offerId [][8]byte, consumer []common.Address,
 	) (ablbind.EventIterator, error)
 }
 
@@ -337,42 +337,42 @@ type ExchangeEventWatcher interface {
 	WatchOfferCanceled(
 		opts *bind.WatchOpts,
 		sink chan<- *ExchangeOfferCanceled,
-		offerId []types.ID,
+		offerId [][8]byte,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchOfferPrepared(
 		opts *bind.WatchOpts,
 		sink chan<- *ExchangeOfferPrepared,
-		offerId []types.ID,
+		offerId [][8]byte,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchOfferPresented(
 		opts *bind.WatchOpts,
 		sink chan<- *ExchangeOfferPresented,
-		offerId []types.ID,
+		offerId [][8]byte,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchOfferReceipt(
 		opts *bind.WatchOpts,
 		sink chan<- *ExchangeOfferReceipt,
-		offerId []types.ID, consumer []common.Address,
+		offerId [][8]byte, consumer []common.Address,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchOfferRejected(
 		opts *bind.WatchOpts,
 		sink chan<- *ExchangeOfferRejected,
-		offerId []types.ID, consumer []common.Address,
+		offerId [][8]byte, consumer []common.Address,
 	) (event.Subscription, error)
 
 	// Watcher
 	WatchOfferSettled(
 		opts *bind.WatchOpts,
 		sink chan<- *ExchangeOfferSettled,
-		offerId []types.ID, consumer []common.Address,
+		offerId [][8]byte, consumer []common.Address,
 	) (event.Subscription, error)
 }
 
@@ -613,7 +613,7 @@ func (it *ExchangeOfferCanceledIterator) Close() error {
 
 // ExchangeOfferCanceled represents a OfferCanceled event raised by the Exchange contract.
 type ExchangeOfferCanceled struct {
-	OfferId         types.ID
+	OfferId         [8]byte
 	ProviderAppName string
 	Raw             chainTypes.Log // Blockchain specific contextual infos
 }
@@ -621,7 +621,7 @@ type ExchangeOfferCanceled struct {
 // FilterOfferCanceled is a free log retrieval operation binding the contract event 0x05b47b0f8bd37a836f7a5c080cb883841c1282c69dd1874a46d4fafc7e8aa27a.
 //
 // Solidity: event OfferCanceled(bytes8 indexed offerId, string providerAppName)
-func (_Exchange *exchangeEvents) FilterOfferCanceled(opts *bind.FilterOpts, offerId []types.ID) (ablbind.EventIterator, error) {
+func (_Exchange *exchangeEvents) FilterOfferCanceled(opts *bind.FilterOpts, offerId [][8]byte) (ablbind.EventIterator, error) {
 
 	var offerIdRule []interface{}
 	for _, offerIdItem := range offerId {
@@ -638,7 +638,7 @@ func (_Exchange *exchangeEvents) FilterOfferCanceled(opts *bind.FilterOpts, offe
 // WatchOfferCanceled is a free log subscription operation binding the contract event 0x05b47b0f8bd37a836f7a5c080cb883841c1282c69dd1874a46d4fafc7e8aa27a.
 //
 // Solidity: event OfferCanceled(bytes8 indexed offerId, string providerAppName)
-func (_Exchange *exchangeEvents) WatchOfferCanceled(opts *bind.WatchOpts, sink chan<- *ExchangeOfferCanceled, offerId []types.ID) (event.Subscription, error) {
+func (_Exchange *exchangeEvents) WatchOfferCanceled(opts *bind.WatchOpts, sink chan<- *ExchangeOfferCanceled, offerId [][8]byte) (event.Subscription, error) {
 
 	var offerIdRule []interface{}
 	for _, offerIdItem := range offerId {
@@ -783,7 +783,7 @@ func (it *ExchangeOfferPreparedIterator) Close() error {
 
 // ExchangeOfferPrepared represents a OfferPrepared event raised by the Exchange contract.
 type ExchangeOfferPrepared struct {
-	OfferId         types.ID
+	OfferId         [8]byte
 	ProviderAppName string
 	Raw             chainTypes.Log // Blockchain specific contextual infos
 }
@@ -791,7 +791,7 @@ type ExchangeOfferPrepared struct {
 // FilterOfferPrepared is a free log retrieval operation binding the contract event 0x821d45f3b8db50a4777ad807928db085f0c986433cf51c2afdc8c6af90d1aef5.
 //
 // Solidity: event OfferPrepared(bytes8 indexed offerId, string providerAppName)
-func (_Exchange *exchangeEvents) FilterOfferPrepared(opts *bind.FilterOpts, offerId []types.ID) (ablbind.EventIterator, error) {
+func (_Exchange *exchangeEvents) FilterOfferPrepared(opts *bind.FilterOpts, offerId [][8]byte) (ablbind.EventIterator, error) {
 
 	var offerIdRule []interface{}
 	for _, offerIdItem := range offerId {
@@ -808,7 +808,7 @@ func (_Exchange *exchangeEvents) FilterOfferPrepared(opts *bind.FilterOpts, offe
 // WatchOfferPrepared is a free log subscription operation binding the contract event 0x821d45f3b8db50a4777ad807928db085f0c986433cf51c2afdc8c6af90d1aef5.
 //
 // Solidity: event OfferPrepared(bytes8 indexed offerId, string providerAppName)
-func (_Exchange *exchangeEvents) WatchOfferPrepared(opts *bind.WatchOpts, sink chan<- *ExchangeOfferPrepared, offerId []types.ID) (event.Subscription, error) {
+func (_Exchange *exchangeEvents) WatchOfferPrepared(opts *bind.WatchOpts, sink chan<- *ExchangeOfferPrepared, offerId [][8]byte) (event.Subscription, error) {
 
 	var offerIdRule []interface{}
 	for _, offerIdItem := range offerId {
@@ -953,7 +953,7 @@ func (it *ExchangeOfferPresentedIterator) Close() error {
 
 // ExchangeOfferPresented represents a OfferPresented event raised by the Exchange contract.
 type ExchangeOfferPresented struct {
-	OfferId         types.ID
+	OfferId         [8]byte
 	ProviderAppName string
 	Raw             chainTypes.Log // Blockchain specific contextual infos
 }
@@ -961,7 +961,7 @@ type ExchangeOfferPresented struct {
 // FilterOfferPresented is a free log retrieval operation binding the contract event 0x198eb5e3b4b2cd8cca381c07c5696b7caffe2c775d93f75d0053073e36a865fa.
 //
 // Solidity: event OfferPresented(bytes8 indexed offerId, string providerAppName)
-func (_Exchange *exchangeEvents) FilterOfferPresented(opts *bind.FilterOpts, offerId []types.ID) (ablbind.EventIterator, error) {
+func (_Exchange *exchangeEvents) FilterOfferPresented(opts *bind.FilterOpts, offerId [][8]byte) (ablbind.EventIterator, error) {
 
 	var offerIdRule []interface{}
 	for _, offerIdItem := range offerId {
@@ -978,7 +978,7 @@ func (_Exchange *exchangeEvents) FilterOfferPresented(opts *bind.FilterOpts, off
 // WatchOfferPresented is a free log subscription operation binding the contract event 0x198eb5e3b4b2cd8cca381c07c5696b7caffe2c775d93f75d0053073e36a865fa.
 //
 // Solidity: event OfferPresented(bytes8 indexed offerId, string providerAppName)
-func (_Exchange *exchangeEvents) WatchOfferPresented(opts *bind.WatchOpts, sink chan<- *ExchangeOfferPresented, offerId []types.ID) (event.Subscription, error) {
+func (_Exchange *exchangeEvents) WatchOfferPresented(opts *bind.WatchOpts, sink chan<- *ExchangeOfferPresented, offerId [][8]byte) (event.Subscription, error) {
 
 	var offerIdRule []interface{}
 	for _, offerIdItem := range offerId {
@@ -1123,7 +1123,7 @@ func (it *ExchangeOfferReceiptIterator) Close() error {
 
 // ExchangeOfferReceipt represents a OfferReceipt event raised by the Exchange contract.
 type ExchangeOfferReceipt struct {
-	OfferId         types.ID
+	OfferId         [8]byte
 	ProviderAppName string
 	Consumer        common.Address
 	Result          []byte
@@ -1133,7 +1133,7 @@ type ExchangeOfferReceipt struct {
 // FilterOfferReceipt is a free log retrieval operation binding the contract event 0x7a2b40d55d10a35fd97231e1d36fc9df7c48361f16299086103e0712135c59fa.
 //
 // Solidity: event OfferReceipt(bytes8 indexed offerId, string providerAppName, address indexed consumer, bytes result)
-func (_Exchange *exchangeEvents) FilterOfferReceipt(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (ablbind.EventIterator, error) {
+func (_Exchange *exchangeEvents) FilterOfferReceipt(opts *bind.FilterOpts, offerId [][8]byte, consumer []common.Address) (ablbind.EventIterator, error) {
 
 	var offerIdRule []interface{}
 	for _, offerIdItem := range offerId {
@@ -1155,7 +1155,7 @@ func (_Exchange *exchangeEvents) FilterOfferReceipt(opts *bind.FilterOpts, offer
 // WatchOfferReceipt is a free log subscription operation binding the contract event 0x7a2b40d55d10a35fd97231e1d36fc9df7c48361f16299086103e0712135c59fa.
 //
 // Solidity: event OfferReceipt(bytes8 indexed offerId, string providerAppName, address indexed consumer, bytes result)
-func (_Exchange *exchangeEvents) WatchOfferReceipt(opts *bind.WatchOpts, sink chan<- *ExchangeOfferReceipt, offerId []types.ID, consumer []common.Address) (event.Subscription, error) {
+func (_Exchange *exchangeEvents) WatchOfferReceipt(opts *bind.WatchOpts, sink chan<- *ExchangeOfferReceipt, offerId [][8]byte, consumer []common.Address) (event.Subscription, error) {
 
 	var offerIdRule []interface{}
 	for _, offerIdItem := range offerId {
@@ -1305,7 +1305,7 @@ func (it *ExchangeOfferRejectedIterator) Close() error {
 
 // ExchangeOfferRejected represents a OfferRejected event raised by the Exchange contract.
 type ExchangeOfferRejected struct {
-	OfferId  types.ID
+	OfferId  [8]byte
 	Consumer common.Address
 	Raw      chainTypes.Log // Blockchain specific contextual infos
 }
@@ -1313,7 +1313,7 @@ type ExchangeOfferRejected struct {
 // FilterOfferRejected is a free log retrieval operation binding the contract event 0x94c89cb0104a1fa8726bf8a9e9151423d67ff6f8eb09ed7392386649655c6843.
 //
 // Solidity: event OfferRejected(bytes8 indexed offerId, address indexed consumer)
-func (_Exchange *exchangeEvents) FilterOfferRejected(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (ablbind.EventIterator, error) {
+func (_Exchange *exchangeEvents) FilterOfferRejected(opts *bind.FilterOpts, offerId [][8]byte, consumer []common.Address) (ablbind.EventIterator, error) {
 
 	var offerIdRule []interface{}
 	for _, offerIdItem := range offerId {
@@ -1334,7 +1334,7 @@ func (_Exchange *exchangeEvents) FilterOfferRejected(opts *bind.FilterOpts, offe
 // WatchOfferRejected is a free log subscription operation binding the contract event 0x94c89cb0104a1fa8726bf8a9e9151423d67ff6f8eb09ed7392386649655c6843.
 //
 // Solidity: event OfferRejected(bytes8 indexed offerId, address indexed consumer)
-func (_Exchange *exchangeEvents) WatchOfferRejected(opts *bind.WatchOpts, sink chan<- *ExchangeOfferRejected, offerId []types.ID, consumer []common.Address) (event.Subscription, error) {
+func (_Exchange *exchangeEvents) WatchOfferRejected(opts *bind.WatchOpts, sink chan<- *ExchangeOfferRejected, offerId [][8]byte, consumer []common.Address) (event.Subscription, error) {
 
 	var offerIdRule []interface{}
 	for _, offerIdItem := range offerId {
@@ -1483,7 +1483,7 @@ func (it *ExchangeOfferSettledIterator) Close() error {
 
 // ExchangeOfferSettled represents a OfferSettled event raised by the Exchange contract.
 type ExchangeOfferSettled struct {
-	OfferId  types.ID
+	OfferId  [8]byte
 	Consumer common.Address
 	Raw      chainTypes.Log // Blockchain specific contextual infos
 }
@@ -1491,7 +1491,7 @@ type ExchangeOfferSettled struct {
 // FilterOfferSettled is a free log retrieval operation binding the contract event 0xb37cb3a83f4f40ee469256bdfc4a2881c9ce188960c87bf11359151a461b723e.
 //
 // Solidity: event OfferSettled(bytes8 indexed offerId, address indexed consumer)
-func (_Exchange *exchangeEvents) FilterOfferSettled(opts *bind.FilterOpts, offerId []types.ID, consumer []common.Address) (ablbind.EventIterator, error) {
+func (_Exchange *exchangeEvents) FilterOfferSettled(opts *bind.FilterOpts, offerId [][8]byte, consumer []common.Address) (ablbind.EventIterator, error) {
 
 	var offerIdRule []interface{}
 	for _, offerIdItem := range offerId {
@@ -1512,7 +1512,7 @@ func (_Exchange *exchangeEvents) FilterOfferSettled(opts *bind.FilterOpts, offer
 // WatchOfferSettled is a free log subscription operation binding the contract event 0xb37cb3a83f4f40ee469256bdfc4a2881c9ce188960c87bf11359151a461b723e.
 //
 // Solidity: event OfferSettled(bytes8 indexed offerId, address indexed consumer)
-func (_Exchange *exchangeEvents) WatchOfferSettled(opts *bind.WatchOpts, sink chan<- *ExchangeOfferSettled, offerId []types.ID, consumer []common.Address) (event.Subscription, error) {
+func (_Exchange *exchangeEvents) WatchOfferSettled(opts *bind.WatchOpts, sink chan<- *ExchangeOfferSettled, offerId [][8]byte, consumer []common.Address) (event.Subscription, error) {
 
 	var offerIdRule []interface{}
 	for _, offerIdItem := range offerId {

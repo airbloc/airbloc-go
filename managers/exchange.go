@@ -2,6 +2,7 @@ package managers
 
 import (
 	"context"
+	"fmt"
 	"math/big"
 
 	ablbind "github.com/airbloc/airbloc-go/bind"
@@ -24,20 +25,20 @@ type ExchangeManager interface {
 	AddDataIds(
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
-		offerId types.ID,
+		offerId [8]byte,
 		dataIds []types.DataId,
 	) error
 
 	Cancel(
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
-		offerId types.ID,
+		offerId [8]byte,
 	) error
 
 	Order(
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
-		offerId types.ID,
+		offerId [8]byte,
 	) error
 
 	Prepare(
@@ -50,19 +51,19 @@ type ExchangeManager interface {
 		escrowArgs []byte,
 		dataIds []types.DataId,
 	) (
-		types.ID,
+		[8]byte,
 		error,
 	)
 	Reject(
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
-		offerId types.ID,
+		offerId [8]byte,
 	) error
 
 	Settle(
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
-		offerId types.ID,
+		offerId [8]byte,
 	) error
 
 	contracts.ExchangeEventFilterer
@@ -96,7 +97,7 @@ func NewExchangeManager(backend ablbind.ContractBackend) (ExchangeManager, error
 func (manager *exchangeManager) AddDataIds(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
-	offerId types.ID,
+	offerId [8]byte,
 	dataIds []types.DataId,
 ) error {
 	_, err := manager.ExchangeContract.AddDataIds(ctx, opts, offerId, dataIds)
@@ -105,7 +106,7 @@ func (manager *exchangeManager) AddDataIds(
 	}
 
 	manager.log.Info("Offer updated.", logger.Attrs{
-		"offer-id":    offerId.Hex(),
+		"offer-id":    fmt.Sprintf("%x", offerId),
 		"data-length": len(dataIds),
 	})
 	return nil
@@ -117,7 +118,7 @@ func (manager *exchangeManager) AddDataIds(
 func (manager *exchangeManager) Cancel(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
-	offerId types.ID,
+	offerId [8]byte,
 ) error {
 	receipt, err := manager.ExchangeContract.Cancel(ctx, opts, offerId)
 	if err != nil {
@@ -129,7 +130,7 @@ func (manager *exchangeManager) Cancel(
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	manager.log.Info("Offer cancelled.", logger.Attrs{"offer-id": evt[0].OfferId.Hex()})
+	manager.log.Info("Offer cancelled.", logger.Attrs{"offer-id": fmt.Sprintf("%x", evt[0].OfferId)})
 	return nil
 }
 
@@ -139,7 +140,7 @@ func (manager *exchangeManager) Cancel(
 func (manager *exchangeManager) Order(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
-	offerId types.ID,
+	offerId [8]byte,
 ) error {
 	receipt, err := manager.ExchangeContract.Order(ctx, opts, offerId)
 	if err != nil {
@@ -151,7 +152,7 @@ func (manager *exchangeManager) Order(
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	manager.log.Info("Offer presented.", logger.Attrs{"offer-id": evt[0].OfferId.Hex()})
+	manager.log.Info("Offer presented.", logger.Attrs{"offer-id": fmt.Sprintf("%x", evt[0].OfferId)})
 	return nil
 }
 
@@ -168,7 +169,7 @@ func (manager *exchangeManager) Prepare(
 	escrowArgs []byte,
 	dataIds []types.DataId,
 ) (
-	types.ID,
+	[8]byte,
 	error,
 ) {
 	var err error
@@ -180,16 +181,16 @@ func (manager *exchangeManager) Prepare(
 	}
 	receipt, err := manager.ExchangeContract.Prepare(ctx, opts, provider, consumer, escrow, escrowSign, escrowArgs, ids)
 	if err != nil {
-		return types.ID{}, errors.Wrap(err, "failed to transact")
+		return [8]byte{}, errors.Wrap(err, "failed to transact")
 	}
 
 	evt, err := manager.ExchangeContract.ParseOfferPreparedFromReceipt(receipt)
 	if err != nil {
-		return types.ID{}, errors.Wrap(err, "failed to parse a event from the receipt")
+		return [8]byte{}, errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
 	manager.log.Info("Offer prepared.", logger.Attrs{
-		"offer-id":          evt[0].OfferId.Hex(),
+		"offer-id":          fmt.Sprintf("%x", evt[0].OfferId),
 		"provider-app-name": evt[0].ProviderAppName,
 	})
 
@@ -219,7 +220,7 @@ func (manager *exchangeManager) Prepare(
 func (manager *exchangeManager) Reject(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
-	offerId types.ID,
+	offerId [8]byte,
 ) error {
 	receipt, err := manager.ExchangeContract.Reject(ctx, opts, offerId)
 	if err != nil {
@@ -231,7 +232,7 @@ func (manager *exchangeManager) Reject(
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	manager.log.Info("Offer rejected", logger.Attrs{"offer-id": evt[0].OfferId.Hex()})
+	manager.log.Info("Offer rejected", logger.Attrs{"offer-id": fmt.Sprintf("%x", evt[0].OfferId)})
 	return nil
 }
 
@@ -241,7 +242,7 @@ func (manager *exchangeManager) Reject(
 func (manager *exchangeManager) Settle(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
-	offerId types.ID,
+	offerId [8]byte,
 ) error {
 	receipt, err := manager.ExchangeContract.Settle(ctx, opts, offerId)
 	if err != nil {
@@ -253,6 +254,6 @@ func (manager *exchangeManager) Settle(
 		return errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	manager.log.Info("Offer settled", logger.Attrs{"offer-id": evt[0].OfferId.Hex()})
+	manager.log.Info("Offer settled", logger.Attrs{"offer-id": fmt.Sprintf("%x", evt[0].OfferId)})
 	return nil
 }

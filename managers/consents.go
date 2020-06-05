@@ -2,6 +2,7 @@ package managers
 
 import (
 	"context"
+	"fmt"
 	"math/big"
 
 	ablbind "github.com/airbloc/airbloc-go/bind"
@@ -24,7 +25,7 @@ type ConsentsManager interface {
 	Consent(
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
-		userId types.ID,
+		userId [8]byte,
 		appName string,
 		consentData types.ConsentData,
 	) error
@@ -32,7 +33,7 @@ type ConsentsManager interface {
 	ConsentMany(
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
-		userId types.ID,
+		userId [8]byte,
 		appName string,
 		consentData []types.ConsentData,
 	) error
@@ -68,7 +69,7 @@ func NewConsentsManager(backend ablbind.ContractBackend) (ConsentsManager, error
 func (manager *consentsManager) Consent(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
-	userId types.ID,
+	userId [8]byte,
 	appName string,
 	consentData types.ConsentData,
 ) error {
@@ -85,7 +86,7 @@ func (manager *consentsManager) Consent(
 	manager.log.Info("Consented to one data.", logger.Attrs{
 		"app-name":  evt[0].AppName,
 		"data-type": evt[0].DataType,
-		"user-id":   evt[0].UserId.Hex(),
+		"user-id":   fmt.Sprintf("%x", evt[0].UserId),
 		"allowed":   evt[0].Allowed,
 	})
 	return nil
@@ -97,7 +98,7 @@ func (manager *consentsManager) Consent(
 func (manager *consentsManager) ConsentMany(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
-	userId types.ID,
+	userId [8]byte,
 	appName string,
 	consentData []types.ConsentData,
 ) error {
@@ -113,7 +114,7 @@ func (manager *consentsManager) ConsentMany(
 
 	manager.log.Info("Consented to many data.", logger.Attrs{
 		"app-name":   evt[0].AppName,
-		"user-id":    evt[0].UserId.Hex(),
+		"user-id":    fmt.Sprintf("%x", evt[0].UserId),
 		"data-count": len(evt),
 	})
 	return nil

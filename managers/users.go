@@ -2,12 +2,12 @@ package managers
 
 import (
 	"context"
+	"fmt"
 	"math/big"
 
 	"github.com/pkg/errors"
 
 	ablbind "github.com/airbloc/airbloc-go/bind"
-	types "github.com/airbloc/airbloc-go/bind/types"
 	"github.com/airbloc/airbloc-go/contracts"
 	logger "github.com/airbloc/logger"
 	common "github.com/klaytn/klaytn/common"
@@ -26,7 +26,7 @@ type UsersManager interface {
 		ctx context.Context,
 		opts *ablbind.TransactOpts,
 	) (
-		types.ID,
+		[8]byte,
 		error,
 	)
 	CreateTemporary(
@@ -34,7 +34,7 @@ type UsersManager interface {
 		opts *ablbind.TransactOpts,
 		identityHash common.Hash,
 	) (
-		types.ID,
+		[8]byte,
 		error,
 	)
 	SetController(
@@ -82,20 +82,20 @@ func (manager *usersManager) Create(
 	ctx context.Context,
 	opts *ablbind.TransactOpts,
 ) (
-	types.ID,
+	[8]byte,
 	error,
 ) {
 	receipt, err := manager.UsersContract.Create(ctx, opts)
 	if err != nil {
-		return types.ID{}, errors.Wrap(err, "failed to transact")
+		return [8]byte{}, errors.Wrap(err, "failed to transact")
 	}
 
 	evt, err := manager.UsersContract.ParseSignedUpFromReceipt(receipt)
 	if err != nil {
-		return types.ID{}, errors.Wrap(err, "failed to parse a event from the receipt")
+		return [8]byte{}, errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
-	manager.log.Info("User created.", logger.Attrs{"user-id": evt[0].UserId.Hex()})
+	manager.log.Info("User created.", logger.Attrs{"user-id": fmt.Sprintf("%x", evt[0].UserId)})
 	return evt[0].UserId, nil
 }
 
@@ -107,21 +107,21 @@ func (manager *usersManager) CreateTemporary(
 	opts *ablbind.TransactOpts,
 	identityHash common.Hash,
 ) (
-	types.ID,
+	[8]byte,
 	error,
 ) {
 	receipt, err := manager.UsersContract.CreateTemporary(ctx, opts, identityHash)
 	if err != nil {
-		return types.ID{}, errors.Wrap(err, "failed to transact")
+		return [8]byte{}, errors.Wrap(err, "failed to transact")
 	}
 
 	evt, err := manager.UsersContract.ParseTemporaryCreatedFromReceipt(receipt)
 	if err != nil {
-		return types.ID{}, errors.Wrap(err, "failed to parse a event from the receipt")
+		return [8]byte{}, errors.Wrap(err, "failed to parse a event from the receipt")
 	}
 
 	manager.log.Info("Temporary user created.", logger.Attrs{
-		"user-id":       evt[0].UserId.Hex(),
+		"user-id":       fmt.Sprintf("%x", evt[0].UserId),
 		"identity-hash": evt[0].IdentityHash.Hex(),
 	})
 	return evt[0].UserId, nil
@@ -146,7 +146,7 @@ func (manager *usersManager) SetController(
 	}
 
 	manager.log.Info("Controller changed.", logger.Attrs{
-		"user-id":        evt[0].UserId.Hex(),
+		"user-id":        fmt.Sprintf("%x", evt[0].UserId),
 		"old-controller": evt[0].OldController.Hex(),
 		"new-controller": evt[0].NewController.Hex(),
 	})
@@ -173,7 +173,7 @@ func (manager *usersManager) UnlockTemporary(
 	}
 
 	manager.log.Info("Temporary user unlocked.", logger.Attrs{
-		"user-id":   evt[0].UserId.Hex(),
+		"user-id":   fmt.Sprintf("%x", evt[0].UserId),
 		"new-owner": evt[0].NewOwner.Hex(),
 	})
 	return nil
