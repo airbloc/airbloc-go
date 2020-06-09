@@ -17,12 +17,18 @@ import (
 
 const feePayerAPIVersion = "v1"
 
-type FeePayer struct {
+type FeePayer interface {
+	Address(ctx context.Context) (common.Address, error)
+	Transact(ctx context.Context, tx *types.Transaction) (common.Hash, error)
+}
+
+type feePayer struct {
+	addr     common.Address
 	client   *http.Client
 	endpoint *url.URL `json:"-"`
 }
 
-func (fpc FeePayer) request(
+func (fpc feePayer) request(
 	ctx context.Context,
 	method, endpoint string,
 	body io.Reader,
@@ -68,25 +74,11 @@ func (fpc FeePayer) request(
 	return respBody, nil
 }
 
-func (fpc FeePayer) Address(ctx context.Context) (common.Address, error) {
-	body, err := fpc.request(ctx, http.MethodGet, "/address", nil)
-	if err != nil {
-		return common.Address{}, nil
-	}
-
-	var resp struct {
-		Address common.Address `json:"address"`
-	}
-	if err = json.Unmarshal(body, &resp); err != nil {
-		return common.Address{}, errors.Wrap(err, "marshal response body")
-	}
-	if resp.Address == (common.Address{}) {
-		return common.Address{}, errors.New("received fee payer address is empty")
-	}
-	return resp.Address, nil
+func (fpc feePayer) Address(ctx context.Context) (common.Address, error) {
+	return fpc.addr, nil
 }
 
-func (fpc FeePayer) Transact(ctx context.Context, tx *types.Transaction) (common.Hash, error) {
+func (fpc feePayer) Transact(ctx context.Context, tx *types.Transaction) (common.Hash, error) {
 	rawTxData, err := tx.MarshalJSON()
 	if err != nil {
 		return common.Hash{}, errors.Wrap(err, "marshal tx")
@@ -109,7 +101,7 @@ func (fpc FeePayer) Transact(ctx context.Context, tx *types.Transaction) (common
 	return resp.TxHash, nil
 }
 
-func NewFeePayer(client *http.Client, rawurl string) (*FeePayer, error) {
+func NewFeePayer(ctx context.Context, client *http.Client, rawurl string) (FeePayer, error) {
 	if client == nil {
 		client = http.DefaultClient
 	}
@@ -119,5 +111,22 @@ func NewFeePayer(client *http.Client, rawurl string) (*FeePayer, error) {
 		return nil, errors.Wrapf(err, "invalid fee payer url %s", rawurl)
 	}
 
-	return &FeePayer{client: client, endpoint: endpoint}, nil
+	fpc := &feePayer{client: client, endpoint: endpoint}
+	body, err := fpc.request(ctx, http.MethodGet, "/address", nil)
+	if err != nil {
+		return nil, nil
+	}
+
+	var resp struct {
+		Address common.Address `json:"address"`
+	}
+	if err = json.Unmarshal(body, &resp); err != nil {
+		return nil, errors.Wrap(err, "marshal response body")
+	}
+	if resp.Address == (common.Address{}) {
+		return nil, errors.New("received fee payer address is empty")
+	}
+
+	fpc.addr = resp.Address
+	return fpc, nil
 }

@@ -5,7 +5,6 @@ import (
 	"crypto/ecdsa"
 
 	ablbind "github.com/airbloc/airbloc-go/bind"
-
 	"github.com/klaytn/klaytn/accounts"
 	"github.com/klaytn/klaytn/blockchain/types"
 	"github.com/klaytn/klaytn/common"
@@ -14,10 +13,11 @@ import (
 )
 
 type Account struct {
-	pubKey   *ecdsa.PublicKey
-	signer   MessageSigner
-	account  *ablbind.TransactOpts
-	feePayer *FeePayer
+	pubKey       *ecdsa.PublicKey
+	signer       MessageSigner
+	account      *ablbind.TransactOpts
+	feePayer     FeePayer
+	feePayerAddr common.Address
 }
 
 func (acc Account) Address() common.Address {
@@ -30,6 +30,10 @@ func (acc Account) IsReadOnly() bool {
 
 func (acc Account) IsDelegated() bool {
 	return acc.feePayer != nil
+}
+
+func (acc Account) FeePayerAddress() common.Address {
+	return acc.feePayerAddr
 }
 
 func (acc Account) TxOpts() *ablbind.TransactOpts {
@@ -59,7 +63,7 @@ func NewKeyedAccount(key *ecdsa.PrivateKey) Account {
 func NewWalletAccount(account accounts.Account, wallet accounts.Wallet) (Account, error) {
 	signer := NewWalletMessageSigner(account, wallet, nil)
 
-	// vulfpeck - 1612
+	// vulfpeck
 	hash := []byte{1, 6, 1, 2, '*'}
 
 	signature, err := signer(hash)
@@ -84,24 +88,27 @@ func NewWalletAccount(account accounts.Account, wallet accounts.Wallet) (Account
 	}, nil
 }
 
-func newAccountWithFeePayer(acc Account, rawFeePayerUrl string) (Account, error) {
-	feePayer, err := NewFeePayer(nil, rawFeePayerUrl)
-	if err != nil {
-		return Account{}, err
-	}
-
+func NewKeyedAccountWithFeePayer(ctx context.Context, key *ecdsa.PrivateKey, feePayer FeePayer) (Account, error) {
+	acc := NewKeyedAccount(key)
 	acc.feePayer = feePayer
+	feePayerAddr, err := feePayer.Address(ctx)
+	if err != nil {
+		return Account{}, errors.Wrap(err, "fetch fee payer address")
+	}
+	acc.feePayerAddr = feePayerAddr
 	return acc, nil
 }
 
-func NewKeyedAccountWithFeePayer(key *ecdsa.PrivateKey, feePayerUrl string) (Account, error) {
-	return newAccountWithFeePayer(NewKeyedAccount(key), feePayerUrl)
-}
-
-func NewWalletAccountWithFeePayer(account accounts.Account, wallet accounts.Wallet, feePayerUrl string) (Account, error) {
+func NewWalletAccountWithFeePayer(ctx context.Context, account accounts.Account, wallet accounts.Wallet, feePayer FeePayer) (Account, error) {
 	acc, err := NewWalletAccount(account, wallet)
 	if err != nil {
-		return Account{}, err
+		return Account{}, errors.Wrap(err, "create wallet account")
 	}
-	return newAccountWithFeePayer(acc, feePayerUrl)
+	acc.feePayer = feePayer
+	feePayerAddr, err := feePayer.Address(ctx)
+	if err != nil {
+		return Account{}, errors.Wrap(err, "fetch fee payer address")
+	}
+	acc.feePayerAddr = feePayerAddr
+	return acc, nil
 }
