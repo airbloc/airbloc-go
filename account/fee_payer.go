@@ -25,6 +25,7 @@ type FeePayer interface {
 type feePayer struct {
 	addr     common.Address
 	client   *http.Client
+	token    string
 	endpoint *url.URL `json:"-"`
 }
 
@@ -44,6 +45,10 @@ func (fpc feePayer) request(
 		return nil, errors.Wrap(err, "make new request")
 	}
 	req = req.WithContext(ctx)
+
+	if fpc.token != "" {
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", fpc.token))
+	}
 
 	resp, err := fpc.client.Do(req)
 	if err != nil {
@@ -101,9 +106,13 @@ func (fpc feePayer) Transact(ctx context.Context, tx *types.Transaction) (common
 	return resp.TxHash, nil
 }
 
-func NewFeePayer(ctx context.Context, client *http.Client, rawurl string) (FeePayer, error) {
+func NewFeePayer(ctx context.Context, client *http.Client, rawurl string, token *string) (FeePayer, error) {
 	if client == nil {
 		client = http.DefaultClient
+	}
+	if token == nil {
+		t := ""
+		token = &t
 	}
 
 	endpoint, err := url.Parse(rawurl)
@@ -111,7 +120,7 @@ func NewFeePayer(ctx context.Context, client *http.Client, rawurl string) (FeePa
 		return nil, errors.Wrapf(err, "invalid fee payer url %s", rawurl)
 	}
 
-	fpc := &feePayer{client: client, endpoint: endpoint}
+	fpc := &feePayer{client: client, endpoint: endpoint, token: *token}
 	body, err := fpc.request(ctx, http.MethodGet, "/address", nil)
 	if err != nil {
 		return nil, nil
