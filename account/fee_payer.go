@@ -52,7 +52,7 @@ func (fpc feePayer) request(
 
 	resp, err := fpc.client.Do(req)
 	if err != nil {
-		return nil, errors.Wrap(err, "request fee payer address")
+		return nil, errors.Wrap(err, "request to fee payer")
 	}
 	defer resp.Body.Close()
 
