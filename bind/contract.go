@@ -48,7 +48,7 @@ func (c *BoundContract) logTx(method string, params ...interface{}) {
 		return
 	}
 
-	c.log.Info(abiMethod.Sig()+" input={}", string(d))
+	c.log.Info(abiMethod.Sig+" input={}", string(d))
 }
 
 func (c *BoundContract) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {

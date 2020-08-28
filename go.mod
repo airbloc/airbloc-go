@@ -5,7 +5,6 @@ go 1.14
 replace github.com/klaytn/klaytn v1.4.2 => github.com/airbloc/klaytn v1.1.1-0.20200605045046-86eb6e0e4869
 
 require (
-	github.com/VictoriaMetrics/fastcache v1.5.7 // indirect
 	github.com/airbloc/airframe v0.0.0-20190822094319-71d50205227c
 	github.com/airbloc/logger v1.4.5
 	github.com/allegro/bigcache v1.2.1 // indirect
@@ -21,7 +20,6 @@ require (
 	github.com/libp2p/go-libp2p-crypto v0.0.1
 	github.com/maruel/panicparse v1.5.0 // indirect
 	github.com/mitchellh/mapstructure v1.1.2
-	github.com/oasislabs/ed25519 v0.0.0-20200302143042-29f6767a7c3e // indirect
 	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/perlin-network/noise v0.0.0-20190219190757-3c13535b725d
 	github.com/pkg/errors v0.9.1
