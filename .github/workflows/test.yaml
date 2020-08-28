@@ -27,11 +27,3 @@ jobs:
 
       - name: Run Test
         run: go test ./...
-
-      - save_cache:
-          key: go-mod-v1-{{ checksum "go.sum.original" }}
-          paths:
-            - "/go/pkg/mod"
-
-      - store_test_results:
-          path: /tmp/test-results
