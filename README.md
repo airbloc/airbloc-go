@@ -1,7 +1,7 @@
 Airbloc
 ==========
 
-[![CircleCI](https://circleci.com/gh/airbloc/airbloc-go.svg?style=svg)](https://circleci.com/gh/airbloc/airbloc-go)
+[![Build Status](https://img.shields.io/github/workflow/status/airbloc/airbloc-go/Test?style=for-the-badge)](https://github.com/airbloc/airbloc-go/actions)
 
 [Airbloc](https://airbloc.org) is user-oriented data exchange protocol which is designed to be scalable, transparent, and able to handle enterprise-grade massive data.
 

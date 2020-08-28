@@ -21,7 +21,7 @@ require (
 	github.com/maruel/panicparse v1.5.0 // indirect
 	github.com/mitchellh/mapstructure v1.1.2
 	github.com/pborman/uuid v1.2.0 // indirect
-	github.com/perlin-network/noise v1.1.1-0.20190219190757-3c13535b725d
+	github.com/perlin-network/noise v0.0.0-20190219190757-3c13535b725d
 	github.com/pkg/errors v0.9.1
 	github.com/rjeczalik/notify v0.9.2 // indirect
 	github.com/rs/cors v1.7.0 // indirect
