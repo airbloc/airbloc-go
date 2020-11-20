@@ -6,8 +6,8 @@ import (
 
 	ablbind "github.com/airbloc/airbloc-go/bind"
 	"github.com/airbloc/airbloc-go/contracts"
-	logger "github.com/airbloc/logger"
-	common "github.com/klaytn/klaytn/common"
+	"github.com/airbloc/logger"
+	"github.com/klaytn/klaytn/common"
 	"github.com/pkg/errors"
 )
 
@@ -46,8 +46,8 @@ func NewControllerRegistryManager(backend ablbind.ContractBackend) (ControllerRe
 
 	return &controllerRegistryManager{
 		ControllerRegistryContract: contract,
-		client: backend,
-		log:    logger.New("controller_registry"),
+		client:                     backend,
+		log:                        logger.New("controller_registry"),
 	}, nil
 }
 

@@ -6,8 +6,8 @@ import (
 
 	ablbind "github.com/airbloc/airbloc-go/bind"
 	"github.com/airbloc/airbloc-go/contracts"
-	logger "github.com/airbloc/logger"
-	common "github.com/klaytn/klaytn/common"
+	"github.com/airbloc/logger"
+	"github.com/klaytn/klaytn/common"
 	"github.com/pkg/errors"
 )
 
@@ -53,8 +53,8 @@ func NewDataTypeRegistryManager(backend ablbind.ContractBackend) (DataTypeRegist
 
 	return &dataTypeRegistryManager{
 		DataTypeRegistryContract: contract,
-		client: backend,
-		log:    logger.New("data_type_registry"),
+		client:                   backend,
+		log:                      logger.New("data_type_registry"),
 	}, nil
 }
 
