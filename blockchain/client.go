@@ -7,6 +7,7 @@ import (
 	"time"
 
 	ablbind "github.com/airbloc/airbloc-go/bind"
+	"github.com/airbloc/airbloc-go/pkg/kas"
 	"github.com/airbloc/logger"
 
 	"github.com/klaytn/klaytn/accounts/abi/bind"
@@ -15,6 +16,8 @@ import (
 	"github.com/klaytn/klaytn/common"
 	"github.com/pkg/errors"
 )
+
+var log = logger.New("klaytn")
 
 // getChainName returns chain name by chain ID (network ID), according to EIP-155.
 func getChainName(cid *big.Int) string {
@@ -38,12 +41,9 @@ func getChainName(cid *big.Int) string {
 type clientData struct{ *klayClient.Client }
 type Client struct {
 	clientData
-	log logger.Logger
 }
 
 func NewClient(ctx context.Context, endpoint string) (*Client, error) {
-	log := logger.New("klaytn")
-
 	if _, err := url.Parse(endpoint); err != nil {
 		return nil, errors.Wrapf(err, "invalid URL: %s", endpoint)
 	}
@@ -60,7 +60,21 @@ func NewClient(ctx context.Context, endpoint string) (*Client, error) {
 
 	return &Client{
 		clientData: clientData{client},
-		log:        log,
+	}, nil
+}
+
+func NewClientWithKAS(ctx context.Context, cfg kas.Config) (*Client, error) {
+	client, err := kas.Dial(cfg)
+	if err != nil {
+		return nil, errors.Wrap(err, "dial klaytn api")
+	}
+	cid, err := client.NetworkID(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "fetch network id")
+	}
+	log.Info("Using {} network", getChainName(cid))
+	return &Client{
+		clientData: clientData{client},
 	}, nil
 }
 
@@ -86,9 +100,9 @@ func (c *Client) waitMined(ctx context.Context, hash common.Hash) (*types.Receip
 			return receipt, err
 		}
 		if err != nil {
-			c.log.Debug("Receipt retrieval failed", "err", err)
+			log.Debug("Receipt retrieval failed", "err", err)
 		} else {
-			c.log.Debug("Transaction not yet mined")
+			log.Debug("Transaction not yet mined")
 		}
 		// Wait for the next round.
 		select {
