@@ -21,12 +21,24 @@ type sessionFactory struct {
 }
 
 func NewFactory(ctx context.Context, opt BaseOption) (Factory, error) {
-	client, err := blockchain.NewClient(ctx, opt.BlockchainEndpoint)
-	if err != nil {
-		return nil, errors.Wrapf(
-			err, "initialize klaytn client. url=%s",
-			opt.BlockchainEndpoint,
-		)
+	var client *blockchain.Client
+	if opt.KAS != nil {
+		// connect to Klaytn API Service (KAS)
+		cli, err := blockchain.NewClientWithKAS(ctx, *opt.KAS)
+		if err != nil {
+			return nil, errors.Wrapf(err, "connect KAS")
+		}
+		client = cli
+	} else {
+		// connect to the Klaytn node directly
+		cli, err := blockchain.NewClient(ctx, opt.BlockchainEndpoint)
+		if err != nil {
+			return nil, errors.Wrapf(
+				err, "initialize klaytn client. url=%s",
+				opt.BlockchainEndpoint,
+			)
+		}
+		client = cli
 	}
 
 	var token *string = nil

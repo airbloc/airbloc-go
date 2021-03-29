@@ -7,9 +7,11 @@ import (
 	"github.com/airbloc/airbloc-go/account"
 	"github.com/airbloc/airbloc-go/bind"
 	"github.com/airbloc/airbloc-go/blockchain"
+	"github.com/airbloc/airbloc-go/pkg/kas"
 )
 
 type BaseOption struct {
+	KAS                *kas.Config
 	BlockchainEndpoint string `split_words:"true" default:"https://api.baobab.klaytn.net:8651"`
 	DeploymentPath     string `split_words:"true"`
 	FeePayerEndpoint   string `split_words:"true" default:"http://localhost:3470/api"`
