@@ -10,7 +10,6 @@ import (
 	"github.com/klaytn/klaytn/common"
 	"github.com/klaytn/klaytn/crypto"
 	"github.com/klaytn/klaytn/crypto/ecies"
-	libp2pCrypto "github.com/libp2p/go-libp2p-crypto"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ed25519"
 	"golang.org/x/crypto/pbkdf2"
@@ -125,9 +124,4 @@ func (key *Key) rawEd25519Public() (publicKey []byte) {
 	publicKey = make([]byte, ed25519.PublicKeySize)
 	copy(publicKey, key.Ed25519Private[32:])
 	return
-}
-
-// DeriveLibp2pKeyPair returns an Ed25519 keypair for Libp2p identity
-func (key *Key) DeriveLibp2pKeyPair() (libp2pCrypto.PrivKey, error) {
-	return libp2pCrypto.UnmarshalSecp256k1PrivateKey(crypto.FromECDSA(key.PrivateKey))
 }

@@ -4,10 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/mitchellh/mapstructure"
 	"github.com/pkg/errors"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type DataId [20]byte
@@ -67,29 +64,6 @@ func NewDataIdFromStr(dataID string) (id DataId, err error) {
 	copy(id[IDLength*2:], rowId[:])
 
 	return
-}
-
-func RawIdToDataId(d bson.D) (DataId, int64, error) {
-	var rawDataId struct {
-		BundleId    string             `json:"bundleId" mapstructure:"bundleId"`
-		UserId      string             `json:"userId" mapstructure:"userId"`
-		RowId       string             `json:"rowId" mapstructure:"rowId"`
-		CollectedAt primitive.DateTime `json:"collectedAt" mapstructure:"collectedAt"`
-	}
-
-	if err := mapstructure.Decode(d.Map(), rawDataId); err != nil {
-		return DataId{}, 0, errors.Wrap(err, "failed to decode rawDataId")
-	}
-
-	dataId, err := NewDataIdFromStr(
-		rawDataId.BundleId +
-			rawDataId.UserId +
-			rawDataId.RowId)
-	if err != nil {
-		return DataId{}, 0, errors.Wrap(err, "failed to convert dataId")
-	}
-
-	return dataId, int64(rawDataId.CollectedAt), nil
 }
 
 func (id DataId) Hex() string {
