@@ -4,7 +4,6 @@ import (
 	"crypto/ecdsa"
 	"errors"
 
-	"github.com/airbloc/airbloc-go/account"
 	"github.com/airbloc/airbloc-go/bind"
 	"github.com/airbloc/airbloc-go/blockchain"
 	"github.com/airbloc/airbloc-go/pkg/kas"
@@ -24,7 +23,7 @@ type sessionFactoryOption struct {
 
 	// optional
 	client      *blockchain.Client
-	feePayer    account.FeePayer
+	useFeePayer bool
 	deployments bind.Deployments
 }
 
@@ -45,8 +44,8 @@ func WithKey(key *ecdsa.PrivateKey) FactoryOption {
 	return func(opt *sessionFactoryOption) { opt.key = key }
 }
 
-func WithFeePayer(feePayer account.FeePayer) FactoryOption {
-	return func(opt *sessionFactoryOption) { opt.feePayer = feePayer }
+func WithUsingFeePayer() FactoryOption {
+	return func(opt *sessionFactoryOption) { opt.useFeePayer = true }
 }
 
 func WithDeployments(deployments bind.Deployments) FactoryOption {

@@ -110,11 +110,11 @@ func (sf sessionFactory) NewSession(ctx context.Context, opts ...FactoryOption) 
 		acc = account.NewKeyedAccount(factoryOption.key)
 		err error
 	)
-	if factoryOption.feePayer != nil {
+	if factoryOption.useFeePayer {
 		acc, err = account.NewKeyedAccountWithFeePayer(
 			ctx,
 			factoryOption.key,
-			factoryOption.feePayer,
+			sf.feePayer,
 		)
 		if err != nil {
 			return Session{},
