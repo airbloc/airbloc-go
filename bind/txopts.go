@@ -67,13 +67,13 @@ func (opts *TransactOpts) MakeTransactionData(client ContractBackend, contract *
 	}
 
 	// gas limit
-	if contract != nil {
-		if code, err := client.PendingCodeAt(opts.Context, *contract); err != nil {
-			return types.TxType(0), nil, err
-		} else if len(code) == 0 {
-			return types.TxType(0), nil, bind.ErrNoCode
-		}
-	}
+	// if contract != nil {
+	// 	if code, err := client.CodeAt(opts.Context, *contract); err != nil {
+	// 		return types.TxType(0), nil, err
+	// 	} else if len(code) == 0 {
+	// 		return types.TxType(0), nil, bind.ErrNoCode
+	// 	}
+	// }
 
 	gasLimit := opts.GasLimit
 	if gasLimit == 0 {
